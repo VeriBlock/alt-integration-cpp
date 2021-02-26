@@ -13,7 +13,6 @@ type AltEndorsement struct {
 	EndorsedHash   []byte
 	ContainingHash []byte
 	BlockOfProof   [24]byte
-	PayoutInfo     []byte
 }
 
 // GetID ...
@@ -36,11 +35,6 @@ func (v *AltEndorsement) GetBlockOfProof() []byte {
 	return v.BlockOfProof[:]
 }
 
-// GetPayoutInfo ...
-func (v *AltEndorsement) GetPayoutInfo() []byte {
-	return v.PayoutInfo
-}
-
 // ToVbkEncoding ...
 func (v *AltEndorsement) ToVbkEncoding(stream io.Writer) error {
 	if err := veriblock.WriteSingleByteLenValue(stream, v.ID[:]); err != nil {
@@ -53,9 +47,6 @@ func (v *AltEndorsement) ToVbkEncoding(stream io.Writer) error {
 		return err
 	}
 	if err := veriblock.WriteSingleByteLenValue(stream, v.BlockOfProof[:]); err != nil {
-		return err
-	}
-	if err := veriblock.WriteSingleByteLenValue(stream, v.PayoutInfo); err != nil {
 		return err
 	}
 	return nil
@@ -88,10 +79,6 @@ func (v *AltEndorsement) FromVbkEncoding(stream io.Reader) error {
 		return err
 	}
 	copy(v.BlockOfProof[:], blockOfProof)
-	v.PayoutInfo, err = veriblock.ReadSingleByteLenValueDefault(stream)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 

@@ -14,9 +14,8 @@ var (
 		parseHex("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"),
 		parseHex("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"),
 		parse24Bytes("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1"),
-		parseHex("f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"),
 	}
-	defaultAltEndorsementEncoded = "20f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000020f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e18f85486026bf4ead8a37a42925332ec8b553f8e310974fea120f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e"
+	defaultAltEndorsementEncoded = "20f7de2995898800ab109af96779b979a60715da9bf2bbb745b30000000000000020f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e20f85486026bf4ead8a37a42925332ec8b553f8e310974fea1eba238f7cee6165e18f85486026bf4ead8a37a42925332ec8b553f8e310974fea1"
 )
 
 func parse24Bytes(src string) [24]byte {
@@ -38,7 +37,6 @@ func TestAltEndorsementDeserialize(t *testing.T) {
 	assert.Equal(defaultAltEndorsement.EndorsedHash, decoded.EndorsedHash)
 	assert.Equal(defaultAltEndorsement.ContainingHash, decoded.ContainingHash)
 	assert.Equal(defaultAltEndorsement.BlockOfProof, decoded.BlockOfProof)
-	assert.Equal(defaultAltEndorsement.PayoutInfo, decoded.PayoutInfo)
 
 	assert.Equal(0, stream.Len(), "Stream has more data")
 }

@@ -172,7 +172,7 @@ func (v *PopContext) BtcGetBlockIndex(hash entities.BtcHash) (*entities.BlockInd
 	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -187,7 +187,7 @@ func (v *PopContext) VbkGetBlockIndex(hash entities.VbkHash) (*entities.BlockInd
 	}
 	defer stream.Free()
 	blockIndex := entities.NewVbkBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -202,7 +202,7 @@ func (v *PopContext) AltGetBlockIndex(hash entities.AltHash) (*entities.BlockInd
 	}
 	defer stream.Free()
 	blockIndex := entities.NewAltBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -217,7 +217,7 @@ func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
 	}
 	defer stream.Free()
 	blockIndex := entities.NewAltBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -232,7 +232,7 @@ func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 	}
 	defer stream.Free()
 	blockIndex := entities.NewVbkBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -247,7 +247,7 @@ func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -262,7 +262,7 @@ func (v *PopContext) VbkBootstrapBlock() (*entities.BlockIndex, error) {
 	}
 	defer stream.Free()
 	blockIndex := entities.NewVbkBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -277,7 +277,7 @@ func (v *PopContext) BtcBootstrapBlock() (*entities.BlockIndex, error) {
 	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -292,7 +292,7 @@ func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockI
 	}
 	defer stream.Free()
 	blockIndex := entities.NewAltBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -307,7 +307,7 @@ func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockI
 	}
 	defer stream.Free()
 	blockIndex := entities.NewVbkBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
@@ -322,7 +322,7 @@ func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockI
 	}
 	defer stream.Free()
 	blockIndex := entities.NewBtcBlockIndex()
-	if err := blockIndex.FromRaw(stream); err != nil {
+	if err := blockIndex.FromVbkEncoding(stream); err != nil {
 		return nil, err
 	}
 	return &blockIndex, nil
