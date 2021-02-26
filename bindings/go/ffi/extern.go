@@ -2,8 +2,8 @@ package ffi
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
-// #include <veriblock/c/config.h>
-// #include <veriblock/c/validation_state.h>
+// #include <veriblock/pop/c/config.h>
+// #include <veriblock/pop/c/validation_state.h>
 // #include <string.h>
 import "C"
 import (
