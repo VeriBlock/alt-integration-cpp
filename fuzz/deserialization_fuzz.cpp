@@ -4,10 +4,10 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <type_traits>
-#include <veriblock/entities/altblock.hpp>
-#include <veriblock/entities/context_info_container.hpp>
-#include <veriblock/entities/keystone_container.hpp>
-#include <veriblock/entities/popdata.hpp>
+#include <veriblock/pop/entities/altblock.hpp>
+#include <veriblock/pop/entities/context_info_container.hpp>
+#include <veriblock/pop/entities/keystone_container.hpp>
+#include <veriblock/pop/entities/popdata.hpp>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
