@@ -1,5 +1,6 @@
-#include "veriblock/blockchain/blockchain_util.hpp"
 #include "veriblock/blockchain/mempool_block_tree.hpp"
+
+#include "veriblock/blockchain/blockchain_util.hpp"
 #include "veriblock/fmt.hpp"
 #include "veriblock/keystone_util.hpp"
 
@@ -13,7 +14,7 @@ bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
 bool MemPoolBlockTree::checkContextually(const VbkBlock& block,
                                          ValidationState& state) {
   auto& vbkstable = vbk().getStableTree();
-  auto hash = block.getHash();
+  const auto& hash = block.getHash();
   auto index = vbkstable.getBlockIndex(hash);
   if (index != nullptr) {
     // duplicate

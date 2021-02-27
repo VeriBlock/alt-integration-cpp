@@ -352,7 +352,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
 template <typename Pop, typename Index>
 static void clearSideEffects(Index& index, PayloadsIndex& storage) {
-  auto containingHash = index.getHash();
+  const auto& containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
   for (const auto& pid : payloadIds) {
     storage.removeAltPayloadIndex(containingHash, pid.asVector());
