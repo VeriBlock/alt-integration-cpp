@@ -153,7 +153,7 @@ TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
 TEST_F(StatelessValidationTest,
        checkBtcBlock_when_checkProofOfWork_invalid_test) {
   BtcBlock block = validVTB.transaction.blockOfProof;
-  block.nonce = 1337;
+  block.setNonce(1337);
   ASSERT_FALSE(checkProofOfWork(block, btc));
 }
 

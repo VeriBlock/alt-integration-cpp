@@ -29,7 +29,7 @@ PopData VbkPayloadsRelations::toPopData() const {
         auto& earliestB = b.transaction.blockOfProofContext.empty()
                               ? b.transaction.blockOfProof
                               : b.transaction.blockOfProofContext.front();
-        return earliestA.timestamp < earliestB.timestamp;
+        return earliestA.getTimestamp() < earliestB.getTimestamp();
       });
 
   return pop;

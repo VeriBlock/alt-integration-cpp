@@ -87,7 +87,7 @@ struct VbkBlock {
    * Get current block hash
    * @return hash block hash
    */
-  hash_t getHash() const;
+  const hash_t& getHash() const;
 
   /**
    * Calculate the hash of the vbk block

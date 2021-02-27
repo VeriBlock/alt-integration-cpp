@@ -446,7 +446,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
     auto& tip = *getBestChain().tip();
     tmp.hash = std::vector<uint8_t>(32, 2);
     tmp.previousBlock = tip.getHash();
-    tmp.timestamp = tip.getBlockTime() + 1;
+    tmp.timestamp = tip.getTimestamp() + 1;
     tmp.height = tip.getHeight() + 1;
     bool ret = acceptBlockHeader(tmp, state);
     VBK_ASSERT(ret);
