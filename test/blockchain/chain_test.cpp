@@ -25,7 +25,8 @@ struct MyDummyBlock {
   using height_t = int;
   using protecting_block_t = std::false_type;
   static std::string name() { return {}; };
-  hash_t getHash() const { return {}; };
+  hash_t h;
+  const hash_t& getHash() const { return h; };
 };
 
 struct TestCase {

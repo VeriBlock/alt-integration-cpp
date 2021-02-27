@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "veriblock/entities/altblock.hpp"
+
 #include "veriblock/strutil.hpp"
 
 namespace altintegration {
@@ -35,7 +36,7 @@ size_t AltBlock::estimateSize() const {
 
 uint32_t AltBlock::getBlockTime() const noexcept { return timestamp; }
 
-AltBlock::hash_t AltBlock::getHash() const { return hash; }
+const AltBlock::hash_t& AltBlock::getHash() const { return hash; }
 
 bool operator==(const AltBlock& a, const AltBlock& b) {
   return a.hash == b.hash;

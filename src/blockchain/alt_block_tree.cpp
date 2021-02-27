@@ -352,7 +352,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
 template <typename Pop, typename Index>
 static void clearSideEffects(Index& index, PayloadsIndex& storage) {
-  auto containingHash = index.getHash();
+  const auto& containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
   for (const auto& pid : payloadIds) {
     storage.removeAltPayloadIndex(containingHash, pid.asVector());
@@ -446,7 +446,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
     auto& tip = *getBestChain().tip();
     tmp.hash = std::vector<uint8_t>(32, 2);
     tmp.previousBlock = tip.getHash();
-    tmp.timestamp = tip.getBlockTime() + 1;
+    tmp.timestamp = tip.getTimestamp() + 1;
     tmp.height = tip.getHeight() + 1;
     bool ret = acceptBlockHeader(tmp, state);
     VBK_ASSERT(ret);

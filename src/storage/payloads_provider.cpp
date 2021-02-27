@@ -48,7 +48,7 @@ void PayloadsStorage::getCommands(AltBlockTree& tree,
     vbks.push_back(val);
   }
 
-  auto containingHash = block.getHash();
+  const auto& containingHash = block.getHash();
   // order is important! first, add all VBK blocks, then add all VTBs, then add
   // all ATVs
   vectorPopToCommandGroup<AltBlockTree, VbkBlock>(

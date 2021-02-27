@@ -134,8 +134,8 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     auto index = this->blockchain->getBlockIndex(prevHash);
     EXPECT_EQ(index->getHash(), chain[i - 1]->getHash());
     // timestamp is increasing
-    EXPECT_GE(chain[i]->getHeader().getBlockTime(),
-              chain[i - 1]->getBlockTime());
+    EXPECT_GE(chain[i]->getHeader().getTimestamp(),
+              chain[i - 1]->getTimestamp());
     // bits is same for RegTest
     EXPECT_EQ(chain[i]->getDifficulty(), chain[i - 1]->getDifficulty())
         << "different at " << i;

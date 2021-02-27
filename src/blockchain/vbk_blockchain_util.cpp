@@ -62,7 +62,7 @@ VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
             .template trimLE<VBK_PREVIOUS_KEYSTONE_HASH_SIZE>());
   }
 
-  block.setTimestamp((std::max)(tip.getBlockTime(), currentTimestamp4()));
+  block.setTimestamp((std::max)(tip.getTimestamp(), currentTimestamp4()));
   block.setDifficulty(getNextWorkRequired(tip, block, params_));
   return block;
 }
@@ -88,7 +88,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
        i < params.getRetargetPeriod() - 1 && workBlock->pprev != nullptr;
        ++i, workBlock = workBlock->pprev) {
     int32_t solveTime =
-        workBlock->getBlockTime() - workBlock->pprev->getBlockTime();
+        workBlock->getTimestamp() - workBlock->pprev->getTimestamp();
 
     if (solveTime > (int32_t)(params.getTargetBlockTime() * 6)) {
       solveTime = params.getTargetBlockTime() * 6;
@@ -219,7 +219,7 @@ int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev) {
     if (pindex == nullptr) {
       break;
     }
-    pmedian.push_back(pindex->getBlockTime());
+    pmedian.push_back(pindex->getTimestamp());
   }
 
   VBK_ASSERT(i > 0);
