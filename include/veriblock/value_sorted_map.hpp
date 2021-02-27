@@ -7,6 +7,7 @@
 #define ALTINTEGRATION_VALUE_SORTED_MAP___
 
 #include <algorithm>
+#include <functional>
 #include <set>
 #include <unordered_map>
 
@@ -14,79 +15,93 @@
 
 namespace altintegration {
 
-template <typename key_t, typename val_t, typename cmp_t>
-struct ValueSortedMap {
-  using pair_t = std::pair<key_t, val_t>;
+template <typename K, typename V, typename Cmp = std::less<V>>
+class ValueSortedMap {
+ public:
+  using pair_t = std::pair<const K, V>;
+  using cmp_t = Cmp;
+  using set_t = typename std::multiset<V, cmp_t>;
+  using map_t = std::unordered_map<K, V>;
 
  private:
-  struct SetCmp {
-    ~SetCmp() = default;
-
-    SetCmp() = default;
-
-    SetCmp(const cmp_t& cmp) : cmp_(cmp) {}
-
-    bool operator()(const pair_t& val1, const pair_t& val2) const {
-      return cmp_(val1.second, val2.second);
-    }
-
-   private:
-    cmp_t cmp_{};
-  };
+  set_t set_;
+  map_t map_;
 
  public:
-  using iterator_t = typename std::set<pair_t, SetCmp>::iterator;
+  using iterator_t = typename map_t::iterator;
+  using const_iterator_t = typename map_t::const_iterator;
 
   ~ValueSortedMap() = default;
 
-  ValueSortedMap() = default;
+  explicit ValueSortedMap(cmp_t cmp = cmp_t{}) : set_(cmp) {}
 
-  ValueSortedMap(const cmp_t& cmp) : set_(SetCmp(cmp)), map_() {}
+  iterator_t find(const K& key) { return map_.find(key); }
+  const_iterator_t find(const K& key) const { return map_.find(key); }
 
-  iterator_t find(const key_t& key) {
-    auto it = map_.find(key);
-    return it != map_.end() ? set_.find(*it) : set_.end();
-  }
+  auto begin() -> iterator_t { return map_.begin(); }
+  auto end() -> iterator_t { return map_.end(); }
+  auto begin() const -> const_iterator_t { return map_.begin(); }
+  auto end() const -> const_iterator_t { return map_.end(); }
 
-  iterator_t begin() const { return set_.begin(); }
+  const set_t& getSortedValues() const { return set_; }
 
-  iterator_t end() const { return set_.end(); }
-
-  void erase(const key_t& key) {
-    auto it = map_.find(key);
-    if (it != map_.end()) {
-      set_.erase(*it);
-      map_.erase(it);
+  void erase(const K& key) {
+    auto map_it = map_.find(key);
+    if (map_it == map_.end()) {
+      return;
     }
 
+    auto set_it = set_.find(map_it->second);
+    VBK_ASSERT(set_it != set_.end());
+    set_.erase(set_it);
+    map_.erase(map_it);
+
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
   }
 
-  void insert(const key_t& key, const val_t& value) {
+  iterator_t erase(const iterator_t& it) {
+    set_.erase(it->second);
+    auto res = map_.erase(it);
+
+    VBK_ASSERT_MSG(map_.size() == set_.size(),
+                   "size of map and set are different map: %d, set: %d",
+                   map_.size(),
+                   set_.size());
+
+    return res;
+  }
+
+  void insert(const K& key, const V& value) {
     pair_t pair(key, value);
 
-    auto it = map_.find(key);
-    if (it != map_.end()) {
-      set_.erase(*it);
-      it->second = value;
-      set_.insert(pair);
+    auto map_it = map_.find(key);
+    if (map_it != map_.end()) {
+      // key exists
+      auto set_it = set_.find(map_it->second);
+      VBK_ASSERT(set_it != set_.end());
+      set_.erase(set_it);
+
+      map_it->second = value;
+      set_.insert(map_it->second);
     } else {
-      map_.insert(pair);
-      set_.insert(pair);
+      auto res = map_.insert(std::move(pair));
+      VBK_ASSERT(res.second);
+      auto it = res.first;
+      set_.insert(it->second);
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
   }
 
   size_t size() const {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
 
@@ -95,7 +110,7 @@ struct ValueSortedMap {
 
   void clear() {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
     set_.clear();
@@ -104,16 +119,12 @@ struct ValueSortedMap {
 
   bool empty() const {
     VBK_ASSERT_MSG(map_.size() == set_.size(),
-                   "size of the map and vector incompetible map: %d, vec: %d",
+                   "size of map and set are different map: %d, set: %d",
                    map_.size(),
                    set_.size());
 
     return map_.empty();
   }
-
- private:
-  std::multiset<pair_t, SetCmp> set_{};
-  std::unordered_map<key_t, val_t> map_{};
 };
 
 }  // namespace altintegration

@@ -233,7 +233,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
-    atvs_in_flight_[id] = atv;
+    atvs_in_flight_.insert(id, atv);
     on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
@@ -269,7 +269,7 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
-    vtbs_in_flight_[id] = vtb;
+    vtbs_in_flight_.insert(id, vtb);
     on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
@@ -302,7 +302,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
 
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
-    vbkblocks_in_flight_[id] = blk;
+    vbkblocks_in_flight_.insert(id, blk);
     on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("vbk-stateful")};
   }
@@ -314,7 +314,7 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
     getOrPutVbkRelation(blk);
   }
 
-  vbkblocks_in_flight_.erase(blk->getId());
+  vbkblocks_in_flight_.erase(id);
 
   return true;
 }
@@ -323,41 +323,26 @@ void MemPool::tryConnectPayloads() {
   ValidationState state;
 
   // resubmit vbk blocks
-  using P1 = std::pair<vbkblock_map_t::key_type, vbkblock_map_t::mapped_type>;
-  std::vector<P1> blocks(vbkblocks_in_flight_.begin(),
-                         vbkblocks_in_flight_.end());
-  std::sort(blocks.begin(), blocks.end(), [](const P1& a, const P1& b) -> bool {
-    return a.second->getHeight() < b.second->getHeight();
-  });
-  for (const auto& pair : blocks) {
-    submit<VbkBlock>(pair.second, state);
+  auto vbks = vbkblocks_in_flight_.getSortedValues();
+  for (const auto& v : vbks) {
+    submit<VbkBlock>(*v, state);
   }
 
   // resubmit vtbs
-  using P2 = std::pair<vtb_map_t::key_type, vtb_map_t::mapped_type>;
-  std::vector<P2> vtbs(vtbs_in_flight_.begin(), vtbs_in_flight_.end());
-  std::sort(vtbs.begin(), vtbs.end(), [](const P2& a, const P2& b) -> bool {
-    return a.second->containingBlock.getHeight() <
-           b.second->containingBlock.getHeight();
-  });
-  for (const auto& pair : vtbs) {
-    submit<VTB>(pair.second, state);
+  auto vtbs = vtbs_in_flight_.getSortedValues();
+  for (const auto& v : vtbs) {
+    submit<VTB>(*v, state);
   }
 
   // resubmit atvs
-  using P3 = std::pair<atv_map_t::key_type, atv_map_t::mapped_type>;
-  std::vector<P3> atvs(atvs_in_flight_.begin(), atvs_in_flight_.end());
-  std::sort(atvs.begin(), atvs.end(), [](const P3& a, const P3& b) -> bool {
-    return a.second->blockOfProof.getHeight() <
-           b.second->blockOfProof.getHeight();
-  });
-  for (const auto& pair : atvs) {
-    submit<ATV>(pair.second, state);
+  auto atvs = atvs_in_flight_.getSortedValues();
+  for (const auto& v : atvs) {
+    submit<ATV>(*v, state);
   }
 }
 
 template <>
-const MemPool::vbkblock_map_t& MemPool::getMap() const {
+const MemPool::vbk_map_t& MemPool::getMap() const {
   return vbkblocks_;
 }
 
@@ -372,17 +357,17 @@ const MemPool::vtb_map_t& MemPool::getMap() const {
 }
 
 template <>
-const MemPool::vbkblock_map_t& MemPool::getInFlightMap() const {
+const MemPool::vbk_value_sorted_map_t& MemPool::getInFlightMap() const {
   return vbkblocks_in_flight_;
 }
 
 template <>
-const MemPool::atv_map_t& MemPool::getInFlightMap() const {
+const MemPool::atv_value_sorted_map_t& MemPool::getInFlightMap() const {
   return atvs_in_flight_;
 }
 
 template <>
-const MemPool::vtb_map_t& MemPool::getInFlightMap() const {
+const MemPool::vtb_value_sorted_map_t& MemPool::getInFlightMap() const {
   return vtbs_in_flight_;
 }
 

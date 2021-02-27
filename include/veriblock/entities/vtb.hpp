@@ -60,7 +60,6 @@ struct VTB {
    */
   id_t getId() const;
 
-  static const std::string _name;
   static const std::string& name() { return _name; }
 
   friend bool operator==(const VTB& a, const VTB& b) {
@@ -68,6 +67,13 @@ struct VTB {
   }
 
   friend bool operator!=(const VTB& a, const VTB& b) { return !(a == b); }
+
+  friend bool operator<(const VTB& a, const VTB& b) {
+    return a.containingBlock.getHeight() < b.containingBlock.getHeight();
+  }
+
+ private:
+  static const std::string _name;
 };
 
 //! @private

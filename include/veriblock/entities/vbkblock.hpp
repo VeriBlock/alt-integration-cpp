@@ -64,6 +64,10 @@ struct VbkBlock {
    */
   void toVbkEncoding(WriteStream& stream) const;
 
+  friend bool operator<(const VbkBlock& a, const VbkBlock& b) {
+    return a.getHeight() < b.getHeight();
+  }
+
   size_t estimateSize() const;
 
   /*
