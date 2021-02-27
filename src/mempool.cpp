@@ -12,23 +12,6 @@
 
 namespace altintegration {
 
-// bool PayloadCmp<VbkBlock>::operator()(
-//    const std::shared_ptr<VbkBlock>& val1,
-//    const std::shared_ptr<VbkBlock>& val2) const {
-//  return val1->getHeight() < val2->getHeight();
-//}
-//
-// bool PayloadCmp<VTB>::operator()(const std::shared_ptr<VTB>& val1,
-//                                 const std::shared_ptr<VTB>& val2) const {
-//  return val1->containingBlock.getHeight() <
-//  val2->containingBlock.getHeight();
-//}
-//
-// bool PayloadCmp<ATV>::operator()(const std::shared_ptr<ATV>& val1,
-//                                 const std::shared_ptr<ATV>& val2) const {
-//  return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
-//}
-
 namespace {
 
 // generates a PopData which is not bigger than 'maxPopDataSize' in serialized
@@ -341,20 +324,20 @@ void MemPool::tryConnectPayloads() {
 
   // resubmit vbk blocks
   auto blocks = vbkblocks_in_flight_;
-  for (const auto& pair : blocks) {
-    submit<VbkBlock>(pair.second, state);
+  for (const auto& pair : blocks.getSortedPairs()) {
+    submit<VbkBlock>(pair->second, state);
   }
 
   // resubmit vtbs
   auto vtbs = vtbs_in_flight_;
-  for (const auto& pair : vtbs) {
-    submit<VTB>(pair.second, state);
+  for (const auto& pair : vtbs.getSortedPairs()) {
+    submit<VTB>(pair->second, state);
   }
 
   // resubmit atvs
   auto atvs = atvs_in_flight_;
-  for (const auto& pair : atvs) {
-    submit<ATV>(pair.second, state);
+  for (const auto& pair : atvs.getSortedPairs()) {
+    submit<ATV>(pair->second, state);
   }
 }
 
