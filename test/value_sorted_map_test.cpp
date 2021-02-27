@@ -71,7 +71,6 @@ TEST_F(VSMTest, erase_test) {
 
 TEST_F(VSMTest, value_sort_test) {
   ValueSortedMap<std::string, int> map;
-  using pair_t = typename ValueSortedMap<std::string, int>::pair_t;
 
   map.insert("key 1", 4);
   map.insert("key 4", 2);
@@ -81,13 +80,16 @@ TEST_F(VSMTest, value_sort_test) {
   map.insert("key 8", 4);
   map.insert("key 9", 6);
 
-  auto it = map.getSortedPairs().begin();
+  auto s = map.getSortedValues();
 
-  EXPECT_EQ(**(it++), pair_t("key 6", 1));
-  EXPECT_EQ(**(it++), pair_t("key 4", 2));
-  EXPECT_EQ(**(it++), pair_t("key 1", 4));
-  EXPECT_EQ(**(it++), pair_t("key 8", 4));
-  EXPECT_EQ(**(it++), pair_t("key 5", 6));
-  EXPECT_EQ(**(it++), pair_t("key 9", 6));
-  EXPECT_EQ(**(it++), pair_t("key 7", 12));
+  auto it = s.begin();
+  EXPECT_EQ(*(it++), 1);
+  EXPECT_EQ(*(it++), 2);
+  EXPECT_EQ(*(it++), 4);
+  EXPECT_EQ(*(it++), 4);
+  EXPECT_EQ(*(it++), 6);
+  EXPECT_EQ(*(it++), 6);
+  EXPECT_EQ(*(it++), 12);
+
+  ASSERT_TRUE(std::is_sorted(s.begin(), s.end()));
 }

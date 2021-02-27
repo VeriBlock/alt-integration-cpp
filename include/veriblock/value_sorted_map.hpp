@@ -20,9 +20,7 @@ class ValueSortedMap {
  public:
   using pair_t = std::pair<const K, V>;
   using cmp_t = Cmp;
-  using set_t =
-      typename std::multiset<const pair_t*,
-                             std::function<bool(const pair_t*, const pair_t*)>>;
+  using set_t = typename std::multiset<V, cmp_t>;
   using map_t = std::unordered_map<K, V>;
 
  private:
@@ -35,10 +33,7 @@ class ValueSortedMap {
 
   ~ValueSortedMap() = default;
 
-  explicit ValueSortedMap(cmp_t cmp = cmp_t{})
-      : set_([cmp](const pair_t* a, const pair_t* b) {
-          return cmp(a->second, b->second);
-        }) {}
+  explicit ValueSortedMap(cmp_t cmp = cmp_t{}) : set_(cmp) {}
 
   iterator_t find(const K& key) { return map_.find(key); }
   const_iterator_t find(const K& key) const { return map_.find(key); }
@@ -48,7 +43,7 @@ class ValueSortedMap {
   auto begin() const -> const_iterator_t { return map_.begin(); }
   auto end() const -> const_iterator_t { return map_.end(); }
 
-  const set_t& getSortedPairs() const { return set_; }
+  const set_t& getSortedValues() const { return set_; }
 
   void erase(const K& key) {
     auto map_it = map_.find(key);
@@ -56,7 +51,7 @@ class ValueSortedMap {
       return;
     }
 
-    auto set_it = set_.find(&(*map_it));
+    auto set_it = set_.find(map_it->second);
     VBK_ASSERT(set_it != set_.end());
     set_.erase(set_it);
     map_.erase(map_it);
@@ -68,7 +63,7 @@ class ValueSortedMap {
   }
 
   iterator_t erase(const iterator_t& it) {
-    set_.erase(&*it);
+    set_.erase(it->second);
     auto res = map_.erase(it);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
@@ -85,16 +80,17 @@ class ValueSortedMap {
     auto map_it = map_.find(key);
     if (map_it != map_.end()) {
       // key exists
-      auto set_it = set_.find(&(*map_it));
+      auto set_it = set_.find(map_it->second);
       VBK_ASSERT(set_it != set_.end());
       set_.erase(set_it);
 
       map_it->second = value;
-      set_.insert(&*map_it);
+      set_.insert(map_it->second);
     } else {
       auto res = map_.insert(std::move(pair));
       VBK_ASSERT(res.second);
-      set_.insert(&(*res.first));
+      auto it = res.first;
+      set_.insert(it->second);
     }
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
