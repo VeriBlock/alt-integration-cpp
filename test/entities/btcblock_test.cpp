@@ -29,12 +29,12 @@ TEST(BtcBlock, DeserializeFromVbkEncoding) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
   auto decoded = AssertDeserializeFromRaw<BtcBlock>(blockEncoded);
 
-  EXPECT_EQ(decoded.version, defaultBlock.version);
-  EXPECT_EQ(decoded.previousBlock.toHex(), defaultBlock.previousBlock.toHex());
-  EXPECT_EQ(decoded.merkleRoot.toHex(), defaultBlock.merkleRoot.toHex());
-  EXPECT_EQ(decoded.getBlockTime(), defaultBlock.getBlockTime());
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
+  EXPECT_EQ(decoded.getPreviousBlock(), defaultBlock.getPreviousBlock());
+  EXPECT_EQ(decoded.getMerkleRoot(), defaultBlock.getMerkleRoot());
+  EXPECT_EQ(decoded.getTimestamp(), defaultBlock.getTimestamp());
   EXPECT_EQ(decoded.getDifficulty(), defaultBlock.getDifficulty());
-  EXPECT_EQ(decoded.nonce, defaultBlock.nonce);
+  EXPECT_EQ(decoded.getNonce(), defaultBlock.getNonce());
 
   EXPECT_EQ(
       ArithUint256::fromLEBytes(decoded.getHash()),
@@ -53,7 +53,7 @@ TEST(BtcBlock, Serialize) {
 TEST(BtcBlock, RoundTrip) {
   auto blockEncoded = ParseHex(defaultBlockEncoded);
   auto decoded = AssertDeserializeFromRaw<BtcBlock>(blockEncoded);
-  EXPECT_EQ(decoded.version, defaultBlock.version);
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
   decoded.toRaw(outputStream);
@@ -69,7 +69,7 @@ TEST(BtcBlock, RoundTripNew) {
   bool ret = DeserializeFromRaw(blockEncoded, decoded, state);
   ASSERT_TRUE(ret);
   EXPECT_TRUE(state.IsValid());
-  EXPECT_EQ(decoded.version, defaultBlock.version);
+  EXPECT_EQ(decoded.getVersion(), defaultBlock.getVersion());
 
   WriteStream outputStream;
   decoded.toRaw(outputStream);
@@ -80,14 +80,14 @@ TEST(BtcBlock, RoundTripNew) {
 
 TEST(BtcBlock, getBlockHash_test) {
   BtcBlock block;
-  block.version = 536870912;
-  block.previousBlock = uint256(
-      "00000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def7"_unhex);
-  block.merkleRoot = uint256(
-      "5e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f8"_unhex);
-  block.timestamp = 1555501858;
-  block.bits = 436279940;
-  block.nonce = 2599551022;
+  block.setVersion(536870912);
+  block.setPreviousBlock(uint256(
+      "00000000000000b345b7bbf29bda1507a679b97967f99a10ab0088899529def7"_unhex));
+  block.setMerkleRoot(uint256(
+      "5e16e6cef738a2eba1fe7409318e3f558bec325392427aa3d8eaf46b028654f8"_unhex));
+  block.setTimestamp(1555501858);
+  block.setDifficulty(436279940);
+  block.setNonce(2599551022);
 
   EXPECT_EQ(
       ArithUint256::fromLEBytes(block.getHash()),

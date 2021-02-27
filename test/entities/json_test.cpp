@@ -116,12 +116,12 @@ TEST(ToJson, MempoolResult) {
 
 TEST(ToJson, BtcBlock) {
   BtcBlock block;
-  block.version = 1;
-  block.previousBlock = uint256::fromHex("123123123123123");
-  block.merkleRoot = uint256::fromHex("abcabc");
-  block.bits = 1337;
-  block.timestamp = 9999;
-  block.nonce = 9379992;
+  block.setVersion(1);
+  block.setPreviousBlock(uint256::fromHex("123123123123123"));
+  block.setMerkleRoot(uint256::fromHex("abcabc"));
+  block.setDifficulty(1337);
+  block.setTimestamp(9999);
+  block.setNonce(9379992);
 
   picojson::value obj = ToJSON<picojson::value>(block);
 
@@ -142,8 +142,8 @@ TEST(ToJson, BtcBlock) {
 }
 
 TEST(ToJson, VTB) {
-  static const NetworkBytePair networkByte{
-      {false, 0}, (uint8_t)TxType::VBK_POP_TX};
+  static const NetworkBytePair networkByte{{false, 0},
+                                           (uint8_t)TxType::VBK_POP_TX};
 
   static const VbkBlock defaultVbkBlock{
       4917,

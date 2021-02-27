@@ -105,13 +105,13 @@ inline BlockIndex<BtcBlock> getRandomIndex() {
   BlockIndex<BtcBlock> index;
   index.setHeight(rand());
 
-  BtcBlock block;
-  block.version = rand();
-  block.previousBlock = generateRandomBytesVector(32);
-  block.timestamp = rand();
-  block.bits = rand();
-  block.nonce = rand();
-  block.merkleRoot = generateRandomBytesVector(32);
+  BtcBlock block(
+      /*version=*/rand(),
+      /*prev=*/generateRandomBytesVector(32),
+      /*mroot=*/generateRandomBytesVector(32),
+      /*time=*/rand(),
+      /*bits=*/rand(),
+      /*nonce=*/rand());
   index.setHeader(block);
   index.addRef(rand());
   index.setStatus(rand() & 0x0f);

@@ -145,8 +145,8 @@ struct BlockIndex : public Block::addon_t {
 
   bool hasFlags(enum BlockValidityStatus s) const { return this->status & s; }
 
-  hash_t getHash() const { return header->getHash(); }
-  uint32_t getBlockTime() const { return header->getBlockTime(); }
+  const hash_t& getHash() const { return header->getHash(); }
+  uint32_t getTimestamp() const { return header->getTimestamp(); }
   uint32_t getDifficulty() const { return header->getDifficulty(); }
 
   height_t getHeight() const { return height; }

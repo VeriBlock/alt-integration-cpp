@@ -42,9 +42,9 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
   // VTB blocks of proof and the tip of alttree.btc() (== genesis block) form a
   // chain
   ASSERT_EQ(alttree.btc().getBestChain().tip()->getHash(),
-            popData.vtbs[0].transaction.blockOfProof.previousBlock);
+            popData.vtbs[0].transaction.blockOfProof.getPreviousBlock());
   ASSERT_EQ(popData.vtbs[0].transaction.blockOfProof.getHash(),
-            popData.vtbs[1].transaction.blockOfProof.previousBlock);
+            popData.vtbs[1].transaction.blockOfProof.getPreviousBlock());
 
   // manually add the VBK context to alttree
   for (auto& block : popData.context) {

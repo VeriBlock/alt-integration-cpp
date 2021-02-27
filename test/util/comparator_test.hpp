@@ -232,7 +232,7 @@ struct TestComparator {
     VBK_EXPECT_EQ(a.getVersion(), b.getVersion(), suppress);
     VBK_EXPECT_EQ(a.getTimestamp(), b.getTimestamp(), suppress);
     VBK_EXPECT_EQ(a.getNonce(), b.getNonce(), suppress);
-    VBK_EXPECT_EQ(a.merkleRoot, b.merkleRoot, suppress);
+    VBK_EXPECT_EQ(a.getMerkleRoot(), b.getMerkleRoot(), suppress);
     VBK_EXPECT_EQ(a.getPreviousBlock(), b.getPreviousBlock(), suppress);
     return true;
   }

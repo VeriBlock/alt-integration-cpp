@@ -192,8 +192,8 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          : tx.blockOfProof;
 
   // if 'firstBlock' is not genesis block, use 'previousBlock' as connectingHash
-  auto connectingHash = firstBlock.previousBlock != ArithUint256()
-                            ? firstBlock.previousBlock
+  auto connectingHash = firstBlock.getPreviousBlock() != ArithUint256()
+                            ? firstBlock.getPreviousBlock()
                             : firstBlock.getHash();
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);

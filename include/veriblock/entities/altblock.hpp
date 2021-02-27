@@ -52,7 +52,7 @@ struct AltBlock {
   /**
    * @return hash of ALT block.
    */
-  hash_t getHash() const;
+  const hash_t& getHash() const;
 
   // dummy
   uint32_t getDifficulty() const { return 0; }
