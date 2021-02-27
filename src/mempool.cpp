@@ -3,29 +3,31 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/mempool.hpp"
+
 #include <deque>
 #include <veriblock/reversed_range.hpp>
 
-#include "veriblock/mempool.hpp"
 #include "veriblock/stateless_validation.hpp"
 
 namespace altintegration {
 
-bool PayloadCmp<VbkBlock>::operator()(
-    const std::shared_ptr<VbkBlock>& val1,
-    const std::shared_ptr<VbkBlock>& val2) const {
-  return val1->getHeight() < val2->getHeight();
-}
-
-bool PayloadCmp<VTB>::operator()(const std::shared_ptr<VTB>& val1,
-                                 const std::shared_ptr<VTB>& val2) const {
-  return val1->containingBlock.getHeight() < val2->containingBlock.getHeight();
-}
-
-bool PayloadCmp<ATV>::operator()(const std::shared_ptr<ATV>& val1,
-                                 const std::shared_ptr<ATV>& val2) const {
-  return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
-}
+// bool PayloadCmp<VbkBlock>::operator()(
+//    const std::shared_ptr<VbkBlock>& val1,
+//    const std::shared_ptr<VbkBlock>& val2) const {
+//  return val1->getHeight() < val2->getHeight();
+//}
+//
+// bool PayloadCmp<VTB>::operator()(const std::shared_ptr<VTB>& val1,
+//                                 const std::shared_ptr<VTB>& val2) const {
+//  return val1->containingBlock.getHeight() <
+//  val2->containingBlock.getHeight();
+//}
+//
+// bool PayloadCmp<ATV>::operator()(const std::shared_ptr<ATV>& val1,
+//                                 const std::shared_ptr<ATV>& val2) const {
+//  return val1->blockOfProof.getHeight() < val2->blockOfProof.getHeight();
+//}
 
 namespace {
 
@@ -340,19 +342,19 @@ void MemPool::tryConnectPayloads() {
   // resubmit vbk blocks
   auto blocks = vbkblocks_in_flight_;
   for (const auto& pair : blocks) {
-    submit<VbkBlock>(pair->second, state);
+    submit<VbkBlock>(pair.second, state);
   }
 
   // resubmit vtbs
   auto vtbs = vtbs_in_flight_;
   for (const auto& pair : vtbs) {
-    submit<VTB>(pair->second, state);
+    submit<VTB>(pair.second, state);
   }
 
   // resubmit atvs
   auto atvs = atvs_in_flight_;
   for (const auto& pair : atvs) {
-    submit<ATV>(pair->second, state);
+    submit<ATV>(pair.second, state);
   }
 }
 
