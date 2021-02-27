@@ -2,12 +2,13 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+#include "pop_context.hpp"
+
 #include "adaptors/block_provider_impl.hpp"
 #include "adaptors/logger.hpp"
 #include "adaptors/payloads_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
-#include "pop_context.hpp"
 #include "storage.hpp"
 #include "validation_state.hpp"
 #include "veriblock/blockchain/alt_block_tree.hpp"
