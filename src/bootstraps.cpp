@@ -31,13 +31,15 @@ VbkBlock GetRegTestVbkBlock() {
 }
 
 BtcBlock GetRegTestBtcBlock() {
-  BtcBlock block;
-  block.version = 1;
-  block.timestamp = 1296688602;
-  block.nonce = 2;
-  block.bits = 0x207fffff;
-  block.merkleRoot = uint256::fromHex(
-      "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b");
+  BtcBlock block(
+      /*version=*/1,
+      /*prev=*/uint256(),
+      /*mroot=*/
+      uint256::fromHex(
+          "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
+      /*time=*/1296688602,
+      /*bits=*/0x207fffff,
+      /*nonce=*/2);
 
   VBK_ASSERT(
       block.getHash() ==

@@ -85,7 +85,7 @@ KeystoneContext getKeystoneContext(
 
     bool EnableTimeAdjustment = tree.getParams().EnableTimeAdjustment();
     if (!EnableTimeAdjustment ||
-        pkc.timestampOfEndorsedBlock < btcIndex->getBlockTime()) {
+        pkc.timestampOfEndorsedBlock < btcIndex->getTimestamp()) {
       earliestEndorsementIndex = endorsementIndex;
       continue;
     }
@@ -100,7 +100,7 @@ KeystoneContext getKeystoneContext(
       // block time of the Bitcoin block it's endorsed in
       auto* index = best[adjustedEndorsementIndex];
       VBK_ASSERT(index != nullptr);
-      if (pkc.timestampOfEndorsedBlock < index->getBlockTime()) {
+      if (pkc.timestampOfEndorsedBlock < index->getTimestamp()) {
         // Timestamp of VeriBlock block is lower than Bitcoin block,
         // set this as the adjusted index if another lower index has
         // not already been set
@@ -140,7 +140,7 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
       highestConnectingBlock, highestPossibleEndorsedBlockHeaderHeight);
 
   ProtoKeystoneContext<ProtectingBlockT> pkc(
-      keystoneToConsider, chain[keystoneToConsider]->getBlockTime());
+      keystoneToConsider, chain[keystoneToConsider]->getTimestamp());
 
   // Find the endorsements of the keystone block and other blocks which
   // reference it, and look at the earliest Bitcoin block that any of those

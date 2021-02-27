@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 #include <veriblock/arith_uint256.hpp>
 #include <veriblock/blockchain/btc_block_addon.hpp>
@@ -35,6 +36,14 @@ struct BtcBlock {
   using merkle_t = uint256;
   using addon_t = BtcBlockAddon;
 
+  BtcBlock() = default;
+  BtcBlock(uint32_t version,
+           uint256 previousBlock,
+           uint256 merkleRoot,
+           uint32_t timestamp,
+           uint32_t bits,
+           uint32_t nonce);
+
   /**
    * Convert BtcBlock to data stream using BtcBlock basic byte format
    * @param stream data stream to write into
@@ -48,10 +57,6 @@ struct BtcBlock {
   void toVbkEncoding(WriteStream& stream) const;
 
   size_t estimateSize() const;
-
-  uint32_t getDifficulty() const;
-
-  uint32_t getBlockTime() const;
 
   friend bool operator==(const BtcBlock& a, const BtcBlock& b) {
     // clang-format off
@@ -68,23 +73,36 @@ struct BtcBlock {
     return !(a == b);
   }
 
+  hash_t calculateHash() const;
+
   /**
    * Calculate the hash of the btc block
    * @return hash block hash
    */
-  uint256 getHash() const;
+  const hash_t& getHash() const;
 
   static const std::string& name() { return _name; }
 
   std::string toPrettyString() const;
 
   uint32_t getVersion() const { return version; }
-  uint256 getPreviousBlock() const { return previousBlock; }
-  uint256 getMerkleRoot() const { return merkleRoot; }
+  const uint256& getPreviousBlock() const { return previousBlock; }
+  const uint256& getMerkleRoot() const { return merkleRoot; }
   uint32_t getNonce() const { return nonce; }
   uint32_t getTimestamp() const { return timestamp; }
-  void setNonce(uint32_t nnc) { nonce = nnc; }
-  void setTimestamp(uint32_t ts) { timestamp = ts; }
+  uint32_t getDifficulty() const { return bits; }
+
+  void setVersion(uint32_t v);
+  void setPreviousBlock(const uint256& prev);
+  void setMerkleRoot(const uint256& mr);
+  void setDifficulty(uint32_t bits);
+  void setNonce(uint32_t nnc);
+  void setTimestamp(uint32_t ts);
+
+ private:
+  static const std::string _name;
+
+  void invalidateHash() const { hash_.fill(0); }
 
   uint32_t version = 0;
   uint256 previousBlock{};
@@ -93,20 +111,30 @@ struct BtcBlock {
   uint32_t bits = 0;
   uint32_t nonce = 0;
 
- private:
-  static const std::string _name;
+  mutable hash_t hash_;
+
+  friend bool DeserializeFromRaw(ReadStream& stream,
+                                 BtcBlock& block,
+                                 ValidationState& state,
+                                 const BtcBlock::hash_t& precalculatedHash);
+
+  friend bool DeserializeFromVbkEncoding(
+      ReadStream& stream,
+      BtcBlock& block,
+      ValidationState& state,
+      const BtcBlock::hash_t& precalculatedHash);
 };
 
 template <typename JsonValue>
 JsonValue ToJSON(const BtcBlock& b) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
   json::putStringKV(object, "hash", HexStr(b.getHash()));
-  json::putIntKV(object, "version", b.version);
-  json::putStringKV(object, "previousBlock", HexStr(b.previousBlock));
-  json::putStringKV(object, "merkleRoot", HexStr(b.merkleRoot));
-  json::putIntKV(object, "timestamp", b.getBlockTime());
+  json::putIntKV(object, "version", b.getVersion());
+  json::putStringKV(object, "previousBlock", HexStr(b.getPreviousBlock()));
+  json::putStringKV(object, "merkleRoot", HexStr(b.getMerkleRoot()));
+  json::putIntKV(object, "timestamp", b.getTimestamp());
   json::putIntKV(object, "bits", b.getDifficulty());
-  json::putIntKV(object, "nonce", b.nonce);
+  json::putIntKV(object, "nonce", b.getNonce());
   return object;
 }
 
@@ -114,13 +142,13 @@ bool DeserializeFromRaw(
     ReadStream& stream,
     BtcBlock& out,
     ValidationState& state,
-    const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
+    const BtcBlock::hash_t& precalculatedHash = BtcBlock::hash_t{});
 
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     BtcBlock& out,
     ValidationState& state,
-    const BtcBlock::hash_t& /*ignore*/ = BtcBlock::hash_t{});
+    const BtcBlock::hash_t& precalculatedHash = BtcBlock::hash_t{});
 
 }  // namespace altintegration
 

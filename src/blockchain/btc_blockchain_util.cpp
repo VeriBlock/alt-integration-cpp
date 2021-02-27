@@ -33,11 +33,11 @@ template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle) {
   BtcBlock block;
-  block.version = tip.getHeader().version;
-  block.previousBlock = tip.getHeader().getHash();
-  block.merkleRoot = merkle;
-  block.timestamp = (std::max)(tip.getBlockTime(), currentTimestamp4());
-  block.bits = getNextWorkRequired(tip, block, params_);
+  block.setVersion(tip.getHeader().getVersion());
+  block.setPreviousBlock(tip.getHash());
+  block.setMerkleRoot(merkle);
+  block.setTimestamp((std::max)(tip.getTimestamp(), currentTimestamp4()));
+  block.setDifficulty(getNextWorkRequired(tip, block, params_));
   return block;
 }
 
@@ -53,7 +53,7 @@ static uint32_t calculateNextWorkRequired(
   auto powTargetTimespan = params.getPowTargetTimespan();
 
   // Limit adjustment step
-  uint32_t nActualTimespan = currentTip.getBlockTime() - nFirstBlockTime;
+  uint32_t nActualTimespan = currentTip.getTimestamp() - nFirstBlockTime;
   if (nActualTimespan < powTargetTimespan / 4) {
     nActualTimespan = powTargetTimespan / 4;
   }
@@ -88,8 +88,8 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
       // Special difficulty rule for testnet:
       // If the new block's timestamp is more than 2* 10 minutes
       // then allow mining of a min-difficulty block.
-      if (block.getBlockTime() >
-          prevBlock.getBlockTime() + params.getPowTargetSpacing() * 2) {
+      if (block.getTimestamp() >
+          prevBlock.getTimestamp() + params.getPowTargetSpacing() * 2) {
         return nProofOfWorkLimit;
       }
 
@@ -114,7 +114,7 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
   }
 
   return calculateNextWorkRequired(
-      prevBlock, pindexFirst->getBlockTime(), params);
+      prevBlock, pindexFirst->getTimestamp(), params);
 }
 
 template <>
@@ -129,7 +129,7 @@ int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev) {
   const BlockIndex<BtcBlock>* pindex = &prev;
   for (int i = 0; i < medianTimeSpan && pindex != nullptr;
        i++, pindex = pindex->pprev) {
-    *(--pbegin) = pindex->getBlockTime();
+    *(--pbegin) = pindex->getTimestamp();
   }
 
   std::sort(pbegin, pend);
@@ -141,13 +141,13 @@ bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     const BtcBlock& block,
                     ValidationState& state,
                     const BtcChainParams& param) {
-  if (int64_t(block.getBlockTime()) < getMedianTimePast(prev)) {
+  if (int64_t(block.getTimestamp()) < getMedianTimePast(prev)) {
     return state.Invalid("btc-time-too-old",
                          "BTC block's timestamp is too early");
   }
 
   const auto time = currentTimestamp4();
-  if (int64_t(block.getBlockTime()) > time + param.maxFutureBlockTime()) {
+  if (int64_t(block.getTimestamp()) > time + param.maxFutureBlockTime()) {
     return state.Invalid("btc-time-too-new",
                          "BTC block timestamp too far in the future");
   }

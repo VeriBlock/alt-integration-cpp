@@ -40,14 +40,19 @@ size_t BtcBlock::estimateSize() const {
   return size;
 }
 
-uint32_t BtcBlock::getDifficulty() const { return bits; }
-
-uint32_t BtcBlock::getBlockTime() const { return timestamp; }
-
-uint256 BtcBlock::getHash() const {
+BtcBlock::hash_t BtcBlock::calculateHash() const {
   WriteStream stream;
   toRaw(stream);
   return sha256twice(stream.data()).reverse();
+}
+
+const BtcBlock::hash_t& BtcBlock::getHash() const {
+  static uint256 empty;
+  if (hash_ == empty) {
+    hash_ = calculateHash();
+  }
+
+  return hash_;
 }
 
 std::string BtcBlock::toPrettyString() const {
@@ -62,10 +67,37 @@ std::string BtcBlock::toPrettyString() const {
       nonce);
 }
 
+void BtcBlock::setTimestamp(uint32_t ts) {
+  timestamp = ts;
+  invalidateHash();
+}
+
+void BtcBlock::setNonce(uint32_t nnc) {
+  nonce = nnc;
+  invalidateHash();
+}
+
+void BtcBlock::setVersion(uint32_t v) {
+  version = v;
+  invalidateHash();
+}
+void BtcBlock::setPreviousBlock(const uint256& prev) {
+  previousBlock = prev;
+  invalidateHash();
+}
+void BtcBlock::setMerkleRoot(const uint256& mr) {
+  merkleRoot = mr;
+  invalidateHash();
+}
+void BtcBlock::setDifficulty(uint32_t diff) {
+  bits = diff;
+  invalidateHash();
+}
+
 bool DeserializeFromRaw(ReadStream& stream,
                         BtcBlock& block,
                         ValidationState& state,
-                        const BtcBlock::hash_t& /*ignore*/) {
+                        const BtcBlock::hash_t& precalculatedHash) {
   if (!stream.readLE<uint32_t>(block.version, state)) {
     return state.Invalid("btc-block-version");
   }
@@ -88,19 +120,35 @@ bool DeserializeFromRaw(ReadStream& stream,
   if (!stream.readLE<uint32_t>(block.nonce, state)) {
     return state.Invalid("btc-block-nonce");
   }
+
+  block.hash_ = precalculatedHash;
   return true;
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 BtcBlock& out,
                                 ValidationState& state,
-                                const BtcBlock::hash_t& /*ignore*/) {
+                                const BtcBlock::hash_t& precalculatedHash) {
   Slice<const uint8_t> value;
   if (!readSingleByteLenValue(
           stream, value, state, BTC_HEADER_SIZE, BTC_HEADER_SIZE)) {
     return state.Invalid("btc-block-bad-header");
   }
+  out.hash_ = precalculatedHash;
   return DeserializeFromRaw(value, out, state);
 }
+
+BtcBlock::BtcBlock(uint32_t version,
+                   uint256 previousBlock,
+                   uint256 merkleRoot,
+                   uint32_t timestamp,
+                   uint32_t bits,
+                   uint32_t nonce)
+    : version(version),
+      previousBlock(std::move(previousBlock)),
+      merkleRoot(std::move(merkleRoot)),
+      timestamp(timestamp),
+      bits(bits),
+      nonce(nonce) {}
 
 }  // namespace altintegration

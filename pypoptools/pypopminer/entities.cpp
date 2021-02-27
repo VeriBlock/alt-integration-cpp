@@ -137,12 +137,12 @@ void init_entities() {
       .def("toHex", &SerializeToRawHex<BtcBlock>)
       .def("toVbkEncodingHex", &SerializeToHex<BtcBlock>)
       .def("getHash", &BtcBlock::getHash)
-      .def_readwrite("version", &BtcBlock::version)
-      .def_readwrite("previousBlock", &BtcBlock::previousBlock)
-      .def_readwrite("merkleRoot", &BtcBlock::merkleRoot)
-      .def_readwrite("timestamp", &BtcBlock::timestamp)
-      .def_readwrite("bits", &BtcBlock::bits)
-      .def_readwrite("nonce", &BtcBlock::nonce);
+      .add_property("version", &BtcBlock::getVersion, &BtcBlock::setVersion)
+      .add_property("previousBlock", &BtcBlock::getPreviousBlock, &BtcBlock::setPreviousBlock)
+      .add_property("merkleRoot", &BtcBlock::getMerkleRoot, &BtcBlock::setMerkleRoot)
+      .add_property("timestamp", &BtcBlock::getTimestamp, &BtcBlock::setTimestamp)
+      .add_property("bits", &BtcBlock::getDifficulty, &BtcBlock::setDifficulty)
+      .add_property("nonce", &BtcBlock::getNonce, &BtcBlock::setNonce);
 
   class_<VbkBlock, boost::shared_ptr<VbkBlock>>("VbkBlock")
       .def("__str__", &VbkBlock::toPrettyString)

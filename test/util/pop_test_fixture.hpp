@@ -56,9 +56,9 @@ struct PopTestFixture {
     auto VBKgenesis = GetRegTestVbkBlock();
 
     // by default, set mocktime to the latest time between all genesis blocks
-    auto time = std::max({altparam.getBootstrapBlock().getBlockTime(),
-                          BTCgenesis.getBlockTime(),
-                          VBKgenesis.getBlockTime()});
+    auto time = std::max({altparam.getBootstrapBlock().getTimestamp(),
+                          BTCgenesis.getTimestamp(),
+                          VBKgenesis.getTimestamp()});
     setMockTime(time + 1);
 
     EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(BTCgenesis, state));

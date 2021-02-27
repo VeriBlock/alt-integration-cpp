@@ -55,7 +55,7 @@ VbkBlock::hash_t VbkBlock::calculateHash() const {
   return progPowHash(header);
 }
 
-VbkBlock::hash_t VbkBlock::getHash() const {
+const VbkBlock::hash_t& VbkBlock::getHash() const {
   static hash_t empty{};
   if (hash_ == empty) {
     hash_ = calculateHash();
