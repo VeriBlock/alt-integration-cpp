@@ -323,17 +323,20 @@ void MemPool::tryConnectPayloads() {
   ValidationState state;
 
   // resubmit vbk blocks
-  for (const auto& v : vbkblocks_in_flight_.getSortedValues()) {
+  auto vbks = vbkblocks_in_flight_.getSortedValues();
+  for (const auto& v : vbks) {
     submit<VbkBlock>(*v, state);
   }
 
   // resubmit vtbs
-  for (const auto& v : vtbs_in_flight_.getSortedValues()) {
+  auto vtbs = vtbs_in_flight_.getSortedValues();
+  for (const auto& v : vtbs) {
     submit<VTB>(*v, state);
   }
 
   // resubmit atvs
-  for (const auto& v : atvs_in_flight_.getSortedValues()) {
+  auto atvs = atvs_in_flight_.getSortedValues();
+  for (const auto& v : atvs) {
     submit<ATV>(*v, state);
   }
 }
