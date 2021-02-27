@@ -21,33 +21,6 @@
 
 namespace altintegration {
 
-template <typename P>
-struct PayloadCmp {
-  bool operator()(const std::shared_ptr<P>&, const std::shared_ptr<P>&) const {
-    static_assert(sizeof(P) == 0,
-                  "Undefined type used in PayloadCmp::operator()");
-    return false;
-  }
-};
-
-template <>
-struct PayloadCmp<VbkBlock> {
-  bool operator()(const std::shared_ptr<VbkBlock>&,
-                  const std::shared_ptr<VbkBlock>&) const;
-};
-
-template <>
-struct PayloadCmp<VTB> {
-  bool operator()(const std::shared_ptr<VTB>&,
-                  const std::shared_ptr<VTB>&) const;
-};
-
-template <>
-struct PayloadCmp<ATV> {
-  bool operator()(const std::shared_ptr<ATV>&,
-                  const std::shared_ptr<ATV>&) const;
-};
-
 /**
  * @struct MemPool
  *
@@ -127,7 +100,7 @@ struct MemPool {
     const auto& inflight = getInFlightMap<T>();
     auto it2 = inflight.find(id);
     if (it2 != inflight.end()) {
-      return (*it2)->second.get();
+      return it2->second.get();
     }
 
     return nullptr;
@@ -299,9 +272,9 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  atv_value_sorted_map_t atvs_in_flight_{PayloadCmp<ATV>()};
-  vtb_value_sorted_map_t vtbs_in_flight_{PayloadCmp<VTB>()};
-  vbk_value_sorted_map_t vbkblocks_in_flight_{PayloadCmp<VbkBlock>()};
+  atv_value_sorted_map_t atvs_in_flight_{};
+  vtb_value_sorted_map_t vtbs_in_flight_{};
+  vbk_value_sorted_map_t vbkblocks_in_flight_{};
 
   VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
@@ -339,7 +312,7 @@ struct MemPool {
   template <typename POP>
   void cleanupStale(payload_value_sorted_map<POP>& c) {
     for (auto it = c.begin(); it != c.end();) {
-      auto& pl = *(*it)->second;
+      auto& pl = *it->second;
       ValidationState state;
       auto valid = mempool_tree_.checkContextually(pl, state);
       it = !valid ? c.erase(it) : std::next(it);

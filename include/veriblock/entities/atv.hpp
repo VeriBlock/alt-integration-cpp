@@ -63,6 +63,10 @@ struct ATV {
 
   friend bool operator!=(const ATV& a, const ATV& b) { return !(a == b); }
 
+  friend bool operator<(const ATV& a, const ATV& b) {
+    return a.blockOfProof.getHeight() < b.blockOfProof.getHeight();
+  }
+
  private:
   static const std::string _name;
 };

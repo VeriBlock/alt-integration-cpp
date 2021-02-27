@@ -15,38 +15,51 @@
 
 namespace altintegration {
 
-template <typename key_t, typename val_t>
-struct ValueSortedMap {
-  using pair_t = std::pair<const key_t, val_t>;
+template <typename K, typename V, typename Cmp = std::less<V>>
+class ValueSortedMap {
+ public:
+  using pair_t = std::pair<const K, V>;
+  using cmp_t = Cmp;
   using set_t =
       typename std::multiset<const pair_t*,
                              std::function<bool(const pair_t*, const pair_t*)>>;
+  using map_t = std::unordered_map<K, V>;
 
-  using iterator_t = typename set_t::iterator;
+ private:
+  set_t set_;
+  map_t map_;
+
+ public:
+  using iterator_t = typename map_t::iterator;
+  using const_iterator_t = typename map_t::const_iterator;
 
   ~ValueSortedMap() = default;
 
-  ValueSortedMap(const std::function<bool(const val_t&, const val_t&)>& cmp)
-      : cmp_(cmp) {}
+  explicit ValueSortedMap(cmp_t cmp = cmp_t{})
+      : set_([cmp](const pair_t* a, const pair_t* b) {
+          return cmp(a->second, b->second);
+        }) {}
 
-  iterator_t find(const key_t& key) const {
-    auto it = map_.find(key);
-    return it != map_.end() ? set_.find(&(*it)) : set_.end();
-  }
+  iterator_t find(const K& key) { return map_.find(key); }
+  const_iterator_t find(const K& key) const { return map_.find(key); }
 
-  iterator_t begin() const { return set_.begin(); }
+  auto begin() -> iterator_t { return map_.begin(); }
+  auto end() -> iterator_t { return map_.end(); }
+  auto begin() const -> const_iterator_t { return map_.begin(); }
+  auto end() const -> const_iterator_t { return map_.end(); }
 
-  iterator_t end() const { return set_.end(); }
+  const set_t& getSortedPairs() const { return set_; }
 
-  void erase(const key_t& key) {
+  void erase(const K& key) {
     auto map_it = map_.find(key);
-
-    if (map_it != map_.end()) {
-      auto set_it = set_.find(&(*map_it));
-      VBK_ASSERT(set_it != set_.end());
-      set_.erase(set_it);
-      map_.erase(map_it);
+    if (map_it == map_.end()) {
+      return;
     }
+
+    auto set_it = set_.find(&(*map_it));
+    VBK_ASSERT(set_it != set_.end());
+    set_.erase(set_it);
+    map_.erase(map_it);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
                    "size of map and set are different map: %d, set: %d",
@@ -55,9 +68,8 @@ struct ValueSortedMap {
   }
 
   iterator_t erase(const iterator_t& it) {
-    auto key = (*it)->first;
-    auto res = set_.erase(it);
-    map_.erase(key);
+    set_.erase(&*it);
+    auto res = map_.erase(it);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
                    "size of map and set are different map: %d, set: %d",
@@ -67,11 +79,12 @@ struct ValueSortedMap {
     return res;
   }
 
-  void insert(const key_t& key, const val_t& value) {
+  void insert(const K& key, const V& value) {
     pair_t pair(key, value);
 
     auto map_it = map_.find(key);
     if (map_it != map_.end()) {
+      // key exists
       auto set_it = set_.find(&(*map_it));
       VBK_ASSERT(set_it != set_.end());
       set_.erase(set_it);
@@ -79,9 +92,8 @@ struct ValueSortedMap {
       map_it->second = value;
       set_.insert(&*map_it);
     } else {
-      auto res = map_.insert(pair);
+      auto res = map_.insert(std::move(pair));
       VBK_ASSERT(res.second);
-
       set_.insert(&(*res.first));
     }
 
@@ -117,15 +129,6 @@ struct ValueSortedMap {
 
     return map_.empty();
   }
-
- private:
-  std::function<bool(const val_t&, const val_t&)> cmp_;
-
-  set_t set_{[this](const pair_t* val1, const pair_t* val2) -> bool {
-    return cmp_(val1->second, val2->second);
-  }};
-
-  std::unordered_map<key_t, val_t> map_{};
 };
 
 }  // namespace altintegration
