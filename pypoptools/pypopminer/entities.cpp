@@ -14,6 +14,13 @@
 using namespace altintegration;
 using namespace boost::python;
 
+// for some reason const ref can't be returned to python.
+// this helper gets const ref to hash, then returns a copy.
+template <typename Block>
+typename Block::hash_t ReturnHashCopy(Block& s) {
+  return s.getHash();
+}
+
 boost::shared_ptr<Address> makeAddress(std::string s) {
   Address addr;
   ValidationState state;
@@ -23,17 +30,17 @@ boost::shared_ptr<Address> makeAddress(std::string s) {
   return boost::shared_ptr<Address>(new Address(std::move(addr)));
 }
 
-list SerializePopData(const PopData& self) {
+list SerializePopData(const PopData& s) {
   list atvs;
-  for (const auto& atv: self.atvs) {
+  for (const auto& atv : s.atvs) {
     atvs.append(SerializeToHex(atv));
   }
   list vtbs;
-  for (const auto& vtb: self.vtbs) {
+  for (const auto& vtb : s.vtbs) {
     vtbs.append(SerializeToHex(vtb));
   }
   list context;
-  for (const auto& block: self.context) {
+  for (const auto& block : s.context) {
     context.append(SerializeToHex(block));
   }
   list data;
@@ -136,11 +143,15 @@ void init_entities() {
       .def("__str__", &BtcBlock::toPrettyString)
       .def("toHex", &SerializeToRawHex<BtcBlock>)
       .def("toVbkEncodingHex", &SerializeToHex<BtcBlock>)
-      .def("getHash", &BtcBlock::getHash)
+      .def("getHash", &ReturnHashCopy<BtcBlock>)
       .add_property("version", &BtcBlock::getVersion, &BtcBlock::setVersion)
-      .add_property("previousBlock", &BtcBlock::getPreviousBlock, &BtcBlock::setPreviousBlock)
-      .add_property("merkleRoot", &BtcBlock::getMerkleRoot, &BtcBlock::setMerkleRoot)
-      .add_property("timestamp", &BtcBlock::getTimestamp, &BtcBlock::setTimestamp)
+      .add_property("previousBlock",
+                    &BtcBlock::getPreviousBlock,
+                    &BtcBlock::setPreviousBlock)
+      .add_property(
+          "merkleRoot", &BtcBlock::getMerkleRoot, &BtcBlock::setMerkleRoot)
+      .add_property(
+          "timestamp", &BtcBlock::getTimestamp, &BtcBlock::setTimestamp)
       .add_property("bits", &BtcBlock::getDifficulty, &BtcBlock::setDifficulty)
       .add_property("nonce", &BtcBlock::getNonce, &BtcBlock::setNonce);
 
@@ -148,7 +159,7 @@ void init_entities() {
       .def("__str__", &VbkBlock::toPrettyString)
       .def("toHex", &SerializeToRawHex<VbkBlock>)
       .def("toVbkEncodingHex", &SerializeToHex<VbkBlock>)
-      .def("getHash", &VbkBlock::getHash)
+      .def("getHash", &ReturnHashCopy<VbkBlock>)
       .add_property("height", &VbkBlock::getHeight, &VbkBlock::setHeight)
       .add_property("version", &VbkBlock::getVersion, &VbkBlock::setVersion)
       .add_property("previousBlock",
