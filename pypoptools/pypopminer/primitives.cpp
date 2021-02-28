@@ -6,7 +6,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
 #include <boost/python/to_python_converter.hpp>
-#include <veriblock/mock_miner.hpp>
+#include <veriblock/pop/mock_miner.hpp>
 
 #include "converters.hpp"
 #include "vector.hpp"
