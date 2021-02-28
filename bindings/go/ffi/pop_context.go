@@ -2,7 +2,7 @@ package ffi
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
-// #include <veriblock/c/pop_context.h>
+// #include <veriblock/pop/c/pop_context.h>
 import "C"
 import (
 	"runtime"

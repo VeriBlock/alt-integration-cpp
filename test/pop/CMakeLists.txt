@@ -1,0 +1,36 @@
+link_libraries(${LIB_NAME})
+include_directories(${CMAKE_CURRENT_LIST_DIR})
+include_directories(${CMAKE_BINARY_DIR}/include)
+
+add_library(test_main OBJECT test_main.cpp)
+target_link_libraries(test_main PUBLIC gtest)
+
+add_subdirectory(e2e)
+add_subdirectory(cache)
+add_subdirectory(storage)
+add_subdirectory(blockchain)
+add_subdirectory(rewards)
+add_subdirectory(third_party)
+add_subdirectory(entities)
+add_subdirectory(commands)
+add_subdirectory(crypto)
+
+addtest(genesis_block_test genesis_block_test.cpp)
+addtest(streamutils_test streamutils_test.cpp)
+addtest(base58_test base58_test.cpp)
+addtest(base59_test base59_test.cpp)
+addtest(uint_test uint_test.cpp)
+addtest(stateless_validation_test stateless_validation_test.cpp)
+addtest(arith_uint256_test arith_uint256_test.cpp)
+addtest(keystone_util_test keystone_util_test.cpp)
+addtest(validationstate_test validationstate_test.cpp)
+addtest(alt-util_test alt-util_test.cpp)
+addtest(mempool_test mempool_test.cpp)
+set_test_cost(mempool_test 41000) # 41 sec
+addtest(mempool_getpop_test mempool_getpop_test.cpp)
+set_test_cost(mempool_getpop_test 42000) # 42 sec
+addtest(mempool_prioritization_test mempool_prioritization_test.cpp)
+set_test_cost(mempool_prioritization_test 23500) # 23.5 sec
+addtest(stateless_vtb_test stateless_vtb_test.cpp)
+addtest(merkle_pool_test merkle_pool_test.cpp)
+addtest(value_sorted_map_test value_sorted_map_test.cpp)
