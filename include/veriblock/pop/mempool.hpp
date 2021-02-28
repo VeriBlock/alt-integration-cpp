@@ -17,7 +17,7 @@
 #include "mempool_result.hpp"
 #include "serde.hpp"
 #include "signals.hpp"
-#include "veriblock/value_sorted_map.hpp"
+#include "value_sorted_map.hpp"
 
 namespace altintegration {
 

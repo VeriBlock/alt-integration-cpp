@@ -3,12 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/value_sorted_map.hpp"
-
 #include <gtest/gtest.h>
 
 #include <string>
-
 #include <veriblock/pop/value_sorted_map.hpp>
 
 using namespace altintegration;
