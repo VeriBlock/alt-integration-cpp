@@ -307,7 +307,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
       mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
   // add containing block without payloads into vbk tree
-  EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
+  EXPECT_TRUE(popminer->vbk().acceptBlockHeader(containingVbkBlock, state));
 
   // Create VTB
   VTB vtb2;
@@ -452,7 +452,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
       mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
   // add containing block without payloads into vbk tree
-  EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
+  EXPECT_TRUE(popminer->vbk().acceptBlockHeader(containingVbkBlock, state));
 
   // Create VTV
   VTB vtb2;
@@ -610,7 +610,7 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
     VbkBlock block =
         vbk_miner.createNextBlock(*popminer->vbk().getBestChain().tip());
     // add containing block without payloads into vbk tree
-    EXPECT_TRUE(popminer->vbk().acceptBlock(block, state));
+    EXPECT_TRUE(popminer->vbk().acceptBlockHeader(block, state));
     vbk_blocks.push_back(block);
   }
 

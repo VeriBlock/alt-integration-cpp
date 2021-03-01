@@ -260,7 +260,7 @@ std::vector<Block> MockMiner::getBlocks(
 template <typename BlockTree, typename Block>
 BlockIndex<Block>* MockMiner::acceptBlock(BlockTree& tree, const Block& block) {
   ValidationState state;
-  if (!tree.acceptBlock(block, state)) {
+  if (!tree.acceptBlockHeader(block, state)) {
     throw std::domain_error(state.toString());
   }
   auto* index = tree.getBlockIndex(block.getHash());

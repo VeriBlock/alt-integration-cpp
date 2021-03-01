@@ -436,7 +436,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   auto containingBlock = vbk_miner.createNextBlock(
       *popminer->vbk().getBestChain().tip(),
       mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
-  EXPECT_TRUE(popminer->vbk().acceptBlock(containingBlock, state));
+  EXPECT_TRUE(popminer->vbk().acceptBlockHeader(containingBlock, state));
 
   // map VbkPopTx -> VTB
   std::vector<VTB> vtbs;

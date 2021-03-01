@@ -87,7 +87,7 @@ TEST_F(Scenario8, scenario_8) {
   EXPECT_TRUE(checkVTB(
       vtb2, state, popminer->btc().getParams(), popminer->vbk().getParams()));
 
-  EXPECT_TRUE(popminer->vbk().acceptBlock(containingVbkBlock, state));
+  EXPECT_TRUE(popminer->vbk().acceptBlockHeader(containingVbkBlock, state));
 
   // mine 10 blocks
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
