@@ -51,7 +51,7 @@ enum BlockValidityStatus : uint32_t {
   //! all invalidity flags
   BLOCK_FAILED_MASK =
       BLOCK_FAILED_CHILD | BLOCK_FAILED_POP | BLOCK_FAILED_BLOCK,
-  //! acceptBlock has been executed on this block;
+  //! acceptBlockHeader has been executed on this block;
   BLOCK_HAS_PAYLOADS = 1 << 8,
   //! the block is currently applied via SetState.
   BLOCK_ACTIVE = 1 << 9,
