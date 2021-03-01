@@ -1,3 +1,4 @@
+add_subdirectory(v2)
 add_subdirectory(adaptors)
 
 add_library(veriblock-pop-c OBJECT
