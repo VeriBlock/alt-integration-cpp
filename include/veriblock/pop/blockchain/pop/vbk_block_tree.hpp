@@ -26,6 +26,8 @@ extern template struct BlockIndex<VbkBlock>;
 extern template struct BlockTree<VbkBlock, VbkChainParams>;
 extern template struct BaseBlockTree<VbkBlock>;
 
+using BtcBlockTree = BlockTree<BtcBlock, BtcChainParams>;
+
 /**
  * @class VbkBlockTree
  *
@@ -42,7 +44,7 @@ extern template struct BaseBlockTree<VbkBlock>;
  * @invariant removePayloads and unsafelyRemovePayload cannot invalidate any
  * block as long as they are called by AltBlockTree, and not by the user.
  * @invariant all payloads and blocks are valid as a consequence of the above.
- * @invariant acceptBlockHeader and acceptBlock are effectively equivalent
+ * @invariant acceptBlockHeader and acceptBlockHeader are effectively equivalent
  *
  * Definition: a validation hole is incorrect use of removePayloads and
  * unsafelyRemovePayload by AltBlockTree that results in invalid Veriblock
@@ -83,7 +85,7 @@ extern template struct BaseBlockTree<VbkBlock>;
  */
 struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
-  using BtcTree = BlockTree<BtcBlock, BtcChainParams>;
+  using BtcTree = BtcBlockTree;
   using index_t = VbkTree::index_t;
   using payloads_t = typename index_t::payloads_t;
   using pid_t = typename payloads_t::id_t;

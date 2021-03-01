@@ -1,7 +1,7 @@
 add_subdirectory(pop)
 
 add_library(blockchain OBJECT
-        alt_block_tree.cpp
+        alt_block_tree_facade.cpp
         btc_blockchain_util.cpp
         vbk_blockchain_util.cpp
         alt_block_addon.cpp

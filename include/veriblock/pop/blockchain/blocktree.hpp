@@ -103,13 +103,13 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  bool acceptBlock(const block_t& block, ValidationState& state) {
-    return acceptBlock(std::make_shared<block_t>(block), state, true);
+  bool acceptBlockHeader(const block_t& block, ValidationState& state) {
+    return acceptBlockHeader(std::make_shared<block_t>(block), state, true);
   }
 
-  bool acceptBlock(const std::shared_ptr<block_t>& block,
-                   ValidationState& state) {
-    return acceptBlock(block, state, true);
+  bool acceptBlockHeader(std::shared_ptr<block_t> block,
+                         ValidationState& state) {
+    return acceptBlockHeader(std::move(block), state, true);
   }
 
   std::string toPrettyString(size_t level = 0) const {
@@ -181,9 +181,9 @@ struct BlockTree : public BaseBlockTree<Block> {
  protected:
   const ChainParams* param_ = nullptr;
 
-  bool acceptBlock(const std::shared_ptr<block_t>& block,
-                   ValidationState& state,
-                   bool shouldContextuallyCheck) {
+  bool acceptBlockHeader(std::shared_ptr<block_t> block,
+                         ValidationState& state,
+                         bool shouldContextuallyCheck) {
     index_t* index = nullptr;
     if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
       return false;

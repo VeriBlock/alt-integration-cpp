@@ -1,5 +1,6 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
+add_subdirectory(facade)
 add_subdirectory(blockchain)
 add_subdirectory(storage)
 add_subdirectory(rewards)

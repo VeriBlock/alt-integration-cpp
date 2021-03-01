@@ -34,7 +34,7 @@ struct AddBlock : public Command {
     auto* index = tree_->getBlockIndex(block_->getHash());
 
     if (index == nullptr) {
-      if (!tree_->acceptBlock(block_, state)) {
+      if (!tree_->acceptBlockHeader(block_, state)) {
         return false;
       }
 

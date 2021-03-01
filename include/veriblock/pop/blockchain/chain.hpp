@@ -28,6 +28,10 @@ struct Chain {
   using hash_t = typename index_t::hash_t;
   using height_t = typename block_t::height_t;
   using storage_t = std::vector<index_t*>;
+  using iterator_t = typename storage_t::iterator;
+  using reverse_iterator_t = typename storage_t::reverse_iterator;
+  using const_iterator_t = typename storage_t::const_iterator;
+  using const_reverse_iterator_t = typename storage_t::const_reverse_iterator;
 
   Chain() = default;
 
@@ -54,7 +58,7 @@ struct Chain {
     return chain[innerHeight];
   }
 
-  index_t* next(const index_t* index) const {
+  const index_t* next(const index_t* index) const {
     if (!contains(index)) {
       return nullptr;
     }
@@ -75,19 +79,15 @@ struct Chain {
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
 
-  typename storage_t::reverse_iterator rbegin() { return chain.rbegin(); }
-  typename storage_t::const_reverse_iterator rbegin() const {
-    return chain.rbegin();
-  }
-  typename storage_t::reverse_iterator rend() { return chain.rend(); }
-  typename storage_t::const_reverse_iterator rend() const {
-    return chain.rend();
-  }
+  reverse_iterator_t rbegin() { return chain.rbegin(); }
+  const_reverse_iterator_t rbegin() const { return chain.rbegin(); }
+  reverse_iterator_t rend() { return chain.rend(); }
+  const_reverse_iterator_t rend() const { return chain.rend(); }
 
-  typename storage_t::iterator begin() { return chain.begin(); }
-  typename storage_t::const_iterator begin() const { return chain.begin(); }
-  typename storage_t::iterator end() { return chain.end(); }
-  typename storage_t::const_iterator end() const { return chain.end(); }
+  iterator_t begin() { return chain.begin(); }
+  const_iterator_t begin() const { return chain.begin(); }
+  iterator_t end() { return chain.end(); }
+  const_iterator_t end() const { return chain.end(); }
 
   void setTip(index_t* index) {
     if (index == nullptr || index->getHeight() < startHeight_) {
