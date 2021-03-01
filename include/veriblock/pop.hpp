@@ -10,6 +10,9 @@
 // this is the only header that should be included by clients.
 // if something is missing, include it here.
 
+#include "pop/json.hpp"
+#include "pop/mock_miner.hpp"
 #include "pop/pop_context.hpp"
+#include "pop/storage.hpp"
 
 #endif  // VERIBLOCK_POP_CPP_POP_HPP
