@@ -45,6 +45,9 @@ class ValueSortedMap {
 
   const set_t& getSortedValues() const { return set_; }
 
+  // implicit const map_t& cast operator
+  operator const map_t&() const { return map_; }
+
   void erase(const K& key) {
     auto map_it = map_.find(key);
     if (map_it == map_.end()) {
