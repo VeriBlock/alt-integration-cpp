@@ -57,7 +57,7 @@ PopData MockMiner::createPopDataEndorsingAltBlock(
     const VbkBlock::hash_t& lastKnownVbkBlockHash) const {
   PopData data;
   data.atvs = { createATV(blockOfProof, transaction) };
-  data.context = getBlocks(vbk_tree_, vbkTip(), lastKnownVbkBlockHash);
+  data.context = getBlocks(vbk_tree_, blockOfProof, lastKnownVbkBlockHash);
   for (const VbkBlock& b : data.context) {
     const auto& vtbs = getVTBs(b);
     data.vtbs.insert(data.vtbs.end(), vtbs.begin(), vtbs.end());
@@ -68,10 +68,9 @@ PopData MockMiner::createPopDataEndorsingAltBlock(
 ATV MockMiner::createATV(
     const VbkBlock& blockOfProof,
     const VbkTx& transaction) const {
-  const VbkMerkleTree& merkleTree = getVbkMerkleTree(blockOfProof);
   ATV atv;
   atv.transaction = transaction;
-  atv.merklePath = merkleTree.getMerklePath(transaction.getHash());
+  atv.merklePath = getMerklePath(blockOfProof, transaction.getHash());
   atv.blockOfProof = blockOfProof;
   return atv;
 }
@@ -97,10 +96,9 @@ VbkTx MockMiner::createVbkTxEndorsingAltBlock(
 VTB MockMiner::createVTB(
     const VbkBlock& containingBlock,
     const VbkPopTx& transaction) const {
-  const VbkMerkleTree& merkleTree = getVbkMerkleTree(containingBlock);
   VTB vtb;
   vtb.transaction = transaction;
-  vtb.merklePath = merkleTree.getMerklePath(transaction.getHash());
+  vtb.merklePath = getMerklePath(containingBlock, transaction.getHash());
   vtb.containingBlock = containingBlock;
   return vtb;
 }
@@ -110,11 +108,6 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
     const BtcTx& transaction,
     const VbkBlock& publishedBlock,
     const BtcBlock::hash_t& lastKnownBtcBlockHash) const {
-  const BtcMerkleTree& merkleTree = getBtcMerkleTree(blockOfProof);
-
-  const auto* containingBlockIndex = btc_tree_.getBlockIndex(blockOfProof.getHash());
-  VBK_ASSERT_MSG(containingBlockIndex != nullptr, "");
-
   VbkPopTx popTx;
   popTx.networkOrType.networkType = vbk_params_.getTransactionMagicByte();
   popTx.networkOrType.typeId = (uint8_t)TxType::VBK_POP_TX;
@@ -123,9 +116,8 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   popTx.blockOfProof = blockOfProof;
   popTx.publicKey = defaultPublicKeyVbk;
   popTx.bitcoinTransaction = transaction;
-  popTx.merklePath = merkleTree.getMerklePath(transaction.getHash());
-  popTx.blockOfProofContext = getBlocks(btc_tree_,
-                                        containingBlockIndex,
+  popTx.merklePath = getMerklePath(blockOfProof, transaction.getHash());
+  popTx.blockOfProofContext = getBlocks(btc_tree_, blockOfProof,
                                         lastKnownBtcBlockHash);
 
   auto hash = popTx.getHash();
@@ -242,12 +234,14 @@ std::vector<VTB> MockMiner::getVTBs(
 template <typename BlockTree, typename Block>
 std::vector<Block> MockMiner::getBlocks(
     BlockTree& tree,
-    const BlockIndex<Block>* tip,
+    const Block& tip,
     const typename Block::hash_t& lastKnownHash) {
+  auto* tipIndex = tree.getBlockIndex(tip.getHash());
+  VBK_ASSERT(tipIndex != nullptr);
   auto lastKnownIndex = tree.getBlockIndex(lastKnownHash);
-  VBK_ASSERT_MSG(lastKnownIndex != nullptr, "");
+  VBK_ASSERT(lastKnownIndex != nullptr);
   std::vector<Block> blocks;
-  for (auto* block = tip->pprev;
+  for (auto* block = tipIndex->pprev;
        block != nullptr && block->getHash() != lastKnownHash;
        block = block->pprev) {
     const auto& header = block->getHeader();
@@ -366,18 +360,20 @@ void MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
   vtbs_.insert({hash, vtbs});
 }
 
-const VbkMerkleTree& MockMiner::getVbkMerkleTree(
-    const VbkBlock& block) const {
+VbkMerklePath MockMiner::getMerklePath(const VbkBlock& block,
+                                       const uint256& txHash) const {
   auto it = vbk_merkle_trees_.find(block.getHash());
   VBK_ASSERT(it != vbk_merkle_trees_.end());
-  return it->second;
+  const auto& merkleTree = it->second;
+  return merkleTree.getMerklePath(txHash);
 }
 
-const BtcMerkleTree& MockMiner::getBtcMerkleTree(
-    const BtcBlock& block) const {
+MerklePath MockMiner::getMerklePath(const BtcBlock& block,
+                                    const uint256& txHash) const {
   auto it = btc_merkle_trees_.find(block.getHash());
   VBK_ASSERT(it != btc_merkle_trees_.end());
-  return it->second;
+  const auto& merkleTree = it->second;
+  return merkleTree.getMerklePath(txHash);
 }
 
 }  // namespace altintegration
