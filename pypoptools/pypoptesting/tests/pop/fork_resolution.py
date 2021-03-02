@@ -14,6 +14,7 @@ node[3] started with 0 blocks.
 After sync has been completed, expect all nodes to be on same height (fork A, block 323)
 """
 from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.generate_util import generate_endorsed
 from ...framework.pop_util import create_endorsed_chain, endorse_block, mine_until_pop_enabled
 from ...framework.sync_util import (
     start_all, connect_all,
@@ -38,6 +39,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
 
         self._shorter_endorsed_chain_wins(apm)
         self._4_chains_converge(apm)
+        self._4_chains_converge_random(apm)
 
     def _shorter_endorsed_chain_wins(self, apm):
         self.log.warning("starting _shorter_endorsed_chain_wins()")
@@ -169,3 +171,43 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
             assert best == expected_best
 
         self.log.warning("_4_chains_converge() succeeded!")
+
+    def _4_chains_converge_random(self, apm):
+        self.log.warning("_4_chains_random_converge() started!")
+
+        # disconnect all nodes
+        for i in range(self.num_nodes):
+            for node in self.nodes:
+                node.disconnect(self.nodes[i])
+
+        self.log.info("all nodes disconnected")
+        last_block = self.nodes[3].getblockcount()
+
+        # node[i] creates endorsed chain
+        for i, node in enumerate(self.nodes):
+            self.log.info("node[{}] started to generate random endorsed chain".format(i))
+            generate_endorsed(node, apm, atvs=20, vtbs=20, alt_blocks=20, vbk_blocks=20, btc_blocks=20, seed=12345)
+
+        # all nodes have different tips at height 323
+        best_blocks = [node.getbestblock() for node in self.nodes]
+        for b in best_blocks:
+            assert b.height == last_block + 20
+        assert len(set([block.hash for block in best_blocks])) == len(best_blocks)
+        self.log.info("all nodes have different tips")
+
+        # connect all nodes to each other
+        for i in range(self.num_nodes):
+            for node in self.nodes:
+                node.connect(self.nodes[i])
+
+        self.log.info("all nodes connected")
+        sync_blocks(self.nodes, timeout=60)
+        sync_pop_tips(self.nodes, timeout=60)
+        self.log.info("all nodes have common tip")
+
+        expected_best = best_blocks[0]
+        best_blocks = [node.getbestblock() for node in self.nodes]
+        for best in best_blocks:
+            assert best == expected_best
+
+        self.log.warning("_4_chains_random_converge() succeeded!")
