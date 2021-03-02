@@ -16,6 +16,7 @@
 #include "pop_stateless_validator.hpp"
 #include "rewards/default_poprewards_calculator.hpp"
 #include "storage.hpp"
+
 /**
  * @defgroup api Public API
  *
@@ -45,9 +46,11 @@ struct PopContext {
 
   /**
    * Factory function for PopContext.
+   *
    * @param[in] config
    * @param[in] payloadsProvider
    * @param[in] validatorWorkers
+   *
    * @return
    */
   static std::shared_ptr<PopContext> create(
@@ -57,44 +60,54 @@ struct PopContext {
 
   /**
    * Checks ATV (stateless check).
+   *
    * @param[in] payload ATV to be checked
    * @param[out] state
+   *
    * @return true if ATV is statelessly valid, false otherwise
    */
   VBK_CHECK_RETURN bool check(const ATV& payload, ValidationState& state);
 
   /**
    * Checks VTB (stateless check).
+   *
    * @param[in] payload VTB to be checked
    * @param[out] state
+   *
    * @return true if VTB is statelessly valid, false otherwise
    */
   VBK_CHECK_RETURN bool check(const VTB& payload, ValidationState& state);
 
   /**
    * Checks VbkBlock (stateless check).
+   *
    * @param[in] payload VbkBlock to be checked
    * @param[out] state
+   *
    * @return true if VbkBlock is statelessly valid, false otherwise
    */
   VBK_CHECK_RETURN bool check(const VbkBlock& payload, ValidationState& state);
 
   /**
    * Checks PopData (stateless check).
+   *
    * @param[in] payload PopData to be checked
    * @param[out] state
+   *
    * @return true if PopData is statelessly valid, false otherwise
    */
   VBK_CHECK_RETURN bool check(const PopData& pd, ValidationState& state);
 
   /**
    * Save ALT/VBK/BTC trees on disk via adapter BlockBatch.
+   *
    * @param[out] batch adaptor for writing blocks on disk.
    */
   void saveAllTrees(BlockBatch& batch) const;
 
   /**
    * Load ALT/VBK/BTC trees from disk via adapter BlockReader.
+   *
    * @param[out] reader adaptor to read blocks from disk.
    */
   VBK_CHECK_RETURN bool loadAllTrees(BlockReader& reader,
@@ -102,8 +115,10 @@ struct PopContext {
 
   /**
    * Calculates POP rewards that should be paid in the next block after `prev`.
+   *
    * @param[in] prev Altchain has to supply prev block of a block that will
    * contain POP reward.
+   *
    * @return a map where key=payoutInfo from PublicationData, value=amount to be
    * paid.
    */
@@ -111,7 +126,9 @@ struct PopContext {
 
   /**
    * Generate PopData for a block next to `prev`.
+   *
    * @param prev should match AltBlockTree tip.
+   *
    * @return empty or non-empty PopData instance that must be inserted into next
    * block body.
    */
@@ -119,6 +136,7 @@ struct PopContext {
 
   /**
    * Create PublicationData given required input parameters.
+   *
    * @param[out] output generated publication data output. Valid only if this
    * func returned true.
    * @param[in] endorsedBlockHeader serialized altchain header of endorsed block
@@ -128,6 +146,7 @@ struct PopContext {
    * @param[in] popData popData that is stored in endorsed block.
    * @param[in] payoutInfo bytes that will then be interpreted by altchain as
    * payout information (for BTC can be a script...).
+   *
    * @return true if endorsed block exists, false otherwise.
    */
   VBK_CHECK_RETURN bool generatePublicationData(
@@ -144,10 +163,11 @@ struct PopContext {
   VBK_CHECK_RETURN const VbkBlockTree& getVbkBlockTree() const;
   VBK_CHECK_RETURN const BtcBlockTree& getBtcBlockTree() const;
 
+  //! stops PopContext internal thread pool used for stateless validation.
+  void shutdown();
+
  private:
   PopContext() = default;
-
-  void shutdown();
 
   std::shared_ptr<Config> config_;
   std::shared_ptr<MemPool> mempool_;
