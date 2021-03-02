@@ -125,3 +125,41 @@ func (v *PopData) FromVbkEncodingBytes(data []byte) error {
 	buffer := bytes.NewBuffer(data)
 	return v.FromVbkEncoding(buffer)
 }
+
+// ToJSON ...
+func (v *PopData) ToJSON() (map[string]interface{}, error) {
+	atvs := make([]map[string]interface{}, len(v.Atvs))
+	for i, atv := range v.Atvs {
+		res, err := atv.ToJSON()
+		if err != nil {
+			return nil, err
+		}
+		atvs[i] = res
+	}
+
+	vtbs := make([]map[string]interface{}, len(v.Vtbs))
+	for i, vtb := range v.Vtbs {
+		res, err := vtb.ToJSON()
+		if err != nil {
+			return nil, err
+		}
+		vtbs[i] = res
+	}
+
+	context := make([]map[string]interface{}, len(v.Context))
+	for i, blk := range v.Context {
+		res, err := blk.ToJSON()
+		if err != nil {
+			return nil, err
+		}
+		context[i] = res
+	}
+
+	res := map[string]interface{}{
+		"atvs":    atvs,
+		"vtbs":    vtbs,
+		"context": context,
+		"version": v.Version,
+	}
+	return res, nil
+}

@@ -2,6 +2,7 @@ package entities
 
 import (
 	"bytes"
+	"encoding/json"
 	"testing"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -198,4 +199,17 @@ func TestPopDataRoundTrip(t *testing.T) {
 	decodedPopData := PopData{}
 	assert.NoError(decodedPopData.FromVbkEncoding(outputStream))
 	assert.Equal(expectedPopData, decodedPopData)
+}
+
+func TestPopDataToJson(t *testing.T) {
+	assert := assert.New(t)
+
+	defaultJSON := ""
+
+	jsonmap, err := defaultAtv.ToJSON()
+	assert.NoError(err)
+
+	res, err := json.Marshal(jsonmap)
+	assert.NoError(err)
+	assert.Equal(defaultJSON, string(res))
 }
