@@ -9,7 +9,6 @@
 #include <vector>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/logger.hpp>
-#include <veriblock/pop/pop_context.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
@@ -86,6 +85,8 @@ void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
 struct AltBlockTree;
 
 void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch);
+
+struct PopContext;
 
 bool LoadAllTrees(PopContext& context,
                   BlockReader& reader,

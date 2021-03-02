@@ -5,8 +5,8 @@
 
 #include <benchmark/benchmark.h>
 
-#include <veriblock/literals.hpp>
-#include <veriblock/stateless_validation.hpp>
+#include <veriblock/pop/literals.hpp>
+#include <veriblock/pop/stateless_validation.hpp>
 
 using namespace altintegration;
 

@@ -340,7 +340,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   }
 
   ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
-  PopData popData = mempool->getPop();
+  PopData popData = mempool->generatePopData();
 
   EXPECT_EQ(popData.vtbs.size(), 2);
   EXPECT_EQ(popData.atvs.size(), 1);
@@ -350,7 +350,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   applyInNextBlock(popData);
   mempool->removeAll(popData);
 
-  popData = mempool->getPop();
+  popData = mempool->generatePopData();
 
   EXPECT_TRUE(popData.vtbs.empty());
   EXPECT_TRUE(popData.atvs.empty());
@@ -364,7 +364,7 @@ TEST_F(MemPoolFixture, removed_payloads_cache_test) {
   submitVTB(vtb2);
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
 
-  popData = mempool->getPop();
+  popData = mempool->generatePopData();
   EXPECT_TRUE(popData.vtbs.empty());
   EXPECT_TRUE(popData.atvs.empty());
   EXPECT_TRUE(popData.context.empty());
@@ -587,7 +587,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     }
     // mine VTB0 to ALT1
     mineAltBlocks(1, chain, false, false);
-    auto pop0 = mempool->getPop();
+    auto pop0 = mempool->generatePopData();
     ASSERT_EQ(pop0.vtbs.size(), 1);
     ASSERT_EQ(pop0.vtbs.at(0), VTB0);
     ASSERT_EQ(pop0.atvs.size(), 0);
@@ -617,7 +617,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
 
     // mine VTB2 in ALT2
     mineAltBlocks(1, chain, false, false);
-    auto pop2 = mempool->getPop();
+    auto pop2 = mempool->generatePopData();
     ASSERT_EQ(pop2.vtbs.size(), 1);
     ASSERT_EQ(pop2.vtbs.at(0), VTB2);
     ASSERT_EQ(pop2.atvs.size(), 0);
@@ -640,7 +640,7 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
   // mine VTB1 in ALT3
   mineAltBlocks(1, chain, false, false);
-  auto pop1 = mempool->getPop();
+  auto pop1 = mempool->generatePopData();
   ASSERT_EQ(pop1.vtbs.size(), 0);
   ASSERT_EQ(pop1.atvs.size(), 0);
   ASSERT_EQ(pop1.context.size(), 0);

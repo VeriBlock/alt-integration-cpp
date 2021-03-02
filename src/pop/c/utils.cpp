@@ -7,11 +7,6 @@
 
 #include <cstdio>
 #include <vector>
-
-#include "adaptors/block_provider_impl.hpp"
-#include "bytestream.hpp"
-#include "pop_context.hpp"
-#include "validation_state.hpp"
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
@@ -21,6 +16,11 @@
 #include <veriblock/pop/exceptions/storage_io.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/storage/util.hpp>
+
+#include "adaptors/block_provider_impl.hpp"
+#include "bytestream.hpp"
+#include "pop_context.hpp"
+#include "validation_state.hpp"
 
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
@@ -118,7 +118,6 @@ void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(txRoot);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
   VBK_ASSERT(out_hash);
   VBK_ASSERT(pop_data_bytes);
   VBK_ASSERT(prev_block_hash);
@@ -131,14 +130,14 @@ void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
   auto pop_data = AssertDeserializeFromVbkEncoding<PopData>(
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
 
-  auto* index = self->context->altTree->getBlockIndex(prev_hash);
+  auto* index = self->context->getAltBlockTree().getBlockIndex(prev_hash);
   VBK_ASSERT_MSG(index != nullptr,
                  "Can't find a block with hash %s. Did you forget to make "
                  "TopLevelMerkleRoot calculation stateful?",
                  HexStr(prev_hash));
 
   auto hash = CalculateTopLevelMerkleRoot(
-      txmroot, pop_data, index, self->context->altTree->getParams());
+      txmroot, pop_data, index, self->context->getAltBlockTree().getParams());
 
   std::copy(hash.begin(), hash.end(), out_hash);
 }
@@ -154,7 +153,6 @@ VBK_ByteStream* VBK_AltBlock_generatePublicationData(
     int payout_info_size) {
   VBK_ASSERT(self);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
   VBK_ASSERT(payout_info);
   VBK_ASSERT(endorsed_block_header);
   VBK_ASSERT(txRoot);
@@ -173,11 +171,12 @@ VBK_ByteStream* VBK_AltBlock_generatePublicationData(
   std::vector<uint8_t> payout(payout_info, payout_info + payout_info_size);
 
   PublicationData res;
-  if (GeneratePublicationData(
-          header, txmroot, pop_data, payout, *self->context->altTree, res)) {
-    return new VbkByteStream(altintegration::SerializeToVbkEncoding(res));
+  if (!self->context->generatePublicationData(
+          res, header, txmroot, pop_data, payout)) {
+    return nullptr;
   }
-  return nullptr;
+
+  return new VbkByteStream(altintegration::SerializeToVbkEncoding(res));
 }
 
 bool VBK_checkATV(PopContext* self,
@@ -187,16 +186,12 @@ bool VBK_checkATV(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->config);
   VBK_ASSERT(atv_bytes);
 
   using namespace altintegration;
   ATV atv = AssertDeserializeFromVbkEncoding<ATV>(
       Slice<const uint8_t>(atv_bytes, atv_bytes_size));
-  return checkATV(atv,
-                  state->getState(),
-                  self->context->config->getAltParams(),
-                  self->context->config->getVbkParams());
+  return self->context->check(atv, state->getState());
 }
 
 bool VBK_checkVTB(PopContext* self,
@@ -206,16 +201,12 @@ bool VBK_checkVTB(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->config);
   VBK_ASSERT(vtb_bytes);
 
   using namespace altintegration;
   VTB vtb = AssertDeserializeFromVbkEncoding<VTB>(
       Slice<const uint8_t>(vtb_bytes, vtb_bytes_size));
-  return checkVTB(vtb,
-                  state->getState(),
-                  self->context->config->getBtcParams(),
-                  self->context->config->getVbkParams());
+  return self->context->check(vtb, state->getState());
 }
 
 bool VBK_checkVbkBlock(PopContext* self,
@@ -225,14 +216,12 @@ bool VBK_checkVbkBlock(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->config);
   VBK_ASSERT(vbk_bytes);
 
   using namespace altintegration;
   VbkBlock block = AssertDeserializeFromVbkEncoding<VbkBlock>(
       Slice<const uint8_t>(vbk_bytes, vbk_bytes_size));
-  return checkBlock(
-      block, state->getState(), self->context->config->getVbkParams());
+  return self->context->check(block, state->getState());
 }
 
 bool VBK_checkPopData(PopContext* self,
@@ -242,15 +231,12 @@ bool VBK_checkPopData(PopContext* self,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->config);
-  VBK_ASSERT(self->context->popValidator);
   VBK_ASSERT(pop_data_bytes);
 
   using namespace altintegration;
   PopData pop_data = AssertDeserializeFromVbkEncoding<PopData>(
       Slice<const uint8_t>(pop_data_bytes, pop_data_bytes_size));
-  return checkPopData(
-      *self->context->popValidator, pop_data, state->getState());
+  return self->context->check(pop_data, state->getState());
 }
 
 bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state) {
@@ -258,13 +244,12 @@ bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state) {
   VBK_ASSERT(state);
   VBK_ASSERT(self->storage);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
 
   using namespace altintegration;
   auto write_batch = self->storage->generateWriteBatch();
   adaptors::BlockBatchImpl block_batch(*write_batch);
   try {
-    SaveAllTrees(*self->context->altTree, block_batch);
+    self->context->saveAllTrees(block_batch);
     write_batch->writeBatch();
   } catch (const StorageIOException& e) {
     state->getState().Invalid("failed-save-trees", e.what());
@@ -281,7 +266,6 @@ bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state) {
   VBK_ASSERT(state);
   VBK_ASSERT(self->storage);
   VBK_ASSERT(self->context);
-  VBK_ASSERT(self->context->altTree);
 
   using namespace altintegration;
 

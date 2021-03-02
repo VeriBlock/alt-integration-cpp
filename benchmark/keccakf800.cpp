@@ -5,7 +5,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <veriblock/crypto/progpow.hpp>
+#include <veriblock/pop/crypto/progpow.hpp>
 
 using namespace altintegration;
 
