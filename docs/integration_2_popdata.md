@@ -1,4 +1,4 @@
-# POP Integration. Adding PopData. {#integration_2_popdata}
+# Adding PopData. {#integration_2_popdata}
 
 [TOC]
 

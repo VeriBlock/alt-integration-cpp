@@ -1,4 +1,4 @@
-# POP Integration. Modifying build setup. {#integration_1_build}
+# Modifying build setup. {#integration_1_build}
 
 [TOC]
 
