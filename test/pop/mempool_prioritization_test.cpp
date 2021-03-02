@@ -19,10 +19,10 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
                                       size_t amount) {
     EXPECT_NE(amount, 0);
     BlockIndex<BtcBlock>* blk = popminer->mineBtcBlocks(1, tip);
-    EXPECT_TRUE(alttree.btc().acceptBlock(blk->getHeader(), state));
+    EXPECT_TRUE(alttree.btc().acceptBlockHeader(blk->getHeader(), state));
     for (size_t i = 1; i < amount; ++i) {
       blk = popminer->mineBtcBlocks(1, *blk);
-      EXPECT_TRUE(alttree.btc().acceptBlock(blk->getHeader(), state));
+      EXPECT_TRUE(alttree.btc().acceptBlockHeader(blk->getHeader(), state));
     }
     return blk;
   }
@@ -39,12 +39,12 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
       const std::vector<VbkPopTx>& transactions = {}) {
     EXPECT_NE(amount, 0);
     BlockIndex<VbkBlock>* blk = popminer->mineVbkBlocks(1, tip, transactions);
-    EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
+    EXPECT_TRUE(alttree.vbk().acceptBlockHeader(blk->getHeader(), state));
     EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
               GetRegTestVbkBlock().getHeight());
     for (size_t i = 1; i < amount; ++i) {
       blk = popminer->mineVbkBlocks(1, *blk);
-      EXPECT_TRUE(alttree.vbk().acceptBlock(blk->getHeader(), state));
+      EXPECT_TRUE(alttree.vbk().acceptBlockHeader(blk->getHeader(), state));
       EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
                 GetRegTestVbkBlock().getHeight());
     }
@@ -62,9 +62,9 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
     auto tx = PopTestFixture::generatePopTx(endorsedBlock);
     for (const auto& blk : tx.blockOfProofContext) {
-      EXPECT_TRUE(alttree.btc().acceptBlock(blk, state));
+      EXPECT_TRUE(alttree.btc().acceptBlockHeader(blk, state));
     }
-    EXPECT_TRUE(alttree.btc().acceptBlock(tx.blockOfProof, state));
+    EXPECT_TRUE(alttree.btc().acceptBlockHeader(tx.blockOfProof, state));
     return tx;
   }
 };

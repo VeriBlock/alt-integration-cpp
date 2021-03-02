@@ -23,7 +23,7 @@ def sync_all(nodes: List[Node], **kwargs):
     sync_pop_tips(nodes, **kwargs)
 
 
-def sync_blocks(nodes: List[Node], *, wait=1, timeout=300):
+def sync_blocks(nodes: List[Node], *, wait=1, timeout=300, height=None):
     """
     Wait until everybody has the same tip.
 
@@ -33,12 +33,28 @@ def sync_blocks(nodes: List[Node], *, wait=1, timeout=300):
     """
     stop_time = time.time() + timeout
     best_hash = None
+    heights = None
     while time.time() <= stop_time:
+        heights = [x.getblockcount() for x in nodes]
         best_hash = [x.getbestblockhash() for x in nodes]
-        if best_hash.count(best_hash[0]) == len(nodes):
-            return
+
+        h = set(heights)
+        b = set(best_hash)
+        # if all best blocks have same hash
+        # and heights of best blocks are same
+        if len(h) == 1 and len(b) == 1:
+            # we do not expect specific height, so return early
+            if height is None:
+                return
+
+            assert height is not None
+            # if height is equal to one that is expected
+            if heights.pop() == height:
+                return
         time.sleep(wait)
-    raise AssertionError("Block sync timed out:{}".format("".join("\n  {!r}".format(b) for b in best_hash)))
+
+    raise AssertionError(
+        "Block sync timed out:{}".format("".join("\n  {}:{!r}".format(h, b) for h, b in zip(heights, best_hash))))
 
 
 def sync_pop_mempools(nodes: List[Node], *, wait=1, timeout=60):

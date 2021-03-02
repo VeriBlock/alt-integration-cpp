@@ -115,7 +115,7 @@ TEST_F(PopContextFixture, A) {
 
   // apply remote vbk blocks to current local vbk tip
   for (const auto& b : vbkblocks) {
-    ASSERT_TRUE(local.acceptBlock(b, state)) << state.GetPath();
+    ASSERT_TRUE(local.acceptBlockHeader(b, state)) << state.GetPath();
   }
 
   // local and remote VBK chains are same
@@ -128,7 +128,7 @@ TEST_F(PopContextFixture, A) {
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
     auto vtbs = remote.getVTBs(containing->getHeader());
 
-    ASSERT_TRUE(local.acceptBlock(containing->getHeader(), state));
+    ASSERT_TRUE(local.acceptBlockHeader(containing->getHeader(), state));
     PopData pd;
     pd.vtbs = vtbs;
     payloadsProvider.writePayloads(pd);
