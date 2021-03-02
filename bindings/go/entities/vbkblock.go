@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 
@@ -16,6 +17,16 @@ const VbkBlockName = "VBK"
 
 // VbkID is 12 byte ID of VbkBlock
 type VbkID [veriblock.VblakePreviousBlockHashSize]byte
+
+// VbkIDFromBytes ...
+func VbkIDFromBytes(bytes []byte) (VbkID, error) {
+	var res VbkID
+	if len(bytes) != len(res) {
+		return res, errors.New("invalid bytes length")
+	}
+	copy(res[:], bytes)
+	return res, nil
+}
 
 // Bytes ...
 func (v *VbkID) Bytes() []byte {
@@ -48,6 +59,16 @@ func ParseErrVbkID(idBytes []byte) (id VbkID, err error) {
 
 // VbkHash is 24 byte hash of VbkBlock
 type VbkHash [veriblock.VblakeBlockHashSize]byte
+
+// VbkHashFromBytes ...
+func VbkHashFromBytes(bytes []byte) (VbkHash, error) {
+	var res VbkHash
+	if len(bytes) != len(res) {
+		return res, errors.New("invalid bytes length")
+	}
+	copy(res[:], bytes)
+	return res, nil
+}
 
 // Bytes ...
 func (v *VbkHash) Bytes() []byte {
