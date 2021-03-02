@@ -32,7 +32,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
 
   PopData checkedGetPop() {
     auto before = alttree.toPrettyString();
-    auto ret = mempool->getPop();
+    auto ret = mempool->generatePopData();
     auto after = alttree.toPrettyString();
     EXPECT_EQ(before, after);
     return ret;
