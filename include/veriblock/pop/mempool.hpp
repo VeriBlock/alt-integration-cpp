@@ -184,15 +184,6 @@ struct MemPool {
     return {};
   }
 
-  /**
-   * Shortcut to submit altintegration::PopData as whole thing.
-   *
-   * @param pop altintegration::PopData
-   * @return MempoolResult - an entity that can be serialized ToJSON.
-   * @ingroup api
-   */
-  MempoolResult submitAll(const PopData& pop);
-
   //! @private
   template <typename T>
   const payload_map<T>& getMap() const {
