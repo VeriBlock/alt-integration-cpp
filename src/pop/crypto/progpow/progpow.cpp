@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 #include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/cache/small_lfu_cache.hpp>
+#include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/crypto/progpow/ethash.hpp>

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/pop_context.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
 namespace altintegration {
@@ -78,11 +79,11 @@ bool LoadTree(
 bool LoadAllTrees(PopContext& context,
                   BlockReader& storage,
                   ValidationState& state) {
-  if (!detail::LoadTree(context.altTree->btc(), storage, state)) {
+  if (!detail::LoadTree(context.getAltBlockTree().btc(), storage, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
   if (!detail::LoadTree(
-          context.altTree->vbk(),
+          context.getAltBlockTree().vbk(),
           storage,
           state,
           // on every block, take its hash and warmup progpow header cache
@@ -92,7 +93,7 @@ bool LoadAllTrees(PopContext& context,
           })) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
-  if (!detail::LoadTree(*context.altTree, storage, state)) {
+  if (!detail::LoadTree(context.getAltBlockTree(), storage, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
   return true;

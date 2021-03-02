@@ -15,9 +15,7 @@
 #include "mempool.hpp"
 #include "pop_stateless_validator.hpp"
 #include "rewards/default_poprewards_calculator.hpp"
-#include "storage/block_reader.hpp"
-#include "storage/payloads_index.hpp"
-
+#include "storage.hpp"
 /**
  * @defgroup api Public API
  *
@@ -35,96 +33,120 @@ namespace altintegration {
  * @ingroup api
  */
 struct PopContext {
-  ~PopContext() {
-    if (popValidator) {
-      shutdown();
-    }
-  }
+  ~PopContext();
 
-  static std::shared_ptr<PopContext> create(
-      const Config& config,
-      std::shared_ptr<PayloadsStorage> payloadsProvider,
-      size_t validatorWorkers = 0) {
-    return create(std::make_shared<Config>(config),
-                  std::move(payloadsProvider),
-                  validatorWorkers);
-  }
+  // non-copyable
+  PopContext(const PopContext&) = delete;
+  PopContext& operator=(const PopContext&) = delete;
 
+  // movable
+  PopContext(PopContext&&) = default;
+  PopContext& operator=(PopContext&&) = default;
+
+  /**
+   * Factory function for PopContext.
+   * @param[in] config
+   * @param[in] payloadsProvider
+   * @param[in] validatorWorkers
+   * @return
+   */
   static std::shared_ptr<PopContext> create(
       std::shared_ptr<Config> config,
       std::shared_ptr<PayloadsStorage> payloadsProvider,
-      size_t validatorWorkers = 0) {
-    config->validate();
+      size_t validatorWorkers = 0);
 
-    // because default constructor is hidden
-    auto ctx = std::shared_ptr<PopContext>(new PopContext());
-    ctx->config = std::move(config);
-    ctx->payloadsProvider = std::move(payloadsProvider);
-    ctx->altTree = std::make_shared<AltBlockTree>(*ctx->config->alt,
-                                                  *ctx->config->vbk.params,
-                                                  *ctx->config->btc.params,
-                                                  *ctx->payloadsProvider);
-    ctx->popRewardsCalculator =
-        std::make_shared<DefaultPopRewardsCalculator>(*ctx->altTree);
-    ctx->mempool = std::make_shared<MemPool>(*ctx->altTree);
-    ctx->popValidator = std::make_shared<PopValidator>(*ctx->config->vbk.params,
-                                                       *ctx->config->btc.params,
-                                                       *ctx->config->alt,
-                                                       validatorWorkers);
-    ValidationState state;
+  /**
+   * Checks ATV (stateless check).
+   * @param[in] payload ATV to be checked
+   * @param[out] state
+   * @return true if ATV is statelessly valid, false otherwise
+   */
+  VBK_CHECK_RETURN bool check(const ATV& payload, ValidationState& state);
 
-    // first, bootstrap BTC
-    if (ctx->config->btc.blocks.size() == 0) {
-      ctx->altTree->btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);
-    } else if (ctx->config->btc.blocks.size() == 1) {
-      ctx->altTree->btc().bootstrapWithGenesis(ctx->config->btc.blocks[0],
-                                               state);
-    } else {
-      ctx->altTree->btc().bootstrapWithChain(
-          ctx->config->btc.startHeight, ctx->config->btc.blocks, state);
-    }
-    VBK_ASSERT_MSG(state.IsValid(),
-                   "BTC bootstrap block is invalid: %s",
-                   state.toString());
+  /**
+   * Checks VTB (stateless check).
+   * @param[in] payload VTB to be checked
+   * @param[out] state
+   * @return true if VTB is statelessly valid, false otherwise
+   */
+  VBK_CHECK_RETURN bool check(const VTB& payload, ValidationState& state);
 
-    // then, bootstrap VBK
-    if (ctx->config->vbk.blocks.size() == 0) {
-      ctx->altTree->vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state);
-    } else if (ctx->config->vbk.blocks.size() == 1) {
-      ctx->altTree->vbk().bootstrapWithGenesis(ctx->config->vbk.blocks[0],
-                                               state);
-    } else {
-      ctx->altTree->vbk().bootstrapWithChain(
-          ctx->config->vbk.startHeight, ctx->config->vbk.blocks, state);
-    }
-    VBK_ASSERT_MSG(state.IsValid(),
-                   "VBK bootstrap block is invalid: %s",
-                   state.toString());
+  /**
+   * Checks VbkBlock (stateless check).
+   * @param[in] payload VbkBlock to be checked
+   * @param[out] state
+   * @return true if VbkBlock is statelessly valid, false otherwise
+   */
+  VBK_CHECK_RETURN bool check(const VbkBlock& payload, ValidationState& state);
 
-    // then, bootstrap ALT
-    bool bootstrapped = ctx->altTree->bootstrap(state);
-    VBK_ASSERT_MSG(
-        bootstrapped, "Can not bootstrap Alt Tree: %s", state.toString());
-    VBK_ASSERT_MSG(state.IsValid(),
-                   "ALT bootstrap block is invalid: %s",
-                   state.toString());
-    return ctx;
-  }
+  /**
+   * Checks PopData (stateless check).
+   * @param[in] payload PopData to be checked
+   * @param[out] state
+   * @return true if PopData is statelessly valid, false otherwise
+   */
+  VBK_CHECK_RETURN bool check(const PopData& pd, ValidationState& state);
 
-  void shutdown() {
-    VBK_ASSERT_MSG(popValidator != nullptr, "PopContext is not initialized");
-    popValidator->stop();
-  }
+  /**
+   * Save ALT/VBK/BTC trees on disk via adapter BlockBatch.
+   * @param[out] batch adaptor for writing blocks on disk.
+   */
+  void saveAllTrees(BlockBatch& batch) const;
 
-  std::shared_ptr<Config> config;
-  std::shared_ptr<MemPool> mempool;
-  std::shared_ptr<AltBlockTree> altTree;
-  std::shared_ptr<PopValidator> popValidator;
-  std::shared_ptr<PopRewardsCalculator> popRewardsCalculator;
-  std::shared_ptr<PayloadsStorage> payloadsProvider;
+  /**
+   * Load ALT/VBK/BTC trees from disk via adapter BlockReader.
+   * @param[out] reader adaptor to read blocks from disk.
+   */
+  VBK_CHECK_RETURN bool loadAllTrees(BlockReader& reader,
+                                     ValidationState& state);
+
+  /**
+   * Calculates POP rewards that should be paid in the next block after `tip`.
+   * @param[in] tip Altchain has to supply prev block of a block that will
+   * contain POP reward.
+   * @return a map where key=payoutInfo from PublicationData, value=amount to be
+   * paid.
+   */
+  VBK_CHECK_RETURN PopPayouts getPopPayout(const AltBlockTree::hash_t& tip);
+
+  /**
+   * Create PublicationData given required input parameters.
+   * @param[out] output generated publication data output. Valid only if this
+   * func returned true.
+   * @param[in] endorsedBlockHeader serialized altchain header of endorsed block
+   * (for BTC it is 80 bytes).
+   * @param[in] txMerkleRoot transaction merkle root (used original merkle root
+   * value from the block header).
+   * @param[in] popData popData that is stored in endorsed block.
+   * @param[in] payoutInfo bytes that will then be interpreted by altchain as
+   * payout information (for BTC can be a script...).
+   * @return true if endorsed block exists, false otherwise.
+   */
+  VBK_CHECK_RETURN bool generatePublicationData(
+      PublicationData& output,
+      const std::vector<uint8_t>& endorsedBlockHeader,
+      const std::vector<uint8_t>& txMerkleRoot,
+      const PopData& popData,
+      const std::vector<uint8_t>& payoutInfo);
+
+  VBK_CHECK_RETURN const Config& getConfig() const;
+  VBK_CHECK_RETURN MemPool& getMemPool();
+  VBK_CHECK_RETURN AltBlockTree& getAltBlockTree();
+  VBK_CHECK_RETURN const AltBlockTree& getAltBlockTree() const;
+  VBK_CHECK_RETURN const VbkBlockTree& getVbkBlockTree() const;
+  VBK_CHECK_RETURN const BtcBlockTree& getBtcBlockTree() const;
 
  private:
   PopContext() = default;
+
+  void shutdown();
+
+  std::shared_ptr<Config> config_;
+  std::shared_ptr<MemPool> mempool_;
+  std::shared_ptr<AltBlockTree> altTree_;
+  std::shared_ptr<PopValidator> popValidator_;
+  std::shared_ptr<PopRewardsCalculator> popRewardsCalculator_;
+  std::shared_ptr<PayloadsStorage> payloadsProvider_;
 };
 
 }  // namespace altintegration
