@@ -44,8 +44,8 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
                                         VbkValidationState* state);
 
 /**
- * @copybrief altintegration::AltBlockTree::acceptBlock
- * @see altintegration::AltBlockTree::acceptBlock
+ * @copybrief altintegration::AltBlockTree::acceptBlockHeader
+ * @see altintegration::AltBlockTree::acceptBlockHeader
  * @param[in] self PopContext
  * @param[in] hash_bytes altintegration::AltBlock hash raw represantation
  * @param[in] hash_bytes_size hash bytes size

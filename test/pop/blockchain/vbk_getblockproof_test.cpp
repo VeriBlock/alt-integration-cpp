@@ -62,13 +62,13 @@ TEST_F(GetProofTest, DISABLED_Blocks100Test) {
   ASSERT_TRUE(tree.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
 
   for (size_t i = 1; i < 101; i++) {
-    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state));
+    ASSERT_TRUE(tree.acceptBlockHeader(allBlocks[i], state));
     auto hash = allBlocks[i].getHash();
     index_t* current = tree.getBlockIndex(hash);
     EXPECT_EQ(current->chainWork, cumulativeDifficulties[i]);
   }
 
-  bool ret = tree.acceptBlock(allBlocks[101], state);
+  bool ret = tree.acceptBlockHeader(allBlocks[101], state);
   ASSERT_TRUE(ret);
 }
 
@@ -78,7 +78,7 @@ TEST_F(GetProofTest, DISABLED_Blocks30kTest) {
 
   for (size_t i = 1; i < allBlocks.size(); i++) {
     // 28568
-    ASSERT_TRUE(tree.acceptBlock(allBlocks[i], state)) << i;
+    ASSERT_TRUE(tree.acceptBlockHeader(allBlocks[i], state)) << i;
     auto hash = allBlocks[i].getHash();
     index_t* current = tree.getBlockIndex(hash);
     ASSERT_EQ(current->chainWork, cumulativeDifficulties[i]);

@@ -185,7 +185,7 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_3) {
   // add block into the stable tree
   auto& stable_tree = getTree<block_tree_t>(this->alttree);
 
-  EXPECT_TRUE(stable_tree.acceptBlock(block, this->state));
+  EXPECT_TRUE(stable_tree.acceptBlockHeader(block, this->state));
 
   EXPECT_NE(this->temp_block_tree.getTempBlockIndex(block->getHash()), nullptr);
   EXPECT_NE(

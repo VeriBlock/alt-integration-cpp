@@ -92,7 +92,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     // our store (yet) to check it correctly
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
-      if (!this->acceptBlock(std::make_shared<block_t>(block), state, false)) {
+      if (!this->acceptBlockHeaderImpl(
+              std::make_shared<block_t>(block), state, false)) {
         return state.Invalid(block_t::name() + "-blocktree-accept");
       }
       auto* index = base::getBlockIndex(block.getHash());
@@ -103,13 +104,13 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  bool acceptBlock(const block_t& block, ValidationState& state) {
-    return acceptBlock(std::make_shared<block_t>(block), state, true);
+  bool acceptBlockHeader(const block_t& block, ValidationState& state) {
+    return acceptBlockHeaderImpl(std::make_shared<block_t>(block), state, true);
   }
 
-  bool acceptBlock(const std::shared_ptr<block_t>& block,
-                   ValidationState& state) {
-    return acceptBlock(block, state, true);
+  bool acceptBlockHeader(const std::shared_ptr<block_t>& block,
+                         ValidationState& state) {
+    return acceptBlockHeaderImpl(block, state, true);
   }
 
   std::string toPrettyString(size_t level = 0) const {
@@ -181,9 +182,9 @@ struct BlockTree : public BaseBlockTree<Block> {
  protected:
   const ChainParams* param_ = nullptr;
 
-  bool acceptBlock(const std::shared_ptr<block_t>& block,
-                   ValidationState& state,
-                   bool shouldContextuallyCheck) {
+  bool acceptBlockHeaderImpl(const std::shared_ptr<block_t>& block,
+                             ValidationState& state,
+                             bool shouldContextuallyCheck) {
     index_t* index = nullptr;
     if (!validateAndAddBlock(block, state, shouldContextuallyCheck, &index)) {
       return false;

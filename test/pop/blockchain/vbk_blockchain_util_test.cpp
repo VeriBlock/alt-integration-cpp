@@ -320,7 +320,7 @@ TEST_F(BlockchainTest, InvalidKeystone1) {
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
   block.setPreviousKeystone(badKeystone);
-  ASSERT_FALSE(blockchain->acceptBlock(block, state));
+  ASSERT_FALSE(blockchain->acceptBlockHeader(block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
 }
@@ -332,7 +332,7 @@ TEST_F(BlockchainTest, InvalidKeystone2) {
                          .reverse()
                          .template trimLE<VbkBlock::keystone_t::size()>();
   block.setSecondPreviousKeystone(badKeystone);
-  ASSERT_FALSE(blockchain->acceptBlock(block, state));
+  ASSERT_FALSE(blockchain->acceptBlockHeader(block, state));
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-bad-keystones");
 }

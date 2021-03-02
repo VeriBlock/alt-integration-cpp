@@ -69,7 +69,7 @@ struct BlockchainTest : public ::testing::Test {
       auto* index = this->blockchain->getBlockIndex(hash);
       EXPECT_TRUE(index);
       auto block = this->miner->createNextBlock(*index);
-      EXPECT_TRUE(this->blockchain->acceptBlock(block, this->state))
+      EXPECT_TRUE(this->blockchain->acceptBlockHeader(block, this->state))
           << this->state.GetDebugMessage();
       return block;
     });
@@ -122,7 +122,7 @@ TYPED_TEST_P(BlockchainTest, Scenario1) {
     auto tip = chain.tip();
     auto block = this->miner->createNextBlock(*tip);
     ASSERT_TRUE(checkProofOfWork(block, *this->chainparam));
-    ASSERT_TRUE(this->blockchain->acceptBlock(block, this->state))
+    ASSERT_TRUE(this->blockchain->acceptBlockHeader(block, this->state))
         << this->state.GetPath();
   }
 

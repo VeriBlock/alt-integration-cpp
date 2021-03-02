@@ -50,12 +50,12 @@ bool onNewFullBlock(Block block) {
     }
     
     // then, attach block body to block header
-    tree.acceptBlock(block.getHash(), block.getPopData());
+    tree.acceptBlockHeader(block.getHash(), block.getPopData());
     
     // ...
 ``` 
 
-AltBlockTree::acceptBlock() connects block immediately if all previous blocks are connected, or just adds block body to AltBlock when one of previous blocks is not connected.
+AltBlockTree::acceptBlockHeader() connects block immediately if all previous blocks are connected, or just adds block body to AltBlock when one of previous blocks is not connected.
 
 After that, users can check if this block is connected:
 ```c++
