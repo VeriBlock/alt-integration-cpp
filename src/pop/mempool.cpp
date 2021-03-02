@@ -14,7 +14,7 @@ namespace {
 
 // generates a PopData which is not bigger than 'maxPopDataSize' in serialized
 // size
-PopData generatePopData(
+PopData generatePopDataImpl(
     const std::vector<std::pair<VbkBlock::id_t,
                                 std::shared_ptr<VbkPayloadsRelations>>>& blocks,
     const AltChainParams& params) {
@@ -70,7 +70,7 @@ PopData generatePopData(
 
 }  // namespace
 
-PopData MemPool::getPop() {
+PopData MemPool::generatePopData() {
   // attempt to connect payloads
   tryConnectPayloads();
 
@@ -81,7 +81,7 @@ PopData MemPool::getPop() {
     return a.second->header->getHeight() < b.second->header->getHeight();
   });
 
-  PopData ret = generatePopData(blocks, mempool_tree_.alt().getParams());
+  PopData ret = generatePopDataImpl(blocks, mempool_tree_.alt().getParams());
   mempool_tree_.alt().filterInvalidPayloads(ret);
   return ret;
 }
