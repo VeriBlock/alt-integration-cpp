@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 
@@ -16,6 +17,16 @@ const VtbBlockName = "VTB"
 
 // VtbID is 32 byte ID of Vtb
 type VtbID [veriblock.Sha256HashSize]byte
+
+// VtbIDFromBytes ...
+func VtbIDFromBytes(bytes []byte) (VtbID, error) {
+	var res VtbID
+	if len(bytes) != len(res) {
+		return res, errors.New("invalid bytes length")
+	}
+	copy(res[:], bytes)
+	return res, nil
+}
 
 // Bytes ...
 func (v *VtbID) Bytes() []byte {
