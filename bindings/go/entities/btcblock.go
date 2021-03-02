@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"errors"
 	"io"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -15,6 +16,16 @@ const BtcBlockName = "BTC"
 
 // BtcHash is 32 byte hash of BtcBlock
 type BtcHash [veriblock.Sha256HashSize]byte
+
+// BtcHashFromBytes ...
+func BtcHashFromBytes(bytes []byte) (BtcHash, error) {
+	var res BtcHash
+	if len(bytes) != len(res) {
+		return res, errors.New("invalid bytes length")
+	}
+	copy(res[:], bytes)
+	return res, nil
+}
 
 // Bytes ...
 func (v *BtcHash) Bytes() []byte {

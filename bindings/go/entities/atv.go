@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 
@@ -16,6 +17,16 @@ const AtvBlockName = "ATV"
 
 // AtvID is 32 byte ID of ATV
 type AtvID [veriblock.Sha256HashSize]byte
+
+// AtvIDFromBytes ...
+func AtvIDFromBytes(bytes []byte) (AtvID, error) {
+	var res AtvID
+	if len(bytes) != len(res) {
+		return res, errors.New("invalid bytes length")
+	}
+	copy(res[:], bytes)
+	return res, nil
+}
 
 // Bytes ...
 func (v *AtvID) Bytes() []byte {
