@@ -367,8 +367,8 @@ int VBK_MemPool_submit_vbk(PopContext* self,
                            VbkValidationState* state);
 
 /**
- * @copybrief altintegration::MemPool::getPop
- * @see altintegration::MemPool::getPop
+ * @copybrief altintegration::MemPool::generatePopData
+ * @see altintegration::MemPool::generatePopData
  * @param[in] self PopContext
  * @param[out] out_bytes output byte array of the altintegration::PopData (must
  * be pre-allocated). Statefully valid altintegration::PopData in the raw

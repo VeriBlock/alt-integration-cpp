@@ -156,4 +156,15 @@ PopPayouts PopContext::getPopPayout(const AltBlockTree::hash_t& tip) {
   return popRewardsCalculator_->getPopPayout(tip);
 }
 
+PopData PopContext::generatePopData(const AltBlockTree::hash_t& prev) {
+  auto* tip = getAltBlockTree().getBestChain().tip();
+  VBK_ASSERT(tip);
+  VBK_ASSERT_MSG(prev == tip->getHash(),
+                 "Unexpected AltBlockTree state: Tip=%s. Expected=%s.",
+                 tip->toShortPrettyString(),
+                 HexStr(prev));
+
+  return getMemPool().generatePopData();
+}
+
 }  // namespace altintegration

@@ -457,7 +457,8 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size) {
   VBK_ASSERT(bytes_size);
   VBK_ASSERT(self->context);
 
-  altintegration::PopData popData = self->context->getMemPool().getPop();
+  altintegration::PopData popData =
+      self->context->getMemPool().generatePopData();
   std::vector<uint8_t> bytes = popData.toVbkEncoding();
 
   memcpy(out_bytes, bytes.data(), bytes.size());

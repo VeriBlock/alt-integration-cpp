@@ -210,7 +210,7 @@ struct MemPool {
    * @return statefully valid altintegration::PopData that can be connected to
    * current tip.
    */
-  PopData getPop();
+  PopData generatePopData();
 
   /**
    * Remove payloads from mempool by their IDs.
