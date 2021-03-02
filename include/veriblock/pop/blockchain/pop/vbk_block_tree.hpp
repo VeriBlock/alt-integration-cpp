@@ -42,7 +42,6 @@ extern template struct BaseBlockTree<VbkBlock>;
  * @invariant removePayloads and unsafelyRemovePayload cannot invalidate any
  * block as long as they are called by AltBlockTree, and not by the user.
  * @invariant all payloads and blocks are valid as a consequence of the above.
- * @invariant acceptBlockHeader and acceptBlock are effectively equivalent
  *
  * Definition: a validation hole is incorrect use of removePayloads and
  * unsafelyRemovePayload by AltBlockTree that results in invalid Veriblock

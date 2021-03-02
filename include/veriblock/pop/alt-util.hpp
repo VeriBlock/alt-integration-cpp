@@ -58,7 +58,7 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
                ValidationState& state) {
   for (const auto& b : blocks) {
     Block block = Block::fromRaw(b);
-    if (!tree.acceptBlock(block, state)) {
+    if (!tree.acceptBlockHeader(block, state)) {
       return false;
     }
   }

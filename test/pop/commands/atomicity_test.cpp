@@ -177,7 +177,7 @@ TEST_F(AtomicityTestFixture, AddVTB) {
       continue;
     }
 
-    ASSERT_TRUE(alttree.vbk().acceptBlock(block->getHeader(), state));
+    ASSERT_TRUE(alttree.vbk().acceptBlockHeader(block->getHeader(), state));
   }
 
   // verify VBK tree does not know about this VTB
