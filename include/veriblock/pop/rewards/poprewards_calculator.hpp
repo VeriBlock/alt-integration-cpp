@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 
+#include <veriblock/pop/entities/pop_payouts.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/rewards/poprewards_bigdecimal.hpp>
 

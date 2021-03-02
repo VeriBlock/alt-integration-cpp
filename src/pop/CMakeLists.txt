@@ -46,6 +46,7 @@ set(SOURCES
         config.cpp
         command_group_cache.cpp
         alt-util.cpp
+        pop_context.cpp
         $<TARGET_OBJECTS:mempool>
         $<TARGET_OBJECTS:pop_stateless_validator>
         $<TARGET_OBJECTS:strutil>

@@ -13,7 +13,6 @@
 #include <vector>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
-#include <veriblock/pop/entities/pop_payouts.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/fmt.hpp>

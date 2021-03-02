@@ -6,15 +6,15 @@
 #include <benchmark/benchmark.h>
 
 #include <iostream>
-#include <veriblock/blockchain/btc_chain_params.hpp>
-#include <veriblock/blockchain/miner.hpp>
-#include <veriblock/blockchain/vbk_chain_params.hpp>
-#include <veriblock/bootstraps.hpp>
-#include <veriblock/crypto/progpow.hpp>
-#include <veriblock/entities/popdata.hpp>
-#include <veriblock/literals.hpp>
-#include <veriblock/pop_stateless_validator.hpp>
-#include <veriblock/stateless_validation.hpp>
+#include <veriblock/pop/blockchain/btc_chain_params.hpp>
+#include <veriblock/pop/blockchain/miner.hpp>
+#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
+#include <veriblock/pop/bootstraps.hpp>
+#include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/entities/popdata.hpp>
+#include <veriblock/pop/literals.hpp>
+#include <veriblock/pop/pop_stateless_validator.hpp>
+#include <veriblock/pop/stateless_validation.hpp>
 
 using namespace altintegration;
 
