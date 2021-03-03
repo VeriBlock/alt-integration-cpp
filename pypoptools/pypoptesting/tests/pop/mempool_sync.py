@@ -15,8 +15,8 @@ class PopMempoolSyncTest(PopIntegrationTestFramework):
 
     def setup_nodes(self):
         start_all(self.nodes)
-        mine_until_pop_enabled(self.nodes[0])
         connect_all(self.nodes)
+        mine_until_pop_enabled(self.nodes[0])
         sync_all(self.nodes)
 
     def run_test(self):
