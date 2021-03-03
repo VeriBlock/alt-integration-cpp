@@ -21,7 +21,7 @@ def sync_all(nodes: List[Node], **kwargs):
     sync_pop_tips(nodes, **kwargs)
 
 
-def sync_blocks(nodes: List[Node], *, wait=1, timeout=300, height=None):
+def sync_blocks(nodes: List[Node], *, wait=1, timeout=60, height=None):
     """
     Wait until everybody has the same tip.
 

@@ -31,7 +31,8 @@ class JsonRpcApi:
                 json=payload,
                 headers={
                     "Content-type": "application/json"
-                }
+                },
+                timeout=60
             )
             self.nonce += 1
 
