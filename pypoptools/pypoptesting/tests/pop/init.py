@@ -7,6 +7,8 @@ Node[2] is a control node.
 Expect that BTC/VBK tree state on nodes[0,1] is same as before shutdown (test against control node).
 """
 
+import time
+
 from ...framework.test_framework import PopIntegrationTestFramework
 from ...framework.pop_util import create_endorsed_chain, mine_until_pop_enabled
 from ...framework.sync_util import start_all, connect_all, sync_all, sync_blocks
@@ -17,10 +19,10 @@ class PopInitTest(PopIntegrationTestFramework):
         self.num_nodes = 3
 
     def setup_nodes(self):
-        start_all(self.nodes)
-        mine_until_pop_enabled(self.nodes[0])
-        connect_all(self.nodes)
-        sync_all(self.nodes)
+        start_all(nodes=self.nodes)
+        connect_all(nodes=self.nodes)
+        mine_until_pop_enabled(node=self.nodes[0])
+        sync_all(nodes=self.nodes, timeout=300)
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner

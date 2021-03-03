@@ -11,10 +11,8 @@ def start_all(nodes: List[Node]):
 
 
 def connect_all(nodes: List[Node]):
-    for i in range(len(nodes)):
-        for j in range(len(nodes)):
-            if i != j:
-                nodes[i].connect(nodes[j])
+    for i in range(len(nodes) - 1):
+        nodes[i + 1].connect(nodes[i])
 
 
 def sync_all(nodes: List[Node], **kwargs):
