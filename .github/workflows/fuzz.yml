@@ -31,12 +31,12 @@ jobs:
           pip3 install cmake
       - name: cmake
         run: >
-          cmake .
-            -Bbuild
-            -DTESTING=OFF
-            -DFUZZING=ON
-            -DCMAKE_BUILD_TYPE=Release
-            -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT}
+          cmake . \
+            -Bbuild \
+            -DTESTING=OFF \
+            -DFUZZING=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT} \
             -DN_PROCESSORS=1
       - name: build
         run: cmake --build build -- -j2 fuzz
