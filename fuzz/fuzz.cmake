@@ -33,7 +33,9 @@ function(add_fuzz FUZZ_TARGET)
             ${ARGN})
 
     if(FUZZ_TIMEOUT)
-        set(FUZZ_TIMEOUT -max_total_time=${FUZZ_TIMEOUT})
+        MATH(EXPR THIS_FUZZ_TIMEOUT "${FUZZ_TIMEOUT} / ${TOTAL_FUZZERS}")
+        set(FUZZ_TIMEOUT -max_total_time=${THIS_FUZZ_TIMEOUT})
+        message(STATUS "${FUZZ_TARGET} will run for ${THIS_FUZZ_TIMEOUT} sec")
     endif()
     if(NOT FUZZ_MAX_LEN)
         set(FUZZ_MAX_LEN 4096)
@@ -76,6 +78,7 @@ function(add_fuzz FUZZ_TARGET)
             OUTPUT fuzz_targets APPEND
             COMMENT "Running ${FUZZ_TARGET}"
             COMMAND run_${FUZZ_TARGET}
+            DEPENDS run_${FUZZ_TARGET}
     )
     add_test(
             NAME ${FUZZ_TARGET}
