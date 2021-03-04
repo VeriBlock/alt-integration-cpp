@@ -12,6 +12,7 @@
 #include <vector>
 #include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/blockchain/blocktree.hpp>
+#include <veriblock/pop/blockchain/chain_slice.hpp>
 #include <veriblock/pop/blockchain/pop/pop_state_machine.hpp>
 #include <veriblock/pop/finalizer.hpp>
 #include <veriblock/pop/keystone_util.hpp>
@@ -124,7 +125,7 @@ template <typename ProtectedBlockT,
           typename ProtectedChainParams>
 ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     int keystoneToConsider,
-    const Chain<BlockIndex<ProtectedBlockT>>& chain,
+    const ChainSlice<BlockIndex<ProtectedBlockT>>& chain,
     const std::unordered_set<typename ProtectedBlockT::hash_t>&
         allHashesInChain,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree,
@@ -189,13 +190,13 @@ struct ReducedPublicationView {
   using protected_block_t = ProtectedBlockT;
   using protecting_chain_params_t = ProtectingChainParams;
   using protected_chain_params_t = ProtectedChainParams;
-  using protected_chain_t = Chain<BlockIndex<protected_block_t>>;
+  using protected_chain_t = ChainSlice<BlockIndex<protected_block_t>>;
   using protecting_tree_t =
       BlockTree<protecting_block_t, protecting_chain_params_t>;
 
   const protected_chain_params_t& config;
   const int keystoneInterval;
-  const protected_chain_t& chain;
+  const protected_chain_t chain;
 
   // FIXME: get rid of this hack
   std::unordered_set<typename protected_chain_t::hash_t> allHashesInChain;
@@ -207,13 +208,13 @@ struct ReducedPublicationView {
 
   KeystoneContext currentKeystoneContext;  // FIXME: UGLY
 
-  ReducedPublicationView(const protected_chain_t& _chain,
+  ReducedPublicationView(const protected_chain_t _chain,
                          const protected_chain_params_t& _config,
                          const protecting_tree_t& _tree)
       : config(_config),
         keystoneInterval(config.getKeystoneInterval()),
         chain(_chain),
-        allHashesInChain(chain.getAllHashesInChain()),
+        allHashesInChain(getAllHashesInChain(chain)),
         protectingTree(_tree),
         firstKeystoneHeight(
             firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval)),
@@ -549,7 +550,7 @@ struct PopAwareForkResolutionComparator {
                  candidate.toShortPrettyString());
 
     auto ki = ed.getParams().getKeystoneInterval();
-    const auto* fork = currentBest.findFork(&candidate);
+    const auto* fork = findFork(currentBest, &candidate);
     VBK_ASSERT_MSG(
         fork != nullptr,
         "state corruption: all blocks in a blocktree must form a tree, "
@@ -569,7 +570,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     // [vbk fork point ... current tip]
-    Chain<protected_index_t> chainA(fork->getHeight(), currentBest.tip());
+    ChainSlice<protected_index_t> chainA(currentBest, fork->getHeight());
     // [vbk fork point ... new block]
     Chain<protected_index_t> chainB(fork->getHeight(), &candidate);
 

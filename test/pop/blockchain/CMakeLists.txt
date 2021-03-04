@@ -56,6 +56,7 @@ set_tests_properties(vbk_getblockproof_test PROPERTIES
         )
 
 addtest(chain_test chain_test.cpp)
+addtest(chainslice_test chainslice_test.cpp)
 addtest(blockchain_test blockchain_test.cpp)
 set_test_cost(blockchain_test 105000) # 105 sec
 addtest(chainparams_test chainparams_test.cpp)
