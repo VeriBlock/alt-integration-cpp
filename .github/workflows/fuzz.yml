@@ -30,7 +30,7 @@ jobs:
           sudo apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: cmake
-        run: |
+        run: >
           cmake .
             -Bbuild
             -DTESTING=OFF
