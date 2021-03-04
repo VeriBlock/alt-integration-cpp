@@ -78,6 +78,7 @@ function(add_fuzz FUZZ_TARGET)
             OUTPUT fuzz_targets APPEND
             COMMENT "Running ${FUZZ_TARGET}"
             COMMAND run_${FUZZ_TARGET}
+            DEPENDS run_${FUZZ_TARGET}
     )
     add_test(
             NAME ${FUZZ_TARGET}
