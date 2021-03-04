@@ -20,8 +20,8 @@ class PopInitTest(PopIntegrationTestFramework):
 
     def setup_nodes(self):
         start_all(nodes=self.nodes)
-        connect_all(nodes=self.nodes)
         mine_until_pop_enabled(node=self.nodes[0])
+        connect_all(nodes=self.nodes)
         sync_all(nodes=self.nodes, timeout=300)
 
     def run_test(self):

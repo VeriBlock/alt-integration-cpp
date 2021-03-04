@@ -275,7 +275,8 @@ TEST_F(MemPoolFixture, removeAll_test4) {
   ASSERT_TRUE(mempool->getMap<VbkBlock>().empty());
 
   popminer->mineVbkBlocks(300);
-  auto vbkPopTx = generatePopTx(popminer->vbk().getBestChain().tip()->getHeader());
+  auto vbkPopTx =
+      generatePopTx(popminer->vbk().getBestChain().tip()->getHeader());
   vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
   auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
 
@@ -451,8 +452,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
                    vtb.merklePath.treeIndex = treeIndex;
                    vtb.merklePath.index = index;
                    vtb.merklePath.subject = hashes[index];
-                   vtb.merklePath.layers =
-                       mtree.getMerklePathLayers(index);
+                   vtb.merklePath.layers = mtree.getMerklePathLayers(index);
                    vtb.containingBlock = containingBlock;
                    index++;
 
@@ -480,8 +480,8 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   submitATV(atv);
   EXPECT_EQ(mempool->getMap<ATV>().size(), 0);
   for (const auto& vtb : vtbs) {
-    EXPECT_TRUE(checkVTB(
-        vtb, state, popminer->btcParams(), popminer->vbkParams()));
+    EXPECT_TRUE(
+        checkVTB(vtb, state, popminer->btcParams(), popminer->vbkParams()));
     submitVTB(vtb);
     EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   }
@@ -742,4 +742,33 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
     ASSERT_EQ(v_popData.vtbs.size(), 0);
     ASSERT_EQ(v_popData.atvs.size(), 0);
   }
+}
+
+TEST_F(MemPoolFixture, getPop_scenario_11) {
+  // mine one VBK block
+  auto* block_index = popminer->mineVbkBlocks(1);
+
+  AltChainParamsRegTest updated_params;
+  updated_params.mMaxPopDataSize = block_index->getHeader().estimateSize() + 1;
+
+  AltBlockTree updated_tree(updated_params,
+                            alttree.vbk().getParams(),
+                            alttree.btc().getParams(),
+                            payloadsProvider);
+
+  ASSERT_TRUE(updated_tree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
+                                                      this->state));
+  ASSERT_TRUE(updated_tree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(),
+                                                      this->state));
+  ASSERT_TRUE(updated_tree.bootstrap(this->state));
+
+  MemPool update_mempool(updated_tree);
+
+  ASSERT_TRUE(update_mempool.submit(block_index->getHeader(), state));
+
+  auto pop_data = update_mempool.generatePopData();
+
+  ASSERT_EQ(pop_data.context.size(), 0);
+  ASSERT_EQ(pop_data.atvs.size(), 0);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
 }
