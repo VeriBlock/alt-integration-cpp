@@ -63,6 +63,10 @@ template <typename T> T create() { return {}; }
                        HexStr(w.data()),                                       \
                        state.toString());                                      \
       }                                                                        \
+      /* if deserialized value is not same as "before serialization", die */  \
+      auto A = SerializeToHex(value);                                          \
+      auto B = SerializeToHex(value2);                                         \
+      VBK_ASSERT_MSG(A == B, "A=%s\nB=%s\n", A, B);                            \
       /* if given type provides .estimateSize() method */                      \
       /* compare its output to size of toVbkEncoding output */                 \
       if constexpr (hasEstimateSize<type>::value) {                            \

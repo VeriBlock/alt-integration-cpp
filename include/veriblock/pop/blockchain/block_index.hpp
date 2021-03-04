@@ -291,7 +291,7 @@ struct BlockIndex : public Block::addon_t {
   height_t height = 0;
 
   //! block header
-  std::shared_ptr<block_t> header{};
+  std::shared_ptr<block_t> header = std::make_shared<block_t>();
 
   //! contains status flags
   uint32_t status = BLOCK_VALID_UNKNOWN;

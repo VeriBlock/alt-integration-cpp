@@ -25,6 +25,10 @@ class WriteStream {
 
   explicit WriteStream(size_t size);
 
+  // movable
+  explicit WriteStream(WriteStream &&) = default;
+  WriteStream &operator=(WriteStream &&) = default;
+
   void write(const void *buf, size_t size);
 
   template <typename T,
@@ -60,6 +64,11 @@ class WriteStream {
   }
 
   const storage_t &data() const noexcept;
+
+ private:
+  // publicly non-copyable
+  WriteStream(const WriteStream &) = default;
+  WriteStream &operator=(const WriteStream &) = default;
 
  private:
   storage_t m_data;
