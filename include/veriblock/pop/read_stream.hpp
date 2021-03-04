@@ -29,6 +29,10 @@ struct ReadStream {
 
   explicit ReadStream(const std::string &s);
 
+  // movable
+  explicit ReadStream(ReadStream &&) = default;
+  ReadStream &operator=(ReadStream &&) = default;
+
   /**
    * Read type T of 'size' bytes
    * @param size bytes to be read
@@ -109,9 +113,7 @@ struct ReadStream {
 
   size_t position() const noexcept;
   void setPosition(const size_t &) noexcept;
-  size_t remaining() const noexcept {
-    { return (m_Size - m_Pos); }
-  }
+  size_t remaining() const noexcept { return (m_Size - m_Pos); }
   bool hasMore(size_t nbytes) const noexcept { return (remaining() >= nbytes); }
   void reset() noexcept;
   Slice<const uint8_t> data() const;
@@ -119,6 +121,10 @@ struct ReadStream {
 
  private:
   void assign(const void *buff, size_t numOfBytes);
+
+  // publicly non-copyable
+  ReadStream(const ReadStream &) = default;
+  ReadStream &operator=(const ReadStream &) = default;
 
  private:
   size_t m_Pos = 0;
