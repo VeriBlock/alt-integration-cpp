@@ -163,3 +163,32 @@ REGISTER_TYPED_TEST_SUITE_P(BlockIndexTest, RoundTrip);
 INSTANTIATE_TYPED_TEST_SUITE_P(BlockIndexTestSuite,
                                BlockIndexTest,
                                TypesUnderTest);
+
+TEST(AltBlockIndex, IdsAreEqual) {
+  BlockIndex<AltBlock> index;
+  index.insertPayloadIds<ATV>({uint256::fromHex("01"), uint256::fromHex("02")});
+  index.insertPayloadIds<VTB>({uint256::fromHex("03"), uint256::fromHex("04")});
+  index.insertPayloadIds<VbkBlock>(
+      {uint96::fromHex("05"), uint96::fromHex("06")});
+
+  ValidationState state;
+  BlockIndex<AltBlock> after;
+  auto hex = SerializeToHex(index);
+
+  ASSERT_TRUE(DeserializeFromHex(hex, after, state));
+  ASSERT_EQ(index.getPayloadIds<ATV>(), after.getPayloadIds<ATV>());
+  ASSERT_EQ(index.getPayloadIds<VTB>(), after.getPayloadIds<VTB>());
+  ASSERT_EQ(index.getPayloadIds<VbkBlock>(), after.getPayloadIds<VbkBlock>());
+}
+
+TEST(VbkBlockIndex, IdsAreEqual) {
+  BlockIndex<VbkBlock> index;
+  index.insertPayloadIds<VTB>({uint256::fromHex("01"), uint256::fromHex("02")});
+
+  ValidationState state;
+  BlockIndex<VbkBlock> after;
+  auto hex = SerializeToHex(index);
+
+  ASSERT_TRUE(DeserializeFromHex(hex, after, state));
+  ASSERT_EQ(index.getPayloadIds<VTB>(), after.getPayloadIds<VTB>());
+}

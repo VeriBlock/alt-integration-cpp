@@ -38,7 +38,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_VBKPOPTX_PER_VBK_BLOCK,
-          [](ReadStream stream, uint256& o, ValidationState& state) -> bool {
+          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint256::size(), uint256::size());
           })) {
@@ -52,10 +52,9 @@ void VbkBlockAddon::toVbkEncoding(WriteStream& w) const {
   w.writeBE<uint32_t>(_refCount);
   const PopState<VbkEndorsement>* e = this;
   e->toVbkEncoding(w);
-  writeArrayOf<uint256>(
-      w, _vtbids, [&](WriteStream& /*ignore*/, const uint256& u) {
-        writeSingleByteLenValue(w, u);
-      });
+  writeArrayOf<uint256>(w, _vtbids, [](WriteStream& w, const uint256& u) {
+    writeSingleByteLenValue(w, u);
+  });
 }
 
 void VbkBlockAddon::setNull() {

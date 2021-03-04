@@ -127,7 +127,7 @@ bool readSingleBEValue(ReadStream& stream, T& out, ValidationState& state) {
   if (!readSingleByteLenValue(stream, data, state, 0, sizeof(T))) {
     return state.Invalid("readsinglebe-bad-data");
   }
-  auto dataStream = ReadStream(data);
+  ReadStream dataStream(data);
   return dataStream.readBE<T>(out, state, data.size());
 }
 
