@@ -82,10 +82,11 @@ TEST_F(Scenario10, scenario_10) {
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  bool bootstrapped = reloadedAltTree.bootstrap(this->state);
-  ASSERT_TRUE(bootstrapped);
+  ASSERT_TRUE(reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
+                                                         this->state));
+  ASSERT_TRUE(reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(),
+                                                         this->state));
+  ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
   ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
