@@ -77,6 +77,7 @@ void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
   // write indices
   for (const index_t* index : dirty_indices) {
     batch.writeBlock(*index);
+    fmt::printf("wrote: %s\n", index->toPrettyString());
   }
 
   batch.writeTip(*tree.getBestChain().tip());
