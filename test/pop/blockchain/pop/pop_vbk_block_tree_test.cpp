@@ -63,51 +63,52 @@ TEST_F(VbkBlockTreeTestFixture, FilterChainForForkResolution) {
   popminer.mineVbkBlocks(1);
   ASSERT_EQ(best.blocksCount(), numVbkBlocks + 11);
 
-  auto hashes = best.getAllHashesInChain();
+  auto hashes = getAllHashesInChain(best);
+
+  auto slice = ChainSlice(best);
 
   auto protoContext = getProtoKeystoneContext(
-      20, best, hashes, popminer.btc(), popminer.vbkParams());
-
+      20, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 20);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
 
   protoContext = getProtoKeystoneContext(
-      40, best, hashes, popminer.btc(), popminer.vbkParams());
+      40, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 40);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
 
   protoContext = getProtoKeystoneContext(
-      60, best, hashes, popminer.btc(), popminer.vbkParams());
+      60, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 60);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
 
   protoContext = getProtoKeystoneContext(
-      80, best, hashes, popminer.btc(), popminer.vbkParams());
+      80, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 80);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 4);
 
   protoContext = getProtoKeystoneContext(
-      100, best, hashes, popminer.btc(), popminer.vbkParams());
+      100, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 100);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
 
   protoContext = getProtoKeystoneContext(
-      120, best, hashes, popminer.btc(), popminer.vbkParams());
+      120, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 120);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 0);
 
   protoContext = getProtoKeystoneContext(
-      140, best, hashes, popminer.btc(), popminer.vbkParams());
+      140, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 140);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 2);
 
   protoContext = getProtoKeystoneContext(
-      160, best, hashes, popminer.btc(), popminer.vbkParams());
+      160, slice, hashes, popminer.btc(), popminer.vbkParams());
   EXPECT_EQ(protoContext.blockHeight, 160);
   EXPECT_EQ(protoContext.referencedByBlocks.size(), 3);
 
   internal::ReducedPublicationView reducedPublicationView{
-      best, popminer.vbkParams(), popminer.btc()};
+      slice, popminer.vbkParams(), popminer.btc()};
 
   EXPECT_EQ(reducedPublicationView.size(),
             numVbkBlocks / popminer.vbkParams().getKeystoneInterval());

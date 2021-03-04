@@ -373,7 +373,7 @@ void DefaultPopRewardsCalculator::onOverrideTip(const index_t& index) {
   // invalidate rewards cache if necessary
   uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
 
-  const auto* fork = tree_.getBestChain().findFork(&index);
+  const auto* fork = findFork(tree_.getBestChain(), &index);
   if (fork != nullptr) {
     auto* tip = tree_.getBestChain().tip();
     VBK_ASSERT(tip);
