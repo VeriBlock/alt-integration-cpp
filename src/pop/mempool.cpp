@@ -20,7 +20,7 @@ PopData generatePopDataImpl(
     const AltChainParams& params) {
   PopData ret;
   // size in bytes of pop data added to
-  size_t popSize = 0;
+  size_t popSize = ret.estimateSize();
 
   const auto& maxSize = params.getMaxPopDataSize();
   for (const auto& block : blocks) {
