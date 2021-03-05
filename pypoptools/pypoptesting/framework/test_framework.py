@@ -135,13 +135,13 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
     def _start_logging(self):
         # Add logger and logging handlers
         self.log = logging.getLogger('TestFramework')
-        self.log.setLevel(logging.ERROR)
+        self.log.setLevel(logging.DEBUG)
         # Create file handler to log all messages
         fh = logging.FileHandler(pathlib.Path(self.dir, 'test_framework.log'), encoding='utf-8')
-        fh.setLevel(logging.INFO)
+        fh.setLevel(logging.DEBUG)
         # Create console handler to log messages to stderr.
         ch = logging.StreamHandler(sys.stdout)
-        ch.setLevel(logging.ERROR)
+        ch.setLevel(logging.DEBUG)
 
         formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d000Z %(name)s (%(levelname)s): %(message)s',
                                       datefmt='%Y-%m-%dT%H:%M:%S')
