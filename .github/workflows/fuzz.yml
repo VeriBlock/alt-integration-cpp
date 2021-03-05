@@ -23,9 +23,9 @@ jobs:
       VBK_FUZZ_CORPUS_DIR: $GITHUB_WORKSPACE/fuzz-corpus
     steps:
       - name: checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: VeriBlock/fuzz-corpus
           path: fuzz-corpus
