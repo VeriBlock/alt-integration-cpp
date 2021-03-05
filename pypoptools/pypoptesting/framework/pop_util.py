@@ -28,12 +28,12 @@ def endorse_block(node: Node, apm, height: int, address: str = None) -> str:
     address = address or node.getnewaddress()
 
     pub = PublicationData()
-    pub.header = pop_data.header
-    pub.payoutInfo = node.getpayoutinfo(address)
+    pub.header = str(pop_data.header)
+    pub.payoutInfo = str(node.getpayoutinfo(address))
     pub.identifier = node.getpopparams().networkId
-    pub.contextInfo = pop_data.authenticated_context
+    pub.contextInfo = str(pop_data.authenticated_context)
 
-    payloads = apm.endorseAltBlock(pub, pop_data.last_known_vbk_block)
+    payloads = apm.endorseAltBlock(pub, str(pop_data.last_known_vbk_block))
 
     for vbk_block in payloads.context:
         node.submitpopvbk(vbk_block.toVbkEncodingHex())
