@@ -17,14 +17,14 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       # 5 hours in sec
-      FUZZ_TIMEOUT: 18000
+      FUZZ_TIMEOUT: 30
       CC: clang
       CXX: clang++
       VBK_FUZZ_CORPUS_DIR: $GITHUB_WORKSPACE/fuzz-corpus
     steps:
-      - name: checkout
+      - name: checkout alt-cpp
         uses: actions/checkout@v2
-      - name: checkout
+      - name: checkout fuzz-corpus
         uses: actions/checkout@v2
         with:
           repository: VeriBlock/fuzz-corpus
