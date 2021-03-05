@@ -20,7 +20,7 @@ jobs:
       FUZZ_TIMEOUT: 30
       CC: clang
       CXX: clang++
-      VBK_FUZZ_CORPUS_DIR: $GITHUB_WORKSPACE/fuzz-corpus
+      VBK_FUZZ_CORPUS_DIR: /tmp/fuzz-corpus
     steps:
       - name: checkout alt-cpp
         uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: VeriBlock/fuzz-corpus
-          path: fuzz-corpus
+          path: /tmp/fuzz-corpus
       - name: update apt-get
         run: sudo apt-get update
       - name: install new cmake
