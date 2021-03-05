@@ -18,7 +18,8 @@ PopData generatePopDataImpl(
     const std::vector<std::pair<VbkBlock::id_t,
                                 std::shared_ptr<VbkPayloadsRelations>>>& blocks,
     const AltChainParams& params) {
-  PopData ret;
+  PopData ret{};
+  ret.version = 1;
   // size in bytes of pop data added to
   size_t popSize = ret.estimateSize();
 
