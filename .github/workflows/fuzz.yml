@@ -20,9 +20,15 @@ jobs:
       FUZZ_TIMEOUT: 18000
       CC: clang
       CXX: clang++
+      VBK_FUZZ_CORPUS_DIR: $GITHUB_WORKSPACE/fuzz-corpus
     steps:
       - name: checkout
         uses: actions/checkout@v1
+      - name: checkout
+        uses: actions/checkout@v1
+        with:
+          repository: VeriBlock/fuzz-corpus
+          path: fuzz-corpus
       - name: update apt-get
         run: sudo apt-get update
       - name: install new cmake
@@ -37,6 +43,12 @@ jobs:
             -DFUZZING=ON \
             -DCMAKE_BUILD_TYPE=Release \
             -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT} \
-            -DN_PROCESSORS=1
+            -DFUZZ_PROCESSORS=1
       - name: build
         run: cmake --build build -- -j2 fuzz
+      - name: commit corpus
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_changes: Update corpus ${{ github.sha }}
+          branch: master
+          repository: ${VBK_FUZZ_CORPUS_DIR}
