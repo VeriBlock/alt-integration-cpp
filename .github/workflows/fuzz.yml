@@ -42,8 +42,7 @@ jobs:
             -DTESTING=OFF \
             -DFUZZING=ON \
             -DCMAKE_BUILD_TYPE=Release \
-            -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT} \
-            -DFUZZ_PROCESSORS=1
+            -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT}
       - name: build
         run: cmake --build build -- -j2 fuzz
       - name: commit corpus
@@ -51,4 +50,4 @@ jobs:
         with:
           commit_changes: Update corpus ${{ github.sha }}
           branch: master
-          repository: ${VBK_FUZZ_CORPUS_DIR}
+          repository: ${{ github.workspace }}/fuzz-corpus
