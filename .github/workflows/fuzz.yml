@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       # 5 hours in sec
-      FUZZ_TIMEOUT: 30
+      FUZZ_TIMEOUT: 18000
       CC: clang
       CXX: clang++
       VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
