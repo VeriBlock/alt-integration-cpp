@@ -236,7 +236,7 @@ struct PopStateMachine {
     return unapplyWhile(*chain.tip(), *chain.first(), pred);
   }
 
-  //! unapplies all commands commands from blocks in the range of [from; to)
+  //! unapplies all commands from blocks in the range of [from; to)
   void unapply(index_t& from, index_t& to) {
     auto pred = [](index_t&) -> bool { return true; };
     auto& firstUnprocessed = unapplyWhile(from, to, pred);
@@ -245,7 +245,17 @@ struct PopStateMachine {
 
   //! unapplies all commands in chain
   //! @overload
-  void unapply(Chain<index_t>& chain) { unapply(*chain.tip(), *chain.first()); }
+  void unapply(Chain<index_t>& chain) {
+    VBK_ASSERT(!chain.empty());
+    unapply(*chain.tip(), *chain.first());
+  }
+
+  //! unapply all blocks in the range [slice.tip(); slice.first())
+  //! @overload
+  void unapply(ChainSlice<index_t>& chain) {
+    VBK_ASSERT(!chain.empty());
+    unapply(*chain.tip(), *chain.first());
+  }
 
   //! applies all commands from blocks in the range of (from; to].
   //! @invariant atomic: applies either all or none of the requested blocks

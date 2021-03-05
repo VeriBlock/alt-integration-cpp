@@ -29,6 +29,11 @@ struct Chain {
   using height_t = typename block_t::height_t;
   using storage_t = std::vector<index_t*>;
 
+  using iterator_t = typename storage_t::iterator;
+  using const_iterator_t = typename storage_t::const_iterator;
+  using reverse_iterator_t = typename storage_t::reverse_iterator;
+  using const_reverse_iterator_t = typename storage_t::const_reverse_iterator;
+
   Chain() = default;
 
   explicit Chain(height_t startHeight) : startHeight_(startHeight) {}
@@ -38,7 +43,9 @@ struct Chain {
     setTip(tip);
   }
 
-  height_t getStartHeight() const { return startHeight_; }
+  // for compatibility
+  height_t getStartHeight() const { return firstHeight(); }
+  height_t firstHeight() const { return startHeight_; }
 
   bool contains(const index_t* index) const {
     return index != nullptr && this->operator[](index->getHeight()) == index;
@@ -55,10 +62,7 @@ struct Chain {
   }
 
   index_t* next(const index_t* index) const {
-    if (!contains(index)) {
-      return nullptr;
-    }
-    return (*this)[index->getHeight() + 1];
+    return !contains(index) ? nullptr : (*this)[index->getHeight() + 1];
   }
 
   height_t chainHeight() const {
@@ -67,7 +71,9 @@ struct Chain {
 
   bool empty() const { return chain.empty(); }
 
-  size_t blocksCount() const { return chain.size(); }
+  size_t size() const { return chain.size(); }
+  // for compatibility
+  size_t blocksCount() const { return size(); }
 
   index_t* tip() const {
     return chain.empty() ? nullptr : (*this)[chainHeight()];
@@ -75,19 +81,15 @@ struct Chain {
 
   index_t* first() const { return chain.empty() ? nullptr : chain[0]; }
 
-  typename storage_t::reverse_iterator rbegin() { return chain.rbegin(); }
-  typename storage_t::const_reverse_iterator rbegin() const {
-    return chain.rbegin();
-  }
-  typename storage_t::reverse_iterator rend() { return chain.rend(); }
-  typename storage_t::const_reverse_iterator rend() const {
-    return chain.rend();
-  }
+  reverse_iterator_t rbegin() { return chain.rbegin(); }
+  const_reverse_iterator_t rbegin() const { return chain.rbegin(); }
+  reverse_iterator_t rend() { return chain.rend(); }
+  const_reverse_iterator_t rend() const { return chain.rend(); }
 
-  typename storage_t::iterator begin() { return chain.begin(); }
-  typename storage_t::const_iterator begin() const { return chain.begin(); }
-  typename storage_t::iterator end() { return chain.end(); }
-  typename storage_t::const_iterator end() const { return chain.end(); }
+  iterator_t begin() { return chain.begin(); }
+  const_iterator_t begin() const { return chain.begin(); }
+  iterator_t end() { return chain.end(); }
+  const_iterator_t end() const { return chain.end(); }
 
   void setTip(index_t* index) {
     if (index == nullptr || index->getHeight() < startHeight_) {
@@ -118,34 +120,6 @@ struct Chain {
 
   friend bool operator!=(const Chain& a, const Chain& b) { return !(a == b); }
 
-  index_t* findFork(const index_t* pindex) const {
-    if (pindex == nullptr || tip() == nullptr) {
-      return nullptr;
-    }
-
-    auto lastHeight = chainHeight();
-    if (pindex->getHeight() > lastHeight) {
-      pindex = pindex->getAncestor(lastHeight);
-    }
-    while (pindex && !contains(pindex)) {
-      pindex = pindex->getPrev();
-    }
-    return const_cast<index_t*>(pindex);
-  }
-
-  //! returns an unordered set of hashes, present in current chain.
-  //! useful for small chains for further checks of "hash existence"
-  std::unordered_set<hash_t> getAllHashesInChain() const {
-    std::unordered_set<hash_t> ret;
-    ret.reserve(chain.size());
-
-    for (auto* block : *this) {
-      ret.emplace(block->getHash());
-    }
-
-    return ret;
-  }
-
  private:
   height_t startHeight_ = 0;
   std::vector<index_t*> chain{};
@@ -155,6 +129,37 @@ struct Chain {
     return in - startHeight_;
   }
 };
+
+template <typename C>
+typename C::index_t* findFork(const C& chain,
+                              const typename C::index_t* pindex) {
+  if (pindex == nullptr || chain.tip() == nullptr) {
+    return nullptr;
+  }
+
+  auto lastHeight = chain.chainHeight();
+  if (pindex->getHeight() > lastHeight) {
+    pindex = pindex->getAncestor(lastHeight);
+  }
+  while (pindex && !chain.contains(pindex)) {
+    pindex = pindex->getPrev();
+  }
+  return const_cast<typename C::index_t*>(pindex);
+}
+
+//! returns an unordered set of hashes, present in current chain.
+//! useful for small chains for further checks of "hash existence"
+template <typename C>
+std::unordered_set<typename C::hash_t> getAllHashesInChain(const C& chain) {
+  std::unordered_set<typename C::hash_t> ret;
+  ret.reserve(chain.size());
+
+  for (auto* block : chain) {
+    ret.emplace(block->getHash());
+  }
+
+  return ret;
+}
 
 template <typename index_t>
 const index_t* findBlockContainingEndorsement(
