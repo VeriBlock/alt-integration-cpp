@@ -14,6 +14,26 @@ def connect_all(nodes: List[Node]):
     for i in range(len(nodes) - 1):
         nodes[i + 1].connect(nodes[i])
 
+    def check_nodes_have_peers():
+        p = [x.getpeers() for x in nodes]
+        return all([len(x) > 0 for x in p])
+
+    # verify that all peers are have at least one peer
+    wait_until(check_nodes_have_peers, timeout=60)
+
+
+def disconnect_all(nodes: List[Node]):
+    for i in range(len(nodes) - 1):
+        for node in nodes:
+            node.disconnect(nodes[i])
+
+    def check_nodes_disconnected():
+        p = [x.getpeers() for x in nodes]
+        return all([len(x) == 0 for x in p])
+
+    # verify that all peers are disconnected
+    wait_until(check_nodes_disconnected, timeout=60)
+
 
 def sync_all(nodes: List[Node], **kwargs):
     sync_blocks(nodes, **kwargs)

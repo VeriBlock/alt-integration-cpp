@@ -34,6 +34,9 @@ class GenericBlock:
     prevhash: Hexstr
     height: int
 
+    def short_str(self):
+        return "{}:{}".format(self.height, self.hash)
+
 
 @dataclass
 class VbkBlock:
