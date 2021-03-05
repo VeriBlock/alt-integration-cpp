@@ -7,6 +7,13 @@ Clean build dir and try this:
 ")
 endif()
 
+if(NOT DEFINED ENV{VBK_FUZZ_CORPUS_DIR})
+    message(FATAL_ERROR "
+Please clone https://github.com/VeriBlock/fuzz-corpus and define
+VBK_FUZZ_CORPUS_DIR environment variable with path to fuzz-corpus!
+    ")
+endif()
+
 target_compile_options(${LIB_NAME} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
 target_link_options(${LIB_NAME} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
 
@@ -40,7 +47,7 @@ function(add_fuzz FUZZ_TARGET)
     if(NOT FUZZ_MAX_LEN)
         set(FUZZ_MAX_LEN 4096)
     endif()
-    if(N_PROCESSORS EQUAL 0 OR NOT N_PROCESSORS)
+    if(NOT FUZZ_PROCESSORS AND (N_PROCESSORS EQUAL 0 OR NOT N_PROCESSORS))
         set(FUZZ_PROCESSORS 1)
     endif()
     if(FUZZ_CORPUS_DIR)
@@ -52,7 +59,7 @@ function(add_fuzz FUZZ_TARGET)
             CXX_STANDARD 17
             CXX_STANDARD_REQUIRED TRUE
             )
-    target_link_libraries(${FUZZ_TARGET} ${LIB_NAME})
+    target_link_libraries(${FUZZ_TARGET} PRIVATE ${LIB_NAME})
     target_compile_options(${FUZZ_TARGET} PRIVATE
             -fsanitize=fuzzer,address
             -g
@@ -70,15 +77,15 @@ function(add_fuzz FUZZ_TARGET)
                 -print_final_stats=1
                 -fork=${N_PROCESSORS}
                 ${ARGS}
-                ${FUZZ_CORPUS_DIR}
+                $ENV{VBK_FUZZ_CORPUS_DIR}/${FUZZ_TARGET}
                 USES_TERMINAL
                 VERBATIM
             )
     add_custom_command(
-            OUTPUT fuzz_targets APPEND
+            OUTPUT fuzz_targets
             COMMENT "Running ${FUZZ_TARGET}"
-            COMMAND run_${FUZZ_TARGET}
             DEPENDS run_${FUZZ_TARGET}
+            APPEND
     )
     add_test(
             NAME ${FUZZ_TARGET}
