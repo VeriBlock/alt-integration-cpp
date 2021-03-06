@@ -31,12 +31,18 @@ jobs:
       CC: clang
       CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
+      VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
     steps:
       - uses: actions/checkout@v1
         name: checkout
         with:
           submodules: recursive
           clean: true
+      - name: checkout fuzz-corpus
+        uses: actions/checkout@v2
+        with:
+          repository: VeriBlock/fuzz-corpus
+          path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
         run: apt-get update
       - name: Prepare ccache timestamp
