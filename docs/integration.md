@@ -66,3 +66,4 @@ This is needed to communicate Bitcoin and VeriBlock consensus information to Alt
 1. @subpage integration_1_build
 2. @subpage integration_2_popdata
 3. @subpage integration_3_forkpoint
+4. @subpage integration_4_config
