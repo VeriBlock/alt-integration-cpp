@@ -49,7 +49,7 @@ class Node(ABC):
     # Blockchain
 
     @abstractmethod
-    def generate(self, nblocks: int, address: str = None) -> List[Hexstr]:
+    def generate(self, nblocks: int, address: str = None) -> None:
         pass
 
     def getbestblock(self) -> BlockWithPopData:

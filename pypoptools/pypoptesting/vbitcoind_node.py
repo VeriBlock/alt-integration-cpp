@@ -129,9 +129,9 @@ class VBitcoindNode(Node):
         s = self.rpc.validateaddress(address)
         return s['scriptPubKey']
 
-    def generate(self, nblocks: int, address: str = None) -> List[Hexstr]:
+    def generate(self, nblocks: int, address: str = None) -> None:
         address = address or self.getnewaddress()
-        return self.rpc.generatetoaddress(nblocks, address)
+        self.rpc.generatetoaddress(nblocks, address)
 
     def getbestblockhash(self) -> Hexstr:
         return self.rpc.getbestblockhash()

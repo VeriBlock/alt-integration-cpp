@@ -45,8 +45,8 @@ class PopE2ETest(PopIntegrationTestFramework):
 
         self._assert_nodes_peer_info()
 
-        containing_block_hash = self.nodes[0].generate(nblocks=1)[0]
-        containing_block = self.nodes[0].getblock(containing_block_hash)
+        self.nodes[0].generate(nblocks=1)
+        containing_block = self.nodes[0].getbestblock()
 
         assert len(containing_block.containingVTBs) == vtbs_amount
         assert len(containing_block.containingVBKs) == vbk_blocks_amount + vtbs_amount + 1
