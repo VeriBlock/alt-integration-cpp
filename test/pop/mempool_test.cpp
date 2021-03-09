@@ -772,3 +772,22 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ASSERT_EQ(pop_data.atvs.size(), 0);
   ASSERT_EQ(pop_data.vtbs.size(), 0);
 }
+
+TEST_F(MemPoolFixture, IsKnown) {
+  ASSERT_FALSE(mempool->isKnown<VbkBlock>(VbkBlock{}.getId()));
+  auto next = popminer->mineVbkBlocks(1);
+
+  ASSERT_FALSE(mempool->isKnown<VbkBlock>(next->getHeader().getId()));
+  ASSERT_TRUE(mempool->submit(next->getHeader(), state));
+  // VBK block is in mempool, so known
+  ASSERT_TRUE(mempool->isKnown<VbkBlock>(next->getHeader().getId()));
+
+  auto pd = checkedGetPop();
+  mineAltBlocks(1, chain, false, false);
+
+  // activate ALT1
+  ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pd));
+  ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+  // VBK block is in blockchain, so known
+  ASSERT_TRUE(mempool->isKnown<VbkBlock>(pd.context.at(0).getId()));
+}

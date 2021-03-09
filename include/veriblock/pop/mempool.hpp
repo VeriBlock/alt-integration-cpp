@@ -85,11 +85,35 @@ struct MemPool {
   using atv_value_sorted_map_t = payload_value_sorted_map<ATV>;
 
   ~MemPool() = default;
-  MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
+  MemPool(AltBlockTree& tree);
+
+  /**
+   * Use this method to determine if payload of type T with id `id` is already
+   * known.
+   * @tparam T ATV or VTB or VbkBlock
+   * @param[in] id payload id
+   * @return true if payload exists in mempool or blockchain, false otherwise.
+   */
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
+  bool isKnown(const typename T::id_t& id) const {
+    // is `id` in mempool?
+    auto* inmempool = get<T>(id);
+    if (inmempool != nullptr) {
+      return true;
+    }
+
+    // is `id` in blockchain?
+    auto& pl = getPayloadsIndex();
+    std::vector<uint8_t> v(id.begin(), id.end());
+    const auto& containing = pl.getContainingAltBlocks(v);
+    return !containing.empty();
+  }
 
   //! getter for payloads stored in mempool
   //! @ingroup api
-  template <typename T>
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   const T* get(const typename T::id_t& id) const {
     const auto& map = getMap<T>();
     auto it = map.find(id);
@@ -124,7 +148,8 @@ struct MemPool {
    * @return true if payload is accepted to mempool, false otherwise
    * @ingroup api
    */
-  template <typename T>
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
     ReadStream stream(bytes);
     T payload;
@@ -154,7 +179,8 @@ struct MemPool {
    * @return true if payload is accepted to mempool, false otherwise
    * @ingroup api
    */
-  template <typename T>
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   SubmitResult submit(const T& pl, ValidationState& state) {
     return submit<T>(std::make_shared<T>(pl), state);
   }
@@ -176,7 +202,8 @@ struct MemPool {
    * @return true if payload is accepted to mempool, false otherwise
    * @ingroup api
    */
-  template <typename T>
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   SubmitResult submit(const std::shared_ptr<T>& pl, ValidationState& state) {
     (void)pl;
     (void)state;
@@ -185,13 +212,15 @@ struct MemPool {
   }
 
   //! @private
-  template <typename T>
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   const payload_map<T>& getMap() const {
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::getMap");
   }
 
   //! @private
-  template <typename T>
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   const payload_value_sorted_map<T>& getInFlightMap() const {
     static_assert(sizeof(T) == 0,
                   "Undefined type used in MemPool::getInFlightMap");
@@ -242,9 +271,10 @@ struct MemPool {
    * @param f callback
    * @return subscription id
    */
-  template <typename Pop>
-  size_t onAccepted(std::function<void(const Pop& p)> f) {
-    auto& sig = getSignal<Pop>();
+  template <typename T,
+            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
+  size_t onAccepted(std::function<void(const T& p)> f) {
+    auto& sig = getSignal<T>();
     return sig.connect(f);
   }
 
@@ -271,6 +301,10 @@ struct MemPool {
       const std::shared_ptr<VbkBlock>& block);
 
   void tryConnectPayloads();
+
+  const PayloadsIndex& getPayloadsIndex() const {
+    return mempool_tree_.alt().getPayloadsIndex();
+  }
 
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {
