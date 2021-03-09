@@ -44,8 +44,8 @@ class PopSyncTest(PopIntegrationTestFramework):
                 self.log.info("transactions relayed")
 
                 # mine a block on node[1] with this pop tx
-                containing_block_hash = self.nodes[1].generate(nblocks=1)[0]
-                containing_block = self.nodes[1].getblock(containing_block_hash)
+                self.nodes[1].generate(nblocks=1)
+                containing_block = self.nodes[1].getbestblock()
                 self.log.info("node1 mined containing block={}".format(containing_block.hash))
                 wait_for_block_height(self.nodes[0], containing_block.height)
                 wait_for_block_height(self.nodes[2], containing_block.height)

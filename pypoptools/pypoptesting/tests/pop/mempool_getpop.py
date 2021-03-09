@@ -38,8 +38,8 @@ class PopMempoolGetpopTest(PopIntegrationTestFramework):
         vbk_blocks = mine_vbk_blocks(self.nodes[0], apm, payloads_amount)
 
         # mine a block on node[1] with this pop tx
-        containing_block_hash = self.nodes[0].generate(nblocks=1)[0]
-        containing_block = self.nodes[0].getblock(containing_block_hash)
+        self.nodes[0].generate(nblocks=1)
+        containing_block = self.nodes[0].getbestblock()
 
         assert len(vbk_blocks) == payloads_amount
         assert len(containing_block.containingVBKs) == payloads_amount
@@ -57,8 +57,8 @@ class PopMempoolGetpopTest(PopIntegrationTestFramework):
             endorse_block(self.nodes[0], apm, last_block - 5)
 
         # mine a block on node[1] with this pop tx
-        containing_block_hash = self.nodes[0].generate(nblocks=1)[0]
-        containing_block = self.nodes[0].getblock(containing_block_hash)
+        self.nodes[0].generate(nblocks=1)
+        containing_block = self.nodes[0].getbestblock()
 
         assert len(containing_block.containingATVs) == payloads_amount
 
