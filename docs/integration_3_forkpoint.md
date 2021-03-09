@@ -1,4 +1,4 @@
-# Adding fork point. {#integration_3_forkpoint}
+# Choosing fork point. {#integration_3_forkpoint}
 
 [TOC]
 
