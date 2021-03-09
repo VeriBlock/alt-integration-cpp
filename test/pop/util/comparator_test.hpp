@@ -60,8 +60,8 @@ struct TestComparator {
   }
 
   template <typename K, typename V>
-  bool operator()(const std::map<K, std::set<V>>& a,
-                  const std::map<K, std::set<V>>& b,
+  bool operator()(const std::unordered_map<K, std::set<V>>& a,
+                  const std::unordered_map<K, std::set<V>>& b,
                   bool suppress = false) {
     VBK_EXPECT_EQ(a.size(), b.size(), suppress);
     for (const auto& k : a) {
