@@ -11,6 +11,7 @@
 #include <vector>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/serde.hpp>
+#include <veriblock/pop/type_traits.hpp>
 #include <veriblock/pop/uint.hpp>
 
 #include "vbk_merkle_path.hpp"
@@ -69,6 +70,11 @@ struct ATV {
 
  private:
   static const std::string _name;
+};
+
+template <>
+struct IsPopPayload<ATV> {
+  static const bool value = true;
 };
 
 template <typename JsonValue>

@@ -151,12 +151,12 @@ std::vector<uint8_t> PayloadsIndex::makeGlobalPid(
   return key;
 }
 
-const std::map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>&
+const std::unordered_map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>&
 PayloadsIndex::getPayloadsInAlt() const {
   return payload_in_alt;
 }
 
-const std::map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>&
+const std::unordered_map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>&
 PayloadsIndex::getPayloadsInVbk() const {
   return payload_in_vbk;
 }
