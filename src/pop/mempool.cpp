@@ -84,8 +84,6 @@ PopData MemPool::generatePopData() {
 
   PopData ret = generatePopDataImpl(blocks, mempool_tree_.alt().getParams());
   mempool_tree_.alt().filterInvalidPayloads(ret);
-
-  VBK_LOG_INFO("pop data: %s", ret.toPrettyString());
   return ret;
 }
 
