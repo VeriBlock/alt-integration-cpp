@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_ENTITIESPROVIDERS_HPP
 #define VERIBLOCK_POP_CPP_ENTITIESPROVIDERS_HPP
 
-#include <veriblock/blockchain/block_index.hpp>
+#include <veriblock/pop/blockchain/block_index.hpp>
 #include "FuzzedDataProvider.hpp"
 
 namespace fuzz {
@@ -40,8 +40,7 @@ bool ConsumeEndorsement(FuzzedDataProvider& p, E& e) {
   return ConsumeArray(p, e.id) &&
          ConsumeArray(p, e.blockOfProof) &&
          ConsumeArray(p, e.containingHash) &&
-         ConsumeArray(p, e.endorsedHash) &&
-         ConsumeArray(p, e.payoutInfo);
+         ConsumeArray(p, e.endorsedHash);
   // clang-format on
 }
 

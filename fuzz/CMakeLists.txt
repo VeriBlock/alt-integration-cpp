@@ -20,4 +20,9 @@ add_fuzz(e2e_fuzz
             e2e/fuzzer.cpp
             e2e/tree.cpp
             e2e/tree.hpp
+        ARGS
+            # fail if malloc(>10MB) is called
+            -malloc_limit_mb=10
+            # fail if more than 4 GB of RAM is used
+            -rss_limit_mb=4000
         )

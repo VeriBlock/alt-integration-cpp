@@ -684,11 +684,20 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
   auto& v = w.data();
   return {{v.data(), VBLAKE_HASH_SIZE}};
 }
+#define VBK_FUZZING_UNSAFE_FOR_PRODUCTION
 
 uint192 progPowHash(Slice<const uint8_t> header) {
+  // replace very slow progpow hash with very fast sha256 hash
+#if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
+  auto hash = sha256(header);
+  return {{hash.data(), uint192::size()}};
+#else
+  // real impl
+  VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto headerSha256 = sha256twice(header);
-  uint192 ret;
-  if (gProgpowHeaderCache.tryGet(headerSha256, ret)) {
+  uint192 ret{};
+  if (!gProgpowHeaderCache.empty() &&
+      gProgpowHeaderCache.tryGet(headerSha256, ret)) {
     // cache hit
     return ret;
   }
@@ -697,6 +706,7 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   ret = progPowHashImpl(header);
   gProgpowHeaderCache.insert(headerSha256, ret);
   return ret;
+#endif
 }
 
 }  // namespace altintegration

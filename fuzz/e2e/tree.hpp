@@ -6,10 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_TREE_HPP
 #define VERIBLOCK_POP_CPP_TREE_HPP
 
-#include <veriblock/bootstraps.hpp>
-#include <veriblock/pop_context.hpp>
-#include <veriblock/storage/inmem_block_storage.hpp>
-#include <veriblock/storage/inmem_payloads_provider.hpp>
+#include <veriblock/pop.hpp>
 
 namespace fuzz {
 
@@ -47,7 +44,9 @@ struct FuzzAltChainParams : public altintegration::AltChainParams {
 
   bool checkBlockHeader(
       const std::vector<uint8_t>& bytes,
-      const std::vector<uint8_t>& root) const noexcept override {
+      const std::vector<uint8_t>& root,
+      altintegration::ValidationState& state) const noexcept override {
+    (void)state;
     (void)bytes;
     (void)root;
     return true;
@@ -62,7 +61,14 @@ class Tree {
 
   Block* getBlock(const std::vector<uint8_t>& hash);
 
-  altintegration::InmemBlockStorage bs;
+  altintegration::BtcBlock lastBtc() const {
+    return popcontext->getBtcBlockTree().getBestChain().tip()->getHeader();
+  }
+
+  altintegration::VbkBlock lastVbk() const {
+    return popcontext->getVbkBlockTree().getBestChain().tip()->getHeader();
+  }
+
   std::vector<uint8_t> bestBlock;
   std::shared_ptr<altintegration::InmemPayloadsProvider> pp = nullptr;
   std::shared_ptr<altintegration::AltChainParams> params = nullptr;

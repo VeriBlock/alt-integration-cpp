@@ -103,11 +103,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wsign-compare)     # warn the user if they compare a signed and unsigned numbers
 
     # disable errors
-    add_flag(-Wno-error=unused-function)
     add_flag(-Wno-error=null-dereference)
     add_flag(-Wno-error=nonnull-compare)
     add_flag(-Wno-error=unknown-pragmas)
     add_flag(-Wno-error=strict-overflow)
+    add_flag(-Wno-unused-local-typedef)
+    add_flag(-Wno-unused-function)
+
     add_cxx_flag(-Wno-error=literal-suffix)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
