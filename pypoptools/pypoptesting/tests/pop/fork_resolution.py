@@ -91,12 +91,13 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         atv_id = endorse_block(self.nodes[0], apm, last_block + 113, addr0)
         self.log.info("node0 endorsed block %d (fork A tip)", last_block + 113)
         # mine pop tx on node0
-        block_hashes = self.nodes[0].generate(nblocks=10)
+        self.nodes[0].generate(nblocks=1)
+        containing_block = self.nodes[0].getbestblock()
+        self.nodes[0].generate(nblocks=9)
         self.log.info("node0 mines 10 more blocks")
         sync_all(self.nodes[0:2])
-        containing_block = self.nodes[0].getblock(block_hashes[0])
 
-        assert self.nodes[1].getblock(block_hashes[0]).hash == containing_block.hash
+        assert self.nodes[1].getblock(containing_block.hash).hash == containing_block.hash
 
         tip = self.nodes[0].getbestblock()
         assert atv_id in containing_block.containingATVs, "pop tx is not in containing block"
