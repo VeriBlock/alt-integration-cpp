@@ -496,6 +496,10 @@ func (v *PopContext) GetPopData() (*entities.PopData, error) {
 
 // RemoveAll - Returns nil if payload is valid
 func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
+	if payloads == nil {
+		return nil
+	}
+
 	stream := new(bytes.Buffer)
 	err := payloads.ToVbkEncoding(stream)
 	if err != nil {
