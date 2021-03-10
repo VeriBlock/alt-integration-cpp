@@ -39,7 +39,7 @@ set_source_files_properties(fuzz_targets PROPERTIES SYMBOLIC "true")
 
 function(add_fuzz FUZZ_TARGET)
     set(options)
-    set(oneValueArgs CORPUS_DIR TIMEOUT RUNS MAX_LEN)
+    set(oneValueArgs CORPUS_DIR TIMEOUT WEIGHT)
     set(multiValueArgs SOURCES ARGS)
     cmake_parse_arguments(FUZZ
             "${options}"
@@ -48,7 +48,7 @@ function(add_fuzz FUZZ_TARGET)
             ${ARGN})
 
     if(FUZZ_TIMEOUT)
-        MATH(EXPR THIS_FUZZ_TIMEOUT "${FUZZ_TIMEOUT} / ${TOTAL_FUZZERS}")
+        MATH(EXPR THIS_FUZZ_TIMEOUT "${FUZZ_TIMEOUT} * ${FUZZ_WEIGHT} / ${TOTAL_WEIGHT}")
         set(FUZZ_TIMEOUT -max_total_time=${THIS_FUZZ_TIMEOUT})
         message(STATUS "${FUZZ_TARGET} will run for ${THIS_FUZZ_TIMEOUT} sec")
     endif()
@@ -73,11 +73,11 @@ function(add_fuzz FUZZ_TARGET)
             )
     target_link_libraries(${FUZZ_TARGET} PUBLIC ${LIB_NAME})
     target_compile_options(${FUZZ_TARGET} PUBLIC
-            -fsanitize=fuzzer,address
+            -fsanitize=fuzzer
             -g
             )
     target_link_options(${FUZZ_TARGET} PRIVATE
-            -fsanitize=fuzzer,address
+            -fsanitize=fuzzer
             )
     set(ccov_dir ${CMAKE_BINARY_DIR}/ccov)
     file(MAKE_DIRECTORY ${ccov_dir})
