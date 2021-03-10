@@ -50,7 +50,10 @@ jobs:
       - name: Pull latest corpus
         run: |
           cd ${{ github.workspace }}/fuzz-corpus
-          git pull || true
+          git stash
+          git fetch
+          git pull
+          git stash pop
       - name: commit corpus
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

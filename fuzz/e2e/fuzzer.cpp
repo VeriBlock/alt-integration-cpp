@@ -101,7 +101,8 @@ fuzz::Block mineNextBlock(FuzzedDataProvider& p,
 void handle(FuzzedDataProvider& p) {
   switch (p.ConsumeEnum<Action>()) {
     case Action::MINE_ALT: {
-      auto* prev = selectBlock(p, TREE().popcontext->getAltBlockTree());
+      // in ALT mine only chain
+      auto* prev = TREE().popcontext->getAltBlockTree().getBlockIndex(TREE().bestBlock);
       VBK_ASSERT(prev != nullptr);
       auto block = mineNextBlock(p, prev);
       /* ignore=*/TREE().acceptBlock(block);
