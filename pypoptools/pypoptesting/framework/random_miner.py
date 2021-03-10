@@ -49,8 +49,8 @@ class RandomPopMiner:
         pop_data = self.node.getpopdatabyheight(endorsed_height)
         from pypoptools.pypopminer import PublicationData
         pub = PublicationData()
-        pub.header = pop_data.header
-        pub.payoutInfo = self.node.getpayoutinfo(self.node.getnewaddress())
+        pub.header = str(pop_data.header)
+        pub.payoutInfo = str(self.node.getpayoutinfo(self.node.getnewaddress()))
         pub.identifier = self.node.getpopparams().networkId
 
         vbk_tx = self.mm.createVbkTxEndorsingAltBlock(pub)
