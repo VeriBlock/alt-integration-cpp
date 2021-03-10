@@ -14,6 +14,7 @@
 #include <veriblock/pop/blockchain/vbk_block_addon.hpp>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/serde.hpp>
+#include <veriblock/pop/type_traits.hpp>
 #include <veriblock/pop/uint.hpp>
 
 #include "btcblock.hpp"
@@ -155,6 +156,11 @@ struct VbkBlock {
                                  VbkBlock& out,
                                  ValidationState& state,
                                  const VbkBlock::hash_t& precalculatedHash);
+};
+
+template <>
+struct IsPopPayload<VbkBlock> {
+  static const bool value = true;
 };
 
 template <typename JsonValue>

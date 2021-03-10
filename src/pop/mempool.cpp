@@ -340,6 +340,8 @@ void MemPool::tryConnectPayloads() {
   }
 }
 
+MemPool::MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
+
 template <>
 const MemPool::vbk_map_t& MemPool::getMap() const {
   return vbkblocks_;

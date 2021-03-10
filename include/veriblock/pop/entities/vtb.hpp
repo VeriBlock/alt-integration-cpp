@@ -76,6 +76,11 @@ struct VTB {
   static const std::string _name;
 };
 
+template <>
+struct IsPopPayload<VTB> {
+  static const bool value = true;
+};
+
 //! @private
 template <typename JsonValue>
 JsonValue ToJSON(const VTB& v) {
