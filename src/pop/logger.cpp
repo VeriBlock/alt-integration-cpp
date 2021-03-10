@@ -8,18 +8,19 @@
 
 namespace altintegration {
 
-// NOLINTNEXTLINE(cert-err58-cpp)
-static std::unique_ptr<Logger> logger = std::unique_ptr<Logger>(new Logger());
-
-Logger& GetLogger() {
-  VBK_ASSERT(logger != nullptr);
-  return *logger;
+static std::unique_ptr<Logger>& getLoggerInner() {
+  // NOLINTNEXTLINE(cert-err58-cpp)
+  static std::unique_ptr<Logger> logger = std::unique_ptr<Logger>(new Logger());
+  return logger;
 }
+
+Logger& GetLogger() { return *getLoggerInner(); }
 
 void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl) {
   VBK_ASSERT(lgr != nullptr);
-  logger = std::move(lgr);
-  logger->level = log_lvl;
+
+  getLoggerInner() = std::move(lgr);
+  getLoggerInner()->level = log_lvl;
 }
 
 std::string LevelToString(LogLevel l) {

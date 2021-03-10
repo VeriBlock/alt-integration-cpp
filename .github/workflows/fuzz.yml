@@ -9,8 +9,8 @@ on:
     branches:
       - fuzz
   schedule:
-    # run at the start of every 6th hour
-    - cron:  '0 */6 * * *'
+    # run at the start of every 3rd hour.
+    - cron:  '0 */3 * * *'
 
 jobs:
   fuzz:

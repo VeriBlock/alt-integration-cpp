@@ -7,6 +7,15 @@
 
 namespace fuzz {
 
+Block genesisBlock = []() -> Block {
+  Block b;
+  b.timestamp = 0;
+  b.hash = {1,2,3,4};
+  b.height = 0;
+  return b;
+}();
+
+
 bool Tree::acceptBlock(const Block& block) {
   if (block.prevhash == block.hash) {
     // bad hash
@@ -22,17 +31,17 @@ bool Tree::acceptBlock(const Block& block) {
   auto altheader = block.toAltBlock();
   using altintegration::ValidationState;
   ValidationState state;
-  if (!popcontext->altTree->acceptBlockHeader(altheader, state)) {
+  if (!popcontext->getAltBlockTree().acceptBlockHeader(altheader, state)) {
     return false;
   }
 
-  auto* bestIndex = popcontext->altTree->getBlockIndex(bestBlock);
+  auto* bestIndex = popcontext->getAltBlockTree().getBlockIndex(bestBlock);
   VBK_ASSERT(bestIndex);
   VBK_ASSERT(bestIndex->isConnected());
 
-  popcontext->altTree->acceptBlock(altheader.hash, block.popdata);
+  popcontext->getAltBlockTree().acceptBlock(altheader.hash, block.popdata);
 
-  auto* index = popcontext->altTree->getBlockIndex(altheader.hash);
+  auto* index = popcontext->getAltBlockTree().getBlockIndex(altheader.hash);
   VBK_ASSERT(index);
   if (!index->isConnected()) {
     // do not invoke POP FR if index is not connected
@@ -40,11 +49,11 @@ bool Tree::acceptBlock(const Block& block) {
   }
 
   // try POP FR
-  bool success = popcontext->altTree->setState(*bestIndex, state);
+  bool success = popcontext->getAltBlockTree().setState(*bestIndex, state);
   VBK_ASSERT(success);
 
-  int result = popcontext->altTree->comparePopScore(bestIndex->getHash(),
-                                                    index->getHash());
+  int result = popcontext->getAltBlockTree().comparePopScore(
+      bestIndex->getHash(), index->getHash());
   if (result < 0) {
     bestBlock = index->getHash();
   } else if (result == 0) {
@@ -55,7 +64,7 @@ bool Tree::acceptBlock(const Block& block) {
     // bestIndex is still best
   }
 
-  success = popcontext->altTree->setState(*bestIndex, state);
+  success = popcontext->getAltBlockTree().setState(*bestIndex, state);
   VBK_ASSERT(success);
 
   return true;
