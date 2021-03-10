@@ -46,6 +46,11 @@ jobs:
             -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT}
       - name: build
         run: cmake --build build -- -j2 fuzz
+
+      - name: Pull latest corpus
+        run: |
+          cd ${{ github.workspace }}/fuzz-corpus
+          git pull || true
       - name: commit corpus
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
