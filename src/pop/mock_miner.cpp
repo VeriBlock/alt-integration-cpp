@@ -3,12 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/mock_miner.hpp>
-
 #include <stdexcept>
-
 #include <veriblock/pop/crypto/secp256k1.hpp>
 #include <veriblock/pop/entities/address.hpp>
+#include <veriblock/pop/mock_miner.hpp>
 #include <veriblock/pop/strutil.hpp>
 
 namespace altintegration {
@@ -24,7 +22,6 @@ static auto defaultPublicKeyVbk = ParseHex(
     "ca1966b7f52e687600784d1de062c1dd9c8a5fe55b2ba5d906c703d37cbd02ecd9c97a8061"
     "10fa05d9014a102a0513dd354ec5");
 
-
 PopData MockMiner::endorseAltBlock(
     const PublicationData& publicationData,
     const VbkBlock::hash_t& lastKnownVbkBlockHash) {
@@ -33,9 +30,8 @@ PopData MockMiner::endorseAltBlock(
   return createPopDataEndorsingAltBlock(block, tx, lastKnownVbkBlockHash);
 }
 
-VTB MockMiner::endorseVbkBlock(
-    const VbkBlock& publishedBlock,
-    const BtcBlock::hash_t& lastKnownBtcBlockHash) {
+VTB MockMiner::endorseVbkBlock(const VbkBlock& publishedBlock,
+                               const BtcBlock::hash_t& lastKnownBtcBlockHash) {
   const auto& tx =
       createVbkPopTxEndorsingVbkBlock(publishedBlock, lastKnownBtcBlockHash);
   const auto& block = mineVbkBlocks(1, {tx});
@@ -56,7 +52,7 @@ PopData MockMiner::createPopDataEndorsingAltBlock(
     const VbkTx& transaction,
     const VbkBlock::hash_t& lastKnownVbkBlockHash) const {
   PopData data;
-  data.atvs = { createATV(blockOfProof, transaction) };
+  data.atvs = {createATV(blockOfProof, transaction)};
   data.context = getBlocks(vbk_tree_, blockOfProof, lastKnownVbkBlockHash);
   for (const VbkBlock& b : data.context) {
     const auto& vtbs = getVTBs(b);
@@ -65,9 +61,8 @@ PopData MockMiner::createPopDataEndorsingAltBlock(
   return data;
 }
 
-ATV MockMiner::createATV(
-    const VbkBlock& blockOfProof,
-    const VbkTx& transaction) const {
+ATV MockMiner::createATV(const VbkBlock& blockOfProof,
+                         const VbkTx& transaction) const {
   ATV atv;
   atv.transaction = transaction;
   atv.merklePath = getMerklePath(blockOfProof, transaction.getHash());
@@ -93,9 +88,8 @@ VbkTx MockMiner::createVbkTxEndorsingAltBlock(
   return tx;
 }
 
-VTB MockMiner::createVTB(
-    const VbkBlock& containingBlock,
-    const VbkPopTx& transaction) const {
+VTB MockMiner::createVTB(const VbkBlock& containingBlock,
+                         const VbkPopTx& transaction) const {
   VTB vtb;
   vtb.transaction = transaction;
   vtb.merklePath = getMerklePath(containingBlock, transaction.getHash());
@@ -117,8 +111,8 @@ VbkPopTx MockMiner::createVbkPopTxEndorsingVbkBlock(
   popTx.publicKey = defaultPublicKeyVbk;
   popTx.bitcoinTransaction = transaction;
   popTx.merklePath = getMerklePath(blockOfProof, transaction.getHash());
-  popTx.blockOfProofContext = getBlocks(btc_tree_, blockOfProof,
-                                        lastKnownBtcBlockHash);
+  popTx.blockOfProofContext =
+      getBlocks(btc_tree_, blockOfProof, lastKnownBtcBlockHash);
 
   auto hash = popTx.getHash();
   popTx.signature =
@@ -137,26 +131,22 @@ BtcTx MockMiner::createBtcTxEndorsingVbkBlock(
   return tx;
 }
 
-BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount) {
+BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
   return mineBlocks(amount, *vbkTip(), std::vector<VbkTx>());
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount,
-    const std::vector<VbkTx>& transactions) {
+    size_t amount, const std::vector<VbkTx>& transactions) {
   return mineBlocks(amount, *vbkTip(), transactions);
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount,
-    const std::vector<VbkPopTx>& transactions) {
+    size_t amount, const std::vector<VbkPopTx>& transactions) {
   return mineBlocks(amount, *vbkTip(), transactions);
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount,
-    const BlockIndex<VbkBlock>& tip) {
+    size_t amount, const BlockIndex<VbkBlock>& tip) {
   return mineBlocks(amount, tip, std::vector<VbkTx>());
 }
 
@@ -175,8 +165,7 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
 }
 
 BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(
-    size_t amount,
-    const std::vector<BtcTx>& transactions) {
+    size_t amount, const std::vector<BtcTx>& transactions) {
   return mineBlocks(amount, *btcTip(), transactions);
 }
 
@@ -190,19 +179,19 @@ BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(
 const BlockIndex<VbkBlock>* MockMiner::vbkTip() const {
   BlockIndex<VbkBlock>* tip = vbk_tree_.getBestChain().tip();
   VBK_ASSERT_MSG(tip != nullptr,
-        "VBK tip is undefined (blockchain may be not bootstrapped)");
+                 "VBK tip is undefined (blockchain may be not bootstrapped)");
   return tip;
 }
 
 const BlockIndex<BtcBlock>* MockMiner::btcTip() const {
   BlockIndex<BtcBlock>* tip = btc_tree_.getBestChain().tip();
   VBK_ASSERT_MSG(tip != nullptr,
-        "BTC tip is undefined (blockchain may be not bootstrapped)");
+                 "BTC tip is undefined (blockchain may be not bootstrapped)");
   return tip;
 }
 
 const BlockIndex<VbkBlock>* MockMiner::getVbkBlockIndex(
-    const VbkBlock::hash_t & hash) const {
+    const VbkBlock::hash_t& hash) const {
   const auto* index = vbk_tree_.getBlockIndex(hash);
   VBK_ASSERT_MSG(
       index != nullptr,
@@ -219,8 +208,7 @@ const BlockIndex<BtcBlock>* MockMiner::getBtcBlockIndex(
   return index;
 }
 
-std::vector<VTB> MockMiner::getVTBs(
-    const VbkBlock& block) const {
+std::vector<VTB> MockMiner::getVTBs(const VbkBlock& block) const {
   auto it = vtbs_.find(block.getHash());
   if (it == vtbs_.end()) {
     return {};
@@ -255,19 +243,19 @@ template <typename BlockTree, typename Block>
 BlockIndex<Block>* MockMiner::acceptBlock(BlockTree& tree, const Block& block) {
   ValidationState state;
   if (!tree.acceptBlockHeader(block, state)) {
-    throw std::domain_error(state.toString());
+    return nullptr;
   }
   auto* index = tree.getBlockIndex(block.getHash());
-  VBK_ASSERT_MSG(index != nullptr, "could not find the block we have just added");
+  VBK_ASSERT_MSG(index != nullptr,
+                 "could not find the block we have just added");
   index->addRef(0);
   return index;
 }
 
 template <typename Block, typename Tx>
-BlockIndex<Block>* MockMiner::mineBlocks(
-    size_t amount,
-    const BlockIndex<Block>& tip,
-    const std::vector<Tx>& transactions) {
+BlockIndex<Block>* MockMiner::mineBlocks(size_t amount,
+                                         const BlockIndex<Block>& tip,
+                                         const std::vector<Tx>& transactions) {
   VBK_ASSERT(amount > 0);
   auto* index = mineBlock(tip, transactions);
   for (size_t i = 1; i < amount; i++) {
@@ -277,17 +265,15 @@ BlockIndex<Block>* MockMiner::mineBlocks(
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineBlock(
-    const BlockIndex<VbkBlock>& tip,
-    const std::vector<VbkTx>& transactions) {
-
+    const BlockIndex<VbkBlock>& tip, const std::vector<VbkTx>& transactions) {
   if (transactions.empty()) {
     VbkBlock block = vbk_miner_.createNextBlock(tip);
     return acceptBlock(vbk_tree_, block);
   }
 
-  VbkMerkleTree merkleTree(hashAll(transactions), 1); // this is NORMAL tx
-  const auto& merkleRoot = merkleTree.getMerkleRoot()
-      .trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+  VbkMerkleTree merkleTree(hashAll(transactions), 1);  // this is NORMAL tx
+  const auto& merkleRoot =
+      merkleTree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 
   VbkBlock block = vbk_miner_.createNextBlock(tip, merkleRoot);
   BlockIndex<VbkBlock>* blockIndex = acceptBlock(vbk_tree_, block);
@@ -300,29 +286,28 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(
 BlockIndex<VbkBlock>* MockMiner::mineBlock(
     const BlockIndex<VbkBlock>& tip,
     const std::vector<VbkPopTx>& transactions) {
-
   if (transactions.empty()) {
     VbkBlock block = vbk_miner_.createNextBlock(tip);
     return acceptBlock(vbk_tree_, block);
   }
 
-  VbkMerkleTree merkleTree(hashAll(transactions), 0); // this is POP tx
-  const auto& merkleRoot = merkleTree.getMerkleRoot()
-      .trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+  VbkMerkleTree merkleTree(hashAll(transactions), 0);  // this is POP tx
+  const auto& merkleRoot =
+      merkleTree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 
   VbkBlock block = vbk_miner_.createNextBlock(tip, merkleRoot);
   BlockIndex<VbkBlock>* blockIndex = acceptBlock(vbk_tree_, block);
 
   vbk_merkle_trees_.insert({block.getHash(), merkleTree});
-  saveVTBs(blockIndex, transactions);
+  if(!saveVTBs(blockIndex, transactions)){
+    return nullptr;
+  }
 
   return blockIndex;
 }
 
 BlockIndex<BtcBlock>* MockMiner::mineBlock(
-    const BlockIndex<BtcBlock>& tip,
-    const std::vector<BtcTx>& transactions) {
-
+    const BlockIndex<BtcBlock>& tip, const std::vector<BtcTx>& transactions) {
   if (transactions.empty()) {
     BtcBlock block = btc_miner_.createNextBlock(tip);
     return acceptBlock(btc_tree_, block);
@@ -339,7 +324,7 @@ BlockIndex<BtcBlock>* MockMiner::mineBlock(
   return blockIndex;
 }
 
-void MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
+bool MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
                          const std::vector<VbkPopTx>& transactions) {
   std::vector<VTB> vtbs(transactions.size());
   for (size_t i = 0; i < vtbs.size(); i++) {
@@ -354,10 +339,13 @@ void MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
   if (!vbk_tree_.addPayloads(hash, vtbs, state)) {
     blockIndex->removeRef(0);
     vbk_tree_.removeLeaf(*blockIndex);
-    throw std::domain_error(state.toString());
+    return false;
+//    throw std::domain_error(state.toString());
   }
 
   vtbs_.insert({hash, vtbs});
+
+  return true;
 }
 
 VbkMerklePath MockMiner::getMerklePath(const VbkBlock& block,
@@ -374,6 +362,11 @@ MerklePath MockMiner::getMerklePath(const BtcBlock& block,
   VBK_ASSERT(it != btc_merkle_trees_.end());
   const auto& merkleTree = it->second;
   return merkleTree.getMerklePath(txHash);
+}
+
+const std::unordered_map<VbkBlock::hash_t, std::vector<VTB>>&
+MockMiner::getAllVTBs() const {
+  return vtbs_;
 }
 
 }  // namespace altintegration

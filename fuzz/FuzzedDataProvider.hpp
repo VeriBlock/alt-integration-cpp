@@ -25,6 +25,8 @@
 #include <utility>
 #include <vector>
 
+struct NotEnoughDataException {};
+
 class FuzzedDataProvider {
  public:
   // |data| is an array of length |size| that the FuzzedDataProvider wraps to
@@ -40,6 +42,15 @@ class FuzzedDataProvider {
   template <typename T>
   std::vector<T> ConsumeBytes(size_t num_bytes) {
     num_bytes = std::min(num_bytes, remaining_bytes_);
+    return ConsumeBytes<T>(num_bytes, num_bytes);
+  }
+
+  template <typename T>
+  std::vector<T> ConsumeBytesOrFail(size_t num_bytes) {
+    if(num_bytes > remaining_bytes_) {
+      throw NotEnoughDataException{};
+    }
+
     return ConsumeBytes<T>(num_bytes, num_bytes);
   }
 

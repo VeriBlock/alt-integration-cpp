@@ -6,9 +6,9 @@
 #include <gtest/gtest.h>
 
 #include <exception>
+#include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
 
 #include "util/pop_test_fixture.hpp"
-#include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
 
 using namespace altintegration;
 
@@ -199,9 +199,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
                                                 GetRegTestBtcBlock().getHash());
 
   auto vbktip1 = popminer->vbk().getBestChain().tip();
-  // should not throw, as we removed call to 'invalidateSubtree'
-  ASSERT_THROW(popminer->mineVbkBlocks(1, *vbkBlockTip2, {vbkPopTx1}),
-               std::domain_error);
+  ASSERT_EQ(popminer->mineVbkBlocks(1, *vbkBlockTip2, {vbkPopTx1}), nullptr);
   auto vbktip3 = popminer->vbk().getBestChain().tip();
 
   ASSERT_TRUE(cmp(*vbktip1, *vbktip3)) << "tip has been changed wrongly";

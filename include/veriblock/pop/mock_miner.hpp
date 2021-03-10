@@ -103,6 +103,8 @@ class MockMiner {
       const BtcBlock::hash_t& hash) const;
 
   std::vector<VTB> getVTBs(const VbkBlock& block) const;
+  const std::unordered_map<VbkBlock::hash_t, std::vector<VTB>>& getAllVTBs()
+      const;
 
   vbk_block_tree& vbk() { return vbk_tree_; }
   btc_block_tree& btc() { return btc_tree_; }
@@ -145,13 +147,12 @@ class MockMiner {
   BlockIndex<BtcBlock>* mineBlock(const BlockIndex<BtcBlock>& tip,
                                   const std::vector<BtcTx>& transactions);
 
-  void saveVTBs(BlockIndex<VbkBlock>* blockIndex,
+  bool saveVTBs(BlockIndex<VbkBlock>* blockIndex,
                 const std::vector<VbkPopTx>& transactions);
 
   VbkMerklePath getMerklePath(const VbkBlock& block,
                               const uint256& txHash) const;
-  MerklePath getMerklePath(const BtcBlock& block,
-                           const uint256& txHash) const;
+  MerklePath getMerklePath(const BtcBlock& block, const uint256& txHash) const;
 
   BtcChainParamsRegTest btc_params_{};
   VbkChainParamsRegTest vbk_params_{};

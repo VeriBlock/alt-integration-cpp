@@ -7,9 +7,9 @@
 
 #include <exception>
 #include <memory>
+#include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
 
 #include "util/pop_test_fixture.hpp"
-#include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
 
 using namespace altintegration;
 
@@ -212,9 +212,9 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   ASSERT_GT(vbkPopTx1.blockOfProofContext.size(), 0);
   vbkPopTx1.blockOfProofContext[0].setPreviousBlock(new_hash);
 
-  EXPECT_THROW(popminer.mineVbkBlocks(
-                   1, {vbkPopTx1, vbkPopTx2, vbkPopTx3, vbkPopTx4, vbkPopTx5}),
-               std::domain_error);
+  EXPECT_EQ(popminer.mineVbkBlocks(
+                1, {vbkPopTx1, vbkPopTx2, vbkPopTx3, vbkPopTx4, vbkPopTx5}),
+            nullptr);
 
   // check that all endorsement have not been applied
   ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
