@@ -100,8 +100,8 @@ class PayloadsIndex {
 
   // clang-format off
   const std::unordered_map<std::vector<uint8_t>, bool>& getValidity() const;
-  const std::map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>& getPayloadsInAlt() const;
-  const std::map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>& getPayloadsInVbk() const;
+  const std::unordered_map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>& getPayloadsInAlt() const;
+  const std::unordered_map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>& getPayloadsInVbk() const;
   // clang-format on
 
  private:
@@ -119,8 +119,10 @@ class PayloadsIndex {
   // reverse index
   // key = id of payload
   // value = set of ALT/VBK blocks containing that payload
-  std::map<std::vector<uint8_t>, std::set<AltBlock::hash_t>> payload_in_alt;
-  std::map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>> payload_in_vbk;
+  std::unordered_map<std::vector<uint8_t>, std::set<AltBlock::hash_t>>
+      payload_in_alt;
+  std::unordered_map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>
+      payload_in_vbk;
 };
 
 }  // namespace altintegration
