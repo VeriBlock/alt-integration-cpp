@@ -598,29 +598,41 @@ struct CacheEntry {
 };
 
 // epoch -> ethash cache + dag
-// NOLINTNEXTLINE(cert-err58-cpp)
-static cache::
-    SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>
-        gEthashCache;
+using EthashCache_t =
+    cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>;
+
+static EthashCache_t& GetEthashCache() {
+  // NOLINTNEXTLINE(cert-err58-cpp)
+  static EthashCache_t instance;
+  return instance;
+}
+
 // protects gEthashCache
-static std::mutex csEthashCache;
+static std::mutex& GetEthashCacheMutex() {
+  static std::mutex csEthashCache;
+  return csEthashCache;
+}
 
 // sha256d(vbkheader) -> progpow hash
+using ProgpowHeaderCache_T = lru11::Cache<uint256, uint192, std::mutex>;
+
 // NOLINTNEXTLINE(cert-err58-cpp)
-static lru11::Cache<uint256, uint192, std::mutex> gProgpowHeaderCache(
-    VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
+static ProgpowHeaderCache_T& GetProgpowHeaderCache() {
+  static ProgpowHeaderCache_T instance(VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
+  return instance;
+}
 
 void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
                                      uint192 progpowHash) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   auto hsha = sha256twice(header);
-  gProgpowHeaderCache.insert(hsha, std::move(progpowHash));
+  GetProgpowHeaderCache().insert(hsha, std::move(progpowHash));
 }
 
-void progpow::clearHeaderCache() { gProgpowHeaderCache.clear(); }
+void progpow::clearHeaderCache() { GetProgpowHeaderCache().clear(); }
 void progpow::clearEthashCache() {
-  std::lock_guard<std::mutex> lock(csEthashCache);
-  gEthashCache.clear();
+  std::lock_guard<std::mutex> lock(GetEthashCacheMutex());
+  GetEthashCache().clear();
 }
 
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
@@ -636,8 +648,8 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   std::shared_ptr<CacheEntry> cacheEntry;
   {
     // cache miss
-    std::lock_guard<std::mutex> lock(csEthashCache);
-    cacheEntry = gEthashCache.getOrDefault(epoch, [epoch, height] {
+    std::lock_guard<std::mutex> lock(GetEthashCacheMutex());
+    cacheEntry = GetEthashCache().getOrDefault(epoch, [epoch, height] {
       VBK_LOG_WARN(
           "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
           epoch,
@@ -686,17 +698,25 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
 }
 
 uint192 progPowHash(Slice<const uint8_t> header) {
+  // replace very slow progpow hash with very fast sha256 hash
+#if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
+  auto hash = sha256(header);
+  return {{hash.data(), uint192::size()}};
+#else
+  // real impl
+  VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto headerSha256 = sha256twice(header);
-  uint192 ret;
-  if (gProgpowHeaderCache.tryGet(headerSha256, ret)) {
+  uint192 ret{};
+  if (GetProgpowHeaderCache().tryGet(headerSha256, ret)) {
     // cache hit
     return ret;
   }
 
   // cache miss
   ret = progPowHashImpl(header);
-  gProgpowHeaderCache.insert(headerSha256, ret);
+  GetProgpowHeaderCache().insert(headerSha256, ret);
   return ret;
+#endif
 }
 
 }  // namespace altintegration

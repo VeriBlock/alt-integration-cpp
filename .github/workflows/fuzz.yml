@@ -9,8 +9,8 @@ on:
     branches:
       - fuzz
   schedule:
-    # run at the start of every 6th hour
-    - cron:  '0 */6 * * *'
+    # run at the start of every 3rd hour.
+    - cron:  '0 */3 * * *'
 
 jobs:
   fuzz:
@@ -46,6 +46,14 @@ jobs:
             -DFUZZ_TIMEOUT=${FUZZ_TIMEOUT}
       - name: build
         run: cmake --build build -- -j2 fuzz
+
+      - name: Pull latest corpus
+        run: |
+          cd ${{ github.workspace }}/fuzz-corpus
+          git stash
+          git fetch
+          git pull
+          git stash pop
       - name: commit corpus
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

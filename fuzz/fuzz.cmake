@@ -14,8 +14,16 @@ VBK_FUZZ_CORPUS_DIR environment variable with path to fuzz-corpus!
     ")
 endif()
 
-target_compile_options(${LIB_NAME} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
-target_link_options(${LIB_NAME} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+function(fuzz_add_cov_flags target)
+    if(FUZZ_COV)
+        target_compile_options(${target} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+        target_link_options(${target} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+    endif()
+endfunction()
+
+
+fuzz_add_cov_flags(${LIB_NAME})
+
 
 add_custom_target(fuzz
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
@@ -53,29 +61,37 @@ function(add_fuzz FUZZ_TARGET)
     if(FUZZ_CORPUS_DIR)
         file(MAKE_DIRECTORY ${FUZZ_CORPUS_DIR})
     endif()
+    if(FUZZ_ONCE)
+        set(FUZZ_ONCE -runs=1)
+    endif()
 
     add_executable(${FUZZ_TARGET} ${FUZZ_SOURCES})
+    fuzz_add_cov_flags(${FUZZ_TARGET})
     set_target_properties(${FUZZ_TARGET} PROPERTIES
             CXX_STANDARD 17
             CXX_STANDARD_REQUIRED TRUE
             )
-    target_link_libraries(${FUZZ_TARGET} PRIVATE ${LIB_NAME})
-    target_compile_options(${FUZZ_TARGET} PRIVATE
+    target_link_libraries(${FUZZ_TARGET} PUBLIC ${LIB_NAME})
+    target_compile_options(${FUZZ_TARGET} PUBLIC
             -fsanitize=fuzzer,address
             -g
             )
     target_link_options(${FUZZ_TARGET} PRIVATE
             -fsanitize=fuzzer,address
             )
+    set(ccov_dir ${CMAKE_BINARY_DIR}/ccov)
+    file(MAKE_DIRECTORY ${ccov_dir})
+    file(MAKE_DIRECTORY $ENV{VBK_FUZZ_CORPUS_DIR}/${FUZZ_TARGET})
     add_custom_target(run_${FUZZ_TARGET}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            WORKING_DIRECTORY ${ccov_dir}
             DEPENDS ${FUZZ_TARGET}
             COMMAND ${CMAKE_EXECUTE_PROCESS_COMMAND_ECHO}
-            COMMAND ${FUZZ_TARGET}
+            COMMAND ${CMAKE_COMMAND} -E env LLVM_PROFILE_FILE=${ccov_dir}/${FUZZ_TARGET}.profraw $<TARGET_FILE:${FUZZ_TARGET}>
                 ${FUZZ_TIMEOUT}
                 -max_len=${FUZZ_MAX_LEN}
                 -print_final_stats=1
                 -fork=${N_PROCESSORS}
+                ${FUZZ_ONCE}
                 ${ARGS}
                 $ENV{VBK_FUZZ_CORPUS_DIR}/${FUZZ_TARGET}
                 USES_TERMINAL
@@ -89,6 +105,6 @@ function(add_fuzz FUZZ_TARGET)
     )
     add_test(
             NAME ${FUZZ_TARGET}
-            COMMAND ${FUZZ_TARGET} -runs=1 ${FUZZ_CORPUS_DIR}
+            COMMAND $<TARGET_FILE:${FUZZ_TARGET}> -runs=1 ${FUZZ_CORPUS_DIR}
     )
 endfunction()
