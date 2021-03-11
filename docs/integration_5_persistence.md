@@ -8,7 +8,7 @@ ALT block storage should be modified to store VeriBlock related data.
           
 # 1. Add PayloadsProvider.
 
-We should add a PayloadsProvider for the VeriBlock library. The main idea of such class is that we reuse the existing ALT blockchain database. Our library allows to use the native implementation of the database. We implement it with PayloadsProvider class which is inherited from the [altintegration::PayloadsProvider](https://veriblock-pop-cpp.netlify.app/structaltintegration_1_1payloadsprovider) class.
+We should add a PayloadsProvider for the VeriBlock library. The main idea of such class is that we reuse the existing ALT blockchain database. Our library allows to use the native implementation of the database. We implement it with PayloadsProvider class which is inherited from the altintegration::PayloadsStorage class.
 
 Payloads provider: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/payloads_provider.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/payloads_provider.hpp). Copy this file to your project.
 
@@ -28,7 +28,8 @@ Block provider: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/ada
 #ifndef BITCOIN_SRC_VBK_POP_SERVICE_HPP
 #define BITCOIN_SRC_VBK_POP_SERVICE_HPP
 
-#include <vbk/pop_common.hpp>
+#include "pop_common.hpp"
+#include <vbk/adaptors/payloads_provider.hpp>
 #include <vbk/util.hpp>
 
 class CBlockTreeDB;
@@ -183,19 +184,6 @@ bool loadTrees(CDBWrapper& db)
 +        if(!VeriBlock::loadTrees(blocktree)) {
 +            return false;
 +        }
-+
-+        // ALT tree tip should be set - this is our last best tip
-+        auto* tip = VeriBlock::GetPop().altTree->getBestChain().tip();
-+        assert(tip && "we could not load tip of alt block");
-+        uint256 hash(tip->getHash());
-+
-+        CBlockIndex* index = LookupBlockIndex(hash);
-+        assert(index);
-+        if (index->IsValid(BLOCK_VALID_TREE)) {
-+            pindexBestHeader = index;
-+        } else {
-+            return false;
-+        }
      }
 ```
 
@@ -219,9 +207,6 @@ bool loadTrees(CDBWrapper& db)
 +    assert(ChainActive().Tip() != nullptr);
 +    assert(ChainActive().Tip()->nHeight == 100);
 +    assert(BlockIndex().size() == 101);
-+
-+    auto& tree = *VeriBlock::GetPop().altTree;
-+    assert(tree.getBestChain().tip()->getHeight() == ChainActive().Tip()->nHeight);
 ```
 
 # 5. Restore VeriBlock block hash from the storage - do not recalculate it if possible.
