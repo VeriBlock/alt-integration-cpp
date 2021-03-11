@@ -57,9 +57,9 @@ Update CreateNewBlock() in the miner.cpp.
 +        pblock->popData = VeriBlock::getPopData();
 +    }
 +
-+    if (!pblock->popData.empty()) {
-+        pblock->nVersion |= VeriBlock::POP_BLOCK_VERSION_BIT;
-+    }
+     if (!pblock->popData.empty()) {
+         pblock->nVersion |= VeriBlock::POP_BLOCK_VERSION_BIT;
+     }
 
      int64_t nTime1 = GetTimeMicros();
 ```
