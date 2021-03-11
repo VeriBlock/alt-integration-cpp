@@ -67,17 +67,27 @@ function(add_fuzz FUZZ_TARGET)
 
     add_executable(${FUZZ_TARGET} ${FUZZ_SOURCES})
     fuzz_add_cov_flags(${FUZZ_TARGET})
+    if(ASAN)
+        set(fuzzers fuzzer,address)
+    elseif(UBSAN)
+        set(fuzzers fuzzer,undefined)
+    elseif(TSAN)
+        set(fuzzers fuzzer,thread)
+    else()
+        set(fuzzers fuzzer)
+    endif()
+
     set_target_properties(${FUZZ_TARGET} PROPERTIES
             CXX_STANDARD 17
             CXX_STANDARD_REQUIRED TRUE
             )
     target_link_libraries(${FUZZ_TARGET} PUBLIC ${LIB_NAME})
     target_compile_options(${FUZZ_TARGET} PUBLIC
-            -fsanitize=fuzzer
+            -fsanitize=${fuzzers}
             -g
             )
     target_link_options(${FUZZ_TARGET} PRIVATE
-            -fsanitize=fuzzer
+            -fsanitize=${fuzzers}
             )
     set(ccov_dir ${CMAKE_BINARY_DIR}/ccov)
     file(MAKE_DIRECTORY ${ccov_dir})

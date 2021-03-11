@@ -32,6 +32,8 @@ jobs:
       CXX: clang++
       CTEST_OUTPUT_ON_FAILURE: 1
       VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
+      ASAN_OPTIONS: detect_container_overflow=1:verbosity=1:debug=1:detect_leaks=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true
+      UBSAN_OPTIONS: print_stacktrace=1
     steps:
       - uses: actions/checkout@v1
         name: checkout

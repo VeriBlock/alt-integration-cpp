@@ -14,27 +14,25 @@ namespace ai = altintegration;
 
 static const int hashsize = 8;
 
-ai::MockMiner& APM() {
-  static ai::MockMiner mm;
-  return mm;
-}
-
-fuzz::Tree& TREE() {
-  static fuzz::Tree tree;
-  return tree;
-}
-
 struct AtvCandidate {
   ai::VbkTx tx;
   ai::VbkBlock blockOfProof;
 };
 
-static std::list<ai::VTB> vtbs;
-static std::list<ai::ATV> atvs;
-static std::list<AtvCandidate> atvcandidates;
-static std::vector<ai::VbkTx> vbktxes;
-static std::vector<ai::VbkPopTx> vbkpoptxes;
-static std::vector<std::pair<ai::BtcTx, ai::VbkBlock>> btctxes;
+struct FuzzState {
+  ai::MockMiner mm;
+  fuzz::Tree tree;
+  std::list<ai::VTB> vtbs;
+  std::list<ai::ATV> atvs;
+  std::list<AtvCandidate> atvcandidates;
+  std::vector<ai::VbkTx> vbktxes;
+  std::vector<ai::VbkPopTx> vbkpoptxes;
+  std::vector<std::pair<ai::BtcTx, ai::VbkBlock>> btctxes;
+
+  ai::MockMiner& APM() { return mm; }
+
+  fuzz::Tree& TREE() { return tree; }
+};
 
 enum class TxType {
   VBK_TX,
@@ -87,165 +85,182 @@ const typename Tree::index_t* selectBlock(FuzzedDataProvider& p, Tree& tree) {
   VBK_ASSERT(false);
 }
 
-fuzz::Block mineNextBlock(FuzzedDataProvider& p,
-                          const ai::BlockIndex<ai::AltBlock>* index) {
+fuzz::Block mineNextBlock(const ai::BlockIndex<ai::AltBlock>* index,
+                          FuzzState& state) {
   fuzz::Block block;
-  block.popdata = TREE().popcontext->getMemPool().generatePopData();
-  block.hash = p.ConsumeBytesOrFail<uint8_t>(hashsize);
+  block.popdata = state.TREE().popcontext->getMemPool().generatePopData();
+  std::generate_n(
+      std::back_inserter(block.hash), hashsize, []() { return rand(); });
   block.timestamp = index->getTimestamp() + 1;
   block.height = index->getHeight() + 1;
   block.prevhash = index->getHash();
   return block;
 }
 
-void handle(FuzzedDataProvider& p) {
+bool handle(FuzzedDataProvider& p, FuzzState& state) {
+  if (p.remaining_bytes() == 0) {
+    return false;
+  }
+
   switch (p.ConsumeEnum<Action>()) {
     case Action::MINE_ALT: {
       // in ALT mine only chain
-      auto* prev = TREE().popcontext->getAltBlockTree().getBlockIndex(TREE().bestBlock);
+      auto* prev = state.TREE().popcontext->getAltBlockTree().getBlockIndex(
+          state.TREE().bestBlock);
       VBK_ASSERT(prev != nullptr);
-      auto block = mineNextBlock(p, prev);
-      /* ignore=*/TREE().acceptBlock(block);
+      auto block = mineNextBlock(prev, state);
+      /* ignore=*/state.TREE().acceptBlock(block);
       break;
     }
     case Action::MINE_VBK: {
-      auto* prev = selectBlock(p, APM().vbk());
+      auto* prev = selectBlock(p, state.APM().vbk());
       auto option = p.ConsumeEnum<TxType>();
       switch (option) {
         case TxType::VBK_TX: {
-          auto* blockOfProof = APM().mineVbkBlocks(1, *prev, vbktxes);
+          auto* blockOfProof =
+              state.APM().mineVbkBlocks(1, *prev, state.vbktxes);
           if (blockOfProof == nullptr) {
-            vbktxes.pop_back();
+            state.vbktxes.pop_back();
             break;
           }
-          for (auto& z : vbktxes) {
+          for (auto& z : state.vbktxes) {
             AtvCandidate c;
             c.blockOfProof = blockOfProof->getHeader();
             c.tx = z;
-            atvcandidates.push_back(std::move(c));
+            state.atvcandidates.push_back(std::move(c));
           }
-          vbktxes.clear();
+          state.vbktxes.clear();
           break;
         }
         case TxType::VBK_POP_TX:
-          auto* containing = APM().mineVbkBlocks(1, *prev, vbkpoptxes);
+          auto* containing =
+              state.APM().mineVbkBlocks(1, *prev, state.vbkpoptxes);
           if (containing == nullptr) {
-            vbkpoptxes.pop_back();
+            state.vbkpoptxes.pop_back();
             break;
           }
-          for (auto& z : vbkpoptxes) {
-            auto vtb = APM().createVTB(containing->getHeader(), z);
-            vtbs.push_back(vtb);
+          for (auto& z : state.vbkpoptxes) {
+            auto vtb = state.APM().createVTB(containing->getHeader(), z);
+            state.vtbs.push_back(vtb);
           }
-          vbkpoptxes.clear();
+          state.vbkpoptxes.clear();
           break;
       }
 
       break;
     }
     case Action::MINE_BTC: {
-      auto* prev = selectBlock(p, APM().btc());
+      auto* prev = selectBlock(p, state.APM().btc());
       std::vector<ai::BtcTx> v;
-      v.reserve(btctxes.size());
-      for (const auto& z : btctxes) {
+      v.reserve(state.btctxes.size());
+      for (const auto& z : state.btctxes) {
         v.push_back(z.first);
       }
-      /* ignore=*/APM().mineBtcBlocks(1, *prev, v);
-      btctxes.clear();
+      /* ignore=*/state.APM().mineBtcBlocks(1, *prev, v);
+      state.btctxes.clear();
       break;
     }
     case Action::CREATE_BTC_TX: {
-      auto* block = selectBlock(p, APM().vbk());
-      auto tx = APM().createBtcTxEndorsingVbkBlock(block->getHeader());
-      btctxes.emplace_back(tx, block->getHeader());
+      auto* block = selectBlock(p, state.APM().vbk());
+      auto tx = state.APM().createBtcTxEndorsingVbkBlock(block->getHeader());
+      state.btctxes.emplace_back(tx, block->getHeader());
       break;
     }
     case Action::CREATE_VBK_TX: {
       auto* endorsedIndex =
-          selectBlock(p, TREE().popcontext->getAltBlockTree());
+          selectBlock(p, state.TREE().popcontext->getAltBlockTree());
       VBK_ASSERT(endorsedIndex);
       std::vector<uint8_t> mroot{1, 2, 3, 4, 5};
-      auto* endorsedBlock = TREE().getBlock(endorsedIndex->getHash());
-      VBK_ASSERT(endorsedBlock);
+      auto* endorsedBlock = state.TREE().getBlock(endorsedIndex->getHash());
+      // if endorsedBlock is not found in TREE() then skip
+      VBK_ASSERT_MSG(
+          endorsedBlock != nullptr,
+          "TREE:\n%s\n\nAltBlockTree:\n%s\n\n",
+          state.TREE().toPrettyString(),
+          state.TREE().popcontext->getAltBlockTree().toPrettyString());
       ai::PublicationData pd;
-      bool result =
-          ai::GeneratePublicationData(endorsedIndex->getHash(),
-                                      mroot,
-                                      endorsedBlock->popdata,
-                                      mroot,
-                                      TREE().popcontext->getAltBlockTree(),
-                                      pd);
+      bool result = ai::GeneratePublicationData(
+          endorsedIndex->getHash(),
+          mroot,
+          endorsedBlock->popdata,
+          mroot,
+          state.TREE().popcontext->getAltBlockTree(),
+          pd);
       VBK_ASSERT(result);
-      auto tx = APM().createVbkTxEndorsingAltBlock(pd);
-      vbktxes.push_back(std::move(tx));
+      auto tx = state.APM().createVbkTxEndorsingAltBlock(pd);
+      state.vbktxes.push_back(std::move(tx));
       break;
     }
     case Action::CREATE_VBK_POP_TX: {
-      auto* block = selectBlock(p, APM().vbk());
-      auto tx = APM().createVbkPopTxEndorsingVbkBlock(
-          block->getHeader(), TREE().lastBtc().getHash());
-      vbkpoptxes.push_back(tx);
+      auto* block = selectBlock(p, state.APM().vbk());
+      auto tx = state.APM().createVbkPopTxEndorsingVbkBlock(
+          block->getHeader(), state.TREE().lastBtc().getHash());
+      state.vbkpoptxes.push_back(tx);
       break;
     }
     case Action::SUBMIT_ATV: {
-      if (atvcandidates.empty()) {
+      if (state.atvcandidates.empty()) {
         break;
       }
 
-      auto candidate = atvcandidates.front();
-      atvcandidates.pop_front();
+      auto candidate = state.atvcandidates.front();
+      state.atvcandidates.pop_front();
 
-      auto atv = APM().createATV(candidate.blockOfProof, candidate.tx);
-      ai::ValidationState state;
-      /* ignore= */ TREE().popcontext->getMemPool().submit<ai::ATV>(atv, state);
+      auto atv = state.APM().createATV(candidate.blockOfProof, candidate.tx);
+      ai::ValidationState dummy;
+      /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::ATV>(
+          atv, dummy);
       break;
     }
     case Action::SUBMIT_VTB: {
-      if (vtbs.empty()) {
+      if (state.vtbs.empty()) {
         break;
       }
 
-      auto vtb = vtbs.front();
-      vtbs.pop_front();
+      auto vtb = state.vtbs.front();
+      state.vtbs.pop_front();
 
-      ai::ValidationState state;
-      /* ignore= */ TREE().popcontext->getMemPool().submit<ai::VTB>(vtb, state);
+      ai::ValidationState dummy;
+      /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::VTB>(
+          vtb, dummy);
       break;
     }
     case Action::SUBMIT_VBK: {
       auto option = p.ConsumeEnum<VbkSubmitType>();
       switch (option) {
         case VbkSubmitType::ACTIVE_CHAIN: {
-          auto lastKnownVbk = TREE().lastVbk();
-          auto* index = APM().vbk().getBlockIndex(lastKnownVbk.getHash());
+          auto lastKnownVbk = state.TREE().lastVbk();
+          auto* index = state.APM().vbk().getBlockIndex(lastKnownVbk.getHash());
           VBK_ASSERT(index);
 
-          auto* fork = ai::findFork(APM().vbk().getBestChain(), index);
+          auto* fork = ai::findFork(state.APM().vbk().getBestChain(), index);
           VBK_ASSERT(fork);
 
-          auto* tip = APM().vbk().getBestChain().tip();
+          auto* tip = state.APM().vbk().getBestChain().tip();
           VBK_ASSERT(tip->getHeight() >= fork->getHeight());
           auto context =
-              ai::getContext(APM().vbk(),
+              ai::getContext(state.APM().vbk(),
                              tip->getHash(),
                              tip->getHeight() - fork->getHeight() + 1);
 
           for (auto& c : context) {
-            ai::ValidationState state;
-            /* ignore= */ TREE().popcontext->getMemPool().submit<ai::VbkBlock>(
-                c, state);
+            ai::ValidationState dummy;
+            /* ignore= */ state.TREE()
+                .popcontext->getMemPool()
+                .submit<ai::VbkBlock>(c, dummy);
           }
 
           break;
         }
         case VbkSubmitType::RANDOM: {
-          const auto& blocks = APM().vbk().getBlocks();
+          const auto& blocks = state.APM().vbk().getBlocks();
           auto it = select_randomly(blocks.begin(), blocks.end());
           VBK_ASSERT(it != blocks.end());
 
-          ai::ValidationState state;
-          /* ignore= */ TREE().popcontext->getMemPool().submit<ai::VbkBlock>(
-              it->second->getHeader(), state);
+          ai::ValidationState dummy;
+          /* ignore= */ state.TREE()
+              .popcontext->getMemPool()
+              .submit<ai::VbkBlock>(it->second->getHeader(), dummy);
           break;
         }
       }
@@ -255,49 +270,60 @@ void handle(FuzzedDataProvider& p) {
       // submit everything we have
 
       // all vbk blocks
-      const auto& blocks = APM().vbk().getBlocks();
+      const auto& blocks = state.APM().vbk().getBlocks();
       for (auto& block : blocks) {
-        ai::ValidationState state;
-        /* ignore= */ TREE().popcontext->getMemPool().submit<ai::VbkBlock>(
-            block.second->getHeader(), state);
+        ai::ValidationState dummy;
+        /* ignore= */ state.TREE()
+            .popcontext->getMemPool()
+            .submit<ai::VbkBlock>(block.second->getHeader(), dummy);
       }
 
       // submit all ATVs
-      for (auto& a : atvs) {
-        ai::ValidationState state;
-        /* ignore= */ TREE().popcontext->getMemPool().submit<ai::ATV>(a, state);
+      for (auto& a : state.atvs) {
+        ai::ValidationState dummy;
+        /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::ATV>(
+            a, dummy);
       }
-      atvs.clear();
+      state.atvs.clear();
 
       // submit all VTBs
-      for (auto& a : vtbs) {
-        ai::ValidationState state;
-        /* ignore= */ TREE().popcontext->getMemPool().submit<ai::VTB>(a, state);
+      for (auto& a : state.vtbs) {
+        ai::ValidationState dummy;
+        /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::VTB>(
+            a, dummy);
       }
-      vtbs.clear();
+      state.vtbs.clear();
 
-      for (auto& a : APM().getAllVTBs()) {
+      for (auto& a : state.APM().getAllVTBs()) {
         for (auto& vtb : a.second) {
-          ai::ValidationState state;
-          /* ignore= */ TREE().popcontext->getMemPool().submit<ai::VTB>(vtb,
-                                                                        state);
+          ai::ValidationState dummy;
+          /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::VTB>(
+              vtb, dummy);
         }
       }
       break;
     }
   }
+
+  return true;
 }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
+  // make sure input is at least of size 10
+  if (Size < 10) {
+    return 0;
+  }
+
   FuzzedDataProvider p(Data, Size);
   srand(p.ConsumeIntegral<uint32_t>());
-  bool hasEnoughData = true;
+  FuzzState state;
 
+  bool hasEnoughData = true;
   do {
     try {
-      handle(p);
+      hasEnoughData = handle(p, state);
     } catch (const NotEnoughDataException& e) {
-      hasEnoughData = false;
+      break;
     }
   } while (hasEnoughData);
 
