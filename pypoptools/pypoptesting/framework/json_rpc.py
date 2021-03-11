@@ -32,7 +32,7 @@ class JsonRpcApi:
                 headers={
                     "Content-type": "application/json"
                 },
-                timeout=60
+                timeout=300
             )
             self.nonce += 1
 
