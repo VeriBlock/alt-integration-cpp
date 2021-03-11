@@ -745,32 +745,53 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
 }
 
 TEST_F(MemPoolFixture, getPop_scenario_11) {
+  size_t emptyPopDataSize = PopData{}.estimateSize();
+
+  // mempool is currently empty
+  for (int i = emptyPopDataSize; i < 1000; i++) {
+    altparam.mMaxPopDataSize = i;
+    ASSERT_NO_FATAL_FAILURE(mempool->generatePopData());
+  }
+
   // mine one VBK block
   auto* block_index = popminer->mineVbkBlocks(1);
 
-  AltChainParamsRegTest updated_params;
-  updated_params.mMaxPopDataSize = block_index->getHeader().estimateSize() + 1;
-
-  AltBlockTree updated_tree(updated_params,
-                            alttree.vbk().getParams(),
-                            alttree.btc().getParams(),
-                            payloadsProvider);
-
-  ASSERT_TRUE(updated_tree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
-                                                      this->state));
-  ASSERT_TRUE(updated_tree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(),
-                                                      this->state));
-  ASSERT_TRUE(updated_tree.bootstrap(this->state));
-
-  MemPool update_mempool(updated_tree);
-
-  ASSERT_TRUE(update_mempool.submit(block_index->getHeader(), state));
-
-  auto pop_data = update_mempool.generatePopData();
-
+  altparam.mMaxPopDataSize = block_index->getHeader().estimateSize() + 1;
+  ASSERT_TRUE(mempool->submit(block_index->getHeader(), state));
+  auto pop_data = mempool->generatePopData();
   ASSERT_EQ(pop_data.context.size(), 0);
   ASSERT_EQ(pop_data.atvs.size(), 0);
   ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  // mempool has 1 VBK block
+  for (int i = emptyPopDataSize; i < 1000; i++) {
+    altparam.mMaxPopDataSize = i;
+    ASSERT_NO_FATAL_FAILURE(mempool->generatePopData());
+  }
+
+  altparam.mMaxPopDataSize = block_index->getHeader().estimateSize() + 50;
+  ASSERT_TRUE(mempool->submit(block_index->getHeader(), state));
+  pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 1);
+  ASSERT_EQ(pop_data.atvs.size(), 0);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  auto pd = popminer->endorseAltBlock(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      getLastKnownVbkBlock());
+  ATV& atv = pd.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv, state));
+
+  auto vtb = popminer->endorseVbkBlock(
+      popminer->vbk().getBestChain().tip()->getHeader(),
+      getLastKnownBtcBlock());
+  ASSERT_TRUE(mempool->submit(vtb, state));
+
+  // mempool has 3 VBK blocks, 1 VTB and 1 ATV
+  for (int i = emptyPopDataSize; i < 5000; i++) {
+    altparam.mMaxPopDataSize = i;
+    ASSERT_NO_FATAL_FAILURE(pop_data = mempool->generatePopData());
+  }
 }
 
 TEST_F(MemPoolFixture, IsKnown) {
