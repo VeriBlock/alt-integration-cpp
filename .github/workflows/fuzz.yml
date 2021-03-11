@@ -51,10 +51,11 @@ jobs:
         if: always()
         run: |
           cd ${{ github.workspace }}/fuzz-corpus
-          git stash
-          git fetch
-          git pull
-          git stash pop
+          git config pull.rebase true
+          git stash || true
+          git fetch || true
+          git pull  || true
+          git stash pop || true
       - name: commit corpus
         if: always()
         uses: stefanzweifel/git-auto-commit-action@v4
