@@ -19,7 +19,6 @@ PopData generatePopDataImpl(
                                 std::shared_ptr<VbkPayloadsRelations>>>& blocks,
     const AltChainParams& params) {
   PopData ret{};
-  ret.version = 1;
   // size in bytes of pop data added to
   size_t popSize = ret.estimateSize();
 
@@ -61,9 +60,16 @@ PopData generatePopDataImpl(
       ret.vtbs.push_back(*vtb);
       popSize += estimate;
     }
+
+    // update popSize, because `push_back` might have increased size estimate
+    // for more than `estimate` (specifically - when we add new VBK block to
+    // array, and then when size of array serialization goes from 1 byte to 2
+    // bytes, we don't count this byte).
+    popSize = ret.estimateSize();
   }
 
   const auto estimate = ret.estimateSize();
+  VBK_ASSERT_MSG(popSize == estimate, "size=%d estimate=%d", popSize, estimate);
   VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 
   return ret;
