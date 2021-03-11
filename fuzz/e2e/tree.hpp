@@ -69,6 +69,23 @@ class Tree {
     return popcontext->getVbkBlockTree().getBestChain().tip()->getHeader();
   }
 
+  std::string toPrettyString() const {
+    std::string s;
+    std::vector<Block*> b;
+    for(auto& it : blocks) {
+      b.push_back(it.second.get());
+    }
+    std::sort(b.begin(), b.end(), [](const Block* a, const Block* b){
+      return a->height < b->height;
+    });
+
+    for(auto& p : b) {
+      s += fmt::format("Block(height={} hash={})\n", p->height, altintegration::HexStr(p->hash));
+    }
+
+    return s;
+  }
+
   std::vector<uint8_t> bestBlock;
   std::shared_ptr<altintegration::InmemPayloadsProvider> pp = nullptr;
   std::shared_ptr<altintegration::AltChainParams> params = nullptr;

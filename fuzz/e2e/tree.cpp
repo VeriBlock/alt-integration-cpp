@@ -41,6 +41,8 @@ bool Tree::acceptBlock(const Block& block) {
 
   popcontext->getAltBlockTree().acceptBlock(altheader.hash, block.popdata);
 
+  blocks[block.hash] = std::make_shared<Block>(block);
+
   auto* index = popcontext->getAltBlockTree().getBlockIndex(altheader.hash);
   VBK_ASSERT(index);
   if (!index->isConnected()) {
