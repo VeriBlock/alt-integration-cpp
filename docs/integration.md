@@ -69,3 +69,4 @@ This is needed to communicate Bitcoin and VeriBlock consensus information to Alt
 4. @subpage integration_4_config
 5. @subpage integration_5_persistence
 6. @subpage integration_6_mempool
+7. @subpage integration_7_alttree
