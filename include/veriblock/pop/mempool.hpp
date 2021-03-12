@@ -37,7 +37,7 @@ namespace altintegration {
  * @ingroup api
  */
 struct MemPool {
-  enum Status { VALID, FAILED_STATELESS, FAILED_STATEFUL };
+  enum Status { VALID = 0, FAILED_STATEFUL = 1, FAILED_STATELESS = 2 };
 
   struct SubmitResult {
     Status status = VALID;
