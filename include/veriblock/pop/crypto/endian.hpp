@@ -23,6 +23,11 @@
 #include <endian.h>
 #endif
 
+#if defined(VBK_HAS_BUILTIN_BYTESWAP32) and defined(VBK_HAS_BUILTIN_BYTESWAP64)
+#define vbk_swap_u32(input_) __builtin_bswap32(input_)
+#define vbk_swap_u64(input_) __builtin_bswap64(input_)
+#else
+
 #if defined(_WIN32)
 #include <stdlib.h>
 #define vbk_swap_u32(input_) _byteswap_ulong(input_)
@@ -38,7 +43,10 @@
 #include <byteswap.h>
 #define vbk_swap_u32(input_) __bswap_32(input_)
 #define vbk_swap_u64(input_) __bswap_64(input_)
-#endif
+#endif  // posix
+
+#endif  // defined(VBK_HAS_BUILTIN_BYTESWAP32) and
+        // defined(VBK_HAS_BUILTIN_BYTESWAP64)
 
 #if LITTLE_ENDIAN == BYTE_ORDER
 
