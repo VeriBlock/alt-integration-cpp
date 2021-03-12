@@ -9,15 +9,15 @@ on:
     branches:
       - fuzz
   schedule:
-    # run at the start of every 3rd hour.
-    - cron:  '0 */3 * * *'
+    # run at the start of every 30min.
+    - cron:  '*/30 * * * *'
 
 jobs:
   fuzz:
     runs-on: ubuntu-20.04
     env:
-      # 5 hours in sec
-      FUZZ_TIMEOUT: 18000
+      # 30 min in sec
+      FUZZ_TIMEOUT: 1800
       CC: clang
       CXX: clang++
       VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
@@ -55,7 +55,7 @@ jobs:
           git stash || true
           git fetch || true
           git pull  || true
-          git stash pop || true
+          git merge --squash --strategy-option=theirs stash || true
       - name: commit corpus
         if: always()
         uses: stefanzweifel/git-auto-commit-action@v4
