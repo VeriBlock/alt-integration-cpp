@@ -22,16 +22,17 @@ class PopActivateTest(PopIntegrationTestFramework):
 
         assert self.nodes[0].getblockcount() == 0
 
-        # node0 start with 100 blocks
-        self.nodes[0].generate(nblocks=100)
-        wait_for_block_height(self.nodes[0], 100)
-        assert self.nodes[0].getblockcount() == 100
-        self.log.info("node0 mined 100 blocks")
+        # node0 start with N blocks
+        popActivationHeight = self.nodes[0].getpopparams().popActivationHeight
+        nBlock = popActivationHeight - 50
+        self.nodes[0].generate(nblocks=nBlock)
+        assert self.nodes[0].getblockcount() == nBlock
+        self.log.info("node0 mined {} blocks".format(nBlock))
 
-        # endorse block 100 (fork A tip)
+        # endorse block N (fork A tip)
         self.log.info('Should not accept POP data before activation block height')
         try:
-            endorse_block(self.nodes[0], apm, 100)
+            endorse_block(self.nodes[0], apm, nBlock)
             assert False
         except:
             self.log.info("Endorse block failed as expected")
@@ -45,7 +46,7 @@ class PopActivateTest(PopIntegrationTestFramework):
         mine_until_pop_enabled(self.nodes[0])
         tip_height = self.nodes[0].getblockcount()
 
-        # endorse block 200 (fork A tip)
+        # endorse block 100 (fork A tip)
         endorse_block(self.nodes[0], apm, tip_height)
         self.log.info("node0 endorsed block {} (fork A tip)".format(tip_height))
         # mine pop tx on node0
