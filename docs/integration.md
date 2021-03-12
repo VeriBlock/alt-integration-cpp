@@ -71,3 +71,4 @@ This is needed to communicate Bitcoin and VeriBlock consensus information to Alt
 6. @subpage integration_6_mempool
 7. @subpage integration_7_alttree
 8. @subpage integration_8_merkle
+9. @subpage integration_9_rewards
