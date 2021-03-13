@@ -172,3 +172,142 @@ Modify rewarding algorithm. Basic PoW rewards are extended with Pop rewards for 
 
 @note Rewarding algorithm should fall back to the original ALT rewarding if Pop security is not activated.
 @note It is advised to apply native halving rules to Pop rewards.
+
+# 3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.
+
+We have to check for the Pop activation height when calculating Pop rewards. Therefore some methods should be modified to accept chain parameters instead of consensus parameters.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
+```cpp
+-CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
++CAmount GetBlockSubsidy(int nHeight, const CChainParams& params)
+ {
+-    int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
++    int halvings = nHeight / params.GetConsensus().nSubsidyHalvingInterval;
+     // Force block reward to zero when right shift is undefined.
+     if (halvings >= 64)
+         return 0;
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp)
+
+[method BlockAssembler::CreateNewBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp#L96)
+```cpp
+     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
+-    coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
++    coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams);
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/blockchain.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/blockchain.cpp)
+
+[method getblockstats](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/blockchain.cpp#L1722)
+```cpp
+     ret_all.pushKV("outs", outputs);
+-    ret_all.pushKV("subsidy", GetBlockSubsidy(pindex->nHeight, Params().GetConsensus()));
++    ret_all.pushKV("subsidy", GetBlockSubsidy(pindex->nHeight, Params()));
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/bench/duplicate_inputs.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/bench/duplicate_inputs.cpp)
+
+[method DuplicateInputs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/bench/duplicate_inputs.cpp#L17)
+```cpp
+     coinbaseTx.vout[0].scriptPubKey = SCRIPT_PUB;
+-    coinbaseTx.vout[0].nValue = GetBlockSubsidy(nHeight, chainparams.GetConsensus());
++    coinbaseTx.vout[0].nValue = GetBlockSubsidy(nHeight, chainparams);
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp)
+
+[method TestBlockSubsidyHalvings](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp#L27)
+```cpp
+     for (int nHalvings = 0; nHalvings < maxHalvings; nHalvings++) {
+-        int nHeight = nHalvings * consensusParams.nSubsidyHalvingInterval;
+-        CAmount nSubsidy = GetBlockSubsidy(nHeight, consensusParams);
++        int nHeight = nHalvings * params.GetConsensus().nSubsidyHalvingInterval;
++        CAmount nSubsidy = GetBlockSubsidy(nHeight, params);
+         BOOST_CHECK(nSubsidy <= nInitialSubsidy);
+         BOOST_CHECK_EQUAL(nSubsidy, nPreviousSubsidy / 2);
+         nPreviousSubsidy = nSubsidy;
+     }
+-    BOOST_CHECK_EQUAL(GetBlockSubsidy(maxHalvings * consensusParams.nSubsidyHalvingInterval, consensusParams), 0);
++    BOOST_CHECK_EQUAL(GetBlockSubsidy(maxHalvings * params.GetConsensus().nSubsidyHalvingInterval, params), 0);
+```
+[method BOOST_AUTO_TEST_CASE(subsidy_limit_test)](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp#L58)
+```cpp
+     CAmount nSum = 0;
+     for (int nHeight = 0; nHeight < 14000000; nHeight += 1000) {
+-        CAmount nSubsidy = GetBlockSubsidy(nHeight, chainParams->GetConsensus());
++        CAmount nSubsidy = GetBlockSubsidy(nHeight, *chainParams);
+```
+
+# 4. Modify mining process in the CreateNewBlock function. Insert VeriBlock PoPRewards into the coinbase transaction, add some validation rules to the validation.cpp.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
+
+[method GetBlockSubsidy](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L1207)
+```cpp
+     CAmount nSubsidy = 50 * COIN;
+     // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
++    nSubsidy = VeriBlock::getCoinbaseSubsidy(nSubsidy, nHeight, params);
++
+     nSubsidy >>= halvings;
+```
+
+[method CChainState::ConnectBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L1879)
+```cpp
+-    int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
+-    LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
+ 
+-    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
+-    if (block.vtx[0]->GetValueOut() > blockReward) {
+-        LogPrintf("ERROR: ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)\n", block.vtx[0]->GetValueOut(), blockReward);
+-        return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-cb-amount");
++    int64_t nTime3 = GetTimeMicros();
++    nTimeConnect += nTime3 - nTime2;
++    LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs - 1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
++
++    assert(pindex->pprev && "previous block ptr is nullptr");
++    if (!VeriBlock::checkCoinbaseTxWithPopRewards(*block.vtx[0], nFees, *pindex->pprev, chainparams, state)) {
++        return false;
++    }
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp)
+
+[method BlockAssembler::CreateNewBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp#L96)
+```cpp
+     coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
++
++    VeriBlock::addPopPayoutsIntoCoinbaseTx(coinbaseTx, *pindexPrev, chainparams);
++
+```
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp)
+
+[method BOOST_AUTO_TEST_CASE(subsidy_limit_test)](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/validation_tests.cpp#L58)
+```cpp
+     CAmount nSum = 0;
+-    for (int nHeight = 0; nHeight < 14000000; nHeight += 1000) {
++    // skip first 1000 blocks to make sure POP security is ON
++    for (int nHeight = 1000; nHeight < 14000000; nHeight += 1000) {
+```
+
+# 5. Add tests for the Pop rewards.
+
+Pop rewards test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/pop_reward_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp). Copy this file to your project.
+
+@note Test expects Pop reward in the second coinbase transaction. Update the test according to the ALT rewarding scheme.
+
+# 6. Update makefile to run tests.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
+```diff
+ ### VeriBlock section start
+ # path is relative to src
+ VBK_TESTS = \
+   vbk/test/unit/e2e_poptx_tests.cpp \
+   vbk/test/unit/block_validation_tests.cpp \
+-  vbk/test/unit/vbk_merkle_tests.cpp
++  vbk/test/unit/vbk_merkle_tests.cpp \
++  vbk/test/unit/pop_reward_tests.cpp
+```
