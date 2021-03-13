@@ -1,4 +1,4 @@
-# POP mempool support. {#integration_6_mempool}
+# Pop mempool support. {#integration_6_mempool}
 
 [TOC]
 
