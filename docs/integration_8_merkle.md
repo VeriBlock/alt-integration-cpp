@@ -134,6 +134,15 @@ Pop merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 +        return error("%s: Consensus::ContextualCheckBlock: %s", __func__, state.GetRejectReason());
 ```
 
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/bench/duplicate_inputs.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/bench/duplicate_inputs.cpp)
+
+[method DuplicateInputs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/bench/duplicate_inputs.cpp#L17)
+```cpp
+         BlockValidationState cvstate{};
+-        assert(!CheckBlock(block, cvstate, chainparams.GetConsensus(), false, false));
++        assert(!CheckBlock(block, cvstate, chainparams.GetConsensus(), false));
+```
+
 Use extended block weight calculation method that append Pop data size.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
