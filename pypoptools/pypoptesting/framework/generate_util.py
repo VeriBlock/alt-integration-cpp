@@ -11,7 +11,7 @@ from .random_miner import RandomPopMiner
 def generate_endorsed(node: Node, mock_miner,
                       atvs: int, vtbs: int,
                       alt_blocks: int, vbk_blocks: int, btc_blocks: int,
-                      seed: int, timeout=6000) -> None:
+                      seed: int, timeout=300) -> None:
     """
     Randomly executes `Node` and `MockMiner` methods.
     Instances of `Node` and `MockMiner` are wrapped with `RandomPopMiner`.
