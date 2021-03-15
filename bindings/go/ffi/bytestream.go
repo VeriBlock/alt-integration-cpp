@@ -36,9 +36,11 @@ type VbkByteStream struct {
 
 // Read ...
 func (v *VbkByteStream) Read(p []byte) (n int, err error) {
-	// TODO: Check is this correct way
 	len := C.ulong(len(p))
-	bufferC := (*C.uint8_t)(unsafe.Pointer(&p[0]))
-	res := C.VBK_ByteStream_Read(v.ref, bufferC, len)
-	return int(res), nil
+	if len != 0 {
+		bufferC := (*C.uint8_t)(unsafe.Pointer(&p[0]))
+		res := C.VBK_ByteStream_Read(v.ref, bufferC, len)
+		return int(res), nil
+	}
+	return 0, nil
 }
