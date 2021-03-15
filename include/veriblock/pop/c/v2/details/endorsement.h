@@ -10,14 +10,21 @@
 extern "C" {
 #endif
 
-
 #include "array.h"
+#include "serde.h"
+#include "type_helpers.h"
 
-typedef struct __pop_endorsement pop_endorsement_t;
+// used for both: ALT endorsement and VBK endorsement
+POP_DECLARE_ENTITY(endorsement);
 
 POP_DECLARE_ARRAY(pop_endorsement_t, endorsement);
 
+POP_ENTITY_GETTER(endorsement, pop_array_u8_t, id);
+POP_ENTITY_GETTER(endorsement, pop_array_u8_t, endorsed_hash);
+POP_ENTITY_GETTER(endorsement, pop_array_u8_t, containing_hash);
+POP_ENTITY_GETTER(endorsement, pop_array_u8_t, block_of_proof);
 
+POP_DECLARE_SERDE_VBK(endorsement);
 
 #ifdef __cplusplus
 }

@@ -10,18 +10,22 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
+
+#include "uint.h"
 
 #define POP_DECLARE_ARRAY(type, suffix) \
-  struct pop_array_ ##suffix## _t {        \
+  struct pop_array_##suffix##_t {       \
     const type* data;                   \
     size_t size;                        \
   };                                    \
-  void pop_array_ ##suffix## _free(const pop_array_ ##suffix## _t* self);
+  void pop_array_##suffix##_free(const pop_array_##suffix##_t* self);
 
+// declare arrays of simple types here
 POP_DECLARE_ARRAY(uint8_t, u8);
 POP_DECLARE_ARRAY(uint32_t, u32);
+POP_DECLARE_ARRAY(pop_uint256, u256);
 
 #ifdef __cplusplus
 }
