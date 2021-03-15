@@ -3,18 +3,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/stateless_validation.hpp>
-
 #include <gtest/gtest.h>
+
+#include <veriblock/pop/blockchain/btc_chain_params.hpp>
+#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
+#include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/literals.hpp>
+#include <veriblock/pop/pop_stateless_validator.hpp>
+#include <veriblock/pop/stateless_validation.hpp>
 
 #include "util/alt_chain_params_regtest.hpp"
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
-#include <veriblock/pop/blockchain/btc_chain_params.hpp>
-#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
-#include <veriblock/pop/literals.hpp>
-#include <veriblock/pop/pop_stateless_validator.hpp>
-#include <veriblock/pop/crypto/progpow.hpp>
 
 using namespace altintegration;
 
@@ -147,7 +147,8 @@ struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
 };
 
 TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
-  ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc));
+  ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest,
@@ -158,7 +159,8 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest, check_valid_vbk_block) {
-  ASSERT_TRUE(checkBlock(validVTB.containingBlock, state, vbk));
+  ASSERT_TRUE(checkBlock(validVTB.containingBlock, state, vbk))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest,
@@ -199,7 +201,7 @@ TEST_F(StatelessValidationTest,
 }
 
 TEST_F(StatelessValidationTest, VTB_valid) {
-  ASSERT_TRUE(checkVTB(validVTB, state, btc, vbk));
+  ASSERT_TRUE(checkVTB(validVTB, state, btc, vbk)) << state.toString();
 }
 
 TEST_F(StatelessValidationTest,
@@ -283,7 +285,8 @@ TEST_F(StatelessValidationTest, checkBitcoinBlocks_when_not_contiguous) {
 }
 
 TEST_F(StatelessValidationTest, checkVbkTx_valid) {
-  ASSERT_TRUE(checkVbkTx(validATV.transaction, alt, vbk, state));
+  ASSERT_TRUE(checkVbkTx(validATV.transaction, alt, vbk, state))
+      << state.toString();
 }
 
 TEST_F(StatelessValidationTest, VbkTx_checkSignature_signature_invalid) {
@@ -378,7 +381,7 @@ TEST_F(StatelessValidationTest, containsSplit_when_chunked) {
 TEST_F(StatelessValidationTest, parallel_check_valid_vbk_block) {
   PopValidator validator(vbk, btc, alt);
   auto result = validator.addCheck(validVTB.containingBlock);
-  ASSERT_TRUE(result.get().IsValid());
+  ASSERT_TRUE(result.get().IsValid()) << result.get().toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_invalid_vbk_block) {
@@ -386,7 +389,7 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_vbk_block) {
   VbkBlock block = validVTB.containingBlock;
   block.setDifficulty(999999);
   auto result = validator.addCheck(block);
-  ASSERT_FALSE(result.get().IsValid());
+  ASSERT_FALSE(result.get().IsValid()) << result.get().toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_mixed_vbk_block) {
@@ -396,21 +399,23 @@ TEST_F(StatelessValidationTest, parallel_check_mixed_vbk_block) {
   VbkBlock block = validVTB.containingBlock;
   block.setDifficulty(999999);
   results.push_back(validator.addCheck(block));
-  ASSERT_FALSE(results.back().get().IsValid());
+  ASSERT_FALSE(results.back().get().IsValid())
+      << results.back().get().toString();
   results.pop_back();
-  ASSERT_TRUE(results.back().get().IsValid());
+  ASSERT_TRUE(results.back().get().IsValid())
+      << results.back().get().toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_valid_vtb) {
   PopValidator validator(vbk, btc, alt);
   auto result = validator.addCheck(validVTB);
-  ASSERT_TRUE(result.get().IsValid());
+  ASSERT_TRUE(result.get().IsValid()) << result.get().toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_valid_atv) {
   PopValidator validator(vbk, btc, alt);
   auto result = validator.addCheck(validATV);
-  ASSERT_TRUE(result.get().IsValid());
+  ASSERT_TRUE(result.get().IsValid()) << result.get().toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_valid_pop) {
@@ -420,8 +425,8 @@ TEST_F(StatelessValidationTest, parallel_check_valid_pop) {
   pop.vtbs.push_back(validVTB);
   pop.atvs.push_back(validATV);
   bool result = checkPopData(validator, pop, state);
-  ASSERT_TRUE(result);
-  ASSERT_TRUE(state.IsValid());
+  ASSERT_TRUE(result) << state.toString();
+  ASSERT_TRUE(state.IsValid()) << state.toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
@@ -433,8 +438,8 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
   pop.vtbs.push_back(validVTB);
   pop.atvs.push_back(validATV);
   bool result = checkPopData(validator, pop, state);
-  ASSERT_FALSE(result);
-  ASSERT_FALSE(state.IsValid());
+  ASSERT_FALSE(result) << state.toString();
+  ASSERT_FALSE(state.IsValid()) << state.toString();
   ASSERT_EQ(state.GetPathParts().front(), "pop-sl-invalid");
 
   // clear state and try validating again to make sure validator's state does
@@ -445,8 +450,8 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_pop) {
   pop2.vtbs.push_back(validVTB);
   pop2.atvs.push_back(validATV);
   result = checkPopData(validator, pop2, state);
-  ASSERT_TRUE(result);
-  ASSERT_TRUE(state.IsValid());
+  ASSERT_TRUE(result) << state.toString();
+  ASSERT_TRUE(state.IsValid()) << state.toString();
 }
 
 TEST_F(StatelessValidationTest, parallel_check_invalid_pop_size) {
@@ -455,8 +460,8 @@ TEST_F(StatelessValidationTest, parallel_check_invalid_pop_size) {
   VbkBlock block = validVTB.containingBlock;
   pop.context = std::vector<VbkBlock>(150000, block);
   bool result = checkPopData(validator, pop, state);
-  ASSERT_FALSE(result);
-  ASSERT_FALSE(state.IsValid());
+  ASSERT_FALSE(result) << state.toString();
+  ASSERT_FALSE(state.IsValid()) << state.toString();
   ASSERT_EQ(state.GetPathParts().front(), "pop-sl-oversize");
 }
 
