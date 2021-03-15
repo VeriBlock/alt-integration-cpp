@@ -26,6 +26,7 @@ extern "C" {
   void pop_##entity##_get_##fieldname##(const pop_##entity##_t* self, \
                                         returntype** out);
 
+// a view to already allocated member
 #define POP_ENTITY_GETTER(entity, returntype, fieldname) \
   returntype pop_##entity##_get_##fieldname(const pop_##entity##_t* self);
 

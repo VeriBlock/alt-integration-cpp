@@ -22,6 +22,13 @@ extern "C" {
   };                                    \
   void pop_array_##suffix##_free(const pop_array_##suffix##_t* self);
 
+#define POP_DECLARE_ARRAY_ALLOC(type, suffix) \
+  struct pop_array_##suffix##_t {       \
+    const type* data;                   \
+    size_t size;                        \
+  };                                    \
+  void pop_array_##suffix##_free(const pop_array_##suffix##_t* self);
+
 // declare arrays of simple types here
 POP_DECLARE_ARRAY(uint8_t, u8);
 POP_DECLARE_ARRAY(uint32_t, u32);

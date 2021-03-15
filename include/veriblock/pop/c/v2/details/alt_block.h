@@ -12,14 +12,14 @@ extern "C" {
 
 #include "array.h"
 #include "serde.h"
+#include "type_helpers.h"
 
-typedef struct __pop_alt_block pop_alt_block_t;
+POP_DECLARE_ENTITY(alt_block);
 
-const pop_array_u8_t* pop_alt_block_get_height(const pop_alt_block_t* self);
-const pop_array_u8_t* pop_alt_block_get_previous_block(
-    const pop_alt_block_t* self);
-uint32_t pop_alt_block_get_timestamp(const pop_alt_block_t* self);
-const pop_array_u8_t* pop_alt_block_get_hash(const pop_alt_block_t* self);
+POP_ENTITY_GETTER(alt_block, uint32_t, timestamp);
+POP_ENTITY_GETTER(alt_block, int32_t, height);
+POP_ENTITY_GETTER(alt_block, pop_array_u8_t, previous_block);
+POP_ENTITY_GETTER(alt_block, pop_array_u8_t, hash);
 
 POP_DECLARE_SERDE_VBK(pop_alt_block_t);
 
