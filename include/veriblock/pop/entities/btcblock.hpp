@@ -85,12 +85,12 @@ struct BtcBlock {
 
   std::string toPrettyString() const;
 
-  uint32_t getVersion() const { return version; }
-  uint256 getPreviousBlock() const { return previousBlock; }
-  uint256 getMerkleRoot() const { return merkleRoot; }
-  uint32_t getNonce() const { return nonce; }
-  uint32_t getTimestamp() const { return timestamp; }
-  uint32_t getDifficulty() const { return bits; }
+  const uint32_t& getVersion() const { return version; }
+  const uint256& getPreviousBlock() const { return previousBlock; }
+  const uint256& getMerkleRoot() const { return merkleRoot; }
+  const uint32_t& getNonce() const { return nonce; }
+  const uint32_t& getTimestamp() const { return timestamp; }
+  const uint32_t& getDifficulty() const { return bits; }
 
   void setVersion(uint32_t v);
   void setPreviousBlock(const uint256& prev);

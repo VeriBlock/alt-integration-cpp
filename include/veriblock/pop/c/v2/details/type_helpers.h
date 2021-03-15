@@ -15,11 +15,19 @@ extern "C" {
   void pop_##entity##_free(const pop_##entity##_t* self);
 
 // getter which allocates memory with malloc
-#define POP_ENTITY_GETTER_ALLOC(entity, returntype, name) \
-  void pop_##entity##_get_##name##(pop_##entity##_t * self, returntype * *out);
+//
+// example:
+// int* val;
+// get_value(self, &val);
+// ... read val ...
+// free(val); // free is necessary, because `get_value` allocated with malloc
+//
+#define POP_ENTITY_GETTER_ALLOC(entity, returntype, fieldname)        \
+  void pop_##entity##_get_##fieldname##(const pop_##entity##_t* self, \
+                                        returntype** out);
 
 #define POP_ENTITY_GETTER(entity, returntype, fieldname) \
-  returntype pop_##entity##_get_##fieldname(pop_##entity##_t* self);
+  returntype pop_##entity##_get_##fieldname(const pop_##entity##_t* self);
 
 #ifdef __cplusplus
 }

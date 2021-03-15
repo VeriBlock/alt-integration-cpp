@@ -14,6 +14,14 @@ extern "C" {
 
 #include "details/pop_data.h"
 
+// do not expose internal macros
+#undef POP_ENTITY_GETTER
+#undef POP_ENTITY_GETTER_ALLOC
+#undef POP_DECLARE_ARRAY
+#undef POP_DECLARE_ENTITY
+#undef POP_DECLARE_SERDE_VBK
+#undef POP_DECLARE_SERDE_RAW
+
 #ifdef __cplusplus
 }
 #endif
