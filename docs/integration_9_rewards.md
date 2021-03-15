@@ -1,4 +1,4 @@
-# Pop rewards. {#integration_9_rewards}
+# Pop rewards {#integration_9_rewards}
 
 [TOC]
 
@@ -176,6 +176,13 @@ Modify rewarding algorithm. Basic PoW rewards are extended with Pop rewards for 
 # 3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.
 
 We have to check for the Pop activation height when calculating Pop rewards. Therefore some methods should be modified to accept chain parameters instead of consensus parameters.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h)
+```cpp
+ bool ActivateBestChain(BlockValidationState& state, const CChainParams& chainparams, std::shared_ptr<const CBlock> pblock = std::shared_ptr<const CBlock>());
+-CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams);
++CAmount GetBlockSubsidy(int nHeight, const CChainParams& params);
+```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
 ```cpp

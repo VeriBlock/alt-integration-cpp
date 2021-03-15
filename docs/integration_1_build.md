@@ -1,4 +1,4 @@
-# Modifying build setup. {#integration_1_build}
+# Modifying build setup {#integration_1_build}
 
 [TOC]
 
@@ -6,7 +6,7 @@
 
 This section contains information about adding veriblock-pop C++ library to your project.
 
-# 1. Build and install veriblock-pop-cpp library
+# 1. Build and install veriblock-pop-cpp library.
 
 ```sh
 git clone https://github.com/VeriBlock/alt-integration-cpp.git
@@ -22,7 +22,7 @@ python3 setup.py install --user
 
 @note Building veriblock-pop-cpp library requires CMake 3.12 or newer
 
-# 2. Add veriblock-pop-cpp library dependency
+# 2. Add veriblock-pop-cpp library dependency.
 
 @note We use Bitcoin source code as reference. Other integrations should adhere to another project structure, build system, programming language, etc.
 
