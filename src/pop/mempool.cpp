@@ -222,8 +222,6 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
                                            ValidationState& state) {
   VBK_ASSERT(atv);
 
-  VBK_LOG_DEBUG("atv: %s", HexStr(atv->toVbkEncoding()));
-
   // before any checks and validations, check if payload is old or not
   if (mempool_tree_.isBlockOld(atv->blockOfProof)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
@@ -257,8 +255,6 @@ template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state) {
   VBK_ASSERT(vtb);
-
-  VBK_LOG_DEBUG("vtb: %s", HexStr(vtb->toVbkEncoding()));
 
   // before any checks and validations, check if payload is old or not
   if (mempool_tree_.isBlockOld(vtb->containingBlock)) {
@@ -295,8 +291,6 @@ template <>
 MemPool::SubmitResult MemPool::submit<VbkBlock>(
     const std::shared_ptr<VbkBlock>& blk, ValidationState& state) {
   VBK_ASSERT(blk);
-
-  VBK_LOG_DEBUG("blk: %s", HexStr(blk->toVbkEncoding()));
 
   // before any checks and validations, check if payload is old or not
   if (mempool_tree_.isBlockOld(*blk)) {
