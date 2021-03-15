@@ -52,6 +52,7 @@ class RandomPopMiner:
         pub.header = str(pop_data.header)
         pub.payoutInfo = str(self.node.getpayoutinfo(self.node.getnewaddress()))
         pub.identifier = self.node.getpopparams().networkId
+        pub.contextInfo = str(pop_data.authenticated_context)
 
         vbk_tx = self.mm.createVbkTxEndorsingAltBlock(pub)
 
