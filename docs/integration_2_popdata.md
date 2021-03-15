@@ -1,4 +1,4 @@
-# Adding PopData. {#integration_2_popdata}
+# Adding PopData {#integration_2_popdata}
 
 [TOC]
 
@@ -8,7 +8,7 @@ We should add new PopData entity into the CBlock class in the block.h file and p
 First we will add new POP_BLOCK_VERSION_BIT flag, that will help to distinguish original blocks that don't have any VeriBlock specific data, and blocks that contain such data.
 Next, update serialization of the block, that will serialize/deserialize PopData if POP_BLOCK_VERSION_BIT is set. Finally extend serialization/deserialization for the PopData, so we can use native serialization/deserialization.
 
-# 1. Helper for the block hash serialization
+# 1. Helper for the block hash serialization.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h)
 

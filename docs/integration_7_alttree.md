@@ -1,4 +1,4 @@
-# Adding AltTree management. {#integration_7_alttree}
+# Adding AltTree management {#integration_7_alttree}
 
 [TOC]
 
@@ -223,6 +223,15 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: set
 ```
 [method BlockManager::LoadBlockIndex](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L4177)
 ```cpp
+-        if (pindex->IsValid(BLOCK_VALID_TREE) && (pindexBestHeader == nullptr || CBlockIndexWorkComparator()(pindexBestHeader, pindex)))
+-            pindexBestHeader = pindex;
++        // do not set best chain here
+     }
+ 
+     // get best chain from ALT tree and update vBTC's best chain
+     {
+         AssertLockHeld(cs_main);
+
          // load blocks
          if(!VeriBlock::loadTrees(blocktree)) {
              return false;
@@ -255,7 +264,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: set
          ReceivedBlockTransactions(block, pindex, blockPos, chainparams.GetConsensus());
 ```
 
-# 3. Show POP related info when node starts.
+# 3. Show Pop related info when node starts.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/init.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/init.cpp)
 
@@ -358,7 +367,7 @@ Update test setup to check if Pop AltTree was initialized properly.
 
 E2E Pop basic functionality test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/e2e_poptx_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/e2e_poptx_tests.cpp). Copy this file to your project.
 
-# 7. Update Makefile to enable new unit test.
+# 7. Update makefile to enable new unit test.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
 ```diff

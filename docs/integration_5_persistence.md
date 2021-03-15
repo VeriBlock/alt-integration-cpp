@@ -1,4 +1,4 @@
-# Adding persistence. {#integration_5_persistence}
+# Adding persistence {#integration_5_persistence}
 
 [TOC]
 
@@ -169,12 +169,9 @@ bool loadTrees(CDBWrapper& db)
 ```
 [method BlockManager::LoadBlockIndex](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L4177)
 ```cpp
-         if (pindex->pprev)
-             pindex->BuildSkip();
--        if (pindex->IsValid(BLOCK_VALID_TREE) && (pindexBestHeader == nullptr || CBlockIndexWorkComparator()(pindexBestHeader, pindex)))
--            pindexBestHeader = pindex;
-+        // do not set best chain here
-+    }
+         if (pindex->IsValid(BLOCK_VALID_TREE) && (pindexBestHeader == nullptr || CBlockIndexWorkComparator()(pindexBestHeader, pindex)))
+             pindexBestHeader = pindex;
+     }
 +
 +    // get best chain from ALT tree and update vBTC's best chain
 +    {
@@ -231,7 +228,7 @@ bool loadTrees(CDBWrapper& db)
 +}
 ```
 
-# 6. Add pop_service.cpp to the Makefile.
+# 6. Add pop_service.cpp to the makefile.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
 ```diff

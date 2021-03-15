@@ -1,18 +1,34 @@
-# Pop Merkle trees. {#integration_8_merkle}
+# Pop Merkle trees {#integration_8_merkle}
 
 [TOC]
 
 # Overview
 
-In order to implement VeriBlock Pop security we should add Pop related information to the merkle root. Root hash of the Pop data should be added to the original block merkle root calculation.
-          
+Altchain developers must ensure PopData is cryptographically authenticated in Block Header.
+
+Regular transactions are typically cryptographically authenticated by inserting Merkle Root into Block Header, we will call it Original Merkle Root.
+
+Merkle Root which is inserted into Block Header is now called Top Level Merkle Root.
+
+![](./img/toplevelmroot.png)
+
+**Algorithm to calculate Top Level Merkle Root**: 
+1. Build Merkle Tree from individual items of PopData (those are VBK blocks, marked as VBK1 on the picture, VTBs and ATVs), resulting Merkle Root is called **Pop Root**.
+2. Insert PopRoot into vector of leaves and calculate **Tx Merkle Root**
+3. Calculate `ContextHash = HASH(BlockHeightBE || PreviousKeystoneHash || SecondPreviousKeystoneHash)`
+   
+   where
+   - `BlockHeightBE` is 4 bytes of block height, serialized in Big-Endian
+   - `PreviousKeystoneHash` is a hash of a Previous Keystone Block. Its height can be calculated with altintegration::getPreviousKeystone(int, int) 
+4. Calculate `TopLevelMerkleRoot = HASH(TxMerkleRoot || ContextHash)`
+
 # 1. VeriBlock merkle root related functions are implemented in the merkle.hpp and merkle.cpp.
 
-Pop merkle trees header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.hpp). Copy this file to your project.
+Pop Merkle trees header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.hpp). Copy this file to your project.
 
-Pop merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.cpp). Copy this file to your project.
+Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/merkle.cpp). Copy this file to your project.
 
-@note Merkle root calculation should fall back to the original merkle root if Pop protocol is not activated.
+@note Merkle Root calculation should fall back to the original Merkle Root if Pop protocol is not activated.
 
 # 2. Update the mining process with Pop Merkle root calculation.
 
@@ -143,7 +159,25 @@ Pop merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 +        assert(!CheckBlock(block, cvstate, chainparams.GetConsensus(), false));
 ```
 
-Use extended block weight calculation method that append Pop data size.
+Use extended block weight calculation method that appends Pop data size.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h)
+```cpp
+ #include <primitives/block.h>
+
++#include <vbk/util.hpp>
++#include <veriblock/pop.hpp>
+```
+```cpp
+ static inline int64_t GetBlockWeight(const CBlock& block)
+ {
+-    return ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * (WITNESS_SCALE_FACTOR - 1) + ::GetSerializeSize(block, PROTOCOL_VERSION);
++    int64_t popDataSize = 0;
++    popDataSize += VeriBlock::GetPopDataWeight(block.popData);
++
++    return ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * (WITNESS_SCALE_FACTOR - 1) + ::GetSerializeSize(block, PROTOCOL_VERSION) - popDataSize;
+ }
+```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
 
@@ -164,7 +198,7 @@ Genesis block generation source: [https://github.com/VeriBlock/vbk-ri-btc/blob/m
 
 Block validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/block_validation_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/block_validation_tests.cpp). Copy this file to your project.
 
-Pop merkle root validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk_merkle_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/vbk_merkle_tests.cpp). Copy this file to your project.
+Pop Merkle Root validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk_merkle_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/vbk_merkle_tests.cpp). Copy this file to your project.
 
 # 6. Update makefile to run tests.
 
