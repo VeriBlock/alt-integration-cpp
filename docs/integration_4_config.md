@@ -1,4 +1,4 @@
-# Adding configuration. {#integration_4_config}
+# Adding configuration {#integration_4_config}
 
 [TOC]
 
@@ -14,6 +14,8 @@ POP configuration header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/s
 POP configuration source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_common.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_common.cpp). Copy this file to your project.
 
 # 2. Add bootstraps blocks.
+
+@note veriblock-pop-cpp library maintains all blocks of Bitcoin and VeriBlock starting at certain set of blocks - "bootstrap blocks".
 
 Bootstrap blocks header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.hpp). Copy this file to your project.
 
@@ -46,14 +48,16 @@ const std::vector<std::string> testnetVBKblocks = {};
 
 POP configuration loader header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.hpp). Copy this file to your project.
 
-@note Make sure to change network ID to uniquely identify ALT blockchain data.
+@note Make sure to change ALT chain ID to uniquely identify ALT blockchain data.
 [struct AltChainParamsBTC](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.hpp#L33)
 ```cpp
     int64_t getIdentifier() const noexcept override
     {
-        return <networkId>;
+        return <altchainId>;
     }
 ```
+
+@note ALT chain ID is 8-byte ID, sent with every endorsement of ALT block in VBK. Used by VeriBlock to group potentially relevant endorsements. It is not critical if ID is reused by multiple Altchains, but this is not preferable.
 
 POP configuration loader source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.cpp). Copy this file to your project.
 
