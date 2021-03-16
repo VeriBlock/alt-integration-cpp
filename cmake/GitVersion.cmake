@@ -26,6 +26,18 @@ if(GIT_FOUND)
             ERROR_STRIP_TRAILING_WHITESPACE
     )
 
+    # is current state "dirty"?
+    execute_process(
+            COMMAND "${GIT_EXECUTABLE}" diff-index --quiet HEAD
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            RESULT_VARIABLE   git_result
+    )
+    if(git_result EQUAL 0)
+        set(_DIRTY_SUFFIX "")
+    else()
+        set(_DIRTY_SUFFIX "-dirty")
+    endif()
+
     if(_TAG STREQUAL _DESCRIBE)
         set(git_at_a_tag ON)
     endif()
@@ -56,24 +68,18 @@ if(GIT_FOUND)
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 ERROR_STRIP_TRAILING_WHITESPACE
         )
-        set(_VERSION "${_BRANCH_CLEAN}-${_SHA}")
+        set(_VERSION "${_BRANCH_CLEAN}-${_SHA}${_DIRTY_SUFFIX}")
     else()
         if(git_at_a_tag)
-            set(_VERSION ${_TAG})
+            set(_VERSION ${_TAG}${_DIRTY_SUFFIX})
         else()
-            set(_VERSION "${_DESCRIBE}-${_BRANCH_CLEAN}")
+            set(_VERSION "${_DESCRIBE}-${_BRANCH_CLEAN}${_DIRTY_SUFFIX}")
         endif()
     endif()
 
-    if( _TAG MATCHES "^([0-9]+).([0-9]+).([0-9]+)" )
-        set( MAJOR_VERSION "${CMAKE_MATCH_1}" )
-        set( MINOR_VERSION "${CMAKE_MATCH_2}" )
-        set( PATCH_VERSION "${CMAKE_MATCH_3}" )
-    endif()
-
-    message(STATUS "[git tag]     : ${_TAG}")
-    message(STATUS "[git branch]  : ${_BRANCH}")
     message(STATUS "[git version] : ${_VERSION}")
 
     set(VERSION ${_VERSION})
+else()
+    set(VERSION "Unknown")
 endif()
