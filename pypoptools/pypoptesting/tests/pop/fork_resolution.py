@@ -37,7 +37,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
-        self._shorter_endorsed_chain_wins(apm)
+        # self._shorter_endorsed_chain_wins(apm)
         self._4_chains_converge(apm)
         self._4_chains_converge_random(apm)
 
