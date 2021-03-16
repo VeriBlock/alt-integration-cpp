@@ -54,8 +54,8 @@ if(GIT_FOUND)
     )
 
     # sanitize
-    string(REGEX REPLACE "[^a-zA-Z0-9.]" "." _BRANCH_CLEAN ${_BRANCH})
-    string(REGEX REPLACE "[.]+" "." _BRANCH_CLEAN ${_BRANCH_CLEAN})
+    string(REGEX REPLACE "[^a-zA-Z0-9.]" "." _BRANCH_CLEAN "${_BRANCH}")
+    string(REGEX REPLACE "[.]+" "." _BRANCH_CLEAN "${_BRANCH_CLEAN}")
 
     if(NOT _TAG)
         # get commit sha
