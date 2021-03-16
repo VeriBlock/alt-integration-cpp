@@ -15,7 +15,8 @@ def create_endorsed_chain(node: Node, apm, size: int, addr: str = None) -> None:
         # endorsing prev tip
         wait_for_block_height(node, height + 1)
         containing_block = node.getbestblock()
-        print(containing_block)
+        print("containing_block: {}".format(containing_block))
+        print("atv_id: {}".format(atv_id))
         assert atv_id in containing_block.containingATVs, \
             "containing block at height {} does not contain pop tx {}".format(containing_block.height, atv_id)
 
