@@ -99,7 +99,7 @@ packages = [
 
 setup(
     name='pypoptools',
-    version='0.0.0',
+    version='0.0.1',
     packages=packages,
     url='https://github.com/VeriBlock/alt-integration-cpp',
     license='MIT',
