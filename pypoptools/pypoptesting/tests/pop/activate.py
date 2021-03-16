@@ -8,13 +8,13 @@ node[0] mines pop tx in block 101 (fork A tip)
 Pop is disabled before block 200 therefore can't handle Pop data
 """
 from ...framework.test_framework import PopIntegrationTestFramework
-from ...framework.pop_util import endorse_block, mine_until_pop_enabled
-from ...framework.sync_util import sync_all, wait_for_block_height
+from ...framework.json_rpc import JsonRpcException
+from ...framework.pop_util import endorse_block
 
 
 class PopActivateTest(PopIntegrationTestFramework):
     def set_test_params(self):
-        self.num_nodes = 2
+        self.num_nodes = 1
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -22,51 +22,36 @@ class PopActivateTest(PopIntegrationTestFramework):
 
         assert self.nodes[0].getblockcount() == 0
 
-        # node0 start with N blocks
-        popActivationHeight = self.nodes[0].getpopparams().popActivationHeight
-        nBlock = popActivationHeight - 50
-        self.nodes[0].generate(nblocks=nBlock)
-        assert self.nodes[0].getblockcount() == nBlock
-        self.log.info("node0 mined {} blocks".format(nBlock))
+        activation_height = self.nodes[0].getpopparams().popActivationHeight
+        before_activation_height = activation_height - 50
+        after_activation_height = activation_height + 50
 
-        # endorse block N (fork A tip)
-        self.log.info('Should not accept POP data before activation block height')
+        # mine before activation height
+        self.nodes[0].generate(nblocks=before_activation_height)
+        assert self.nodes[0].getblockcount() == before_activation_height
+        self.log.info("node mined {} blocks".format(before_activation_height))
+
+        # endorse block before activation height
         try:
-            endorse_block(self.nodes[0], apm, nBlock)
+            endorse_block(self.nodes[0], apm, before_activation_height)
             assert False
-        except:
-            self.log.info("Endorse block failed as expected")
-            pass
+        except Exception as e:
+            assert isinstance(e, JsonRpcException)
+            assert e.error['message'].startswith('POP protocol is not active')
+            self.log.info("node failed endorse block {} as expected".format(before_activation_height))
 
-        self.nodes[0].restart()
-        self.nodes[0].connect(self.nodes[1])
-        sync_all(self.nodes)
-        self.nodes[1].disconnect(self.nodes[0])
+        # mine after activation height
+        self.nodes[0].generate(nblocks=after_activation_height - before_activation_height)
+        assert self.nodes[0].getblockcount() == after_activation_height
+        self.log.info("node mined {} blocks".format(after_activation_height))
 
-        mine_until_pop_enabled(self.nodes[0])
-        tip_height = self.nodes[0].getblockcount()
-
-        # endorse block 100 (fork A tip)
-        endorse_block(self.nodes[0], apm, tip_height)
-        self.log.info("node0 endorsed block {} (fork A tip)".format(tip_height))
-        # mine pop tx on node0
+        # endorse block before activation height
+        endorse_block(self.nodes[0], apm, before_activation_height)
         self.nodes[0].generate(nblocks=1)
-        tip = self.nodes[0].getbestblock()
-        self.log.info("node0 tip is {}".format(tip.height))
+        self.log.info("node endorsed block {}".format(before_activation_height))
 
-        self.nodes[1].generate(nblocks=250)
-        tip2 = self.nodes[1].getbestblock()
-        self.log.info("node1 tip is {}".format(tip2.height))
+        # endorse block after activation height
+        endorse_block(self.nodes[0], apm, after_activation_height)
+        self.nodes[0].generate(nblocks=1)
+        self.log.info("node endorsed block {}".format(after_activation_height))
 
-        self.nodes[0].connect(self.nodes[1])
-        sync_all(self.nodes)
-        best_blocks = [node.getbestblock() for node in self.nodes]
-        assert best_blocks[0].hash == best_blocks[1].hash
-        self.log.info("all nodes switched to common block")
-
-        for i in range(len(best_blocks)):
-            assert best_blocks[i].height == tip.height, \
-                "node[{}] expected to select shorter chain ({}) with higher pop score\n" \
-                "but selected longer chain ({})".format(i, tip.height, best_blocks[i].height)
-
-        self.log.info("all nodes selected fork A as best chain")
