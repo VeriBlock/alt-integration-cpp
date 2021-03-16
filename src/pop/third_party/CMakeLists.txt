@@ -1,5 +1,5 @@
 add_library(sha256 OBJECT sha256.cpp)
 disable_clang_tidy(sha256)
 add_library(secp256k1 OBJECT secp256k1/secp256k1.cpp)
-target_add_flag_visability(secp256k1 PRIVATE -Wno-unused-function)
+target_add_flag_visibility(secp256k1 PRIVATE -Wno-unused-function)
 disable_clang_tidy(secp256k1)
