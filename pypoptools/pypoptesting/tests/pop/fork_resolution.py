@@ -79,7 +79,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
 
         # mine 10 more blocks to fork A
         self.nodes[0].generate(nblocks=10)
-        sync_all(self.nodes[0:2])
+        sync_all([self.nodes[0], self.nodes[1]])
         self.log.info("nodes[0,1] are in sync and are at fork A (%d...%d blocks)", last_block + 103, last_block + 113)
 
         # fork B is at 400
