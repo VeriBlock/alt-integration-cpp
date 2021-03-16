@@ -53,6 +53,9 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         self.nodes[0].generate(nblocks=103)
         self.log.info("node0 mined 103 blocks")
         sync_blocks([self.nodes[0], self.nodes[1], self.nodes[2]], timeout=60)
+        self.log.info("nodes[0] getbestblock height: {}".format(nodes[0].getbestblock().height))
+        self.log.info("nodes[1] getbestblock height: {}".format(nodes[1].getbestblock().height))
+        self.log.info("nodes[2] getbestblock height: {}".format(nodes[2].getbestblock().height))
         assert self.nodes[0].getbestblock().height == last_block + 103
         assert self.nodes[1].getbestblock().height == last_block + 103
         assert self.nodes[2].getbestblock().height == last_block + 103
