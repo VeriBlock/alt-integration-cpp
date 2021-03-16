@@ -52,7 +52,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         # all nodes start with last_block + 103 blocks
         self.nodes[0].generate(nblocks=103)
         self.log.info("node0 mined 103 blocks")
-        sync_blocks(self.nodes[0:2], timeout=20)
+        sync_blocks([self.nodes[0], self.nodes[1], self.nodes[2]], timeout=60)
         assert self.nodes[0].getbestblock().height == last_block + 103
         assert self.nodes[1].getbestblock().height == last_block + 103
         assert self.nodes[2].getbestblock().height == last_block + 103
@@ -95,13 +95,13 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         containing_block = self.nodes[0].getbestblock()
         self.nodes[0].generate(nblocks=9)
         self.log.info("node0 mines 10 more blocks")
-        sync_all(self.nodes[0:2])
+        sync_all([self.nodes[0], self.nodes[1]])
 
         assert self.nodes[1].getblock(containing_block.hash).hash == containing_block.hash
 
         tip = self.nodes[0].getbestblock()
         assert atv_id in containing_block.containingATVs, "pop tx is not in containing block"
-        sync_blocks(self.nodes[0:2])
+        sync_blocks([self.nodes[0], self.nodes[1]], timeout=60)
         self.log.info("nodes[0,1] are in sync, pop tx containing block is {}".format(containing_block.height))
         self.log.info("node0 tip is {}".format(tip.height))
 
@@ -114,7 +114,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         self.nodes[3].connect(self.nodes[2])
         self.log.info("node3 started with 0 blocks, connected to nodes[0,2]")
 
-        sync_blocks(self.nodes, timeout=30)
+        sync_blocks(self.nodes, timeout=60)
         self.log.info("nodes[0,1,2,3] are in sync")
 
         # expected best block hash is fork A (has higher pop score)
