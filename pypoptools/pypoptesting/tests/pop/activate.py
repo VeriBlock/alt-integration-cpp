@@ -24,6 +24,7 @@ class PopActivateTest(PopIntegrationTestFramework):
 
         activation_height = self.nodes[0].getpopparams().popActivationHeight
         before_activation_height = activation_height - 50
+        almost_activation_height = activation_height - 1
         after_activation_height = activation_height + 50
 
         # mine before activation height
@@ -49,6 +50,11 @@ class PopActivateTest(PopIntegrationTestFramework):
         endorse_block(self.nodes[0], apm, before_activation_height)
         self.nodes[0].generate(nblocks=1)
         self.log.info("node endorsed block {}".format(before_activation_height))
+
+        # endorse block almost activation height
+        endorse_block(self.nodes[0], apm, almost_activation_height)
+        self.nodes[0].generate(nblocks=1)
+        self.log.info("node endorsed block {}".format(almost_activation_height))
 
         # endorse block after activation height
         endorse_block(self.nodes[0], apm, after_activation_height)
