@@ -7,32 +7,32 @@
 We have to provide Pop aware RPC calls to let users interact with node. We'll add new functions to the RPC.
 
 Here is the list of the provided Pop RPC calls: 
-- getpopparams
-- submitpopatv
-- submitpopvtb
-- submitpopvbk
-- getpopdatabyheight
-- getpopdatabyhash
-- getvbkblock
-- getbtcblock
-- getvbkbestblockhash
-- getbtcbestblockhash
-- getvbkblockhash
-- getbtcblockhash
-- getrawatv
-- getrawvtb
-- getrawvbkblock
-- getrawpopmempool
+- `getpopparams`
+- `submitpopatv`
+- `submitpopvtb`
+- `submitpopvbk`
+- `getpopdatabyheight`
+- `getpopdatabyhash`
+- `getvbkblock`
+- `getbtcblock`
+- `getvbkbestblockhash`
+- `getbtcbestblockhash`
+- `getvbkblockhash`
+- `getbtcblockhash`
+- `getrawatv`
+- `getrawvtb`
+- `getrawvbkblock`
+- `getrawpopmempool`
 
 Besides new RPC calls some of the original calls will be extended to provide additional Pop information.
 
 Here is the list of extended RPC calls: 
-- getblock
-- getblockchaininfo
-- getmininginfo
-- getblocktemplate
+- `getblock`
+- `getblockchaininfo`
+- `getmininginfo`
+- `getblocktemplate`
 
-@note Description of the RPC calls can be found in the source code. For example [here](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.cpp#L112) is the description of getpopdatabyheight RPC call.
+@note Description of the RPC calls can be found in the source code. For example [here](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.cpp#L112) is the description of `getpopdatabyheight` RPC call.
 
 # 1. Add RPC service files: rpc_register.hpp, rpc_register.cpp.
 
