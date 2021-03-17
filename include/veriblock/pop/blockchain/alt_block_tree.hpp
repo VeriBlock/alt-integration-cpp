@@ -223,6 +223,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @overload
   using base::setState;
 
+  bool finalizeBlock(const hash_t& block);
+
   /**
    * Removes given block and all blocks after it.
    * @param[in] toRemove block to be removed.

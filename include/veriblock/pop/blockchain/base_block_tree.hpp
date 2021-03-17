@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 #define ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/pop/algorithm.hpp>
@@ -39,11 +40,23 @@ struct BaseBlockTree {
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
   const block_index_t& getBlocks() const { return blocks_; }
 
-  virtual ~BaseBlockTree() = default;
+  virtual ~BaseBlockTree() {
+    if (!isBootstrapped()) {
+      return;
+    }
+
+    deallocateTree(getRoot());
+  }
 
   BaseBlockTree() = default;
+
+  // non-copyable
   BaseBlockTree(const BaseBlockTree&) = delete;
   BaseBlockTree& operator=(const BaseBlockTree&) = delete;
+
+  // movable
+  BaseBlockTree(BaseBlockTree&&) = default;
+  BaseBlockTree& operator=(BaseBlockTree&&) = default;
 
   /**
    * Getter for currently Active Chain.
@@ -140,7 +153,7 @@ struct BaseBlockTree {
                            "Block does not connect to current tree");
     }
 
-    current = touchBlockIndex(currentHash);
+    current = touchBlockIndex(currentHash, prev);
     VBK_ASSERT(current);
 
     // touchBlockIndex may return existing block (one of bootstrap blocks), so
@@ -148,7 +161,7 @@ struct BaseBlockTree {
     auto next = current->pnext;
 
     // copy all fields
-    *current = *index;
+    current->mergeFrom(*index);
     // clear inmem fields
     current->setNullInmemFields();
     current->unsetDirty();
@@ -428,7 +441,7 @@ struct BaseBlockTree {
     tips_.insert(index);
   }
 
-  index_t* touchBlockIndex(const hash_t& hash) {
+  index_t* touchBlockIndex(const hash_t& hash, index_t* prev) {
     auto shortHash = makePrevHash(hash);
     auto it = blocks_.find(shortHash);
     if (it != blocks_.end()) {
@@ -441,7 +454,7 @@ struct BaseBlockTree {
       newIndex = std::move(itr->second);
       removed_.erase(itr);
     } else {
-      newIndex = std::unique_ptr<index_t>(new index_t{});
+      newIndex = make_unique<index_t>(prev);
     }
 
     newIndex->setNull();
@@ -453,15 +466,15 @@ struct BaseBlockTree {
                                block_height_t bootstrapHeight = 0) {
     VBK_ASSERT(header != nullptr);
 
-    index_t* current = touchBlockIndex(header->getHash());
+    auto* prev = getBlockIndex(header->getPreviousBlock());
+    index_t* current = touchBlockIndex(header->getHash(), prev);
     current->setHeader(std::move(header));
-    current->pprev = getBlockIndex(header->getPreviousBlock());
+    current->pprev = prev;
 
     if (current->pprev != nullptr) {
       // prev block found
       current->setHeight(current->pprev->getHeight() + 1);
-      auto pair = current->pprev->pnext.insert(current);
-      VBK_ASSERT(pair.second && "block already existed in prev");
+      current->pprev->pnext.insert(current);
 
       if (!current->pprev->isValid()) {
         current->setFlag(BLOCK_FAILED_CHILD);
@@ -552,6 +565,121 @@ struct BaseBlockTree {
   }
 
  protected:
+  /**
+   * Deallocates a "connected" tree which contains block with hash=`hash`.
+   *
+   * @invariant to deallocate part of a tree, disconnect tree which must remain.
+   *
+   * @param block
+   */
+  void deallocateTree(index_t& toDelete) {
+    auto* index = &toDelete;
+
+    // find oldest ancestor
+    while (index != nullptr && index->pprev != nullptr) {
+      index = index->pprev;
+    }
+
+    // starting at oldest ancestor, remove all blocks during post-order tree
+    // traversal
+    forEachNodePostorder<block_t>(*index, [&](index_t& next) {
+      auto h = makePrevHash(next.getHash());
+      blocks_.erase(h);
+    });
+  }
+
+  //! Marks `block` as finalized.
+  //!
+  //! Final blocks can not be reorganized, thus we can remove outdated blocks
+  //! from tips_ and free some RAM by deallocating blocks past last final block
+  //! minus `N` (`preserveBlocksBehindFinal`) blocks. In ALT and VBK chains N
+  //! will equal to at least Endorsement Settlement Interval, so that
+  //! endorsements in blocks after finalized block will point to an existing
+  //! *endorsed* block.
+  //!
+  //! @param[in] block hash of block to be finalized. Must be part of active
+  //! chain.
+  //!
+  //! @warning This action is irreversible. You will need to reload the whole
+  //! tree to recover in case if this func is called by mistake.
+  //!
+  //! @returns false if block not found or prereq are not met
+  virtual bool finalizeBlockImpl(const hash_t& block,
+                                 // see config.preserveBlocksBehindFinal()
+                                 int32_t preserveBlocksBehindFinal) {
+    auto* index = getBlockIndex(block);
+    if (!index) {
+      return false;
+    }
+
+    // block is already final
+    if (index->finalized) {
+      return true;
+    }
+
+    // prereq is not met - finalized block must be on active chain
+    if (!activeChain_.contains(index)) {
+      return false;
+    }
+
+    // first, update active chain (it should start with
+    // 'index' but we also need to preserve `preserveBlocksBehindFinal` blocks
+    // before it). all outdated blocks behind `index` block will be deallocated
+    int32_t firstBlockHeight = index->getHeight() - preserveBlocksBehindFinal;
+    int32_t bootstrapBlockHeight = getRoot().getHeight();
+    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+    activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
+
+    // second, erase candidates from tips_ that will never be activated
+    erase_if<decltype(tips_), index_t*>(
+        tips_, [this, index](const index_t* const& tip) -> bool {
+          VBK_ASSERT(tip);
+
+          // tip from active chain can not be outdated
+          if (activeChain_.contains(tip)) {
+            return false;
+          }
+
+          return isBlockOutdated(*index, *tip);
+        });
+
+    // before we deallocate subtree, disconnect "new root block" from previous
+    // tree
+    auto& root = getRoot();
+    auto* rootPrev = root.pprev;
+    if (root.pprev != nullptr) {
+      root.pprev->pnext.erase(&root);
+      root.pprev = nullptr;
+
+      // do deallocate
+      deallocateTree(*rootPrev);
+
+      // erase "parallel" blocks - blocks that are on same height as `index`,
+      // but since `index` is final, will never be active.
+      if (index->pprev != nullptr) {
+        auto parallelBlocks = index->pprev->pnext;
+        parallelBlocks.erase(index);
+        for (auto* par : parallelBlocks) {
+          // disconnect `par` from prev block
+          if (par->pprev != nullptr) {
+            par->pprev->pnext.erase(par);
+            par->pprev = nullptr;
+          }
+          deallocateTree(*par);
+        }
+      }
+    }
+
+    // fourth, mark `index` and all predecessors as finalized
+    index_t* ptr = index;
+    while (ptr != nullptr && !ptr->finalized) {
+      ptr->finalized = true;
+      ptr = ptr->pprev;
+    }
+
+    return true;
+  }
+
   //! callback which is executed when new block is added to a tree
   virtual void onBlockInserted(index_t* /*ignore*/) {
     /* do nothing in base tree */
