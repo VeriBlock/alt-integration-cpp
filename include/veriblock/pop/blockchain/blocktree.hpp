@@ -203,8 +203,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     base::tryAddTip(index);
 
-    // don't defer fork resolution in the acceptBlock+addPayloads flow until the
-    // validation hole is plugged
+    // don't defer fork resolution in the acceptBlockHeader+addPayloads flow
+    // until the validation hole is plugged
     determineBestChain(*index, state);
 
     return true;

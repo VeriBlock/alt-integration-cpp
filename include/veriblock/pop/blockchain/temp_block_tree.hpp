@@ -7,19 +7,47 @@
 #define ALTINTEGRATION_TEMP_BLOCK_TREE_HPP
 
 #include <memory>
-
+#include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 namespace altintegration {
 
 template <typename StableBlockTree>
 struct TempBlockTree {
+  template <typename BlockIndexT>
+  struct TempBlockIndex : public BlockIndexT {
+    using base = BlockIndexT;
+    using base::base;
+
+    ~TempBlockIndex() {
+      // if alttree is destroyed before temp block tree, then
+      // `pprev` may point to deallocated block. to solve this, override
+      // destructor of temp block index, as we don't care in which order temp
+      // blocks are destroyed.
+      this->pprev = nullptr;
+      this->pnext.clear();
+    }
+  };
+
   using block_tree_t = StableBlockTree;
   using block_t = typename block_tree_t::block_t;
   using index_t = typename block_tree_t::index_t;
-  using block_index_t = typename block_tree_t::base::block_index_t;
+  using wrapped_index_t = TempBlockIndex<index_t>;
+  using prev_block_hash_t = typename StableBlockTree::prev_block_hash_t;
+  using block_index_t =
+      std::unordered_map<prev_block_hash_t, std::unique_ptr<wrapped_index_t>>;
 
   TempBlockTree(const block_tree_t& tree) : tree_(&tree) {}
+
+  virtual ~TempBlockTree() = default;
+
+  // non-copyable
+  TempBlockTree(const TempBlockTree&) = delete;
+  TempBlockTree& operator=(const TempBlockTree&) = delete;
+
+  // movable
+  TempBlockTree(TempBlockTree&&) = default;
+  TempBlockTree& operator=(TempBlockTree&&) = default;
 
   template <typename T,
             typename = typename std::enable_if<
@@ -60,14 +88,14 @@ struct TempBlockTree {
     return const_cast<index_t*>(t.getBlockIndex(hash));
   }
 
-  bool acceptBlock(const block_t& header, ValidationState& state) {
-    return acceptBlock(std::make_shared<block_t>(header), state);
+  bool acceptBlockHeader(const block_t& header, ValidationState& state) {
+    return acceptBlockHeader(std::make_shared<block_t>(header), state);
   }
 
-  bool acceptBlock(std::shared_ptr<block_t> header, ValidationState& state) {
+  bool acceptBlockHeader(std::shared_ptr<block_t> header,
+                         ValidationState& state) {
     VBK_ASSERT(header);
     auto* prev = getBlockIndex(header->getPreviousBlock());
-
     if (prev == nullptr) {
       return state.Invalid(
           block_t::name() + "-bad-prev-block",
@@ -86,7 +114,7 @@ struct TempBlockTree {
   /**
    * Remove blocks from the temp store that are already in the stable tree
    */
-  void cleanUp() {
+  void cleanUpStaleBlocks() {
     for (auto it = temp_blocks_.begin(); it != temp_blocks_.end();) {
       auto short_hash = tree_->makePrevHash(it->second->getHash());
       auto* index = tree_->getBlockIndex(short_hash);
@@ -134,7 +162,9 @@ struct TempBlockTree {
       return it->second.get();
     }
 
-    auto newIndex = make_unique<index_t>(nullptr);
+    // intentionally do not pass 'prev' here - we don't want 'stable' blocks
+    // have pnext ptr to temp blocks.
+    auto newIndex = make_unique<wrapped_index_t>(nullptr);
     newIndex->setNull();
     it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
     return it->second.get();
