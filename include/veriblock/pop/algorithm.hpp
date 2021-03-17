@@ -84,7 +84,7 @@ bool erase_last_item_if(std::vector<T>& v,
 //! removes all elements from container, which satisfy given predicate
 template <typename container_t, typename val_t>
 void erase_if(container_t& c, std::function<bool(const val_t&)> pred) {
-  for (auto it = c.begin(), end = c.end(); it != end;) {
+  for (auto it = c.begin(); it != c.end();) {
     it = pred(*it) ? c.erase(it) : std::next(it);
   }
 }

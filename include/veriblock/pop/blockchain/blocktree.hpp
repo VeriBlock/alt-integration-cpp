@@ -126,11 +126,12 @@ struct BlockTree : public BaseBlockTree<Block> {
   //! @invariant NOT atomic.
   bool loadBlock(std::unique_ptr<index_t> index,
                  ValidationState& state) override {
+    VBK_ASSERT(index != nullptr);
     if (!checkBlock(index->getHeader(), state, *param_)) {
       return state.Invalid("bad-header");
     }
 
-    auto hash = index->getHash();
+    const auto hash = index->getHash();
     if (!base::loadBlock(std::move(index), state)) {
       return false;
     }
@@ -179,6 +180,10 @@ struct BlockTree : public BaseBlockTree<Block> {
     return isBlockOld(index->getHeight());
   }
 
+  bool finalizeBlock(const hash_t& block) {
+    return base::finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
+  }
+
  protected:
   const ChainParams* param_ = nullptr;
 
@@ -198,8 +203,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     base::tryAddTip(index);
 
-    // don't defer fork resolution in the acceptBlock+addPayloads flow until the
-    // validation hole is plugged
+    // don't defer fork resolution in the acceptBlockHeader+addPayloads flow
+    // until the validation hole is plugged
     determineBestChain(*index, state);
 
     return true;

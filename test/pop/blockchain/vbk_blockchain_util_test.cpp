@@ -3,37 +3,35 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
-
 #include <gtest/gtest.h>
 
 #include <memory>
-#include <veriblock/pop/bootstraps.hpp>
-
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
+#include <veriblock/pop/bootstraps.hpp>
 #include <veriblock/pop/time.hpp>
 
 using namespace altintegration;
 
-static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
-                                                  int32_t deltaTime_change,
-                                                  uint32_t difficulty,
-                                                  uint32_t chainlength) {
+static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
+    int32_t deltaTime,
+    int32_t deltaTime_change,
+    uint32_t difficulty,
+    uint32_t chainlength) {
   assert(chainlength != 0);
 
   VbkBlock block{};
   block.setHeight(1);
   block.setTimestamp(10000);
   block.setDifficulty(difficulty);
-  BlockIndex<VbkBlock> blockIndex;
-  blockIndex.setHeader(block);
-  blockIndex.setHeight(block.getHeight());
-  blockIndex.pprev = nullptr;
+  auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(nullptr);
+  blockIndex->setHeader(block);
+  blockIndex->setHeight(block.getHeight());
 
-  std::vector<BlockIndex<VbkBlock>> chain(chainlength);
-  chain[0] = blockIndex;
+  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain(chainlength);
+  chain[0] = std::move(blockIndex);
 
   for (size_t i = 1; i < chainlength; ++i) {
     if (i > 0 && i % 40 == 0) {
@@ -42,14 +40,13 @@ static std::vector<BlockIndex<VbkBlock>> getChain(int32_t deltaTime,
 
     VbkBlock blockTmp{};
     blockTmp.setHeight((int32_t)i + 1);
-    blockTmp.setTimestamp(chain[i - 1].getHeader().getBlockTime() + deltaTime);
-    blockTmp.setDifficulty( difficulty);
-    BlockIndex<VbkBlock> temp;
-    temp.setHeader(blockTmp);
-    temp.setHeight(blockTmp.getHeight());
-    temp.pprev = &chain[i - 1];
+    blockTmp.setTimestamp(chain[i - 1]->getHeader().getBlockTime() + deltaTime);
+    blockTmp.setDifficulty(difficulty);
+    auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
+    temp->setHeader(blockTmp);
+    temp->setHeight(blockTmp.getHeight());
 
-    chain[i] = temp;
+    chain[i] = std::move(temp);
   }
 
   return chain;
@@ -152,15 +149,20 @@ static std::vector<GetNextWorkRequiredTestCases>
 TEST_P(GetNextWorkRequiredTest, getNextWorkRequired_test) {
   auto value = GetParam();
 
-  std::vector<BlockIndex<VbkBlock>> chain = getChain(value.deltaTime,
-                                                     value.deltaTime_change,
-                                                     value.chain_difficulty,
-                                                     value.chainlength);
+  auto chain = getChain(value.deltaTime,
+                        value.deltaTime_change,
+                        value.chain_difficulty,
+                        value.chainlength);
 
   uint32_t result =
-      getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
+      getNextWorkRequired(*chain[chain.size() - 1], VbkBlock(), *chainparams);
 
   EXPECT_EQ(value.expected_difficulty, result);
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(GetNextWorkRequiredRegression,
@@ -177,13 +179,13 @@ TEST_F(SingleTest, single_test) {
   block.setHeight(1);
   block.setTimestamp(10000);
   block.setDifficulty(ArithUint256::fromHex("09184E72A000").toBits());
-  BlockIndex<VbkBlock> blockIndex;
-  blockIndex.setHeader(block);
-  blockIndex.setHeight(block.getHeight());
-  blockIndex.pprev = nullptr;
+  auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(nullptr);
+  blockIndex->setHeader(block);
+  blockIndex->setHeight(block.getHeight());
+  blockIndex->pprev = nullptr;
 
-  std::vector<BlockIndex<VbkBlock>> chain(chainlength);
-  chain[0] = blockIndex;
+  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain(chainlength);
+  chain[0] = std::move(blockIndex);
 
   for (size_t i = 1; i < chainlength; ++i) {
     if (i >= 60) {
@@ -192,20 +194,24 @@ TEST_F(SingleTest, single_test) {
 
     VbkBlock blockTmp{};
     blockTmp.setHeight((int32_t)i + 1);
-    blockTmp.setTimestamp(chain[i - 1].getHeader().getBlockTime() + deltaTime);
+    blockTmp.setTimestamp(chain[i - 1]->getHeader().getBlockTime() + deltaTime);
     blockTmp.setDifficulty(ArithUint256::fromHex("09184E72A000").toBits());
-    BlockIndex<VbkBlock> temp;
-    temp.setHeader(blockTmp);
-    temp.setHeight(blockTmp.getHeight());
-    temp.pprev = &chain[i - 1];
+    auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
+    temp->setHeader(blockTmp);
+    temp->setHeight(blockTmp.getHeight());
 
-    chain[i] = temp;
+    chain[i] = std::move(temp);
   }
 
   uint32_t result =
-      getNextWorkRequired(chain[chain.size() - 1], VbkBlock(), *chainparams);
+      getNextWorkRequired(*chain.back(), VbkBlock(), *chainparams);
 
   EXPECT_EQ(ArithUint256::fromHex("0228C35294D0").toBits(), result);
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 TEST(Vbk, CheckBlockTime1) {
@@ -213,13 +219,14 @@ TEST(Vbk, CheckBlockTime1) {
   const auto startTime = 1'527'000'000;
   std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
   for (int i = 0; i < 1000; i++) {
-    chain.push_back(std::make_shared<BlockIndex<VbkBlock>>());
-    auto& index = chain[chain.size() - 1];
+    auto b = std::make_shared<BlockIndex<VbkBlock>>(
+        i == 0 ? nullptr : chain.back().get());
+    chain.push_back(std::move(b));
+    auto& index = chain.back();
     VbkBlock blockTmp{};
     blockTmp.setTimestamp(startTime + (120 * i));
     index->setHeight(VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i);
     index->setHeader(blockTmp);
-    index->pprev = i == 0 ? nullptr : chain[i - 1].get();
   }
 
   VbkChainParamsMain main;
@@ -237,42 +244,49 @@ TEST(Vbk, CheckBlockTime1) {
   ASSERT_FALSE(r2) << state.GetPath();
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 TEST(Vbk, CheckBlockTime2) {
-  auto makeBlock = [](int timestamp, int height) -> BlockIndex<VbkBlock> {
-    BlockIndex<VbkBlock> index;
+  auto makeBlock = [](BlockIndex<VbkBlock>* prev,
+                      int timestamp,
+                      int height) -> std::shared_ptr<BlockIndex<VbkBlock>> {
+    auto index = std::make_shared<BlockIndex<VbkBlock>>(prev);
     VbkBlock blockTmp{};
     blockTmp.setTimestamp(timestamp);
-    index.setHeight(height);
-    index.setHeader(blockTmp);
+    index->setHeight(height);
+    index->setHeader(blockTmp);
     return index;
   };
 
   ValidationState state;
-  std::vector<BlockIndex<VbkBlock>> chain;
-  chain.push_back(makeBlock(1527000000, 110000));
-  chain.push_back(makeBlock(1527500000, 110001));
-  chain.push_back(makeBlock(1528000000, 110002));
-
-  for (size_t i = 0; i < chain.size(); i++) {
-    auto& index = chain[i];
-    index.pprev = i == 0 ? nullptr : &chain[i - 1];
-  }
+  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
+  chain.push_back(makeBlock(nullptr, 1527000000, 110000));
+  chain.push_back(makeBlock(chain.back().get(), 1527500000, 110001));
+  chain.push_back(makeBlock(chain.back().get(), 1528000000, 110002));
 
   VbkBlock block;
   VbkChainParamsMain params;
   block.setTimestamp(1527499999);
   bool r1 = checkBlockTime<VbkBlock, VbkChainParams>(
-      chain[chain.size() - 1], block, state, params);
+      *chain[chain.size() - 1], block, state, params);
   ASSERT_FALSE(r1);
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
 
   block.setTimestamp(1527500000);
   bool r2 = checkBlockTime<VbkBlock, VbkChainParams>(
-      chain[chain.size() - 1], block, state, params);
+      *chain[chain.size() - 1], block, state, params);
   ASSERT_TRUE(r2);
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 template <typename T>

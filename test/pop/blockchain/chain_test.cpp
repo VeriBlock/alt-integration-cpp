@@ -27,6 +27,19 @@ struct MyDummyBlock {
   static std::string name() { return {}; };
   hash_t h;
   const hash_t& getHash() const { return h; };
+
+  std::string toPrettyString() const { return "MyDummyBlock"; }
+};
+
+struct BlocksOwner {
+  std::vector<std::shared_ptr<BlockIndex<MyDummyBlock>>> blocks;
+
+  ~BlocksOwner() {
+    // destroy chain in reverse order (from tip to root)
+    for(auto it = blocks.rbegin(); it != blocks.rend(); ++it) {
+      it->reset();
+    }
+  }
 };
 
 struct TestCase {
@@ -37,36 +50,39 @@ struct TestCase {
 struct ChainTest : public ::testing::TestWithParam<TestCase> {
   Chain<BlockIndex<MyDummyBlock>> chain{};
 
-  static std::vector<BlockIndex<MyDummyBlock>> makeBlocks(int startHeight,
-                                                          int size) {
-    std::vector<BlockIndex<MyDummyBlock>> blocks;
+  static BlocksOwner makeBlocks(
+      int startHeight, int size) {
+    std::vector<std::shared_ptr<BlockIndex<MyDummyBlock>>> blocks;
     for (int i = 0; i < size; i++) {
-      BlockIndex<MyDummyBlock> index{};
-      index.setHeight(i + startHeight);
-      index.pprev = nullptr;
-      blocks.push_back(index);
+      auto index = std::make_shared<BlockIndex<MyDummyBlock>>(nullptr);
+      index->setHeight(i + startHeight);
+      blocks.push_back(std::move(index));
     }
 
     // fill in the links to previous blocks
     for (int i = 0; i < (size - 1); i++) {
-      auto elem = &blocks[size - i - 1];
-      elem->pprev = &blocks[size - i - 2];
+      auto elem = blocks[size - i - 1].get();
+      elem->pprev = blocks[size - i - 2].get();
+      if (elem->pprev != nullptr) {
+        elem->pprev->pnext.insert(elem);
+      }
     }
-    return blocks;
+    return {blocks};
   }
 };
 
 TEST_P(ChainTest, Full) {
   auto [start, size] = GetParam();
-  auto blocks = makeBlocks(start, size);
-  chain = Chain<BlockIndex<MyDummyBlock>>(start, &blocks.back());
+  auto owner = makeBlocks(start, size);
+  auto& blocks = owner.blocks;
+  chain = Chain<BlockIndex<MyDummyBlock>>(start, blocks.back().get());
   EXPECT_EQ(chain.chainHeight(), start + size - 1);
-  EXPECT_EQ(chain.tip(), &blocks.back());
+  EXPECT_EQ(chain.tip(), blocks.back().get());
 
   // check 'contains' method
   for (int i = 0; i < size; i++) {
-    EXPECT_EQ(chain[i + start], &blocks[i]);
-    EXPECT_TRUE(chain.contains(&blocks[i]));
+    EXPECT_EQ(chain[i + start], blocks[i].get());
+    EXPECT_TRUE(chain.contains(blocks[i].get()));
   }
   EXPECT_EQ(chain[start - 1], nullptr);
 
@@ -76,13 +92,13 @@ TEST_P(ChainTest, Full) {
 
   // check 'next' method
   for (int i = 0; i < size - 2; i++) {
-    EXPECT_EQ(chain.next(&blocks[i]), &(blocks[i + 1]));
+    EXPECT_EQ(chain.next(blocks[i].get()), (blocks[i + 1]).get());
   }
-  EXPECT_EQ(chain.next(&blocks[blocks.size() - 1]), nullptr);
+  EXPECT_EQ(chain.next(blocks[blocks.size() - 1].get()), nullptr);
 
   // check 'setTip' method
   for (int i = 0; i < size; i++) {
-    chain.setTip(&blocks[i]);
+    chain.setTip(blocks[i].get());
   }
 }
 
@@ -94,8 +110,9 @@ static const std::vector<TestCase> cases = {
 INSTANTIATE_TEST_SUITE_P(Chain, ChainTest, testing::ValuesIn(cases));
 
 TEST(ChainTest, ChainStartHeightAboveTip) {
-  auto blocks = ChainTest::makeBlocks(0, 10);
-  Chain<BlockIndex<MyDummyBlock>> chain(100, &blocks.back());
+  auto owner = ChainTest::makeBlocks(0, 10);
+  auto& blocks = owner.blocks;
+  Chain<BlockIndex<MyDummyBlock>> chain(100, blocks.back().get());
   ASSERT_TRUE(chain.empty());
 }
 
@@ -103,8 +120,10 @@ TEST(ChainTest, CreateFrom0) {
   // when first block is at height 100 (no blocks behind that), and Chain is
   // created with height 0, it is expected to see that chain will contain 110
   // elements, first 100 of which are null.
-  auto blocks = ChainTest::makeBlocks(100, 10);
-  Chain<BlockIndex<MyDummyBlock>> c(0, &blocks.back());
+  auto owner = ChainTest::makeBlocks(100, 10);
+  auto& blocks = owner.blocks;
+
+  Chain<BlockIndex<MyDummyBlock>> c(0, blocks.back().get());
   ASSERT_EQ(c.blocksCount(), 110);
   ASSERT_EQ(c.chainHeight(), 109);
 }
@@ -121,10 +140,11 @@ Endorsement generateEndorsement(const Block& endorsedBlock,
 }
 
 template <typename Block>
-BlockIndex<Block> generateNextBlock(BlockIndex<Block>* prev);
+std::shared_ptr<BlockIndex<Block>> generateNextBlock(BlockIndex<Block>* prev);
 
 template <>
-BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
+std::shared_ptr<BlockIndex<AltBlock>> generateNextBlock(
+    BlockIndex<AltBlock>* prev) {
   AltBlock block;
   block.hash = generateRandomBytesVector(32);
   if (prev != nullptr) {
@@ -135,15 +155,15 @@ BlockIndex<AltBlock> generateNextBlock(BlockIndex<AltBlock>* prev) {
     block.height = 0;
     block.timestamp = 0;
   }
-  BlockIndex<AltBlock> index;
-  index.setHeader(block);
-  index.setHeight(block.height);
-  index.pprev = prev;
+  auto index = std::make_shared<BlockIndex<AltBlock>>(prev);
+  index->setHeader(block);
+  index->setHeight(block.height);
   return index;
 }
 
 template <>
-BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
+std::shared_ptr<BlockIndex<VbkBlock>> generateNextBlock(
+    BlockIndex<VbkBlock>* prev) {
   VbkBlock block;
   if (prev != nullptr) {
     block.setHeight(prev->getHeight() + 1);
@@ -155,10 +175,9 @@ BlockIndex<VbkBlock> generateNextBlock(BlockIndex<VbkBlock>* prev) {
     block.setNonce(0);
     block.setVersion(0);
   }
-  BlockIndex<VbkBlock> index;
-  index.setHeader(block);
-  index.setHeight(block.getHeight());
-  index.pprev = prev;
+  auto index = std::make_shared<BlockIndex<VbkBlock>>(prev);
+  index->setHeader(block);
+  index->setHeight(block.getHeight());
   return index;
 }
 
@@ -177,45 +196,44 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   using block_t = typename findEndorsement::block_t;
   using endorsement_t = typename findEndorsement::endorsement_t;
 
-  BlockIndex<block_t> bootstrapBlock = generateNextBlock<block_t>(nullptr);
-
-  Chain<BlockIndex<block_t>> chain(bootstrapBlock.getHeight(), &bootstrapBlock);
-
   std::vector<std::shared_ptr<BlockIndex<block_t>>> indexes{
-      std::make_shared<BlockIndex<block_t>>(bootstrapBlock)};
+      generateNextBlock<block_t>(nullptr)};
+
+  auto& bootstrapBlock = indexes.at(0);
+  Chain<BlockIndex<block_t>> chain(bootstrapBlock->getHeight(),
+                                   bootstrapBlock.get());
 
   for (int i = 0; i < 10; ++i) {
-    auto block =
-        std::make_shared<BlockIndex<block_t>>(generateNextBlock(chain.tip()));
-    indexes.push_back(block);
-    chain.setTip(block.get());
+    auto index = generateNextBlock(chain.tip());
+    indexes.push_back(index);
+    chain.setTip(index.get());
   }
 
-  BlockIndex<block_t> newIndex = generateNextBlock(chain.tip());
+  auto newIndex = generateNextBlock(chain.tip());
 
   endorsement_t endorsement1 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->getHeader(), newIndex.getHeader());
+      chain.tip()->getHeader(), newIndex->getHeader());
   endorsement_t endorsement2 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->pprev->getHeader(), newIndex.getHeader());
+      chain.tip()->pprev->getHeader(), newIndex->getHeader());
 
-  newIndex.insertContainingEndorsement(
+  newIndex->insertContainingEndorsement(
       std::make_shared<endorsement_t>(endorsement1));
-  newIndex.insertContainingEndorsement(
+  newIndex->insertContainingEndorsement(
       std::make_shared<endorsement_t>(endorsement2));
 
-  chain.setTip(&newIndex);
+  chain.setTip(newIndex.get());
 
-  BlockIndex<block_t> newIndex2 = generateNextBlock(chain.tip());
+  auto newIndex2 = generateNextBlock(chain.tip());
 
   endorsement_t endorsement3 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->getHeader(), newIndex2.getHeader());
+      chain.tip()->getHeader(), newIndex2->getHeader());
   endorsement_t endorsement4 = generateEndorsement<block_t, endorsement_t>(
-      chain.tip()->pprev->getHeader(), newIndex2.getHeader());
+      chain.tip()->pprev->getHeader(), newIndex2->getHeader());
 
-  newIndex2.insertContainingEndorsement(
+  newIndex2->insertContainingEndorsement(
       std::make_shared<endorsement_t>(endorsement3));
 
-  chain.setTip(&newIndex2);
+  chain.setTip(newIndex2.get());
 
   auto* blockContaining1 =
       findBlockContainingEndorsement(chain, endorsement1, 100);
@@ -236,6 +254,13 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
                  ->second,
             endorsement3);
   EXPECT_EQ(findBlockContainingEndorsement(chain, endorsement4, 100), nullptr);
+
+  // deallocate blocks in reverse order (tip->root)
+  newIndex2.reset();
+  newIndex.reset();
+  for(auto it = indexes.rbegin(); it != indexes.rend(); ++it) {
+    it->reset();
+  }
 }
 
 // make sure to enumerate the test cases here

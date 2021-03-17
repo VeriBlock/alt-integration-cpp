@@ -6,8 +6,9 @@
 #ifndef ALTINTEGRATION_TREE_ALGO_HPP
 #define ALTINTEGRATION_TREE_ALGO_HPP
 
-#include <deque>
 #include <functional>
+#include <stack>
+#include <unordered_set>
 
 #include "block_index.hpp"
 
@@ -17,15 +18,22 @@ template <typename Block>
 void forEachNodePostorder(
     BlockIndex<Block>& index,
     const std::function<void(BlockIndex<Block>&)>& visit) {
-  // because pnext can be modified while iterating, we make a copy and iterate
-  // over a copy
-  auto copy = index.pnext;
-  for (auto* pnext : copy) {
-    VBK_ASSERT(pnext != nullptr);
-    forEachNodePostorder(*pnext, visit);
+  using index_t = BlockIndex<Block>;
+  std::unordered_set<index_t*> set;
+  std::stack<index_t*> stack;
+  stack.push(&index);
+  while (!stack.empty()) {
+    auto* item = stack.top();
+    if (item->pnext.empty() || set.count(item) > 0) {
+      visit(*item);
+      stack.pop();
+    } else {
+      for (auto* next : item->pnext) {
+        stack.push(next);
+      }
+      set.insert(item);
+    }
   }
-
-  visit(index);
 }
 
 //! iterate across all subtrees starting (and including) given 'index'

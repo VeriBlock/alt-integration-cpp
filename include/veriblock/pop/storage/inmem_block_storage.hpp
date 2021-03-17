@@ -41,7 +41,8 @@ struct InmemBlockProvider {
 
     for (auto& b : m) {
       auto& bi = b.second;
-      ret.push_back(std::move(bi));
+      auto index = make_unique<BlockIndex<T>>(bi->clone());
+      ret.push_back(std::move(index));
     }
 
     return ret;
@@ -71,15 +72,15 @@ struct InmemBlockBatch : public BlockBatch {
   ~InmemBlockBatch() override = default;
 
   void writeBlock(const BlockIndex<BtcBlock>& value) override {
-    storage_.btc[value.getHash()] = make_unique<BlockIndex<BtcBlock>>(value);
+    storage_.btc[value.getHash()] = make_unique<BlockIndex<BtcBlock>>(value.clone());
   }
 
   void writeBlock(const BlockIndex<VbkBlock>& value) override {
-    storage_.vbk[value.getHash()] = make_unique<BlockIndex<VbkBlock>>(value);
+    storage_.vbk[value.getHash()] = make_unique<BlockIndex<VbkBlock>>(value.clone());
   }
 
   void writeBlock(const BlockIndex<AltBlock>& value) override {
-    storage_.alt[value.getHash()] = make_unique<BlockIndex<AltBlock>>(value);
+    storage_.alt[value.getHash()] = make_unique<BlockIndex<AltBlock>>(value.clone());
   }
 
   void writeTip(const BlockIndex<BtcBlock>& value) override {

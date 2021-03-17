@@ -31,7 +31,7 @@ bool LoadTree(
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
-    auto val = make_unique<index_t>();
+    auto val = make_unique<index_t>(nullptr);
     if (!it->value(*val)) {
       return state.Invalid("bad-value", "Can not read block data");
     }
