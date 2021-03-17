@@ -465,7 +465,7 @@ Add additional failure codes.
 
 # 3. Add Pop fork resolution unit test.
 
-Pop fork resolution test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/forkresolution_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/forkresolution_tests.cpp). Copy this file to your project.
+Pop fork resolution test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/forkresolution_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/forkresolution_tests.cpp). Copy this file to your project.
 
 # 4. Update makefile to run tests.
 
