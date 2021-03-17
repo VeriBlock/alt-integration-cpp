@@ -8,11 +8,9 @@
 #include "veriblock/pop/c/entities/btcblock.h"
 #include "veriblock/pop/entities/btcblock.hpp"
 
-POP_ENTITY_STRUCT_NAME(btc_block) {
+struct __pop_btc_block {
   std::shared_ptr<altintegration::BtcBlock> ref;
 };
-
-POP_ENTITY_NEW_SIGNATURE(btc_block) { return new POP_ENTITY_NAME(btc_block)(); }
 
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
