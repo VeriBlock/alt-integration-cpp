@@ -30,7 +30,52 @@ Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 
 @note Merkle Root calculation should fall back to the original Merkle Root if Pop protocol is not activated.
 
-# 2. Update the mining process with Pop Merkle root calculation.
+# 2. Use extended block weight calculation method that appends Pop data size.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h)
+```cpp
+ #include <primitives/block.h>
+
++#include <vbk/util.hpp>
++#include <veriblock/pop.hpp>
+```
+```cpp
+ static inline int64_t GetBlockWeight(const CBlock& block)
+ {
+-    return ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * (WITNESS_SCALE_FACTOR - 1) + ::GetSerializeSize(block, PROTOCOL_VERSION);
++    int64_t popDataSize = 0;
++    popDataSize += VeriBlock::GetPopDataWeight(block.popData);
++
++    return ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * (WITNESS_SCALE_FACTOR - 1) + ::GetSerializeSize(block, PROTOCOL_VERSION) - popDataSize;
+ }
+```
+
+# 3. Extend ValidationState class for better veriblock-pop-cpp error processing.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h)
+
+[class ValidationState](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h#L83)
+```cpp
+     std::string GetDebugMessage() const { return m_debug_message; }
++    std::string ToString() const {return m_reject_reason + ": " + m_debug_message; }
++
++    operator altintegration::ValidationState() {
++        altintegration::ValidationState v;
++        if(IsInvalid()) {
++            v.Invalid(m_reject_reason, m_debug_message);
++            return v;
++        }
++
++        if(IsError()) {
++            v.Invalid(m_reject_reason);
++            return v;
++        }
++
++        return v;
++    }
+```
+
+# 4. Update the mining process with Pop Merkle root calculation.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp)
 ```cpp
@@ -57,7 +102,7 @@ Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 +    block->hashMerkleRoot = VeriBlock::TopLevelMerkleRoot(tip, *block);
 ```
 
-# 3. Since Pop Merkle root algorithm depends on the blockchain, we should move Merkle root validation from the CheckBlock() to the ContextualCheckBlock().
+# 5. Since Pop Merkle root algorithm depends on the blockchain, we should move Merkle root validation from the CheckBlock() to the ContextualCheckBlock().
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h)
 ```cpp
@@ -114,6 +159,12 @@ Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 +    if (fCheckPOW)
          block.fChecked = true;
 ```
+[method CheckBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L3376)
+```cpp
+     // Size limits
+-    if (block.vtx.empty() || block.vtx.size() * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT || ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT)
++    if (block.vtx.empty() || block.vtx.size() * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT || GetBlockWeight(block) > MAX_BLOCK_WEIGHT)
+```
 ```cpp
 -/** NOTE: This function is not currently invoked by ConnectBlock(), so we
 - *  should consider upgrade issues if we change which consensus rules are
@@ -159,48 +210,34 @@ Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 +        assert(!CheckBlock(block, cvstate, chainparams.GetConsensus(), false));
 ```
 
-Use extended block weight calculation method that appends Pop data size.
-
-[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/validation.h)
-```cpp
- #include <primitives/block.h>
-
-+#include <vbk/util.hpp>
-+#include <veriblock/pop.hpp>
-```
-```cpp
- static inline int64_t GetBlockWeight(const CBlock& block)
- {
--    return ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * (WITNESS_SCALE_FACTOR - 1) + ::GetSerializeSize(block, PROTOCOL_VERSION);
-+    int64_t popDataSize = 0;
-+    popDataSize += VeriBlock::GetPopDataWeight(block.popData);
-+
-+    return ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * (WITNESS_SCALE_FACTOR - 1) + ::GetSerializeSize(block, PROTOCOL_VERSION) - popDataSize;
- }
-```
-
-[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
-
-[method CheckBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L3376)
-```cpp
-     // Size limits
--    if (block.vtx.empty() || block.vtx.size() * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT || ::GetSerializeSize(block, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT)
-+    if (block.vtx.empty() || block.vtx.size() * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT || GetBlockWeight(block) > MAX_BLOCK_WEIGHT)
-```
-
-# 4. Add helper genesis_common.cpp file that allows Genesis block generation.
+# 6. Add helper genesis_common.cpp file that allows Genesis block generation.
 
 Genesis block generation header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/genesis_common.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/genesis_common.hpp). Copy this file to your project.
 
 Genesis block generation source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/genesis_common.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/genesis_common.cpp). Copy this file to your project.
 
-# 5. Add new tests: block_validation_tests.cpp, vbk_merkle_tests.cpp.
+# 7. Add new tests: block_validation_tests.cpp, vbk_merkle_tests.cpp.
 
 Block validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/block_validation_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/block_validation_tests.cpp). Copy this file to your project.
 
 Pop Merkle Root validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk_merkle_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/vbk_merkle_tests.cpp). Copy this file to your project.
 
-# 6. Update makefile to run tests.
+# 8. Add Pop Merkle trees code to the makefile.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
+```diff
+libbitcoin_common_a_SOURCES = \
+   script/sign.cpp \
+   script/signingprovider.cpp \
+   script/standard.cpp \
++  vbk/genesis_common.hpp \
++  vbk/genesis_common.cpp \
++  vbk/merkle.hpp \
++  vbk/merkle.cpp \
+   versionbitsinfo.cpp \
+```
+
+# 9. Update makefile to run tests.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
 ```diff
