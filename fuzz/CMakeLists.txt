@@ -27,5 +27,7 @@ add_fuzz(e2e_fuzz
             -malloc_limit_mb=10
             # fail if more than 4 GB of RAM is used
             -rss_limit_mb=4000
+            # make maximum length of an input sequence big
+            -max_len=100000
         WEIGHT 20
         )
