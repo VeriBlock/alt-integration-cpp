@@ -74,3 +74,4 @@ This is needed to communicate Bitcoin and VeriBlock consensus information to Alt
 9. @subpage integration_9_rewards
 10. @subpage integration_10_fr
 11. @subpage integration_11_p2p
+12. @subpage integration_12_rpc

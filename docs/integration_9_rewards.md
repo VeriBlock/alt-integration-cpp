@@ -301,7 +301,7 @@ We have to check for the Pop activation height when calculating Pop rewards. The
 
 # 5. Add tests for the Pop rewards.
 
-Pop rewards test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/pop_reward_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp). Copy this file to your project.
+Pop rewards test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp). Copy this file to your project.
 
 @note Test expects Pop reward in the second coinbase transaction. Update the test according to the ALT rewarding scheme.
 

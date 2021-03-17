@@ -218,9 +218,9 @@ Genesis block generation source: [https://github.com/VeriBlock/vbk-ri-btc/blob/m
 
 # 7. Add new tests: block_validation_tests.cpp, vbk_merkle_tests.cpp.
 
-Block validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/block_validation_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/block_validation_tests.cpp). Copy this file to your project.
+Block validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/block_validation_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/block_validation_tests.cpp). Copy this file to your project.
 
-Pop Merkle Root validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk_merkle_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/vbk_merkle_tests.cpp). Copy this file to your project.
+Pop Merkle Root validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/vbk_merkle_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/vbk_merkle_tests.cpp). Copy this file to your project.
 
 # 8. Add Pop Merkle trees code to the makefile.
 
