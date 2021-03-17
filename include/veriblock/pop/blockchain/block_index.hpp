@@ -60,11 +60,8 @@ struct BlockIndex : public Block::addon_t {
       pprev->pnext.erase(this);
     }
 
-    // we can deallocate blocks only if they are "tips", e.g. if they do not
-    // have "next" blocks
-    //        VBK_ASSERT(pnext.empty());
-
-    // disconnect from next blocks
+    // disconnect from next blocks so that next blocks won't have invalid
+    // pointers
     for (auto* it : pnext) {
       it->pprev = nullptr;
     }
