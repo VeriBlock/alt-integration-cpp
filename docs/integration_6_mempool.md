@@ -37,9 +37,9 @@ Next step is to add the Pop mempool support for the ALT blockchain. We should im
 +}
 ```
 
-# 2. Add popData during block mining.
+# 2. Add PopData during block mining.
 
-Update CreateNewBlock() in the miner.cpp.
+Update `CreateNewBlock()` in the miner.cpp.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp)
 ```cpp
@@ -64,9 +64,9 @@ Update CreateNewBlock() in the miner.cpp.
      int64_t nTime1 = GetTimeMicros();
 ```
 
-# 3. Remove popData after successfully submitting to the blockchain.
+# 3. Remove PopData after successfully submitting to the blockchain.
 
-Modify ConnectTip() and DisconnectTip() methods in the validation.cpp.
+Modify `ConnectTip()` and `DisconnectTip()` methods in the validation.cpp.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
 

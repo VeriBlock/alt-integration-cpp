@@ -4,9 +4,9 @@
 
 # Overview
 
-We should add new PopData entity into the CBlock class in the block.h file and provide new nVersion flag. It is needed for storing VeriBlock specific information such as ATVs, VTBs, VBKs.
-First we will add new POP_BLOCK_VERSION_BIT flag, that will help to distinguish original blocks that don't have any VeriBlock specific data, and blocks that contain such data.
-Next, update serialization of the block, that will serialize/deserialize PopData if POP_BLOCK_VERSION_BIT is set. Finally extend serialization/deserialization for the PopData, so we can use native serialization/deserialization.
+We should add new PopData entity into the `CBlock` class in the block.h file and provide new `nVersion` flag. It is needed for storing VeriBlock specific information such as ATVs, VTBs, VBKs.
+First we will add new `POP_BLOCK_VERSION_BIT` flag, that will help to distinguish original blocks that don't have any VeriBlock specific data, and blocks that contain such data.
+Next, update serialization of the block, that will serialize/deserialize PopData if `POP_BLOCK_VERSION_BIT` is set. Finally extend serialization/deserialization for the PopData, so we can use native serialization/deserialization.
 
 # 1. Helper for the block hash serialization.
 
@@ -26,7 +26,7 @@ Next, update serialization of the block, that will serialize/deserialize PopData
 
 # 2. Define POP_BLOCK_VERSION_BIT flag.
 
-POP_BLOCK_VERSION_BIT is defined in [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk.hpp). Copy this file to your project.
+`POP_BLOCK_VERSION_BIT` is defined in [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/vbk.hpp). Copy this file to your project.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h)
 ```cpp
@@ -214,7 +214,7 @@ public:
 
 # 6. Update validation rules.
 
-Add check that if block contains VeriBlock PopData then block.nVersion must contain POP_BLOCK_VERSION_BIT. Otherwise block.nVersion should not contain POP_BLOCK_VERSION_BIT.
+Add check that if block contains VeriBlock PopData then `block.nVersion` must contain `POP_BLOCK_VERSION_BIT`. Otherwise `block.nVersion` should not contain `POP_BLOCK_VERSION_BIT`.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
 

@@ -63,6 +63,8 @@ This is needed to communicate Bitcoin and VeriBlock consensus information to Alt
 
 # Adding Pop protocol
 
+@note The documentation below is based on vBTC commit [`026fba4e80bc114c68c636e3c9cfc6af855c9c94`](https://github.com/VeriBlock/vbk-ri-btc/commit/026fba4e80bc114c68c636e3c9cfc6af855c9c94).
+
 1. @subpage integration_1_build
 2. @subpage integration_2_popdata
 3. @subpage integration_3_forkpoint
