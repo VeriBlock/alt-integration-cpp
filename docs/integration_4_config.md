@@ -137,6 +137,23 @@ Util file with some useful functions for the VeriBlock integration: [https://git
 
 # 5. Update test chain setup to allow adding block to specific previous block.
 
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.h)
+```cpp
+ #include <txmempool.h>
+
++#include <vbk/pop_service.hpp>
+```
+[struct TestChain100Setup](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.h#L107)
+```cpp
+     CBlock CreateAndProcessBlock(const std::vector<CMutableTransaction>& txns,
+-                                 const CScript& scriptPubKey);
++                                 const CScript& scriptPubKey, bool* isBlockValid = nullptr);
++
++    CBlock CreateAndProcessBlock(const std::vector<CMutableTransaction>& txns, uint256 prevBlock,
++                                 const CScript& scriptPubKey, bool* isBlockValid = nullptr);
++
+```
+
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.cpp)
 ```cpp
 -// Create a new block with just given transactions, coinbase paying to
