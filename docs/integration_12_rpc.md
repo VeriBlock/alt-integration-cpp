@@ -57,6 +57,20 @@ Univalue conversions: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/a
 
 # 4. Add all new RPC functions to the RPC server.
 
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/register.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/register.h)
+```cpp
+ #define BITCOIN_RPC_REGISTER_H
+
++#include "vbk/rpc_register.hpp"
+```
+[method RegisterAllCoreRPCCommands](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/register.h#L27)
+```cpp
+     RegisterMiningRPCCommands(t);
+     RegisterRawTransactionRPCCommands(t);
++    VeriBlock::RegisterPOPMiningRPCCommands(t);
+ }
+```
+
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/client.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/client.cpp)
 
 [field vRPCConvertParams](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/client.cpp#L29)
