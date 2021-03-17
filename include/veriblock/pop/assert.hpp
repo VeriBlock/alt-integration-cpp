@@ -44,6 +44,7 @@
                            fmt::sprintf(__VA_ARGS__));                       \
     /* print to log */ VBK_LOG_CRITICAL(msg);                                \
     /* print to stderr */ fmt::fprintf(stderr, msg);                         \
+    /* print to stderr */ fmt::printf(msg);                                  \
     /* die */ std::terminate();                                              \
   }
 

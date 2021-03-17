@@ -60,12 +60,13 @@ struct BlockIndex : public Block::addon_t {
       pprev->pnext.erase(this);
     }
 
-    // make sure we deleted this block from next blocks pprev.
-    // it is ok to deallocate a block in a middle of chain. we will detect
-    // orphaned blocks and cleanup later.
-    for (auto* next : pnext) {
-      VBK_ASSERT(next);
-      next->pprev = nullptr;
+    // we can deallocate blocks only if they are "tips", e.g. if they do not
+    // have "next" blocks
+    //        VBK_ASSERT(pnext.empty());
+
+    // disconnect from next blocks
+    for (auto* it : pnext) {
+      it->pprev = nullptr;
     }
   }
 
@@ -303,11 +304,12 @@ struct BlockIndex : public Block::addon_t {
 
   std::string toPrettyString(size_t level = 0) const {
     return fmt::sprintf(
-        "%s%sBlockIndex(height=%d, hash=%s, status=%d, header=%s, %s)",
+        "%s%sBlockIndex(height=%d, hash=%s, next=%d, status=%d, header=%s, %s)",
         std::string(level, ' '),
         Block::name(),
         height,
         HexStr(getHash()),
+        pnext.size(),
         status,
         header->toPrettyString(),
         addon_t::toPrettyString());

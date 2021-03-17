@@ -3,16 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
-
 #include <gtest/gtest.h>
 
 #include <memory>
-#include <veriblock/pop/bootstraps.hpp>
-
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
+#include <veriblock/pop/bootstraps.hpp>
 #include <veriblock/pop/time.hpp>
 
 using namespace altintegration;
@@ -160,6 +158,11 @@ TEST_P(GetNextWorkRequiredTest, getNextWorkRequired_test) {
       getNextWorkRequired(*chain[chain.size() - 1], VbkBlock(), *chainparams);
 
   EXPECT_EQ(value.expected_difficulty, result);
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(GetNextWorkRequiredRegression,
@@ -204,6 +207,11 @@ TEST_F(SingleTest, single_test) {
       getNextWorkRequired(*chain.back(), VbkBlock(), *chainparams);
 
   EXPECT_EQ(ArithUint256::fromHex("0228C35294D0").toBits(), result);
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 TEST(Vbk, CheckBlockTime1) {
@@ -236,6 +244,11 @@ TEST(Vbk, CheckBlockTime1) {
   ASSERT_FALSE(r2) << state.GetPath();
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 TEST(Vbk, CheckBlockTime2) {
@@ -269,6 +282,11 @@ TEST(Vbk, CheckBlockTime2) {
   bool r2 = checkBlockTime<VbkBlock, VbkChainParams>(
       *chain[chain.size() - 1], block, state, params);
   ASSERT_TRUE(r2);
+
+  // deallocate blocks starting at tip, towards root
+  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+    it->reset();
+  }
 }
 
 template <typename T>

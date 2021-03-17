@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 #define ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/pop/algorithm.hpp>
@@ -39,11 +40,23 @@ struct BaseBlockTree {
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
   const block_index_t& getBlocks() const { return blocks_; }
 
-  virtual ~BaseBlockTree() = default;
+  virtual ~BaseBlockTree() {
+    if (!isBootstrapped()) {
+      return;
+    }
+
+    deallocateTree(getRoot());
+  }
 
   BaseBlockTree() = default;
+
+  // non-copyable
   BaseBlockTree(const BaseBlockTree&) = delete;
   BaseBlockTree& operator=(const BaseBlockTree&) = delete;
+
+  // movable
+  BaseBlockTree(BaseBlockTree&&) = default;
+  BaseBlockTree& operator=(BaseBlockTree&&) = default;
 
   /**
    * Getter for currently Active Chain.
@@ -552,6 +565,29 @@ struct BaseBlockTree {
   }
 
  protected:
+  /**
+   * Deallocates a "connected" tree which contains block with hash=`hash`.
+   *
+   * @invariant to deallocate part of a tree, disconnect tree which must remain.
+   *
+   * @param block
+   */
+  void deallocateTree(index_t& toDelete) {
+    auto* index = &toDelete;
+
+    // find oldest ancestor
+    while (index != nullptr && index->pprev != nullptr) {
+      index = index->pprev;
+    }
+
+    // starting at oldest ancestor, remove all blocks during post-order tree
+    // traversal
+    forEachNodePostorder<block_t>(*index, [&](index_t& next) {
+      auto h = makePrevHash(next.getHash());
+      blocks_.erase(h);
+    });
+  }
+
   //! Marks `block` as finalized.
   //!
   //! Final blocks can not be reorganized, thus we can remove outdated blocks
@@ -595,46 +631,41 @@ struct BaseBlockTree {
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
     // second, erase candidates from tips_ that will never be activated
-    std::vector<const index_t*> outdated_tips;
-    erase_if<index_t*>(tips_, [this, index, &outdated_tips](index_t* tip) {
-      VBK_ASSERT(tip);
+    erase_if<decltype(tips_), index_t*>(
+        tips_, [this, index](const index_t* const& tip) -> bool {
+          VBK_ASSERT(tip);
 
-      // tip from active chain can not be outdated
-      if (activeChain_.contains(tip)) {
-        return false;
-      }
+          // tip from active chain can not be outdated
+          if (activeChain_.contains(tip)) {
+            return false;
+          }
 
-      if (isBlockOutdated(*index, *tip)) {
-        outdated_tips.push_back(tip);
-        return true;
-      }
+          return isBlockOutdated(*index, *tip);
+        });
 
-      return false;
-    });
+    // before we deallocate subtree, disconnect "new root block" from previous
+    // tree
+    auto& root = getRoot();
+    auto* rootPrev = root.pprev;
+    if (root.pprev != nullptr) {
+      root.pprev->pnext.erase(&root);
+      root.pprev = nullptr;
 
-    // optimization:
-    // for every outdated tip, remove its chain connecting to active chain
-    for (const auto* tip : outdated_tips) {
-      while (tip != nullptr && !activeChain_.contains(tip)) {
-        auto shortHash = makePrevHash(tip->getHash());
-        tip = tip->pprev;
-        blocks_.erase(shortHash);
-      }
-    }
+      // do deallocate
+      deallocateTree(*rootPrev);
 
-    // third, deallocate blocks that are outdated, if any
-    {
-      auto begin = blocks_.cbegin();
-      auto end = blocks_.cend();
-      for (auto it = begin; it != end;) {
-        auto* candidate = it->second.get();
-
-        bool outdated =
-            isBlockOutdated(*index, *candidate, preserveBlocksBehindFinal);
-        if (outdated) {
-          it = blocks_.erase(it);
-        } else {
-          ++it;
+      // erase "parallel" blocks - blocks that are on same height as `index`,
+      // but since `index` is final, will never be active.
+      if (index->pprev != nullptr) {
+        auto parallelBlocks = index->pprev->pnext;
+        parallelBlocks.erase(index);
+        for (auto* par : parallelBlocks) {
+          // disconnect `par` from prev block
+          if (par->pprev != nullptr) {
+            par->pprev->pnext.erase(par);
+            par->pprev = nullptr;
+          }
+          deallocateTree(*par);
         }
       }
     }

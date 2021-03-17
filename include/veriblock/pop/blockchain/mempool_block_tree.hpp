@@ -91,8 +91,8 @@ struct MemPoolBlockTree {
   const AltBlockTree& alt() const { return *tree_; }
 
   void cleanUp() {
-    temp_btc_tree_.cleanUp();
-    temp_vbk_tree_.cleanUp();
+    temp_btc_tree_.cleanUpStaleBlocks();
+    temp_vbk_tree_.cleanUpStaleBlocks();
   }
 
   void clear() {

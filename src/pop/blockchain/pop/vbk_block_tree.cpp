@@ -346,7 +346,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     appliedPayloads.push_back(pid);
   }
 
-  // don't defer fork resolution in the acceptBlock+addPayloads flow until the
+  // don't defer fork resolution in the acceptBlockHeader+addPayloads flow until the
   // validation hole is plugged
   doUpdateAffectedTips(*index, state);
 

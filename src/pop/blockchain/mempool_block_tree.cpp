@@ -8,7 +8,7 @@ namespace altintegration {
 
 bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
                                       ValidationState& state) {
-  return temp_vbk_tree_.acceptBlock(blk, state);
+  return temp_vbk_tree_.acceptBlockHeader(blk, state);
 }
 
 bool MemPoolBlockTree::checkContextually(const VbkBlock& block,
@@ -108,20 +108,20 @@ bool MemPoolBlockTree::acceptVTB(
     return state.Invalid("vtb-contextual");
   }
 
-  if (!this->temp_vbk_tree_.acceptBlock(containingBlock, state)) {
+  if (!this->temp_vbk_tree_.acceptBlockHeader(containingBlock, state)) {
     return state.Invalid("bad-containing-block");
   }
 
   size_t i = 0;
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
-    if (!temp_btc_tree_.acceptBlock(blk, state)) {
+    if (!temp_btc_tree_.acceptBlockHeader(blk, state)) {
       return state.Invalid("bad-block-of-proof-context", i);
     }
 
     i++;
   }
 
-  if (!temp_btc_tree_.acceptBlock(vtb.transaction.blockOfProof, state)) {
+  if (!temp_btc_tree_.acceptBlockHeader(vtb.transaction.blockOfProof, state)) {
     return state.Invalid("bad-block-of-proof");
   }
 
@@ -139,7 +139,7 @@ bool MemPoolBlockTree::acceptATV(const ATV& atv,
     return state.Invalid("atv-contextual");
   }
 
-  if (!temp_vbk_tree_.acceptBlock(blockOfProof, state)) {
+  if (!temp_vbk_tree_.acceptBlockHeader(blockOfProof, state)) {
     return state.Invalid("bad-block-of-proof");
   }
 
