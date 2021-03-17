@@ -1,4 +1,5 @@
 add_subdirectory(adaptors)
+add_subdirectory(entities)
 
 add_library(veriblock-pop-c OBJECT
         config.cpp
@@ -11,4 +12,5 @@ add_library(veriblock-pop-c OBJECT
         )
 target_link_libraries(veriblock-pop-c
         rocksdb
+        c-entities
         )
