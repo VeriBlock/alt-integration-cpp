@@ -1,14 +1,14 @@
-# Adding AltTree management {#integration_7_alttree}
+# AltTree management {#integration_7_alttree}
 
 [TOC]
 
 # Overview
 
-At this stage we should add functions for maintaining the VeriBlock AltTree: setState(), acceptBlock(), addAllBlockPayloads(). They provide API to change the state of the VeriBlock AltTree.
+At this stage we should add functions for maintaining the VeriBlock AltTree: `setState()`, `acceptBlock()`, `addAllBlockPayloads()`. They provide API to change the state of the VeriBlock AltTree.
 
-- acceptBlock() - adds an ALT block into to the library.
-- addAllBlockPayloads() - adds popData for the current ALT block into the library and should be invoked before acceptBlock() call.
-- setState() - changes the state of the VeriBlock AltTree as if the provided ALT block was the current tip of the blockchain.
+- `acceptBlock()` - adds an ALT block into to the library.
+- `addAllBlockPayloads()` - adds popData for the current ALT block into the library and should be invoked before `acceptBlock()` call.
+- `setState()` - changes the state of the VeriBlock AltTree as if the provided ALT block was the current tip of the blockchain.
           
 # 1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.
 
@@ -292,7 +292,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: set
 
 Pop logger: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/log.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/log.hpp). Copy this file to your project.
 
-@note Pop logger inherits from altintegration::Logger. It should write to ALT log in the overriden virtual method log().
+@note Pop logger inherits from altintegration::Logger. It should write to ALT log in the overriden virtual method `log()`.
 
 Add additional flag for the logger.
 
@@ -334,7 +334,7 @@ Attach veriblock-pop-cpp library to the native logger.
      fLogIPs = gArgs.GetBoolArg("-logips", DEFAULT_LOGIPS);
 ```
 
-Add poplogverbosity to the application arguments. It allows to choose the verbosity level for the library logger.
+Add `poplogverbosity` to the application arguments. It allows to choose the verbosity level for the library logger.
 
 [method SetupServerArgs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/init.cpp#L347)
 ```cpp
