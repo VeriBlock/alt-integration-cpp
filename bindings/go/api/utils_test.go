@@ -17,6 +17,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 
 	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
+	defer popContext.Lock()()
 
 	// generate new block
 	newBlock := generateNextAltBlock(&boostrapBlock)
@@ -55,8 +56,10 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	assert.NoError(err)
 
 	popContext := generateTestPopContext(t, storage)
+	defer popContext.Lock()()
 
 	miner := NewMockMiner()
+	defer miner.Lock()()
 
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
@@ -106,6 +109,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	popContext = generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer storage.Free()
+	defer popContext.Lock()()
 
 	index, err = popContext.AltBestBlock()
 	assert.NoError(err)

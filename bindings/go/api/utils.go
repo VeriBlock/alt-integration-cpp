@@ -9,8 +9,6 @@ import (
 )
 
 func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error) {
-	defer v.lock()()
-
 	if popData == nil {
 		popData = entities.GetEmptyPopData()
 	}
@@ -33,7 +31,8 @@ func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootH
 }
 
 func (v *PopContext) CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if popData == nil {
 		return nil, errors.New("popData should be defined")
 	}
@@ -49,7 +48,6 @@ func (v *PopContext) CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256Has
 }
 
 func (v *PopContext) CheckATV(atv *entities.Atv) error {
-	defer v.lock()()
 	bytes, err := atv.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -65,7 +63,6 @@ func (v *PopContext) CheckATV(atv *entities.Atv) error {
 }
 
 func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
-	defer v.lock()()
 	bytes, err := vtb.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -80,7 +77,6 @@ func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
 }
 
 func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
-	defer v.lock()()
 	bytes, err := blk.ToVbkEncodingBytes()
 	if err != nil {
 		return err
@@ -95,7 +91,6 @@ func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
 }
 
 func (v *PopContext) CheckPopData(popData *entities.PopData) error {
-	defer v.lock()()
 	if popData == nil {
 		return nil
 	}
@@ -113,7 +108,7 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 }
 
 func (v *PopContext) SaveAllTrees() error {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
 
 	state := ffi.NewValidationState()
 	defer state.Free()
@@ -126,7 +121,7 @@ func (v *PopContext) SaveAllTrees() error {
 }
 
 func (v *PopContext) LoadAllTrees() error {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
 
 	state := ffi.NewValidationState()
 	defer state.Free()

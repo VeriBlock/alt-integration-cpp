@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"sync"
 
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
@@ -11,20 +10,21 @@ import (
 // MockMiner ...
 type MockMiner struct {
 	miner *ffi.MockMiner
-	mutex *sync.Mutex
+	mutex *SafeMutex
 }
 
 // NewMockMiner ...
 func NewMockMiner() *MockMiner {
 	return &MockMiner{
 		miner: ffi.NewMockMiner(),
-		mutex: new(sync.Mutex),
+		mutex: NewSafeMutex(),
 	}
 }
 
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
 func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("mock miner is not locked")
+
 	stream := v.miner.MineBtcBlockTip()
 	if stream == nil {
 		panic("MineBtcBlockTip returned nullptr")
@@ -40,7 +40,8 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 
 // MineBtcBlock - Mine new altintegration::BtcBlock on the top of the provided block.
 func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("mock miner is not locked")
+
 	stream := v.miner.MineBtcBlock(blockHash)
 	if stream == nil {
 		return nil, nil
@@ -56,7 +57,8 @@ func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error)
 
 // MineVbkBlockTip - Mine new altintegration::VbkBlock on the top of the current vbktree.
 func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("mock miner is not locked")
+
 	stream := v.miner.MineVbkBlockTip()
 	if stream == nil {
 		return nil, nil
@@ -72,7 +74,8 @@ func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
 
 // MineVbkBlock - Mine new altintegration::VbkBlock on the top of the provided block.
 func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("mock miner is not locked")
+
 	stream := v.miner.MineVbkBlock(blockHash)
 	defer stream.Free()
 	if stream == nil {
@@ -88,7 +91,8 @@ func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error)
 
 // MineAtv ...
 func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entities.Atv, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("mock miner is not locked")
+
 	var buffer bytes.Buffer
 	err := publicationData.ToVbkEncoding(&buffer)
 	if err != nil {
@@ -111,7 +115,8 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 
 // MineVtb ...
 func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*entities.Vtb, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("mock miner is not locked")
+
 	var buffer bytes.Buffer
 	err := endorsedBlock.ToVbkEncoding(&buffer)
 	if err != nil {
@@ -132,7 +137,7 @@ func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*ent
 	return &vtb, nil
 }
 
-func (v *MockMiner) lock() (unlock func()) {
+func (v *MockMiner) Lock() (unlock func()) {
 	v.mutex.Lock()
 	return func() {
 		v.mutex.Unlock()
