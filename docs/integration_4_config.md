@@ -17,7 +17,7 @@ POP configuration source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/s
 
 @note veriblock-pop-cpp library maintains all blocks of Bitcoin and VeriBlock starting at certain set of blocks - "bootstrap blocks".
 
-Bootstrap blocks header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.hpp). Copy this file to your project.
+Bootstrap blocks header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.h). Copy this file to your project.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.cpp)
 ```cpp
@@ -26,7 +26,7 @@ Bootstrap blocks header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <vbk/bootstraps.hpp>
+#include <vbk/bootstraps.h>
 
 namespace VeriBlock {
 
@@ -48,7 +48,8 @@ const std::vector<std::string> testnetVBKblocks = {};
 
 POP configuration loader header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.hpp). Copy this file to your project.
 
-@note Make sure to change ALT chain ID to uniquely identify ALT blockchain data.
+@note Make sure to change `altchainId` to uniquely identify ALT blockchain data.
+
 [struct AltChainParamsBTC](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.hpp#L33)
 ```cpp
     int64_t getIdentifier() const noexcept override
@@ -57,7 +58,7 @@ POP configuration loader header: [https://github.com/VeriBlock/vbk-ri-btc/blob/m
     }
 ```
 
-@note ALT chain ID is 8-byte ID, sent with every endorsement of ALT block in VBK. Used by VeriBlock to group potentially relevant endorsements. It is not critical if ID is reused by multiple Altchains, but this is not preferable.
+@note `altchainId` is 8-byte ID, sent with every endorsement of ALT block in VBK. Used by VeriBlock to group potentially relevant endorsements. It is not critical if `altchainId` is reused by multiple Altchains, but this is not preferable.
 
 POP configuration loader source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/params.cpp). Copy this file to your project.
 
@@ -136,6 +137,23 @@ Util file with some useful functions for the VeriBlock integration: [https://git
 ```
 
 # 5. Update test chain setup to allow adding block to specific previous block.
+
+[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.h)
+```cpp
+ #include <txmempool.h>
+
++#include <vbk/pop_service.hpp>
+```
+[struct TestChain100Setup](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.h#L107)
+```cpp
+     CBlock CreateAndProcessBlock(const std::vector<CMutableTransaction>& txns,
+-                                 const CScript& scriptPubKey);
++                                 const CScript& scriptPubKey, bool* isBlockValid = nullptr);
++
++    CBlock CreateAndProcessBlock(const std::vector<CMutableTransaction>& txns, uint256 prevBlock,
++                                 const CScript& scriptPubKey, bool* isBlockValid = nullptr);
++
+```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/test/util/setup_common.cpp)
 ```cpp
