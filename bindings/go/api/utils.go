@@ -31,9 +31,7 @@ func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootH
 }
 
 func (v *PopContext) CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
-	if !v.mutex.IsLocked() {
-		panic("pop context is not locked")
-	}
+	v.mutex.AssertMutexLocked("pop context is not locked")
 
 	if popData == nil {
 		return nil, errors.New("popData should be defined")
@@ -110,9 +108,7 @@ func (v *PopContext) CheckPopData(popData *entities.PopData) error {
 }
 
 func (v *PopContext) SaveAllTrees() error {
-	if !v.mutex.IsLocked() {
-		panic("pop context is not locked")
-	}
+	v.mutex.AssertMutexLocked("pop context is not locked")
 
 	state := ffi.NewValidationState()
 	defer state.Free()
@@ -125,9 +121,7 @@ func (v *PopContext) SaveAllTrees() error {
 }
 
 func (v *PopContext) LoadAllTrees() error {
-	if !v.mutex.IsLocked() {
-		panic("pop context is not locked")
-	}
+	v.mutex.AssertMutexLocked("pop context is not locked")
 
 	state := ffi.NewValidationState()
 	defer state.Free()

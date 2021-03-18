@@ -16,8 +16,10 @@ func (m *SafeMutex) Lock() {
 	m.locked = true
 }
 
-func (m *SafeMutex) IsLocked() bool {
-	return m.locked
+func (m *SafeMutex) AssertMutexLocked(str string) {
+	if !m.locked {
+		panic(str)
+	}
 }
 
 func (m *SafeMutex) Unlock() {

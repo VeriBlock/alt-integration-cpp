@@ -23,9 +23,7 @@ func NewMockMiner() *MockMiner {
 
 // MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
 func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
-	if !v.mutex.IsLocked() {
-		panic("mock miner is not locked")
-	}
+	v.mutex.AssertMutexLocked("mock miner is not locked")
 
 	stream := v.miner.MineBtcBlockTip()
 	if stream == nil {
@@ -42,9 +40,7 @@ func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
 
 // MineBtcBlock - Mine new altintegration::BtcBlock on the top of the provided block.
 func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error) {
-	if !v.mutex.IsLocked() {
-		panic("mock miner is not locked")
-	}
+	v.mutex.AssertMutexLocked("mock miner is not locked")
 
 	stream := v.miner.MineBtcBlock(blockHash)
 	if stream == nil {
@@ -61,9 +57,7 @@ func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error)
 
 // MineVbkBlockTip - Mine new altintegration::VbkBlock on the top of the current vbktree.
 func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
-	if !v.mutex.IsLocked() {
-		panic("mock miner is not locked")
-	}
+	v.mutex.AssertMutexLocked("mock miner is not locked")
 
 	stream := v.miner.MineVbkBlockTip()
 	if stream == nil {
@@ -80,9 +74,7 @@ func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
 
 // MineVbkBlock - Mine new altintegration::VbkBlock on the top of the provided block.
 func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error) {
-	if !v.mutex.IsLocked() {
-		panic("mock miner is not locked")
-	}
+	v.mutex.AssertMutexLocked("mock miner is not locked")
 
 	stream := v.miner.MineVbkBlock(blockHash)
 	defer stream.Free()
@@ -99,9 +91,7 @@ func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error)
 
 // MineAtv ...
 func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entities.Atv, error) {
-	if !v.mutex.IsLocked() {
-		panic("mock miner is not locked")
-	}
+	v.mutex.AssertMutexLocked("mock miner is not locked")
 
 	var buffer bytes.Buffer
 	err := publicationData.ToVbkEncoding(&buffer)
@@ -125,9 +115,7 @@ func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entitie
 
 // MineVtb ...
 func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*entities.Vtb, error) {
-	if !v.mutex.IsLocked() {
-		panic("mock miner is not locked")
-	}
+	v.mutex.AssertMutexLocked("mock miner is not locked")
 
 	var buffer bytes.Buffer
 	err := endorsedBlock.ToVbkEncoding(&buffer)
