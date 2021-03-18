@@ -17,8 +17,10 @@ func TestPopContextSubmitVbk(t *testing.T) {
 
 	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
+	defer popContext.Lock()()
 
 	miner := NewMockMiner()
+	defer miner.Lock()()
 
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
@@ -50,8 +52,10 @@ func TestPopContextSubmitVtb(t *testing.T) {
 
 	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
+	defer popContext.Lock()()
 
 	miner := NewMockMiner()
+	defer miner.Lock()()
 
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)
@@ -94,8 +98,10 @@ func TestPopContextSubmitAtv(t *testing.T) {
 
 	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
+	defer popContext.Lock()()
 
 	miner := NewMockMiner()
+	defer miner.Lock()()
 
 	endorsedBytes, err := boostrapBlock.ToVbkEncodingBytes()
 	assert.NoError(err)
@@ -135,8 +141,10 @@ func TestPopContextAcceptBlock(t *testing.T) {
 
 	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
+	defer popContext.Lock()()
 
 	miner := NewMockMiner()
+	defer miner.Lock()()
 
 	index, err := miner.MineVbkBlockTip()
 	assert.NoError(err)

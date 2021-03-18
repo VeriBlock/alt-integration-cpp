@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"math"
-	"sync"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
@@ -72,7 +71,7 @@ var _ MemPool = &PopContext{}
 // PopContext ...
 type PopContext struct {
 	popContext *ffi.PopContext
-	mutex      *sync.Mutex
+	mutex      *SafeMutex
 }
 
 // NewPopContext ...
@@ -83,7 +82,7 @@ func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext
 
 	return &PopContext{
 		popContext: ffi.NewPopContext(config.Config, storage.Storage, log_lvl),
-		mutex:      new(sync.Mutex),
+		mutex:      NewSafeMutex(),
 	}
 }
 
@@ -94,12 +93,13 @@ func (v *PopContext) Free() {
 
 // AcceptBlockHeader - Returns nil if block is valid, and added
 func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
 		return err
 	}
-	defer v.lock()()
 	state := ffi.NewValidationState()
 	defer state.Free()
 	ok := v.popContext.AltBlockTreeAcceptBlockHeader(stream.Bytes(), state)
@@ -111,6 +111,8 @@ func (v *PopContext) AcceptBlockHeader(block *entities.AltBlock) error {
 
 // AcceptBlock - POP payloads stored in this block
 func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopData) error {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if payloads == nil {
 		payloads = entities.GetEmptyPopData()
 	}
@@ -120,7 +122,6 @@ func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopDa
 	if err != nil {
 		return err
 	}
-	defer v.lock()()
 	state := ffi.NewValidationState()
 	defer state.Free()
 	v.popContext.AltBlockTreeAcceptBlock(hash, stream.Bytes(), state)
@@ -129,20 +130,23 @@ func (v *PopContext) AcceptBlock(hash entities.AltHash, payloads *entities.PopDa
 
 // ComparePopScore ...
 func (v *PopContext) ComparePopScore(hashA entities.AltHash, hashB entities.AltHash) int {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	return v.popContext.AltBlockTreeComparePopScore(hashA, hashB)
 }
 
 // RemoveSubtree ...
 func (v *PopContext) RemoveSubtree(hash entities.AltHash) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	v.popContext.AltBlockTreeRemoveSubtree(hash)
 }
 
 // SetState - Return `false` if intermediate or target block is invalid. In this
 // case tree will rollback into original state. `true` if state change is successful.
 func (v *PopContext) SetState(hash entities.AltHash) error {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	state := ffi.NewValidationState()
 	defer state.Free()
 	ok := v.popContext.AltBlockTreeSetState(hash, state)
@@ -153,7 +157,8 @@ func (v *PopContext) SetState(hash entities.AltHash) error {
 }
 
 func (v *PopContext) GetPopPayout(tipHash entities.AltHash) (*entities.PopPayouts, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltBlockTreeGetPopPayout(tipHash)
 	defer stream.Free()
 	popPayouts := &entities.PopPayouts{}
@@ -165,7 +170,8 @@ func (v *PopContext) GetPopPayout(tipHash entities.AltHash) (*entities.PopPayout
 
 // BtcGetBlockIndex ...
 func (v *PopContext) BtcGetBlockIndex(hash entities.BtcHash) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.BtcGetBlockIndex([veriblock.Sha256HashSize]byte(hash))
 	if stream == nil {
 		return nil, nil
@@ -180,7 +186,8 @@ func (v *PopContext) BtcGetBlockIndex(hash entities.BtcHash) (*entities.BlockInd
 
 // VbkGetBlockIndex ...
 func (v *PopContext) VbkGetBlockIndex(hash entities.VbkHash) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.VbkGetBlockIndex([veriblock.VblakeBlockHashSize]byte(hash))
 	if stream == nil {
 		return nil, nil
@@ -195,7 +202,8 @@ func (v *PopContext) VbkGetBlockIndex(hash entities.VbkHash) (*entities.BlockInd
 
 // AltGetBlockIndex ...
 func (v *PopContext) AltGetBlockIndex(hash entities.AltHash) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltGetBlockIndex([]byte(hash))
 	if stream == nil {
 		return nil, nil
@@ -210,7 +218,8 @@ func (v *PopContext) AltGetBlockIndex(hash entities.AltHash) (*entities.BlockInd
 
 // AltBestBlock ...
 func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltBestBlock()
 	if stream == nil {
 		return nil, nil
@@ -225,7 +234,8 @@ func (v *PopContext) AltBestBlock() (*entities.BlockIndex, error) {
 
 // VbkBestBlock ...
 func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.VbkBestBlock()
 	if stream == nil {
 		return nil, nil
@@ -240,7 +250,8 @@ func (v *PopContext) VbkBestBlock() (*entities.BlockIndex, error) {
 
 // BtcBestBlock ...
 func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.BtcBestBlock()
 	if stream == nil {
 		return nil, nil
@@ -255,7 +266,8 @@ func (v *PopContext) BtcBestBlock() (*entities.BlockIndex, error) {
 
 // VbkBootstrapBlock ...
 func (v *PopContext) VbkBootstrapBlock() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.VbkBootstrapBlock()
 	if stream == nil {
 		return nil, nil
@@ -270,7 +282,8 @@ func (v *PopContext) VbkBootstrapBlock() (*entities.BlockIndex, error) {
 
 // BtcBootstrapBlock ...
 func (v *PopContext) BtcBootstrapBlock() (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.BtcBootstrapBlock()
 	if stream == nil {
 		return nil, nil
@@ -285,7 +298,8 @@ func (v *PopContext) BtcBootstrapBlock() (*entities.BlockIndex, error) {
 
 // AltBlockAtActiveChainByHeight ...
 func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltBlockAtActiveChainByHeight(height)
 	if stream == nil {
 		return nil, nil
@@ -300,7 +314,8 @@ func (v *PopContext) AltBlockAtActiveChainByHeight(height int) (*entities.BlockI
 
 // VbkBlockAtActiveChainByHeight ...
 func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.VbkBlockAtActiveChainByHeight(height)
 	if stream == nil {
 		return nil, nil
@@ -315,7 +330,8 @@ func (v *PopContext) VbkBlockAtActiveChainByHeight(height int) (*entities.BlockI
 
 // BtcBlockAtActiveChainByHeight ...
 func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockIndex, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.BtcBlockAtActiveChainByHeight(height)
 	if stream == nil {
 		return nil, nil
@@ -330,7 +346,8 @@ func (v *PopContext) BtcBlockAtActiveChainByHeight(height int) (*entities.BlockI
 
 // AltGetAtvContainingBlock ...
 func (v *PopContext) AltGetAtvContainingBlock(atvID entities.AtvID) ([]entities.AltHash, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltGetAtvContainingBlock(atvID)
 	if stream == nil {
 		return nil, nil
@@ -351,7 +368,8 @@ func (v *PopContext) AltGetAtvContainingBlock(atvID entities.AtvID) ([]entities.
 
 // AltGetVtbContainingBlock ...
 func (v *PopContext) AltGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.AltHash, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltGetVtbContainingBlock(vtbID)
 	if stream == nil {
 		return nil, nil
@@ -372,7 +390,8 @@ func (v *PopContext) AltGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.
 
 // AltGetVbkBlockContainingBlock ...
 func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID entities.VbkID) ([]entities.AltHash, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.AltGetVbkBlockContainingBlock(vbkID)
 	if stream == nil {
 		return nil, nil
@@ -393,7 +412,8 @@ func (v *PopContext) AltGetVbkBlockContainingBlock(vbkID entities.VbkID) ([]enti
 
 // VbkGetVtbContainingBlock ...
 func (v *PopContext) VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.VbkID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.VbkGetVtbContainingBlock(vtbID)
 	if stream == nil {
 		return nil, nil
@@ -414,12 +434,13 @@ func (v *PopContext) VbkGetVtbContainingBlock(vtbID entities.VtbID) ([]entities.
 
 // SubmitAtv - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitAtv(atv *entities.Atv) (int, error) {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := new(bytes.Buffer)
 	err := atv.ToVbkEncoding(stream)
 	if err != nil {
 		return 2, err
 	}
-	defer v.lock()()
 	state := ffi.NewValidationState()
 	defer state.Free()
 	res := v.popContext.MemPoolSubmitAtv(stream.Bytes(), state)
@@ -428,7 +449,8 @@ func (v *PopContext) SubmitAtv(atv *entities.Atv) (int, error) {
 
 // SubmitAtvBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitAtvBytes(data []byte) (int, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	state := ffi.NewValidationState()
 	defer state.Free()
 	res := v.popContext.MemPoolSubmitAtv(data, state)
@@ -437,12 +459,13 @@ func (v *PopContext) SubmitAtvBytes(data []byte) (int, error) {
 
 // SubmitVtb - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVtb(block *entities.Vtb) (int, error) {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
 		return 2, err
 	}
-	defer v.lock()()
 	state := ffi.NewValidationState()
 	defer state.Free()
 	res := v.popContext.MemPoolSubmitVtb(stream.Bytes(), state)
@@ -451,7 +474,8 @@ func (v *PopContext) SubmitVtb(block *entities.Vtb) (int, error) {
 
 // SubmitVtbBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVtbBytes(data []byte) (int, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	state := ffi.NewValidationState()
 	defer state.Free()
 	res := v.popContext.MemPoolSubmitVtb(data, state)
@@ -460,12 +484,13 @@ func (v *PopContext) SubmitVtbBytes(data []byte) (int, error) {
 
 // SubmitVbk - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVbk(block *entities.VbkBlock) (int, error) {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := new(bytes.Buffer)
 	err := block.ToVbkEncoding(stream)
 	if err != nil {
 		return 2, err
 	}
-	defer v.lock()()
 	state := ffi.NewValidationState()
 	defer state.Free()
 	res := v.popContext.MemPoolSubmitVbk(stream.Bytes(), state)
@@ -474,7 +499,8 @@ func (v *PopContext) SubmitVbk(block *entities.VbkBlock) (int, error) {
 
 // SubmitVbkBytes - Returns 0 if payload is valid, 1 if statefully invalid, 2 if statelessly invalid
 func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	state := ffi.NewValidationState()
 	defer state.Free()
 	res := v.popContext.MemPoolSubmitVbk(data, state)
@@ -483,7 +509,8 @@ func (v *PopContext) SubmitVbkBytes(data []byte) (int, error) {
 
 // GetPop ...
 func (v *PopContext) GetPopData() (*entities.PopData, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	popBytes := v.popContext.MemPoolGetPop()
 	stream := bytes.NewReader(popBytes)
 	pop := &entities.PopData{}
@@ -496,6 +523,8 @@ func (v *PopContext) GetPopData() (*entities.PopData, error) {
 
 // RemoveAll - Returns nil if payload is valid
 func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if payloads == nil {
 		return nil
 	}
@@ -505,7 +534,6 @@ func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
 	if err != nil {
 		return err
 	}
-	defer v.lock()()
 	state := ffi.NewValidationState()
 	defer state.Free()
 	v.popContext.MemPoolRemoveAll(stream.Bytes(), state)
@@ -514,7 +542,8 @@ func (v *PopContext) RemoveAll(payloads *entities.PopData) error {
 
 // GetAtv ...
 func (v *PopContext) GetAtv(id entities.AtvID) (*entities.Atv, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetAtv(id)
 	if stream == nil {
 		return nil, nil
@@ -530,7 +559,8 @@ func (v *PopContext) GetAtv(id entities.AtvID) (*entities.Atv, error) {
 
 // GetVtb ...
 func (v *PopContext) GetVtb(id entities.VtbID) (*entities.Vtb, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetVtb(id)
 	if stream == nil {
 		return nil, nil
@@ -546,7 +576,8 @@ func (v *PopContext) GetVtb(id entities.VtbID) (*entities.Vtb, error) {
 
 // GetVbkBlock ...
 func (v *PopContext) GetVbkBlock(id entities.VbkID) (*entities.VbkBlock, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetVbkBlock(id)
 	if stream == nil {
 		return nil, nil
@@ -562,7 +593,8 @@ func (v *PopContext) GetVbkBlock(id entities.VbkID) (*entities.VbkBlock, error) 
 
 // GetAtvs ...
 func (v *PopContext) GetAtvs() ([]entities.AtvID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetAtvs()
 	if stream == nil {
 		return nil, nil
@@ -583,7 +615,8 @@ func (v *PopContext) GetAtvs() ([]entities.AtvID, error) {
 
 // GetVtbs ...
 func (v *PopContext) GetVtbs() ([]entities.VtbID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetVtbs()
 	if stream == nil {
 		return nil, nil
@@ -604,7 +637,8 @@ func (v *PopContext) GetVtbs() ([]entities.VtbID, error) {
 
 // GetVbkBlocks ...
 func (v *PopContext) GetVbkBlocks() ([]entities.VbkID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetVbkBlocks()
 	if stream == nil {
 		return nil, nil
@@ -625,7 +659,8 @@ func (v *PopContext) GetVbkBlocks() ([]entities.VbkID, error) {
 
 // GetAtvsInFlight ...
 func (v *PopContext) GetAtvsInFlight() ([]entities.AtvID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetAtvsInFlight()
 	if stream == nil {
 		return nil, nil
@@ -646,7 +681,8 @@ func (v *PopContext) GetAtvsInFlight() ([]entities.AtvID, error) {
 
 // GetVtbsInFlight ...
 func (v *PopContext) GetVtbsInFlight() ([]entities.VtbID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetVtbsInFlight()
 	if stream == nil {
 		return nil, nil
@@ -667,7 +703,8 @@ func (v *PopContext) GetVtbsInFlight() ([]entities.VtbID, error) {
 
 // GetVbkBlocksInFlight ...
 func (v *PopContext) GetVbkBlocksInFlight() ([]entities.VbkID, error) {
-	defer v.lock()()
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	stream := v.popContext.MemPoolGetVbkBlocksInFlight()
 	if stream == nil {
 		return nil, nil
@@ -686,7 +723,7 @@ func (v *PopContext) GetVbkBlocksInFlight() ([]entities.VbkID, error) {
 	return ids, nil
 }
 
-func (v *PopContext) lock() (unlock func()) {
+func (v *PopContext) Lock() (unlock func()) {
 	v.mutex.Lock()
 	return func() {
 		v.mutex.Unlock()
