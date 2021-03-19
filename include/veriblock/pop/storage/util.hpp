@@ -52,7 +52,7 @@ bool LoadBlocks(
 }
 
 template <typename BlockIndexT>
-void validateBlockIndex(const BlockIndexT&) {}
+void validateBlockIndex(const BlockIndexT&);
 
 template <typename BlockTreeT>
 void SaveTree(
