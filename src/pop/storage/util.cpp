@@ -99,6 +99,9 @@ bool LoadAllTrees(PopContext& context,
   return true;
 }
 
+template <typename BlockIndexT>
+void validateBlockIndex(const BlockIndexT&) {}
+
 template <>
 void validateBlockIndex(const BlockIndex<VbkBlock>& index) {
   const auto& vtbids = index.getPayloadIds<VTB>();
