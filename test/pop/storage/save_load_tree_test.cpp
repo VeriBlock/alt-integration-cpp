@@ -178,3 +178,74 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "load-tree+ATV-duplicate");
 }
+
+TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
+  PopData popData;
+
+  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
+      popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
+
+  // both VTBs should be contained in the same block
+  BlockIndex<VbkBlock>* containingVbkBlock =
+      popminer->mineVbkBlocks(1, {vbkPopTx1});
+
+  auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  popData.vtbs = {vtb1, vtb1};
+  fillVbkContext(popData.context,
+                 alttree.vbk().getBestChain().tip()->getHash(),
+                 containingVbkBlock->getHash(),
+                 popminer->vbk());
+  payloadsProvider.writePayloads(popData);
+
+  // manually add the VBK context to alttree
+  for (auto& block : popData.context) {
+    ASSERT_TRUE(alttree.vbk().acceptBlockHeader(block, state))
+        << state.toString();
+  }
+
+  ASSERT_TRUE(alttree.vbk().addPayloads(
+      containingVbkBlock->getHash(), popData.vtbs, state))
+      << state.toString();
+
+  ASSERT_DEATH(save(), "");
+}
+
+void emptyValidator(const BlockIndex<VbkBlock>&) {}
+
+TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
+  PopData popData;
+
+  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
+      popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
+
+  // both VTBs should be contained in the same block
+  BlockIndex<VbkBlock>* containingVbkBlock =
+      popminer->mineVbkBlocks(1, {vbkPopTx1});
+
+  auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  popData.vtbs = {vtb1, vtb1};
+  fillVbkContext(popData.context,
+                 alttree.vbk().getBestChain().tip()->getHash(),
+                 containingVbkBlock->getHash(),
+                 popminer->vbk());
+  payloadsProvider.writePayloads(popData);
+
+  // manually add the VBK context to alttree
+  for (auto& block : popData.context) {
+    ASSERT_TRUE(alttree.vbk().acceptBlockHeader(block, state))
+        << state.toString();
+  }
+
+  ASSERT_TRUE(alttree.vbk().addPayloads(
+      containingVbkBlock->getHash(), popData.vtbs, state))
+      << state.toString();
+
+  auto writer = InmemBlockBatch(blockStorage);
+  SaveTree(alttree.btc(), writer);
+  SaveTree(alttree.vbk(), writer, emptyValidator);
+  SaveTree(alttree, writer);
+
+  EXPECT_FALSE(load());
+  EXPECT_FALSE(state.IsValid());
+  EXPECT_EQ(state.GetPath(), "load-tree+VTB-duplicate");
+}
