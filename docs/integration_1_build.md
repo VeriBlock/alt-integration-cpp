@@ -4,7 +4,7 @@
 
 # Overview
 
-This section contains information about adding veriblock-pop C++ library to your project.
+This section contains information about adding veriblock-pop C++ library to your fork of Bitcoin.
 
 # 1. Build and install veriblock-pop-cpp library.
 
@@ -13,11 +13,9 @@ git clone https://github.com/VeriBlock/alt-integration-cpp.git
 cd alt-integration-cpp
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DWITH_PYPOPTOOLS=ON
-make
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
+make -j4
 sudo make install
-cd ..
-python3 setup.py install --user
 ```
 
 @note Building veriblock-pop-cpp library requires CMake 3.12 or newer
@@ -30,7 +28,6 @@ python3 setup.py install --user
 ```diff
 PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto not found.)])
 +      # VeriBlock
-+      echo "pkg-config is used..."
 +      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib64/pkgconfig
 +      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
 +      export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig
@@ -40,36 +37,42 @@ PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto not found.)])
 ```diff
 else
 +  # VeriBlock
-+  AC_CHECK_HEADER([veriblock/pop_context.hpp],,AC_MSG_ERROR(veriblock-pop-cpp headers missing))
++  AC_CHECK_HEADER([veriblock/pop.hpp],,AC_MSG_ERROR(veriblock-pop-cpp headers missing))
 +  AC_CHECK_LIB([veriblock-pop-cpp],[main],[VERIBLOCK_POP_CPP_LIBS=" -lveriblock-pop-cpp"],AC_MSG_ERROR(veriblock-pop-cpp missing))
-+
 +  AC_ARG_VAR(VERIBLOCK_POP_CPP_LIBS, "linker flags for VERIBLOCK_POP_CPP")
 +
    AC_CHECK_HEADER([openssl/crypto.h],,AC_MSG_ERROR(libcrypto headers missing))
 ```
 
+After this, `VERIBLOCK_POP_CPP_LIBS` variable in Makefile will contain all link flags required to link `veriblock-pop-cpp` to your project.
+
+Now, link each target in a project to `VERIBLOCK_POP_CPP_LIBS`. Note that some targets may list some libraries twice - to resolve circular dependencies.
+
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
 ```diff
 bitcoind_LDADD = \
 +  $(VERIBLOCK_POP_CPP_LIBS) \
-+  $(LIBBITCOIN_SERVER) \
+   $(LIBBITCOIN_SERVER) \
    $(LIBBITCOIN_WALLET) \
+   $(LIBBITCOIN_SERVER) \
    $(LIBBITCOIN_COMMON) \
--  $(LIBBITCOIN_UTIL) \
    $(LIBUNIVALUE) \
-+  $(LIBBITCOIN_UTIL) \
-```
-```diff
-+bitcoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
+   $(LIBBITCOIN_UTIL) \
+   $(LIBBITCOIN_ZMQ) \
+   $(LIBBITCOIN_CONSENSUS) \
+   $(LIBBITCOIN_CRYPTO) \
+   $(LIBLEVELDB) \
+   $(LIBLEVELDB_SSE42) \
+   $(LIBMEMENV) \
+   $(LIBSECP256K1)
 ```
 ```diff
 bitcoin_cli_LDADD = \
++  $(VERIBLOCK_POP_CPP_LIBS) \
    $(LIBBITCOIN_CLI) \
    $(LIBUNIVALUE) \
    $(LIBBITCOIN_UTIL) \
--  $(LIBBITCOIN_CRYPTO)
-+  $(LIBBITCOIN_CRYPTO) \
-+  $(VERIBLOCK_POP_CPP_LIBS)
+   $(LIBBITCOIN_CRYPTO)
 ```
 ```diff
 bitcoin_tx_LDADD = \
@@ -79,61 +82,74 @@ bitcoin_tx_LDADD = \
    $(LIBBITCOIN_UTIL) \
 ```
 ```diff
+-bitcoin_tx_LDADD += $(BOOST_LIBS)
 +bitcoin_tx_LDADD += $(BOOST_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
 ```
 ```diff
 bitcoin_wallet_LDADD = \
-+  $(LIBBITCOIN_WALLET_TOOL) \
-+  $(LIBBITCOIN_WALLET) \
++  $(VERIBLOCK_POP_CPP_LIBS) \
+   $(LIBBITCOIN_WALLET_TOOL) \
+   $(LIBBITCOIN_WALLET) \
    $(LIBBITCOIN_COMMON) \
--  $(LIBBITCOIN_UTIL) \
--  $(LIBUNIVALUE) \
    $(LIBBITCOIN_CONSENSUS) \
-+  $(LIBBITCOIN_UTIL) \
+   $(LIBBITCOIN_UTIL) \
    $(LIBBITCOIN_CRYPTO) \
--  $(LIBSECP256K1)
-+  $(LIBBITCOIN_ZMQ) \
-+  $(LIBLEVELDB) \
-+  $(LIBLEVELDB_SSE42) \
-+  $(LIBMEMENV) \
-+  $(LIBSECP256K1) \
-+  $(LIBUNIVALUE) \
-+  $(VERIBLOCK_POP_CPP_LIBS)
-```
-```diff
-+bitcoin_wallet_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(ZMQ_LIBS)
+   $(LIBBITCOIN_ZMQ) \
+   $(LIBLEVELDB) \
+   $(LIBLEVELDB_SSE42) \
+   $(LIBMEMENV) \
+   $(LIBSECP256K1) \
+   $(LIBUNIVALUE)
+
+-bitcoin_wallet_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(ZMQ_LIBS)
++bitcoin_wallet_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(ZMQ_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
 ```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.bench.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.bench.include)
 ```diff
 bench_bench_bitcoin_LDADD = \
+   $(LIBBITCOIN_SERVER) \
+   $(LIBBITCOIN_WALLET) \
+   $(LIBBITCOIN_SERVER) \
+   $(LIBBITCOIN_COMMON) \
+   $(LIBBITCOIN_UTIL) \
+   $(LIBBITCOIN_CONSENSUS) \
+   $(LIBBITCOIN_CRYPTO) \
+   $(LIBTEST_UTIL) \
+   $(LIBLEVELDB) \
+   $(LIBLEVELDB_SSE42) \
+   $(LIBMEMENV) \
    $(LIBSECP256K1) \
    $(LIBUNIVALUE) \
    $(EVENT_PTHREADS_LIBS) \
--  $(EVENT_LIBS)
-+  $(EVENT_LIBS) \
-+  $(VERIBLOCK_POP_CPP_LIBS)
++  $(VERIBLOCK_POP_CPP_LIBS) \
+   $(EVENT_LIBS)
 ```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
 ```diff
--test_test_bitcoin_LDADD += $(LIBBITCOIN_SERVER) $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) \
--  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(LIBSECP256K1) $(EVENT_LIBS) $(EVENT_PTHREADS_LIBS)
--test_test_bitcoin_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-+test_test_bitcoin_LDADD += $(LIBSECP256K1) $(VERIBLOCK_POP_CPP_LIBS) $(LIBBITCOIN_SERVER) $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) \
-+  $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(BOOST_LIBS) $(BOOST_UNIT_TEST_FRAMEWORK_LIB) $(EVENT_LIBS) $(EVENT_PTHREADS_LIBS)
-+test_test_bitcoin_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) -g -Og
+test_test_bitcoin_LDADD += $(BDB_LIBS) $(MINIUPNPC_LIBS) $(RAPIDCHECK_LIBS)
+test_test_bitcoin_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) -static
+
++ test_test_bitcoin_LDADD += $(VERIBLOCK_POP_CPP_LIBS)
 ```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qt.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qt.include)
 ```diff
--bitcoin_qt_ldadd = qt/libbitcoinqt.a $(LIBBITCOIN_SERVER)
-+bitcoin_qt_LDADD = qt/libbitcoinqt.a $(VERIBLOCK_POP_CPP_LIBS) $(LIBBITCOIN_SERVER)
-```
-```diff
-+bitcoin_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
-+  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
+-qt_bitcoin_qt_LDADD = qt/libbitcoinqt.a $(LIBBITCOIN_SERVER)
++qt_bitcoin_qt_LDADD = qt/libbitcoinqt.a $(VERIBLOCK_POP_CPP_LIBS) $(LIBBITCOIN_SERVER)
+if ENABLE_WALLET
+qt_bitcoin_qt_LDADD += $(LIBBITCOIN_UTIL) $(LIBBITCOIN_WALLET)
+endif
+if ENABLE_ZMQ
+qt_bitcoin_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
+endif
+qt_bitcoin_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) \
+  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
+-  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 +  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
+qt_bitcoin_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_bitcoin_qt_LIBTOOLFLAGS = $(AM_LIBTOOLFLAGS) --tag CXX
 ```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qttest.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.qttest.include)

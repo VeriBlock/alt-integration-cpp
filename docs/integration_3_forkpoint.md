@@ -4,14 +4,14 @@
 
 # Overview
 
-The only way to enable VeriBlock security for already running blockchains is to make a fork. For this reason we will provide a height of the fork point.
+The only way to enable VeriBlock security for already running blockchains is to make a hard fork. For this reason we will provide a height of the fork point.
 
-# 1. Add block height from which PopSecurity is enabled into the consensus parameters.
+# 1. Add block height for Pop Security activation.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h)
 
 [struct Params](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h#L45)
-```cpp
+```diff
      uint256 nMinimumChainWork;
      uint256 defaultAssumeValid;
 +
@@ -19,42 +19,11 @@ The only way to enable VeriBlock security for already running blockchains is to 
 +    uint64_t VeriBlockPopSecurityHeight;
 ```
 
-# 2. Define VeriBlockPopSecurityHeight variable.
+@warning The value must be selected carefully. If current height is `X`, never set height less or equal to `X`.
 
-[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp)
+@note Set `VeriBlockPopSecurityHeight` equal to 200 in regtest, so that existing tests can be re-used.
 
-[class CMainParams](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp#L71)
-```cpp
-+
-+        // VeriBlock
-+        // TODO: should determine the correct height
-+        consensus.VeriBlockPopSecurityHeight = -1;
-+
-+        // The best chain should have at least this much work.
-         consensus.nMinimumChainWork = uint256S("0x00");
-```
-[class CTestNetParams](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp#L154)
-```cpp
-+
-+        // VeriBlock
-+        // TODO: should determine the correct height
-+        consensus.VeriBlockPopSecurityHeight = -1;
-
-         // The best chain should have at least this much work.
-         consensus.nMinimumChainWork = uint256S("0x00");
-```
-[class CRegTestParams](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp#L242)
-```cpp
-+
-+        // VeriBlock
-+        // TODO: should determine the correct height
-+        consensus.VeriBlockPopSecurityHeight = -1;
-
-         // The best chain should have at least this much work.
-         consensus.nMinimumChainWork = uint256S("0x00");
-```
-
-# 3. Create a function in the chainparams which detects if the Pop security is enabled.
+# 2. Create a function in the chainparams which detects if the Pop security is enabled.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h)
 
@@ -70,7 +39,9 @@ The only way to enable VeriBlock security for already running blockchains is to 
 +
 ```
 
-# 4. Update the validation of blocks. If PoPSecurity is disabled POP_BLOCK_VERSION_BIT should not be set.
+# 3. Update the block version validation.
+
+`POP_BLOCK_VERSION_BIT` should not be set before PoP Activation Height:
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
 
@@ -86,14 +57,4 @@ The only way to enable VeriBlock security for already running blockchains is to 
      return true;
 ```
 
-# 5. Change height of the Pop security fork point in the regtest. It allows to properly run Pop tests.
-
-[https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp)
-
-[method CRegTestParams::CRegTestParams](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.cpp#L242)
-```cpp
-+        consensus.VeriBlockPopSecurityHeight = 200;
-
-         // The best chain should have at least this much work.
-         consensus.nMinimumChainWork = uint256S("0x00");
-```
+Technically, this check is stateless, so can be moved to `CheckBlockHeader` if wanted.
