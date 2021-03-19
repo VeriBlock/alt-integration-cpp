@@ -560,27 +560,20 @@ bool checkBlock(const BtcBlock& block,
   return true;
 }
 
-template <typename I>
-bool hasDuplicateIds(const std::vector<I> payloads) {
-  std::unordered_set<std::vector<uint8_t>> ids;
-  for (const auto& payload : payloads) {
-    const auto id = getIdVector(payload);
-    bool inserted = ids.insert(id).second;
-    if (!inserted) {
-      return true;
-    }
-  }
-  return false;
+template <typename P>
+static bool hasDuplicatePayloads(const std::vector<P>& payloads) {
+  const auto& ids = map_get_id(payloads);
+  return hasDuplicateIds<P>(ids);
 }
 
 bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
-  if (hasDuplicateIds(popData.context)) {
+  if (hasDuplicatePayloads(popData.context)) {
     return state.Invalid("duplicate-vbk", "duplicate VBK blocks");
   }
-  if (hasDuplicateIds(popData.vtbs)) {
+  if (hasDuplicatePayloads(popData.vtbs)) {
     return state.Invalid("duplicate-vtb", "duplicate VTBs");
   }
-  if (hasDuplicateIds(popData.atvs)) {
+  if (hasDuplicatePayloads(popData.atvs)) {
     return state.Invalid("duplicate-atv", "duplicate ATVs");
   }
 

@@ -100,6 +100,28 @@ bool checkVTB(const VTB& vtb,
               const BtcChainParams& btc,
               const VbkChainParams& vbk);
 
+template <typename P>
+bool hasDuplicateIds(const std::vector<typename P::id_t>& payloadIds) {
+  std::unordered_set<typename P::id_t> ids;
+  for (const auto& id : payloadIds) {
+    bool inserted = ids.insert(id).second;
+    if (!inserted) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <typename P>
+bool checkIdsForDuplicates(const std::vector<typename P::id_t>& payloadIds,
+                           ValidationState& state) {
+  if (hasDuplicateIds<P>(payloadIds)) {
+    return state.Invalid(P::name() + "-duplicate",
+                         fmt::format("duplicate {} ids", P::name()));
+  }
+  return true;
+}
+
 bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state);
 
 bool checkPopData(PopValidator& validator,
