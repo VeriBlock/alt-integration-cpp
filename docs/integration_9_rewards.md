@@ -171,11 +171,11 @@ Modify rewarding algorithm. Basic PoW rewards are extended with Pop rewards for 
 ```
 
 @note Rewarding algorithm should fall back to the original ALT rewarding if Pop security is not activated.
-@note It is advised to apply native halving rules to Pop rewards.
+@note It is recommended to apply native halving rules to Pop rewards.
 
 # 3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.
 
-We have to check for the Pop activation height when calculating Pop rewards. Therefore some methods should be modified to accept chain parameters instead of consensus parameters.
+We have to check the Pop activation height when calculating Pop rewards. Therefore some methods should be modified to accept chain parameters instead of consensus parameters.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h)
 ```cpp
@@ -301,7 +301,7 @@ We have to check for the Pop activation height when calculating Pop rewards. The
 
 # 5. Add tests for the Pop rewards.
 
-Pop rewards test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/pop_reward_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp). Copy this file to your project.
+Pop rewards test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp). Copy this file to your project.
 
 @note Test expects Pop reward in the second coinbase transaction. Update the test according to the ALT rewarding scheme.
 

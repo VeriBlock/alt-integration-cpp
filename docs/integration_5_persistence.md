@@ -8,13 +8,13 @@ ALT block storage should be modified to store VeriBlock related data.
           
 # 1. Add PayloadsProvider.
 
-We should add a PayloadsProvider for the VeriBlock library. The main idea of such class is that we reuse the existing ALT blockchain database. Our library allows to use the native implementation of the database. We implement it with PayloadsProvider class which is inherited from the altintegration::PayloadsStorage class.
+We should add a `PayloadsProvider` for the VeriBlock library. The main idea of such class is that we reuse the existing ALT blockchain database. Our library allows to use the native implementation of the database. We implement it with `PayloadsProvider` class which is inherited from the altintegration::PayloadsStorage class.
 
 Payloads provider: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/payloads_provider.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/payloads_provider.hpp). Copy this file to your project.
 
 Block provider: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/block_provider.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/block_provider.hpp). Copy this file to your project.
 
-@note These adaptors rely heavily on Bitcoin structures such as CDBWrapper and CDBIterator. Other blockchains should use own adaptors or other means for storing VeriBlock related data.
+@note These adaptors rely heavily on Bitcoin structures such as `CDBWrapper` and `CDBIterator`. Other blockchains should use own adaptors or other means for storing VeriBlock related data.
 
 # 2. Create wrappers for the persistence API.
 
