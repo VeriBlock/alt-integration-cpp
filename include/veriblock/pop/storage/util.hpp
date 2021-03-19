@@ -51,8 +51,14 @@ bool LoadBlocks(
   return tree.loadTip(tiphash, state);
 }
 
+template <typename BlockIndexT>
+void validateBlockIndex(const BlockIndexT&) {}
+
 template <typename BlockTreeT>
-void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
+void SaveTree(
+    BlockTreeT& tree,
+    BlockBatch& batch,
+    std::function<void(const typename BlockTreeT::index_t&)> validator) {
   using index_t = typename BlockTreeT::index_t;
   std::vector<const index_t*> dirty_indices;
 
@@ -76,10 +82,16 @@ void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
 
   // write indices
   for (const index_t* index : dirty_indices) {
+    validator(*index);
     batch.writeBlock(*index);
   }
 
   batch.writeTip(*tree.getBestChain().tip());
+}
+
+template <typename BlockTreeT>
+void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
+  SaveTree(tree, batch, &validateBlockIndex<typename BlockTreeT::index_t>);
 }
 
 struct AltBlockTree;
