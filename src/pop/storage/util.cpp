@@ -99,6 +99,12 @@ bool LoadAllTrees(PopContext& context,
   return true;
 }
 
+template <>
+void validateBlockIndex(const BlockIndex<VbkBlock>& index) {
+  const auto& vtbids = index.getPayloadIds<VTB>();
+  VBK_ASSERT_MSG(!hasDuplicateIds<VTB>(vtbids), "Duplicate VTB IDs");
+}
+
 void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch) {
   SaveTree(tree.btc(), batch);
   SaveTree(tree.vbk(), batch);

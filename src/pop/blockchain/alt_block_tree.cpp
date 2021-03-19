@@ -531,12 +531,18 @@ bool AltBlockTree::loadBlock(std::unique_ptr<index_t> index,
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  const auto& vbkblocks = current->getPayloadIds<VbkBlock>();
-  const auto& vtbs = current->getPayloadIds<VTB>();
-  const auto& atvs = current->getPayloadIds<ATV>();
-  if (hasDuplicates<VbkBlock>(*current, vbkblocks, *this, state) ||
-      hasDuplicates<VTB>(*current, vtbs, *this, state) ||
-      hasDuplicates<ATV>(*current, atvs, *this, state)) {
+  const auto& vbkblockIds = current->getPayloadIds<VbkBlock>();
+  const auto& vtbIds = current->getPayloadIds<VTB>();
+  const auto& atvIds = current->getPayloadIds<ATV>();
+
+  // stateless check for duplicates in each of the payload IDs vectors
+  if (!checkIdsForDuplicates<VbkBlock>(vbkblockIds, state)) return false;
+  if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
+  if (!checkIdsForDuplicates<ATV>(atvIds, state)) return false;
+
+  if (hasDuplicates<VbkBlock>(*current, vbkblockIds, *this, state) ||
+      hasDuplicates<VTB>(*current, vtbIds, *this, state) ||
+      hasDuplicates<ATV>(*current, atvIds, *this, state)) {
     return false;
   }
 
