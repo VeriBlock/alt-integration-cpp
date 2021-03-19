@@ -40,6 +40,12 @@ struct PopData {
     atvs.insert(atvs.end(), p.atvs.begin(), p.atvs.end());
   }
 
+  void clear() {
+    context.clear();
+    vtbs.clear();
+    atvs.clear();
+  }
+
   /**
    * Convert PopData to data stream using Vbk byte format
    * @param stream data stream to write into
