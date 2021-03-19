@@ -1,6 +1,8 @@
 package api
 
-import "sync"
+import (
+	"sync"
+)
 
 type SafeMutex struct {
 	mu     *sync.Mutex
@@ -23,6 +25,6 @@ func (m *SafeMutex) AssertMutexLocked(str string) {
 }
 
 func (m *SafeMutex) Unlock() {
-	m.mu.Unlock()
 	m.locked = false
+	m.mu.Unlock()
 }
