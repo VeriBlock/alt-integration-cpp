@@ -20,7 +20,7 @@ extern "C" {
   void pop_##entity##_free(pop_##entity##_t* self)
 
 // declare the getter method for the pop entity
-#define POP_ENTITY_GETTER_DECLARE(entity, returntype, fieldname) \
+#define POP_ENTITY_DECLARE_GETTER(entity, returntype, fieldname) \
   returntype pop_##entity##_get_##fieldname(const pop_##entity##_t* self);
 
 // signature of the getter method of the pop entity

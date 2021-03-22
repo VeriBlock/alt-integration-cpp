@@ -16,13 +16,13 @@ extern "C" {
 
 POP_DECLARE_ENTITY(btc_block);
 
-POP_ENTITY_GETTER_DECLARE(btc_block, POP_ARRAY_NAME(u8), hash);
-POP_ENTITY_GETTER_DECLARE(btc_block, POP_ARRAY_NAME(u8), previous_block);
-POP_ENTITY_GETTER_DECLARE(btc_block, POP_ARRAY_NAME(u8), merkle_root);
-POP_ENTITY_GETTER_DECLARE(btc_block, uint32_t, version);
-POP_ENTITY_GETTER_DECLARE(btc_block, uint32_t, timestamp);
-POP_ENTITY_GETTER_DECLARE(btc_block, uint32_t, difficulty);
-POP_ENTITY_GETTER_DECLARE(btc_block, uint32_t, nonce);
+POP_ENTITY_DECLARE_GETTER(btc_block, POP_ARRAY_NAME(u8), hash);
+POP_ENTITY_DECLARE_GETTER(btc_block, POP_ARRAY_NAME(u8), previous_block);
+POP_ENTITY_DECLARE_GETTER(btc_block, POP_ARRAY_NAME(u8), merkle_root);
+POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, version);
+POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, timestamp);
+POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, difficulty);
+POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, nonce);
 
 POP_DECLARE_ARRAY(pop_btc_block_t, btc_block);
 

@@ -8,10 +8,18 @@
 
 #include "btcblock.h"
 
-#undef POP_ENTITY_GETTER
-#undef POP_ENTITY_GETTER_ALLOC
+// array
 #undef POP_DECLARE_ARRAY
+#undef POP_ARRAY_NAME
+
+// type helpers
 #undef POP_DECLARE_ENTITY
+#undef POP_ENTITY_NAME
+#undef POP_ENTITY_FREE_SIGNATURE
+#undef POP_ENTITY_DECLARE_GETTER
+#undef POP_ENTITY_GETTER_SIGNATURE
+
+// serde
 #undef POP_DECLARE_SERDE_VBK
 #undef POP_DECLARE_SERDE_RAW
 
