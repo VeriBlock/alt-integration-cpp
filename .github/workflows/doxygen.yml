@@ -33,4 +33,4 @@ jobs:
           git checkout -f docs
           git add .
           git commit -m "Update docs ${{ github.sha }}"
-          git push -f
+          git push -f origin docs
