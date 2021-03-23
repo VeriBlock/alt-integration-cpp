@@ -17,24 +17,20 @@ jobs:
   doxygen:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         name: checkout
-        with:
-          clean: true
       - name: prepare
-        run: |
-          mkdir -p build/docs
-          git config --global user.email "bot@veriblock.org"
-          git config --global user.name "Bot"
-          git checkout docs --
+        run: mkdir -p build/docs
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
           doxyfile-path: './Doxyfile'
       - name: prepare
-        run: sudo mv -f ./build/docs/html/* ./docs/
+        run: | 
+          sudo mv -f ./build/docs/html/* ./docs/
       - name: commit
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_changes: Update docs ${{ github.sha }}
           branch: docs
+          push_options: --force
