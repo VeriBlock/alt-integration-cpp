@@ -272,8 +272,9 @@ struct std::hash<altintegration::Blob<N>> {
 };
 
 //! @private
+namespace fmt {
 template <size_t N>
-struct fmt::formatter<altintegration::Blob<N>> {
+struct formatter<altintegration::Blob<N>> {
   auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
     auto it = ctx.begin(), end = ctx.end();
     // Check if reached the end of the range:
@@ -291,5 +292,6 @@ struct fmt::formatter<altintegration::Blob<N>> {
     return format_to(ctx.out(), "{:s}", val.toHex());
   }
 };
+}  // namespace fmt
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOB_HPP_
