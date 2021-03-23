@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+//! @private
 struct ContinueOnInvalidContext {
   ContinueOnInvalidContext(const AltChainParams& params) : params_(params) {}
 

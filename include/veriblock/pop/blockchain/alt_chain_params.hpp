@@ -13,19 +13,12 @@
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
-/**
- * @defgroup config Altchain Config
- * Data structures that store all altchain-related configs required for POP
- * integration.
- */
-
 namespace altintegration {
 
 /**
- * @struct PopPayoutParams
+ * @struct PopPayoutsParams
  *
  * Defines config for POP payouts.
- * @ingroup config, interfaces
  */
 struct PopPayoutsParams {
   //! we start decreasing rewards after this score
@@ -134,7 +127,6 @@ JsonValue ToJSON(const PopPayoutsParams& p) {
 }
 
 /**
- * @ingroup config, interfaces
  *
  * @struct AltChainParams
  *

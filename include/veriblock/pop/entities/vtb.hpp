@@ -24,7 +24,6 @@ namespace altintegration {
  * Veriblock to Bitcoin publication, committed to Veriblock blockchain in
  * containingBlock.
  *
- * @ingroup entities
  */
 struct VTB {
   using id_t = uint256;
@@ -76,6 +75,7 @@ struct VTB {
   static const std::string _name;
 };
 
+//! @private
 template <>
 struct IsPopPayload<VTB> {
   static const bool value = true;

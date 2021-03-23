@@ -18,13 +18,10 @@
 namespace altintegration {
 
 /**
- * @struct BlockProvider
+ * @struct BlockReader
  *
  * An abstraction over on-disk storage iterator.
- *
- * @ingroup interfaces
  */
-
 struct BlockReader {
   virtual ~BlockReader() = default;
 

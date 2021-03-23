@@ -225,7 +225,7 @@ Pop Merkle Root validation test: [https://github.com/VeriBlock/vbk-ri-btc/blob/m
 # 8. Add Pop Merkle trees code to the makefile.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
-```diff
+```cpp
 libbitcoin_common_a_SOURCES = \
    script/sign.cpp \
    script/signingprovider.cpp \
@@ -240,7 +240,7 @@ libbitcoin_common_a_SOURCES = \
 # 9. Update makefile to run tests.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
-```diff
+```cpp
  ### VeriBlock section start
  # path is relative to src
  VBK_TESTS = \

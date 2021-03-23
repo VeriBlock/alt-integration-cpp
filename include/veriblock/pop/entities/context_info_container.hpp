@@ -13,8 +13,14 @@
 
 namespace altintegration {
 
+/**
+ * Container of context info for endorsed block.
+ */
 struct ContextInfoContainer {
+  //! endorsed block height
   int height = 0;
+
+  //! endorsed block previous keystones
   KeystoneContainer keystones{};
 
   static ContextInfoContainer createFromPrevious(
@@ -36,6 +42,20 @@ struct ContextInfoContainer {
   std::string toPrettyString() const;
 };
 
+/**
+ * Contains ContextInfoContainer and merkle path which authenticates hash of
+ * ContextInfoContainer to a block header.
+ *
+ * ```
+ * auto tlmr = getTopLevelMerkleRoot(header);
+ * auto r = sha256d(stateRoot, context.getHash());
+ * if(r == tlmr) {
+ *   // valid!
+ * } esle {
+ *   // invalid!
+ * }
+ * ```
+ */
 struct AuthenticatedContextInfoContainer {
   ContextInfoContainer ctx{};
   // state root = sha256d(original merkle root || popdata merkle root)

@@ -158,6 +158,7 @@ struct VbkBlock {
                                  const VbkBlock::hash_t& precalculatedHash);
 };
 
+//! @private
 template <>
 struct IsPopPayload<VbkBlock> {
   static const bool value = true;

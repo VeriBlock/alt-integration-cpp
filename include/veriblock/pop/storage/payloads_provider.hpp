@@ -10,17 +10,17 @@
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
 
-/**
- * @defgroup interfaces Interfaces to be implemented
- * These interfaces must be implemented by Altchain developers for integration
- * of POP protocol.
- */
-
 namespace altintegration {
 
 struct AltBlockTree;
 struct VbkBlockTree;
 
+/**
+ * Accessor for ATV/VTB/VbkBlock bodies given hash. Technically, a facade over
+ * on-disk storage.
+ *
+ * Altchains are expected to implement this interface.
+ */
 struct PayloadsStorage {
   virtual ~PayloadsStorage() = default;
 

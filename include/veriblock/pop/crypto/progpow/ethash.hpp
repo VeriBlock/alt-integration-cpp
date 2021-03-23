@@ -37,16 +37,19 @@
 namespace altintegration {
 namespace progpow {
 
+//! @private
 struct ethash_cache {
   void* cache;
   uint64_t cache_size;
   uint64_t epoch;
 };
 
+//! @private
 typedef struct ethash_dag_node {
   uint32_t words[VBK_ETHASH_DAG_NODE_SIZE];
 } ethash_dag_node_t;
 
+//! @private
 void ethash_calculate_dag_node(ethash_dag_node_t* out,
                                uint32_t node_index,
                                ethash_cache* const light);
@@ -58,20 +61,27 @@ void ethash_calculate_dag_node(ethash_dag_node_t* out,
  * @return               Newly allocated ethash_light handler or NULL in case of
  *                       ERRNOMEM or invalid parameters used for
  * ethash_compute_cache_nodes()
+ *
+ * @private
  */
 ethash_cache* ethash_light_new(uint64_t block_number);
 /**
  * Frees a previously allocated ethash_light handler
  * @param light        The light handler to free
+ * @private
  */
 void ethash_light_delete(ethash_cache* light);
 
 /**
  * Calculate the seedhash for a given block number
+ * @private
  */
 uint256 ethash_calculate_seedhash(uint64_t block_number);
+
+//! @private
 uint256 ethash_get_seedhash(uint64_t block_number);
 
+//! @private
 std::shared_ptr<ethash_cache> ethash_make_cache(uint64_t block_number);
 
 }  // namespace progpow
