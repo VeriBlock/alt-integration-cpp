@@ -21,16 +21,19 @@ jobs:
         name: checkout
         with:
           clean: true
-      - run: mkdir -p build/docs
+      - name: prepare
+        run: |
+          mkdir -p build/docs
+          git config --global user.email "bot@veriblock.org"
+          git config --global user.name "Bot"
+          git checkout docs
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
           doxyfile-path: './Doxyfile'
       - name: publish
         run: |
-          git config --global user.email "bot@veriblock.org"
-          git config --global user.name "Bot"
-          git checkout -f docs
+          sudo mv -f ./build/docs/html/* ./docs/
           git add .
           git commit -m "Update docs ${{ github.sha }}"
-          git push -f origin docs
+          git push -f origin/docs
