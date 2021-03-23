@@ -5,7 +5,7 @@ from ...framework.test_framework import PopIntegrationTestFramework
 from ...framework.pop_util import endorse_block, mine_until_pop_enabled
 from ...framework.sync_util import (
     start_all, connect_all,
-    sync_all, sync_pop_mempools
+    sync_all, sync_pop_mempools, disconnect_all
 )
 
 
@@ -18,6 +18,7 @@ class PopMempoolSyncTest(PopIntegrationTestFramework):
         connect_all(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         sync_all(self.nodes)
+        disconnect_all(self.nodes)
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -33,8 +34,9 @@ class PopMempoolSyncTest(PopIntegrationTestFramework):
         assert atv_id not in rawpopmempool1.atvs
         self.log.info("node1 does not contain atv1 in its pop mempool after restart")
 
+        self.nodes[0].connect(self.nodes[1])
         sync_pop_mempools(self.nodes, timeout=20)
-        self.log.info("nodes[0,1] have syncd pop mempools")
+        self.log.info("nodes[0,1] have synced pop mempools")
 
         rawpopmempool1 = self.nodes[1].getrawpopmempool()
         assert atv_id in rawpopmempool1.atvs
@@ -50,7 +52,7 @@ class PopMempoolSyncTest(PopIntegrationTestFramework):
         self.log.info("node1 connect to node0")
 
         sync_pop_mempools(self.nodes, timeout=20)
-        self.log.info("nodes[0,1] have syncd pop mempools")
+        self.log.info("nodes[0,1] have synced pop mempools")
 
         rawpopmempool1 = self.nodes[1].getrawpopmempool()
         assert atv_id in rawpopmempool1.atvs
