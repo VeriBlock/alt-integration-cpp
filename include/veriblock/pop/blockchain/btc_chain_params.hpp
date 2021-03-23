@@ -50,7 +50,6 @@ struct BtcChainParams {
  *
  * mainnet network params in Bitcoin chain.
  *
- * @ingroup config
  */
 struct BtcChainParamsMain : public BtcChainParams {
   ~BtcChainParamsMain() override = default;
@@ -97,7 +96,6 @@ struct BtcChainParamsMain : public BtcChainParams {
  *
  * testnet3 network params in Bitcoin chain.
  *
- * @ingroup config
  */
 struct BtcChainParamsTest : public BtcChainParams {
   ~BtcChainParamsTest() override = default;
@@ -144,7 +142,6 @@ struct BtcChainParamsTest : public BtcChainParams {
  *
  * regtest network params in Bitcoin chain.
  *
- * @ingroup config
  */
 struct BtcChainParamsRegTest : public BtcChainParams {
   ~BtcChainParamsRegTest() override = default;

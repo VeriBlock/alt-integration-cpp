@@ -22,7 +22,6 @@ namespace altintegration {
  * veriblock-pop-cpp does not dictate how to iterate blocks over the storage.
  * Altchain must create derived class.
  *
- * @ingroup interfaces
  */
 
 template <typename BlockT>

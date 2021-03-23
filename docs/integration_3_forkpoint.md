@@ -11,7 +11,7 @@ The only way to enable VeriBlock security for already running blockchains is to 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h)
 
 [struct Params](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h#L45)
-```diff
+```cpp
      uint256 nMinimumChainWork;
      uint256 defaultAssumeValid;
 +

@@ -17,21 +17,12 @@
 #include "rewards/default_poprewards_calculator.hpp"
 #include "storage.hpp"
 
-/**
- * @defgroup api Public API
- *
- * This is public API of veriblock-pop-cpp library, which is meant to be used by
- * Altchains.
- */
-
 namespace altintegration {
 
 /**
- * @struct Altintegration
+ * @struct PopContext
  *
  * Main entrypoint into the veriblock-pop library.
- *
- * @ingroup api
  */
 struct PopContext {
   ~PopContext();

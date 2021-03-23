@@ -33,7 +33,7 @@ This flag is set in a block header version and will tell users if given block he
 
 In file `src/version.h` define this flag:
 
-```diff
+```cpp
 static const int PROTOCOL_VERSION = 80000;
 
 +namespace VeriBlock {
@@ -43,7 +43,7 @@ static const int PROTOCOL_VERSION = 80000;
 
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h)
-```diff
+```cpp
  #include <serialize.h>
  #include <uint256.h>
 +#include <version.h>
@@ -51,14 +51,14 @@ static const int PROTOCOL_VERSION = 80000;
 ```
 
 [class CBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/primitives/block.h#L75)
-```diff
+```cpp
 public:
      // network and disk
      std::vector<CTransactionRef> vtx;
 +    // VeriBlock  data network and disk
 +    altintegration::PopData popData;
 ```
-```diff
+```cpp
      // memory only
      mutable bool fChecked;
      inline void SerializationOp(Stream& s, Operation ser_action) {
@@ -87,7 +87,7 @@ We must ensure that altintegration::PopData is propagated alongside transactions
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h)
 
 [class BlockTransactions](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h#L70)
-```diff
+```cpp
 class BlockTransactions {
 public:
     // A BlockTransactions message
@@ -95,7 +95,7 @@ public:
     std::vector<CTransactionRef> txn;
 +   altintegration::PopData popData;
 ```
-```diff 
+```cpp 
              for (size_t i = 0; i < txn.size(); i++)
                  READWRITE(TransactionCompressor(txn[i]));
          }
@@ -106,12 +106,12 @@ public:
 ```
 
 [class CBlockHeaderAndShortTxIDs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h#L134)
-```diff
+```cpp
 public:
      CBlockHeader header;
 +    altintegration::PopData popData;
 ```
-```diff 
+```cpp 
              }
          }
 
@@ -122,7 +122,7 @@ public:
          READWRITE(prefilledtxn);
 ```
 [class PartiallyDownloadedBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h#L206)
-```diff
+```cpp
  public:
      CBlockHeader header;
 +    altintegration::PopData popData;
@@ -145,7 +145,7 @@ public:
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp)
 
 [method CBlockHeaderAndShortTxIDs::CBlockHeaderAndShortTxIDs](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L21)
-```diff
+```cpp
          const CTransaction& tx = *block.vtx[i];
          shorttxids[i - 1] = GetShortID(fUseWTXID ? tx.GetWitnessHash() : tx.GetHash());
      }
@@ -153,7 +153,7 @@ public:
 +    this->popData = block.popData;
 ```
 [method PartiallyDownloadedBlock::InitData](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L53)
-```diff
+```cpp
     if (mempool_count == shorttxids.size())
             break;
     }
@@ -165,7 +165,7 @@ public:
 ```
 
 [method PartiallyDownloadedBlock::FillBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L190)
-```diff
+```cpp
      if (vtx_missing.size() != tx_missing_offset)
          return READ_STATUS_INVALID;
 
@@ -180,7 +180,7 @@ public:
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp)
 
 [method SendBlockTransactions](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L1655)
-```diff
+```cpp
      const CNetMsgMaker msgMaker(pfrom->GetSendVersion());
      int nSendFlags = State(pfrom->GetId())->fWantsCmpctWitness ? 0 : SERIALIZE_TRANSACTION_NO_WITNESS;
 +
@@ -190,14 +190,14 @@ public:
      connman->PushMessage(pfrom, msgMaker.Make(nSendFlags, NetMsgType::BLOCKTXN, resp));
 ```
 [method ProcessMessage](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L1919)
-```diff
+```cpp
                      BlockTransactions txn;
                      txn.blockhash = cmpctblock.header.GetHash();
 +                    txn.popData = cmpctblock.popData;
                      blockTxnMsg << txn;
                      fProcessBLOCKTXN = true;
 ```
-```diff
+```cpp
                  if (status == READ_STATUS_OK) {
                      fBlockReconstructed = true;
 +                    if(pblock && pblock->nVersion & VeriBlock::POP_BLOCK_VERSION_BIT) {
@@ -205,13 +205,13 @@ public:
 +                    }
                  }
 ```
-```diff
+```cpp
              PartiallyDownloadedBlock& partialBlock = *it->second.second->partialBlock;
 -            ReadStatus status = partialBlock.FillBlock(*pblock, resp.txn);
 +            ReadStatus status = partialBlock.FillBlock(*pblock, resp.txn, resp.popData);
              if (status == READ_STATUS_INVALID) {
 ```
-```diff
+```cpp
           for (unsigned int n = 0; n < nCount; n++) {
              vRecv >> headers[n];
              ReadCompactSize(vRecv); // ignore tx count; assume it is 0.
@@ -229,7 +229,7 @@ Add check that if block contains VeriBlock PopData then `block.nVersion` must co
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp)
 
 [method UpdateTip](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L2360)
-```diff
+```cpp
              int32_t nExpectedVersion = ComputeBlockVersion(pindex->pprev, chainParams.GetConsensus());
 -            if (pindex->nVersion > VERSIONBITS_LAST_OLD_BLOCK_VERSION && (pindex->nVersion & ~nExpectedVersion) != 0)
 +            // do not expect this flag to be set
@@ -244,7 +244,7 @@ Update `CheckBlock`:
 - if POP_BLOCK_VERSION_BIT is set, then PopData MUST exist and be non-empty.
 
 [method CheckBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L3376)
-```diff
+```cpp
      // Check that the header is valid (particularly PoW).  This is mostly
      // redundant with the call in AcceptBlockHeader.
      if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW))
@@ -280,7 +280,7 @@ Update `CheckBlock`:
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp)
 
 [method BlockAssembler::CreateNewBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp#L96)
-```diff
+```cpp
    addPackageTxs<ancestor_score>(nPackagesSelected, nDescendantsUpdated);
 
 +  // VeriBlock: add PopData into the block
@@ -307,7 +307,7 @@ During deserialization, if any of internal entities can not be deserialized, thr
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/serialize.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/serialize.h)
 
-```diff
+```cpp
  #include <prevector.h>
  #include <span.h>
 
@@ -316,7 +316,7 @@ During deserialization, if any of internal entities can not be deserialized, thr
  static const unsigned int MAX_SIZE = 0x02000000;
 ```
 
-```diff 
+```cpp 
 +// VeriBlock: Serialize a PopData object
 +template<typename Stream> inline void Serialize(Stream& s, const altintegration::PopData& pop_data) {
 +    std::vector<uint8_t> bytes_data = pop_data.toVbkEncoding();

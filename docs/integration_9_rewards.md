@@ -308,7 +308,7 @@ Pop rewards test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/t
 # 6. Update makefile to run tests.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
-```diff
+```cpp
  ### VeriBlock section start
  # path is relative to src
  VBK_TESTS = \

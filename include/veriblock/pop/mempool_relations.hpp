@@ -7,6 +7,7 @@
 #define ALT_INTEGRATION_VERIBLOCK_MEMPOOL_RELATIONS_HPP
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "entities/atv.hpp"
@@ -16,6 +17,7 @@
 
 namespace altintegration {
 
+//! @private
 struct VbkPayloadsRelations {
   using id_t = VbkBlock::id_t;
   using height_t = typename VbkBlock::height_t;
@@ -23,8 +25,8 @@ struct VbkPayloadsRelations {
   VbkPayloadsRelations(const VbkBlock& b)
       : header(std::make_shared<VbkBlock>(b)) {}
 
-  VbkPayloadsRelations(const std::shared_ptr<VbkBlock>& ptr_b)
-      : header(ptr_b) {}
+  VbkPayloadsRelations(std::shared_ptr<VbkBlock> ptr_b)
+      : header(std::move(ptr_b)) {}
 
   std::shared_ptr<VbkBlock> header;
   std::vector<std::shared_ptr<VTB>> vtbs;

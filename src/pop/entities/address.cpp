@@ -26,18 +26,18 @@ constexpr const auto MULTISIG_ADDRESS_DATA_END = 24;
 constexpr const auto MULTISIG_ADDRESS_CHECKSUM_END = 28;
 
 static std::string getDataPortionFromAddress(const std::string& address) {
-  VBK_ASSERT(address.length() == ADDRESS_SIZE);
+  VBK_ASSERT(address.length() == VBK_ADDRESS_SIZE);
   return address.substr(0, MULTISIG_ADDRESS_DATA_END + 1);
 }
 
 static bool isMultisig(const std::string& address) {
-  VBK_ASSERT(address.length() == ADDRESS_SIZE);
-  return (address[ADDRESS_SIZE - 1] == MULTISIG_ENDING_CHAR);
+  VBK_ASSERT(address.length() == VBK_ADDRESS_SIZE);
+  return (address[VBK_ADDRESS_SIZE - 1] == MULTISIG_ENDING_CHAR);
 }
 
 static std::string getChecksumPortionFromAddress(const std::string& address,
                                                  bool multisig) {
-  VBK_ASSERT(address.length() == ADDRESS_SIZE);
+  VBK_ASSERT(address.length() == VBK_ADDRESS_SIZE);
   if (multisig) {
     return address.substr(
         MULTISIG_ADDRESS_DATA_END + 1,
@@ -91,11 +91,11 @@ bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
 }
 
 bool Address::fromString(const std::string& input, ValidationState& state) {
-  if (input.size() != ADDRESS_SIZE) {
+  if (input.size() != VBK_ADDRESS_SIZE) {
     return state.Invalid(
         "addr-bad-length",
         fmt::format("Invalid address length. Expected={}, got={}.",
-                    ADDRESS_SIZE,
+                    VBK_ADDRESS_SIZE,
                     input.size()));
   }
 
@@ -154,7 +154,7 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
                            "Too many addresses or signatures");
     }
 
-    if (!isBase58String(input.substr(0, ADDRESS_SIZE - 1))) {
+    if (!isBase58String(input.substr(0, VBK_ADDRESS_SIZE - 1))) {
       return state.Invalid("addr-multisig-bad-remainder",
                            "Remainder is not a base58 string");
     }
@@ -246,7 +246,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
   Slice<const uint8_t> addressBytes;
   if (!readSingleByteLenValue(
-          stream, addressBytes, state, 0, altintegration::ADDRESS_SIZE)) {
+          stream, addressBytes, state, 0, altintegration::VBK_ADDRESS_SIZE)) {
     return state.Invalid("address-bytes");
   }
 

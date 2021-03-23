@@ -80,7 +80,6 @@ struct VbkChainParams {
 /**
  * MainNet VBK parameters.
  *
- * @ingroup config
  */
 struct VbkChainParamsMain : public VbkChainParams {
   ~VbkChainParamsMain() override = default;
@@ -118,7 +117,6 @@ struct VbkChainParamsMain : public VbkChainParams {
 /**
  * TestNet VBK config.
  *
- * @ingroup config
  */
 struct VbkChainParamsTest : public VbkChainParams {
   ~VbkChainParamsTest() override = default;
@@ -160,7 +158,6 @@ struct VbkChainParamsTest : public VbkChainParams {
  * @note technically, there's no RegTest in VeriBlock, we created it only for
  * testing purposes specifically in veriblock-pop-cpp.
  *
- * @ingroup config
  */
 struct VbkChainParamsRegTest : public VbkChainParams {
   ~VbkChainParamsRegTest() override = default;

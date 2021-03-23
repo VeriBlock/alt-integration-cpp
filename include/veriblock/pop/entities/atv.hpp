@@ -22,18 +22,28 @@ namespace altintegration {
 
 /**
  * @class ATV
+ *
+ * Atlchain endorsement.
  */
 struct ATV {
   using id_t = uint256;
 
+  //! ATV serialization version.
   uint32_t version = 1;
+
+  //! endorsing transaction.
   VbkTx transaction{};
+
+  //! merkle path that proves that endorsing transaction is in blockOfProof.
   VbkMerklePath merklePath{};
+
+  //! VBK block which contains endorsing transaction.
   VbkBlock blockOfProof{};
 
   //! (memory only) indicates whether we already did 'checkATV' on this ATV
   mutable bool checked{false};
 
+  //! create pretty string
   std::string toPrettyString() const;
 
   /**
@@ -48,6 +58,7 @@ struct ATV {
    */
   std::vector<uint8_t> toVbkEncoding() const;
 
+  //! Estimate serialization size.
   size_t estimateSize() const;
 
   /**
@@ -72,6 +83,7 @@ struct ATV {
   static const std::string _name;
 };
 
+//! @private
 template <>
 struct IsPopPayload<ATV> {
   static const bool value = true;

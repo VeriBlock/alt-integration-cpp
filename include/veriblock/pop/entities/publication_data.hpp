@@ -20,7 +20,6 @@ namespace altintegration {
  *
  * Publication data about ALT block inside VBK blockchain.
  *
- * @ingroup entities
  */
 struct PublicationData {
   //! altchain network POP ID

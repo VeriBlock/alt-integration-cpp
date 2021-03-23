@@ -10,10 +10,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/**
- * @defgroup c-api C interface
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif

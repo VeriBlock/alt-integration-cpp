@@ -9,15 +9,13 @@
 #include <memory>
 #include <string>
 
-#include <veriblock/pop/fmt.hpp>
+#include "fmt.hpp"
 
 /**
  * @file logger.hpp
  *
- * Defines logging helpers.
- *
- * By default, logger is disabled (no-op logger is used).
- * Users can derive from Logger class, and specify their logger instance.
+ * Defines logging helpers. By default, logger is disabled (no-op logger is
+ * used). Users can derive from Logger class, and specify their logger instance.
  *
  * Used log levels:
  * - DEBUG - most noisy and verbose, debug level
@@ -38,7 +36,7 @@ enum class LogLevel { debug, info, warn, error, critical, off };
  * An interface for logger. Implement it to enable logging in veriblock-pop-cpp.
  *
  * Example:
- * ```C++
+ * ```cpp
  * using namespace altintegration;
  * // set MyLogger as main logger. Default is noop.
  * SetLogger<MyLogger>();
@@ -46,7 +44,6 @@ enum class LogLevel { debug, info, warn, error, critical, off };
  * // see logs
  * ```
  *
- * @ingroup interfaces
  */
 struct Logger {
   virtual ~Logger() = default;
@@ -82,7 +79,8 @@ LogLevel StringToLevel(const std::string&);
 #endif
 
 #ifdef VBK_FUZZING_UNSAFE_FOR_PRODUCTION
-// disable logger when VBK_FUZZING_UNSAFE_FOR_PRODUCTION is defined
+//! disable logger when VBK_FUZZING_UNSAFE_FOR_PRODUCTION is defined
+//! @private
 #define VBK_LOG(...)
 #else
 
@@ -111,10 +109,15 @@ LogLevel StringToLevel(const std::string&);
 
 #else  // !VERIBLOCK_POP_LOGGER_DISABLED
 
+//! Format and log line in DEBUG
 #define VBK_LOG_DEBUG(...)
+//! Format and log line in INFO
 #define VBK_LOG_INFO(...)
+//! Format and log line in WARN
 #define VBK_LOG_WARN(...)
+//! Format and log line in ERROR
 #define VBK_LOG_ERROR(...)
+//! Format and log line in CRITICAL
 #define VBK_LOG_CRITICAL(...)
 
 #endif  // VERIBLOCK_POP_LOGGER_DISABLED

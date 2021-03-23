@@ -2,10 +2,10 @@
 
 ## How to Build
 
-`veriblock-pop-cpp` is a CMake project, so it follows all best practices for CMake projects.
+`veriblock-pop-cpp` is a CMake project, so it follows best practices for CMake projects.
 
 To build library:
-```sh
+```bash
 # clone repo
 $ git clone https://github.com/VeriBlock/alt-integration-cpp
 $ cd alt-integration-cpp
@@ -28,10 +28,12 @@ Legend:
 - `{[A],B}` - A or B, default A
 
 Flags:
-- `-DTESTING={[ON],OFF}` - do not build tests
+- `-DTESTING={[ON],OFF}` - if ON, tests will be built automatically.
+- `-DTESTING_GO={ON,[OFF]}` - if ON, Go tests will run as part of `ctest`.
+- `-DWITH_PYPOPTOOLS={ON,[OFF]}` - if ON, pypopminer will be built (depends on python3 and boost-python).
+- `-DWITH_C_WRAPPER={ON,[OFF]}` - if ON, C bindings will be included in resulting library.
+- `-DWITH_ROCKSDB={ON,[OFF]}` - if ON, rocksdb implementation of a storage will be included (required for C wrapper).
 - `-DCMAKE_BUILD_TYPE={Release,[Debug]}` - build library in release mode or debug mode
-- `-DWITH_PYPOPMINER={ON,[OFF]}` - build python package `pypopminer` - it is a python3 package, which wraps this library, and can be used for [functional](https://github.com/bitcoin/bitcoin/tree/master/test/functional) tests.
-   It depends on `python3`, `python3-dev`, `libboost-all-dev` and `libboost-python-dev`
 - `-DSHARED={ON,[OFF]}` - build shared library (`.so, .dll, .dylib`) or static library (`.a, .lib`)
 
 Full list of flags can be found at [root CMakeLists.txt#55-70](https://github.com/VeriBlock/alt-integration-cpp/blob/master/CMakeLists.txt#L55-L70).

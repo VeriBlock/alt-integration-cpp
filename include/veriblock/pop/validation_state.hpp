@@ -23,7 +23,6 @@ namespace altintegration {
  * - valid (when default initialized)
  * - invalid - validation failed. Example: invalid signature in transaction.
  *
- * @ingroup api
  */
 // clang-format on
 class ValidationState {

@@ -201,7 +201,7 @@ Util file with some useful functions for the VeriBlock integration: [https://git
 # 6. Update makefiles. Add new source files.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
-```diff
+```cpp
  libbitcoin_common_a_SOURCES = \
 +  vbk/pop_common.hpp \
 +  vbk/pop_common.cpp \
