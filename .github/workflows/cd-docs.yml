@@ -18,7 +18,7 @@ jobs:
           doxyfile-path: './Doxyfile'
       - name: prepare
         run: |
-          mv -f build/docs/html/* ./docs
+          sudo mv -f ./build/docs/html/* ./docs/
       - name: publish
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
