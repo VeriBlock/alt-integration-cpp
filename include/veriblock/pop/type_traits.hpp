@@ -10,6 +10,7 @@
 
 namespace altintegration {
 
+//! type trait which returns true on types that are "POP Payloads"
 template <typename T>
 struct IsPopPayload {
   static const bool value = false;

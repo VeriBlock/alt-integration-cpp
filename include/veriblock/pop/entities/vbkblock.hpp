@@ -158,11 +158,13 @@ struct VbkBlock {
                                  const VbkBlock::hash_t& precalculatedHash);
 };
 
+//! @private
 template <>
 struct IsPopPayload<VbkBlock> {
   static const bool value = true;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const VbkBlock& b) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -181,11 +183,13 @@ JsonValue ToJSON(const VbkBlock& b) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromRaw(ReadStream& stream,
                         VbkBlock& out,
                         ValidationState& state,
                         const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
+//! @overload
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     VbkBlock& out,

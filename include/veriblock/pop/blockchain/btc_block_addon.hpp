@@ -69,6 +69,7 @@ struct BtcBlockAddon {
                                          ValidationState& state);
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 BtcBlockAddon& out,
                                 ValidationState& state);

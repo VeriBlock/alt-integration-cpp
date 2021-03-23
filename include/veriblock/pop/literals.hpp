@@ -11,11 +11,13 @@
 
 namespace altintegration {
 
+//! @private
 inline std::vector<uint8_t> operator""_unhex(const char *str, size_t size) {
   std::string hex{str, str + size};
   return altintegration::ParseHex(hex);
 }
 
+//! @private
 inline std::vector<uint8_t> operator""_v(const char *str, size_t size) {
   return std::vector<uint8_t>{str, str + size};
 }

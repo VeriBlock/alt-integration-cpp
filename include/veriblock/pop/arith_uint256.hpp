@@ -290,6 +290,7 @@ class ArithUint256 : public Blob<SHA256_HASH_SIZE> {
 };
 
 /// custom gtest printer, which prints Blob of any size as hexstring
+//!@ private
 inline void PrintTo(const ArithUint256& uint, ::std::ostream* os) {
   *os << uint.toHex();
 }

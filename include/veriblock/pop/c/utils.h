@@ -6,10 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_UTILS_H
 #define VERIBLOCK_POP_CPP_UTILS_H
 
-/**
- * @defgroup c-api C interface
- */
-
 #include <stddef.h>
 #include <stdint.h>
 
@@ -30,7 +26,6 @@ extern "C" {
  * size of altintegration::VbkBlock::short_hash_t (must be prealocated)
  * @param[out] id_bytes_size id bytes size, equals to the
  * altintegration::VbkBlock::short_hash_t size
- * @ingroup c-api
  */
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
@@ -47,7 +42,6 @@ void VBK_VbkBlock_getId(const uint8_t* block_bytes,
  * size of altintegration::VTB::id_t (must be prealocated)
  * @param[out] id_bytes_size id bytes size, equals to the
  * altintegration::VTB::id_t size
- * @ingroup c-api
  */
 void VBK_VTB_getId(const uint8_t* vtb_bytes,
                    int vtb_bytes_size,
@@ -64,7 +58,6 @@ void VBK_VTB_getId(const uint8_t* vtb_bytes,
  * size of altintegration::ATV::id_t (must be prealocated)
  * @param[out] id_bytes_size id bytes size, equals to the
  * altintegration::ATV::id_t size
- * @ingroup c-api
  */
 void VBK_ATV_getId(const uint8_t* atv_bytes,
                    int atv_bytes_size,
@@ -81,7 +74,6 @@ void VBK_ATV_getId(const uint8_t* atv_bytes,
  * with size of altintegration::VkbBlock::hash_t (must be prealocated)
  * @param[out] hash_bytes_size hash bytes size, equals to the
  * altintegration::VkbBlock::hash_t size
- * @ingroup c-api
  */
 void VBK_VbkBlock_getHash(const uint8_t* block_bytes,
                           int block_bytes_size,
@@ -98,7 +90,6 @@ void VBK_VbkBlock_getHash(const uint8_t* block_bytes,
  * with size of altintegration::BtcBlock::hash_t (must be prealocated)
  * @param[out] hash_bytes_size hash bytes size, equals to the
  * altintegration::BtcBlock::hash_t size
- * @ingroup c-api
  */
 void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
                           int block_bytes_size,
@@ -120,7 +111,6 @@ void VBK_BtcBlock_getHash(const uint8_t* block_bytes,
  * bytes
  * @param[out] out_hash, sha256 hash of the ContextInfoContainer
  * @param[out] out_hash_size, size of the sha256 hash size
- * @ingroup c-api
  */
 void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
                                               const uint8_t txRoot[32],
@@ -143,7 +133,6 @@ void VBK_AltBlock_calculateTopLevelMerkleRoot(PopContext* self,
  * @param[in] payout_info_size, size of the provided payout info
  * @return altintgration::PublicationData serialized in the toVbkEncoding format
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_AltBlock_generatePublicationData(
     PopContext* self,
@@ -164,7 +153,6 @@ VBK_ByteStream* VBK_AltBlock_generatePublicationData(
  * @param[in] atv_bytes_size, size of the atv bytes.
  * @param[out] state VbkValidationState.
  * @return true if atv is valid, false otherwise.
- * @ingroup c-api
  */
 bool VBK_checkATV(PopContext* self,
                   const uint8_t* atv_bytes,
@@ -180,7 +168,6 @@ bool VBK_checkATV(PopContext* self,
  * @param[in] vtb_bytes_size, size of the vtb bytes.
  * @param[out] state VbkValidationState.
  * @return true if vtb is valid, false otherwise.
- * @ingroup c-api
  */
 bool VBK_checkVTB(PopContext* self,
                   const uint8_t* vtb_bytes,
@@ -196,7 +183,6 @@ bool VBK_checkVTB(PopContext* self,
  * @param[in] vbk_bytes_size, size of the vbk bytes.
  * @param[out] state VbkValidationState.
  * @return true if vbk is valid, false otherwise.
- * @ingroup c-api
  */
 bool VBK_checkVbkBlock(PopContext* self,
                        const uint8_t* vbk_bytes,
@@ -212,7 +198,6 @@ bool VBK_checkVbkBlock(PopContext* self,
  * @param[in] pop_data_bytes_size, size of the vbk bytes.
  * @param[out] state VbkValidationState.
  * @return true if pop_data is valid, false otherwise.
- * @ingroup c-api
  */
 bool VBK_checkPopData(PopContext* self,
                       const uint8_t* pop_data_bytes,
@@ -225,7 +210,6 @@ bool VBK_checkPopData(PopContext* self,
  * @param[in] self PopContext.
  * @param[out] state VbkValidationState.
  * @return true if successfullty saved, false otherwise.
- * @ingroup c-api
  */
 bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state);
 
@@ -235,7 +219,6 @@ bool VBK_SaveAllTrees(PopContext* self, VbkValidationState* state);
  * @param[in] self PopContext.
  * @param[out] state VbkValidationState.
  * @return true if successfullty loaded, false loaded.
- * @ingroup c-api
  */
 bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state);
 

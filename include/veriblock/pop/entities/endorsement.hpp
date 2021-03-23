@@ -13,6 +13,7 @@
 namespace altintegration {
 
 /**
+ * ```
  * Protecting Chain:
  * A - B - C - D - E - F - G - H - I - J
  *                    /
@@ -21,6 +22,7 @@ namespace altintegration {
  * A - B - C - D - E - F - G - H - I - J
  *        /                /
  *  endorsed hash      containing hash
+ * ```
  *
  * "endorsed hash" is a block hash that is endorsed by POP TX.
  * "block of proof" is a block from protecting chain that contains a tx with
@@ -108,6 +110,7 @@ struct Endorsement {
   static const std::string name();
 };
 
+//! @overload
 template <typename Value, class A, class B, class C>
 Value ToJSON(const Endorsement<A, B, C>& e) {
   auto obj = json::makeEmptyObject<Value>();
@@ -118,6 +121,7 @@ Value ToJSON(const Endorsement<A, B, C>& e) {
   return obj;
 }
 
+//! @private
 template <typename A, typename B, typename C>
 void PrintTo(const Endorsement<A, B, C>& e, std::ostream* os) {
   *os << e.toPrettyString();

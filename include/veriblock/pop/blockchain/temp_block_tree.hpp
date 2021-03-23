@@ -12,8 +12,10 @@
 
 namespace altintegration {
 
+//! @private
 template <typename StableBlockTree>
 struct TempBlockTree {
+  //! @private
   template <typename BlockIndexT>
   struct TempBlockIndex : public BlockIndexT {
     using base = BlockIndexT;

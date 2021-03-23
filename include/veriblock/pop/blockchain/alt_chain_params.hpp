@@ -13,19 +13,12 @@
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
-/**
- * @defgroup config Altchain Config
- * Data structures that store all altchain-related configs required for POP
- * integration.
- */
-
 namespace altintegration {
 
 /**
- * @struct PopPayoutParams
+ * @struct PopPayoutsParams
  *
  * Defines config for POP payouts.
- * @ingroup config, interfaces
  */
 struct PopPayoutsParams {
   //! we start decreasing rewards after this score
@@ -111,6 +104,7 @@ struct PopPayoutsParams {
       0.02193952, 0.02134922};
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const PopPayoutsParams& p) {
   auto obj = json::makeEmptyObject<JsonValue>();
@@ -134,7 +128,6 @@ JsonValue ToJSON(const PopPayoutsParams& p) {
 }
 
 /**
- * @ingroup config, interfaces
  *
  * @struct AltChainParams
  *
@@ -242,11 +235,14 @@ struct AltChainParams {
    *  - can be deserialized to a header
    *  - statelessly valid (time, POW, version... etc)
    *  - top level merkle root is equal to 'root'
-   * @param bytes
-   * @param root top level merkle root to validate
+   * @param[in] bytes
+   * @param[in] root top level merkle root to validate
+   * @param[out] state validation state
    * @return false if any of checks fail
    *
    * @warning SHOULD NOT THROW
+   *
+   * @pure
    */
   virtual bool checkBlockHeader(const std::vector<uint8_t>& bytes,
                                 const std::vector<uint8_t>& root,
@@ -272,6 +268,7 @@ struct AltChainParams {
       100, 100, 95, 89, 80, 69, 56, 40, 21};
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const AltChainParams& p, bool reverseAltHashes = true) {
   auto obj = json::makeEmptyObject<JsonValue>();

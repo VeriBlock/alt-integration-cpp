@@ -25,6 +25,7 @@ struct MempoolResult {
 //! @private
 namespace detail {
 
+//! @overload
 template <typename JsonValue, typename ID>
 JsonValue putArrayOfPairs(
     JsonValue& obj,
@@ -45,6 +46,7 @@ JsonValue putArrayOfPairs(
 
 }  // namespace detail
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const MempoolResult& r) {
   auto obj = json::makeEmptyObject<JsonValue>();

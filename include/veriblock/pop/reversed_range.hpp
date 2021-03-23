@@ -10,8 +10,8 @@
 
 namespace altintegration {
 
-/// translates a pair of forward iterators to a range whose regular iteration
-/// order is "backward"
+//! translates a pair of forward iterators to a range whose regular iteration
+//! order is "backward"
 template <typename T>
 class reverse_range {
   T &m_x;
@@ -24,6 +24,7 @@ class reverse_range {
   auto end() const -> decltype(this->m_x.rend()) { return m_x.rend(); }
 };
 
+//! @overload
 template <typename T>
 reverse_range<T> reverse_iterate(T &x) {
   return reverse_range<T>(x);

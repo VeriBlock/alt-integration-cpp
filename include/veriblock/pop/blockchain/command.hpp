@@ -21,6 +21,7 @@ struct Command {
   virtual void UnExecute() = 0;
 };
 
+//! @private
 using CommandPtr = std::shared_ptr<Command>;
 
 }  // namespace altintegration

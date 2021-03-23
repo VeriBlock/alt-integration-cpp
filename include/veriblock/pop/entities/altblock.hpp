@@ -82,6 +82,7 @@ struct AltBlock {
   static const std::string _name;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const AltBlock& alt, bool reverseHashes = true) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
@@ -93,17 +94,19 @@ JsonValue ToJSON(const AltBlock& alt, bool reverseHashes = true) {
   return object;
 }
 
-/// custom gtest printer
+//! @private
 inline void PrintTo(const AltBlock& block, ::std::ostream* os) {
   *os << block.toPrettyString();
 }
 
+//! @overload
 bool DeserializeFromRaw(
     ReadStream& stream,
     AltBlock& out,
     ValidationState& state,
     const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
 
+//! @overload
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     AltBlock& out,

@@ -13,10 +13,6 @@
 #include "storage.h"
 #include "validation_state.h"
 
-/**
- * @defgroup c-api C interface
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,7 +32,6 @@ void VBK_FreePopContext(PopContext* app);
  * @param[in] bytes_size block bytes size
  * @param[out] state VbkValidationState
  * @return true if block is valid, and added; false otherwise.
- * @ingroup c-api
  */
 bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
                                         const uint8_t* block_bytes,
@@ -54,7 +49,6 @@ bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
  * @param[in] payloads_bytes_size payloads bytes size
  * @param[out] state VbkValidationState
  *
- * @ingroup c-api
  */
 void VBK_AltBlockTree_acceptBlock(PopContext* self,
                                   const uint8_t* hash_bytes,
@@ -75,7 +69,6 @@ void VBK_AltBlockTree_acceptBlock(PopContext* self,
  * BLOCK_HAS_PAYLOADS.
  * @param[in] B_hash_bytes_size B block hash bytes size
  * @see altintegration::AltBlockTree::comparePopScore
- * @ingroup c-api
  */
 int VBK_AltBlockTree_comparePopScore(PopContext* self,
                                      const uint8_t* A_hash_bytes,
@@ -91,7 +84,6 @@ int VBK_AltBlockTree_comparePopScore(PopContext* self,
  * removed
  * @param[in] hash_bytes_size hash bytes size
  * @warning fails on assert if block can not be found in this tree.
- * @ingroup c-api
  */
 void VBK_AltBlockTree_removeSubtree(PopContext* self,
                                     const uint8_t* hash_bytes,
@@ -110,7 +102,6 @@ void VBK_AltBlockTree_removeSubtree(PopContext* self,
  * successful.
  * @invariant atomic - either switches to new state, or does nothing.
  * @warning Expensive operation.
- * @ingroup c-api
  */
 bool VBK_AltBlockTree_setState(PopContext* self,
                                const uint8_t* hash_bytes,
@@ -129,7 +120,6 @@ bool VBK_AltBlockTree_setState(PopContext* self,
  * @param[in] tip_hash_bytes altintegration::AltBlock hash bytes of the tip
  * @param[in] tip_hash_bytes_size size of input hash
  * @return VbkByteStream with the serialized altintegration::PopPayouts
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
                                               const uint8_t* tip_hash_bytes,
@@ -143,7 +133,6 @@ VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
  * @param[in] hash_bytes_size size of input hash
  * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized
  * block to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
                                       const uint8_t* hash_bytes,
@@ -157,7 +146,6 @@ VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
  * @param[in] hash_bytes_size size of input hash
  * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
                                       const uint8_t* hash_bytes,
@@ -171,7 +159,6 @@ VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
  * @param[in] hash_bytes_size size of input hash
  * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
                                       const uint8_t* hash_bytes,
@@ -183,7 +170,6 @@ VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_BestBlock(PopContext* self);
 
@@ -193,7 +179,6 @@ VBK_ByteStream* VBK_alt_BestBlock(PopContext* self);
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
 
@@ -203,7 +188,6 @@ VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
 
@@ -212,7 +196,6 @@ VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_BootstrapBlock(PopContext* self);
 
@@ -221,7 +204,6 @@ VBK_ByteStream* VBK_vbk_BootstrapBlock(PopContext* self);
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
  * to the stream
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_BootstrapBlock(PopContext* self);
 
@@ -231,7 +213,6 @@ VBK_ByteStream* VBK_btc_BootstrapBlock(PopContext* self);
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
  * to the stream, if cannot find return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height);
@@ -242,7 +223,6 @@ VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
  * to the stream, if cannot find return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height);
@@ -253,7 +233,6 @@ VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
  * @param[in] self PopContext
  * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
  * to the stream, if cannot find return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
                                                    int height);
@@ -267,7 +246,6 @@ VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
  * @param[in] p_id_size size of the altintegration::ATV::id_t
  * @return  VbkByteStream with the serialized vector of the
  * altintegration::AltBlock hashes, if vector will empty return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
                                               const uint8_t* p_id,
@@ -282,7 +260,6 @@ VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
  * @param[in] p_id_size size of the altintegration::VTB::id_t
  * @return  VbkByteStream with the serialized vector of the
  * altintegration::AltBlock hashes, if vector will empty return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
                                               const uint8_t* p_id,
@@ -297,7 +274,6 @@ VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
  * @param[in] p_id_size size of the altintegration::VbkBlock::id_t
  * @return  VbkByteStream with the serialized vector of the
  * altintegration::AltBlock hashes, if vector will empty return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
                                                    const uint8_t* p_id,
@@ -312,7 +288,6 @@ VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
  * @param[in] p_id_size size of the altintegration::VTB::id_t
  * @return  VbkByteStream with the serialized vector of the
  * altintegration::VbkBlock hashes, if vector will empty return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
                                               const uint8_t* p_id,
@@ -327,7 +302,6 @@ VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
  * @param[out] state VbkValidationState
  * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
  * invalid
- * @ingroup c-api
  */
 int VBK_MemPool_submit_atv(PopContext* self,
                            const uint8_t* bytes,
@@ -343,7 +317,6 @@ int VBK_MemPool_submit_atv(PopContext* self,
  * @param[out] state VbkValidationState
  * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
  * invalid
- * @ingroup c-api
  */
 int VBK_MemPool_submit_vtb(PopContext* self,
                            const uint8_t* bytes,
@@ -359,7 +332,6 @@ int VBK_MemPool_submit_vtb(PopContext* self,
  * @param[out] state VbkValidationState
  * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
  * invalid
- * @ingroup c-api
  */
 int VBK_MemPool_submit_vbk(PopContext* self,
                            const uint8_t* bytes,
@@ -374,7 +346,6 @@ int VBK_MemPool_submit_vbk(PopContext* self,
  * be pre-allocated). Statefully valid altintegration::PopData in the raw
  * representation that can be connected to current tip.
  * @param[out] bytes_size bytes size
- * @ingroup c-api
  */
 void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size);
 
@@ -385,7 +356,6 @@ void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size);
  * @param[in] bytes altintegration::PopData raw representation
  * @param[in] bytes_size bytes size
  * @param[out] state VbkValidationState
- * @ingroup c-api
  */
 void VBK_MemPool_removeAll(PopContext* self,
                            const uint8_t* bytes,
@@ -401,7 +371,6 @@ void VBK_MemPool_removeAll(PopContext* self,
  * @param[in] id_bytes_size size of the altintegration::ATV::id_t
  * @return return altintegration::ATV in the toVbkEncoding format, if
  * cannot find payloads return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
                                    const uint8_t* id_bytes,
@@ -416,7 +385,6 @@ VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
  * @param[in] id_bytes_size size of the altintegration::VTB::id_t
  * @return return altintegration::VTB in the toVbkEncoding format, if
  * cannot find payloads return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
                                    const uint8_t* id_bytes,
@@ -432,7 +400,6 @@ VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
  * @param[in] id_bytes_size size of the altintegration::VbkBlock::id_t
  * @return return altintegration::VbkBlock in the toVbkEncoding format, if
  * cannot find payloads return nullptr
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
                                         const uint8_t* id_bytes,
@@ -448,7 +415,6 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
  * @see altintegration::MemPool::getMap
  * @param[in] self PopContext
  * @return VbkByteStream with the serialized vector of the ATV`s ids
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self);
 
@@ -462,7 +428,6 @@ VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self);
  * @see altintegration::MemPool::getMap
  * @param[in] self PopContext
  * @return VbkByteStream with the serialized vector of the VTB`s ids
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self);
 
@@ -476,7 +441,6 @@ VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self);
  * @see altintegration::MemPool::getMap
  * @param[in] self PopContext
  * @return VbkByteStream with the serialized vector of the VbkBlock`s ids
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self);
 
@@ -490,7 +454,6 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self);
  * @see altintegration::MemPool::getInFlightMap
  * @param[in] self PopContext
  * @return VbkByteStream with the serialized vector of the ATV`s ids
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self);
 
@@ -504,7 +467,6 @@ VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self);
  * @see altintegration::MemPool::getInFlightMap
  * @param[in] self PopContext
  * @return VbkByteStream with the serialized vector of the VTB`s ids
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self);
 
@@ -518,7 +480,6 @@ VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self);
  * @see altintegration::MemPool::getInFlightMap
  * @param[in] self PopContext
  * @return VbkByteStream with the serialized vector of the VbkBlock`s ids
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self);
 
@@ -526,7 +487,6 @@ VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self);
  * @copybrief altintegration::MemPool::clear
  * @see altintegration::MemPool::clear
  * @param[in] self PopContext
- * @ingroup c-api
  */
 void VBK_MemPool_clear(PopContext* self);
 

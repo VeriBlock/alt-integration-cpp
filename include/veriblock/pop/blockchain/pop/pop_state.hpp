@@ -81,6 +81,7 @@ struct PopState {
                                          ValidationState& state);
 };
 
+//! @overload
 template <typename T>
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PopState<T>& out,

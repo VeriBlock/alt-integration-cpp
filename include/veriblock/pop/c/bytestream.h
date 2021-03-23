@@ -6,10 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_BYTESTREAM_H
 #define VERIBLOCK_POP_CPP_BYTESTREAM_H
 
-/**
- * @defgroup c-api C interface
- */
-
 #include <stddef.h>
 #include <stdint.h>
 

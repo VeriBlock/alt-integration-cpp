@@ -10,6 +10,7 @@
 
 namespace altintegration {
 
+//! @private
 template <class T>
 class ring_buffer {
  public:

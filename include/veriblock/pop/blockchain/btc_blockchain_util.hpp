@@ -15,27 +15,33 @@
 
 namespace altintegration {
 
+//! @private
 template <>
 uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
                              const BtcBlock& block,
                              const BtcChainParams& params);
 
+//! @private
 template <>
 BtcBlock Miner<BtcBlock, BtcChainParams>::getBlockTemplate(
     const BlockIndex<BtcBlock>& tip, const merkle_t& merkle);
 
+//! @private
 template <>
 ArithUint256 getBlockProof(const BtcBlock& block);
 
+//! @private
 template <>
 int64_t getMedianTimePast(const BlockIndex<BtcBlock>& prev);
 
+//! @private
 template <>
 bool checkBlockTime(const BlockIndex<BtcBlock>& prev,
                     const BtcBlock& block,
                     ValidationState& state,
                     const BtcChainParams& param);
 
+//! @private
 template <>
 bool contextuallyCheckBlock(const BlockIndex<BtcBlock>& prev,
                             const BtcBlock& block,

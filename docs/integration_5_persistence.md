@@ -231,7 +231,7 @@ bool loadTrees(CDBWrapper& db)
 # 6. Add pop_service.cpp to the makefile.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
-```diff
+```cpp
  libbitcoin_server_a_SOURCES = \
 +  vbk/pop_service.hpp \
 +  vbk/pop_service.cpp \
