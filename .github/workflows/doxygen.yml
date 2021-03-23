@@ -26,7 +26,7 @@ jobs:
           mkdir -p build/docs
           git config --global user.email "bot@veriblock.org"
           git config --global user.name "Bot"
-          git checkout docs
+          git checkout docs --
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
