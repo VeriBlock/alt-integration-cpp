@@ -16,6 +16,7 @@ struct kiss99_t;
 //! @private
 namespace progpow {
 
+//! @private
 struct hash32_t {
   uint32_t uint32s[32 / sizeof(uint32_t)];
 
@@ -26,35 +27,48 @@ struct hash32_t {
   static hash32_t readBE(ReadStream& rs);
 };
 
+//! @private
 uint256 getVbkHeaderHash(Slice<const uint8_t> header);
+
+//! @private
 void fill_mix(uint64_t seed, uint32_t lane_id, Slice<uint32_t> mix);
+//! @private
 void keccak_f800(Slice<uint32_t> state);
-void keccak_f800_2(Slice<uint32_t> state);
+//! @private
 hash32_t keccak_f800_progpow(const uint256& header,
                              uint64_t seed,
                              const hash32_t& digest);
+//! @private
 hash32_t keccak_f800_progpow(const hash32_t& header,
                              uint64_t seed,
                              const hash32_t& digest);
+//! @private
 uint32_t math(uint32_t a, uint32_t b, uint32_t r);
+//! @private
 uint32_t merge(uint32_t a, uint32_t b, uint32_t r);
+//! @private
 kiss99_t progPowInit(uint64_t prog_seed,
                      Slice<int> mix_seq_dst,
                      Slice<int> mix_seq_src);
 
 struct ethash_cache;
 
+//! @private
 inline uint32_t ethashGetEpochWithoutOffset(int64_t height) {
   return (uint32_t)(height / VBK_ETHASH_EPOCH_LENGTH);
 }
 
+//! @private
 inline uint32_t ethashGetEpoch(int64_t height) {
   return ethashGetEpochWithoutOffset(height) + VBK_ETHASH_EPOCH_OFFSET;
 }
 
 //! Use this function to warm-up VBK Header cache if their hashes are known
+//! @private
 void insertHeaderCacheEntry(Slice<const uint8_t> header, uint192 progpowHash);
+//! @private
 void clearHeaderCache();
+//! @private
 void clearEthashCache();
 
 }  // namespace progpow

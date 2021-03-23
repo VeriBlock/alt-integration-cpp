@@ -23,7 +23,6 @@ namespace altintegration {
  * - valid (when default initialized)
  * - invalid - validation failed. Example: invalid signature in transaction.
  *
- * @ingroup api
  */
 // clang-format on
 class ValidationState {
@@ -78,6 +77,7 @@ class ValidationState {
   std::vector<std::string> stack_trace;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const ValidationState &s, bool *acceptedToMempool = nullptr) {
   auto obj = json::makeEmptyObject<JsonValue>();

@@ -48,6 +48,7 @@ struct MerklePath {
   uint256 calculateMerkleRoot() const;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const MerklePath& m) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -57,11 +58,13 @@ JsonValue ToJSON(const MerklePath& m) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromRaw(ReadStream& stream,
                         const uint256& subject,
                         MerklePath& out,
                         ValidationState& state);
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 const uint256& subject,
                                 MerklePath& out,

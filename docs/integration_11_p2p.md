@@ -305,7 +305,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 # 7. Add P2P service to the makefile.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
-```diff
+```cpp
 libbitcoin_server_a_SOURCES = \
    policy/settings.cpp \
    pow.cpp \

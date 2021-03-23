@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+//! Postorder tree traversal algorithm.
 template <typename Block>
 void forEachNodePostorder(
     BlockIndex<Block>& index,

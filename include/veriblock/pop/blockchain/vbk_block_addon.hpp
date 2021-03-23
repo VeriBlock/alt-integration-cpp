@@ -87,6 +87,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
                                          ValidationState& state);
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkBlockAddon& out,
                                 ValidationState& state);

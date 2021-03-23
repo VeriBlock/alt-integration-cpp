@@ -18,23 +18,26 @@
 namespace altintegration {
 
 /**
- * @struct BlockProvider
+ * @struct BlockReader
  *
  * An abstraction over on-disk storage iterator.
- *
- * @ingroup interfaces
  */
-
 struct BlockReader {
   virtual ~BlockReader() = default;
 
+  //! @pure
   virtual bool getAltTip(AltBlock::hash_t& out) const = 0;
+  //! @pure
   virtual bool getVbkTip(VbkBlock::hash_t& out) const = 0;
+  //! @pure
   virtual bool getBtcTip(BtcBlock::hash_t& out) const = 0;
 
   // clang-format off
+  //! @pure
   virtual std::shared_ptr<BlockIterator<AltBlock>> getAltBlockIterator() const = 0;
+  //! @pure
   virtual std::shared_ptr<BlockIterator<VbkBlock>> getVbkBlockIterator() const = 0;
+  //! @pure
   virtual std::shared_ptr<BlockIterator<BtcBlock>> getBtcBlockIterator() const = 0;
   // clang-format on
 

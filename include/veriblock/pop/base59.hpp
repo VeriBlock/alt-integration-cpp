@@ -11,11 +11,14 @@
 
 namespace altintegration {
 
+//! Encode input bytes to base59
 std::string EncodeBase59(const unsigned char *pbegin,
                          const unsigned char *pend);
 
+//! @overload
 std::string EncodeBase59(const uint8_t *buf, size_t size);
 
+//! @overload
 template <typename T,
           typename = typename std::enable_if<sizeof(typename T::value_type) ==
                                              1>::type>
@@ -24,8 +27,11 @@ std::string EncodeBase59(const T &container) {
   return EncodeBase59(ptr, ptr + container.size());
 }
 
+//! Decode base59 string into bytes.
 bool DecodeBase59(const std::string &input, std::vector<uint8_t> &out);
 
+//! @overload
+//! @note Will die on assert if input string is not base59.
 std::vector<uint8_t> AssertDecodeBase59(const std::string &str);
 
 }  // namespace altintegration

@@ -11,10 +11,15 @@
 
 namespace altintegration {
 
+//! Fixed-size array.
 using uint128 = Blob<VBK_MERKLE_ROOT_HASH_SIZE>;
+//! @overload
 using uint256 = Blob<SHA256_HASH_SIZE>;
+//! @overload
 using uint72 = Blob<VBK_PREVIOUS_KEYSTONE_HASH_SIZE>;
+//! @overload
 using uint96 = Blob<VBK_PREVIOUS_BLOCK_HASH_SIZE>;
+//! @overload
 using uint192 = Blob<VBK_BLOCK_HASH_SIZE>;
 }  // namespace altintegration
 

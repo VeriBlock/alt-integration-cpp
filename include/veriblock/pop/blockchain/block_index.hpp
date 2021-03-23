@@ -419,11 +419,13 @@ bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
   return isBlockOutdated(finalBlock, *fork);
 }
 
+//! @private
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
 }
 
+//! @overload
 template <typename JsonValue, typename Block>
 JsonValue ToJSON(const BlockIndex<Block>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
@@ -433,6 +435,7 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
   return obj;
 }
 
+//! @overload
 template <typename Block>
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,

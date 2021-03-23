@@ -20,6 +20,8 @@
 
 namespace altintegration {
 
+//! Build a context (blocks necessary to connect) in a `tree` from `tip`
+//! backwards `size` elements.
 template <typename BlockTreeT>
 std::vector<typename BlockTreeT::block_t> getContext(
     const BlockTreeT& tree,
@@ -35,6 +37,7 @@ std::vector<typename BlockTreeT::block_t> getContext(
   return ret;
 }
 
+//! helper to get last N known block hashes
 template <typename BlockTree>
 std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
                                                      size_t size) {
@@ -52,6 +55,7 @@ std::vector<std::vector<uint8_t>> getLastKnownBlocks(const BlockTree& tree,
   return ret;
 }
 
+//! helper to accept multiple blocks
 template <typename Block, typename ChainParams>
 bool addBlocks(BlockTree<Block, ChainParams>& tree,
                const std::vector<std::vector<uint8_t>>& blocks,
@@ -66,6 +70,18 @@ bool addBlocks(BlockTree<Block, ChainParams>& tree,
   return true;
 }
 
+/**
+ * Creates a PublicationData - an entity, which stores information about
+ * Altchain block endorsement.
+ *
+ * @param[in] endorsedBlockHeader endorsed block header
+ * @param[in] txMerkleRoot original merkle root from altchain
+ * @param[in] popData PopData from endorsed block
+ * @param[in] payoutInfo payout info bytes.
+ * @param[in] tree AltBlockTree instance
+ * @param[out] out output instance
+ * @return true if endorsed block found, false otherwise.
+ */
 bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
                              const std::vector<uint8_t>& txMerkleRoot,
                              const PopData& popData,
@@ -73,6 +89,7 @@ bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
                              const AltBlockTree& tree,
                              PublicationData& out);
 
+//! @overload
 PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& endorsedBlockHeader,
     const BlockIndex<AltBlock>& endorsedBlock,

@@ -45,6 +45,7 @@ struct Output {
   std::string toPrettyString() const;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const Output& o) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -53,6 +54,7 @@ JsonValue ToJSON(const Output& o) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 Output& out,
                                 ValidationState& state);

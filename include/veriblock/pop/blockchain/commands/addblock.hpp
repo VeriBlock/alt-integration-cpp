@@ -68,9 +68,12 @@ struct AddBlock : public Command {
   int32_t referencedAtHeight_;
 };
 
+//! @private
 using AddBtcBlock = AddBlock<BtcBlock, BtcChainParams>;
+//! @private
 using AddVbkBlock = AddBlock<VbkBlock, VbkChainParams>;
 
+//! @private
 template <typename BlockTree>
 void addBlock(BlockTree& tree,
               const typename BlockTree::block_t& block,
@@ -85,6 +88,7 @@ void addBlock(BlockTree& tree,
   commands.push_back(std::move(cmd));
 };
 
+//! @private
 template <typename BlockTree>
 void addBlock(BlockTree& tree,
               const typename BlockTree::block_t& block,

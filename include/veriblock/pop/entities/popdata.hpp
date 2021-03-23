@@ -110,6 +110,7 @@ void putArrayKV(Value& object,
 
 }  // namespace detail
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const PopData& p, bool verbose = false) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -127,6 +128,7 @@ JsonValue ToJSON(const PopData& p, bool verbose = false) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PopData& out,
                                 ValidationState& state);

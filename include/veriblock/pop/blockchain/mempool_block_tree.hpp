@@ -14,6 +14,7 @@
 
 namespace altintegration {
 
+//! @private
 struct MemPoolBlockTree {
   using BtcBlockTree = typename VbkBlockTree::BtcTree;
 

@@ -51,9 +51,11 @@ bool LoadBlocks(
   return tree.loadTip(tiphash, state);
 }
 
+//! @private
 template <typename BlockIndexT>
 void validateBlockIndex(const BlockIndexT&);
 
+//! @private
 template <typename BlockTreeT>
 void SaveTree(
     BlockTreeT& tree,
@@ -89,6 +91,7 @@ void SaveTree(
   batch.writeTip(*tree.getBestChain().tip());
 }
 
+//! @private
 template <typename BlockTreeT>
 void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
   SaveTree(tree, batch, &validateBlockIndex<typename BlockTreeT::index_t>);
@@ -96,10 +99,12 @@ void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
 
 struct AltBlockTree;
 
+//! Save all (BTC/VBK/ALT) trees on disk in a single Batch.
 void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch);
 
 struct PopContext;
 
+//! Load all (ALT/VBK/BTC) trees from disk into memory.
 bool LoadAllTrees(PopContext& context,
                   BlockReader& reader,
                   ValidationState& state);

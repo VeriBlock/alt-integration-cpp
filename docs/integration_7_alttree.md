@@ -370,7 +370,7 @@ E2E Pop basic functionality test: [https://github.com/VeriBlock/vbk-ri-btc/blob/
 # 7. Update makefile to enable new unit test.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
-```diff
+```cpp
 +### VeriBlock section start
 +# path is relative to src
 +VBK_TESTS = \

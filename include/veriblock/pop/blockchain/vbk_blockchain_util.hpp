@@ -15,32 +15,40 @@
 
 namespace altintegration {
 
+//! @private
 template <>
 uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& currentTip,
                              const VbkBlock& block,
                              const VbkChainParams& params);
 
+//! @private
 template <>
 VbkBlock Miner<VbkBlock, VbkChainParams>::getBlockTemplate(
     const BlockIndex<VbkBlock>& tip, const merkle_t& merkle);
 
+//! @private
 template <>
 ArithUint256 getBlockProof(const VbkBlock& block);
 
+//! @private
 int64_t getMedianTimePast(const BlockIndex<VbkBlock>& prev);
 
+//! @private
 template <>
 bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     const VbkBlock& block,
                     ValidationState& state,
                     const VbkChainParams& params);
 
+//! @private
 int64_t calculateMinimumTimestamp(const BlockIndex<VbkBlock>& prev);
 
+//! @private
 bool validateKeystones(const BlockIndex<VbkBlock>& prevBlock,
                        const VbkBlock& block,
                        std::shared_ptr<VbkChainParams> params);
 
+//! @private
 template <>
 bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
                             const VbkBlock& block,

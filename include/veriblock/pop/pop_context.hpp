@@ -17,21 +17,12 @@
 #include "rewards/default_poprewards_calculator.hpp"
 #include "storage.hpp"
 
-/**
- * @defgroup api Public API
- *
- * This is public API of veriblock-pop-cpp library, which is meant to be used by
- * Altchains.
- */
-
 namespace altintegration {
 
 /**
- * @struct Altintegration
+ * @struct PopContext
  *
  * Main entrypoint into the veriblock-pop library.
- *
- * @ingroup api
  */
 struct PopContext {
   ~PopContext();
@@ -96,7 +87,7 @@ struct PopContext {
    *
    * @return true if PopData is statelessly valid, false otherwise
    */
-  VBK_CHECK_RETURN bool check(const PopData& pd, ValidationState& state);
+  VBK_CHECK_RETURN bool check(const PopData& payload, ValidationState& state);
 
   /**
    * Save ALT/VBK/BTC trees on disk via adapter BlockBatch.
@@ -109,6 +100,7 @@ struct PopContext {
    * Load ALT/VBK/BTC trees from disk via adapter BlockReader.
    *
    * @param[out] reader adaptor to read blocks from disk.
+   * @param[out] state validation state
    */
   VBK_CHECK_RETURN bool loadAllTrees(BlockReader& reader,
                                      ValidationState& state);

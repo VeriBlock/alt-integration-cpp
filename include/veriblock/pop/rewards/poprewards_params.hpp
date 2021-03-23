@@ -12,6 +12,9 @@
 
 namespace altintegration {
 
+/**
+ * A container for curve params.
+ */
 struct PopRewardsCurveParams {
   virtual ~PopRewardsCurveParams() = default;
 
@@ -27,6 +30,9 @@ struct PopRewardsCurveParams {
   }
 };
 
+/**
+ * A container for PoP rewards params.
+ */
 struct PopRewardsParams {
   virtual ~PopRewardsParams() = default;
 

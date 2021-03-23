@@ -8,6 +8,7 @@
 
 namespace altintegration {
 
+//! Flags that describe block status.
 enum BlockStateStatus : uint32_t {
   //! acceptBlockHeader succeded. All ancestors are at least at this state and
   //! statelessly valid.
@@ -33,6 +34,7 @@ enum BlockStateStatus : uint32_t {
 
 };
 
+//! Flags that describe block status.
 enum BlockValidityStatus : uint32_t {
   //! default state for validity - validity state is unknown
   BLOCK_VALID_UNKNOWN = 0,

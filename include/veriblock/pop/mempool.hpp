@@ -34,11 +34,11 @@ namespace altintegration {
  * current VBK chain, so this VTB remains in MemPool until we explicitly remove
  * it, or connect containing VBK block with this VTB.
  *
- * @ingroup api
  */
 struct MemPool {
   enum Status { VALID = 0, FAILED_STATEFUL = 1, FAILED_STATELESS = 2 };
 
+  //! Result of submission to mempool.
   struct SubmitResult {
     Status status = VALID;
 
@@ -111,7 +111,6 @@ struct MemPool {
   }
 
   //! getter for payloads stored in mempool
-  //! @ingroup api
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   const T* get(const typename T::id_t& id) const {
@@ -146,7 +145,6 @@ struct MemPool {
    * @param[out] state validation state
    * validation
    * @return true if payload is accepted to mempool, false otherwise
-   * @ingroup api
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
@@ -177,7 +175,6 @@ struct MemPool {
    * @param[out] state validation state
    * validation
    * @return true if payload is accepted to mempool, false otherwise
-   * @ingroup api
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
@@ -200,7 +197,6 @@ struct MemPool {
    * @param[in] pl payload
    * @param[out] state validation state
    * @return true if payload is accepted to mempool, false otherwise
-   * @ingroup api
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
@@ -235,7 +231,6 @@ struct MemPool {
    * this method returns altintegration::PopData which contains fully valid and
    * connected payloads. This should be inserted into AltBlock as is.
    *
-   * @ingroup api
    * @return statefully valid altintegration::PopData that can be connected to
    * current tip.
    */
@@ -246,7 +241,6 @@ struct MemPool {
    *
    * Use it when new block arrives and it contains PopData. Doing this, mempool
    * also executes clean() method.
-   * @ingroup api
    * @param[in] popData altintegration::PopData
    */
   void removeAll(const PopData& popData);
@@ -254,13 +248,11 @@ struct MemPool {
   /**
    * Remove paylaods that are statefully invalid anymore (duplicated, staled
    * payloads)
-   *@ingroup api
    */
   void cleanUp();
 
   /**
    * Clear mempool from all payloads.
-   * @ingroup api
    */
   void clear();
 

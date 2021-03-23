@@ -25,6 +25,8 @@
 
 namespace altintegration {
 
+
+//! @private
 template <typename T>
 std::vector<typename T::hash_t> hashAll(const std::vector<T>& txs) {
   std::vector<typename T::hash_t> hashes(txs.size());

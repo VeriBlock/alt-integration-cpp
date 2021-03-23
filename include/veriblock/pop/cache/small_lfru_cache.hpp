@@ -27,6 +27,7 @@ template <typename Key,
           size_t TimeWindow = 10 * 60,  // 10 min
           typename = typename std::enable_if<(Size <= 50)>::type>
 struct SmallLFRUCache {
+  //! @private
   struct Item {
     size_t frequency = 0;
     size_t lastAccessed = 0;
