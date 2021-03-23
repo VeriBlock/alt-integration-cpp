@@ -17,12 +17,19 @@ jobs:
   doxygen:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         name: checkout
-        with:
-          clean: true
-      - run: mkdir -p build/docs
+      - name: prepare
+        run: |
+          mkdir -p build/docs
+          git fetch
+          git checkout docs --
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
           doxyfile-path: './Doxyfile'
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: docs
+          folder: build/docs/html 
