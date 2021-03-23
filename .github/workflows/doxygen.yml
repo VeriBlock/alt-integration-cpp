@@ -20,7 +20,10 @@ jobs:
       - uses: actions/checkout@v2
         name: checkout
       - name: prepare
-        run: mkdir -p build/docs
+        run: |
+          mkdir -p build/docs
+          git fetch
+          git checkout docs --
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
@@ -31,6 +34,6 @@ jobs:
       - name: commit
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_changes: Update docs ${{ github.sha }}
+          commit_message: Update docs ${{ github.sha }}
           branch: docs
           push_options: --force
