@@ -38,6 +38,7 @@ struct Coin {
   bool operator==(const Coin& other) const noexcept;
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 Coin& out,
                                 ValidationState& state);

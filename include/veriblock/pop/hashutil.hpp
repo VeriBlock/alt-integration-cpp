@@ -21,6 +21,7 @@ namespace altintegration {
  * @return vector with SHA256 hash of the input data
  */
 uint256 sha256(Slice<const uint8_t> data);
+//! @overload
 uint256 sha256(Slice<const uint8_t> a, Slice<const uint8_t> b);
 
 /**
@@ -29,6 +30,7 @@ uint256 sha256(Slice<const uint8_t> a, Slice<const uint8_t> b);
  * @return vector with SHA256 hash of the input data
  */
 uint256 sha256twice(Slice<const uint8_t> data);
+//! @overload
 uint256 sha256twice(Slice<const uint8_t> a, Slice<const uint8_t> b);
 
 /**

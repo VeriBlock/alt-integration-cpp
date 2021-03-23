@@ -221,10 +221,10 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * When block is connected (meaning that all of its ancestors are also
    * connected and have block body), it emits new signal onBlockConnected.
    *
-   * @invariant can be executed on blocks in random order
-   * @invariant must not be executed twice on the same block
-   * @invariant must not be executed on bootstrap block
-   * @invariant PopData must be statelessly validated before passing it here
+   * @pre can be executed on blocks in random order. I.e.
+   * @pre must not be executed twice on the same block
+   * @pre must not be executed on bootstrap block
+   * @pre PopData must be statelessly validated before passing it here
    *
    * @throws StateCorruptedException when we detect state corruption and we can
    * not recover.

@@ -12,7 +12,6 @@
 #include "fmt.hpp"
 
 /**
- * @file logger.hpp
  *
  * Defines logging helpers. By default, logger is disabled (no-op logger is
  * used). Users can derive from Logger class, and specify their logger instance.
@@ -28,6 +27,7 @@
 
 namespace altintegration {
 
+//! Log level
 enum class LogLevel { debug, info, warn, error, critical, off };
 
 /**
@@ -84,7 +84,6 @@ LogLevel StringToLevel(const std::string&);
 #define VBK_LOG(...)
 #else
 
-//! @private
 #define VBK_LOG(lvl, format, ...)                             \
   do {                                                        \
     auto& logger = altintegration::GetLogger();               \

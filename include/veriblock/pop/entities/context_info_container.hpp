@@ -65,6 +65,8 @@ struct AuthenticatedContextInfoContainer {
   uint256 stateRoot{};
 
   //! @param stateRoot equals to sha256d(merkle root || pop data merkle root)
+  //! @param prev is a pointer to previous block
+  //! @param p params
   static AuthenticatedContextInfoContainer createFromPrevious(
       const uint256& stateRoot,
       const BlockIndex<AltBlock>* prev,
@@ -88,14 +90,17 @@ struct AuthenticatedContextInfoContainer {
   uint256 getTopLevelMerkleRoot() const;
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 ContextInfoContainer& ctx,
                                 ValidationState& state);
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 AuthenticatedContextInfoContainer& ctx,
                                 ValidationState& state);
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const ContextInfoContainer& a) {
   auto o = json::makeEmptyObject<JsonValue>();
@@ -107,6 +112,7 @@ JsonValue ToJSON(const ContextInfoContainer& a) {
   return o;
 }
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const AuthenticatedContextInfoContainer& a) {
   auto o = json::makeEmptyObject<JsonValue>();

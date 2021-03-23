@@ -147,9 +147,11 @@ struct VbkBlockTree;
 template <typename Block, typename ChainParams>
 struct BlockTree;
 
+//! @private
 using AddVbkEndorsement =
     AddEndorsement<BlockTree<BtcBlock, BtcChainParams>, VbkBlockTree>;
 
+//! @private
 using AddAltEndorsement = AddEndorsement<VbkBlockTree, AltBlockTree>;
 
 }  // namespace altintegration

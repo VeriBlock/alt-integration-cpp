@@ -20,12 +20,14 @@ struct VbkBlockTree;
 struct AltChainParams;
 struct AltBlockTree;
 
+//! @private
 template <>
 bool checkBlockTime(const BlockIndex<AltBlock>& prev,
                     const AltBlock& block,
                     ValidationState& state,
                     const AltChainParams& params);
 
+//! @private
 template <>
 std::vector<CommandGroup> payloadsToCommandGroups(
     AltBlockTree& tree,

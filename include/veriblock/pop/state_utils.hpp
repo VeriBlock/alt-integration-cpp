@@ -16,6 +16,7 @@
 
 namespace altintegration {
 
+//! @private
 template <typename Block_t, typename ChainParams_t>
 bool loadBlockTree(
     BlockTree<Block_t, ChainParams_t>& tree,

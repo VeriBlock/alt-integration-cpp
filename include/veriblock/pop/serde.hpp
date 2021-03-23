@@ -177,12 +177,16 @@ void writeSingleFixedBEValue(WriteStream& stream, T value) {
  */
 void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value);
 
+//! @private
 size_t singleByteLenValueSize(Slice<const uint8_t> value);
 
+//! @private
 size_t singleByteLenValueSize(size_t valueSize);
 
+//! @private
 size_t singleBEValueSize(int64_t value);
 
+//! @private
 template <typename T,
           typename = typename std::enable_if<std::is_integral<T>::value>::type>
 size_t singleFixedBEValueSize(T value) {
@@ -191,8 +195,10 @@ size_t singleFixedBEValueSize(T value) {
   return singleByteLenValueSize(dataStream.data());
 }
 
+//! @private
 size_t varLenValueSize(Slice<const uint8_t> value);
 
+//! @private
 size_t varLenValueSize(size_t valueSize);
 
 /**
@@ -227,6 +233,7 @@ bool readNetworkByte(ReadStream& stream,
  */
 void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
 
+//! @private
 size_t networkByteSize(NetworkBytePair networkOrType);
 
 /**
@@ -272,10 +279,10 @@ bool readArrayOf(
 /**
  * Reads array of entities of type T.
  * @tparam T type of entity to read
- * @param stream read data from this stream
- * @param min min size of array
- * @param max max size of array
- * @param readFunc function that is called to read single value of type T
+ * @param[in] stream read data from this stream
+ * @param[out] out output array of T.
+ * @param[in] readFunc function that is called to read single value of type T
+ * @param[out] state validation state.
  * @throws std::out_of_range if stream is out of data
  * @return vector of read elements of type T
  */
@@ -289,6 +296,7 @@ bool readArrayOf(
   return readArrayOf<T>(stream, out, state, 0, max, readFunc);
 }
 
+//! @private
 template <typename Container>
 void writeContainer(
     WriteStream& w,
@@ -301,6 +309,7 @@ void writeContainer(
   }
 }
 
+//! @private
 template <typename T>
 void writeArrayOf(WriteStream& w,
                   const std::vector<T>& t,
@@ -308,6 +317,7 @@ void writeArrayOf(WriteStream& w,
   return writeContainer<std::vector<T>>(w, t, f);
 }
 
+//! @private
 template <typename Container>
 size_t estimateContainerSize(
     const Container& t,
@@ -320,12 +330,14 @@ size_t estimateContainerSize(
   return size;
 }
 
+//! Estimate size of array in bytes.
 template <typename T>
 size_t estimateArraySizeOf(const std::vector<T>& t,
                            std::function<size_t(const T& t)> f) {
   return estimateContainerSize<std::vector<T>>(t, f);
 }
 
+//! Deserialize from VBK encoding.
 template <typename T>
 bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
                                 T& out,
@@ -334,6 +346,7 @@ bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
   return DeserializeFromVbkEncoding(stream, out, state);
 }
 
+//! Deserialize from RAW encoding.
 template <typename T>
 bool DeserializeFromRaw(Slice<const uint8_t> data,
                         T& out,
@@ -342,6 +355,7 @@ bool DeserializeFromRaw(Slice<const uint8_t> data,
   return DeserializeFromRaw(stream, out, state);
 }
 
+//! Deserialize from HEX VBK encoding.
 template <typename T>
 bool DeserializeFromHex(const std::string& hex,
                         T& out,
@@ -351,6 +365,7 @@ bool DeserializeFromHex(const std::string& hex,
   return DeserializeFromVbkEncoding(stream, out, state);
 }
 
+//! Deserialize from HEX RAW encoding.
 template <typename T>
 bool DeserializeFromRawHex(const std::string& hex,
                            T& out,
@@ -360,6 +375,7 @@ bool DeserializeFromRawHex(const std::string& hex,
   return DeserializeFromRaw(stream, out, state);
 }
 
+//! Serialize to VBK encoding.
 template <typename T>
 std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
   WriteStream w;
@@ -367,6 +383,7 @@ std::vector<uint8_t> SerializeToVbkEncoding(const T& obj) {
   return w.data();
 }
 
+//! Serialize to RAW encoding.
 template <typename T>
 std::vector<uint8_t> SerializeToRaw(const T& obj) {
   WriteStream w;
@@ -374,16 +391,20 @@ std::vector<uint8_t> SerializeToRaw(const T& obj) {
   return w.data();
 }
 
+//! Serialize to HEX VBK encoding.
 template <typename T>
 std::string SerializeToHex(const T& obj) {
   return HexStr(SerializeToVbkEncoding<T>(obj));
 }
 
+//! Serialize to HEX RAW encoding.
 template <typename T>
 std::string SerializeToRawHex(const T& obj) {
   return HexStr(SerializeToRaw<T>(obj));
 }
 
+//! Deserialize from RAW encoding.
+//! @note will fail on assert if can't be deserialized.
 template <typename T>
 T AssertDeserializeFromRaw(std::vector<uint8_t> raw) {
   T t;
@@ -393,6 +414,8 @@ T AssertDeserializeFromRaw(std::vector<uint8_t> raw) {
   return t;
 }
 
+//! Deserialize from VBK encoding.
+//! @note will fail on assert if can't be deserialized.
 template <typename T>
 T AssertDeserializeFromVbkEncoding(Slice<const uint8_t> raw) {
   T t;
@@ -402,6 +425,8 @@ T AssertDeserializeFromVbkEncoding(Slice<const uint8_t> raw) {
   return t;
 }
 
+//! Deserialize from HEX VBK encoding.
+//! @note will fail on assert if can't be deserialized.
 template <typename T>
 T AssertDeserializeFromHex(std::string hex) {
   T t;
@@ -411,6 +436,8 @@ T AssertDeserializeFromHex(std::string hex) {
   return t;
 }
 
+//! Deserialize from HEX RAW encoding.
+//! @note will fail on assert if can't be deserialized.
 template <typename T>
 T AssertDeserializeFromRawHex(std::string hex) {
   T t;

@@ -77,6 +77,7 @@ class ValidationState {
   std::vector<std::string> stack_trace;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const ValidationState &s, bool *acceptedToMempool = nullptr) {
   auto obj = json::makeEmptyObject<JsonValue>();

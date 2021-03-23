@@ -25,18 +25,22 @@ struct PayloadsStorage {
   virtual ~PayloadsStorage() = default;
 
   //! should write ATV identified by `id` into `out`, or return false
+  //! @pure
   virtual bool getATV(const ATV::id_t& ids,
                       ATV& out,
                       ValidationState& state) = 0;
   //! should write VTB identified by `id` into `out`, or return false
+  //! @pure
   virtual bool getVTB(const VTB::id_t& ids,
                       VTB& out,
                       ValidationState& state) = 0;
   //! should write VbkBlock identified by `id` into `out`, or return false
+  //! @pure
   virtual bool getVBK(const VbkBlock::id_t& id,
                       VbkBlock& out,
                       ValidationState& state) = 0;
 
+  //! @pure
   virtual void writePayloads(const PopData& payloads) = 0;
 
   /**
