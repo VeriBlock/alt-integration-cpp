@@ -13,6 +13,7 @@
 namespace altintegration {
 
 /**
+ * ```
  * Protecting Chain:
  * A - B - C - D - E - F - G - H - I - J
  *                    /
@@ -21,6 +22,7 @@ namespace altintegration {
  * A - B - C - D - E - F - G - H - I - J
  *        /                /
  *  endorsed hash      containing hash
+ * ```
  *
  * "endorsed hash" is a block hash that is endorsed by POP TX.
  * "block of proof" is a block from protecting chain that contains a tx with
