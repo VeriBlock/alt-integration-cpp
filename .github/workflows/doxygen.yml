@@ -26,3 +26,11 @@ jobs:
         with:
           working-directory: '.'
           doxyfile-path: './Doxyfile'
+      - name: publish
+        run: |
+          git config --global user.email "bot@veriblock.org"
+          git config --global user.name "Bot"
+          git checkout -f docs
+          git add .
+          git commit -m "Update docs ${{ github.sha }}"
+          git push -f
