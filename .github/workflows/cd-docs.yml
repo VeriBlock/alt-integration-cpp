@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
         name: checkout
+      - run: mkdir -p build/docs/html
       - uses: mattnotmitt/doxygen-action@v1
         with:
           working-directory: '.'
