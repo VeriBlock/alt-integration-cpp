@@ -146,7 +146,7 @@ typename C::index_t* findFork(const C& chain,
   while (pindex && !chain.contains(pindex)) {
     pindex = pindex->getPrev();
   }
-  return as_mut(pindex);
+  return const_cast<typename C::index_t*>(pindex);
 }
 
 //! returns an unordered set of hashes, present in current chain.
