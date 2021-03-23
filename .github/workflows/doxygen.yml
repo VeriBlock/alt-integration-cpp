@@ -36,4 +36,4 @@ jobs:
           sudo mv -f ./build/docs/html/* ./docs/
           git add .
           git commit -m "Update docs ${{ github.sha }}"
-          git push -f origin/docs
+          git push -f origin docs
