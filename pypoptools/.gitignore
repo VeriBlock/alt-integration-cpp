@@ -1,7 +1,0 @@
-!__init__.py
-*.so
-*.pyd
-MANIFEST
-.idea
-*.egg-info
-dist
