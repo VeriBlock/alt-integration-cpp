@@ -117,7 +117,7 @@ bool DeserializeFromVbkEncoding(
 
 //! @private
 template <>
-struct ::std::hash<altintegration::AltBlock> {
+struct std::hash<altintegration::AltBlock> {
   size_t operator()(const altintegration::AltBlock& block) {
     std::hash<std::vector<uint8_t>> hasher;
     return hasher(block.getHash());
