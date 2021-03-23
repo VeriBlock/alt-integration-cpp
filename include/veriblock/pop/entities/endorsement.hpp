@@ -108,6 +108,7 @@ struct Endorsement {
   static const std::string name();
 };
 
+//! @overload
 template <typename Value, class A, class B, class C>
 Value ToJSON(const Endorsement<A, B, C>& e) {
   auto obj = json::makeEmptyObject<Value>();
@@ -118,6 +119,7 @@ Value ToJSON(const Endorsement<A, B, C>& e) {
   return obj;
 }
 
+//! @private
 template <typename A, typename B, typename C>
 void PrintTo(const Endorsement<A, B, C>& e, std::ostream* os) {
   *os << e.toPrettyString();

@@ -81,6 +81,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
                                          ValidationState& state);
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 AltBlockAddon& out,
                                 ValidationState& state);

@@ -18,6 +18,7 @@
 
 namespace altintegration {
 
+//! @private
 using ValidationThreadPool =
     tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>, tp::MPMCBoundedQueue>;
 

@@ -21,10 +21,12 @@
 
 namespace altintegration {
 
+//! @private
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data,
                    ValidationState& state);
 
+//! Verify merkle path.
 template <typename MerklePathType, typename HashType1, typename HashType2>
 bool checkMerklePath(const MerklePathType& merklePath,
                      const HashType1& transactionHash,
@@ -45,61 +47,77 @@ bool checkMerklePath(const MerklePathType& merklePath,
   return true;
 }
 
+//! Verify signature of a transaction.
 bool checkSignature(const VbkTx& tx, ValidationState& state);
 
+//! @overload
 bool checkSignature(const VbkPopTx& tx, ValidationState& state);
 
+//! Stateless validation for a chain of Blocks.
 bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlocks,
                     ValidationState& state,
                     const BtcChainParams& param);
 
+//! @overload
 bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
                     ValidationState& state,
                     const VbkChainParams& param);
 
+//! Search BtcTx for POP data.
 bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                        ValidationState& state);
 
+//! Stateless validation for a Block.
 bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param);
-
+//! @overload
 bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param);
 
+//! Stateless validation for VbkPopTx.
 bool checkVbkPopTx(const VbkPopTx& tx,
                    ValidationState& state,
                    const BtcChainParams& param,
                    const VbkChainParams& vbk);
 
+//! Stateless validation for VbkTx.
 bool checkVbkTx(const VbkTx& tx,
                 const AltChainParams& params,
                 const VbkChainParams& vbkparams,
                 ValidationState& state);
 
+//! Stateless validation for PublicationData.
 bool checkPublicationData(const PublicationData& pub,
                           const AltChainParams& params,
                           ValidationState& state);
 
+//! Stateless validation for a single block.
 bool checkBlock(const BtcBlock& block,
                 ValidationState& state,
                 const BtcChainParams& params);
 
+//! Optimization: VBK block is not plausible if its combination of height+time
+//! do not correspond to potential VBK network.
 bool checkVbkBlockPlausibility(const VbkBlock& block,
                                ValidationState& state,
                                const VbkChainParams& params);
 
+//! Stateless validation for VbkBlock.
 bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params);
 
+//! Stateless validation for ATV.
 bool checkATV(const ATV& atv,
               ValidationState& state,
               const AltChainParams& alt,
               const VbkChainParams& vbkp);
 
+//! Stateless validation for VTB.
 bool checkVTB(const VTB& vtb,
               ValidationState& state,
               const BtcChainParams& btc,
               const VbkChainParams& vbk);
 
+//! @private
 template <typename P>
 bool hasDuplicateIds(const std::vector<typename P::id_t>& payloadIds) {
   std::unordered_set<typename P::id_t> ids;
@@ -112,6 +130,7 @@ bool hasDuplicateIds(const std::vector<typename P::id_t>& payloadIds) {
   return false;
 }
 
+//! @private
 template <typename P>
 bool checkIdsForDuplicates(const std::vector<typename P::id_t>& payloadIds,
                            ValidationState& state) {
@@ -122,8 +141,10 @@ bool checkIdsForDuplicates(const std::vector<typename P::id_t>& payloadIds,
   return true;
 }
 
+//! @private
 bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state);
 
+//! Stateless validation for PopData and all internal PoP payloads.
 bool checkPopData(PopValidator& validator,
                   const PopData& popData,
                   ValidationState& state);

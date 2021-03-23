@@ -11,8 +11,10 @@
 
 namespace altintegration {
 
-// corresponds to "regtest_progpow" VBK network
+//! Getter for `regtest_progpow` VBK network genesis block.
 extern VbkBlock GetRegTestVbkBlock();
+
+//! Getter for `regtest` BTC network genesis block.
 extern BtcBlock GetRegTestBtcBlock();
 
 }  // namespace altintegration

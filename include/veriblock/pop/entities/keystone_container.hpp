@@ -34,10 +34,12 @@ struct KeystoneContainer {
   }
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 KeystoneContainer& container,
                                 ValidationState& state);
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const KeystoneContainer& c) {
   auto obj = json::makeEmptyObject<JsonValue>();

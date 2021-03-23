@@ -46,6 +46,7 @@ struct VbkMerklePath {
   uint128 calculateMerkleRoot() const;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const VbkMerklePath& mp) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -56,6 +57,7 @@ JsonValue ToJSON(const VbkMerklePath& mp) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkMerklePath& out,
                                 ValidationState& state);

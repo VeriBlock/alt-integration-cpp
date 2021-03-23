@@ -11,26 +11,42 @@
 
 namespace altintegration {
 
+/**
+ * Calculates if block with height = `blockNumber` is keystone.
+ * @param blockNumber blopck height
+ * @param keystoneInterval keystone interval
+ * @return true if block is keystone
+ */
 bool isKeystone(int32_t blockNumber, uint32_t keystoneInterval);
 
-int32_t blockHeightToKeystoneNumber(int32_t blockHeight, uint32_t keystoneInterval);
+//! @private
+int32_t blockHeightToKeystoneNumber(int32_t blockHeight,
+                                    uint32_t keystoneInterval);
 
+//! @private
 int32_t highestKeystoneAtOrBefore(int32_t blockNumber,
                                   uint32_t keystoneInterval);
+//! @private
 int32_t firstKeystoneAfter(int32_t blockNumber, uint32_t keystoneInterval);
+
+//! @private
 int32_t highestBlockWhichConnectsKeystoneToPrevious(
     int32_t blockNumberOfKeystone, uint32_t keystoneInterval);
 
+//! @private
 bool isCrossedKeystoneBoundary(int32_t bottomHeight,
                                int32_t tipHeight,
                                uint32_t keystoneInterval);
 
+//! @private
 bool areOnSameKeystoneInterval(int32_t height1,
                                int32_t height2,
                                uint32_t keystoneInterval);
 
+//! @private
 int32_t getFirstPreviousKeystoneHeight(int32_t height,
                                        uint32_t keystoneInterval);
+//! @private
 int32_t getSecondPreviousKeystoneHeight(int32_t height,
                                         uint32_t keystoneInterval);
 }  // namespace altintegration

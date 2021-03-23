@@ -130,6 +130,8 @@ struct Chain {
   }
 };
 
+//! Find fork between `chain` and `pindex`.
+//! @returns nullptr if fork can not be found
 template <typename C>
 typename C::index_t* findFork(const C& chain,
                               const typename C::index_t* pindex) {
@@ -144,7 +146,7 @@ typename C::index_t* findFork(const C& chain,
   while (pindex && !chain.contains(pindex)) {
     pindex = pindex->getPrev();
   }
-  return const_cast<typename C::index_t*>(pindex);
+  return as_mut(pindex);
 }
 
 //! returns an unordered set of hashes, present in current chain.
@@ -161,6 +163,7 @@ std::unordered_set<typename C::hash_t> getAllHashesInChain(const C& chain) {
   return ret;
 }
 
+//! @private
 template <typename index_t>
 const index_t* findBlockContainingEndorsement(
     const Chain<index_t>& chain,
@@ -179,6 +182,7 @@ const index_t* findBlockContainingEndorsement(
   return nullptr;
 }
 
+//! @private
 template <typename index_t>
 inline const index_t* findBlockContainingEndorsement(
     const Chain<index_t>& chain,
@@ -188,6 +192,7 @@ inline const index_t* findBlockContainingEndorsement(
       chain, chain.tip(), e.id, endorsement_settlement_interval);
 }
 
+//! @private
 template <typename T>
 void PrintTo(const Chain<T>& c, std::ostream* os) {
   auto* tip = c.tip();

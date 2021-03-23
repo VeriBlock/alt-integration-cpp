@@ -89,6 +89,7 @@ struct IsPopPayload<ATV> {
   static const bool value = true;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const ATV& atv) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -100,6 +101,7 @@ JsonValue ToJSON(const ATV& atv) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 ATV& out,
                                 ValidationState& state);

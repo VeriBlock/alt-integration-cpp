@@ -74,6 +74,7 @@ struct VbkTx {
   void toRaw(WriteStream& stream) const;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const VbkTx& tx) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -90,12 +91,14 @@ JsonValue ToJSON(const VbkTx& tx) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromRaw(ReadStream& stream,
                         Slice<const uint8_t> signature,
                         Slice<const uint8_t> publicKey,
                         VbkTx& out,
                         ValidationState& state);
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkTx& out,
                                 ValidationState& state);

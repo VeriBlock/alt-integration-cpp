@@ -14,15 +14,21 @@
 
 namespace altintegration {
 
+//! @private
 bool IsHex(const std::string& str);
+
+//! Parse bytes from hex.
 std::vector<uint8_t> ParseHex(const char* psz);
+//! @overload
 std::vector<uint8_t> ParseHex(const std::string& hex);
 
+//! @private
 constexpr inline bool IsSpace(char c) noexcept {
   return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
          c == '\v';
 }
 
+//! Convert bytes to hex.
 template <typename T>
 std::string HexStr(const T itbegin, const T itend) {
   std::string rv;
@@ -38,6 +44,7 @@ std::string HexStr(const T itbegin, const T itend) {
   return rv;
 }
 
+//! @overload
 template <typename T>
 inline std::string HexStr(const T& vch, bool reverseHex = false) {
   if(reverseHex) {
@@ -47,6 +54,7 @@ inline std::string HexStr(const T& vch, bool reverseHex = false) {
   }
 }
 
+//! @private
 std::vector<uint8_t> toBytes(const std::string& input);
 
 
