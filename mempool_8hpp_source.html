@@ -264,117 +264,130 @@ $(document).ready(function(){initNavTree('mempool_8hpp_source.html',''); initRes
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  atv_map_t stored_atvs_;</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  vtb_map_t stored_vtbs_;</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  atv_value_sorted_map_t atvs_in_flight_{};</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;  vtb_value_sorted_map_t vtbs_in_flight_{};</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  vbk_value_sorted_map_t vbkblocks_in_flight_{};</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;  VbkPayloadsRelations&amp; getOrPutVbkRelation(</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; block);</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  <span class="keywordtype">void</span> tryConnectPayloads();</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  <span class="keyword">const</span> PayloadsIndex&amp; getPayloadsIndex()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordflow">return</span> mempool_tree_.alt().getPayloadsIndex();</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  }</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  <span class="keywordtype">void</span> makePayloadConnected(<span class="keyword">const</span> std::shared_ptr&lt;T&gt;&amp; t) {</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keyword">auto</span>&amp; signal = getSignal&lt;T&gt;();</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keyword">auto</span>&amp; inflight = getInFlightMapMut&lt;T&gt;();</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keyword">auto</span>&amp; connected = getMapMut&lt;T&gt;();</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keyword">auto</span> <span class="keywordtype">id</span> = t-&gt;getId();</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    connected[id] = t;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    inflight.erase(<span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    signal.emit(*t);</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;  }</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> POP&gt;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  <span class="keywordtype">void</span> cleanupStale(std::vector&lt;std::shared_ptr&lt;POP&gt;&gt;&amp; c,</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                    std::function&lt;<span class="keywordtype">void</span>(POP&amp;)&gt; remove) {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = c.begin(); it != c.end();) {</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;      <span class="keyword">auto</span>&amp; pl = **it;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;      ValidationState state;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;      <span class="keyword">auto</span> valid = mempool_tree_.checkContextually(pl, state);</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;      <span class="keywordflow">if</span> (!valid) {</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        remove(pl);</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        it = c.erase(it);</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        ++it;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;      }</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  }</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> POP&gt;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="keywordtype">void</span> cleanupStale(payload_value_sorted_map&lt;POP&gt;&amp; c) {</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = c.begin(); it != c.end();) {</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;      <span class="keyword">auto</span>&amp; pl = *it-&gt;second;</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;      ValidationState state;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;      <span class="keyword">auto</span> valid = mempool_tree_.checkContextually(pl, state);</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;      it = !valid ? c.erase(it) : std::next(it);</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    }</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  }</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Pop&gt;</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;  signals::Signal&lt;void(<span class="keyword">const</span> Pop&amp;)&gt;&amp; getSignal() {</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    static_assert(<span class="keyword">sizeof</span>(Pop) == 0, <span class="stringliteral">&quot;Unknown type in getSignal&quot;</span>);</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;  }</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;  payload_map&lt;T&gt;&amp; getMapMut() {</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">const_cast&lt;</span>payload_map&lt;T&gt;&amp;<span class="keyword">&gt;</span>(this-&gt;getMap&lt;T&gt;());</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  }</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160; </div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  payload_value_sorted_map&lt;T&gt;&amp; getInFlightMapMut() {</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">const_cast&lt;</span>payload_value_sorted_map&lt;T&gt;&amp;<span class="keyword">&gt;</span>(this-&gt;getInFlightMap&lt;T&gt;());</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;  }</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;};</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  atv_value_sorted_map_t atvs_in_flight_{</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;      [](<span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; v1,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;         <span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; v2) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <span class="keywordflow">return</span> v1-&gt;blockOfProof.getHeight() &lt; v2-&gt;blockOfProof.getHeight();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      }};</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  vtb_value_sorted_map_t vtbs_in_flight_{</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;      [](<span class="keyword">const</span> std::shared_ptr&lt;VTB&gt;&amp; v1,</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;         <span class="keyword">const</span> std::shared_ptr&lt;VTB&gt;&amp; v2) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        <span class="keywordflow">return</span> v1-&gt;containingBlock.getHeight() &lt;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;               v2-&gt;containingBlock.getHeight();</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;      }};</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  vbk_value_sorted_map_t vbkblocks_in_flight_{</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;      [](<span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; v1,</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;         <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; v2) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        <span class="keywordflow">return</span> v1-&gt;getHeight() &lt; v2-&gt;getHeight();</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      }};</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  VbkPayloadsRelations&amp; getOrPutVbkRelation(</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;      <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; block);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  <span class="keywordtype">void</span> tryConnectPayloads();</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  <span class="keyword">const</span> PayloadsIndex&amp; getPayloadsIndex()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">return</span> mempool_tree_.alt().getPayloadsIndex();</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;  }</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  <span class="keywordtype">void</span> makePayloadConnected(<span class="keyword">const</span> std::shared_ptr&lt;T&gt;&amp; t) {</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keyword">auto</span>&amp; signal = getSignal&lt;T&gt;();</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keyword">auto</span>&amp; inflight = getInFlightMapMut&lt;T&gt;();</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">auto</span>&amp; connected = getMapMut&lt;T&gt;();</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keyword">auto</span> <span class="keywordtype">id</span> = t-&gt;getId();</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    connected[id] = t;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    inflight.erase(<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    signal.emit(*t);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> POP&gt;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="keywordtype">void</span> cleanupStale(std::vector&lt;std::shared_ptr&lt;POP&gt;&gt;&amp; c,</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                    std::function&lt;<span class="keywordtype">void</span>(POP&amp;)&gt; remove) {</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = c.begin(); it != c.end();) {</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;      <span class="keyword">auto</span>&amp; pl = **it;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;      ValidationState state;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;      <span class="keyword">auto</span> valid = mempool_tree_.checkContextually(pl, state);</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;      <span class="keywordflow">if</span> (!valid) {</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        remove(pl);</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        it = c.erase(it);</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        ++it;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      }</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    }</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;  }</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160; </div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> POP&gt;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  <span class="keywordtype">void</span> cleanupStale(payload_value_sorted_map&lt;POP&gt;&amp; c) {</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = c.begin(); it != c.end();) {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      <span class="keyword">auto</span>&amp; pl = *it-&gt;second;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;      ValidationState state;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;      <span class="keyword">auto</span> valid = mempool_tree_.checkContextually(pl, state);</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      it = !valid ? c.erase(it) : std::next(it);</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    }</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  }</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Pop&gt;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  signals::Signal&lt;void(<span class="keyword">const</span> Pop&amp;)&gt;&amp; getSignal() {</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    static_assert(<span class="keyword">sizeof</span>(Pop) == 0, <span class="stringliteral">&quot;Unknown type in getSignal&quot;</span>);</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;  }</div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">// clang-format off</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a7b83df1c20f27f50de559c94e03febcb">  359</a></span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;&gt; <a class="code" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a> MemPool::submit&lt;ATV&gt;(<span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; atv, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
-<div class="line"><a name="l00361"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a895eb27cc1690b9236d5edc906d69d26">  361</a></span>&#160;<span class="keyword">template</span> &lt;&gt; <a class="code" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a> MemPool::submit&lt;VTB&gt;(<span class="keyword">const</span> std::shared_ptr&lt;VTB&gt;&amp; vtb, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
-<div class="line"><a name="l00363"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a29e3ca04c94b9818712d07ba039590d9">  363</a></span>&#160;<span class="keyword">template</span> &lt;&gt; <a class="code" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a> MemPool::submit&lt;VbkBlock&gt;(<span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; block, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
-<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a7ddec8b4bb32e57104f19af8fe91a550">  365</a></span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">const</span> MemPool::payload_map&lt;VbkBlock&gt;&amp; MemPool::getMap() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">const</span> MemPool::payload_map&lt;ATV&gt;&amp; MemPool::getMap() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">const</span> MemPool::payload_map&lt;VTB&gt;&amp; MemPool::getMap() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00371"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a7ced15979f468651e878758b7159b1f9">  371</a></span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">const</span> MemPool::payload_value_sorted_map&lt;VbkBlock&gt;&amp; MemPool::getInFlightMap() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">const</span> MemPool::payload_value_sorted_map&lt;ATV&gt;&amp; MemPool::getInFlightMap() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00375"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#af867360c1fdc1aa7268e18f6681888eb">  375</a></span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">const</span> MemPool::payload_value_sorted_map&lt;VTB&gt;&amp; MemPool::getInFlightMap() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="keyword">template</span> &lt;&gt; signals::Signal&lt;void(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1ATV.html">ATV</a>&amp;)&gt;&amp; MemPool::getSignal();</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="keyword">template</span> &lt;&gt; signals::Signal&lt;void(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VTB.html">VTB</a>&amp;)&gt;&amp; MemPool::getSignal();</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="keyword">template</span> &lt;&gt; signals::Signal&lt;void(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&amp;)&gt;&amp; MemPool::getSignal();</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">// clang-format on</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="keyword">namespace </span>detail {</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160; </div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value, <span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> mapToJson(Value&amp; obj, <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1MemPool.html">MemPool</a>&amp; mp, <span class="keyword">const</span> std::string&amp; key) {</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;  <span class="keyword">auto</span> arr = json::makeEmptyArray&lt;Value&gt;();</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; p : mp.getMap&lt;T&gt;()) {</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    json::arrayPushBack(arr, ToJSON&lt;Value&gt;(p.first));</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  }</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; p : mp.getInFlightMap&lt;T&gt;()) {</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    json::arrayPushBack(arr, ToJSON&lt;Value&gt;(p.first));</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  }</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  json::putKV(obj, key, arr);</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;}</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;}  <span class="comment">// namespace detail</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;  payload_map&lt;T&gt;&amp; getMapMut() {</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">const_cast&lt;</span>payload_map&lt;T&gt;&amp;<span class="keyword">&gt;</span>(this-&gt;getMap&lt;T&gt;());</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;  }</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;  payload_value_sorted_map&lt;T&gt;&amp; getInFlightMapMut() {</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">const_cast&lt;</span>payload_value_sorted_map&lt;T&gt;&amp;<span class="keyword">&gt;</span>(this-&gt;getInFlightMap&lt;T&gt;());</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;  }</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;};</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">// clang-format off</span></div>
+<div class="line"><a name="l00372"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a7b83df1c20f27f50de559c94e03febcb">  372</a></span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;&gt; <a class="code" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a> MemPool::submit&lt;ATV&gt;(<span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; atv, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00374"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a895eb27cc1690b9236d5edc906d69d26">  374</a></span>&#160;<span class="keyword">template</span> &lt;&gt; <a class="code" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a> MemPool::submit&lt;VTB&gt;(<span class="keyword">const</span> std::shared_ptr&lt;VTB&gt;&amp; vtb, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00376"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a29e3ca04c94b9818712d07ba039590d9">  376</a></span>&#160;<span class="keyword">template</span> &lt;&gt; <a class="code" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a> MemPool::submit&lt;VbkBlock&gt;(<span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; block, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00378"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a7ddec8b4bb32e57104f19af8fe91a550">  378</a></span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">const</span> MemPool::payload_map&lt;VbkBlock&gt;&amp; MemPool::getMap() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">const</span> MemPool::payload_map&lt;ATV&gt;&amp; MemPool::getMap() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="keyword">template</span> &lt;&gt; <span class="keyword">const</span> MemPool::payload_map&lt;VTB&gt;&amp; MemPool::getMap() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00384"></a><span class="lineno"><a class="line" href="structaltintegration_1_1MemPool.html#a7ced15979f468651e878758b7159b1f9">  384</a></span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">const</span> MemPool::payload_value_sorted_map&lt;VbkBlock&gt;&amp; MemPool::getInFlightMap() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">const</span> MemPool::payload_value_sorted_map&lt;ATV&gt;&amp; MemPool::getInFlightMap() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00388"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#af867360c1fdc1aa7268e18f6681888eb">  388</a></span>&#160;<span class="keyword">template</span>&lt;&gt; <span class="keyword">const</span> MemPool::payload_value_sorted_map&lt;VTB&gt;&amp; MemPool::getInFlightMap() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="keyword">template</span> &lt;&gt; signals::Signal&lt;void(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1ATV.html">ATV</a>&amp;)&gt;&amp; MemPool::getSignal();</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="keyword">template</span> &lt;&gt; signals::Signal&lt;void(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VTB.html">VTB</a>&amp;)&gt;&amp; MemPool::getSignal();</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="keyword">template</span> &lt;&gt; signals::Signal&lt;void(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&amp;)&gt;&amp; MemPool::getSignal();</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="comment">// clang-format on</span></div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="keyword">namespace </span>detail {</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160; </div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value&gt;</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;Value ToJSON(<span class="keyword">const</span> MemPool&amp; mp) {</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;Value&gt;();</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  detail::mapToJson&lt;Value, VbkBlock&gt;(obj, mp, <span class="stringliteral">&quot;vbkblocks&quot;</span>);</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  detail::mapToJson&lt;Value, ATV&gt;(obj, mp, <span class="stringliteral">&quot;atvs&quot;</span>);</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;  detail::mapToJson&lt;Value, VTB&gt;(obj, mp, <span class="stringliteral">&quot;vtbs&quot;</span>);</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160; </div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value, <span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> mapToJson(Value&amp; obj, <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1MemPool.html">MemPool</a>&amp; mp, <span class="keyword">const</span> std::string&amp; key) {</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  <span class="keyword">auto</span> arr = json::makeEmptyArray&lt;Value&gt;();</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; p : mp.getMap&lt;T&gt;()) {</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    json::arrayPushBack(arr, ToJSON&lt;Value&gt;(p.first));</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;  }</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; p : mp.getInFlightMap&lt;T&gt;()) {</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    json::arrayPushBack(arr, ToJSON&lt;Value&gt;(p.first));</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  }</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  json::putKV(obj, key, arr);</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;}</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// !</span></div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;}  <span class="comment">// namespace detail</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160; </div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value&gt;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;Value ToJSON(<span class="keyword">const</span> MemPool&amp; mp) {</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;Value&gt;();</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160; </div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  detail::mapToJson&lt;Value, VbkBlock&gt;(obj, mp, <span class="stringliteral">&quot;vbkblocks&quot;</span>);</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;  detail::mapToJson&lt;Value, ATV&gt;(obj, mp, <span class="stringliteral">&quot;atvs&quot;</span>);</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;  detail::mapToJson&lt;Value, VTB&gt;(obj, mp, <span class="stringliteral">&quot;vtbs&quot;</span>);</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160; </div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;}</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160; </div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// !</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>

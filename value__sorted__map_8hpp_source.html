@@ -105,11 +105,11 @@ $(document).ready(function(){initNavTree('value__sorted__map_8hpp_source.html','
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> K, <span class="keyword">typename</span> V, <span class="keyword">typename</span> Cmp = std::less&lt;V&gt;&gt;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> K, <span class="keyword">typename</span> V&gt;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">class </span>ValueSortedMap {</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">using</span> pair_t = std::pair&lt;const K, V&gt;;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">using</span> cmp_t = Cmp;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">using</span> cmp_t = std::function&lt;bool(<span class="keyword">const</span> V&amp;, <span class="keyword">const</span> V&amp;)&gt;;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keyword">using</span> set_t = <span class="keyword">typename</span> std::multiset&lt;V, cmp_t&gt;;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">using</span> map_t = std::unordered_map&lt;K, V&gt;;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
@@ -123,7 +123,7 @@ $(document).ready(function(){initNavTree('value__sorted__map_8hpp_source.html','
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  ~ValueSortedMap() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">explicit</span> ValueSortedMap(cmp_t cmp = cmp_t{}) : set_(cmp) {}</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">explicit</span> ValueSortedMap(cmp_t cmp) : set_(cmp) {}</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  iterator_t find(<span class="keyword">const</span> K&amp; key) { <span class="keywordflow">return</span> map_.find(key); }</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  const_iterator_t find(<span class="keyword">const</span> K&amp; key)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> map_.find(key); }</div>
