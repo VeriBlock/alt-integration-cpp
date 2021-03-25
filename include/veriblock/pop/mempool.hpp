@@ -285,9 +285,22 @@ struct MemPool {
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
 
-  atv_value_sorted_map_t atvs_in_flight_{};
-  vtb_value_sorted_map_t vtbs_in_flight_{};
-  vbk_value_sorted_map_t vbkblocks_in_flight_{};
+  atv_value_sorted_map_t atvs_in_flight_{
+      [](const std::shared_ptr<ATV>& v1,
+         const std::shared_ptr<ATV>& v2) -> bool {
+        return v1->blockOfProof.getHeight() < v2->blockOfProof.getHeight();
+      }};
+  vtb_value_sorted_map_t vtbs_in_flight_{
+      [](const std::shared_ptr<VTB>& v1,
+         const std::shared_ptr<VTB>& v2) -> bool {
+        return v1->containingBlock.getHeight() <
+               v2->containingBlock.getHeight();
+      }};
+  vbk_value_sorted_map_t vbkblocks_in_flight_{
+      [](const std::shared_ptr<VbkBlock>& v1,
+         const std::shared_ptr<VbkBlock>& v2) -> bool {
+        return v1->getHeight() < v2->getHeight();
+      }};
 
   VbkPayloadsRelations& getOrPutVbkRelation(
       const std::shared_ptr<VbkBlock>& block);
