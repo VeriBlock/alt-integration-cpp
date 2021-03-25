@@ -48,7 +48,7 @@ class PopMempoolReorgTest(PopIntegrationTestFramework):
         self.nodes[0].connect(self.nodes[1])
         self.log.info("connect node 1 and node 0")
 
-        sync_all(self.nodes, timeout=30)
+        sync_all(self.nodes, timeout=60)
         self.log.info("nodes[0,1] are in sync")
 
         assert self.nodes[1].getbestblock() == self.nodes[0].getbestblock()
