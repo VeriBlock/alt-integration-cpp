@@ -1,5 +1,18 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1VbkChainParams.html#a4cb58ed3c06e17d29714c0034e3d807d":[3,0,0,18,2],
+"structaltintegration_1_1VbkChainParams.html#a766b7332545c26fb38be6a5a67d1a033":[3,0,0,18,10],
+"structaltintegration_1_1VbkChainParams.html#a841f25a4f18c13464b5bd2222e93486d":[3,0,0,18,18],
+"structaltintegration_1_1VbkChainParams.html#a915918004bcef96ca500b4e9c27ebcab":[3,0,0,18,15],
+"structaltintegration_1_1VbkChainParams.html#a9e5be95382333ffa0319da3fa55d3c37":[3,0,0,18,3],
+"structaltintegration_1_1VbkChainParams.html#abe0c362d91e499c991f4363eeadecb69":[3,0,0,18,12],
+"structaltintegration_1_1VbkChainParams.html#abf2dbbf05276d23c2dc232ac7ce595ec":[3,0,0,18,9],
+"structaltintegration_1_1VbkChainParams.html#ad6b531407322bb51c30aff50379bf280":[3,0,0,18,22],
+"structaltintegration_1_1VbkChainParams.html#ad6bc3b67ded234ed34bda81845f09488":[3,0,0,18,16],
+"structaltintegration_1_1VbkChainParams.html#add2841aef405740d3cb72937f35e8e94":[3,0,0,18,1],
+"structaltintegration_1_1VbkChainParams.html#add46ddb4623900ade62aa823372305a7":[3,0,0,18,19],
+"structaltintegration_1_1VbkChainParams.html#add95d77ca720bda96f88c4dd96305999":[3,0,0,18,6],
+"structaltintegration_1_1VbkChainParams.html#ae9f65fc5fb7bc514a1d5f8a46a884e43":[3,0,0,18,4],
 "structaltintegration_1_1VbkChainParams.html#aea2724726bbfd518151a332f13b18d18":[3,0,0,18,11],
 "structaltintegration_1_1VbkChainParams.html#aecb89911f8ae26b0077f2a292217a488":[3,0,0,18,17],
 "structaltintegration_1_1VbkChainParamsMain.html":[3,0,0,19],
@@ -104,7 +117,7 @@ var NAVTREEINDEX7 =
 "tree__algo_8hpp_source.html":[4,0,1,0,0,1,21],
 "type__traits_8hpp_source.html":[4,0,1,0,0,44],
 "uint_8hpp_source.html":[4,0,1,0,0,45],
-"util_8hpp_source.html":[4,0,1,0,0,8,7],
+"util_8hpp_source.html":[4,0,1,0,0,8,11],
 "utils_8h_source.html":[4,0,1,0,0,2,7],
 "validation__state_8h_source.html":[4,0,1,0,0,2,8],
 "validation__state_8hpp_source.html":[4,0,1,0,0,46],
@@ -120,11 +133,11 @@ var NAVTREEINDEX7 =
 "vblake_8hpp_source.html":[4,0,1,0,0,4,4],
 "vtb_8hpp_source.html":[4,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[4,0,1,0,0,48],
-"":[2,0,0,5],
-"":[2,0,0,0],
 "":[2,0,0,4],
+"":[2,0,0,5],
 "":[2,0,0,1],
-"":[2,0,0,6],
+"":[2,0,0,2],
 "":[2,0,1],
-"":[2,0,0,2]
+"":[2,0,0,6],
+"":[2,0,0,0]
 };
