@@ -127,6 +127,7 @@ struct BtcBlock {
       const BtcBlock::hash_t& precalculatedHash);
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const BtcBlock& b) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
@@ -140,12 +141,14 @@ JsonValue ToJSON(const BtcBlock& b) {
   return object;
 }
 
+//! @overload
 bool DeserializeFromRaw(
     ReadStream& stream,
     BtcBlock& out,
     ValidationState& state,
     const BtcBlock::hash_t& precalculatedHash = BtcBlock::hash_t{});
 
+//! @overload
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     BtcBlock& out,

@@ -15,6 +15,7 @@
 
 namespace altintegration {
 
+//! @private
 template <typename K, typename V, typename Cmp = std::less<V>>
 class ValueSortedMap {
  public:

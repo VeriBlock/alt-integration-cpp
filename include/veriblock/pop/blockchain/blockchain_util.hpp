@@ -14,26 +14,32 @@
 
 namespace altintegration {
 
+//! @private
 template <typename Block>
 void determineBestChain(Chain<Block>& currentBest, BlockIndex<Block>& indexNew);
 
+//! @private
 template <typename Block, typename ChainParams>
 uint32_t getNextWorkRequired(const BlockIndex<Block>& prevBlock,
                              const Block& block,
                              const ChainParams& params);
 
+//! @private
 template <typename Block>
 ArithUint256 getBlockProof(const Block& block);
 
+//! @private
 template <typename Block>
 int64_t getMedianTimePast(const BlockIndex<Block>& prev);
 
+//! @private
 template <typename Block, typename ChainParams>
 bool checkBlockTime(const BlockIndex<Block>& prev,
                     const Block& block,
                     ValidationState& state,
                     const ChainParams& param);
 
+//! @private
 template <typename Block, typename ChainParams>
 bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             const Block& block,
@@ -41,11 +47,13 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             const ChainParams& params,
                             bool shouldVerifyNextWork = true);
 
+//! @private
 template <typename Block, typename Storage>
 void removePayloadsFromIndex(Storage& storage,
                              BlockIndex<Block>& index,
                              const CommandGroup& cg);
 
+//! @private
 template <typename ProtectedBlockTree>
 bool recoverEndorsements(ProtectedBlockTree& ed_,
                          Chain<typename ProtectedBlockTree::index_t>& chain,
@@ -122,9 +130,11 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
   return true;
 }
 
+//! @private
 template <typename Block>
 void assertBlockCanBeRemoved(const Block& block);
 
+//! @private
 template <typename Block>
 void assertBlockSanity(const Block& block) {
   VBK_ASSERT_MSG(block.getHash() != block.getPreviousBlock(),
@@ -133,6 +143,7 @@ void assertBlockSanity(const Block& block) {
                  HexStr(block.getHash()));
 }
 
+//! @private
 template <typename Tree, typename Pop>
 void payloadToCommands(Tree& tree,
                        const Pop& pop,
@@ -141,12 +152,14 @@ void payloadToCommands(Tree& tree,
 
 struct PopData;
 
+//! @private
 template <typename Tree, typename PayloadsT>
 std::vector<CommandGroup> payloadsToCommandGroups(
     Tree& tree,
     const PayloadsT& pop,
     const std::vector<uint8_t>& containinghash);
 
+//! @private
 template <typename Tree, typename Pop>
 void vectorPopToCommandGroup(Tree& tree,
                              const std::vector<Pop>& pop,
@@ -164,6 +177,7 @@ void vectorPopToCommandGroup(Tree& tree,
   }
 }
 
+//! @private
 template <typename BlockTree>
 bool areOnSameChain(const typename BlockTree::block_t& blk1,
                     const typename BlockTree::block_t& blk2,

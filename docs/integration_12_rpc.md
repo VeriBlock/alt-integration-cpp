@@ -192,7 +192,7 @@ Pop RPC test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/
 # 7. Add RPC service and test to the makefile.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am)
-```diff
+```cpp
 libbitcoin_server_a_SOURCES = \
    policy/settings.cpp \
    pow.cpp \
@@ -205,7 +205,7 @@ libbitcoin_server_a_SOURCES = \
 ```
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
-```diff
+```cpp
  ### VeriBlock section start
  # path is relative to src
  VBK_TESTS = \

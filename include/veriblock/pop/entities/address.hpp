@@ -62,7 +62,8 @@ struct Address {
 
   /**
    * Parse provided string and convert it to VBK address
-   * @param input should contain text representation of an address
+   * @param[in] input should contain text representation of an address
+   * @param[out] state validation state
    * @return Address containing VBK address
    */
   bool fromString(const std::string& input, ValidationState& state);

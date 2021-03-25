@@ -33,15 +33,146 @@ extern template struct BlockIndex<AltBlock>;
 extern template struct BaseBlockTree<AltBlock>;
 
 // clang-format off
-/**
- * @struct AltBlockTree
- * @brief Represents simplified view on Altchain's block tree, maintains VBK tree and BTC tree.
- * @copydoc altblocktree
- *
- * @ingroup api
- */
+//! @struct AltBlockTree
+//!
+//! @brief Represents simplified view on Altchain's block tree, maintains VBK tree and
+//! BTC tree.
+//!
+//! Helps Altchain to compare Altchain blocks by POP score in POP Fork Resolution.
+//! @invariant If POP score of two chains are equal, it expects Altchain to resolve conflict using their native fork resolution algorithm.
+//!
+//! AltBlockTree is initialized with Altchain, Veriblock and Bitcoin parameters, as well as with PayloadsStorage implementation.
+//! ```cpp
+//! // use mainnet for all chains, for instance
+//! AltChainParamsMain altp;
+//! VbkChainParamsMain vbkp;
+//! BtcChainParamsMain btcp;
+//! // your implementation of PayloadsStorage
+//! PayloadsProviderImpl provider;
+//! AltBlockTree tree(altp, vbkp, btcp, provider);
+//! ```
+//!
+//! After initialization AltBlockTree does not contain any blocks.
+//! **Users MUST bootstrap AltBlockTree** - add initial/genesis/root block of Altchain.
+//!
+//! We will refer to this block as **bootstrap block**.
+//! Bootstrap block is a first block in Altchain that can be endorsed, but can not contain POP body (PopData).
+//!
+//! If `bootstrap()` fails, your block provided in struct AltChainParams::getBootstrapBlock() is invalid.
+//!
+//! ValidationState will contain detailed info about failure reason, if any.
+//!
+//!```cpp
+//! ValidationState state;
+//! bool ret = tree.bootstrap(state);
+//! assert(ret && "bootstrap is unsuccessful");
+//!```
+//!
+//! @invariant bootstrap block is immediately finalized - it can not be reorganized.
+//!
+//! Whenever any new **full block** (block with header, block body and PopData) is accepted,
+//! users must first add block header to AltBlockTree, then add PopData to this block.
+//!
+//!```cpp
+//! bool onNewFullBlock(AltBlockTree& tree, Block block) {
+//!     ValidationState state;
+//!
+//!     // first, add block header. if this returns false,
+//!     // header can not be connected (invalid).
+//!     if(!tree.acceptBlockHeader(block.getHeader(), state)) {
+//!         //! block header is invalid. Use state to get info about failure.
+//!         return false;
+//!     }
+//!
+//!     // then, attach block body (PopData) to block header.
+//!     // if block does not exist, this will fail on assert.
+//!     tree.acceptBlock(block.getHash(), block.getPopData());
+//!
+//!     // ...
+//! ```
+//!
+//! AltBlockTree::acceptBlockHeader() connects block immediately if all previous blocks are connected, or just adds block body to AltBlock when one of previous blocks is not connected.
+//!
+//! After that, users can check if this block is connected:
+//! ```cpp
+//!     // ...
+//!     // this returns nullptr if block can not be found
+//!     auto* blockindex = tree.getBlockIndex(block.getHash());
+//!     assert(blockindex && "we added this block to a tree, so it must exist");
+//!
+//!     auto candidates = tree.getConnectedTipsAfter(*blockindex);
+//!     if(candidates.empty()) {
+//!       // we have no POP FR candidates
+//!       return true; //! block have been added
+//!     }
+//!
+//!     const auto* tip = tree.getBestChain().tip();
+//!     for(const auto* candidate : candidates) {
+//!         // here, we assume that candidate has all txes downloaded and block is fully available
+//!
+//!         // compare current tip to a candidate
+//!         int result = tree.comparePopScore(tip->getHash(), candidate->getHash());
+//! ```
+//!
+//! @note after AltBlockTree::comparePopScore AltBlockTree always corresponds to a state, as if winner chain have been applied.
+//!
+//!```cpp
+//!         if(result < 0) {
+//!             // candidate has better POP score.
+//!             // tree already switched to candidate chain.
+//!
+//!             UpdateTip(candidate->getHash());
+//!             // NOTE: update `tip`, otherwise old tip will be passed to first arg,
+//!             // and comparePopScore will die on assert
+//!             tip = candidate;
+//!             return true;
+//!         } else if (result == 0) {
+//!             // tip POP score == candidate POP score
+//!             // tree tip is unchanged
+//!             // fallback to chain-native Fork Resolution algorithm
+//!
+//!             // in BTC, for example, compare blocks by chainwork
+//!             if(tip->nChainWork < candidate->nChainWork) {
+//!                 //! candidate has better chainwork
+//!                 UpdateTip(candidate->getHash());
+//!             }
+//!             return true;
+//!        } else {
+//!             // candidate is invalid or has worse POP score
+//!             // tree tip is unchanged
+//!             return true;
+//!         }
+//!     } //! end of forloop
+//! } //! end of OnNewFullBlock
+//! ```
+//!
+//! @invariant AltBlockTree::comparePopScore always compares current AltBlockTree tip to other block. To avoid confusion, you must specify tip explicitly as first arg. If incorrect tip is passed, function dies on assert.
+//!
+//! @invariant AltBlockTree::comparePopScore always leaves AltBlockTree switched to winner (by POP Score) chain.
+//!
+//! @invariant Current active chain of AltBlockTree always corresponds to an empty tree with all applied blocks from first bootstrap block to current tip, i.e. currently applied active chain and this state MUST be always valid.
+//!
+//! When tip is changed, Altchain MUST change state of AltBlockTree:
+//!
+//! @note use AltBlockTree::setState() to switch from current best chain to new block. It can very expensive operation if there's large reorg. If altchain is already at this state, this is a no-op.
+//!
+//! ```cpp
+//! void UpdateTip(uint256 bestHash) {
+//!   ValidationState state;
+//!   //! setState returns true if all blocks on path (tip...bestHash] are valid
+//!   bool ret = tree.setState(bestHash, state);
+//!   assert(ret && "this block won FR, so it must be valid");
+//! }
+//! ```
+//! @invariant Current tip of your Altchain tree MUST correspond to `tree.getBestChain().tip()`, so calling AltBlockTree::setState() ensures they are in sync.
+//!
+//! @see PayloadsStorage
+//! @see AltChainParams
+//! @see VbkChainParams
+//! @see BtcChainParams
+
 // clang-format on
-struct AltBlockTree : public BaseBlockTree<AltBlock> {
+struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
@@ -71,7 +202,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    *
    * @param[out] state validation state
    * @return true in success, false if block is invalid.
-   * @ingroup api
+   * @private
    */
   VBK_CHECK_RETURN bool bootstrap(ValidationState& state);
 
@@ -80,7 +211,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @param[in] block ALT block header
    * @param[out] state validation state
    * @return true if block is valid, and added; false otherwise.
-   * @ingroup api
    */
   VBK_CHECK_RETURN bool acceptBlockHeader(const AltBlock& block,
                                           ValidationState& state);
@@ -92,10 +222,10 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * When block is connected (meaning that all of its ancestors are also
    * connected and have block body), it emits new signal onBlockConnected.
    *
-   * @invariant can be executed on blocks in random order
-   * @invariant must not be executed twice on the same block
-   * @invariant must not be executed on bootstrap block
-   * @invariant PopData must be statelessly validated before passing it here
+   * @pre can be executed on blocks in random order. I.e.
+   * @pre must not be executed twice on the same block
+   * @pre must not be executed on bootstrap block
+   * @pre PopData must be statelessly validated before passing it here
    *
    * @throws StateCorruptedException when we detect state corruption and we can
    * not recover.
@@ -103,7 +233,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @param[in] block hash of block where to add the block body
    * @param[in] payloads all POP payloads stored in this block
    *
-   * @ingroup api
    */
   void acceptBlock(const hash_t& block, const PopData& payloads);
   //! @overload
@@ -117,7 +246,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * Get all connected tips after given block.
    * @param[in] index input block
    * @return vector of blocks where every block is connected and after index.
-   * @ingroup api
    */
   std::vector<const index_t*> getConnectedTipsAfter(const index_t& index) const;
 
@@ -142,7 +270,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @return true if block is valid
    * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is undefined
    * and can not be used. Tip: ask user to run with '-reindex'.
-   * @ingroup api
    */
   VBK_CHECK_RETURN bool loadBlock(std::unique_ptr<stored_index_t> index,
                                   ValidationState& state) override;
@@ -152,7 +279,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @param[in] hash tip hash
    * @param[out] state validation state
    * @return true on success, false otherwise
-   * @ingroup api
    */
   VBK_CHECK_RETURN bool loadTip(const hash_t& hash,
                                 ValidationState& state) override;
@@ -195,7 +321,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * not recover.
    *
    * @warning Operation can be expensive for long forks.
-   * @ingroup api
    */
   VBK_CHECK_RETURN int comparePopScore(const AltBlock::hash_t& A,
                                        const AltBlock::hash_t& B);
@@ -218,12 +343,12 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * @warning Expensive operation when we need to do long reorgs.
    * @throws StateCorruptedException when we detect state corruption and we can
    * not recover.
-   * @ingroup api
    */
   VBK_CHECK_RETURN bool setState(index_t& to, ValidationState& state) override;
   //! @overload
   using base::setState;
 
+  //! @private
   bool finalizeBlock(const hash_t& block);
 
   /**
@@ -238,7 +363,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   /**
    * Removes all payloads from a block
    * @param[in] hash
-   * @ingroup api
+   * @private
    */
   void removePayloads(const hash_t& hash);
 
@@ -251,17 +376,14 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @private
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
   //! Accessor for VBK tree
-  //! @ingroup api
   const VbkBlockTree& vbk() const { return cmp_.getProtectingBlockTree(); }
   //! @private
   VbkBlockTree::BtcTree& btc() { return cmp_.getProtectingBlockTree().btc(); }
   //! Accessor for BTC tree
-  //! @ingroup api
   const VbkBlockTree::BtcTree& btc() const { return cmp_.getProtectingBlockTree().btc(); }
   //! @private
   const PopForkComparator& getComparator() const { return cmp_; }
   //! Accessor for Network Parameters stored in this tree
-  //! @ingroup api
   const AltChainParams& getParams() const { return *alt_config_; }
   //! @private
   PayloadsIndex& getPayloadsIndex()  { return payloadsIndex_; }
@@ -283,27 +405,30 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @private
   using base::removeLeaf;
 
- protected:
+ private:
   const alt_config_t* alt_config_;
-  const vbk_config_t* vbk_config_;
-  const btc_config_t* btc_config_;
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
 
+  //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
+  //! @private
   void setPayloads(index_t& index, const PopData& payloads);
 
   /**
    * Connect the block to the tree, doing stateful validation(incomplete at this
    * moment)
    * @return true if the block is statefully valid
+   * @private
    */
   bool connectBlock(index_t& index, ValidationState& state);
 
+  //! @private
   void setTipContinueOnInvalid(index_t& to);
 
+  //! @private
   void removeAllPayloads(index_t& index);
 };
 

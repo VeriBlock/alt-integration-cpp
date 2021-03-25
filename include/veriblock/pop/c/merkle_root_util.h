@@ -29,6 +29,7 @@ inline void pop_sha256d_concat(pop_uint256 output,
   pop_sha256d(output, bytes, size);
 }
 
+//! @private
 typedef struct pop_context_info {
   int height;
   pop_uint256 first_prev_keystone;

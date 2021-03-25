@@ -17,8 +17,9 @@
 namespace altintegration {
 
 /**
- * @struct PopRewards
- * @ingroup entities
+ * @struct PopPayouts
+ *
+ * A container for Pop payouts information.
  */
 struct PopPayouts {
   using payout_info_t = std::vector<uint8_t>;

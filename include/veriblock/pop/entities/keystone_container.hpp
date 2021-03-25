@@ -12,6 +12,11 @@
 
 namespace altintegration {
 
+/**
+ * A container for two previous keystones of endorsed block.
+ *
+ * A keystone is a block which satisfies a condition `isKeystone(block.height) == true`.
+ */
 struct KeystoneContainer {
   std::vector<uint8_t> firstPreviousKeystone;
   std::vector<uint8_t> secondPreviousKeystone;
@@ -29,10 +34,12 @@ struct KeystoneContainer {
   }
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 KeystoneContainer& container,
                                 ValidationState& state);
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const KeystoneContainer& c) {
   auto obj = json::makeEmptyObject<JsonValue>();

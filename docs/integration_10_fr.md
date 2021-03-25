@@ -4,8 +4,6 @@
 
 # Overview
 
-See [Pop protocol description](@ref pop)
-
 Pop fork resolution uses Pop score to determine the winning chain. One block with highest Pop score can rollback a consideraby lengthy chain. There is no cumulative chain work like in Bitcoin. Therefore work comparator should be replaced with Pop aware comparator and candidate chain tips should be stored disregard their cumulative difficulty.
 
 # 1. Add fork resoultion functions to the pop_service.cpp and pop_service.hpp.
@@ -470,7 +468,7 @@ Pop fork resolution test: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/s
 # 4. Update makefile to run tests.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include)
-```diff
+```cpp
  ### VeriBlock section start
  # path is relative to src
  VBK_TESTS = \

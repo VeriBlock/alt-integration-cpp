@@ -316,6 +316,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 };
 
+//! @private
 template <typename Block, typename ChainParams>
 void PrintTo(const BlockTree<Block, ChainParams>& tree, std::ostream* os) {
   *os << tree.toPrettyString();

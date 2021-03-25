@@ -10,6 +10,9 @@
 
 namespace altintegration {
 
+/**
+ * A command which performs stateful check of PublicationData stored in ATV.
+ */
 struct CheckPublicationData : public Command {
   ~CheckPublicationData() override = default;
 

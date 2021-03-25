@@ -59,6 +59,7 @@ struct BtcTx {
   hash_t getHash() const;
 };
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 BtcTx& out,
                                 ValidationState& state);

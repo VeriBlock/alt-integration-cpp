@@ -26,6 +26,7 @@ extern template struct BlockIndex<VbkBlock>;
 extern template struct BlockTree<VbkBlock, VbkChainParams>;
 extern template struct BaseBlockTree<VbkBlock>;
 
+//! Bitcoin tree
 using BtcBlockTree = BlockTree<BtcBlock, BtcChainParams>;
 
 /**
@@ -181,26 +182,32 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsIndex& payloadsIndex_;
 };
 
+//! @private
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index);
+//! @private
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index);
 
+//! @private
 template <>
 void assertBlockSanity(const VbkBlock& block);
 
+//! @private
 template <>
 std::vector<CommandGroup> payloadsToCommandGroups(
     VbkBlockTree& tree,
     const std::vector<VTB>& pop,
     const std::vector<uint8_t>& containinghash);
 
+//! @private
 template <>
 void payloadToCommands(VbkBlockTree& tree,
                        const VTB& pop,
                        const std::vector<uint8_t>& containingHash,
                        std::vector<CommandPtr>& cmds);
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
@@ -238,6 +245,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   return obj;
 }
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
@@ -259,16 +267,17 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   return obj;
 }
 
-// HACK: getBlockIndex accepts either hash_t or prev_block_hash_t
-// then, depending on what it received, it should do trim LE on full hash to
-// receive short hash, which is stored inside a map. In this weird case, when
-// Block=VbkBlock, we may call `getBlockIndex(block->previousBlock)`, it is a
-// call `getBlockIndex(Blob<12>). But when `getBlockIndex` accepts it, it does
-// an implicit cast to full hash (hash_t), adding zeroes in the end. Then,
-// .trimLE returns 12 zeroes.
-//
-// This hack allows us to inject explicit conversion hash_t (Blob<24>) ->
-// prev_block_hash_t (Blob<12>).
+//! HACK: getBlockIndex accepts either hash_t or prev_block_hash_t
+//! then, depending on what it received, it should do trim LE on full hash to
+//! receive short hash, which is stored inside a map. In this weird case, when
+//! Block=VbkBlock, we may call `getBlockIndex(block->previousBlock)`, it is a
+//! call `getBlockIndex(Blob<12>). But when `getBlockIndex` accepts it, it does
+//! an implicit cast to full hash (hash_t), adding zeroes in the end. Then,
+//! .trimLE returns 12 zeroes.
+//!
+//! This hack allows us to inject explicit conversion hash_t (Blob<24>) ->
+//! prev_block_hash_t (Blob<12>).
+//! @private
 template <>
 template <>
 inline BaseBlockTree<VbkBlock>::prev_block_hash_t
@@ -278,6 +287,7 @@ BaseBlockTree<VbkBlock>::makePrevHash<BaseBlockTree<VbkBlock>::hash_t>(
   return h.template trimLE<prev_block_hash_t::size()>();
 }
 
+//! @private
 inline void PrintTo(const VbkBlockTree& tree, std::ostream* os) {
   *os << tree.toPrettyString();
 }

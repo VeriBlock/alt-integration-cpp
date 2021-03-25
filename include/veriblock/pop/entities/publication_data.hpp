@@ -20,7 +20,6 @@ namespace altintegration {
  *
  * Publication data about ALT block inside VBK blockchain.
  *
- * @ingroup entities
  */
 struct PublicationData {
   //! altchain network POP ID
@@ -44,7 +43,7 @@ struct PublicationData {
   size_t estimateSize() const;
 };
 
-//! @private
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const PublicationData& p) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -55,6 +54,7 @@ JsonValue ToJSON(const PublicationData& p) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 PublicationData& out,
                                 ValidationState& state);

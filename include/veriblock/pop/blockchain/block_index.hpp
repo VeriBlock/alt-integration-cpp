@@ -407,11 +407,13 @@ bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
   return isBlockOutdated(finalBlock, *fork);
 }
 
+//! @private
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
 }
 
+//! @overload
 template <typename JsonValue, typename Block>
 JsonValue ToJSON(const BlockIndex<Block>& i) {
   auto obj = json::makeEmptyObject<JsonValue>();
@@ -419,6 +421,38 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
   json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
   json::putIntKV(obj, "status", i.status);
   return obj;
+}
+
+<<<<<<< HEAD
+=======
+//! @overload
+template <typename Block>
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    BlockIndex<Block>& out,
+    ValidationState& state,
+    typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
+  const auto& name = Block::name();
+  using height_t = typename Block::height_t;
+  if (!stream.readBE<height_t>(out.height, state)) {
+    return state.Invalid(name + "-block-index-height");
+  }
+  Block block{};
+  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
+    return state.Invalid(name + "-block-index-header");
+  }
+  out.setHeader(block);
+  if (!stream.readBE<uint32_t>(out.status, state)) {
+    return state.Invalid(name + "-block-index-status");
+  }
+
+  using addon_t = typename Block::addon_t;
+  addon_t& addon = out;
+  if (!DeserializeFromVbkEncoding(stream, addon, state)) {
+    return state.Invalid(name + "-block-index-addon");
+  }
+  out.unsetDirty();
+  return true;
 }
 
 }  // namespace altintegration

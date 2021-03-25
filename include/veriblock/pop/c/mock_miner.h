@@ -9,10 +9,6 @@
 #include "bytestream.h"
 #include "validation_state.h"
 
-/**
- * @defgroup c-api C interface
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,7 +26,6 @@ void VBK_FreeMockMiner(MockMiner_t* miner);
  * @param[in] self MockMiner.
  * @return VBK_ByteStream* stream that stores.
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes.
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self);
 
@@ -42,7 +37,6 @@ VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self);
  * @param[in] block_hash_size size of the input block hash.
  * @return VBK_ByteStream* stream that stores
  * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes.
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
                                            const uint8_t* block_hash,
@@ -54,7 +48,6 @@ VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
  * @param[in] self MockMiner.
  * @return VBK_ByteStream* stream that stores.
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes.
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self);
 
@@ -66,7 +59,6 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self);
  * @param[in] block_hash_size size of the input block hash.
  * @return VBK_ByteStream* stream that stores.
  * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes.
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
                                            const uint8_t* block_hash,
@@ -82,7 +74,6 @@ VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
  * @param[out] state VbkValidationState.
  * @return VBK_ByteStream* stream that stores altintgration::ATV in the
  * VbkEncoding format.
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
                                       const uint8_t* publication_data,
@@ -103,7 +94,6 @@ VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
  * @param[out] state VbkValidationState.
  * @return VBK_ByteStream* stream that stores altintgration::VTB in the
  * VbkEncoding format.
- * @ingroup c-api
  */
 VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
                                       const uint8_t* endorsed_vbk_block,

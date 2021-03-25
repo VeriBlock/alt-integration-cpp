@@ -420,12 +420,15 @@ struct BaseBlockTree {
   }
 
   //! the number of blocks that have BLOCK_APPLIED flag set
+  //! @private
   block_height_t appliedBlockCount = 0;
 
  protected:
+  //! @private
   virtual void determineBestChain(index_t& candidate,
                                   ValidationState& state) = 0;
 
+  //! @private
   void tryAddTip(index_t* index) {
     VBK_ASSERT(index);
 
@@ -443,6 +446,7 @@ struct BaseBlockTree {
     tips_.insert(index);
   }
 
+  //! @private
   index_t* touchBlockIndex(const hash_t& hash, index_t* prev) {
     auto shortHash = makePrevHash(hash);
     auto it = blocks_.find(shortHash);
@@ -464,6 +468,7 @@ struct BaseBlockTree {
     return it->second.get();
   }
 
+  //! @private
   index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header,
                                block_height_t bootstrapHeight = 0) {
     VBK_ASSERT(header != nullptr);
@@ -491,6 +496,7 @@ struct BaseBlockTree {
     return current;
   }
 
+  //! @private
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
     assertBlockSanity(*block);
@@ -573,6 +579,7 @@ struct BaseBlockTree {
    * @invariant to deallocate part of a tree, disconnect tree which must remain.
    *
    * @param block
+   * @private
    */
   void deallocateTree(index_t& toDelete) {
     auto* index = &toDelete;
@@ -606,6 +613,7 @@ struct BaseBlockTree {
   //! tree to recover in case if this func is called by mistake.
   //!
   //! @returns false if block not found or prereq are not met
+  //! @private
   virtual bool finalizeBlockImpl(const hash_t& block,
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal) {
@@ -683,6 +691,7 @@ struct BaseBlockTree {
   }
 
   //! callback which is executed when new block is added to a tree
+  //! @private
   virtual void onBlockInserted(index_t* /*ignore*/) {
     /* do nothing in base tree */
   }
@@ -690,6 +699,7 @@ struct BaseBlockTree {
   /**
    * Find all tips affected by a block modification and schedule or do fork
    * resolution
+   * @private
    */
   void updateAffectedTips(index_t& modifiedBlock) {
     if (deferForkResolutionDepth == 0) {
@@ -709,6 +719,8 @@ struct BaseBlockTree {
 
   /**
    * Find all tips affected by a block modification and do fork resolution
+   *
+   * @private
    */
   void doUpdateAffectedTips(index_t& modifiedBlock, ValidationState& state) {
     auto tips = findValidTips<block_t>(this->getTips(), modifiedBlock);
@@ -719,6 +731,7 @@ struct BaseBlockTree {
     }
   }
 
+  //! @private
   void updateTips() {
     if (deferForkResolutionDepth == 0) {
       return doUpdateTips();

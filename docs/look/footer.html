@@ -1,0 +1,25 @@
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.line').each(function(){
+            var t = $(this).html()
+            if(t.startsWith("+")) {
+                $(this).addClass('diff-plus')
+                $(this).html(t.slice(1))
+                $(this).prepend(
+                    $('<div>+</div>')
+                        .addClass('noselect')
+                        .addClass('sign')
+                )
+            } else if (t.startsWith("-")) {
+                $(this).addClass('diff-minus')
+                $(this).html(t.slice(1))
+                $(this).prepend(
+                    $('<div>-</div>')
+                        .addClass('noselect')
+                        .addClass('sign')
+                )
+            }
+        })
+    });
+</script>

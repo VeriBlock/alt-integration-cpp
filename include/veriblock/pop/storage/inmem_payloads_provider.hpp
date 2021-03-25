@@ -13,6 +13,7 @@
 
 namespace altintegration {
 
+//! @private
 struct InmemPayloadsProvider : public PayloadsStorage {
   ~InmemPayloadsProvider() override = default;
 

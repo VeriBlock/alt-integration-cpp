@@ -26,7 +26,6 @@ namespace altintegration {
  *
  * Veriblock POP transaction, which endorses VBK block in BTC blockchain.
  *
- * @ingroup entities
  */
 struct VbkPopTx {
   using hash_t = uint256;
@@ -74,6 +73,7 @@ struct VbkPopTx {
   void toRaw(WriteStream& stream) const;
 };
 
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const VbkPopTx& tx) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -92,12 +92,14 @@ JsonValue ToJSON(const VbkPopTx& tx) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromRaw(ReadStream& stream,
                         Slice<const uint8_t> signature,
                         Slice<const uint8_t> publicKey,
                         VbkPopTx& out,
                         ValidationState& state);
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkPopTx& out,
                                 ValidationState& state);

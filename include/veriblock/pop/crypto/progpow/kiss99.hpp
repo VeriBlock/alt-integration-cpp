@@ -23,6 +23,7 @@ struct kiss99_t;
  */
 uint32_t kiss99(kiss99_t& st);
 
+//! @private
 struct kiss99_t {
   uint32_t z, w, jsr, jcong;
 

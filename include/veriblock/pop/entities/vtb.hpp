@@ -24,7 +24,6 @@ namespace altintegration {
  * Veriblock to Bitcoin publication, committed to Veriblock blockchain in
  * containingBlock.
  *
- * @ingroup entities
  */
 struct VTB {
   using id_t = uint256;
@@ -76,12 +75,13 @@ struct VTB {
   static const std::string _name;
 };
 
+//! @private
 template <>
 struct IsPopPayload<VTB> {
   static const bool value = true;
 };
 
-//! @private
+//! @overload
 template <typename JsonValue>
 JsonValue ToJSON(const VTB& v) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
@@ -93,6 +93,7 @@ JsonValue ToJSON(const VTB& v) {
   return obj;
 }
 
+//! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VTB& out,
                                 ValidationState& state);
