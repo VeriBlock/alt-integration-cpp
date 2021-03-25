@@ -54,7 +54,6 @@ std::vector<typename P::id_t> map_get_id(const std::vector<P>& a) {
   return map_vector<P, typename P::id_t>(a, get_id<P>);
 }
 
-<<<<<<< HEAD
 template <typename A, typename B>
 std::vector<typename A> map_get_id_from_pointers(const std::vector<B*>& b) {
   std::vector<A> a;

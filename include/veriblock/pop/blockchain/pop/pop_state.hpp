@@ -64,38 +64,6 @@ struct PopState {
   }
 };
 
-<<<<<<< HEAD
-=======
-//! @overload
-template <typename T>
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                PopState<T>& out,
-                                ValidationState& state) {
-  std::vector<T> endorsements;
-  auto max = std::max(MAX_POPDATA_ATV, MAX_POPDATA_VTB);
-  if (!readArrayOf<T>(
-          stream,
-          endorsements,
-          state,
-          0,
-          max,
-          [](ReadStream& stream, T& t, ValidationState& state) -> bool {
-            return DeserializeFromVbkEncoding(stream, t, state);
-          })) {
-    return state.Invalid("popstate-bad-endorsement");
-  }
-
-  for (const auto& endorsement : endorsements) {
-    auto it = out._containingEndorsements.emplace(
-        endorsement.getId(), std::make_shared<T>(endorsement));
-    // newly created endorsement must not be null
-    VBK_ASSERT(it->second);
-  }
-  // do not restore 'endorsedBy' here, it will be done later during tree
-  // loading
-  return true;
-}
-
 }  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_POP_STATE_HPP
