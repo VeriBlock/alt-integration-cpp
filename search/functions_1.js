@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['bits_517',['bits',['../classaltintegration_1_1ArithUint256.html#ab263fe41ffc8e40e3875c808cfae687b',1,'altintegration::ArithUint256']]],
-  ['bootstrapwithchain_518',['bootstrapWithChain',['../structaltintegration_1_1BlockTree.html#a378e5bc6b86e1f273a31071a27a4ec78',1,'altintegration::BlockTree']]],
-  ['bootstrapwithgenesis_519',['bootstrapWithGenesis',['../structaltintegration_1_1BlockTree.html#aeaaae6936ec9464d11d0f887605a18c3',1,'altintegration::BlockTree']]],
-  ['btc_520',['btc',['../structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856',1,'altintegration::AltBlockTree']]]
+  ['bits_515',['bits',['../classaltintegration_1_1ArithUint256.html#ab263fe41ffc8e40e3875c808cfae687b',1,'altintegration::ArithUint256']]],
+  ['bootstrapwithchain_516',['bootstrapWithChain',['../structaltintegration_1_1BlockTree.html#a378e5bc6b86e1f273a31071a27a4ec78',1,'altintegration::BlockTree']]],
+  ['bootstrapwithgenesis_517',['bootstrapWithGenesis',['../structaltintegration_1_1BlockTree.html#aeaaae6936ec9464d11d0f887605a18c3',1,'altintegration::BlockTree']]],
+  ['btc_518',['btc',['../structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856',1,'altintegration::AltBlockTree']]]
 ];

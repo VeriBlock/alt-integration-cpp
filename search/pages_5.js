@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['new_20rpc_20calls_837',['New RPC calls',['../integration_12_rpc.html',1,'integration']]]
+  ['new_20rpc_20calls_835',['New RPC calls',['../integration_12_rpc.html',1,'integration']]]
 ];

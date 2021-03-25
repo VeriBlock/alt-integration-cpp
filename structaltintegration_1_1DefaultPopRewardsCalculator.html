@@ -120,7 +120,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1DefaultPopRewa
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a46a055948fa02b84d7f46844da6380f3"><td class="memItemLeft" align="right" valign="top"><a id="a46a055948fa02b84d7f46844da6380f3"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>index_t</b> = AltBlockTree::index_t</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>index_t</b> = <a class="el" href="structaltintegration_1_1BlockIndex.html">AltBlockTree::index_t</a></td></tr>
 <tr class="separator:a46a055948fa02b84d7f46844da6380f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -152,7 +152,7 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ad7350db0af292d89ea78dbd25393cb4e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1DefaultPopRewardsCalculator.html#ad7350db0af292d89ea78dbd25393cb4e">onOverrideTip</a> (const index_t &amp;index)</td></tr>
+<tr class="memitem:ad7350db0af292d89ea78dbd25393cb4e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1DefaultPopRewardsCalculator.html#ad7350db0af292d89ea78dbd25393cb4e">onOverrideTip</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;index)</td></tr>
 <tr class="memdesc:ad7350db0af292d89ea78dbd25393cb4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Will process chain reorg.  <a href="structaltintegration_1_1DefaultPopRewardsCalculator.html#ad7350db0af292d89ea78dbd25393cb4e">More...</a><br /></td></tr>
 <tr class="separator:ad7350db0af292d89ea78dbd25393cb4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f08400e22a73fdc692ad092ebac0e07"><td class="memItemLeft" align="right" valign="top"><a id="a1f08400e22a73fdc692ad092ebac0e07"></a>
@@ -168,7 +168,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memitem:a49a7715ca2b1fcdc072e1af9ef4cc80a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1PopPayouts.html">PopPayouts</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1DefaultPopRewardsCalculator.html#a49a7715ca2b1fcdc072e1af9ef4cc80a">calculatePayoutsInner</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;endorsedBlock, const PopRewardsBigDecimal &amp;endorsedBlockScore, const PopRewardsBigDecimal &amp;popDifficulty)</td></tr>
 <tr class="memdesc:a49a7715ca2b1fcdc072e1af9ef4cc80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate POP rewards for miners.  <a href="structaltintegration_1_1DefaultPopRewardsCalculator.html#a49a7715ca2b1fcdc072e1af9ef4cc80a">More...</a><br /></td></tr>
 <tr class="separator:a49a7715ca2b1fcdc072e1af9ef4cc80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd4c678060a5f2e3085e57f1ce0fc454"><td class="memItemLeft" align="right" valign="top">PopRewardsBigDecimal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454">appendToCache</a> (const index_t &amp;block)</td></tr>
+<tr class="memitem:acd4c678060a5f2e3085e57f1ce0fc454"><td class="memItemLeft" align="right" valign="top">PopRewardsBigDecimal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454">appendToCache</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;block)</td></tr>
 <tr class="memdesc:acd4c678060a5f2e3085e57f1ce0fc454"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate PoP score for the block and append to the cache.  <a href="structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454">More...</a><br /></td></tr>
 <tr class="separator:acd4c678060a5f2e3085e57f1ce0fc454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -178,10 +178,10 @@ Protected Attributes</h2></td></tr>
 <a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>tree_</b></td></tr>
 <tr class="separator:a489e9fd5a7d7be83dba3e14cac92f62e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69039454d736779646d501fce294d675"><td class="memItemLeft" align="right" valign="top"><a id="a69039454d736779646d501fce294d675"></a>
-ring_buffer&lt; const index_t * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>history_</b></td></tr>
+ring_buffer&lt; const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>history_</b></td></tr>
 <tr class="separator:a69039454d736779646d501fce294d675"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a912d652b9922d5629c6c9c179d386c01"><td class="memItemLeft" align="right" valign="top"><a id="a912d652b9922d5629c6c9c179d386c01"></a>
-std::unordered_map&lt; const index_t *, PopRewardsBigDecimal &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>cache_</b></td></tr>
+std::unordered_map&lt; const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *, PopRewardsBigDecimal &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>cache_</b></td></tr>
 <tr class="separator:a912d652b9922d5629c6c9c179d386c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -197,7 +197,7 @@ std::unordered_map&lt; const index_t *, PopRewardsBigDecimal &gt;&#160;</td><td 
         <tr>
           <td class="memname">PopRewardsBigDecimal altintegration::DefaultPopRewardsCalculator::appendToCache </td>
           <td>(</td>
-          <td class="paramtype">const index_t &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;&#160;</td>
           <td class="paramname"><em>block</em></td><td>)</td>
           <td></td>
         </tr>
@@ -542,7 +542,7 @@ std::unordered_map&lt; const index_t *, PopRewardsBigDecimal &gt;&#160;</td><td 
         <tr>
           <td class="memname">void altintegration::DefaultPopRewardsCalculator::onOverrideTip </td>
           <td>(</td>
-          <td class="paramtype">const index_t &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>
           <td></td>
         </tr>
