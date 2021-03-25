@@ -41,9 +41,9 @@ class PopMempoolReorgTest(PopIntegrationTestFramework):
 
         self.log.info("node 1 mine 10 blocks")
         self.nodes[1].generate(nblocks=10)
-        node1_tip = self.nodes[1].getbestblock()
 
-        assert node1_tip == self.nodes[1].getbestblock()
+        assert self.nodes[1].getbestblock() != self.nodes[0].getbestblock()
+        self.log.info("node 1 and node 0 have different tips")
 
         self.nodes[0].connect(self.nodes[1])
         self.log.info("connect node 1 and node 0")
