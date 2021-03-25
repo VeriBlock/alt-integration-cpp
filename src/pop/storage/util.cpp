@@ -15,7 +15,7 @@ namespace detail {
 
 template <typename Block>
 using OnBlockCallback_t =
-    std::function<void(typename Block::hash_t, const BlockIndex<Block>&)>;
+    std::function<void(typename Block::hash_t, const StoredBlockIndex<Block>&)>;
 
 template <typename BlockTreeT>
 bool LoadTree(
@@ -23,15 +23,15 @@ bool LoadTree(
     BlockReader& storage,
     ValidationState& state,
     const OnBlockCallback_t<typename BlockTreeT::block_t>& onBlock = {}) {
-  using index_t = typename BlockTreeT::index_t;
+  using stored_index_t = typename BlockTreeT::stored_index_t;
   using block_t = typename BlockTreeT::block_t;
-  using hash_t = typename index_t::hash_t;
+  using hash_t = typename block_t::hash_t;
 
-  std::vector<std::unique_ptr<index_t>> blocks;
+  std::vector<std::unique_ptr<stored_index_t>> blocks;
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
-    auto val = make_unique<index_t>(nullptr);
+    auto val = make_unique<stored_index_t>();
     if (!it->value(*val)) {
       return state.Invalid("bad-value", "Can not read block data");
     }
@@ -50,12 +50,12 @@ bool LoadTree(
   bool res = storage.getTip<block_t>(tip_hash);
 
   if (!res && !blocks.empty()) {
-    return state.Invalid(index_t::block_t::name() + "-bad-tip",
+    return state.Invalid(block_t::name() + "-bad-tip",
                          "Can not read block tip");
   }
 
   if (res && blocks.empty()) {
-    return state.Invalid(index_t::block_t::name() + "-state-corruption",
+    return state.Invalid(block_t::name() + "-state-corruption",
                          "Can not read blocks");
   }
 
@@ -87,8 +87,8 @@ bool LoadAllTrees(PopContext& context,
           storage,
           state,
           // on every block, take its hash and warmup progpow header cache
-          [](VbkBlock::hash_t hash, const BlockIndex<VbkBlock>& index) {
-            auto serializedHeader = SerializeToRaw(index.getHeader());
+          [](VbkBlock::hash_t hash, const StoredBlockIndex<VbkBlock>& index) {
+            auto serializedHeader = SerializeToRaw(*index.header);
             progpow::insertHeaderCacheEntry(serializedHeader, std::move(hash));
           })) {
     return state.Invalid("failed-to-load-vbk-tree");

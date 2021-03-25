@@ -504,12 +504,12 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
 
   const uint32_t upperBound =
       startTimeEpoch +
-      ((blocktimeSeconds * (double)(height - progPowForkHeight) * 1.2)) +
+      ((uint64_t)blocktimeSeconds * (height - progPowForkHeight) * 12 / 10) +
       (secondsInDay * gracePeriodDays);
 
   uint32_t lowerBound =
       startTimeEpoch +
-      ((blocktimeSeconds * (double)(height - progPowForkHeight) / 1.2)) -
+      ((uint64_t)blocktimeSeconds * (height - progPowForkHeight) * 10 / 12) -
       (secondsInDay * gracePeriodDays);
 
   lowerBound = std::max({lowerBound, startTimeEpoch});

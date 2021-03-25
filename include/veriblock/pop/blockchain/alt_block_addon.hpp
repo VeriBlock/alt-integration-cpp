@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 #define VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 
-#include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blockchain/block_status.hpp>
 #include <veriblock/pop/blockchain/pop/pop_state.hpp>
 #include <veriblock/pop/entities/endorsements.hpp>
@@ -58,8 +57,6 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   std::string toPrettyString() const;
 
-  void toVbkEncoding(WriteStream& w) const;
-
  protected:
   //! list of changes introduced in this block
   // ATV::id_t
@@ -75,15 +72,7 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   template <typename pop_t>
   std::vector<typename pop_t::id_t>& getPayloadIdsInner();
-
-  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                         AltBlockAddon& out,
-                                         ValidationState& state);
 };
-
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                AltBlockAddon& out,
-                                ValidationState& state);
 
 }  // namespace altintegration
 

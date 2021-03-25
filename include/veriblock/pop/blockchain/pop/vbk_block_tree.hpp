@@ -86,6 +86,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using VbkTree = BlockTree<VbkBlock, VbkChainParams>;
   using BtcTree = BtcBlockTree;
   using index_t = VbkTree::index_t;
+  using stored_index_t = VbkTree::stored_index_t;
   using payloads_t = typename index_t::payloads_t;
   using pid_t = typename payloads_t::id_t;
   using endorsement_t = typename index_t::endorsement_t;
@@ -107,7 +108,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   //! - does validation of endorsements
   //! - recovers tips array
   //! @invariant NOT atomic.
-  bool loadBlock(std::unique_ptr<index_t> index, ValidationState& state) override;
+  bool loadBlock(std::unique_ptr<stored_index_t> index, ValidationState& state) override;
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }

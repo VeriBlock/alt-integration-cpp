@@ -48,10 +48,10 @@ inline pop_context_info pop_create_context_info(int height,
 inline uint8_t* pop_write_int_bigendian(uint8_t* out, int value) {
   assert(out);
   assert(sizeof(value) == 4);
-  out[0] = value >> 24;
-  out[1] = value >> 16;
-  out[2] = value >> 8;
-  out[3] = value;
+  out[0] = (uint8_t)(value >> 24);
+  out[1] = (uint8_t)(value >> 16);
+  out[2] = (uint8_t)(value >> 8);
+  out[3] = (uint8_t)value;
   return out + 4;
 }
 

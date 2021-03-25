@@ -17,6 +17,7 @@
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
+#include <veriblock/pop/storage/stored_btc_block_addon.hpp>
 #include <veriblock/pop/uint.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
@@ -34,7 +35,8 @@ struct BtcBlock {
   using height_t = int32_t;
   using nonce_t = uint32_t;
   using merkle_t = uint256;
-  using addon_t = BtcBlockAddon;
+  using addon_t = StoredBtcBlockAddon::addon_t;
+  using stored_addon_t = StoredBtcBlockAddon;
 
   BtcBlock() = default;
   BtcBlock(uint32_t version,

@@ -70,8 +70,8 @@ std::vector<uint8_t> fixedArray(T input) {
 bool readVarLenValue(ReadStream& stream,
                      Slice<const uint8_t>& out,
                      ValidationState& state,
-                     int32_t minLen,
-                     int32_t maxLen);
+                     size_t minLen,
+                     size_t maxLen);
 
 /**
  * Read variable length value, which consists of
@@ -87,8 +87,8 @@ bool readVarLenValue(ReadStream& stream,
 bool readSingleByteLenValue(ReadStream& stream,
                             Slice<const uint8_t>& out,
                             ValidationState& state,
-                            int minLen,
-                            int maxLen);
+                            size_t minLen,
+                            size_t maxLen);
 
 //! @overload
 template <typename Container,
@@ -97,8 +97,8 @@ template <typename Container,
 bool readSingleByteLenValue(ReadStream& stream,
                             Container& out,
                             ValidationState& state,
-                            int minLen,
-                            int maxLen) {
+                            size_t minLen,
+                            size_t maxLen) {
   uint8_t length = 0;
   if (!stream.readBE<uint8_t>(length, state)) {
     return state.Invalid("readsingle-bad-length");
@@ -245,8 +245,8 @@ bool readArrayOf(
     ReadStream& stream,
     std::vector<T>& out,
     ValidationState& state,
-    int32_t min,
-    int32_t max,
+    size_t min,
+    size_t max,
     std::function<bool(ReadStream&, T&, ValidationState&)> readFunc) {
   int32_t count = 0;
   if (!readSingleBEValue<int32_t>(stream, count, state)) {
@@ -258,7 +258,7 @@ bool readArrayOf(
 
   out.reserve(count);
 
-  for (int32_t i = 0; i < count; i++) {
+  for (size_t i = 0; i < count; i++) {
     T item;
     if (!readFunc(stream, item, state)) {
       return state.Invalid("readarray-bad-item", i);

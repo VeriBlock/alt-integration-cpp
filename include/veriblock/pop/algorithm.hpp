@@ -50,6 +50,16 @@ std::vector<typename P::id_t> map_get_id(const std::vector<P>& a) {
   return map_vector<P, typename P::id_t>(a, get_id<P>);
 }
 
+template <typename A, typename B>
+std::vector<typename A> map_get_id_from_pointers(const std::vector<B*>& b) {
+  std::vector<A> a;
+  a.reserve(b.size());
+  std::transform(b.begin(), b.end(), std::back_inserter(a), [&](B* t) -> A {
+    return t->getId();
+  });
+  return a;
+}
+
 template <typename T>
 std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
   auto ids = map_get_id(v);

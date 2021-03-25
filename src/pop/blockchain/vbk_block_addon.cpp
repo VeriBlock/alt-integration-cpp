@@ -20,43 +20,6 @@ const std::vector<typename VTB::id_t>& VbkBlockAddon::getPayloadIds<VTB>()
   return _vtbids;
 }
 
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                VbkBlockAddon& out,
-                                ValidationState& state) {
-  if (!stream.readBE<uint32_t>(out._refCount, state)) {
-    return state.Invalid("vbk-addon-bad-ref-count");
-  }
-
-  PopState<VbkEndorsement>& pop = out;
-  if (!DeserializeFromVbkEncoding(stream, pop, state)) {
-    return state.Invalid("vbk-addon-bad-popstate");
-  }
-
-  if (!readArrayOf<uint256>(
-          stream,
-          out._vtbids,
-          state,
-          0,
-          MAX_VBKPOPTX_PER_VBK_BLOCK,
-          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
-            return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
-          })) {
-    return state.Invalid("vbk-addon-bad-vtbid");
-  }
-
-  return true;
-}
-
-void VbkBlockAddon::toVbkEncoding(WriteStream& w) const {
-  w.writeBE<uint32_t>(_refCount);
-  const PopState<VbkEndorsement>* e = this;
-  e->toVbkEncoding(w);
-  writeArrayOf<uint256>(w, _vtbids, [](WriteStream& w, const uint256& u) {
-    writeSingleByteLenValue(w, u);
-  });
-}
-
 void VbkBlockAddon::setNull() {
   _refCount = 0;
   chainWork = 0;
@@ -75,6 +38,11 @@ void VbkBlockAddon::setIsBootstrap(bool isBootstrap) {
   } else {
     VBK_ASSERT(false && "not supported");
   }
+}
+
+void VbkBlockAddon::setRef(uint32_t count) {
+  _refCount = count;
+  setDirty();
 }
 
 void VbkBlockAddon::removeRef(VbkBlockAddon::ref_height_t) {

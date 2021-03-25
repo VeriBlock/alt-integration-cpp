@@ -53,7 +53,7 @@ void PopValidator::start(size_t threads) {
   tp::ThreadPoolOptions options;
   options.setThreadCount(threads);
   // queue size can "at least" contain full PopData
-  auto size = upper_power_of_two(alt_.maxWorkerQueueSize());
+  auto size = upper_power_of_two((uint32_t)alt_.maxWorkerQueueSize());
   options.setQueueSize(size);
   workers = std::make_shared<ValidationThreadPool>(options);
 #endif
@@ -85,7 +85,7 @@ std::future<ValidationState> PopValidator::addCheck(const VbkBlock& b) {
   bool success = workers->tryPost(t);
   VBK_ASSERT_MSG(success,
                  "Worker queue is full, can't add new item. Max size=%d",
-                 upper_power_of_two(alt_.maxWorkerQueueSize()));
+                 upper_power_of_two((uint32_t)alt_.maxWorkerQueueSize()));
   return r;
 #else
   ValidationState state;
@@ -108,7 +108,7 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& b) {
   bool success = workers->tryPost(t);
   VBK_ASSERT_MSG(success,
                  "Worker queue is full, can't add new item. Max size=%d",
-                 upper_power_of_two(alt_.maxWorkerQueueSize()));
+                 upper_power_of_two((uint32_t)alt_.maxWorkerQueueSize()));
   return r;
 #else
   ValidationState state;
@@ -131,7 +131,7 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& b) {
   bool success = workers->tryPost(t);
   VBK_ASSERT_MSG(success,
                  "Worker queue is full, can't add new item. Max size=%d",
-                 upper_power_of_two(alt_.maxWorkerQueueSize()));
+                 upper_power_of_two((uint32_t)alt_.maxWorkerQueueSize()));
   return r;
 #else
   ValidationState state;

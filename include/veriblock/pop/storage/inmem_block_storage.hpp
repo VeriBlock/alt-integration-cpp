@@ -9,6 +9,7 @@
 #include "block_reader.hpp"
 
 #include "block_batch.hpp"
+#include <veriblock/pop/storage/stored_block_index.hpp>
 
 namespace altintegration {
 
@@ -19,8 +20,8 @@ namespace altintegration {
  */
 struct InmemBlockProvider {
   template <typename T>
-  using M =
-      std::unordered_map<typename T::hash_t, std::unique_ptr<BlockIndex<T>>>;
+  using M = std::unordered_map<typename T::hash_t,
+                               std::unique_ptr<StoredBlockIndex<T>>>;
 
   template <typename T>
   M<T>& getBlocks();
@@ -34,15 +35,14 @@ struct InmemBlockProvider {
   }
 
   template <typename T>
-  std::vector<std::unique_ptr<BlockIndex<T>>> load() {
-    std::vector<std::unique_ptr<BlockIndex<T>>> ret;
+  std::vector<std::unique_ptr<StoredBlockIndex<T>>> load() {
+    std::vector<std::unique_ptr<StoredBlockIndex<T>>> ret;
     auto& m = getBlocks<T>();
     ret.reserve(m.size());
 
     for (auto& b : m) {
       auto& bi = b.second;
-      auto index = make_unique<BlockIndex<T>>(bi->clone());
-      ret.push_back(std::move(index));
+      ret.push_back(std::move(bi));
     }
 
     return ret;
@@ -72,15 +72,17 @@ struct InmemBlockBatch : public BlockBatch {
   ~InmemBlockBatch() override = default;
 
   void writeBlock(const BlockIndex<BtcBlock>& value) override {
-    storage_.btc[value.getHash()] = make_unique<BlockIndex<BtcBlock>>(value.clone());
+    storage_.btc[value.getHash()] = make_unique<StoredBlockIndex<BtcBlock>>(value.toStoredBlockIndex());
   }
 
   void writeBlock(const BlockIndex<VbkBlock>& value) override {
-    storage_.vbk[value.getHash()] = make_unique<BlockIndex<VbkBlock>>(value.clone());
+    storage_.vbk[value.getHash()] =
+        make_unique<StoredBlockIndex<VbkBlock>>(value.toStoredBlockIndex());
   }
 
   void writeBlock(const BlockIndex<AltBlock>& value) override {
-    storage_.alt[value.getHash()] = make_unique<BlockIndex<AltBlock>>(value.clone());
+    storage_.alt[value.getHash()] =
+        make_unique<StoredBlockIndex<AltBlock>>(value.toStoredBlockIndex());
   }
 
   void writeTip(const BlockIndex<BtcBlock>& value) override {

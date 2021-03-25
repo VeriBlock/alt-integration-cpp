@@ -13,6 +13,7 @@
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/signals.hpp>
+#include <veriblock/pop/storage/stored_block_index.hpp>
 
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
@@ -33,6 +34,7 @@ struct BaseBlockTree {
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = typename Block::prev_hash_t;
   using index_t = BlockIndex<Block>;
+  using stored_index_t = StoredBlockIndex<Block>;
   using on_invalidate_t = void(const index_t&);
   using block_index_t =
       std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
@@ -115,19 +117,19 @@ struct BaseBlockTree {
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(std::unique_ptr<index_t> index,
+  virtual bool loadBlock(std::unique_ptr<stored_index_t> index,
                          ValidationState& state) {
     VBK_ASSERT(index != nullptr);
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
     const auto& root = getRoot();
-    if (index->getHeight() < root.getHeight()) {
+    if (index->height < root.getHeight()) {
       return state.Invalid("cant-connect", "Loaded block is too far");
     }
 
-    if (index->getHeight() == root.getHeight() &&
-        index->getHash() != root.getHash()) {
+    if (index->height == root.getHeight() &&
+        index->header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
       return state.Invalid(
           "bad-root",
@@ -135,8 +137,8 @@ struct BaseBlockTree {
                       index->toPrettyString()));
     }
 
-    auto& header = index->getHeader();
-    auto currentHash = index->getHash();
+    auto& header = *index->header;
+    auto currentHash = header.getHash();
     auto* current = getBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block

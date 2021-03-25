@@ -14,6 +14,7 @@
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/logger.hpp>
+#include <veriblock/pop/storage/stored_block_index.hpp>
 #include <veriblock/pop/validation_state.hpp>
 #include <veriblock/pop/write_stream.hpp>
 
@@ -72,16 +73,24 @@ struct BlockIndex : public Block::addon_t {
   BlockIndex(BlockIndex&& other) = default;
   BlockIndex& operator=(BlockIndex&& other) = default;
 
-  // returns a copy of BlockIndex without inmem fields
-  BlockIndex<Block> clone() const {
-    BlockIndex<Block> ret = *this;
-    ret.setNullInmemFields();
-    return ret;
-  }
-
   // loads on-disk fields from 'other' block index.
   // works like (explicit) copy constructor
-  void mergeFrom(const BlockIndex& other) { *this = other.clone(); }
+  void mergeFrom(const StoredBlockIndex<Block>& other) {
+    setHeight(other.height);
+    setHeader(other.header);
+    setStatus(other.status);
+
+    other.addon.toInmem(*this);
+  }
+
+  StoredBlockIndex<Block> toStoredBlockIndex() const {
+    StoredBlockIndex<Block> ret;
+    ret.height = height;
+    ret.status = status;
+    ret.header = header;
+    ret.addon = *this;
+    return ret;
+  }
 
   /**
    * Block is connected if it contains block body (PopData), and all its
@@ -316,21 +325,6 @@ struct BlockIndex : public Block::addon_t {
     return fmt::sprintf("%s:%d:%s", Block::name(), height, HexStr(getHash()));
   }
 
-  void toVbkEncoding(WriteStream& stream) const {
-    stream.writeBE<uint32_t>(height);
-    header->toRaw(stream);
-    stream.writeBE<uint32_t>(status);
-
-    const addon_t* t = this;
-    t->toVbkEncoding(stream);
-  }
-
-  std::vector<uint8_t> toVbkEncoding() const {
-    WriteStream stream;
-    toVbkEncoding(stream);
-    return stream.data();
-  }
-
  protected:
   //! height of the entry in the chain
   height_t height = 0;
@@ -343,12 +337,6 @@ struct BlockIndex : public Block::addon_t {
 
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
-
-  template <typename T>
-  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                         BlockIndex<T>& out,
-                                         ValidationState& state,
-                                         typename T::hash_t precalculatedHash);
 
  private:
   // make it non-copyable
@@ -431,35 +419,6 @@ JsonValue ToJSON(const BlockIndex<Block>& i) {
   json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
   json::putIntKV(obj, "status", i.status);
   return obj;
-}
-
-template <typename Block>
-bool DeserializeFromVbkEncoding(
-    ReadStream& stream,
-    BlockIndex<Block>& out,
-    ValidationState& state,
-    typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
-  const auto& name = Block::name();
-  using height_t = typename Block::height_t;
-  if (!stream.readBE<height_t>(out.height, state)) {
-    return state.Invalid(name + "-block-index-height");
-  }
-  Block block{};
-  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
-    return state.Invalid(name + "-block-index-header");
-  }
-  out.setHeader(block);
-  if (!stream.readBE<uint32_t>(out.status, state)) {
-    return state.Invalid(name + "-block-index-status");
-  }
-
-  using addon_t = typename Block::addon_t;
-  addon_t& addon = out;
-  if (!DeserializeFromVbkEncoding(stream, addon, state)) {
-    return state.Invalid(name + "-block-index-addon");
-  }
-  out.unsetDirty();
-  return true;
 }
 
 }  // namespace altintegration

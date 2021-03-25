@@ -3,46 +3,30 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
-#define VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
+#ifndef VERIBLOCK_POP_CPP_VBK_STORAGE_STORED_BTC_BLOCK_ADDON_HPP
+#define VERIBLOCK_POP_CPP_VBK_STORAGE_STORED_BTC_BLOCK_ADDON_HPP
 
-#include <veriblock/pop/entities/endorsements.hpp>
-#include <veriblock/pop/arith_uint256.hpp>
+#include <veriblock/pop/blockchain/btc_block_addon.hpp>
+#include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/uint.hpp>
-
-#include "block_status.hpp"
 
 namespace altintegration {
 
 //! @private
-struct BtcBlockAddon {
+struct StoredBtcBlockAddon {
+  using addon_t = BtcBlockAddon;
   using ref_height_t = int32_t;
 
-  //! (memory only) total amount of work in the chain up to and including this
-  //! block
-  ArithUint256 chainWork = 0;
+  StoredBtcBlockAddon() = default;
+  StoredBtcBlockAddon(const addon_t& other);
 
-  //! (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
-  //! this block. must be a vector, because we can have duplicates here
-  std::vector<const VbkEndorsement*> blockOfProofEndorsements;
+  void toVbkEncoding(WriteStream& w) const;
 
-  static constexpr auto validTipLevel = BLOCK_VALID_TREE;
-
-  void setNullInmemFields();
-
-  void setIsBootstrap(bool isBootstrap);
-
-  uint32_t refCount() const;
-
-  const std::vector<ref_height_t>& getRefs() const { return refs; }
-
-  void addRef(ref_height_t referencedAtHeight);
-
-  void removeRef(ref_height_t referencedAtHeight);
+  addon_t toInmem() const;
+  void toInmem(addon_t& to) const;
 
   std::string toPrettyString() const;
 
- protected:
   //! reference counter for fork resolution. Stores heights of VBK blocks that
   //! contain VTBs which add this BTC block.
   // Ideally we would want a sorted collection with cheap addition, deletion and
@@ -56,11 +40,15 @@ struct BtcBlockAddon {
   // TODO: figure out if this is somehow abusable by spammers/dosers
   std::vector<ref_height_t> refs{};
 
-  void setDirty();
-
-  void setNull();
+  //! list of endorsements of VBK blocks, whose BlockOfProof is
+  //! this block. must be a vector, because we can have duplicates here
+  std::vector<uint256> blockOfProofEndorsementHashes;
 };
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                StoredBtcBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 
-#endif  // VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
+#endif  // VERIBLOCK_POP_CPP_VBK_STORAGE_STORED_BTC_BLOCK_ADDON_HPP
