@@ -151,44 +151,10 @@ $(document).ready(function(){initNavTree('pop__state_8hpp_source.html',''); init
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;};</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;=======</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#ae5e32b795cd8ef66c419b013066d9e79">DeserializeFromVbkEncoding</a>(ReadStream&amp; stream,</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                PopState&lt;T&gt;&amp; out,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                ValidationState&amp; state) {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  std::vector&lt;T&gt; endorsements;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">auto</span> max = std::max(<a class="code" href="namespacealtintegration.html#a049bbf9c96cb5ab4f392f169a09cf8c8">MAX_POPDATA_ATV</a>, <a class="code" href="namespacealtintegration.html#aee63841a399e1460dc669cd3e7066ee3">MAX_POPDATA_VTB</a>);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keywordflow">if</span> (!readArrayOf&lt;T&gt;(</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          stream,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          endorsements,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          state,</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          0,</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;          max,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          [](ReadStream&amp; stream, T&amp; t, ValidationState&amp; state) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespacealtintegration.html#ae5e32b795cd8ef66c419b013066d9e79">DeserializeFromVbkEncoding</a>(stream, t, state);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;          })) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;popstate-bad-endorsement&quot;</span>);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; endorsement : endorsements) {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">auto</span> it = out._containingEndorsements.emplace(</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        endorsement.getId(), std::make_shared&lt;T&gt;(endorsement));</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// newly created endorsement must not be null</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    VBK_ASSERT(it-&gt;second);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  }</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="comment">// do not restore &#39;endorsedBy&#39; here, it will be done later during tree</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="comment">// loading</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_POP_STATE_HPP</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_POP_STATE_HPP</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a049bbf9c96cb5ab4f392f169a09cf8c8"><div class="ttname"><a href="namespacealtintegration.html#a049bbf9c96cb5ab4f392f169a09cf8c8">altintegration::MAX_POPDATA_ATV</a></div><div class="ttdeci">constexpr const auto MAX_POPDATA_ATV</div><div class="ttdoc">absolute maximum number of ATV blocks per ALT block</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00084">consts.hpp:84</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_ae5e32b795cd8ef66c419b013066d9e79"><div class="ttname"><a href="namespacealtintegration.html#ae5e32b795cd8ef66c419b013066d9e79">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, Address &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Read data from the stream and convert it to VBK address.</div></div>
-<div class="ttc" id="anamespacealtintegration_html_aee63841a399e1460dc669cd3e7066ee3"><div class="ttname"><a href="namespacealtintegration.html#aee63841a399e1460dc669cd3e7066ee3">altintegration::MAX_POPDATA_VTB</a></div><div class="ttdeci">constexpr const auto MAX_POPDATA_VTB</div><div class="ttdoc">absolute maximum number of VTB blocks per ALT block</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00082">consts.hpp:82</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
