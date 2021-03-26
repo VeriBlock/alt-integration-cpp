@@ -1,9 +1,10 @@
 var structaltintegration_1_1AltBlock =
 [
-    [ "addon_t", "structaltintegration_1_1AltBlock.html#a9b994434307f0c094b4162f5a0ea0966", null ],
+    [ "addon_t", "structaltintegration_1_1AltBlock.html#a559deacffcfe3922440047a557c7431d", null ],
     [ "hash_t", "structaltintegration_1_1AltBlock.html#a3971ffcd51baa22e508314139a396f18", null ],
     [ "height_t", "structaltintegration_1_1AltBlock.html#abfa434dc2f0123fb045aa9471e659406", null ],
     [ "prev_hash_t", "structaltintegration_1_1AltBlock.html#a948d14e51ff009f5f495340c70a0c45e", null ],
+    [ "stored_addon_t", "structaltintegration_1_1AltBlock.html#a6fccf4384a0e3a8444674a33481f7ca3", null ],
     [ "estimateSize", "structaltintegration_1_1AltBlock.html#a36d07ce5935995da699903ac54c086df", null ],
     [ "getBlockTime", "structaltintegration_1_1AltBlock.html#a55db1404185fb82e7574d2b91ac16bfb", null ],
     [ "getDifficulty", "structaltintegration_1_1AltBlock.html#ab76ef56ae40d1d626d3eb3bd710ec2c2", null ],
