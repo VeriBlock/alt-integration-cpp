@@ -15,13 +15,13 @@ namespace altintegration {
 //! @private
 struct StoredAltBlockAddon {
   using addon_t = AltBlockAddon;
+  using pop_state_t = PopState<AltEndorsement>;
 
   StoredAltBlockAddon() = default;
   StoredAltBlockAddon(const addon_t& other);
 
   void toVbkEncoding(WriteStream& w) const;
 
-  addon_t toInmem() const;
   void toInmem(addon_t& to) const;
 
   std::string toPrettyString() const;
@@ -33,10 +33,11 @@ struct StoredAltBlockAddon {
   std::vector<uint256> _vtbids;
   // VbkBlock::id_t
   std::vector<uint96> _vbkblockids;
-
   // list of endorsements pointing to this block.
   // must be a vector, because we can have duplicates here
   std::vector<uint256> endorsedByHashes;
+  // POP endorsements state
+  pop_state_t popState;
 };
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

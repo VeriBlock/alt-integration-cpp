@@ -10,35 +10,32 @@
 namespace altintegration {
 
 StoredVbkBlockAddon::StoredVbkBlockAddon(const addon_t& other) {
-  _refCount = other.refCount();
   endorsedByHashes =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(other.endorsedBy);
   blockOfProofEndorsementHashes =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
           other.blockOfProofEndorsements);
+  _refCount = other.refCount();
   _vtbids = other.getPayloadIds<VTB>();
+  popState = other;
 }
 
 void StoredVbkBlockAddon::toVbkEncoding(WriteStream& w) const {
-  w.writeBE<uint32_t>(_refCount);
   writeArrayOf<uint256>(w, endorsedByHashes, writeSingleByteLenValue);
   writeArrayOf<uint256>(
       w, blockOfProofEndorsementHashes, writeSingleByteLenValue);
+  w.writeBE<uint32_t>(_refCount);
   writeArrayOf<VTB::id_t>(w, _vtbids, [](WriteStream& w, const VTB::id_t& u) {
     writeSingleByteLenValue(w, u);
   });
-}
-
-StoredVbkBlockAddon::addon_t StoredVbkBlockAddon::toInmem() const {
-  addon_t ret;
-  ret.setRef(_refCount);
-  ret.template insertPayloadIds<VTB>(_vtbids);
-  return ret;
+  popState.toVbkEncoding(w);
 }
 
 void StoredVbkBlockAddon::toInmem(StoredVbkBlockAddon::addon_t& to) const {
   to.setRef(_refCount);
   to.template insertPayloadIds<VTB>(_vtbids);
+  auto& p = static_cast<pop_state_t&>(to);
+  p = popState;
 }
 
 std::string StoredVbkBlockAddon::toPrettyString() const {
@@ -48,10 +45,6 @@ std::string StoredVbkBlockAddon::toPrettyString() const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 StoredVbkBlockAddon& out,
                                 ValidationState& state) {
-  if (!stream.readBE<uint32_t>(out._refCount, state)) {
-    return state.Invalid("stored-vbk-addon-bad-ref-count");
-  }
-
   if (!readArrayOf<uint256>(
           stream,
           out.endorsedByHashes,
@@ -78,6 +71,10 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("stored-vbk-block-addon-bad-block-of-proof-hash");
   }
 
+  if (!stream.readBE<uint32_t>(out._refCount, state)) {
+    return state.Invalid("stored-vbk-addon-bad-ref-count");
+  }
+
   if (!readArrayOf<VTB::id_t>(
           stream,
           out._vtbids,
@@ -89,6 +86,10 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                 stream, o, state, VTB::id_t::size(), VTB::id_t::size());
           })) {
     return state.Invalid("stored-vbk-addon-bad-vtbid");
+  }
+
+  if (!DeserializeFromVbkEncoding(stream, out.popState, state)) {
+    return state.Invalid("stored-vbk-block-addon-bad-popstate");
   }
 
   return true;

@@ -18,6 +18,7 @@ StoredAltBlockAddon::StoredAltBlockAddon(const addon_t& other) {
   _atvids = other.getPayloadIds<ATV>();
   _vtbids = other.getPayloadIds<VTB>();
   _vbkblockids = other.getPayloadIds<VbkBlock>();
+  popState = other;
 }
 
 void StoredAltBlockAddon::toVbkEncoding(WriteStream& w) const {
@@ -25,20 +26,15 @@ void StoredAltBlockAddon::toVbkEncoding(WriteStream& w) const {
   writeArrayOf<ATV::id_t>(w, _atvids, writeSingleByteLenValue);
   writeArrayOf<VTB::id_t>(w, _vtbids, writeSingleByteLenValue);
   writeArrayOf<VbkBlock::id_t>(w, _vbkblockids, writeSingleByteLenValue);
-}
-
-StoredAltBlockAddon::addon_t StoredAltBlockAddon::toInmem() const {
-  addon_t ret;
-  ret.template setPayloads<ATV>(_atvids);
-  ret.template setPayloads<VTB>(_vtbids);
-  ret.template setPayloads<VbkBlock>(_vbkblockids);
-  return ret;
+  popState.toVbkEncoding(w);
 }
 
 void StoredAltBlockAddon::toInmem(StoredAltBlockAddon::addon_t& to) const {
   to.template setPayloads<ATV>(_atvids);
   to.template setPayloads<VTB>(_vtbids);
   to.template setPayloads<VbkBlock>(_vbkblockids);
+  auto& p = static_cast<pop_state_t&>(to);
+  p = popState;
 }
 
 std::string StoredAltBlockAddon::toPrettyString() const {
@@ -112,6 +108,10 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("stored-alt-block-addon-bad-vbkids");
   }
 
+  if (!DeserializeFromVbkEncoding(stream, out.popState, state)) {
+    return state.Invalid("stored-alt-block-addon-bad-popstate");
+  }
+  
   return true;
 }
 

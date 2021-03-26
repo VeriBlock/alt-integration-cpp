@@ -9,10 +9,10 @@
 namespace altintegration {
 
 StoredBtcBlockAddon::StoredBtcBlockAddon(const addon_t& other) {
-  refs = other.getRefs();
   blockOfProofEndorsementHashes =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
       other.blockOfProofEndorsements);
+  refs = other.getRefs();
 }
 
 void StoredBtcBlockAddon::toVbkEncoding(WriteStream& w) const {
@@ -22,14 +22,6 @@ void StoredBtcBlockAddon::toVbkEncoding(WriteStream& w) const {
       w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
         w.writeBE<ref_height_t>(value);
       });
-}
-
-StoredBtcBlockAddon::addon_t StoredBtcBlockAddon::toInmem() const {
-  addon_t ret;
-  for (const auto& r : refs) {
-    ret.addRef(r);
-  }
-  return ret;
 }
 
 void StoredBtcBlockAddon::toInmem(StoredBtcBlockAddon::addon_t& to) const {

@@ -10,6 +10,7 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/uint.hpp>
 
 namespace altintegration {
@@ -51,6 +52,17 @@ struct PopState {
     setDirty();
   }
 
+  void toVbkEncoding(WriteStream& stream) const {
+    // write containingEndorsements as vector
+    using value_t = typename decltype(_containingEndorsements)::value_type;
+    writeContainer<decltype(_containingEndorsements)>(
+        stream,
+        _containingEndorsements,
+        [&](WriteStream&, const value_t& endorsement) {
+          endorsement.second->toVbkEncoding(stream);
+        });
+  }
+
   // hide setters from public usage
  protected:
   //! (stored as vector) list of containing endorsements in this block
@@ -62,7 +74,42 @@ struct PopState {
     _containingEndorsements.clear();
     endorsedBy.clear();
   }
+
+  template <typename T>
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         PopState<T>& out,
+                                         ValidationState& state);
 };
+
+//! @overload
+template <typename T>
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                PopState<T>& out,
+                                ValidationState& state) {
+  std::vector<T> endorsements;
+  auto max = std::max(MAX_POPDATA_ATV, MAX_POPDATA_VTB);
+  if (!readArrayOf<T>(
+          stream,
+          endorsements,
+          state,
+          0,
+          max,
+          [](ReadStream& stream, T& t, ValidationState& state) -> bool {
+            return DeserializeFromVbkEncoding(stream, t, state);
+          })) {
+    return state.Invalid("popstate-bad-endorsement");
+  }
+
+  for (const auto& endorsement : endorsements) {
+    auto it = out._containingEndorsements.emplace(
+        endorsement.getId(), std::make_shared<T>(endorsement));
+    // newly created endorsement must not be null
+    VBK_ASSERT(it->second);
+  }
+  // do not restore 'endorsedBy' here, it will be done later during tree
+  // loading
+  return true;
+}
 
 }  // namespace altintegration
 

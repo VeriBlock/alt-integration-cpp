@@ -22,7 +22,6 @@ struct StoredBtcBlockAddon {
 
   void toVbkEncoding(WriteStream& w) const;
 
-  addon_t toInmem() const;
   void toInmem(addon_t& to) const;
 
   std::string toPrettyString() const;
