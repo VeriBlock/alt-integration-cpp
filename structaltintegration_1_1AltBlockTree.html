@@ -558,21 +558,23 @@ must not be executed on bootstrap block </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>POP Fork Resolution is NOT transitive, it can not be used to search for an "absolute" best chain. If A is better than B, and B is better than C, then A may NOT be better than C. It is expected that caller will execute this comparator once for every tip candidate to avoid cycles (A-&gt;B-&gt;C-&gt;A). But this is no big deal, as sooner or later peers with different chains will converge to the same chain. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns positive if chain A is better. Returns negative if chain B is better. Returns 0 if blocks are equal in terms of POP. Users should fallback to chain-native Fork Resolution algorithm. </dd></dl>
-<dl class="section invariant"><dt>Invariant</dt><dd>this function can be called only on existing blocks </dd>
+<dl class="section pre"><dt>Precondition</dt><dd>this function can be called only on existing blocks </dd>
 <dd>
 this function can be called only on connected blocks, otherwise it dies on assert </dd>
 <dd>
 the first argument must always be equal to the current tip of <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a>, otherwise it dies on assert </dd>
 <dd>
-no other blocks but [genesis .. current tip] must be applied </dd>
-<dd>
-If B loses the fork resolution, only partial validation of B is performed. </dd>
+no other blocks but [genesis .. current tip] must be applied </dd></dl>
+<dl class="section invariant"><dt>Invariant</dt><dd>If B loses the fork resolution, only partial validation of B is performed. We can not determine B validity, because we never applied B alone. </dd>
 <dd>
 If B wins the fork resolution, it is fully validated and AltBlockTree::setState(B,...) will be successful. </dd>
 <dd>
-if neither chain wins, A stays applied. </dd>
+If POP score of both chains is equal, we expect altchain to determine best chain and then change state of <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> via setState. </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>if neither chain wins, A stays applied. </dd>
 <dd>
-if chain B wins, the tree automatically switches to chain B (it becomes the tip)</dd></dl>
+if chain B wins, the tree automatically switches to chain B (it becomes the tip) </dd>
+<dd>
+if return value is more or equal to 0, tree state is unchanged.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="structaltintegration_1_1StateCorruptedException.html" title="Is thrown only when this library detects POP-related state corruption, and can&#39;t recover.">StateCorruptedException</a></td><td>when we detect state corruption and we can not recover.</td></tr>
