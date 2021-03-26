@@ -303,19 +303,23 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * Returns negative if chain B is better.
    * Returns 0 if blocks are equal in terms of POP. Users should fallback to
    * chain-native Fork Resolution algorithm.
-   * @invariant this function can be called only on existing blocks
-   * @invariant this function can be called only on connected blocks, otherwise
+   * @pre this function can be called only on existing blocks
+   * @pre this function can be called only on connected blocks, otherwise
    * it dies on assert
-   * @invariant the first argument must always be equal to the current tip of
+   * @pre the first argument must always be equal to the current tip of
    * AltBlockTree, otherwise  it dies on assert
-   * @invariant no other blocks but [genesis .. current tip] must be applied
+   * @pre no other blocks but [genesis .. current tip] must be applied
    * @invariant If B loses the fork resolution, only partial validation of B is
-   * performed.
+   * performed. We can not determine B validity, because we never applied B
+   * alone.
    * @invariant If B wins the fork resolution, it is fully validated and
    * AltBlockTree::setState(B,...) will be successful.
-   * @invariant if neither chain wins, A stays applied.
-   * @invariant if chain B wins, the tree automatically switches to chain B (it
+   * @invariant If POP score of both chains is equal, we expect altchain to
+   * determine best chain and then change state of AltBlockTree via setState.
+   * @post if neither chain wins, A stays applied.
+   * @post if chain B wins, the tree automatically switches to chain B (it
    * becomes the tip)
+   * @post if return value is more or equal to 0, tree state is unchanged.
    *
    * @throws StateCorruptedException when we detect state corruption and we can
    * not recover.

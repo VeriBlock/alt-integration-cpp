@@ -48,10 +48,13 @@ class PopMempoolReorgTest(PopIntegrationTestFramework):
         self.nodes[0].connect(self.nodes[1])
         self.log.info("connect node 1 and node 0")
 
-        sync_all(self.nodes, timeout=30)
+        sync_all(self.nodes, timeout=60)
         self.log.info("nodes[0,1] are in sync")
 
         assert self.nodes[1].getbestblock() == self.nodes[0].getbestblock()
+
+        assert len(self.nodes[0].getrawpopmempool().vbkblocks) == vbk_blocks_amount
+        assert len(self.nodes[1].getrawpopmempool().vbkblocks) == vbk_blocks_amount
 
         # mine a block on node[1] with these vbk blocks
         self.nodes[1].generate(nblocks=1)
