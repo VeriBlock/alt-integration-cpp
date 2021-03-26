@@ -10,7 +10,7 @@ Regular transactions are typically cryptographically authenticated by inserting 
 
 Merkle Root which is inserted into Block Header is now called **Top Level Merkle Root**.
 
-![](./img/toplevelmroot.png)
+![](../../img/toplevelmroot.png)
 
 **Algorithm to calculate Top Level Merkle Root**: 
 1. Build Merkle Tree from individual items of PopData (those are VBK blocks, marked as VBK1 on the picture, VTBs and ATVs), resulting Merkle Root is called **Pop Root**.

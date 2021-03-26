@@ -1,6 +1,4 @@
-# PoP Integration {#integration}
-
-This page describes required steps to integrate PoP protocol into **any** blockchain.
+# PoP Description {#description}
 
 [TOC]
 
@@ -62,20 +60,3 @@ Altchain transitively inherits security of Bitcoin.
 You can also notice that VTBs and VBK blocks are sent to Altchain. 
 This is needed to communicate Bitcoin and VeriBlock consensus information to Altchain.
 APM implementation continuously submits VBK blocks and VTBs found on VeriBlock network to Altchain, so it is important to have at least 1 APM running continuously for the whole network.
-
-# Adding PoP protocol to Bitcoin fork
-
-@note The documentation below is based on vBTC commit [`026fba4e80bc114c68c636e3c9cfc6af855c9c94`](https://github.com/VeriBlock/vbk-ri-btc/commit/026fba4e80bc114c68c636e3c9cfc6af855c9c94).
-
-1. @subpage integration_1_build
-2. @subpage integration_2_popdata
-3. @subpage integration_3_forkpoint
-4. @subpage integration_4_config
-5. @subpage integration_5_persistence
-6. @subpage integration_6_mempool
-7. @subpage integration_7_alttree
-8. @subpage integration_8_merkle
-9. @subpage integration_9_rewards
-10. @subpage integration_10_fr
-11. @subpage integration_11_p2p
-12. @subpage integration_12_rpc
