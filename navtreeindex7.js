@@ -1,5 +1,12 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1VbkBlockTree.html#acac5820df22bee06262a367cc11c95f2":[3,0,0,17,13],
+"structaltintegration_1_1VbkBlockTree.html#adaa3d7518fbb08989f64359ed69c68d3":[3,0,0,17,14],
+"structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d":[3,0,0,17,22],
+"structaltintegration_1_1VbkBlockTree.html#ae28432e1d4ef23b8d9c254d784c29f3e":[3,0,0,17,16],
+"structaltintegration_1_1VbkBlockTree.html#aee6a78afe780898b2958ac3d733f1515":[3,0,0,17,8],
+"structaltintegration_1_1VbkBlockTree.html#afdb889bfc30bdcc8e5d3d6413fedc647":[3,0,0,17,6],
+"structaltintegration_1_1VbkChainParams.html":[3,0,0,18],
 "structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3":[3,0,0,18,20],
 "structaltintegration_1_1VbkChainParams.html#a0ecd5428a507344f184a6995111ac40d":[3,0,0,18,8],
 "structaltintegration_1_1VbkChainParams.html#a0f7d6789ab277ab55ecdbe2055505065":[3,0,0,18,14],
@@ -140,12 +147,5 @@ var NAVTREEINDEX7 =
 "vbktx_8hpp_source.html":[4,0,1,0,0,5,20],
 "vblake_8hpp_source.html":[4,0,1,0,0,4,4],
 "vtb_8hpp_source.html":[4,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[4,0,1,0,0,48],
-"":[2,0,1],
-"":[2,0,0,6],
-"":[2,0,0,4],
-"":[2,0,0,1],
-"":[2,0,0,5],
-"":[2,0,0,2],
-"":[2,0,0,0]
+"write__stream_8hpp_source.html":[4,0,1,0,0,48]
 };

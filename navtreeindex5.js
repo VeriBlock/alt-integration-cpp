@@ -1,5 +1,12 @@
 var NAVTREEINDEX5 =
 {
+"structaltintegration_1_1BtcTx.html#a49e7a202e10392845f22391eacd0ca6c":[3,0,0,28,3],
+"structaltintegration_1_1BtcTx.html#a55796ad82d5b35a9f6316efc978f36f9":[3,0,0,28,4],
+"structaltintegration_1_1BtcTx.html#a7e197dd0a4caeb263cb0a17bed9ff56e":[3,0,0,28,0],
+"structaltintegration_1_1BtcTx.html#a8ba190d24900b1cac7144d2a72680776":[3,0,0,28,10],
+"structaltintegration_1_1BtcTx.html#a8db6d7e21bab4f73fbf357d2816c2d60":[3,0,0,28,8],
+"structaltintegration_1_1BtcTx.html#a9887e209b987a840c680c5069b48433f":[3,0,0,28,9],
+"structaltintegration_1_1BtcTx.html#aa30a9e151c8402adaa4ca1308a9c44f0":[3,0,0,28,6],
 "structaltintegration_1_1BtcTx.html#ac0e4a5f8c70becd546e7785c15a6cf28":[3,0,0,28,2],
 "structaltintegration_1_1BtcTx.html#acc030df8fab82d3866b34444d82b3d7f":[3,0,0,28,5],
 "structaltintegration_1_1BtcTx.html#af9a0fcabd40bff9b361dddf4e1eec8b2":[3,0,0,28,1],
@@ -242,12 +249,5 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1Output.html":[3,0,0,37],
 "structaltintegration_1_1Output.html#a1ce3e8e2e7817349cafa780f50878bda":[3,0,0,37,1],
 "structaltintegration_1_1Output.html#a30e1ca51121ef7f5298873fabfd6e6d5":[3,0,0,37,2],
-"structaltintegration_1_1Output.html#a5edc04f581fda585c9b49c2094b97817":[3,0,0,37,5],
-"structaltintegration_1_1Output.html#a72e493fd5f88cf132758782c677860af":[3,0,0,37,4],
-"structaltintegration_1_1Output.html#a7a9b3b4f82a74df5f40d58e6c832b010":[3,0,0,37,3],
-"structaltintegration_1_1Output.html#abca5324e7ab9eb27e895302c609209c6":[3,0,0,37,6],
-"structaltintegration_1_1Output.html#ac57fa32eb0ff1c0161a3584be226439e":[3,0,0,37,0],
-"structaltintegration_1_1Output.html#acdfc1ce4ea15e04d77b5e2f98bc671f7":[3,0,0,37,7],
-"structaltintegration_1_1PayloadsStorage.html":[3,0,0,63],
-"structaltintegration_1_1PayloadsStorage.html#a09ff68ddda641edd3cf4438d2a1d9c77":[3,0,0,63,1]
+"structaltintegration_1_1Output.html#a5edc04f581fda585c9b49c2094b97817":[3,0,0,37,5]
 };
