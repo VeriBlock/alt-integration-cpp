@@ -89,26 +89,26 @@ $(document).ready(function(){initNavTree('integration_11_p2p.html',''); initResi
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md10">Overview</a></li>
-<li class="level1"><a href="#autotoc_md11">1. Add P2P service files: p2p_sync.hpp, p2p_sync.cpp.</a></li>
-<li class="level1"><a href="#autotoc_md12">2. Introduce new protocol version.</a></li>
-<li class="level1"><a href="#autotoc_md13">3. Allow node to download chain with less chainWork.</a></li>
-<li class="level1"><a href="#autotoc_md14">4. Update Ping and Pong calls to provide best block hash.</a></li>
-<li class="level1"><a href="#autotoc_md15">5. Offer and process Pop data.</a></li>
-<li class="level1"><a href="#autotoc_md16">6. Subscribe the library to the mempool events.</a></li>
-<li class="level1"><a href="#autotoc_md17">7. Add P2P service to the makefile.</a></li>
+<ul><li class="level1"><a href="#autotoc_md9">Overview</a></li>
+<li class="level1"><a href="#autotoc_md10">1. Add P2P service files: p2p_sync.hpp, p2p_sync.cpp.</a></li>
+<li class="level1"><a href="#autotoc_md11">2. Introduce new protocol version.</a></li>
+<li class="level1"><a href="#autotoc_md12">3. Allow node to download chain with less chainWork.</a></li>
+<li class="level1"><a href="#autotoc_md13">4. Update Ping and Pong calls to provide best block hash.</a></li>
+<li class="level1"><a href="#autotoc_md14">5. Offer and process Pop data.</a></li>
+<li class="level1"><a href="#autotoc_md15">6. Subscribe the library to the mempool events.</a></li>
+<li class="level1"><a href="#autotoc_md16">7. Add P2P service to the makefile.</a></li>
 </ul>
 </div>
-<div class="textblock"><p><a class="anchor" id="md_docs_integration_11_p2p"></a></p>
-<h1><a class="anchor" id="autotoc_md10"></a>
+<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_11_p2p"></a></p>
+<h1><a class="anchor" id="autotoc_md9"></a>
 Overview</h1>
 <p>Original Bitcoin P2P sync protocol does not download blocks if advertized cumulative difficulty is lower than ours. It is no longer valid for Pop aware chains. P2P protocol should be modified to offer and accept all blocks and also should properly process ATV and VTB data.</p>
-<h1><a class="anchor" id="autotoc_md11"></a>
+<h1><a class="anchor" id="autotoc_md10"></a>
 1. Add P2P service files: p2p_sync.hpp, p2p_sync.cpp.</h1>
 <p>VeriBlock P2P service files contain interactions with Pop mempool, data filtering, misbehaving nodes protection.</p>
 <p>P2P header: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_sync.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_sync.hpp</a>. Copy this file to your project.</p>
 <p>P2P source: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_sync.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_sync.cpp</a>. Copy this file to your project.</p>
-<h1><a class="anchor" id="autotoc_md12"></a>
+<h1><a class="anchor" id="autotoc_md11"></a>
 2. Introduce new protocol version.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/version.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/version.h</a> </p><div class="fragment"><div class="line">-<span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> PROTOCOL_VERSION = 70015;</div>
 <div class="line">+<span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> PROTOCOL_VERSION = 80000;</div>
@@ -116,7 +116,7 @@ Overview</h1>
 <div class="line"> </div>
 <div class="line">+</div>
 <div class="line">+<span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> PING_BESTCHAIN_VERSION = 80000;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md12"></a>
 3. Allow node to download chain with less chainWork.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.h</a> </p><div class="fragment"><div class="line"> <span class="keywordtype">bool</span> GetNodeStateStats(NodeId nodeid, CNodeStateStats &amp;stats);</div>
 <div class="line"> </div>
@@ -248,7 +248,7 @@ Overview</h1>
 <div class="line">+                }</div>
 <div class="line">+            }</div>
 <div class="line">             <span class="keywordflow">for</span> (<span class="keyword">const</span> CBlockIndex *pindex : vToDownload) {</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md14"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
 4. Update Ping and Pong calls to provide best block hash.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L1919">method ProcessMessage</a> </p><div class="fragment"><div class="line">             uint64_t nonce = 0;</div>
@@ -287,7 +287,7 @@ Overview</h1>
 <div class="line">+                } <span class="keywordflow">else</span> {</div>
 <div class="line">+                    connman-&gt;PushMessage(pto, msgMaker.Make(NetMsgType::PING, nonce));</div>
 <div class="line">+                }</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md15"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md14"></a>
 5. Offer and process Pop data.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L799">method PeerLogicValidation::FinalizeNode</a> </p><div class="fragment"><div class="line">     assert(g_outbound_peers_with_protect_from_disconnect &gt;= 0);</div>
@@ -319,7 +319,7 @@ Overview</h1>
 <div class="line">+        }</div>
 <div class="line">+</div>
 <div class="line">         <span class="comment">// Detect whether we&#39;re stalling</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md16"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md15"></a>
 6. Subscribe the library to the mempool events.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp</a> </p><div class="fragment"><div class="line"><span class="preprocessor"> #include &lt;vbk/adaptors/block_provider.hpp&gt;</span></div>
 <div class="line">+#include &lt;vbk/p2p_sync.hpp&gt;</div>
@@ -332,8 +332,8 @@ Overview</h1>
 <div class="line">+    app.getMemPool().onAccepted&lt;<a class="code" href="structaltintegration_1_1VbkBlock.html">altintegration::VbkBlock</a>&gt;(VeriBlock::p2p::offerPopDataToAllNodes&lt;altintegration::VbkBlock&gt;);</div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html"><div class="ttname"><a href="structaltintegration_1_1ATV.html">altintegration::ATV</a></div><div class="ttdoc">Atlchain endorsement.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00028">atv.hpp:28</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VTB_html"><div class="ttname"><a href="structaltintegration_1_1VTB.html">altintegration::VTB</a></div><div class="ttdoc">Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.</div><div class="ttdef"><b>Definition:</b> <a href="vtb_8hpp_source.html#l00028">vtb.hpp:28</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1VbkBlock_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlock.html">altintegration::VbkBlock</a></div><div class="ttdoc">Veriblock block.</div><div class="ttdef"><b>Definition:</b> <a href="vbkblock_8hpp_source.html#l00032">vbkblock.hpp:32</a></div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md17"></a>
+<div class="ttc" id="astructaltintegration_1_1VbkBlock_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlock.html">altintegration::VbkBlock</a></div><div class="ttdoc">Veriblock block.</div><div class="ttdef"><b>Definition:</b> <a href="vbkblock_8hpp_source.html#l00031">vbkblock.hpp:31</a></div></div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md16"></a>
 7. Add P2P service to the makefile.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am</a> </p><div class="fragment"><div class="line">libbitcoin_server_a_SOURCES = \</div>
 <div class="line">   policy/settings.cpp \
@@ -345,7 +345,6 @@ Overview</h1>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 <script>
     $(document).ready(function(){
         $('.line').each(function(){

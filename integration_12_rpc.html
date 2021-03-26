@@ -89,18 +89,18 @@ $(document).ready(function(){initNavTree('integration_12_rpc.html',''); initResi
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md18">Overview</a></li>
-<li class="level1"><a href="#autotoc_md19">1. Add RPC service files: rpc_register.hpp, rpc_register.cpp.</a></li>
-<li class="level1"><a href="#autotoc_md20">2. Add JSON adaptor for the library that allows converting from altintegration::MempoolResult to UniValue object.</a></li>
-<li class="level1"><a href="#autotoc_md21">3. Update serialize.h to use new JSON convertor.</a></li>
-<li class="level1"><a href="#autotoc_md22">4. Add all new RPC functions to the RPC server.</a></li>
-<li class="level1"><a href="#autotoc_md23">5. Extend original RPC calls with Pop data.</a></li>
-<li class="level1"><a href="#autotoc_md24">6. Add RPC unit test.</a></li>
-<li class="level1"><a href="#autotoc_md25">7. Add RPC service and test to the makefile.</a></li>
+<ul><li class="level1"><a href="#autotoc_md17">Overview</a></li>
+<li class="level1"><a href="#autotoc_md18">1. Add RPC service files: rpc_register.hpp, rpc_register.cpp.</a></li>
+<li class="level1"><a href="#autotoc_md19">2. Add JSON adaptor for the library that allows converting from altintegration::MempoolResult to UniValue object.</a></li>
+<li class="level1"><a href="#autotoc_md20">3. Update serialize.h to use new JSON convertor.</a></li>
+<li class="level1"><a href="#autotoc_md21">4. Add all new RPC functions to the RPC server.</a></li>
+<li class="level1"><a href="#autotoc_md22">5. Extend original RPC calls with Pop data.</a></li>
+<li class="level1"><a href="#autotoc_md23">6. Add RPC unit test.</a></li>
+<li class="level1"><a href="#autotoc_md24">7. Add RPC service and test to the makefile.</a></li>
 </ul>
 </div>
-<div class="textblock"><p><a class="anchor" id="md_docs_integration_12_rpc"></a></p>
-<h1><a class="anchor" id="autotoc_md18"></a>
+<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_12_rpc"></a></p>
+<h1><a class="anchor" id="autotoc_md17"></a>
 Overview</h1>
 <p>We have to provide Pop aware RPC calls to let users interact with node. We'll add new functions to the RPC.</p>
 <p>Here is the list of the provided Pop RPC calls:</p><ul>
@@ -129,21 +129,21 @@ Overview</h1>
 <li><code>getblocktemplate</code></li>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>Description of the RPC calls can be found in the source code. For example <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.cpp#L112">here</a> is the description of <code>getpopdatabyheight</code> RPC call.</dd></dl>
-<h1><a class="anchor" id="autotoc_md19"></a>
+<h1><a class="anchor" id="autotoc_md18"></a>
 1. Add RPC service files: rpc_register.hpp, rpc_register.cpp.</h1>
 <p>Pop RPC header: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.hpp</a>. Copy this file to your project.</p>
 <p>Pop RPC source: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/rpc_register.cpp</a>. Copy this file to your project.</p>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md19"></a>
 2. Add JSON adaptor for the library that allows converting from altintegration::MempoolResult to UniValue object.</h1>
 <p>Univalue conversions: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/adaptors/univalue_json.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/adaptors/univalue_json.hpp</a>. Copy this file to your project.</p>
-<h1><a class="anchor" id="autotoc_md21"></a>
+<h1><a class="anchor" id="autotoc_md20"></a>
 3. Update serialize.h to use new JSON convertor.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/serialize.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/serialize.h</a> </p><div class="fragment"><div class="line"><span class="preprocessor"> #include &lt;span.h&gt;</span></div>
 <div class="line"> </div>
 <div class="line">+#include &lt;vbk/adaptors/univalue_json.hpp&gt;</div>
 <div class="line">+</div>
 <div class="line"><span class="preprocessor"> #include &lt;veriblock/pop.hpp&gt;</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md22"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md21"></a>
 4. Add all new RPC functions to the RPC server.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/register.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/register.h</a> </p><div class="fragment"><div class="line"><span class="preprocessor"> #define BITCOIN_RPC_REGISTER_H</span></div>
 <div class="line"> </div>
@@ -164,7 +164,7 @@ Overview</h1>
 <div class="line">+    { <span class="stringliteral">&quot;getpopdatabyheight&quot;</span>, 0, <span class="stringliteral">&quot;block_height&quot;</span>},</div>
 <div class="line">+    <span class="comment">// end VeriBlock</span></div>
 <div class="line">     { <span class="stringliteral">&quot;setmocktime&quot;</span>, 0, <span class="stringliteral">&quot;timestamp&quot;</span> },</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md23"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md22"></a>
 5. Extend original RPC calls with Pop data.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/blockchain.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/rpc/blockchain.cpp</a> </p><div class="fragment"><div class="line"><span class="preprocessor"> #include &lt;mutex&gt;</span></div>
 <div class="line"> </div>
@@ -242,10 +242,10 @@ Overview</h1>
 <div class="line">     <span class="keywordflow">return</span> result;</div>
 <div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00033">strutil.hpp:33</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ContextInfoContainer_html"><div class="ttname"><a href="structaltintegration_1_1ContextInfoContainer.html">altintegration::ContextInfoContainer</a></div><div class="ttdoc">Container of context info for endorsed block.</div><div class="ttdef"><b>Definition:</b> <a href="context__info__container_8hpp_source.html#l00019">context_info_container.hpp:19</a></div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md24"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md23"></a>
 6. Add RPC unit test.</h1>
 <p>Pop RPC test: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/rpc_service_tests.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/rpc_service_tests.cpp</a>. Copy this file to your project.</p>
-<h1><a class="anchor" id="autotoc_md25"></a>
+<h1><a class="anchor" id="autotoc_md24"></a>
 7. Add RPC service and test to the makefile.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am</a> </p><div class="fragment"><div class="line">libbitcoin_server_a_SOURCES = \</div>
 <div class="line">   policy/settings.cpp \
@@ -270,7 +270,6 @@ Overview</h1>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 <script>
     $(document).ready(function(){
         $('.line').each(function(){

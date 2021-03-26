@@ -1,12 +1,11 @@
 var structaltintegration_1_1BtcBlock =
 [
-    [ "addon_t", "structaltintegration_1_1BtcBlock.html#aaa0218a6cc38f1366422057216bebbc0", null ],
+    [ "addon_t", "structaltintegration_1_1BtcBlock.html#a1449850569081d00ab46fe53b828cc4c", null ],
     [ "hash_t", "structaltintegration_1_1BtcBlock.html#a6bb063fa95796758b80b8e9d49c5208f", null ],
     [ "height_t", "structaltintegration_1_1BtcBlock.html#a2891dafcc0c78a9a3c708a43d8ca5139", null ],
     [ "merkle_t", "structaltintegration_1_1BtcBlock.html#abeaa7c735d68ba0ad7c10246efee665e", null ],
     [ "nonce_t", "structaltintegration_1_1BtcBlock.html#a7b60d0ec73d9b811e09279930cbcacb0", null ],
     [ "prev_hash_t", "structaltintegration_1_1BtcBlock.html#a941ef0670ae0f95f4579b1cc610e8fb5", null ],
-    [ "stored_addon_t", "structaltintegration_1_1BtcBlock.html#aa90e0eb918cd31625c4331b13830a5fa", null ],
     [ "BtcBlock", "structaltintegration_1_1BtcBlock.html#abfd33cae7c142a369469e236f8101d14", null ],
     [ "BtcBlock", "structaltintegration_1_1BtcBlock.html#a2a1e644e0b9269b24f53234f39c8afdc", null ],
     [ "calculateHash", "structaltintegration_1_1BtcBlock.html#a1b997e5409d2d978b1b193bcc19f192f", null ],

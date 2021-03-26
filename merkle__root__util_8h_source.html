@@ -137,10 +137,10 @@ $(document).ready(function(){initNavTree('merkle__root__util_8h_source.html','')
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">inline</span> uint8_t* pop_write_int_bigendian(uint8_t* out, <span class="keywordtype">int</span> value) {</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  assert(out);</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  assert(<span class="keyword">sizeof</span>(value) == 4);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  out[0] = (uint8_t)(value &gt;&gt; 24);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  out[1] = (uint8_t)(value &gt;&gt; 16);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  out[2] = (uint8_t)(value &gt;&gt; 8);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  out[3] = (uint8_t)value;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  out[0] = value &gt;&gt; 24;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  out[1] = value &gt;&gt; 16;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  out[2] = value &gt;&gt; 8;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  out[3] = value;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordflow">return</span> out + 4;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
@@ -188,7 +188,6 @@ $(document).ready(function(){initNavTree('merkle__root__util_8h_source.html','')
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_MERKLE_ROOT_UTIL_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 <script>
     $(document).ready(function(){
         $('.line').each(function(){

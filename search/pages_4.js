@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['modifying_20build_20setup_836',['Modifying build setup',['../integration_1_build.html',1,'integration']]]
+  ['how_20to_20rebootstrap_20btc_20and_20vbk_20blockchains_838',['How to rebootstrap BTC and VBK blockchains',['../rebootstrap.html',1,'index']]]
 ];

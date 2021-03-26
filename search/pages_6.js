@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['pop_20fork_20resolution_838',['Pop fork resolution',['../integration_10_fr.html',1,'integration']]],
-  ['pop_20integration_839',['PoP Integration',['../integration.html',1,'index']]],
-  ['pop_20mempool_20support_840',['Pop mempool support',['../integration_6_mempool.html',1,'integration']]],
-  ['pop_20merkle_20trees_841',['Pop Merkle trees',['../integration_8_merkle.html',1,'integration']]],
-  ['pop_20rewards_842',['Pop rewards',['../integration_9_rewards.html',1,'integration']]]
+  ['modifying_20build_20setup_840',['Modifying build setup',['../integration_1_build.html',1,'integration']]]
 ];

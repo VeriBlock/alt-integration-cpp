@@ -26,6 +26,7 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
+    [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -59,13 +60,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "",
-"functions_i.html",
-"namespacealtintegration.html#a48e216f55cb1951a188959e649fe15ed",
-"namespacemembers.html",
-"structaltintegration_1_1BaseBlockTree.html#a9feee17d9c4768461b195dec5b0d4ea0",
-"structaltintegration_1_1BtcTx.html#a49e7a202e10392845f22391eacd0ca6c",
-"structaltintegration_1_1Output.html#a72e493fd5f88cf132758782c677860af",
-"structaltintegration_1_1VbkBlockTree.html#acac5820df22bee06262a367cc11c95f2"
+"functions_func_v.html",
+"namespacealtintegration.html#a4178fcd93c766896a7911631ec5c1e8d",
+"namespacealtintegration_1_1json.html#a04d1e4499e2a61cc9ec24e0b288144b1",
+"structaltintegration_1_1BaseBlockTree.html#a8878e8850f58e0b014354def418c606f",
+"structaltintegration_1_1BtcChainParamsTest.html#a6ea2d6428d54b8c616f62231016cc85e",
+"structaltintegration_1_1MerklePath.html#a5895c62d372767ac1f6a971b1fe3c193",
+"structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -89,19 +89,19 @@ $(document).ready(function(){initNavTree('integration_2_popdata.html',''); initR
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md29">Overview</a></li>
-<li class="level1"><a href="#autotoc_md30">1. Helper for the block hash serialization.</a></li>
-<li class="level1"><a href="#autotoc_md31">2. Define POP_BLOCK_VERSION_BIT flag.</a></li>
-<li class="level1"><a href="#autotoc_md32">3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.</a></li>
-<li class="level1"><a href="#autotoc_md33">4. Update PartiallyDownloadedBlock initializing - set PopData field.</a></li>
-<li class="level1"><a href="#autotoc_md34">5. Update setting up the PopData fields during the net processing.</a></li>
-<li class="level1"><a href="#autotoc_md35">6. Update validation rules.</a></li>
-<li class="level1"><a href="#autotoc_md36">7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.</a></li>
-<li class="level1"><a href="#autotoc_md37">8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.</a></li>
+<ul><li class="level1"><a href="#autotoc_md28">Overview</a></li>
+<li class="level1"><a href="#autotoc_md29">1. Helper for the block hash serialization.</a></li>
+<li class="level1"><a href="#autotoc_md30">2. Define POP_BLOCK_VERSION_BIT flag.</a></li>
+<li class="level1"><a href="#autotoc_md31">3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.</a></li>
+<li class="level1"><a href="#autotoc_md32">4. Update PartiallyDownloadedBlock initializing - set PopData field.</a></li>
+<li class="level1"><a href="#autotoc_md33">5. Update setting up the PopData fields during the net processing.</a></li>
+<li class="level1"><a href="#autotoc_md34">6. Update validation rules.</a></li>
+<li class="level1"><a href="#autotoc_md35">7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.</a></li>
+<li class="level1"><a href="#autotoc_md36">8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.</a></li>
 </ul>
 </div>
-<div class="textblock"><p><a class="anchor" id="md_docs_integration_2_popdata"></a></p>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_2_popdata"></a></p>
+<h1><a class="anchor" id="autotoc_md28"></a>
 Overview</h1>
 <p>We will add:</p><ol type="1">
 <li><a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> entity into the <code>CBlock</code> class in <code>primitives/block.h</code> file. This is needed to store POP-related consensus information, such as ATVs, VTBs, and VBk blocks.</li>
@@ -109,7 +109,7 @@ Overview</h1>
 <li>Update serialization for <code>CBlock</code> to include <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a>.</li>
 <li>Add serialization/deserialization code for <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> entity.</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md30"></a>
+<h1><a class="anchor" id="autotoc_md29"></a>
 1. Helper for the block hash serialization.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h#L20">class base_blob</a> </p><div class="fragment"><div class="line">     {</div>
@@ -121,7 +121,7 @@ Overview</h1>
 <div class="line">+        <span class="keywordflow">return</span> std::vector&lt;uint8_t&gt;{begin(), end()};</div>
 <div class="line">+    }</div>
 <div class="line"> };</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md31"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md30"></a>
 2. Define POP_BLOCK_VERSION_BIT flag.</h1>
 <p>This flag is set in a block header version and will tell users if given block header contains PopData or not.</p>
 <p>In file <code>src/version.h</code> define this flag:</p>
@@ -158,7 +158,7 @@ Overview</h1>
 <div class="line">+        popData.clear();</div>
 <div class="line">         fChecked = <span class="keyword">false</span>;</div>
 <div class="line">     }</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md32"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md31"></a>
 3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.</h1>
 <p>Bitcoin uses these classes during sync protocol. We must ensure that <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> is propagated alongside transactions during sync.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h</a></p>
@@ -202,7 +202,7 @@ Overview</h1>
 <div class="line">+        <span class="keywordflow">return</span> FillBlock(block, vtx_missing);</div>
 <div class="line">+    }</div>
 <div class="line"> };</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md33"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md32"></a>
 4. Update PartiallyDownloadedBlock initializing - set PopData field.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L21">method CBlockHeaderAndShortTxIDs::CBlockHeaderAndShortTxIDs</a> </p><div class="fragment"><div class="line">         <span class="keyword">const</span> CTransaction&amp; tx = *block.vtx[i];</div>
@@ -225,7 +225,7 @@ Overview</h1>
 <div class="line">+    block.popData = this-&gt;popData;</div>
 <div class="line">+</div>
 <div class="line">     BlockValidationState state;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md34"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md33"></a>
 5. Update setting up the PopData fields during the net processing.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L1655">method SendBlockTransactions</a> </p><div class="fragment"><div class="line">     <span class="keyword">const</span> CNetMsgMaker msgMaker(pfrom-&gt;GetSendVersion());</div>
@@ -258,7 +258,7 @@ Overview</h1>
 <div class="line">+                vRecv &gt;&gt; tmp;</div>
 <div class="line">+            }</div>
 <div class="line">          }</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md35"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md34"></a>
 6. Update validation rules.</h1>
 <p>Add check that if block contains VeriBlock PopData then <code>block.nVersion</code> must contain <code>POP_BLOCK_VERSION_BIT</code>. Otherwise <code>block.nVersion</code> should not contain <code>POP_BLOCK_VERSION_BIT</code>.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp</a></p>
@@ -301,7 +301,7 @@ Overview</h1>
 <div class="line">+    }</div>
 <div class="line"> </div>
 <div class="line">     <span class="comment">// All potential-corruption validation must be done before we do any</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md36"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md35"></a>
 7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp#L96">method BlockAssembler::CreateNewBlock</a> </p><div class="fragment"><div class="line">   addPackageTxs&lt;ancestor_score&gt;(nPackagesSelected, nDescendantsUpdated);</div>
@@ -320,7 +320,7 @@ Overview</h1>
 <div class="line"> </div>
 <div class="line">   m_last_block_num_txs = nBlockTx;</div>
 <div class="line">   m_last_block_weight = nBlockWeight;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md37"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md36"></a>
 8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.</h1>
 <dl class="section warning"><dt>Warning</dt><dd>In our example we use VeriBlock-native serialization (function <code>toVbkEncoding</code>). It essentially couples Altchain CBlock serialization to VBK encoding. If VBK encoding ever change, Altchain will get hard fork. To mitigate this, it is stongly suggested to implement your own serialization.</dd></dl>
 <p>During deserialization, if any of internal entities can not be deserialized, throw an exception.</p>
@@ -341,7 +341,7 @@ Overview</h1>
 <div class="line">+<span class="keywordtype">void</span> UnserializeOrThrow(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; in, T&amp; out) {</div>
 <div class="line">+    <a class="code" href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a> state;</div>
 <div class="line">+    <a class="code" href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a> stream(in);</div>
-<div class="line">+    <span class="keywordflow">if</span>(!<a class="code" href="namespacealtintegration.html#ac49823f310e29a02a4948db9debad9b7">altintegration::DeserializeFromVbkEncoding</a>(stream, out, state)) {</div>
+<div class="line">+    <span class="keywordflow">if</span>(!<a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a>(stream, out, state)) {</div>
 <div class="line">+        <span class="keywordflow">throw</span> std::invalid_argument(state.toString());</div>
 <div class="line">+    }</div>
 <div class="line">+}</div>
@@ -350,7 +350,7 @@ Overview</h1>
 <div class="line">+<span class="keywordtype">void</span> UnserializeOrThrow(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; in, T&amp; out, <span class="keyword">typename</span> T::hash_t precalculatedHash) {</div>
 <div class="line">+    <a class="code" href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a> state;</div>
 <div class="line">+    <a class="code" href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a> stream(in);</div>
-<div class="line">+    <span class="keywordflow">if</span>(!<a class="code" href="namespacealtintegration.html#ac49823f310e29a02a4948db9debad9b7">altintegration::DeserializeFromVbkEncoding</a>(stream, out, state, precalculatedHash)) {</div>
+<div class="line">+    <span class="keywordflow">if</span>(!<a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a>(stream, out, state, precalculatedHash)) {</div>
 <div class="line">+        <span class="keywordflow">throw</span> std::invalid_argument(state.toString());</div>
 <div class="line">+    }</div>
 <div class="line">+}</div>
@@ -439,21 +439,21 @@ Overview</h1>
 <div class="line">+}</div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_ac49823f310e29a02a4948db9debad9b7"><div class="ttname"><a href="namespacealtintegration.html#ac49823f310e29a02a4948db9debad9b7">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, PopState&lt; T &gt; &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="pop__state_8hpp_source.html#l00086">pop_state.hpp:86</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html"><div class="ttname"><a href="structaltintegration_1_1ATV.html">altintegration::ATV</a></div><div class="ttdoc">Atlchain endorsement.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00028">atv.hpp:28</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a5c09170c6abae48ec131ec4cff670754"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a5c09170c6abae48ec131ec4cff670754">altintegration::ATV::toVbkEncoding</a></div><div class="ttdeci">void toVbkEncoding(WriteStream &amp;stream) const</div><div class="ttdoc">Convert ATV to data stream using Vbk byte format.</div></div>
 <div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob</a></div><div class="ttdoc">Contiguous byte array of fixed size.</div><div class="ttdef"><b>Definition:</b> <a href="blob_8hpp_source.html#l00026">blob.hpp:26</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00032">block_index.hpp:32</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00031">block_index.hpp:31</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1PopData_html_a261845c9bd353abd9c70a6208e08c57b"><div class="ttname"><a href="structaltintegration_1_1PopData.html#a261845c9bd353abd9c70a6208e08c57b">altintegration::PopData::toVbkEncoding</a></div><div class="ttdeci">void toVbkEncoding(WriteStream &amp;stream) const</div><div class="ttdoc">Convert PopData to data stream using Vbk byte format.</div></div>
 <div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00022">read_stream.hpp:22</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VTB_html"><div class="ttname"><a href="structaltintegration_1_1VTB.html">altintegration::VTB</a></div><div class="ttdoc">Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.</div><div class="ttdef"><b>Definition:</b> <a href="vtb_8hpp_source.html#l00028">vtb.hpp:28</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VTB_html_a3d01efdef24e1705cfa0041cba456813"><div class="ttname"><a href="structaltintegration_1_1VTB.html#a3d01efdef24e1705cfa0041cba456813">altintegration::VTB::toVbkEncoding</a></div><div class="ttdeci">void toVbkEncoding(WriteStream &amp;stream) const</div><div class="ttdoc">Convert VTB to data stream using Vbk byte format.</div></div>
-<div class="ttc" id="astructaltintegration_1_1VbkBlock_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlock.html">altintegration::VbkBlock</a></div><div class="ttdoc">Veriblock block.</div><div class="ttdef"><b>Definition:</b> <a href="vbkblock_8hpp_source.html#l00032">vbkblock.hpp:32</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1VbkBlock_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlock.html">altintegration::VbkBlock</a></div><div class="ttdoc">Veriblock block.</div><div class="ttdef"><b>Definition:</b> <a href="vbkblock_8hpp_source.html#l00031">vbkblock.hpp:31</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkBlock_html_aa85426e112fc48c153616e3b0a79f009"><div class="ttname"><a href="structaltintegration_1_1VbkBlock.html#aa85426e112fc48c153616e3b0a79f009">altintegration::VbkBlock::toVbkEncoding</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; toVbkEncoding() const</div><div class="ttdoc">Convert VbkBlock to raw bytes data using VbkBlock byte format.</div></div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><p><a class="el" href="integration_3_forkpoint.html#md_docs_families_btc_integration_3_forkpoint">Next Section</a> </p>
+</div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 <script>
     $(document).ready(function(){
         $('.line').each(function(){

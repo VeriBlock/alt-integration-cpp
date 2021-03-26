@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update_20p2p_20protocol_843',['Update P2P protocol',['../integration_11_p2p.html',1,'integration']]]
+  ['new_20rpc_20calls_841',['New RPC calls',['../integration_12_rpc.html',1,'integration']]]
 ];

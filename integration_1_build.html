@@ -89,16 +89,16 @@ $(document).ready(function(){initNavTree('integration_1_build.html',''); initRes
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md26">Overview</a></li>
-<li class="level1"><a href="#autotoc_md27">1. Build and install veriblock-pop-cpp library.</a></li>
-<li class="level1"><a href="#autotoc_md28">2. Add veriblock-pop-cpp library dependency.</a></li>
+<ul><li class="level1"><a href="#autotoc_md25">Overview</a></li>
+<li class="level1"><a href="#autotoc_md26">1. Build and install veriblock-pop-cpp library.</a></li>
+<li class="level1"><a href="#autotoc_md27">2. Add veriblock-pop-cpp library dependency.</a></li>
 </ul>
 </div>
-<div class="textblock"><p><a class="anchor" id="md_docs_integration_1_build"></a></p>
-<h1><a class="anchor" id="autotoc_md26"></a>
+<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_1_build"></a></p>
+<h1><a class="anchor" id="autotoc_md25"></a>
 Overview</h1>
 <p>This section contains information about adding veriblock-pop C++ library to your fork of Bitcoin.</p>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md26"></a>
 1. Build and install veriblock-pop-cpp library.</h1>
 <div class="fragment"><div class="line">git clone https://github.com/VeriBlock/alt-integration-cpp.git</div>
 <div class="line">cd alt-integration-cpp</div>
@@ -108,7 +108,7 @@ Overview</h1>
 <div class="line">make -j4</div>
 <div class="line">sudo make install</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Building veriblock-pop-cpp library requires CMake 3.12 or newer</dd></dl>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md27"></a>
 2. Add veriblock-pop-cpp library dependency.</h1>
 <dl class="section note"><dt>Note</dt><dd>We use Bitcoin source code as reference. Other integrations should adhere to another project structure, build system, programming language, etc.</dd></dl>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/configure.ac">https://github.com/VeriBlock/vbk-ri-btc/blob/master/configure.ac</a> </p><div class="fragment"><div class="line">PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto not found.)])</div>
@@ -214,10 +214,10 @@ Overview</h1>
 <div class="line">-qt_test_test_bitcoin_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)</div>
 <div class="line">+  $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \</div>
 <div class="line">+  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(VERIBLOCK_POP_CPP_LIBS)</div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><p><a class="el" href="integration_2_popdata.html#md_docs_families_btc_integration_2_popdata">Next Section</a> </p>
+</div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 <script>
     $(document).ready(function(){
         $('.line').each(function(){
