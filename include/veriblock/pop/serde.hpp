@@ -265,7 +265,7 @@ bool readArrayOf(
 
   out.reserve(count);
 
-  for (size_t i = 0; i < count; i++) {
+  for (size_t i = 0; i < (size_t)count; i++) {
     T item;
     if (!readFunc(stream, item, state)) {
       return state.Invalid("readarray-bad-item", i);
