@@ -64,9 +64,14 @@ TEST_F(VSMTest, erase_test) {
   EXPECT_NE(map.find("key 3"), map.end());
   EXPECT_NE(map.find("key 4"), map.end());
 
-  map.erase("key 4");
+  map.erase("key 2");
 
   EXPECT_EQ(map.size(), 3);
+  EXPECT_FALSE(map.empty());
+
+  map.erase(map.find("key 1"));
+
+  EXPECT_EQ(map.size(), 2);
   EXPECT_FALSE(map.empty());
 }
 

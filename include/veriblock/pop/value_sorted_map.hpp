@@ -67,7 +67,7 @@ class ValueSortedMap {
   }
 
   iterator_t erase(const iterator_t& it) {
-    set_.erase(it->second);
+    set_.erase(set_.find(it->second));
     auto res = map_.erase(it);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
