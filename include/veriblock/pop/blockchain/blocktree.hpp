@@ -30,8 +30,8 @@ struct BlockTree : public BaseBlockTree<Block> {
   using base = BaseBlockTree<Block>;
   using block_t = Block;
   using params_t = ChainParams;
-  using index_t = base::index_t;
-  using stored_index_t = base::stored_index_t;
+  using index_t = typename base::index_t;
+  using stored_index_t = typename base::stored_index_t;
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = typename Block::prev_hash_t;
   using height_t = typename Block::height_t;
