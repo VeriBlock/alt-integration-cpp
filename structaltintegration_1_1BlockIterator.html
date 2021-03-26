@@ -125,9 +125,9 @@ Public Member Functions</h2></td></tr>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#ae489224d16febd52e4c5b8339cc9aa98">next</a> ()=0</td></tr>
 <tr class="memdesc:ae489224d16febd52e4c5b8339cc9aa98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate to the next block. <br /></td></tr>
 <tr class="separator:ae489224d16febd52e4c5b8339cc9aa98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3b23652bdf77d7eab4f2188cda34be7"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#ac3b23652bdf77d7eab4f2188cda34be7">value</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; BlockT &gt; &amp;out) const =0</td></tr>
-<tr class="memdesc:ac3b23652bdf77d7eab4f2188cda34be7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current block value.  <a href="structaltintegration_1_1BlockIterator.html#ac3b23652bdf77d7eab4f2188cda34be7">More...</a><br /></td></tr>
-<tr class="separator:ac3b23652bdf77d7eab4f2188cda34be7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcb4cec77bb22dae6005cd732ecc5238"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238">value</a> (<a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; BlockT &gt; &amp;out) const =0</td></tr>
+<tr class="memdesc:adcb4cec77bb22dae6005cd732ecc5238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current block value.  <a href="structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238">More...</a><br /></td></tr>
+<tr class="separator:adcb4cec77bb22dae6005cd732ecc5238"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac144042f9c2e295d00a43b27255dd2e3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3">key</a> (hash_t &amp;out) const =0</td></tr>
 <tr class="memdesc:ac144042f9c2e295d00a43b27255dd2e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current block hash key.  <a href="structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3">More...</a><br /></td></tr>
 <tr class="separator:ac144042f9c2e295d00a43b27255dd2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,8 +203,8 @@ template&lt;typename BlockT &gt; </div>
 
 </div>
 </div>
-<a id="ac3b23652bdf77d7eab4f2188cda34be7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3b23652bdf77d7eab4f2188cda34be7">&#9670;&nbsp;</a></span>value()</h2>
+<a id="adcb4cec77bb22dae6005cd732ecc5238"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcb4cec77bb22dae6005cd732ecc5238">&#9670;&nbsp;</a></span>value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -217,7 +217,7 @@ template&lt;typename BlockT &gt; </div>
         <tr>
           <td class="memname">virtual bool <a class="el" href="structaltintegration_1_1BlockIterator.html">altintegration::BlockIterator</a>&lt; BlockT &gt;::value </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; BlockT &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; BlockT &gt; &amp;&#160;</td>
           <td class="paramname"><em>out</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -230,7 +230,7 @@ template&lt;typename BlockT &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>block, <a class="el" href="structaltintegration_1_1BlockIndex.html" title="A node in a block tree.">altintegration::BlockIndex</a> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>block, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a> </td></tr>
   </table>
   </dd>
 </dl>
