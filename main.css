@@ -22,7 +22,7 @@
 }
 
 @media screen and (min-width: 767px) and (max-width: 1410px) {
-    .PageDoc > .contents, .PageDoc > .header .title {
+    #doc-content .contents, #doc-content .header .title {
         margin-left: 250px;
     }
 }
