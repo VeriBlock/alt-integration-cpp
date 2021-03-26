@@ -16,11 +16,11 @@
 namespace altintegration {
 
 //! @private
-template <typename K, typename V, typename Cmp = std::less<V>>
+template <typename K, typename V>
 class ValueSortedMap {
  public:
   using pair_t = std::pair<const K, V>;
-  using cmp_t = Cmp;
+  using cmp_t = std::function<bool(const V&, const V&)>;
   using set_t = typename std::multiset<V, cmp_t>;
   using map_t = std::unordered_map<K, V>;
 
@@ -34,7 +34,7 @@ class ValueSortedMap {
 
   ~ValueSortedMap() = default;
 
-  explicit ValueSortedMap(cmp_t cmp = cmp_t{}) : set_(cmp) {}
+  explicit ValueSortedMap(cmp_t cmp) : set_(cmp) {}
 
   iterator_t find(const K& key) { return map_.find(key); }
   const_iterator_t find(const K& key) const { return map_.find(key); }
@@ -67,7 +67,7 @@ class ValueSortedMap {
   }
 
   iterator_t erase(const iterator_t& it) {
-    set_.erase(it->second);
+    set_.erase(set_.find(it->second));
     auto res = map_.erase(it);
 
     VBK_ASSERT_MSG(map_.size() == set_.size(),
