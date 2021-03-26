@@ -208,3 +208,5 @@ Util file with some useful functions for the VeriBlock integration: [https://git
 +  vbk/params.cpp \
 +  vbk/bootstraps.cpp \
 ```
+
+[Next Section](./integration_5_persistence.md)
