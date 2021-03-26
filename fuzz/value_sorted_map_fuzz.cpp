@@ -12,7 +12,7 @@ enum Op : uint8_t { Insert = 0, Find = 1, Erase = 2, kMaxValue = 2 };
 using namespace altintegration;
 
 auto sort_map(const std::unordered_map<int, int>& a) {
-  std::multiset<int, std::less<int>> v;
+  std::multiset<int, std::function<bool(const int&, const int&)>> v;
   for (auto& p : a) {
     v.insert(p.second);
   }
@@ -21,7 +21,7 @@ auto sort_map(const std::unordered_map<int, int>& a) {
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   std::unordered_map<int, int> m;
-  ValueSortedMap<int, int> s;
+  ValueSortedMap<int, int> s{std::less<int>{}};
 
   FuzzedDataProvider p(Data, Size);
 

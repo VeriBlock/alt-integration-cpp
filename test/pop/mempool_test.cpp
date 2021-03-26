@@ -211,7 +211,7 @@ TEST_F(MemPoolFixture, removeAll_test3) {
 }
 
 TEST_F(MemPoolFixture, removeAll_test4) {
-  // mine 65 VBK blocks
+  // mine 15 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(15);
 
   // endorse VBK blocks
@@ -792,6 +792,30 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
     altparam.mMaxPopDataSize = i;
     ASSERT_NO_FATAL_FAILURE(pop_data = mempool->generatePopData());
   }
+}
+
+TEST_F(MemPoolFixture, getPop_scenario_12) {
+  size_t vbk_amount = 65;
+
+  // mine 65 VBK blocks
+  popminer->mineVbkBlocks(vbk_amount);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+
+  ASSERT_EQ(vbk_amount, context.size());
+
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    submitVBK(*it);
+  }
+
+  // only one block should be fully valid, other blocks are statefully invalid
+  ASSERT_EQ(mempool->getMap<VbkBlock>().size(), 1);
+  ASSERT_EQ(mempool->getInFlightMap<VbkBlock>().size(), vbk_amount - 1);
+
+  auto popData = checkedGetPop();
+
+  ASSERT_EQ(popData.context.size(), vbk_amount);
 }
 
 TEST_F(MemPoolFixture, IsKnown) {

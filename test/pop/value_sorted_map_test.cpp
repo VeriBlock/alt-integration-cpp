@@ -12,8 +12,10 @@ using namespace altintegration;
 
 struct VSMTest : ::testing::Test {};
 
+auto cmp = [](const int& v1, const int& v2) -> bool { return v1 < v2; };
+
 TEST_F(VSMTest, Basic_test) {
-  ValueSortedMap<std::string, int> map;
+  ValueSortedMap<std::string, int> map{cmp};
 
   map.insert("hello", 5);
   map.insert("hello 2", 6);
@@ -29,7 +31,7 @@ TEST_F(VSMTest, Basic_test) {
 }
 
 TEST_F(VSMTest, find_test) {
-  ValueSortedMap<int, int> map;
+  ValueSortedMap<int, int> map{cmp};
 
   map.insert(1, 5);
   map.insert(2, 6);
@@ -47,7 +49,7 @@ TEST_F(VSMTest, find_test) {
 }
 
 TEST_F(VSMTest, erase_test) {
-  ValueSortedMap<std::string, int> map;
+  ValueSortedMap<std::string, int> map{cmp};
 
   map.insert("key 1", 5);
   map.insert("key 2", 6);
@@ -62,14 +64,19 @@ TEST_F(VSMTest, erase_test) {
   EXPECT_NE(map.find("key 3"), map.end());
   EXPECT_NE(map.find("key 4"), map.end());
 
-  map.erase("key 4");
+  map.erase("key 2");
 
   EXPECT_EQ(map.size(), 3);
+  EXPECT_FALSE(map.empty());
+
+  map.erase(map.find("key 1"));
+
+  EXPECT_EQ(map.size(), 2);
   EXPECT_FALSE(map.empty());
 }
 
 TEST_F(VSMTest, value_sort_test) {
-  ValueSortedMap<std::string, int> map;
+  ValueSortedMap<std::string, int> map{cmp};
 
   map.insert("key 1", 4);
   map.insert("key 4", 2);
