@@ -225,7 +225,7 @@ $(document).ready(function(){initNavTree('serde_8hpp_source.html',''); initResiz
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  out.reserve(count);</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; count; i++) {</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    T item;</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>

@@ -383,10 +383,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abdfc334f9fdd1a9627176ed588386e4d"><td class="memTemplParams" colspan="2"><a id="abdfc334f9fdd1a9627176ed588386e4d"></a>
+<tr class="memitem:ae9feab182693629cdaae37644d546da4"><td class="memTemplParams" colspan="2"><a id="ae9feab182693629cdaae37644d546da4"></a>
 template&lt;typename A , typename B &gt; </td></tr>
-<tr class="memitem:abdfc334f9fdd1a9627176ed588386e4d"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; typename A &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>map_get_id_from_pointers</b> (const std::vector&lt; B * &gt; &amp;b)</td></tr>
-<tr class="separator:abdfc334f9fdd1a9627176ed588386e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9feab182693629cdaae37644d546da4"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; A &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>map_get_id_from_pointers</b> (const std::vector&lt; B * &gt; &amp;b)</td></tr>
+<tr class="separator:ae9feab182693629cdaae37644d546da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab62231f8e9dbe7481ec0a6078ec10d9d"><td class="memTemplParams" colspan="2"><a id="ab62231f8e9dbe7481ec0a6078ec10d9d"></a>
 template&lt;typename BlockTreeT &gt; </td></tr>
 <tr class="memitem:ab62231f8e9dbe7481ec0a6078ec10d9d"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; typename BlockTreeT::block_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ab62231f8e9dbe7481ec0a6078ec10d9d">getContext</a> (const BlockTreeT &amp;tree, typename BlockTreeT::hash_t tip, size_t size=std::numeric_limits&lt; size_t &gt;::max())</td></tr>
@@ -2263,7 +2263,7 @@ template&lt;typename T &gt; </div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  out.reserve(count);</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; count; i++) {</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    T item;</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
