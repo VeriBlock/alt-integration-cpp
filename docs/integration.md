@@ -22,7 +22,7 @@ This page describes required steps to integrate PoP protocol into **any** blockc
 - Containing Block - block in SI chain, which stores proof of endorsement.
 - altintegration::VbkTx (VBK TX) - VeriBlock transaction.
 - altintegration::BtcTx (BTC TX) - Bitcoin transaction.
-- altintegration::VbkPoPTx (VBK POP TX) - VeriBlock PoP transaction.
+- altintegration::VbkPopTx (VBK POP TX) - VeriBlock PoP transaction.
 - PoP Payout Delay - altintegration::PoPPayoutsParams::getPoPPayoutDelay() - PoP payout will occur after this amount of blocks after endorsed block.
 - Endorsement Settlement Interval - altintegration::AltChainParams::getEndorsementSettlementInterval() - validity window for ATV.
 - altintegration::MemPool (PoP MemPool) - memory pool for PoP-related payloads. Represents the content of the "next" block after current tip.
