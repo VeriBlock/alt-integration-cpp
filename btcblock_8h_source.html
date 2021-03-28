@@ -114,13 +114,15 @@ $(document).ready(function(){initNavTree('btcblock_8h_source.html',''); initResi
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, difficulty);</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, nonce);</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;POP_DECLARE_ARRAY(pop_btc_block_t, btc_block);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;POP_DECLARE_ARRAY(POP_ENTITY_NAME(btc_block), btc_block);</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_BTC_BLOCK_H</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;POP_GENERATE_DEFAULT_VALUE(btc_block);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;}</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_BTC_BLOCK_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>
