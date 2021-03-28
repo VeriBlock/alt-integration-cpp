@@ -454,13 +454,13 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="674" y="-1099.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockIndex()</text>
 <text text-anchor="start" x="674" y="-1088.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
 <text text-anchor="start" x="674" y="-1077.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="674" y="-1066.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mergeFrom()</text>
-<text text-anchor="start" x="674" y="-1055.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toStoredBlockIndex()</text>
+<text text-anchor="start" x="674" y="-1066.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ clone()</text>
+<text text-anchor="start" x="674" y="-1055.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mergeFrom()</text>
 <text text-anchor="start" x="674" y="-1044.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isConnected()</text>
 <text text-anchor="start" x="674" y="-1033.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getStatus()</text>
 <text text-anchor="start" x="674" y="-1022.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ setStatus()</text>
 <text text-anchor="start" x="674" y="-1011.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getValidityLevel()</text>
-<text text-anchor="start" x="674" y="-1000.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 33 more...</text>
+<text text-anchor="start" x="674" y="-1000.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 35 more...</text>
 </a>
 </g>
 </g>
