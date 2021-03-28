@@ -14,11 +14,12 @@
 extern "C" {
 #endif
 
-#define POP_DECLARE_ARRAY(type, suffix) \
-  struct pop_array_##suffix##_t {       \
-    const type* data;                   \
-    size_t size;                        \
-  };                                    \
+#define POP_DECLARE_ARRAY(type, suffix)                       \
+  struct __pop_array_##suffix {                               \
+    const type* data;                                         \
+    size_t size;                                              \
+  };                                                          \
+  typedef struct __pop_array_##suffix pop_array_##suffix##_t; \
   void pop_array_##suffix##_free(const pop_array_##suffix##_t* self);
 
 #define POP_ARRAY_NAME(suffix) pop_array_##suffix##_t

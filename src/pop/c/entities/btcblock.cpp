@@ -12,6 +12,8 @@ struct __pop_btc_block {
   altintegration::BtcBlock ref;
 };
 
+int VBK_func() { return 1; }
+
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
     delete self;
