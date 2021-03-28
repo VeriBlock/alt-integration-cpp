@@ -27,6 +27,10 @@ extern "C" {
 #define POP_ENTITY_GETTER_SIGNATURE(entity, returntype, fieldname) \
   returntype pop_##entity##_get_##fieldname(const pop_##entity##_t* self)
 
+// get the default value of the entity (test used only)
+#define POP_GENERATE_DEFAULT_VALUE(entity) \
+  POP_ENTITY_NAME(entity) * pop_##entity##_generate_default_value()
+
 #ifdef __cplusplus
 }
 #endif

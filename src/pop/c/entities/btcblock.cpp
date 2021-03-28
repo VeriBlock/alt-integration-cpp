@@ -66,3 +66,25 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, difficulty) {
 POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, nonce) {
   return self->ref.getNonce();
 }
+
+POP_ARRAY_FREE_SIGNATURE(btc_block) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
+POP_GENERATE_DEFAULT_VALUE(btc_block) {
+  auto* v = new POP_ENTITY_NAME(btc_block);
+
+  v->ref.setNonce(1);
+  v->ref.setTimestamp(1);
+  v->ref.setVersion(1);
+  v->ref.setDifficulty(1);
+  v->ref.setPreviousBlock({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+  v->ref.setMerkleRoot({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+
+  return v;
+}

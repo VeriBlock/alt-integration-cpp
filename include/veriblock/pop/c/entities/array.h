@@ -20,9 +20,12 @@ extern "C" {
     size_t size;                                              \
   };                                                          \
   typedef struct __pop_array_##suffix pop_array_##suffix##_t; \
-  void pop_array_##suffix##_free(const pop_array_##suffix##_t* self);
+  void pop_array_##suffix##_free(pop_array_##suffix##_t* self);
 
 #define POP_ARRAY_NAME(suffix) pop_array_##suffix##_t
+
+#define POP_ARRAY_FREE_SIGNATURE(suffix) \
+  void pop_array_##suffix##_free(pop_array_##suffix##_t* self)
 
 // declare arrays of simple types here
 POP_DECLARE_ARRAY(uint8_t, u8);

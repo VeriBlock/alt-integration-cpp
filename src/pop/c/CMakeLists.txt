@@ -10,6 +10,7 @@ add_library(veriblock-pop-c OBJECT
         storage.cpp
         # entities
         entities/btcblock.cpp
+        entities/array.cpp
         )
 target_link_libraries(veriblock-pop-c
         rocksdb

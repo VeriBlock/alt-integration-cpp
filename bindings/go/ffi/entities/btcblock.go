@@ -4,9 +4,26 @@ package entities
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/btcblock.h>
 import "C"
+import "runtime"
 
 type BtcBlock struct {
 	ref *C.pop_btc_block_t
+}
+
+func GenerateDefaultBtcBlock() *BtcBlock {
+	val := &BtcBlock{ref: C.pop_btc_block_generate_default_value()}
+	runtime.SetFinalizer(val, func(v *BtcBlock) {
+		v.Free()
+	})
+
+	return val
+}
+
+func (v *BtcBlock) Free() {
+	if v.ref != nil {
+		C.pop_btc_block_free(v.ref)
+		v.ref = nil
+	}
 }
 
 func (v *BtcBlock) GetHash() []byte {
