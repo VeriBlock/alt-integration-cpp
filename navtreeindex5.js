@@ -1,12 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structaltintegration_1_1BtcChainParamsTest.html#a6ea2d6428d54b8c616f62231016cc85e":[4,0,0,12,5],
-"structaltintegration_1_1BtcChainParamsTest.html#a7378a855109ca85015ef70b132fd67e1":[4,0,0,12,7],
-"structaltintegration_1_1BtcChainParamsTest.html#a9b1b1137fabce231f45fac74b72f106d":[4,0,0,12,2],
-"structaltintegration_1_1BtcChainParamsTest.html#ace4994b70b998889fe9a0ad8e7967f87":[4,0,0,12,6],
-"structaltintegration_1_1BtcChainParamsTest.html#ad00cfa024a46be2cbe74304887f92088":[4,0,0,12,3],
-"structaltintegration_1_1BtcTx.html":[4,0,0,28],
-"structaltintegration_1_1BtcTx.html#a21571c14f1f6ab7aa6e4a9bd928fb933":[4,0,0,28,7],
 "structaltintegration_1_1BtcTx.html#a49e7a202e10392845f22391eacd0ca6c":[4,0,0,28,3],
 "structaltintegration_1_1BtcTx.html#a55796ad82d5b35a9f6316efc978f36f9":[4,0,0,28,4],
 "structaltintegration_1_1BtcTx.html#a7e197dd0a4caeb263cb0a17bed9ff56e":[4,0,0,28,0],
@@ -249,5 +242,12 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1MerklePath.html#a01b734b8c63386ab6aac7a0305e6528b":[4,0,0,34,2],
 "structaltintegration_1_1MerklePath.html#a0c1573f4c7cbcc21fd1a8f8d0996ff9b":[4,0,0,34,6],
 "structaltintegration_1_1MerklePath.html#a264bdc1815f4090741b5c7e613674e06":[4,0,0,34,4],
-"structaltintegration_1_1MerklePath.html#a2ce092b20111a93562442d53e91bd483":[4,0,0,34,5]
+"structaltintegration_1_1MerklePath.html#a2ce092b20111a93562442d53e91bd483":[4,0,0,34,5],
+"structaltintegration_1_1MerklePath.html#a5895c62d372767ac1f6a971b1fe3c193":[4,0,0,34,1],
+"structaltintegration_1_1MerklePath.html#aa76b3a3e723958ecaef0c628c43f2350":[4,0,0,34,0],
+"structaltintegration_1_1MerklePath.html#afe1cc7d3dc01e08477ce0cf2c87cc43e":[4,0,0,34,3],
+"structaltintegration_1_1Output.html":[4,0,0,37],
+"structaltintegration_1_1Output.html#a1ce3e8e2e7817349cafa780f50878bda":[4,0,0,37,1],
+"structaltintegration_1_1Output.html#a30e1ca51121ef7f5298873fabfd6e6d5":[4,0,0,37,2],
+"structaltintegration_1_1Output.html#a5edc04f581fda585c9b49c2094b97817":[4,0,0,37,5]
 };
