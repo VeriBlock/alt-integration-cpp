@@ -69,10 +69,7 @@ Pop fork resolution uses Pop score to determine the winning chain. One block wit
 +    auto state = altintegration::ValidationState();
 +
 +    if (!pop.getAltBlockTree().setState(left.hash, state)) {
-+        if (!pop.getAltBlockTree().setState(right.hash, state)) {
-+            assert(false && "both chains are invalid");
-+        }
-+        return -1;
+          assert(false && "current tip is invalid");
 +    }
 +
 +    return pop.getAltBlockTree().comparePopScore(left.hash, right.hash);
