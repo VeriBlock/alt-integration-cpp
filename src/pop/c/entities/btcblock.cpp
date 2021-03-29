@@ -12,8 +12,6 @@ struct __pop_btc_block {
   altintegration::BtcBlock ref;
 };
 
-int VBK_func() { return 1; }
-
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
     delete self;
@@ -26,6 +24,7 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
 
   POP_ARRAY_NAME(u8) res;
   res.data = new uint8_t[hash.size()];
+  std::copy(hash.begin(), hash.end(), res.data);
   res.size = hash.size();
 
   return res;
@@ -36,6 +35,7 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), previous_block) {
 
   POP_ARRAY_NAME(u8) res;
   res.data = new uint8_t[hash.size()];
+  std::copy(hash.begin(), hash.end(), res.data);
   res.size = hash.size();
 
   return res;
@@ -46,6 +46,7 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), merkle_root) {
 
   POP_ARRAY_NAME(u8) res;
   res.data = new uint8_t[hash.size()];
+  std::copy(hash.begin(), hash.end(), res.data);
   res.size = hash.size();
 
   return res;
@@ -65,13 +66,6 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, difficulty) {
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, nonce) {
   return self->ref.getNonce();
-}
-
-POP_ARRAY_FREE_SIGNATURE(btc_block) {
-  if (self != nullptr) {
-    delete[] self->data;
-    self = nullptr;
-  }
 }
 
 POP_GENERATE_DEFAULT_VALUE(btc_block) {

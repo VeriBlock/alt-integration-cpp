@@ -30,21 +30,25 @@ func (v *BtcBlock) GetHash() []byte {
 	if v.ref == nil {
 		panic("BtcBlock does not initialized")
 	}
-	return nil
+
+	array := C.pop_btc_block_get_hash(v.ref)
+	return ConvertToBytes(&array)
 }
 
 func (v *BtcBlock) GetPreviousBlock() []byte {
 	if v.ref == nil {
 		panic("BtcBlock does not initialized")
 	}
-	return nil
+	array := C.pop_btc_block_get_previous_block(v.ref)
+	return ConvertToBytes(&array)
 }
 
 func (v *BtcBlock) GetMerkleRoot() []byte {
 	if v.ref == nil {
 		panic("BtcBlock does not initialized")
 	}
-	return nil
+	array := C.pop_btc_block_get_merkle_root(v.ref)
+	return ConvertToBytes(&array)
 }
 
 func (v *BtcBlock) GetVersion() uint32 {
