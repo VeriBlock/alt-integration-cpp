@@ -36,7 +36,7 @@ struct BlocksOwner {
 
   ~BlocksOwner() {
     // destroy chain in reverse order (from tip to root)
-    for(auto it = blocks.rbegin(); it != blocks.rend(); ++it) {
+    for (auto it = blocks.rbegin(); it != blocks.rend(); ++it) {
       it->reset();
     }
   }
@@ -50,8 +50,7 @@ struct TestCase {
 struct ChainTest : public ::testing::TestWithParam<TestCase> {
   Chain<BlockIndex<MyDummyBlock>> chain{};
 
-  static BlocksOwner makeBlocks(
-      int startHeight, int size) {
+  static BlocksOwner makeBlocks(int startHeight, int size) {
     std::vector<std::shared_ptr<BlockIndex<MyDummyBlock>>> blocks;
     for (int i = 0; i < size; i++) {
       auto index = std::make_shared<BlockIndex<MyDummyBlock>>(nullptr);
@@ -168,7 +167,7 @@ std::shared_ptr<BlockIndex<VbkBlock>> generateNextBlock(
   if (prev != nullptr) {
     block.setHeight(prev->getHeight() + 1);
     block.setPreviousBlock(prev->getHash().trimLE<uint96::size()>());
-    block.setTimestamp(prev->getHeader().getBlockTime() + 1);
+    block.setTimestamp(prev->getHeader().getTimestamp() + 1);
   } else {
     block.setHeight(0);
     block.setTimestamp(0);
@@ -258,7 +257,7 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   // deallocate blocks in reverse order (tip->root)
   newIndex2.reset();
   newIndex.reset();
-  for(auto it = indexes.rbegin(); it != indexes.rend(); ++it) {
+  for (auto it = indexes.rbegin(); it != indexes.rend(); ++it) {
     it->reset();
   }
 }

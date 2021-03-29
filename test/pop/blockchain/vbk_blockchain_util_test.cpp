@@ -40,7 +40,7 @@ static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
 
     VbkBlock blockTmp{};
     blockTmp.setHeight((int32_t)i + 1);
-    blockTmp.setTimestamp(chain[i - 1]->getHeader().getBlockTime() + deltaTime);
+    blockTmp.setTimestamp(chain[i - 1]->getHeader().getTimestamp() + deltaTime);
     blockTmp.setDifficulty(difficulty);
     auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
     temp->setHeader(blockTmp);
@@ -194,7 +194,7 @@ TEST_F(SingleTest, single_test) {
 
     VbkBlock blockTmp{};
     blockTmp.setHeight((int32_t)i + 1);
-    blockTmp.setTimestamp(chain[i - 1]->getHeader().getBlockTime() + deltaTime);
+    blockTmp.setTimestamp(chain[i - 1]->getHeader().getTimestamp() + deltaTime);
     blockTmp.setDifficulty(ArithUint256::fromHex("09184E72A000").toBits());
     auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
     temp->setHeader(blockTmp);
