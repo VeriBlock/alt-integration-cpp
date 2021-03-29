@@ -70,6 +70,8 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
 
   std::string toPrettyString() const;
 
+  void toVbkEncoding(WriteStream& w) const;
+
  protected:
   //! reference counter for fork resolution
   uint32_t _refCount = 0;
@@ -79,7 +81,16 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   void setDirty();
 
   void setNull();
+
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         VbkBlockAddon& out,
+                                         ValidationState& state);
 };
+
+//! @overload
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

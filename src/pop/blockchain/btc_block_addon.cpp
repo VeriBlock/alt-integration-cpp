@@ -13,6 +13,32 @@ void BtcBlockAddon::setDirty() {
   static_cast<BlockIndex<BtcBlock>*>(this)->setDirty();
 }
 
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                BtcBlockAddon& out,
+                                ValidationState& state) {
+  if (!readArrayOf<BtcBlockAddon::ref_height_t>(
+          stream,
+          out.refs,
+          state,
+          0,
+          MAX_BTCADDON_REFS,
+          [](ReadStream& stream, int32_t& out, ValidationState& state) -> bool {
+            return stream.readBE<BtcBlockAddon::ref_height_t>(out, state);
+          })) {
+    return state.Invalid("bad-refs");
+  }
+
+  return true;
+}
+
+void BtcBlockAddon::toVbkEncoding(WriteStream& w) const {
+  // save only refs
+  writeArrayOf<ref_height_t>(
+      w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
+        w.writeBE<ref_height_t>(value);
+      });
+}
+
 void BtcBlockAddon::setNullInmemFields() {
   chainWork = 0;
   blockOfProofEndorsements.clear();

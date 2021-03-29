@@ -41,11 +41,15 @@ getEstimateSize(const T&) {
 
 using altintegration::AltBlock;
 using altintegration::StoredBlockIndex;
+using altintegration::BlockIndex;
 using altintegration::BtcBlock;
 using altintegration::VbkBlock;
 
 // clang-format off
 template <typename T> T create() { return {}; }
+template <> BlockIndex<BtcBlock> create() { return {nullptr}; }
+template <> BlockIndex<VbkBlock> create() { return {nullptr}; }
+template <> BlockIndex<AltBlock> create() { return {nullptr}; }
 // clang-format on
 
 #define DEFINE_DESER_FUZZ(type)                                                \
@@ -120,6 +124,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   DEFINE_DESER_FUZZ(StoredBlockIndex<AltBlock>);
   DEFINE_DESER_FUZZ(StoredBlockIndex<VbkBlock>);
   DEFINE_DESER_FUZZ(StoredBlockIndex<BtcBlock>);
+  DEFINE_DESER_FUZZ(BtcBlockAddon);
+  DEFINE_DESER_FUZZ(VbkBlockAddon);
+  DEFINE_DESER_FUZZ(AltBlockAddon);
+  DEFINE_DESER_FUZZ(BlockIndex<AltBlock>);
+  DEFINE_DESER_FUZZ(BlockIndex<VbkBlock>);
+  DEFINE_DESER_FUZZ(BlockIndex<BtcBlock>);
   DEFINE_DESER_FUZZ(VTB);
   DEFINE_DESER_FUZZ(ATV);
   DEFINE_DESER_FUZZ(PopData);

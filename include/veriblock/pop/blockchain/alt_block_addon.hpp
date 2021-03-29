@@ -57,6 +57,8 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   std::string toPrettyString() const;
 
+  void toVbkEncoding(WriteStream& w) const;
+
  protected:
   //! list of changes introduced in this block
   // ATV::id_t
@@ -72,7 +74,16 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
 
   template <typename pop_t>
   std::vector<typename pop_t::id_t>& getPayloadIdsInner();
+
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         AltBlockAddon& out,
+                                         ValidationState& state);
 };
+
+//! @overload
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                AltBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 

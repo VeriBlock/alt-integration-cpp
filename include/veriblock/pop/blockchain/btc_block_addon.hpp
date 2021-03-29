@@ -42,6 +42,8 @@ struct BtcBlockAddon {
 
   std::string toPrettyString() const;
 
+  void toVbkEncoding(WriteStream& w) const;
+
  protected:
   //! reference counter for fork resolution. Stores heights of VBK blocks that
   //! contain VTBs which add this BTC block.
@@ -59,7 +61,16 @@ struct BtcBlockAddon {
   void setDirty();
 
   void setNull();
+
+  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                         BtcBlockAddon& out,
+                                         ValidationState& state);
 };
+
+//! @overload
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                BtcBlockAddon& out,
+                                ValidationState& state);
 
 }  // namespace altintegration
 
