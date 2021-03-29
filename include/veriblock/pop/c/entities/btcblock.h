@@ -24,7 +24,7 @@ POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, timestamp);
 POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, difficulty);
 POP_ENTITY_DECLARE_GETTER(btc_block, uint32_t, nonce);
 
-POP_DECLARE_ARRAY(POP_ENTITY_NAME(btc_block), btc_block);
+POP_DECLARE_ARRAY(POP_ENTITY_NAME(btc_block) *, btc_block);
 
 POP_GENERATE_DEFAULT_VALUE(btc_block);
 

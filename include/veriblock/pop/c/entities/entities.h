@@ -11,6 +11,7 @@
 // array
 #undef POP_DECLARE_ARRAY
 #undef POP_ARRAY_NAME
+#undef POP_ARRAY_FREE_SIGNATURE
 
 // type helpers
 #undef POP_DECLARE_ENTITY
