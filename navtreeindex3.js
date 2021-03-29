@@ -1,5 +1,8 @@
 var NAVTREEINDEX3 =
 {
+"namespacealtintegration_1_1json.html#a04d1e4499e2a61cc9ec24e0b288144b1":[3,0,0,3,4],
+"namespacealtintegration_1_1json.html#a22f269a51e28f3544bdeb083d813999c":[3,0,0,3,2],
+"namespacealtintegration_1_1json.html#a48e7904b2d715d4693ce7e0a4af8d611":[3,0,0,3,8],
 "namespacealtintegration_1_1json.html#a6e4b981d8ed092f97a56200c5798e4d2":[3,0,0,3,3],
 "namespacealtintegration_1_1json.html#ae2a4fa14d61e8296235a0b4f1fce3898":[3,0,0,3,6],
 "namespacealtintegration_1_1json.html#ae45ea70d981f987509e029ab850b0181":[3,0,0,3,5],
@@ -40,7 +43,7 @@ var NAVTREEINDEX3 =
 "payloads__provider_8hpp_source.html":[5,0,1,0,0,8,6],
 "picojson_8hpp_source.html":[5,0,1,0,0,0,0],
 "pop_8hpp_source.html":[5,0,1,0,1],
-"pop__context_8h_source.html":[5,0,1,0,0,2,6],
+"pop__context_8h_source.html":[5,0,1,0,0,2,5],
 "pop__context_8hpp_source.html":[5,0,1,0,0,32],
 "pop__payouts_8hpp_source.html":[5,0,1,0,0,5,14],
 "pop__state_8hpp_source.html":[5,0,1,0,0,1,1,2],
@@ -90,7 +93,6 @@ var NAVTREEINDEX3 =
 "secp256k1_8hpp.html#aa0d66f47fe40020c434679bf2486ebc9":[3,0,0,5,11],
 "secp256k1_8hpp.html#aff432b5531b69bcf4592aba8fb14797d":[3,0,0,5,2],
 "secp256k1_8hpp_source.html":[5,0,1,0,0,4,3],
-"serde_8h_source.html":[5,0,1,0,0,2,0,3],
 "serde_8hpp_source.html":[5,0,1,0,0,36],
 "signals_8hpp.html#ae402b05319fea3c59629af8e5082dcf5":[3,0,0,6,1],
 "signals_8hpp_source.html":[5,0,1,0,0,37],
@@ -99,7 +101,7 @@ var NAVTREEINDEX3 =
 "state__corrupted_8hpp_source.html":[5,0,1,0,0,6,0],
 "state__utils_8hpp_source.html":[5,0,1,0,0,39],
 "stateless__validation_8hpp_source.html":[5,0,1,0,0,40],
-"storage_8h_source.html":[5,0,1,0,0,2,7],
+"storage_8h_source.html":[5,0,1,0,0,2,6],
 "storage_8hpp_source.html":[5,0,1,0,0,41],
 "storage__io_8hpp_source.html":[5,0,1,0,0,6,1],
 "structaltintegration_1_1ATV.html":[4,0,0,26],
@@ -247,7 +249,5 @@ var NAVTREEINDEX3 =
 "structaltintegration_1_1BaseBlockTree.html#a73284affd575c2eafc54f7991078683a":[4,0,0,7,35],
 "structaltintegration_1_1BaseBlockTree.html#a744bf76b3fe3c296375e04cdf6157c7e":[4,0,0,7,1],
 "structaltintegration_1_1BaseBlockTree.html#a78f4ab76e6419449175a99f7b66d7ad4":[4,0,0,7,24],
-"structaltintegration_1_1BaseBlockTree.html#a88004ad8992eefd68d064c377c079495":[4,0,0,7,13],
-"structaltintegration_1_1BaseBlockTree.html#a8878e8850f58e0b014354def418c606f":[4,0,0,7,3],
-"structaltintegration_1_1BaseBlockTree.html#a88c964a619c7ecf2bdf7158dbd376a82":[4,0,0,7,2]
+"structaltintegration_1_1BaseBlockTree.html#a88004ad8992eefd68d064c377c079495":[4,0,0,7,13]
 };

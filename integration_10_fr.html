@@ -157,10 +157,7 @@ Overview</h1>
 <div class="line">+    <span class="keyword">auto</span> state = <a class="code" href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a>();</div>
 <div class="line">+</div>
 <div class="line">+    <span class="keywordflow">if</span> (!pop.getAltBlockTree().setState(left.hash, state)) {</div>
-<div class="line">+        <span class="keywordflow">if</span> (!pop.getAltBlockTree().setState(right.hash, state)) {</div>
-<div class="line">+            assert(<span class="keyword">false</span> &amp;&amp; <span class="stringliteral">&quot;both chains are invalid&quot;</span>);</div>
-<div class="line">+        }</div>
-<div class="line">+        <span class="keywordflow">return</span> -1;</div>
+<div class="line">          assert(<span class="keyword">false</span> &amp;&amp; <span class="stringliteral">&quot;current tip is invalid&quot;</span>);</div>
 <div class="line">+    }</div>
 <div class="line">+</div>
 <div class="line">+    <span class="keywordflow">return</span> pop.getAltBlockTree().comparePopScore(left.hash, right.hash);</div>

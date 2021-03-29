@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"structaltintegration_1_1MerklePath.html#a5895c62d372767ac1f6a971b1fe3c193":[4,0,0,34,1],
+"structaltintegration_1_1MerklePath.html#aa76b3a3e723958ecaef0c628c43f2350":[4,0,0,34,0],
 "structaltintegration_1_1MerklePath.html#afe1cc7d3dc01e08477ce0cf2c87cc43e":[4,0,0,34,3],
 "structaltintegration_1_1Output.html":[4,0,0,37],
 "structaltintegration_1_1Output.html#a1ce3e8e2e7817349cafa780f50878bda":[4,0,0,37,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d":[4,0,0,17,21],
 "structaltintegration_1_1VbkBlockTree.html#ae1b38af8edb3fca0387e909e90fa4a8f":[4,0,0,17,15],
 "structaltintegration_1_1VbkBlockTree.html#aee6a78afe780898b2958ac3d733f1515":[4,0,0,17,7],
-"structaltintegration_1_1VbkChainParams.html":[4,0,0,18],
-"structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3":[4,0,0,18,20],
-"structaltintegration_1_1VbkChainParams.html#a0ecd5428a507344f184a6995111ac40d":[4,0,0,18,8]
+"structaltintegration_1_1VbkChainParams.html":[4,0,0,18]
 };
