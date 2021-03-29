@@ -511,10 +511,10 @@
 <text text-anchor="start" x="1114" y="-410" font-family="Helvetica,sans-Serif" font-size="10.00">+ toRaw()</text>
 <text text-anchor="start" x="1114" y="-399" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
 <text text-anchor="start" x="1114" y="-388" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateSize()</text>
-<text text-anchor="start" x="1114" y="-377" font-family="Helvetica,sans-Serif" font-size="10.00">+ getDifficulty()</text>
-<text text-anchor="start" x="1114" y="-366" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockTime()</text>
-<text text-anchor="start" x="1114" y="-355" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateHash()</text>
-<text text-anchor="start" x="1114" y="-344" font-family="Helvetica,sans-Serif" font-size="10.00">+ getHash()</text>
+<text text-anchor="start" x="1114" y="-377" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockTime()</text>
+<text text-anchor="start" x="1114" y="-366" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateHash()</text>
+<text text-anchor="start" x="1114" y="-355" font-family="Helvetica,sans-Serif" font-size="10.00">+ getHash()</text>
+<text text-anchor="start" x="1114" y="-344" font-family="Helvetica,sans-Serif" font-size="10.00">+ getShortHash()</text>
 <text text-anchor="start" x="1114" y="-333" font-family="Helvetica,sans-Serif" font-size="10.00">and 21 more...</text>
 <text text-anchor="start" x="1114" y="-322" font-family="Helvetica,sans-Serif" font-size="10.00">+ name()</text>
 </a>

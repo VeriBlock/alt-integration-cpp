@@ -15,7 +15,7 @@ var structaltintegration_1_1VbkBlock =
     [ "calculateHash", "structaltintegration_1_1VbkBlock.html#ac2f1abe68e8e136be326ca9f63f61110", null ],
     [ "estimateSize", "structaltintegration_1_1VbkBlock.html#a57775a64dab87a06edf34ae09ef014ae", null ],
     [ "getBlockTime", "structaltintegration_1_1VbkBlock.html#a6c6580d6dd2a6d98abe1735ce23f6c74", null ],
-    [ "getDifficulty", "structaltintegration_1_1VbkBlock.html#a0c34ea27b671d18a8b426db55b17e169", null ],
+    [ "getDifficulty", "structaltintegration_1_1VbkBlock.html#aaa611314daa03910dafec40bbc7d0ec5", null ],
     [ "getHash", "structaltintegration_1_1VbkBlock.html#ab7935b2cf5d894299bd7711642a376e9", null ],
     [ "getHeight", "structaltintegration_1_1VbkBlock.html#a6c9f0a40a89eadd1b7afe7bcb6ddffeb", null ],
     [ "getId", "structaltintegration_1_1VbkBlock.html#a72a390633a2472c85c5dae7f5ba8ecfc", null ],
