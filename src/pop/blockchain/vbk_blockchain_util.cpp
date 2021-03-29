@@ -191,14 +191,14 @@ bool checkBlockTime(const BlockIndex<VbkBlock>& prev,
                     const VbkBlock& block,
                     ValidationState& state,
                     const VbkChainParams& params) {
-  int64_t blockTime = block.getBlockTime();
+  int64_t timestamp = block.getTimestamp();
   int64_t median = getMedianTimePast(prev);
-  if (blockTime < median) {
+  if (timestamp < median) {
     return state.Invalid("vbk-time-too-old", "block's timestamp is too early");
   }
 
   int64_t maxTime = currentTimestamp4() + params.maxFutureBlockTime();
-  if (blockTime > maxTime) {
+  if (timestamp > maxTime) {
     return state.Invalid("vbk-time-too-new",
                          "VBK block timestamp too far in the future");
   }
@@ -237,8 +237,8 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
     return state.Invalid("vbk-check-block-time");
   }
 
-  if (shouldVerifyNextWork &&
-      (block.getDifficulty() != getNextWorkRequired(prev, block, params))) {
+  if (shouldVerifyNextWork && ((uint32_t)block.getDifficulty() !=
+                               getNextWorkRequired(prev, block, params))) {
     return state.Invalid("vbk-bad-diffbits", "incorrect proof of work");
   }
 

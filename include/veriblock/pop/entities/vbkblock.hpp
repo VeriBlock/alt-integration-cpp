@@ -73,12 +73,6 @@ struct VbkBlock {
   size_t estimateSize() const;
 
   /*
-   * Getter for difficulty
-   * @return block difficulty
-   */
-  uint32_t getDifficulty() const;
-
-  /*
    * Getter for timestamp
    * @return block timestamp
    */
@@ -116,6 +110,7 @@ struct VbkBlock {
            int32_t diff,
            uint64_t nonce);
 
+  int32_t getDifficulty() const { return difficulty; }
   int32_t getHeight() const { return height; }
   int16_t getVersion() const { return version; }
   uint96 getPreviousBlock() const { return previousBlock; }
