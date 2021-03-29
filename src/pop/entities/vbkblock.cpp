@@ -3,12 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/vbkblock.hpp>
-
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/config.hpp>
-
 #include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/entities/vbkblock.hpp>
 
 namespace altintegration {
 
@@ -43,10 +41,6 @@ size_t VbkBlock::estimateSize() const {
   size += singleByteLenValueSize(rawSize);
   return size;
 }
-
-uint32_t VbkBlock::getDifficulty() const { return difficulty; }
-
-uint32_t VbkBlock::getBlockTime() const { return timestamp; }
 
 VbkBlock::hash_t VbkBlock::calculateHash() const {
   WriteStream stream;

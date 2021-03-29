@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/vbkblock.hpp>
-
 #include <gtest/gtest.h>
 
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blockchain/block_index.hpp>
+#include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;
@@ -40,7 +39,7 @@ TEST(VbkBlock, DeserializeFromVbkEncoding) {
             defaultBlock.getSecondPreviousKeystone().toHex());
   EXPECT_EQ(block.getMerkleRoot().toHex(),
             defaultBlock.getMerkleRoot().toHex());
-  EXPECT_EQ(block.getBlockTime(), defaultBlock.getBlockTime());
+  EXPECT_EQ(block.getTimestamp(), defaultBlock.getTimestamp());
   EXPECT_EQ(block.getDifficulty(), defaultBlock.getDifficulty());
   EXPECT_EQ(block.getNonce(), defaultBlock.getNonce());
 }
