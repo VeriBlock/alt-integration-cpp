@@ -7,6 +7,7 @@
 #ifndef VERIBLOCK_POP_CPP_ENTITIES_ARRAY_H
 #define VERIBLOCK_POP_CPP_ENTITIES_ARRAY_H
 
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -16,7 +17,7 @@ extern "C" {
 
 #define POP_DECLARE_ARRAY(type, suffix)                       \
   struct __pop_array_##suffix {                               \
-    const type* data;                                         \
+    type* data;                                               \
     size_t size;                                              \
   };                                                          \
   typedef struct __pop_array_##suffix pop_array_##suffix##_t; \
