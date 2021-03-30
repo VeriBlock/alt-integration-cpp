@@ -71,30 +71,30 @@ struct InmemBlockBatch : public BlockBatch {
   InmemBlockBatch(InmemBlockProvider& storage) : storage_(storage) {}
   ~InmemBlockBatch() override = default;
 
-  void writeBlock(const BlockIndex<BtcBlock>& value) override {
-    storage_.btc[value.getHash()] = make_unique<StoredBlockIndex<BtcBlock>>(value.toStoredBlockIndex());
+  void writeBlock(const StoredBlockIndex<BtcBlock>& value) override {
+    storage_.btc[value.header->getHash()] = make_unique<StoredBlockIndex<BtcBlock>>(value);
   }
 
-  void writeBlock(const BlockIndex<VbkBlock>& value) override {
-    storage_.vbk[value.getHash()] =
-        make_unique<StoredBlockIndex<VbkBlock>>(value.toStoredBlockIndex());
+  void writeBlock(const StoredBlockIndex<VbkBlock>& value) override {
+    storage_.vbk[value.header->getHash()] =
+        make_unique<StoredBlockIndex<VbkBlock>>(value);
   }
 
-  void writeBlock(const BlockIndex<AltBlock>& value) override {
-    storage_.alt[value.getHash()] =
-        make_unique<StoredBlockIndex<AltBlock>>(value.toStoredBlockIndex());
+  void writeBlock(const StoredBlockIndex<AltBlock>& value) override {
+    storage_.alt[value.header->getHash()] =
+        make_unique<StoredBlockIndex<AltBlock>>(value);
   }
 
-  void writeTip(const BlockIndex<BtcBlock>& value) override {
-    storage_.btcTip = value.getHash();
+  void writeTip(const StoredBlockIndex<BtcBlock>& value) override {
+    storage_.btcTip = value.header->getHash();
   }
 
-  void writeTip(const BlockIndex<VbkBlock>& value) override {
-    storage_.vbkTip = value.getHash();
+  void writeTip(const StoredBlockIndex<VbkBlock>& value) override {
+    storage_.vbkTip = value.header->getHash();
   }
 
-  void writeTip(const BlockIndex<AltBlock>& value) override {
-    storage_.altTip = value.getHash();
+  void writeTip(const StoredBlockIndex<AltBlock>& value) override {
+    storage_.altTip = value.header->getHash();
   }
 
  private:
