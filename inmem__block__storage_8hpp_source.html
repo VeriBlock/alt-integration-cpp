@@ -99,35 +99,35 @@ $(document).ready(function(){initNavTree('inmem__block__storage_8hpp_source.html
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;block_reader.hpp&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;block_batch.hpp&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/storage/stored_block_index.hpp&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="structaltintegration_1_1InmemBlockProvider.html">   21</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1InmemBlockProvider.html">InmemBlockProvider</a> {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">using</span> M = std::unordered_map&lt;<span class="keyword">typename</span> T::hash_t,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                               std::unique_ptr&lt;StoredBlockIndex&lt;T&gt;&gt;&gt;;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  M&lt;T&gt;&amp; getBlocks();</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">typename</span> T::hash_t getTip() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordtype">void</span> save(<span class="keyword">const</span> M&lt;T&gt;&amp; m) {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    getBlocks&lt;T&gt;() = m;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::vector&lt;std::unique_ptr&lt;StoredBlockIndex&lt;T&gt;&gt;&gt; load() {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    std::vector&lt;std::unique_ptr&lt;StoredBlockIndex&lt;T&gt;&gt;&gt; ret;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">auto</span>&amp; m = getBlocks&lt;T&gt;();</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    ret.reserve(m.size());</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; b : m) {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="keyword">auto</span>&amp; bi = b.second;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      ret.push_back(std::move(bi));</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="structaltintegration_1_1InmemBlockProvider.html">   20</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1InmemBlockProvider.html">InmemBlockProvider</a> {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">using</span> M =</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;      std::unordered_map&lt;typename T::hash_t, std::unique_ptr&lt;BlockIndex&lt;T&gt;&gt;&gt;;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  M&lt;T&gt;&amp; getBlocks();</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">typename</span> T::hash_t getTip() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordtype">void</span> save(<span class="keyword">const</span> M&lt;T&gt;&amp; m) {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    getBlocks&lt;T&gt;() = m;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  std::vector&lt;std::unique_ptr&lt;BlockIndex&lt;T&gt;&gt;&gt; load() {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    std::vector&lt;std::unique_ptr&lt;BlockIndex&lt;T&gt;&gt;&gt; ret;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">auto</span>&amp; m = getBlocks&lt;T&gt;();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    ret.reserve(m.size());</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; b : m) {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keyword">auto</span>&amp; bi = b.second;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <span class="keyword">auto</span> index = make_unique&lt;BlockIndex&lt;T&gt;&gt;(bi-&gt;clone());</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      ret.push_back(std::move(index));</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> ret;</div>
@@ -155,42 +155,40 @@ $(document).ready(function(){initNavTree('inmem__block__storage_8hpp_source.html
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  InmemBlockBatch(InmemBlockProvider&amp; storage) : storage_(storage) {}</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  ~InmemBlockBatch() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> StoredBlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    storage_.btc[value.header-&gt;getHash()] = make_unique&lt;StoredBlockIndex&lt;BtcBlock&gt;&gt;(value);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> BlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    storage_.btc[value.getHash()] = make_unique&lt;BlockIndex&lt;BtcBlock&gt;&gt;(value.clone());</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> StoredBlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    storage_.vbk[value.header-&gt;getHash()] =</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        make_unique&lt;StoredBlockIndex&lt;VbkBlock&gt;&gt;(value);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> StoredBlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    storage_.alt[value.header-&gt;getHash()] =</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        make_unique&lt;StoredBlockIndex&lt;AltBlock&gt;&gt;(value);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> StoredBlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    storage_.btcTip = value.header-&gt;getHash();</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> StoredBlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    storage_.vbkTip = value.header-&gt;getHash();</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> StoredBlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    storage_.altTip = value.header-&gt;getHash();</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  InmemBlockProvider&amp; storage_;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> BlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    storage_.vbk[value.getHash()] = make_unique&lt;BlockIndex&lt;VbkBlock&gt;&gt;(value.clone());</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    storage_.alt[value.getHash()] = make_unique&lt;BlockIndex&lt;AltBlock&gt;&gt;(value.clone());</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> BlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    storage_.btcTip = value.getHash();</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> BlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    storage_.vbkTip = value.getHash();</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    storage_.altTip = value.getHash();</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  }</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  InmemBlockProvider&amp; storage_;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;};</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_INMEM_BLOCK_STORAGE_HPP</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob&lt; SHA256_HASH_SIZE &gt;</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1InmemBlockProvider_html"><div class="ttname"><a href="structaltintegration_1_1InmemBlockProvider.html">altintegration::InmemBlockProvider</a></div><div class="ttdoc">In-memory block storage, used in tests.</div><div class="ttdef"><b>Definition:</b> <a href="inmem__block__storage_8hpp_source.html#l00021">inmem_block_storage.hpp:21</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1InmemBlockProvider_html"><div class="ttname"><a href="structaltintegration_1_1InmemBlockProvider.html">altintegration::InmemBlockProvider</a></div><div class="ttdoc">In-memory block storage, used in tests.</div><div class="ttdef"><b>Definition:</b> <a href="inmem__block__storage_8hpp_source.html#l00020">inmem_block_storage.hpp:20</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>
