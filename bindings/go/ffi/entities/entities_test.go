@@ -25,3 +25,22 @@ func TestBtcBlock(t *testing.T) {
 	btc_block.Free()
 	btc_block.Free()
 }
+
+func TestVbkBlock(t *testing.T) {
+	assert := assert.New(t)
+
+	vbk_block := GenerateDefaultVbkBlock()
+
+	assert.Equal(vbk_block.GetHeight(), int32(1))
+	assert.Equal(vbk_block.GetNonce(), uint64(1))
+	assert.Equal(vbk_block.GetDifficulty(), int32(1))
+	assert.Equal(vbk_block.GetVersion(), int16(1))
+	assert.Equal(vbk_block.GetTimestamp(), uint32(1))
+	assert.Equal(vbk_block.GetMerkleRoot(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(vbk_block.GetPreviousBlock(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(vbk_block.GetPreviousKeystone(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(vbk_block.GetSecondPreviousKeystone(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1})
+
+	vbk_block.Free()
+	vbk_block.Free()
+}
