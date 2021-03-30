@@ -155,30 +155,30 @@ $(document).ready(function(){initNavTree('inmem__block__storage_8hpp_source.html
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  InmemBlockBatch(InmemBlockProvider&amp; storage) : storage_(storage) {}</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  ~InmemBlockBatch() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> BlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    storage_.btc[value.getHash()] = make_unique&lt;StoredBlockIndex&lt;BtcBlock&gt;&gt;(value.toStoredBlockIndex());</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> StoredBlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    storage_.btc[value.header-&gt;getHash()] = make_unique&lt;StoredBlockIndex&lt;BtcBlock&gt;&gt;(value);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> BlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    storage_.vbk[value.getHash()] =</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        make_unique&lt;StoredBlockIndex&lt;VbkBlock&gt;&gt;(value.toStoredBlockIndex());</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> StoredBlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    storage_.vbk[value.header-&gt;getHash()] =</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        make_unique&lt;StoredBlockIndex&lt;VbkBlock&gt;&gt;(value);</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  }</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    storage_.alt[value.getHash()] =</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        make_unique&lt;StoredBlockIndex&lt;AltBlock&gt;&gt;(value.toStoredBlockIndex());</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span> writeBlock(<span class="keyword">const</span> StoredBlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    storage_.alt[value.header-&gt;getHash()] =</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        make_unique&lt;StoredBlockIndex&lt;AltBlock&gt;&gt;(value);</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  }</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> BlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    storage_.btcTip = value.getHash();</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> StoredBlockIndex&lt;BtcBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    storage_.btcTip = value.header-&gt;getHash();</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  }</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> BlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    storage_.vbkTip = value.getHash();</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> StoredBlockIndex&lt;VbkBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    storage_.vbkTip = value.header-&gt;getHash();</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    storage_.altTip = value.getHash();</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordtype">void</span> writeTip(<span class="keyword">const</span> StoredBlockIndex&lt;AltBlock&gt;&amp; value)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    storage_.altTip = value.header-&gt;getHash();</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; <span class="keyword">private</span>:</div>
