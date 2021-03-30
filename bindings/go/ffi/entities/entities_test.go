@@ -40,7 +40,23 @@ func TestVbkBlock(t *testing.T) {
 	assert.Equal(vbk_block.GetPreviousBlock(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
 	assert.Equal(vbk_block.GetPreviousKeystone(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1})
 	assert.Equal(vbk_block.GetSecondPreviousKeystone(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(vbk_block.GetHash(), []byte{0xc8, 0x43, 0x1c, 0x39, 0x10, 0x4b, 0x66, 0x9d, 0x23,
+		0x4f, 0x54, 0xb2, 0xa6, 0xb7, 0x6a, 0xdb, 0x58, 0x1c, 0x53, 0x52, 0xca, 0xd8, 0x18, 0x26})
 
 	vbk_block.Free()
 	vbk_block.Free()
+}
+
+func TestAltBlock(t *testing.T) {
+	assert := assert.New(t)
+
+	alt_block := GenerateDefaultAltBlock()
+
+	assert.Equal(alt_block.GetHeight(), int32(1))
+	assert.Equal(alt_block.GetTimestamp(), uint32(1))
+	assert.Equal(alt_block.GetHash(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(alt_block.GetPreviousBlock(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+
+	alt_block.Free()
+	alt_block.Free()
 }
