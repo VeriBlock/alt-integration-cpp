@@ -149,40 +149,40 @@ struct BlockBatchImpl : public altintegration::BlockBatch {
   void writeBlock(const altintegration::BlockIndex<altintegration::AltBlock>&
                       blk) override {
     batch_.write(block_key<altintegration::AltBlock>(blk.getHash()),
-                 altintegration::SerializeToVbkEncoding(blk));
+                 altintegration::SerializeToVbkEncoding(blk.toStoredBlockIndex()));
   }
 
   void writeBlock(const altintegration::BlockIndex<altintegration::VbkBlock>&
                       blk) override {
     batch_.write(block_key<altintegration::VbkBlock>(blk.getHash()),
-                 altintegration::SerializeToVbkEncoding(blk));
+                 altintegration::SerializeToVbkEncoding(blk.toStoredBlockIndex()));
   }
 
   void writeBlock(const altintegration::BlockIndex<altintegration::BtcBlock>&
                       blk) override {
     batch_.write(block_key<altintegration::BtcBlock>(blk.getHash()),
-                 altintegration::SerializeToVbkEncoding(blk));
+                 altintegration::SerializeToVbkEncoding(blk.toStoredBlockIndex()));
   }
 
   void writeTip(const altintegration::BlockIndex<altintegration::AltBlock>& blk)
       override {
     batch_.write(tip_key<altintegration::AltBlock>(), blk.getHash());
     batch_.write(block_key<altintegration::AltBlock>(blk.getHash()),
-                 altintegration::SerializeToVbkEncoding(blk));
+                 altintegration::SerializeToVbkEncoding(blk.toStoredBlockIndex()));
   }
 
   void writeTip(const altintegration::BlockIndex<altintegration::VbkBlock>& blk)
       override {
     batch_.write(tip_key<altintegration::VbkBlock>(), blk.getHash().asVector());
     batch_.write(block_key<altintegration::VbkBlock>(blk.getHash()),
-                 altintegration::SerializeToVbkEncoding(blk));
+                 altintegration::SerializeToVbkEncoding(blk.toStoredBlockIndex()));
   }
 
   void writeTip(const altintegration::BlockIndex<altintegration::BtcBlock>& blk)
       override {
     batch_.write(tip_key<altintegration::BtcBlock>(), blk.getHash().asVector());
     batch_.write(block_key<altintegration::BtcBlock>(blk.getHash()),
-                 altintegration::SerializeToVbkEncoding(blk));
+                 altintegration::SerializeToVbkEncoding(blk.toStoredBlockIndex()));
   }
 
  private:
