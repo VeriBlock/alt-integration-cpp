@@ -1,6 +1,6 @@
 var structaltintegration_1_1VbkBlock =
 [
-    [ "addon_t", "structaltintegration_1_1VbkBlock.html#a6d2fec81ad371360308df0f9894bb05a", null ],
+    [ "addon_t", "structaltintegration_1_1VbkBlock.html#a7485d5a6f8bbec773878178ec192dfb9", null ],
     [ "hash_t", "structaltintegration_1_1VbkBlock.html#a0599c2b038465011740b17d49552a848", null ],
     [ "height_t", "structaltintegration_1_1VbkBlock.html#a1d884e1189f7be765eb4679c01cca1ab", null ],
     [ "id_t", "structaltintegration_1_1VbkBlock.html#aa782b7a275bbabcfff91096d7f68b294", null ],
@@ -10,7 +10,6 @@ var structaltintegration_1_1VbkBlock =
     [ "prev_hash_t", "structaltintegration_1_1VbkBlock.html#a08aa8a8514c56c42a1811501b9ed1fd1", null ],
     [ "protecting_block_t", "structaltintegration_1_1VbkBlock.html#a0d4b38d079c453689cf95e99bb686321", null ],
     [ "short_hash_t", "structaltintegration_1_1VbkBlock.html#a108acb1d88779623ad441fb400510095", null ],
-    [ "stored_addon_t", "structaltintegration_1_1VbkBlock.html#ad0ac4b3654c49c6cb96251406f4bfc23", null ],
     [ "VbkBlock", "structaltintegration_1_1VbkBlock.html#a5d888f2026acda90eca7410b5df224b6", null ],
     [ "VbkBlock", "structaltintegration_1_1VbkBlock.html#aa3aa59a4101a8d0e178afa594a6eb016", null ],
     [ "calculateHash", "structaltintegration_1_1VbkBlock.html#ac2f1abe68e8e136be326ca9f63f61110", null ],
