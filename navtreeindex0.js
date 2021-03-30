@@ -17,10 +17,11 @@ var NAVTREEINDEX0 =
 "alt__block__tree_8hpp_source.html":[5,0,1,0,0,1,3],
 "alt__block__tree__util_8hpp_source.html":[5,0,1,0,0,1,4],
 "alt__chain__params_8hpp_source.html":[5,0,1,0,0,1,5],
+"altblock_8h_source.html":[5,0,1,0,0,2,0,0],
 "altblock_8hpp_source.html":[5,0,1,0,0,5,1],
 "annotated.html":[4,0],
 "arith__uint256_8hpp_source.html":[5,0,1,0,0,11],
-"array_8h_source.html":[5,0,1,0,0,2,0,0],
+"array_8h_source.html":[5,0,1,0,0,2,0,1],
 "assert_8hpp_source.html":[5,0,1,0,0,12],
 "atv_8hpp_source.html":[5,0,1,0,0,5,2],
 "base58_8hpp_source.html":[5,0,1,0,0,13],
@@ -38,7 +39,7 @@ var NAVTREEINDEX0 =
 "btc__block__addon_8hpp_source.html":[5,0,1,0,0,1,11],
 "btc__blockchain__util_8hpp_source.html":[5,0,1,0,0,1,12],
 "btc__chain__params_8hpp_source.html":[5,0,1,0,0,1,13],
-"btcblock_8h_source.html":[5,0,1,0,0,2,0,1],
+"btcblock_8h_source.html":[5,0,1,0,0,2,0,2],
 "btcblock_8hpp_source.html":[5,0,1,0,0,5,3],
 "btctesting.html":[0,2,14],
 "btctx_8hpp_source.html":[5,0,1,0,0,5,4],
@@ -208,7 +209,7 @@ var NAVTREEINDEX0 =
 "endian_8hpp_source.html":[5,0,1,0,0,4,1],
 "endorsement_8hpp_source.html":[5,0,1,0,0,5,7],
 "endorsements_8hpp_source.html":[5,0,1,0,0,5,8],
-"entities_8h_source.html":[5,0,1,0,0,2,0,2],
+"entities_8h_source.html":[5,0,1,0,0,2,0,3],
 "ethash_8hpp.html#a15fe79aa34493a1812681f135d59c4b9":[3,0,0,4,0],
 "ethash_8hpp.html#a492ddd1e7548d35fc6245921dd3bf2e6":[3,0,0,4,7],
 "ethash_8hpp.html#a63c303213fbc106e29bbbcf3cd696717":[3,0,0,4,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "functions_func_l.html":[4,3,1,9],
 "functions_func_m.html":[4,3,1,10],
 "functions_func_n.html":[4,3,1,11],
-"functions_func_o.html":[4,3,1,12],
-"functions_func_p.html":[4,3,1,13]
+"functions_func_o.html":[4,3,1,12]
 };

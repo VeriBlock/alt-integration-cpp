@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1VbkBlockTree.html#acac5820df22bee06262a367cc11c95f2":[4,0,0,17,12],
 "structaltintegration_1_1VbkBlockTree.html#adaa3d7518fbb08989f64359ed69c68d3":[4,0,0,17,13],
 "structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d":[4,0,0,17,21],
 "structaltintegration_1_1VbkBlockTree.html#ae1b38af8edb3fca0387e909e90fa4a8f":[4,0,0,17,15],
@@ -129,7 +130,7 @@ var NAVTREEINDEX7 =
 "time_8hpp_source.html":[5,0,1,0,0,43],
 "todo.html":[1],
 "tree__algo_8hpp_source.html":[5,0,1,0,0,1,21],
-"type__helpers_8h_source.html":[5,0,1,0,0,2,0,4],
+"type__helpers_8h_source.html":[5,0,1,0,0,2,0,5],
 "type__traits_8hpp_source.html":[5,0,1,0,0,44],
 "uint_8hpp_source.html":[5,0,1,0,0,45],
 "util_8hpp_source.html":[5,0,1,0,0,8,7],
@@ -142,7 +143,7 @@ var NAVTREEINDEX7 =
 "vbk__blockchain__util_8hpp_source.html":[5,0,1,0,0,1,23],
 "vbk__chain__params_8hpp_source.html":[5,0,1,0,0,1,24],
 "vbk__merkle__path_8hpp_source.html":[5,0,1,0,0,5,17],
-"vbkblock_8h_source.html":[5,0,1,0,0,2,0,5],
+"vbkblock_8h_source.html":[5,0,1,0,0,2,0,6],
 "vbkblock_8hpp_source.html":[5,0,1,0,0,5,18],
 "vbkpoptx_8hpp_source.html":[5,0,1,0,0,5,19],
 "vbktx_8hpp_source.html":[5,0,1,0,0,5,20],
