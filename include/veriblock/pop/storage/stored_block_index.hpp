@@ -17,7 +17,8 @@ struct StoredBlockIndex {
   ~StoredBlockIndex() = default;
 
   void toVbkEncoding(WriteStream& stream) const {
-    stream.writeBE<uint32_t>(height);
+    using height_t = typename Block::height_t;
+    stream.writeBE<height_t>(height);
     header->toRaw(stream);
     stream.writeBE<uint32_t>(status);
     addon.toVbkEncoding(stream);
