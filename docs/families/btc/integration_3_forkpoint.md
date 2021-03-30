@@ -58,3 +58,5 @@ The only way to enable VeriBlock security for already running blockchains is to 
 ```
 
 Technically, this check is stateless, so can be moved to `CheckBlockHeader` if wanted.
+
+[Next Section](./integration_4_config.md)

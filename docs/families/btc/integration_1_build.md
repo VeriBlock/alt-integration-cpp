@@ -162,3 +162,6 @@ qt_bitcoin_qt_LIBTOOLFLAGS = $(AM_LIBTOOLFLAGS) --tag CXX
 +  $(QR_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
 +  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(VERIBLOCK_POP_CPP_LIBS)
 ```
+
+
+[Next Section](./integration_2_popdata.md)

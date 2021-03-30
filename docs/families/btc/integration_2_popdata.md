@@ -424,3 +424,5 @@ During deserialization, if any of internal entities can not be deserialized, thr
 +    UnserializeOrThrow(bytes_data, block, precalculatedHash);
 +}
 ```
+
+[Next Section](./integration_3_forkpoint.md)
