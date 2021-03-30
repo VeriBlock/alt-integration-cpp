@@ -8,7 +8,7 @@ var structaltintegration_1_1StoredBlockIndex =
     [ "toVbkEncoding", "structaltintegration_1_1StoredBlockIndex.html#ac580cc57c310ee3bc346cd9d7fb2b7fa", null ],
     [ "toVbkEncoding", "structaltintegration_1_1StoredBlockIndex.html#ae1baf71b2003d0ec0ae7fe816e721c1e", null ],
     [ "addon", "structaltintegration_1_1StoredBlockIndex.html#a6d2b89c805559262191299659e55f0ec", null ],
-    [ "header", "structaltintegration_1_1StoredBlockIndex.html#a4c4a6798871f0802fc7f0615335387c5", null ],
+    [ "header", "structaltintegration_1_1StoredBlockIndex.html#ad03f28f9e717ece7e050d2b30e40f985", null ],
     [ "height", "structaltintegration_1_1StoredBlockIndex.html#ae8dad64f527cebf0c449a56c43d747a0", null ],
     [ "status", "structaltintegration_1_1StoredBlockIndex.html#aac75c9c08d4d081ea250cf055f82e33a", null ]
 ];

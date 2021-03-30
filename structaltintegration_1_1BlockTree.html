@@ -603,11 +603,11 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00128">128</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                                                  {</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(index-&gt;header, state, *param_)) {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*index-&gt;header, state, *param_)) {</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;bad-header&quot;</span>);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> hash = index-&gt;header.getHash();</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> hash = index-&gt;header-&gt;getHash();</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a19ec7bce1c56a478f09883315727a431">base::loadBlock</a>(std::move(index), state)) {</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    }</div>

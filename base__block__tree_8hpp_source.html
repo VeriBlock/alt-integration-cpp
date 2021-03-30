@@ -195,7 +195,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    }</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">if</span> (index-&gt;height == root.getHeight() &amp;&amp;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        index-&gt;header.getHash() != root.getHash()) {</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        index-&gt;header-&gt;getHash() != root.getHash()) {</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      <span class="comment">// root is finalized, we can&#39;t load a block on same height</span></div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;          <span class="stringliteral">&quot;bad-root&quot;</span>,</div>
@@ -203,7 +203,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                      index-&gt;toPrettyString()));</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    }</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">auto</span>&amp; header = index-&gt;header;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">auto</span>&amp; header = *index-&gt;header;</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keyword">auto</span> currentHash = header.getHash();</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keyword">auto</span>* current = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">getBlockIndex</a>(currentHash);</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="comment">// we can not load a block, which already exists on chain and is not a</span></div>
@@ -861,7 +861,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_a26c5aa8d8b55e9c01b3b05bf270faa27"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#a26c5aa8d8b55e9c01b3b05bf270faa27">altintegration::BlockIndex::pprev</a></div><div class="ttdeci">BlockIndex * pprev</div><div class="ttdoc">(memory only) pointer to a previous block</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00040">block_index.hpp:40</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_a478bf2ce1222d7d550cd4d83f8dce162"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#a478bf2ce1222d7d550cd4d83f8dce162">altintegration::BlockIndex::pnext</a></div><div class="ttdeci">std::set&lt; BlockIndex * &gt; pnext</div><div class="ttdoc">(memory only) a set of pointers for forward iteration</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00043">block_index.hpp:43</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1Chain_html"><div class="ttname"><a href="structaltintegration_1_1Chain.html">altintegration::Chain</a></div><div class="ttdoc">Fully in-memory chain representation.</div><div class="ttdef"><b>Definition:</b> <a href="chain_8hpp_source.html#l00025">chain.hpp:25</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00014">stored_block_index.hpp:14</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00012">stored_block_index.hpp:12</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>
