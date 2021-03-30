@@ -1,12 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structaltintegration_1_1BtcChainParamsRegTest.html#af92841dd576a47c2fbe758644a96043a":[4,0,0,13,8],
-"structaltintegration_1_1BtcChainParamsTest.html":[4,0,0,12],
-"structaltintegration_1_1BtcChainParamsTest.html#a068feacf707979cafdd4f405723c54af":[4,0,0,12,8],
-"structaltintegration_1_1BtcChainParamsTest.html#a229cf3fb91b2ba39772ed97dfce5d734":[4,0,0,12,4],
-"structaltintegration_1_1BtcChainParamsTest.html#a27dc8dabe64596953c69768f0a89c013":[4,0,0,12,1],
-"structaltintegration_1_1BtcChainParamsTest.html#a4ec6bd23eb3f58fa7eae09b14b41d3a7":[4,0,0,12,0],
-"structaltintegration_1_1BtcChainParamsTest.html#a6ea2d6428d54b8c616f62231016cc85e":[4,0,0,12,5],
 "structaltintegration_1_1BtcChainParamsTest.html#a7378a855109ca85015ef70b132fd67e1":[4,0,0,12,7],
 "structaltintegration_1_1BtcChainParamsTest.html#a9b1b1137fabce231f45fac74b72f106d":[4,0,0,12,2],
 "structaltintegration_1_1BtcChainParamsTest.html#ace4994b70b998889fe9a0ad8e7967f87":[4,0,0,12,6],
@@ -249,5 +242,12 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1MemPool_1_1SubmitResult.html#a8087023064f35d3207490272a3a303d5":[4,0,0,50,0,1],
 "structaltintegration_1_1MemPool_1_1SubmitResult.html#aa40411cafc2a53395935b10e0072b534":[4,0,0,50,0,6],
 "structaltintegration_1_1MemPool_1_1SubmitResult.html#aa55d8e8d1a643d1372755ad831157aac":[4,0,0,50,0,2],
-"structaltintegration_1_1MemPool_1_1SubmitResult.html#ad51fc44762647a4a2f1f68a90c46694f":[4,0,0,50,0,7]
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#ad51fc44762647a4a2f1f68a90c46694f":[4,0,0,50,0,7],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#af882cb9c2035c7e1bda62efc798792d7":[4,0,0,50,0,8],
+"structaltintegration_1_1MerklePath.html":[4,0,0,34],
+"structaltintegration_1_1MerklePath.html#a01b734b8c63386ab6aac7a0305e6528b":[4,0,0,34,2],
+"structaltintegration_1_1MerklePath.html#a0c1573f4c7cbcc21fd1a8f8d0996ff9b":[4,0,0,34,6],
+"structaltintegration_1_1MerklePath.html#a264bdc1815f4090741b5c7e613674e06":[4,0,0,34,4],
+"structaltintegration_1_1MerklePath.html#a2ce092b20111a93562442d53e91bd483":[4,0,0,34,5],
+"structaltintegration_1_1MerklePath.html#a5895c62d372767ac1f6a971b1fe3c193":[4,0,0,34,1]
 };
