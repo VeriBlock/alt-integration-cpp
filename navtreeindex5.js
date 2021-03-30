@@ -1,12 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structaltintegration_1_1BtcChainParamsMain.html#a9ce0d39728f3d9d84c4c5bfb9d29024e":[4,0,0,11,2],
-"structaltintegration_1_1BtcChainParamsMain.html#aa17904bf3fc2e8427babedf9b442b140":[4,0,0,11,3],
-"structaltintegration_1_1BtcChainParamsMain.html#ab782f6831afd0b926e0296c244ad4e72":[4,0,0,11,6],
-"structaltintegration_1_1BtcChainParamsMain.html#aba214d93858e06185d090e54ab97f7a5":[4,0,0,11,4],
-"structaltintegration_1_1BtcChainParamsRegTest.html":[4,0,0,13],
-"structaltintegration_1_1BtcChainParamsRegTest.html#a2304a6ee5fa409a3d6928cc5ccb022e8":[4,0,0,13,3],
-"structaltintegration_1_1BtcChainParamsRegTest.html#a2e4d3d61a45c9150f6976e1195b733a0":[4,0,0,13,7],
 "structaltintegration_1_1BtcChainParamsRegTest.html#aab3f0d26bdcc0e4977856613405aae6d":[4,0,0,13,2],
 "structaltintegration_1_1BtcChainParamsRegTest.html#aba9e25021593bb36dbdf0be538050d22":[4,0,0,13,1],
 "structaltintegration_1_1BtcChainParamsRegTest.html#abf56d2babaf09fc04aafd03736986949":[4,0,0,13,6],
@@ -249,5 +242,12 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1MemPool.html#ab5afddd8678e2476c45644149c1ebc2f":[4,0,0,50,3],
 "structaltintegration_1_1MemPool.html#abadad2120fbd969b2b2e5e6fa9c4239e":[4,0,0,50,14],
 "structaltintegration_1_1MemPool.html#abe66b62fdd1c46309150e0f8c8702936":[4,0,0,50,12],
-"structaltintegration_1_1MemPool.html#ac12ccabcc8eb02e59adfaa4d21e19d1b":[4,0,0,50,20]
+"structaltintegration_1_1MemPool.html#ac12ccabcc8eb02e59adfaa4d21e19d1b":[4,0,0,50,20],
+"structaltintegration_1_1MemPool.html#adb8a8c4c2bb8d4efd8fa1a3c8646baeb":[4,0,0,50,5],
+"structaltintegration_1_1MemPool.html#ae10e6a8ad87fb1617cc6fc2a4ae7d15b":[4,0,0,50,17],
+"structaltintegration_1_1MemPool.html#aee936f653e65f97996c2c91a14a7efa8":[4,0,0,50,27],
+"structaltintegration_1_1MemPool.html#afebd9b2a2157e626466a20ccb129e8eb":[4,0,0,50,29],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html":[4,0,0,50,0],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a2ca060d33b3ec3dc95758fa43c72f2d1":[4,0,0,50,0,0],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a3ca5ebf5f05553aa515dad24d94338db":[4,0,0,50,0,5]
 };
