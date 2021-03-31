@@ -492,7 +492,7 @@ TEST(VbkBlockPlausibility, Height) {
       VBK_ETHASH_EPOCH_LENGTH * (VBK_MAX_CALCULATED_EPOCHS_SIZE + 1);
   block.setHeight(firstInvalidHeight);
   // set valid timestamp
-  block.setTimestamp(forkTimestamp * 1.5);
+  block.setTimestamp(forkTimestamp * 3 / 2);
   EXPECT_FALSE(checkVbkBlockPlausibility(block, state, param))
       << state.toString();
   EXPECT_EQ(state.GetPath(), "height-too-high");

@@ -14,6 +14,7 @@
 #include <veriblock/pop/hashers.hpp>
 #include <veriblock/pop/json.hpp>
 #include <veriblock/pop/serde.hpp>
+#include <veriblock/pop/storage/stored_alt_block_addon.hpp>
 
 namespace altintegration {
 
@@ -28,7 +29,8 @@ struct AltBlock {
   using height_t = int32_t;
   using hash_t = std::vector<uint8_t>;
   using prev_hash_t = std::vector<uint8_t>;
-  using addon_t = AltBlockAddon;
+  using addon_t = StoredAltBlockAddon::addon_t;
+  using stored_addon_t = StoredAltBlockAddon;
 
   /**
    * Convert AltBlock to data stream using AltBlock basic byte format

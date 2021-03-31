@@ -14,6 +14,7 @@
 #include <veriblock/pop/blockchain/vbk_block_addon.hpp>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/serde.hpp>
+#include <veriblock/pop/storage/stored_vbk_block_addon.hpp>
 #include <veriblock/pop/type_traits.hpp>
 #include <veriblock/pop/uint.hpp>
 
@@ -38,7 +39,8 @@ struct VbkBlock {
   using keystone_t = uint72;
   using merkle_t = uint128;
   using protecting_block_t = BtcBlock;
-  using addon_t = VbkBlockAddon;
+  using addon_t = StoredVbkBlockAddon::addon_t;
+  using stored_addon_t = StoredVbkBlockAddon;
 
   std::string toPrettyString() const;
 

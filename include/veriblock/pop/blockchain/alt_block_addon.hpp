@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 #define VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 
-#include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blockchain/block_status.hpp>
 #include <veriblock/pop/blockchain/pop/pop_state.hpp>
 #include <veriblock/pop/entities/endorsements.hpp>

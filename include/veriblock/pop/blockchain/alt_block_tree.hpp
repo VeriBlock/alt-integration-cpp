@@ -177,7 +177,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using alt_config_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
   using btc_config_t = BtcChainParams;
-  using index_t = BlockIndex<AltBlock>;
+  using index_t = base::index_t;
+  using stored_index_t = base::stored_index_t;
   using endorsement_t = typename index_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
   using hash_t = typename AltBlock::hash_t;
@@ -270,7 +271,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is undefined
    * and can not be used. Tip: ask user to run with '-reindex'.
    */
-  VBK_CHECK_RETURN bool loadBlock(std::unique_ptr<index_t> index,
+  VBK_CHECK_RETURN bool loadBlock(const stored_index_t& index,
                                   ValidationState& state) override;
 
   /**

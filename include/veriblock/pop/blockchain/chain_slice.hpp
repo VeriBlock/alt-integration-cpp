@@ -58,7 +58,7 @@ struct ChainSlice {
 
   height_t firstHeight() const { return firstHeight_; }
 
-  height_t tipHeight() const { return firstHeight() + size() - 1; }
+  height_t tipHeight() const { return (int)(firstHeight() + size()) - 1; }
 
   // for compatibility
   height_t chainHeight() const { return tip()->getHeight(); }

@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include <veriblock/pop/blockchain/block_index.hpp>
+#include <veriblock/pop/storage/stored_block_index.hpp>
 
 namespace altintegration {
 
@@ -37,10 +37,10 @@ struct BlockIterator {
 
   /**
    * Return the current block value
-   * @param[out] out block, altintegration::BlockIndex
+   * @param[out] out block, altintegration::StoredBlockIndex
    * @return true if we can successfully return value, false otherwise
    */
-  virtual bool value(BlockIndex<BlockT>& out) const = 0;
+  virtual bool value(StoredBlockIndex<BlockT>& out) const = 0;
 
   /**
    * Return the current block hash key

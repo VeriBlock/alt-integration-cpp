@@ -692,7 +692,7 @@ TEST_F(MemPoolFixture, getPop_scenario_10) {
   // PopData with 1 VBK block is 71 bytes
   const auto popDataWith1VBK = estimatePopDataWithVbkSize();
   altparam.mMaxPopDataSize =
-      (altparam.getMaxVbkBlocksInAltBlock() + 1) * popDataWith1VBK;
+      (uint32_t)((altparam.getMaxVbkBlocksInAltBlock() + 1) * popDataWith1VBK);
   const auto max = altparam.getMaxPopDataSize();
 
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
@@ -748,15 +748,15 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   size_t emptyPopDataSize = PopData{}.estimateSize();
 
   // mempool is currently empty
-  for (int i = emptyPopDataSize; i < 1000; i++) {
-    altparam.mMaxPopDataSize = i;
+  for (size_t i = emptyPopDataSize; i < 1000; i++) {
+    altparam.mMaxPopDataSize = (uint32_t)i;
     ASSERT_NO_FATAL_FAILURE(mempool->generatePopData());
   }
 
   // mine one VBK block
   auto* block_index = popminer->mineVbkBlocks(1);
 
-  altparam.mMaxPopDataSize = block_index->getHeader().estimateSize() + 1;
+  altparam.mMaxPopDataSize = (uint32_t)(block_index->getHeader().estimateSize() + 1);
   ASSERT_TRUE(mempool->submit(block_index->getHeader(), state));
   auto pop_data = mempool->generatePopData();
   ASSERT_EQ(pop_data.context.size(), 0);
@@ -764,12 +764,12 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ASSERT_EQ(pop_data.vtbs.size(), 0);
 
   // mempool has 1 VBK block
-  for (int i = emptyPopDataSize; i < 1000; i++) {
-    altparam.mMaxPopDataSize = i;
+  for (size_t i = emptyPopDataSize; i < 1000; i++) {
+    altparam.mMaxPopDataSize = (uint32_t)i;
     ASSERT_NO_FATAL_FAILURE(mempool->generatePopData());
   }
 
-  altparam.mMaxPopDataSize = block_index->getHeader().estimateSize() + 50;
+  altparam.mMaxPopDataSize = (uint32_t)(block_index->getHeader().estimateSize() + 50);
   ASSERT_TRUE(mempool->submit(block_index->getHeader(), state));
   pop_data = mempool->generatePopData();
   ASSERT_EQ(pop_data.context.size(), 1);
@@ -788,8 +788,8 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ASSERT_TRUE(mempool->submit(vtb, state));
 
   // mempool has 3 VBK blocks, 1 VTB and 1 ATV
-  for (int i = emptyPopDataSize; i < 5000; i++) {
-    altparam.mMaxPopDataSize = i;
+  for (size_t i = emptyPopDataSize; i < 5000; i++) {
+    altparam.mMaxPopDataSize = (uint32_t)i;
     ASSERT_NO_FATAL_FAILURE(pop_data = mempool->generatePopData());
   }
 }

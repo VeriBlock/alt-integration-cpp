@@ -46,8 +46,8 @@ std::vector<uint8_t> trimmedArray(int64_t input) {
 bool readVarLenValue(ReadStream& stream,
                      Slice<const uint8_t>& out,
                      ValidationState& state,
-                     int32_t minLen,
-                     int32_t maxLen) {
+                     size_t minLen,
+                     size_t maxLen) {
   int32_t length = 0;
   if (!readSingleBEValue<int32_t>(stream, length, state)) {
     return state.Invalid("readvarlen-bad-length");
@@ -61,8 +61,8 @@ bool readVarLenValue(ReadStream& stream,
 bool readSingleByteLenValue(ReadStream& stream,
                             Slice<const uint8_t>& out,
                             ValidationState& state,
-                            int minLen,
-                            int maxLen) {
+                            size_t minLen,
+                            size_t maxLen) {
   uint8_t length = 0;
   if (!stream.readBE<uint8_t>(length, state)) {
     return state.Invalid("readsingle-bad-length");

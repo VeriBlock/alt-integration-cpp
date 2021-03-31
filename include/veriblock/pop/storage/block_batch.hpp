@@ -6,10 +6,10 @@
 #ifndef VERIBLOCK_POP_CPP_BLOCK_BATCH_HPP
 #define VERIBLOCK_POP_CPP_BLOCK_BATCH_HPP
 
-#include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <veriblock/pop/storage/stored_block_index.hpp>
 
 namespace altintegration {
 
@@ -26,21 +26,21 @@ struct BlockBatch {
    * Save BlockIndex on disk.
    * @param value
    */
-  virtual void writeBlock(const BlockIndex<AltBlock>& value) = 0;
+  virtual void writeBlock(const StoredBlockIndex<AltBlock>& value) = 0;
   //! @overload
-  virtual void writeBlock(const BlockIndex<VbkBlock>& value) = 0;
+  virtual void writeBlock(const StoredBlockIndex<VbkBlock>& value) = 0;
   //! @overload
-  virtual void writeBlock(const BlockIndex<BtcBlock>& value) = 0;
+  virtual void writeBlock(const StoredBlockIndex<BtcBlock>& value) = 0;
 
   /**
    * Save Tree tip on disk.
    * @param value
    */
-  virtual void writeTip(const BlockIndex<AltBlock>& value) = 0;
+  virtual void writeTip(const StoredBlockIndex<AltBlock>& value) = 0;
   //! @overload
-  virtual void writeTip(const BlockIndex<VbkBlock>& value) = 0;
+  virtual void writeTip(const StoredBlockIndex<VbkBlock>& value) = 0;
   //! @overload
-  virtual void writeTip(const BlockIndex<BtcBlock>& value) = 0;
+  virtual void writeTip(const StoredBlockIndex<BtcBlock>& value) = 0;
 };
 
 }  // namespace altintegration

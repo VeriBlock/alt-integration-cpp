@@ -12,7 +12,7 @@ using namespace altintegration;
 
 struct VSMTest : ::testing::Test {};
 
-auto cmp = [](const int& v1, const int& v2) -> bool { return v1 < v2; };
+static auto cmp = [](const int& v1, const int& v2) -> bool { return v1 < v2; };
 
 TEST_F(VSMTest, Basic_test) {
   ValueSortedMap<std::string, int> map{cmp};

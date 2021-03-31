@@ -98,12 +98,12 @@ inline Blob<N> generateRandomBlob() {
 }
 
 template <typename B>
-BlockIndex<B> getRandomIndex();
+StoredBlockIndex<B> getRandomIndex();
 
 template <>
-inline BlockIndex<BtcBlock> getRandomIndex() {
-  BlockIndex<BtcBlock> index(nullptr);
-  index.setHeight(rand());
+inline StoredBlockIndex<BtcBlock> getRandomIndex() {
+  StoredBlockIndex<BtcBlock> index;
+  index.height = rand();
 
   BtcBlock block(
       /*version=*/rand(),
@@ -112,17 +112,16 @@ inline BlockIndex<BtcBlock> getRandomIndex() {
       /*time=*/rand(),
       /*bits=*/rand(),
       /*nonce=*/rand());
-  index.setHeader(block);
-  index.addRef(rand());
-  index.setStatus(rand() & 0x0f);
-
+  index.header = std::make_shared<BtcBlock>(block);
+  index.addon.refs.push_back(rand());
+  index.status = rand() & 0x0f;
   return index;
 }
 
 template <>
-inline BlockIndex<VbkBlock> getRandomIndex() {
-  BlockIndex<VbkBlock> index(nullptr);
-  index.setHeight(rand());
+inline StoredBlockIndex<VbkBlock> getRandomIndex() {
+  StoredBlockIndex<VbkBlock> index;
+  index.height = rand();
 
   VbkBlock block;
   block.setVersion((int16_t)rand());
@@ -133,19 +132,18 @@ inline BlockIndex<VbkBlock> getRandomIndex() {
   block.setDifficulty(rand());
   block.setNonce(rand());
   block.setMerkleRoot(generateRandomBytesVector(uint128::size()));
-  index.setHeader(block);
-  index.addRef(100);
-  index.chainWork = generateRandomBytesVector(uint256::size());
-  index.insertPayloadId<VTB>(generateRandomBlob<32>());
-  index.setStatus(rand() & 0x0f);
-
+  index.header = std::make_shared<VbkBlock>(block);
+  index.status = rand() & 0x0f;
+  index.addon._refCount = 100;
+  index.addon._vtbids.push_back(generateRandomBlob<32>());
+  //index.chainWork = generateRandomBytesVector(uint256::size());
   return index;
 }
 
 template <>
-inline BlockIndex<AltBlock> getRandomIndex() {
-  BlockIndex<AltBlock> index(nullptr);
-  index.setHeight(rand());
+inline StoredBlockIndex<AltBlock> getRandomIndex() {
+  StoredBlockIndex<AltBlock> index;
+  index.height = rand();
 
   AltBlock block;
   block.hash = generateRandomBytesVector(12);
@@ -153,15 +151,16 @@ inline BlockIndex<AltBlock> getRandomIndex() {
   block.timestamp = rand();
   block.height = rand();
 
-  index.setHeader(block);
-  index.insertPayloadIds<VTB>(
-      {generateRandomBlob<32>(), generateRandomBlob<32>()});
-  index.insertPayloadIds<ATV>(
-      {generateRandomBlob<32>(), generateRandomBlob<32>()});
-  index.insertPayloadIds<VbkBlock>(
-      {generateRandomBlob<VbkBlock::short_hash_t::size()>(),
-       generateRandomBlob<VbkBlock::short_hash_t::size()>()});
-  index.setStatus(rand() & 0x0f);
+  index.header = std::make_shared<AltBlock>(block);
+  index.addon._vtbids.push_back(generateRandomBlob<32>());
+  index.addon._vtbids.push_back(generateRandomBlob<32>());
+  index.addon._atvids.push_back(generateRandomBlob<32>());
+  index.addon._atvids.push_back(generateRandomBlob<32>());
+  index.addon._vbkblockids.push_back(
+      generateRandomBlob<VbkBlock::short_hash_t::size()>());
+  index.addon._vbkblockids.push_back(
+      generateRandomBlob<VbkBlock::short_hash_t::size()>());
+  index.status = rand() & 0x0f;
 
   return index;
 }

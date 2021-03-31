@@ -270,5 +270,5 @@ bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state) {
   using namespace altintegration;
 
   adaptors::BlockReaderImpl block_reader(*self->storage);
-  return LoadAllTrees(*self->context, block_reader, state->getState());
+  return loadTrees(*self->context, block_reader, state->getState());
 }

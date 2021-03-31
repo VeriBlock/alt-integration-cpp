@@ -344,9 +344,9 @@ struct PopTestFixture {
     }
   }
 
-  template <typename index_t>
-  std::vector<std::unique_ptr<index_t>> LoadBlocksFromDisk() {
-    return blockStorage.load<typename index_t::block_t>();
+  template <typename stored_index_t>
+  std::vector<stored_index_t> LoadBlocksFromDisk() {
+    return blockStorage.load<typename stored_index_t::block_t>();
   }
 
   template <typename index_t>
@@ -357,9 +357,10 @@ struct PopTestFixture {
   template <typename Tree>
   bool LoadTreeWrapper(Tree& tree) {
     using index_t = typename Tree::index_t;
-    auto blocks = LoadBlocksFromDisk<index_t>();
+    using stored_index_t = typename Tree::stored_index_t;
+    auto blocks = LoadBlocksFromDisk<stored_index_t>();
     auto tip = LoadTipFromDisk<index_t>();
-    return LoadBlocks<Tree>(tree, blocks, tip, state);
+    return loadBlocksIntoTree<Tree>(tree, tip, blocks, state);
   }
 };
 
