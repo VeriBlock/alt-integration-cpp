@@ -69,7 +69,6 @@ var annotated_dup =
       [ "BlockReader", "structaltintegration_1_1BlockReader.html", "structaltintegration_1_1BlockReader" ],
       [ "InmemBlockProvider", "structaltintegration_1_1InmemBlockProvider.html", "structaltintegration_1_1InmemBlockProvider" ],
       [ "PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", "structaltintegration_1_1PayloadsStorage" ],
-      [ "StoredBlockIndex", "structaltintegration_1_1StoredBlockIndex.html", "structaltintegration_1_1StoredBlockIndex" ],
       [ "IsPopPayload", "structaltintegration_1_1IsPopPayload.html", "structaltintegration_1_1IsPopPayload" ],
       [ "ValidationState", "classaltintegration_1_1ValidationState.html", "classaltintegration_1_1ValidationState" ],
       [ "WriteStream", "classaltintegration_1_1WriteStream.html", "classaltintegration_1_1WriteStream" ]

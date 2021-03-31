@@ -131,7 +131,7 @@ Overview</h1>
 <div class="line">+<span class="keyword">using</span> PoPRewards = std::map&lt;CScript, CAmount&gt;;</div>
 <div class="line">+</div>
 <div class="line"> <span class="keywordtype">void</span> InitPopContext(CDBWrapper&amp; db);</div>
-</div><!-- fragment --> <div class="fragment"><div class="line"> <span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">loadTrees</a>(CDBWrapper&amp; db);</div>
+</div><!-- fragment --> <div class="fragment"><div class="line"> <span class="keywordtype">bool</span> loadTrees(CDBWrapper&amp; db);</div>
 <div class="line"> </div>
 <div class="line">+</div>
 <div class="line">+<span class="keywordtype">bool</span> acceptBlock(<span class="keyword">const</span> CBlockIndex&amp; indexNew, BlockValidationState&amp; state);</div>
@@ -142,7 +142,6 @@ Overview</h1>
 <div class="line">+std::vector&lt;BlockBytes&gt; getLastKnownBTCBlocks(<span class="keywordtype">size_t</span> blocks);</div>
 <div class="line"> } <span class="comment">// namespace VeriBlock</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a967e6111ef2ca4672fc0314dcdb90dc5"><div class="ttname"><a href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">altintegration::loadTrees</a></div><div class="ttdeci">bool loadTrees(PopContext &amp;context, BlockReader &amp;reader, ValidationState &amp;state)</div><div class="ttdoc">Load all (ALT/VBK/BTC) trees from disk into memory.</div></div>
 </div><!-- fragment --><p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp</a> </p><div class="fragment"><div class="line">+<span class="keywordtype">bool</span> acceptBlock(<span class="keyword">const</span> CBlockIndex&amp; indexNew, BlockValidationState&amp; state)</div>
 <div class="line">+{</div>
 <div class="line">+    AssertLockHeld(cs_main);</div>
