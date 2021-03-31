@@ -98,7 +98,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1InmemBlockProv
  <a href="structaltintegration_1_1InmemBlockProvider.html#details">More...</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="inmem__block__storage_8hpp_source.html#l00020">20</a> of file <a class="el" href="inmem__block__storage_8hpp_source.html">inmem_block_storage.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="inmem__block__storage_8hpp_source.html#l00021">21</a> of file <a class="el" href="inmem__block__storage_8hpp_source.html">inmem_block_storage.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::InmemBlockProvider:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -110,10 +110,10 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1InmemBlockProv
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af67873dd577bd07f06924acaa7ea626e"><td class="memTemplParams" colspan="2"><a id="af67873dd577bd07f06924acaa7ea626e"></a>
+<tr class="memitem:ab4f681f14997671aa03fea9daf57dbfa"><td class="memTemplParams" colspan="2"><a id="ab4f681f14997671aa03fea9daf57dbfa"></a>
 template&lt;typename T &gt; </td></tr>
-<tr class="memitem:af67873dd577bd07f06924acaa7ea626e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>M</b> = std::unordered_map&lt; typename T::hash_t, std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; T &gt; &gt;&gt;</td></tr>
-<tr class="separator:af67873dd577bd07f06924acaa7ea626e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4f681f14997671aa03fea9daf57dbfa"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>M</b> = std::unordered_map&lt; typename T::hash_t, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; T &gt; &gt;</td></tr>
+<tr class="separator:ab4f681f14997671aa03fea9daf57dbfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -129,10 +129,10 @@ template&lt;typename T &gt; </td></tr>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a979ab633616fc2688e680f4ee0dc1b5d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>save</b> (const M&lt; T &gt; &amp;m)</td></tr>
 <tr class="separator:a979ab633616fc2688e680f4ee0dc1b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab692039d9c74086e39d4a99264d8abe4"><td class="memTemplParams" colspan="2"><a id="ab692039d9c74086e39d4a99264d8abe4"></a>
+<tr class="memitem:a6dcecdd1d8a65dfb7675eb08d29e601d"><td class="memTemplParams" colspan="2"><a id="a6dcecdd1d8a65dfb7675eb08d29e601d"></a>
 template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ab692039d9c74086e39d4a99264d8abe4"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; T &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>load</b> ()</td></tr>
-<tr class="separator:ab692039d9c74086e39d4a99264d8abe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dcecdd1d8a65dfb7675eb08d29e601d"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>load</b> ()</td></tr>
+<tr class="separator:a6dcecdd1d8a65dfb7675eb08d29e601d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68ce6acef68a9c28b27662aff1c85364"><td class="memItemLeft" align="right" valign="top"><a id="a68ce6acef68a9c28b27662aff1c85364"></a>
 template&lt;&gt; </td></tr>
 <tr class="memitem:a68ce6acef68a9c28b27662aff1c85364"><td class="memTemplItemLeft" align="right" valign="top">InmemBlockProvider::M&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getBlocks</b> ()</td></tr>

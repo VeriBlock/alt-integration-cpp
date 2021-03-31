@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['savealltrees_328',['SaveAllTrees',['../namespacealtintegration.html#a8714324f6b90ef3678b41abe47e1d590',1,'altintegration']]],
-  ['savealltrees_329',['saveAllTrees',['../structaltintegration_1_1PopContext.html#af4a75ce0d9b92146523799a102d5a12b',1,'altintegration::PopContext']]],
+  ['savealltrees_328',['saveAllTrees',['../structaltintegration_1_1PopContext.html#af4a75ce0d9b92146523799a102d5a12b',1,'altintegration::PopContext']]],
+  ['savetrees_329',['saveTrees',['../namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995',1,'altintegration']]],
   ['scorefromendorsements_330',['scoreFromEndorsements',['../structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036',1,'altintegration::DefaultPopRewardsCalculator']]],
   ['seek_5fstart_331',['seek_start',['../structaltintegration_1_1BlockIterator.html#a9f0eb8fde6e1dfe9d23cd237fa774393',1,'altintegration::BlockIterator']]],
   ['serializetohex_332',['SerializeToHex',['../namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05',1,'altintegration']]],
@@ -23,10 +23,11 @@ var searchData=
   ['startheight_348',['startHeight',['../structaltintegration_1_1Config_1_1Bootstrap.html#a48840270db4f535dca32e02225413149',1,'altintegration::Config::Bootstrap']]],
   ['startofslope_349',['startOfSlope',['../structaltintegration_1_1PopPayoutsParams.html#aa42055f77effacfa67f57112fb607266',1,'altintegration::PopPayoutsParams']]],
   ['statecorruptedexception_350',['StateCorruptedException',['../structaltintegration_1_1StateCorruptedException.html',1,'altintegration']]],
-  ['status_351',['status',['../structaltintegration_1_1BlockIndex.html#aebb596a27604345614ebbe5d72d8f08c',1,'altintegration::BlockIndex']]],
+  ['status_351',['status',['../structaltintegration_1_1StoredBlockIndex.html#aac75c9c08d4d081ea250cf055f82e33a',1,'altintegration::StoredBlockIndex::status()'],['../structaltintegration_1_1BlockIndex.html#aebb596a27604345614ebbe5d72d8f08c',1,'altintegration::BlockIndex::status()']]],
   ['storageioexception_352',['StorageIOException',['../structaltintegration_1_1StorageIOException.html',1,'altintegration']]],
-  ['stringtolevel_353',['StringToLevel',['../namespacealtintegration.html#a74d1310d21c147f0b18eaaf2d70e4bc9',1,'altintegration']]],
-  ['subject_354',['subject',['../structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f',1,'altintegration::VbkMerklePath']]],
-  ['submit_355',['submit',['../structaltintegration_1_1MemPool.html#a29e3ca04c94b9818712d07ba039590d9',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; VbkBlock &gt; &amp;block, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a895eb27cc1690b9236d5edc906d69d26',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; VTB &gt; &amp;vtb, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a7b83df1c20f27f50de559c94e03febcb',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; ATV &gt; &amp;atv, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a019ff92ea7c53f1dbc340cfd68a6cf74',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; T &gt; &amp;pl, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#aee936f653e65f97996c2c91a14a7efa8',1,'altintegration::MemPool::submit(const T &amp;pl, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a1c4c85ff5cb07c47cf72cdb4bff2f7b8',1,'altintegration::MemPool::submit(Slice&lt; const uint8_t &gt; bytes, ValidationState &amp;state)']]],
-  ['submitresult_356',['SubmitResult',['../structaltintegration_1_1MemPool_1_1SubmitResult.html',1,'altintegration::MemPool']]]
+  ['storedblockindex_353',['StoredBlockIndex',['../structaltintegration_1_1StoredBlockIndex.html',1,'altintegration']]],
+  ['stringtolevel_354',['StringToLevel',['../namespacealtintegration.html#a74d1310d21c147f0b18eaaf2d70e4bc9',1,'altintegration']]],
+  ['subject_355',['subject',['../structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f',1,'altintegration::VbkMerklePath']]],
+  ['submit_356',['submit',['../structaltintegration_1_1MemPool.html#a29e3ca04c94b9818712d07ba039590d9',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; VbkBlock &gt; &amp;block, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a895eb27cc1690b9236d5edc906d69d26',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; VTB &gt; &amp;vtb, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a7b83df1c20f27f50de559c94e03febcb',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; ATV &gt; &amp;atv, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a019ff92ea7c53f1dbc340cfd68a6cf74',1,'altintegration::MemPool::submit(const std::shared_ptr&lt; T &gt; &amp;pl, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#aee936f653e65f97996c2c91a14a7efa8',1,'altintegration::MemPool::submit(const T &amp;pl, ValidationState &amp;state)'],['../structaltintegration_1_1MemPool.html#a1c4c85ff5cb07c47cf72cdb4bff2f7b8',1,'altintegration::MemPool::submit(Slice&lt; const uint8_t &gt; bytes, ValidationState &amp;state)']]],
+  ['submitresult_357',['SubmitResult',['../structaltintegration_1_1MemPool_1_1SubmitResult.html',1,'altintegration::MemPool']]]
 ];

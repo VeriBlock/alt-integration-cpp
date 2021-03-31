@@ -139,9 +139,12 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>block_t</b> = Block<
 <tr class="memitem:a765d4df2a1e98b65cc0e4137119dda7d"><td class="memItemLeft" align="right" valign="top"><a id="a765d4df2a1e98b65cc0e4137119dda7d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>params_t</b> = ChainParams</td></tr>
 <tr class="separator:a765d4df2a1e98b65cc0e4137119dda7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d226461db60889f29c9abc78a46dcd8"><td class="memItemLeft" align="right" valign="top"><a id="a1d226461db60889f29c9abc78a46dcd8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>index_t</b> = <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; block_t &gt;</td></tr>
-<tr class="separator:a1d226461db60889f29c9abc78a46dcd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61152955290884e219db8ee39b2ca2a8"><td class="memItemLeft" align="right" valign="top"><a id="a61152955290884e219db8ee39b2ca2a8"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>index_t</b> = typename <a class="el" href="structaltintegration_1_1BlockIndex.html">base::index_t</a></td></tr>
+<tr class="separator:a61152955290884e219db8ee39b2ca2a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4761021ddc1f8dddad0392210105b2b"><td class="memItemLeft" align="right" valign="top"><a id="af4761021ddc1f8dddad0392210105b2b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>stored_index_t</b> = typename <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">base::stored_index_t</a></td></tr>
+<tr class="separator:af4761021ddc1f8dddad0392210105b2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae79b584beb16373c2f19a789425bd1db"><td class="memItemLeft" align="right" valign="top"><a id="ae79b584beb16373c2f19a789425bd1db"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>hash_t</b> = typename Block::hash_t</td></tr>
 <tr class="separator:ae79b584beb16373c2f19a789425bd1db"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,6 +170,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>prev_block_hash_t</b
 <tr class="memitem:a96c9e0f2cf70379d32ea8833cbb3a933 inherit pub_types_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a96c9e0f2cf70379d32ea8833cbb3a933"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>index_t</b> = <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt;</td></tr>
 <tr class="separator:a96c9e0f2cf70379d32ea8833cbb3a933 inherit pub_types_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93c4cdc057693bd4f126409cec1b325b inherit pub_types_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a93c4cdc057693bd4f126409cec1b325b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>stored_index_t</b> = <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; Block &gt;</td></tr>
+<tr class="separator:a93c4cdc057693bd4f126409cec1b325b inherit pub_types_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1543358a5aea3e3681cc228188ca6cde inherit pub_types_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a1543358a5aea3e3681cc228188ca6cde"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>on_invalidate_t</b> = void(const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;)</td></tr>
 <tr class="separator:a1543358a5aea3e3681cc228188ca6cde inherit pub_types_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -197,8 +203,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>acceptBlockHeader</b>
 <tr class="memitem:abb46e4499aa53ccde9f870f160c6ee91"><td class="memItemLeft" align="right" valign="top"><a id="abb46e4499aa53ccde9f870f160c6ee91"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> (size_t level=0) const</td></tr>
 <tr class="separator:abb46e4499aa53ccde9f870f160c6ee91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a7c67677a6412c2a896580be2c93761"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#a4a7c67677a6412c2a896580be2c93761">loadBlock</a> (std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt; index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="separator:a4a7c67677a6412c2a896580be2c93761"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51fce8c4ef10fd35e75de77c40ec9e0e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#a51fce8c4ef10fd35e75de77c40ec9e0e">loadBlock</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
+<tr class="separator:a51fce8c4ef10fd35e75de77c40ec9e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7de7a66d6867ddbf077f1c20d16d8fc"><td class="memItemLeft" align="right" valign="top"><a id="ae7de7a66d6867ddbf077f1c20d16d8fc"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a> (height_t height) const</td></tr>
 <tr class="memdesc:ae7de7a66d6867ddbf077f1c20d16d8fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">block is considered old if it is behind current tip further than 'old blocks window' blocks <br /></td></tr>
@@ -405,46 +411,46 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if bootstrap was successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00067">67</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                                          {</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    VBK_ASSERT(!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>() &amp;&amp; <span class="stringliteral">&quot;already bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">if</span> (chain.empty()) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap-empty-chain&quot;</span>,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                           <span class="stringliteral">&quot;provided bootstrap chain is empty&quot;</span>);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">if</span> (chain.size() &lt; param_-&gt;numBlocksForBootstrap()) {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          block_t::name() + <span class="stringliteral">&quot;-bootstrap-small-chain&quot;</span>,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          <span class="stringliteral">&quot;number of blocks in the provided chain is too small: &quot;</span> +</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;              std::to_string(chain.size()) + <span class="stringliteral">&quot;, expected at least &quot;</span> +</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;              std::to_string(param_-&gt;numBlocksForBootstrap()));</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="comment">// pick first block from the chain, bootstrap with a single block</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">auto</span> genesis = chain[0];</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">if</span> (!this-&gt;bootstrap(startHeight, genesis, state)) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-blocktree-bootstrap&quot;</span>);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="comment">// apply the rest of the blocks from the chain on top of our bootstrap</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// block. disable difficulty checks, because we have not enough blocks in</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="comment">// our store (yet) to check it correctly</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1, size = chain.size(); i &lt; size; i++) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keyword">auto</span>&amp; block = chain[i];</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="keywordflow">if</span> (!this-&gt;acceptBlockHeaderImpl(</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;              std::make_shared&lt;block_t&gt;(block), state, <span class="keyword">false</span>)) {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-blocktree-accept&quot;</span>);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      }</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="keyword">auto</span>* index = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(block.getHash());</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      VBK_ASSERT(index);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      index-&gt;setIsBootstrap(<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0a1ab4ab0c45ad2691be3f192e1c6d1e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00084">base_block_tree.hpp:84</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00369">base_block_tree.hpp:369</a></div></div>
+<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00068">68</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                                                          {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    VBK_ASSERT(!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>() &amp;&amp; <span class="stringliteral">&quot;already bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">if</span> (chain.empty()) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap-empty-chain&quot;</span>,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                           <span class="stringliteral">&quot;provided bootstrap chain is empty&quot;</span>);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">if</span> (chain.size() &lt; param_-&gt;numBlocksForBootstrap()) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          block_t::name() + <span class="stringliteral">&quot;-bootstrap-small-chain&quot;</span>,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          <span class="stringliteral">&quot;number of blocks in the provided chain is too small: &quot;</span> +</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;              std::to_string(chain.size()) + <span class="stringliteral">&quot;, expected at least &quot;</span> +</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;              std::to_string(param_-&gt;numBlocksForBootstrap()));</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="comment">// pick first block from the chain, bootstrap with a single block</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">auto</span> genesis = chain[0];</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">if</span> (!this-&gt;bootstrap(startHeight, genesis, state)) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-blocktree-bootstrap&quot;</span>);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// apply the rest of the blocks from the chain on top of our bootstrap</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="comment">// block. disable difficulty checks, because we have not enough blocks in</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="comment">// our store (yet) to check it correctly</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1, size = chain.size(); i &lt; size; i++) {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="keyword">auto</span>&amp; block = chain[i];</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      <span class="keywordflow">if</span> (!this-&gt;acceptBlockHeaderImpl(</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;              std::make_shared&lt;block_t&gt;(block), state, <span class="keyword">false</span>)) {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-blocktree-accept&quot;</span>);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      <span class="keyword">auto</span>* index = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(block.getHash());</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      VBK_ASSERT(index);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      index-&gt;setIsBootstrap(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  }</div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0a1ab4ab0c45ad2691be3f192e1c6d1e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00086">base_block_tree.hpp:86</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00370">base_block_tree.hpp:370</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -485,12 +491,12 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>true if bootstrap was successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00049">49</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                                                            {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    VBK_ASSERT(!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>() &amp;&amp; <span class="stringliteral">&quot;already bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">return</span> this-&gt;bootstrap(0, block, state) ||</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;           state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap-genesis&quot;</span>);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00050">50</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                                                            {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    VBK_ASSERT(!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>() &amp;&amp; <span class="stringliteral">&quot;already bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">return</span> this-&gt;bootstrap(0, block, state) ||</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;           state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap-genesis&quot;</span>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -551,12 +557,12 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;      this-&gt;setState(candidate, state);</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00065">base_block_tree.hpp:65</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00067">base_block_tree.hpp:67</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a4a7c67677a6412c2a896580be2c93761"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a7c67677a6412c2a896580be2c93761">&#9670;&nbsp;</a></span>loadBlock()</h2>
+<a id="a51fce8c4ef10fd35e75de77c40ec9e0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51fce8c4ef10fd35e75de77c40ec9e0e">&#9670;&nbsp;</a></span>loadBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -569,7 +575,7 @@ template&lt;typename Block , typename ChainParams &gt; </div>
         <tr>
           <td class="memname">bool <a class="el" href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree</a>&lt; Block, ChainParams &gt;::loadBlock </td>
           <td>(</td>
-          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;&#160;</td>
           <td class="paramname"><em>index</em>, </td>
         </tr>
         <tr>
@@ -592,17 +598,16 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 </div><div class="memdoc">
 <dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="structaltintegration_1_1BaseBlockTree.html#a44dfd9d546ada64a6087ba8ccc3dcce4">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
+<p>Reimplemented from <a class="el" href="structaltintegration_1_1BaseBlockTree.html#a925899dfacc9a135c77c2ffc24f9321a">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00127">127</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                                                  {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(index-&gt;getHeader(), state, *param_)) {</div>
+<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00128">128</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                                                  {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*index.header, state, *param_)) {</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;bad-header&quot;</span>);</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    }</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> hash = index-&gt;getHash();</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a44dfd9d546ada64a6087ba8ccc3dcce4">base::loadBlock</a>(std::move(index), state)) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> hash = index.header-&gt;getHash();</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a925899dfacc9a135c77c2ffc24f9321a">base::loadBlock</a>(index, state)) {</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
@@ -629,10 +634,10 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    current-&gt;raiseValidity(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">BLOCK_VALID_TREE</a>);</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  }</div>
-<div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00015">block_status.hpp:15</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">altintegration::BLOCK_BOOTSTRAP</a></div><div class="ttdeci">@ BLOCK_BOOTSTRAP</div><div class="ttdoc">this is a bootstrap block</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00045">block_status.hpp:45</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00017">block_status.hpp:17</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">altintegration::BLOCK_BOOTSTRAP</a></div><div class="ttdeci">@ BLOCK_BOOTSTRAP</div><div class="ttdoc">this is a bootstrap block</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00047">block_status.hpp:47</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8f11a78c3709de515ce810b744ac05f6"><div class="ttname"><a href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">altintegration::checkBlock</a></div><div class="ttdeci">bool checkBlock(const BtcBlock &amp;block, ValidationState &amp;state, const BtcChainParams &amp;params)</div><div class="ttdoc">Stateless validation for a single block.</div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a44dfd9d546ada64a6087ba8ccc3dcce4"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a44dfd9d546ada64a6087ba8ccc3dcce4">altintegration::BaseBlockTree::loadBlock</a></div><div class="ttdeci">virtual bool loadBlock(std::unique_ptr&lt; index_t &gt; index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00118">base_block_tree.hpp:118</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a925899dfacc9a135c77c2ffc24f9321a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a925899dfacc9a135c77c2ffc24f9321a">altintegration::BaseBlockTree::loadBlock</a></div><div class="ttdeci">virtual bool loadBlock(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00120">base_block_tree.hpp:120</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
