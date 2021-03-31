@@ -18,8 +18,9 @@ using OnBlockCallback_t =
     std::function<void(typename Block::hash_t, const StoredBlockIndex<Block>&)>;
 
 template <typename Index>
-bool loadBlocks(
+bool loadBlocksAndTip(
     std::vector<Index>& out,
+    typename Index::block_t::hash_t& tipout,
     BlockReader& storage,
     ValidationState& state,
     const OnBlockCallback_t<typename Index::block_t>& onBlock = {}) {
@@ -43,6 +44,18 @@ bool loadBlocks(
     out.push_back(val);
   }
 
+  bool res = storage.getTip<block_t>(tipout);
+
+  if (!res && !out.empty()) {
+    return state.Invalid(block_t::name() + "-bad-tip",
+                         "Can not read block tip");
+  }
+
+  if (res && out.empty()) {
+    return state.Invalid(block_t::name() + "-state-corruption",
+                         "Can not read blocks");
+  }
+
   return true;
 }
 
@@ -51,10 +64,6 @@ bool loadTree(BlockTreeT& out,
               const typename BlockTreeT::block_t::hash_t& tip_hash,
               std::vector<typename BlockTreeT::stored_index_t>& blocks,
               ValidationState& state) {
-  using stored_index_t = typename BlockTreeT::stored_index_t;
-  using block_t = typename BlockTreeT::block_t;
-  using hash_t = typename block_t::hash_t;
-
   if (!loadBlocksIntoTree(out, tip_hash, blocks, state)) {
     return state.Invalid("bad-tree");
   }
@@ -132,7 +141,6 @@ bool loadValidateTree(
     const BlockTreeT& tree,
     const std::vector<typename BlockTreeT::stored_index_t>& blocks,
     ValidationState& state) {
-  using stored_index_t = typename BlockTreeT::stored_index_t;
   using block_t = typename BlockTreeT::block_t;
 
   for (const auto& block : blocks) {
@@ -152,12 +160,15 @@ bool loadTrees(PopContext& context,
                BlockReader& storage,
                ValidationState& state) {
   std::vector<typename BtcBlockTree::stored_index_t> btcblocks;
-  if (!detail::loadBlocks(btcblocks, storage, state)) {
+  typename BtcBlock::hash_t btctip;
+  if (!detail::loadBlocksAndTip(btcblocks, btctip, storage, state)) {
     return state.Invalid("load-btc-tree-blocks");
   }
   std::vector<typename VbkBlockTree::stored_index_t> vbkblocks;
-  if (!detail::loadBlocks(
+  typename VbkBlock::hash_t vbktip;
+  if (!detail::loadBlocksAndTip(
           vbkblocks,
+          vbktip,
           storage,
           state,  // on every block, take its hash and warmup progpow header
                   // cache
@@ -168,21 +179,9 @@ bool loadTrees(PopContext& context,
     return state.Invalid("load-vbk-tree-blocks");
   }
   std::vector<typename AltBlockTree::stored_index_t> altblocks;
-  if (!detail::loadBlocks(altblocks, storage, state)) {
+  typename AltBlock::hash_t alttip;
+  if (!detail::loadBlocksAndTip(altblocks, alttip, storage, state)) {
     return state.Invalid("load-alt-tree-blocks");
-  }
-
-  typename BtcBlock::hash_t btctip;
-  bool res = storage.getTip<BtcBlock>(btctip);
-
-  if (!res && !btcblocks.empty()) {
-    return state.Invalid(BtcBlock::name() + "-bad-tip",
-                         "Can not read block tip");
-  }
-
-  if (res && btcblocks.empty()) {
-    return state.Invalid(BtcBlock::name() + "-state-corruption",
-                         "Can not read blocks");
   }
 
   if (!detail::loadTree(
@@ -190,35 +189,9 @@ bool loadTrees(PopContext& context,
     return state.Invalid("failed-to-load-btc-tree");
   }
 
-  typename VbkBlock::hash_t vbktip;
-  res = storage.getTip<VbkBlock>(vbktip);
-
-  if (!res && !vbkblocks.empty()) {
-    return state.Invalid(VbkBlock::name() + "-bad-tip",
-                         "Can not read block tip");
-  }
-
-  if (res && vbkblocks.empty()) {
-    return state.Invalid(VbkBlock::name() + "-state-corruption",
-                         "Can not read blocks");
-  }
-
   if (!detail::loadTree(
           context.getAltBlockTree().vbk(), vbktip, vbkblocks, state)) {
     return state.Invalid("failed-to-load-vbk-tree");
-  }
-
-  typename AltBlock::hash_t alttip;
-  res = storage.getTip<AltBlock>(alttip);
-
-  if (!res && !altblocks.empty()) {
-    return state.Invalid(AltBlock::name() + "-bad-tip",
-                         "Can not read block tip");
-  }
-
-  if (res && altblocks.empty()) {
-    return state.Invalid(AltBlock::name() + "-state-corruption",
-                         "Can not read blocks");
   }
 
   if (!detail::loadTree(context.getAltBlockTree(), alttip, altblocks, state)) {
