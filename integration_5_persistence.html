@@ -133,12 +133,14 @@ Overview</h1>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">bool</span> hasPopData(CBlockTreeDB&amp; db);</div>
 <div class="line"><a class="code" href="structaltintegration_1_1PopData.html">altintegration::PopData</a> getPopData();</div>
-<div class="line"><span class="keywordtype">void</span> saveTrees(CDBBatch* batch);</div>
-<div class="line"><span class="keywordtype">bool</span> loadTrees(CDBWrapper&amp; db);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995">saveTrees</a>(CDBBatch* batch);</div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">loadTrees</a>(CDBWrapper&amp; db);</div>
 <div class="line"> </div>
 <div class="line">} <span class="comment">// namespace VeriBlock</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#endif </span><span class="comment">//BITCOIN_SRC_VBK_POP_SERVICE_HPP</span></div>
+<div class="ttc" id="anamespacealtintegration_html_a1036e0889afa590fec23e3efc7b3c995"><div class="ttname"><a href="namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995">altintegration::saveTrees</a></div><div class="ttdeci">void saveTrees(const AltBlockTree &amp;tree, BlockBatch &amp;batch)</div><div class="ttdoc">Save all (BTC/VBK/ALT) trees on disk in a single Batch.</div></div>
+<div class="ttc" id="anamespacealtintegration_html_a967e6111ef2ca4672fc0314dcdb90dc5"><div class="ttname"><a href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">altintegration::loadTrees</a></div><div class="ttdeci">bool loadTrees(PopContext &amp;context, BlockReader &amp;reader, ValidationState &amp;state)</div><div class="ttdoc">Load all (ALT/VBK/BTC) trees from disk into memory.</div></div>
 <div class="ttc" id="astructaltintegration_1_1PopData_html"><div class="ttname"><a href="structaltintegration_1_1PopData.html">altintegration::PopData</a></div><div class="ttdoc">Represents ALT block body of POP-related info.</div><div class="ttdef"><b>Definition:</b> <a href="popdata_8hpp_source.html#l00027">popdata.hpp:27</a></div></div>
 </div><!-- fragment --><p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp</a> </p><div class="fragment"><div class="line"><span class="comment">// Copyright (c) 2019-2020 Xenios SEZC</span></div>
 <div class="line"><span class="comment">// https://www.veriblock.org</span></div>
@@ -178,26 +180,24 @@ Overview</h1>
 <div class="line">           db.Exists(tip_key&lt;altintegration::AltBlock&gt;());</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> saveTrees(CDBBatch* batch)</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995">saveTrees</a>(CDBBatch* batch)</div>
 <div class="line">{</div>
 <div class="line">    AssertLockHeld(cs_main);</div>
 <div class="line">    VeriBlock::BlockBatch b(*batch);</div>
-<div class="line">    <a class="code" href="namespacealtintegration.html#a8714324f6b90ef3678b41abe47e1d590">altintegration::SaveAllTrees</a>(*GetPop().altTree, b);</div>
+<div class="line">    altintegration::SaveAllTrees(*GetPop().altTree, b);</div>
 <div class="line">}</div>
-<div class="line"><span class="keywordtype">bool</span> loadTrees(CDBWrapper&amp; db)</div>
+<div class="line"><span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">loadTrees</a>(CDBWrapper&amp; db)</div>
 <div class="line">{</div>
 <div class="line">    <a class="code" href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a> state;</div>
 <div class="line"> </div>
 <div class="line">    BlockReader reader(db);</div>
-<div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#aff104077a3bc445c4d5461e1f5ca4802">altintegration::LoadAllTrees</a>(GetPop(), reader, state)) {</div>
+<div class="line">    <span class="keywordflow">if</span> (!altintegration::LoadAllTrees(GetPop(), reader, state)) {</div>
 <div class="line">        <span class="keywordflow">return</span> error(<span class="stringliteral">&quot;%s: failed to load trees %s&quot;</span>, __func__, state.toString());</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a8714324f6b90ef3678b41abe47e1d590"><div class="ttname"><a href="namespacealtintegration.html#a8714324f6b90ef3678b41abe47e1d590">altintegration::SaveAllTrees</a></div><div class="ttdeci">void SaveAllTrees(const AltBlockTree &amp;tree, BlockBatch &amp;batch)</div><div class="ttdoc">Save all (BTC/VBK/ALT) trees on disk in a single Batch.</div></div>
-<div class="ttc" id="anamespacealtintegration_html_aff104077a3bc445c4d5461e1f5ca4802"><div class="ttname"><a href="namespacealtintegration.html#aff104077a3bc445c4d5461e1f5ca4802">altintegration::LoadAllTrees</a></div><div class="ttdeci">bool LoadAllTrees(PopContext &amp;context, BlockReader &amp;reader, ValidationState &amp;state)</div><div class="ttdoc">Load all (ALT/VBK/BTC) trees from disk into memory.</div></div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>You can copy provided <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp">pop_service.hpp</a> and <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp">pop_service.cpp</a> files and comment out everything but storage related API.</dd></dl>
 <h1><a class="anchor" id="autotoc_md51"></a>
 3. Initialize VeriBlock storage during ALT blockchain initialization process.</h1>
@@ -272,7 +272,7 @@ Overview</h1>
 <div class="line">+    }</div>
 <div class="line">+    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">+}</div>
-<div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00031">block_index.hpp:31</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00032">block_index.hpp:32</a></div></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md54"></a>
 6. Add pop_service.cpp to the makefile.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.am</a> </p><div class="fragment"><div class="line"> libbitcoin_server_a_SOURCES = \</div>
