@@ -42,8 +42,8 @@ TEST_F(AltTreeRepositoryTest, ValidBlocks) {
   this->popminer->mineVbkBlocks(1, {vbkpoptx});
 
   auto writer = InmemBlockBatch(blockStorage);
-  SaveTree(this->popminer->btc(), writer);
-  SaveTree(this->popminer->vbk(), writer);
+  saveTree(this->popminer->btc(), writer);
+  saveTree(this->popminer->vbk(), writer);
 
   VbkBlockTree newvbk{this->vbkparam,
                       this->btcparam,
@@ -92,7 +92,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->state.IsValid());
 
   auto writer = InmemBlockBatch(blockStorage);
-  SaveAllTrees(this->alttree, writer);
+  saveTrees(this->alttree, writer);
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -159,7 +159,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   EXPECT_TRUE(this->state.IsValid());
 
   auto writer = InmemBlockBatch(blockStorage);
-  SaveAllTrees(this->alttree, writer);
+  saveTrees(this->alttree, writer);
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -236,7 +236,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
       this->alttree, containingBlock, popData, /*payloads_validation =*/true);
 
   auto writer = InmemBlockBatch(blockStorage);
-  SaveAllTrees(this->alttree, writer);
+  saveTrees(this->alttree, writer);
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};

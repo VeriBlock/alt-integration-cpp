@@ -77,6 +77,11 @@ void VbkBlockAddon::setIsBootstrap(bool isBootstrap) {
   }
 }
 
+void VbkBlockAddon::setRef(uint32_t count) {
+  _refCount = count;
+  setDirty();
+}
+
 void VbkBlockAddon::removeRef(VbkBlockAddon::ref_height_t) {
   VBK_ASSERT(_refCount > 0 &&
              "state corruption: attempted to remove a nonexitent reference "

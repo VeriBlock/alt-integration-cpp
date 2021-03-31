@@ -153,7 +153,7 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree, uint256> {
 
     VbkMerklePath merklePath;
     merklePath.treeIndex = treeIndex;
-    merklePath.index = index;
+    merklePath.index = (int32_t)index;
     merklePath.subject = hash;
     merklePath.layers = getMerklePathLayers(index);
     return merklePath;
@@ -191,7 +191,7 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
     size_t index = it->second;
 
     MerklePath merklePath;
-    merklePath.index = index;
+    merklePath.index = (int32_t)index;
     merklePath.subject = hash;
     merklePath.layers = getMerklePathLayers(index);
     return merklePath;

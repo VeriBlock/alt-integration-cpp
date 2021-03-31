@@ -34,7 +34,7 @@ class ValueSortedMap {
 
   ~ValueSortedMap() = default;
 
-  explicit ValueSortedMap(cmp_t cmp) : set_(cmp) {}
+  explicit ValueSortedMap(cmp_t comparator) : set_(comparator) {}
 
   iterator_t find(const K& key) { return map_.find(key); }
   const_iterator_t find(const K& key) const { return map_.find(key); }

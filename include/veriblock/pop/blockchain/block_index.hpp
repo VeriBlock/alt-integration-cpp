@@ -14,6 +14,7 @@
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/logger.hpp>
+#include <veriblock/pop/storage/stored_block_index.hpp>
 #include <veriblock/pop/validation_state.hpp>
 #include <veriblock/pop/write_stream.hpp>
 
@@ -72,16 +73,24 @@ struct BlockIndex : public Block::addon_t {
   BlockIndex(BlockIndex&& other) = default;
   BlockIndex& operator=(BlockIndex&& other) = default;
 
-  // returns a copy of BlockIndex without inmem fields
-  BlockIndex<Block> clone() const {
-    BlockIndex<Block> ret = *this;
-    ret.setNullInmemFields();
-    return ret;
-  }
-
   // loads on-disk fields from 'other' block index.
   // works like (explicit) copy constructor
-  void mergeFrom(const BlockIndex& other) { *this = other.clone(); }
+  void mergeFrom(const StoredBlockIndex<Block>& other) {
+    setHeight(other.height);
+    setHeader(other.header);
+    setStatus(other.status);
+
+    other.addon.toInmem(*this);
+  }
+
+  StoredBlockIndex<Block> toStoredBlockIndex() const {
+    StoredBlockIndex<Block> ret;
+    ret.height = height;
+    ret.status = status;
+    ret.header = header;
+    ret.addon = *this;
+    return ret;
+  }
 
   /**
    * Block is connected if it contains block body (PopData), and all its
@@ -317,7 +326,8 @@ struct BlockIndex : public Block::addon_t {
   }
 
   void toVbkEncoding(WriteStream& stream) const {
-    stream.writeBE<uint32_t>(height);
+    using height_t = typename Block::height_t;
+    stream.writeBE<height_t>(height);
     header->toRaw(stream);
     stream.writeBE<uint32_t>(status);
 

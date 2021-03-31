@@ -363,11 +363,11 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::loadBlock(std::unique_ptr<index_t> index,
+bool VbkBlockTree::loadBlock(const stored_index_t& index,
                              ValidationState& state) {
-  auto hash = index->getHash();
-  auto height = index->getHeight();
-  if (!VbkTree::loadBlock(std::move(index), state)) {
+  auto hash = index.header->getHash();
+  auto height = index.height;
+  if (!VbkTree::loadBlock(index, state)) {
     return false;  // already set
   }
 

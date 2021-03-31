@@ -30,7 +30,8 @@ struct BlockTree : public BaseBlockTree<Block> {
   using base = BaseBlockTree<Block>;
   using block_t = Block;
   using params_t = ChainParams;
-  using index_t = BlockIndex<block_t>;
+  using index_t = typename base::index_t;
+  using stored_index_t = typename base::stored_index_t;
   using hash_t = typename Block::hash_t;
   using prev_block_hash_t = typename Block::prev_hash_t;
   using height_t = typename Block::height_t;
@@ -124,15 +125,14 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! @invariant NOT atomic.
-  bool loadBlock(std::unique_ptr<index_t> index,
+  bool loadBlock(const stored_index_t& index,
                  ValidationState& state) override {
-    VBK_ASSERT(index != nullptr);
-    if (!checkBlock(index->getHeader(), state, *param_)) {
+    if (!checkBlock(*index.header, state, *param_)) {
       return state.Invalid("bad-header");
     }
 
-    const auto hash = index->getHash();
-    if (!base::loadBlock(std::move(index), state)) {
+    const auto hash = index.header->getHash();
+    if (!base::loadBlock(index, state)) {
       return false;
     }
 

@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 
-#include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/uint.hpp>
@@ -36,6 +35,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
   uint32_t refCount() const { return _refCount; }
+  void setRef(uint32_t count);
 
   void addRef(ref_height_t);
 

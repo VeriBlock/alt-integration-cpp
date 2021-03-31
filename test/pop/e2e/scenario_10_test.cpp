@@ -76,7 +76,7 @@ TEST_F(Scenario10, scenario_10) {
 
   VBK_LOG_DEBUG("Step 3");
   auto writer = InmemBlockBatch(blockStorage);
-  SaveAllTrees(alttree, writer);
+  saveTrees(alttree, writer);
 
   VBK_LOG_DEBUG("Step 4");
   AltBlockTree reloadedAltTree{

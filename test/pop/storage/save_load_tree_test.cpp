@@ -27,7 +27,7 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
 
   void save() {
     auto writer = InmemBlockBatch(blockStorage);
-    SaveAllTrees(alttree, writer);
+    saveTrees(alttree, writer);
   }
 
   bool load() {
@@ -241,9 +241,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
       << state.toString();
 
   auto writer = InmemBlockBatch(blockStorage);
-  SaveTree(alttree.btc(), writer);
-  SaveTree(alttree.vbk(), writer, emptyValidator);
-  SaveTree(alttree, writer);
+  saveTree(alttree.btc(), writer);
+  saveTree(alttree.vbk(), writer, emptyValidator);
+  saveTree(alttree, writer);
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());

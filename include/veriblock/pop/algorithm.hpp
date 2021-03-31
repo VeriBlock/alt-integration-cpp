@@ -55,6 +55,38 @@ std::vector<typename P::id_t> map_get_id(const std::vector<P>& a) {
 }
 
 //! @private
+template <typename A, typename B>
+std::vector<A> map_get_id_from_pointers(const std::vector<B*>& b) {
+  std::vector<A> a;
+  a.reserve(b.size());
+  std::transform(b.begin(), b.end(), std::back_inserter(a), [&](B* t) -> A {
+    return t->getId();
+  });
+  return a;
+}
+
+//! @private
+template <typename T>
+bool same_vectors_unique_unordered(const std::vector<T>& a,
+                                   const std::vector<T>& b) {
+  const auto setA = std::set<T>(a.begin(), a.end());
+  const auto setB = std::set<T>(b.begin(), b.end());
+  return setA == setB;
+}
+
+//! @private
+template <typename T>
+bool same_vectors_unordered(const std::vector<T>& a,
+                            const std::vector<T>& b) {
+
+  std::vector<T> sortedVectorA = a;
+  std::vector<T> sortedVectorB = b;
+  std::sort(sortedVectorA.begin(), sortedVectorA.end());
+  std::sort(sortedVectorB.begin(), sortedVectorB.end());
+  return sortedVectorA == sortedVectorB;
+}
+
+//! @private
 template <typename T>
 std::set<typename T::id_t> make_idset(const std::vector<T>& v) {
   auto ids = map_get_id(v);
