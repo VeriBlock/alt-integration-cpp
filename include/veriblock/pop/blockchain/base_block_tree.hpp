@@ -117,27 +117,26 @@ struct BaseBlockTree {
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(std::unique_ptr<stored_index_t> index,
+  virtual bool loadBlock(const stored_index_t& index,
                          ValidationState& state) {
-    VBK_ASSERT(index != nullptr);
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
     const auto& root = getRoot();
-    if (index->height < root.getHeight()) {
+    if (index.height < root.getHeight()) {
       return state.Invalid("cant-connect", "Loaded block is too far");
     }
 
-    if (index->height == root.getHeight() &&
-        index->header->getHash() != root.getHash()) {
+    if (index.height == root.getHeight() &&
+        index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
       return state.Invalid(
           "bad-root",
           fmt::format("Can't overwrite root block with block {}",
-                      index->toPrettyString()));
+                      index.toPrettyString()));
     }
 
-    auto& header = *index->header;
+    auto& header = *index.header;
     auto currentHash = header.getHash();
     auto* current = getBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
@@ -163,7 +162,7 @@ struct BaseBlockTree {
     auto next = current->pnext;
 
     // copy all fields
-    current->mergeFrom(*index);
+    current->mergeFrom(index);
     // clear inmem fields
     current->setNullInmemFields();
     current->unsetDirty();

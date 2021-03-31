@@ -519,15 +519,14 @@ void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
   overrideTip(to);
 }
 
-bool AltBlockTree::loadBlock(std::unique_ptr<stored_index_t> index,
+bool AltBlockTree::loadBlock(const stored_index_t& index,
                              ValidationState& state) {
-  const auto containingHash = index->header->getHash();
-  const auto height = index->height;
-  if (!base::loadBlock(std::move(index), state)) {
+  if (!base::loadBlock(index, state)) {
     return false;  // already set
   }
 
   // load endorsements
+  const auto& containingHash = index.header->getHash();
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
@@ -548,7 +547,7 @@ bool AltBlockTree::loadBlock(std::unique_ptr<stored_index_t> index,
 
   // recover `endorsedBy` and `blockOfProofEndorsements`
   const int si = getParams().getEndorsementSettlementInterval();
-  auto window = std::max(0, height - si);
+  auto window = std::max(0, index.height - si);
   Chain<index_t> chain(window, current);
   if (!recoverEndorsements(*this, chain, *current, state)) {
     return state.Invalid("bad-endorsements");

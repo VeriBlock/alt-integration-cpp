@@ -20,13 +20,16 @@ namespace altintegration {
 //! does validation of these blocks. Sets tip after loading.
 //! @invariant NOT atomic
 template <typename BlockTreeT>
-bool LoadBlocks(
+bool loadBlocksIntoTree(
     BlockTreeT& tree,
-    std::vector<std::unique_ptr<typename BlockTreeT::stored_index_t>>& blocks,
     const typename BlockTreeT::hash_t& tiphash,
+    std::vector<typename BlockTreeT::stored_index_t>& blocks,
     ValidationState& state) {
   using stored_index_t = typename BlockTreeT::stored_index_t;
   using block_t = typename BlockTreeT::block_t;
+
+  if (blocks.size() == 0) return true;
+
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
                blocks.size(),
                block_t::name(),
@@ -34,17 +37,15 @@ bool LoadBlocks(
   VBK_ASSERT(tree.isBootstrapped() && "tree must be bootstrapped");
 
   // first, sort them by height
-  std::sort(
-      blocks.begin(),
-      blocks.end(),
-            [](const std::unique_ptr<stored_index_t>& a,
-               const std::unique_ptr<stored_index_t>& b) {
-              return a->height < b->height;
-      });
+  std::sort(blocks.begin(),
+            blocks.end(),
+            [](const stored_index_t& a, const stored_index_t& b) {
+              return a.height < b.height;
+            });
 
-  for (auto& block : blocks) {
+  for (const auto& block : blocks) {
     // load blocks one by one
-    if (!tree.loadBlock(std::move(block), state)) {
+    if (!tree.loadBlock(block, state)) {
       return state.Invalid("load-tree");
     }
   }
@@ -58,7 +59,7 @@ void validateBlockIndex(const BlockIndexT&);
 
 //! @private
 template <typename BlockTreeT>
-void SaveTree(
+void saveTree(
     BlockTreeT& tree,
     BlockBatch& batch,
     std::function<void(const typename BlockTreeT::index_t&)> validator) {
@@ -94,21 +95,21 @@ void SaveTree(
 
 //! @private
 template <typename BlockTreeT>
-void SaveTree(BlockTreeT& tree, BlockBatch& batch) {
-  SaveTree(tree, batch, &validateBlockIndex<typename BlockTreeT::index_t>);
+void saveTree(BlockTreeT& tree, BlockBatch& batch) {
+  saveTree(tree, batch, &validateBlockIndex<typename BlockTreeT::index_t>);
 }
 
 struct AltBlockTree;
 
 //! Save all (BTC/VBK/ALT) trees on disk in a single Batch.
-void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch);
+void saveTrees(const AltBlockTree& tree, BlockBatch& batch);
 
 struct PopContext;
 
 //! Load all (ALT/VBK/BTC) trees from disk into memory.
-bool LoadAllTrees(PopContext& context,
-                  BlockReader& reader,
-                  ValidationState& state);
+bool loadTrees(PopContext& context,
+               BlockReader& reader,
+               ValidationState& state);
 
 }  // namespace altintegration
 

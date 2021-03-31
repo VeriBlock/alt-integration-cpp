@@ -345,7 +345,7 @@ struct PopTestFixture {
   }
 
   template <typename stored_index_t>
-  std::vector<std::unique_ptr<stored_index_t>> LoadBlocksFromDisk() {
+  std::vector<stored_index_t> LoadBlocksFromDisk() {
     return blockStorage.load<typename stored_index_t::block_t>();
   }
 
@@ -360,7 +360,7 @@ struct PopTestFixture {
     using stored_index_t = typename Tree::stored_index_t;
     auto blocks = LoadBlocksFromDisk<stored_index_t>();
     auto tip = LoadTipFromDisk<index_t>();
-    return LoadBlocks<Tree>(tree, blocks, tip, state);
+    return loadBlocksIntoTree<Tree>(tree, tip, blocks, state);
   }
 };
 

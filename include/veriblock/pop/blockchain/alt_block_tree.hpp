@@ -271,7 +271,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is undefined
    * and can not be used. Tip: ask user to run with '-reindex'.
    */
-  VBK_CHECK_RETURN bool loadBlock(std::unique_ptr<stored_index_t> index,
+  VBK_CHECK_RETURN bool loadBlock(const stored_index_t& index,
                                   ValidationState& state) override;
 
   /**

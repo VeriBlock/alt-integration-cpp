@@ -17,22 +17,19 @@ template <typename Block>
 using OnBlockCallback_t =
     std::function<void(typename Block::hash_t, const StoredBlockIndex<Block>&)>;
 
-template <typename BlockTreeT>
-bool LoadTree(
-    BlockTreeT& out,
+template <typename Index>
+bool loadBlocks(
+    std::vector<Index>& out,
     BlockReader& storage,
     ValidationState& state,
-    const OnBlockCallback_t<typename BlockTreeT::block_t>& onBlock = {}) {
-  using stored_index_t = typename BlockTreeT::stored_index_t;
-  using block_t = typename BlockTreeT::block_t;
+    const OnBlockCallback_t<typename Index::block_t>& onBlock = {}) {
+  using block_t = typename Index::block_t;
   using hash_t = typename block_t::hash_t;
-
-  std::vector<std::unique_ptr<stored_index_t>> blocks;
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
-    auto val = make_unique<stored_index_t>();
-    if (!it->value(*val)) {
+    Index val;
+    if (!it->value(val)) {
       return state.Invalid("bad-value", "Can not read block data");
     }
     // if callback is supplied, execute it
@@ -41,30 +38,24 @@ bool LoadTree(
       if (!it->key(hash)) {
         return state.Invalid("bad-key", "Can not read block key");
       }
-      onBlock(hash, *val);
+      onBlock(hash, val);
     }
-    blocks.push_back(std::move(val));
+    out.push_back(val);
   }
 
-  hash_t tip_hash;
-  bool res = storage.getTip<block_t>(tip_hash);
+  return true;
+}
 
-  if (!res && !blocks.empty()) {
-    return state.Invalid(block_t::name() + "-bad-tip",
-                         "Can not read block tip");
-  }
+template <typename BlockTreeT>
+bool loadTree(BlockTreeT& out,
+              const typename BlockTreeT::block_t::hash_t& tip_hash,
+              std::vector<typename BlockTreeT::stored_index_t>& blocks,
+              ValidationState& state) {
+  using stored_index_t = typename BlockTreeT::stored_index_t;
+  using block_t = typename BlockTreeT::block_t;
+  using hash_t = typename block_t::hash_t;
 
-  if (res && blocks.empty()) {
-    return state.Invalid(block_t::name() + "-state-corruption",
-                         "Can not read blocks");
-  }
-
-  // skip loading because storage is empty
-  if (!res && blocks.empty()) {
-    return true;
-  }
-
-  if (!LoadBlocks(out, blocks, tip_hash, state)) {
+  if (!loadBlocksIntoTree(out, tip_hash, blocks, state)) {
     return state.Invalid("bad-tree");
   }
 
@@ -74,28 +65,175 @@ bool LoadTree(
   return true;
 }
 
+template <typename BlockTreeT>
+bool validateLoadBlock(const BlockTreeT&,
+                       const typename BlockTreeT::stored_index_t&,
+                       ValidationState&) {
+  return true;
+}
+
+template <>
+bool validateLoadBlock(const AltBlockTree& tree,
+                       const typename AltBlockTree::stored_index_t& index,
+                       ValidationState& state) {
+  const auto* current = tree.getBlockIndex(index.header->getHash());
+  const auto endorsedByIds =
+      map_get_id_from_pointers<uint256, const AltEndorsement>(
+          current->endorsedBy);
+  if (!same_vectors_unique_unordered(endorsedByIds,
+                                     index.addon.endorsedByHashes)) {
+    return state.Invalid("alt-block-invalid-stored-endorsed-by");
+  }
+  return true;
+}
+
+template <>
+bool validateLoadBlock(const VbkBlockTree& tree,
+                       const typename VbkBlockTree::stored_index_t& index,
+                       ValidationState& state) {
+  const auto* current = tree.getBlockIndex(index.header->getHash());
+  const auto endorsedByIds =
+      map_get_id_from_pointers<uint256, const VbkEndorsement>(
+          current->endorsedBy);
+  if (!same_vectors_unique_unordered(endorsedByIds,
+                                     index.addon.endorsedByHashes)) {
+    return state.Invalid("vbk-block-invalid-stored-endorsed-by");
+  }
+
+  const auto blockOfProofIds =
+      map_get_id_from_pointers<uint256, const AltEndorsement>(
+          current->blockOfProofEndorsements);
+  if (!same_vectors_unordered(blockOfProofIds,
+                              index.addon.blockOfProofEndorsementHashes)) {
+    return state.Invalid(
+        "vbk-block-invalid-stored-block-of-proof-endorsements");
+  }
+  return true;
+}
+
+template <>
+bool validateLoadBlock(const BtcBlockTree& tree,
+                       const typename BtcBlockTree::stored_index_t& index,
+                       ValidationState& state) {
+  const auto* current = tree.getBlockIndex(index.header->getHash());
+  const auto blockOfProofIds =
+      map_get_id_from_pointers<uint256, const VbkEndorsement>(
+          current->blockOfProofEndorsements);
+  if (!same_vectors_unordered(blockOfProofIds,
+                              index.addon.blockOfProofEndorsementHashes)) {
+    return state.Invalid(
+        "btc-block-invalid-stored-block-of-proof-endorsements");
+  }
+  return true;
+}
+
+template <typename BlockTreeT>
+bool loadValidateTree(
+    const BlockTreeT& tree,
+    const std::vector<typename BlockTreeT::stored_index_t>& blocks,
+    ValidationState& state) {
+  using stored_index_t = typename BlockTreeT::stored_index_t;
+  using block_t = typename BlockTreeT::block_t;
+
+  for (const auto& block : blocks) {
+    if (!validateLoadBlock(tree, block, state)) {
+      return state.Invalid("load-validate-tree",
+                           fmt::format("Invalid stored {} block {}",
+                                       block_t::name(),
+                                       block.toPrettyString()));
+    }
+  }
+  return true;
+}
+
 }  // namespace detail
 
-bool LoadAllTrees(PopContext& context,
-                  BlockReader& storage,
-                  ValidationState& state) {
-  if (!detail::LoadTree(context.getAltBlockTree().btc(), storage, state)) {
-    return state.Invalid("failed-to-load-btc-tree");
+bool loadTrees(PopContext& context,
+               BlockReader& storage,
+               ValidationState& state) {
+  std::vector<typename BtcBlockTree::stored_index_t> btcblocks;
+  if (!detail::loadBlocks(btcblocks, storage, state)) {
+    return state.Invalid("load-btc-tree-blocks");
   }
-  if (!detail::LoadTree(
-          context.getAltBlockTree().vbk(),
+  std::vector<typename VbkBlockTree::stored_index_t> vbkblocks;
+  if (!detail::loadBlocks(
+          vbkblocks,
           storage,
-          state,
-          // on every block, take its hash and warmup progpow header cache
+          state,  // on every block, take its hash and warmup progpow header
+                  // cache
           [](VbkBlock::hash_t hash, const StoredBlockIndex<VbkBlock>& index) {
             auto serializedHeader = SerializeToRaw(*index.header);
             progpow::insertHeaderCacheEntry(serializedHeader, std::move(hash));
           })) {
+    return state.Invalid("load-vbk-tree-blocks");
+  }
+  std::vector<typename AltBlockTree::stored_index_t> altblocks;
+  if (!detail::loadBlocks(altblocks, storage, state)) {
+    return state.Invalid("load-alt-tree-blocks");
+  }
+
+  typename BtcBlock::hash_t btctip;
+  bool res = storage.getTip<BtcBlock>(btctip);
+
+  if (!res && !btcblocks.empty()) {
+    return state.Invalid(BtcBlock::name() + "-bad-tip",
+                         "Can not read block tip");
+  }
+
+  if (res && btcblocks.empty()) {
+    return state.Invalid(BtcBlock::name() + "-state-corruption",
+                         "Can not read blocks");
+  }
+
+  if (!detail::loadTree(
+          context.getAltBlockTree().btc(), btctip, btcblocks, state)) {
+    return state.Invalid("failed-to-load-btc-tree");
+  }
+
+  typename VbkBlock::hash_t vbktip;
+  res = storage.getTip<VbkBlock>(vbktip);
+
+  if (!res && !vbkblocks.empty()) {
+    return state.Invalid(VbkBlock::name() + "-bad-tip",
+                         "Can not read block tip");
+  }
+
+  if (res && vbkblocks.empty()) {
+    return state.Invalid(VbkBlock::name() + "-state-corruption",
+                         "Can not read blocks");
+  }
+
+  if (!detail::loadTree(
+          context.getAltBlockTree().vbk(), vbktip, vbkblocks, state)) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
-  if (!detail::LoadTree(context.getAltBlockTree(), storage, state)) {
+
+  typename AltBlock::hash_t alttip;
+  res = storage.getTip<AltBlock>(alttip);
+
+  if (!res && !altblocks.empty()) {
+    return state.Invalid(AltBlock::name() + "-bad-tip",
+                         "Can not read block tip");
+  }
+
+  if (res && altblocks.empty()) {
+    return state.Invalid(AltBlock::name() + "-state-corruption",
+                         "Can not read blocks");
+  }
+
+  if (!detail::loadTree(context.getAltBlockTree(), alttip, altblocks, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
+
+  VBK_ASSERT_MSG(detail::loadValidateTree(
+                     context.getAltBlockTree().btc(), btcblocks, state),
+                 "Failed to validate stored BTC tree");
+  VBK_ASSERT_MSG(detail::loadValidateTree(
+                     context.getAltBlockTree().vbk(), vbkblocks, state),
+                 "Failed to validate stored VBK tree");
+  VBK_ASSERT_MSG(
+      detail::loadValidateTree(context.getAltBlockTree(), altblocks, state),
+      "Failed to validate stored ALT tree");
   return true;
 }
 
@@ -108,10 +246,10 @@ void validateBlockIndex(const BlockIndex<VbkBlock>& index) {
   VBK_ASSERT_MSG(!hasDuplicateIds<VTB>(vtbids), "Duplicate VTB IDs");
 }
 
-void SaveAllTrees(const AltBlockTree& tree, BlockBatch& batch) {
-  SaveTree(tree.btc(), batch);
-  SaveTree(tree.vbk(), batch);
-  SaveTree(tree, batch);
+void saveTrees(const AltBlockTree& tree, BlockBatch& batch) {
+  saveTree(tree.btc(), batch);
+  saveTree(tree.vbk(), batch);
+  saveTree(tree, batch);
 }
 
 }  // namespace altintegration
