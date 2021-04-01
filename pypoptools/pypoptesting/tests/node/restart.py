@@ -1,4 +1,5 @@
 from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.sync_util import start_all
 
 
 class NodeRestartTest(PopIntegrationTestFramework):
