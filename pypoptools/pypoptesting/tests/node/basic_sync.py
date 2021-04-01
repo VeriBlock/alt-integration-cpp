@@ -23,14 +23,29 @@ class NodeBasicSyncTest(PopIntegrationTestFramework):
         self.log.info("node[2] mine 1500 blocks")
         self.nodes[2].generate(nblocks=1500)
 
-        assert self.nodes[0].getbestblock() != self.nodes[1].getbestblock()
-        assert self.nodes[1].getbestblock() != self.nodes[2].getbestblock()
-        assert self.nodes[2].getbestblock() != self.nodes[0].getbestblock()
+        node_0_tip = self.nodes[0].getbestblock()
+        node_1_tip = self.nodes[1].getbestblock()
+        node_2_tip = self.nodes[2].getbestblock()
 
+        assert node_0_tip != node_1_tip
+        assert node_1_tip != node_2_tip
+        assert node_2_tip != node_0_tip
+
+        self.log.info("restart all nodes")
+        for node in self.nodes:
+            node.restart()
+            
         self.log.info("connect all nodes")
         connect_all(self.nodes)
         sync_all(self.nodes)
 
+        assert node_0_tip == self.nodes[0].getbestblock()
+        assert node_1_tip == self.nodes[1].getbestblock()
+        assert node_2_tip == self.nodes[2].getbestblock()
+
+        assert self.nodes[0].getbestblock() == self.nodes[1].getbestblock()
+        assert self.nodes[1].getbestblock() == self.nodes[2].getbestblock()
+        assert self.nodes[2].getbestblock() == self.nodes[0].getbestblock()
 
 
 
