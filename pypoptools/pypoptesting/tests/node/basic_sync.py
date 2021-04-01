@@ -41,7 +41,7 @@ class NodeBasicSyncTest(PopIntegrationTestFramework):
 
         self.log.info("connect all nodes")
         connect_all(self.nodes)
-        sync_all(self.nodes)
+        sync_all(self.nodes, timeout=300)
 
         assert self.nodes[0].getbestblock() == self.nodes[1].getbestblock()
         assert self.nodes[1].getbestblock() == self.nodes[2].getbestblock()
