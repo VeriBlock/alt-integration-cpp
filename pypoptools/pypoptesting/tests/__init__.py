@@ -1,7 +1,8 @@
 from .node import (
     NodeRestartTest,
     NodeStartTest,
-    NodeStopTest
+    NodeStopTest,
+    NodeBasicSyncTest
 )
 from .rpc import (
     RpcConnectTest,
@@ -23,7 +24,8 @@ from .pop import (
 node_tests = [
     NodeStartTest(),
     NodeStopTest(),
-    NodeRestartTest()
+    NodeRestartTest(),
+    NodeBasicSyncTest()
 ]
 
 rpc_tests = [
