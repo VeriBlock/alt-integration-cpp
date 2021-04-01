@@ -40,6 +40,8 @@ struct BtcBlockAddon {
 
   void removeRef(ref_height_t referencedAtHeight);
 
+  void clearRefs();
+
   std::string toPrettyString() const;
 
   void toVbkEncoding(WriteStream& w) const;

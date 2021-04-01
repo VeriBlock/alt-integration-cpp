@@ -25,6 +25,7 @@ void StoredBtcBlockAddon::toVbkEncoding(WriteStream& w) const {
 }
 
 void StoredBtcBlockAddon::toInmem(StoredBtcBlockAddon::addon_t& to) const {
+  to.clearRefs();
   for (const auto& r : refs) {
     to.addRef(r);
   }

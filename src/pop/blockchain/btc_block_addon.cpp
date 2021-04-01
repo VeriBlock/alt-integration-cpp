@@ -60,6 +60,11 @@ void BtcBlockAddon::addRef(BtcBlockAddon::ref_height_t referencedAtHeight) {
   setDirty();
 }
 
+void BtcBlockAddon::clearRefs() {
+  refs.clear();
+  setDirty();
+}
+
 void BtcBlockAddon::removeRef(BtcBlockAddon::ref_height_t referencedAtHeight) {
   auto ref_it = find(refs.begin(), refs.end(), referencedAtHeight);
   VBK_ASSERT(ref_it != refs.end() &&
