@@ -35,17 +35,14 @@ class NodeBasicSyncTest(PopIntegrationTestFramework):
         for node in self.nodes:
             node.restart()
             
-        self.log.info("connect all nodes")
-        connect_all(self.nodes)
-        sync_all(self.nodes)
-
         assert node_0_tip == self.nodes[0].getbestblock()
         assert node_1_tip == self.nodes[1].getbestblock()
         assert node_2_tip == self.nodes[2].getbestblock()
 
+        self.log.info("connect all nodes")
+        connect_all(self.nodes)
+        sync_all(self.nodes)
+
         assert self.nodes[0].getbestblock() == self.nodes[1].getbestblock()
         assert self.nodes[1].getbestblock() == self.nodes[2].getbestblock()
         assert self.nodes[2].getbestblock() == self.nodes[0].getbestblock()
-
-
-
