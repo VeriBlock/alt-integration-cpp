@@ -14,11 +14,16 @@ var namespacealtintegration =
       [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
     ] ],
     [ "detail", null, [
+      [ "loadValidateTree", "util_8hpp.html#af57ae0917d044998806a180360d57018", null ],
       [ "mapToJson", "mempool_8hpp.html#a62eda25874348a14249551eea59b769b", null ],
       [ "putArrayKV", "popdata_8hpp.html#ac7912c32ae7c66733c3b72aa98aa850a", null ],
       [ "putArrayOfIds", "popdata_8hpp.html#a60bcd50d1ae6c9a992681d556062b90a", null ],
       [ "putArrayOfPairs", "mempool__result_8hpp.html#ae378d56e1040bd702aec888f96a8f2d8", null ],
-      [ "putPopPayload", "popdata_8hpp.html#aaeac1a6f8d0a69d913ba8b45b4f7c22d", null ]
+      [ "putPopPayload", "popdata_8hpp.html#aaeac1a6f8d0a69d913ba8b45b4f7c22d", null ],
+      [ "validateLoadBlock", "util_8hpp.html#ab1aacb10ab20eff95a81a0c911ad06dc", null ],
+      [ "validateLoadBlock", "util_8hpp.html#a81ea80706a3fcf2f6f1be29c33f2dc8b", null ],
+      [ "validateLoadBlock", "util_8hpp.html#ac65139475c1db006dd0d8b5af8f0ae33", null ],
+      [ "validateLoadBlock", "util_8hpp.html#a93a837b3f5d7eb38dda11b417f714d16", null ]
     ] ],
     [ "internal", null, [
       [ "comparePopScoreImpl", "fork__resolution_8hpp.html#a5011cf3c07ca9102c2ab65d0b4737cf6", null ],
@@ -346,8 +351,8 @@ var namespacealtintegration =
     [ "isValidInvalidationReason", "namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf", null ],
     [ "kiss99", "namespacealtintegration.html#aa5909c3f85b096e25a712638582d2b62", null ],
     [ "LevelToString", "namespacealtintegration.html#a0718136595cbbce16f499166a2b91dc8", null ],
-    [ "loadBlocksIntoTree", "namespacealtintegration.html#a5df6e98c8cd6f8f6928d1b43d46af82d", null ],
     [ "loadBlockTree", "namespacealtintegration.html#a8462452cd186b7d502f88aac848507ec", null ],
+    [ "loadTree", "namespacealtintegration.html#a15cd64f2153057af08909462364b756c", null ],
     [ "loadTrees", "namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5", null ],
     [ "make_idset", "namespacealtintegration.html#a35e7706bc7c877b469024e396547a313", null ],
     [ "make_unique", "namespacealtintegration.html#a5439dcdae2d308c827e1fca03deb55d3", null ],

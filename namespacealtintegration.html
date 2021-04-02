@@ -1016,10 +1016,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 <tr class="memitem:a926d81b2783c0bf59a3b979a164b5a22"><td class="memItemLeft" align="right" valign="top"><a id="a926d81b2783c0bf59a3b979a164b5a22"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, StoredVbkBlockAddon &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a926d81b2783c0bf59a3b979a164b5a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5df6e98c8cd6f8f6928d1b43d46af82d"><td class="memTemplParams" colspan="2">template&lt;typename BlockTreeT &gt; </td></tr>
-<tr class="memitem:a5df6e98c8cd6f8f6928d1b43d46af82d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a5df6e98c8cd6f8f6928d1b43d46af82d">loadBlocksIntoTree</a> (BlockTreeT &amp;tree, const typename BlockTreeT::hash_t &amp;tiphash, std::vector&lt; typename BlockTreeT::stored_index_t &gt; &amp;blocks, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="memdesc:a5df6e98c8cd6f8f6928d1b43d46af82d"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently loads <code>blocks</code> into tree (they must be sorted by height) and does validation of these blocks.  <a href="namespacealtintegration.html#a5df6e98c8cd6f8f6928d1b43d46af82d">More...</a><br /></td></tr>
-<tr class="separator:a5df6e98c8cd6f8f6928d1b43d46af82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15cd64f2153057af08909462364b756c"><td class="memTemplParams" colspan="2">template&lt;typename BlockTreeT &gt; </td></tr>
+<tr class="memitem:a15cd64f2153057af08909462364b756c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a15cd64f2153057af08909462364b756c">loadTree</a> (BlockTreeT &amp;tree, const typename BlockTreeT::hash_t &amp;tiphash, std::vector&lt; typename BlockTreeT::stored_index_t &gt; &amp;blocks, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a15cd64f2153057af08909462364b756c"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently loads <code>blocks</code> into tree (they must be sorted by height) and does validation of these blocks.  <a href="namespacealtintegration.html#a15cd64f2153057af08909462364b756c">More...</a><br /></td></tr>
+<tr class="separator:a15cd64f2153057af08909462364b756c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1036e0889afa590fec23e3efc7b3c995"><td class="memItemLeft" align="right" valign="top"><a id="a1036e0889afa590fec23e3efc7b3c995"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995">saveTrees</a> (const <a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree, <a class="el" href="structaltintegration_1_1BlockBatch.html">BlockBatch</a> &amp;batch)</td></tr>
 <tr class="memdesc:a1036e0889afa590fec23e3efc7b3c995"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save all (BTC/VBK/ALT) trees on disk in a single Batch. <br /></td></tr>
@@ -2096,8 +2096,8 @@ template&lt;typename C &gt; </div>
 
 </div>
 </div>
-<a id="a5df6e98c8cd6f8f6928d1b43d46af82d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5df6e98c8cd6f8f6928d1b43d46af82d">&#9670;&nbsp;</a></span>loadBlocksIntoTree()</h2>
+<a id="a15cd64f2153057af08909462364b756c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15cd64f2153057af08909462364b756c">&#9670;&nbsp;</a></span>loadTree()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2105,7 +2105,7 @@ template&lt;typename C &gt; </div>
 template&lt;typename BlockTreeT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool altintegration::loadBlocksIntoTree </td>
+          <td class="memname">bool altintegration::loadTree </td>
           <td>(</td>
           <td class="paramtype">BlockTreeT &amp;&#160;</td>
           <td class="paramname"><em>tree</em>, </td>
@@ -2137,35 +2137,46 @@ template&lt;typename BlockTreeT &gt; </div>
 </div><div class="memdoc">
 <p>Sets tip after loading. </p><dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00023">23</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                            {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">using</span> stored_index_t = <span class="keyword">typename</span> BlockTreeT::stored_index_t;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">using</span> block_t = <span class="keyword">typename</span> BlockTreeT::block_t;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keywordflow">if</span> (blocks.size() == 0) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  VBK_LOG_WARN(<span class="stringliteral">&quot;Loading %d %s blocks with tip %s&quot;</span>,</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;               blocks.size(),</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;               block_t::name(),</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;               <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tiphash));</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  VBK_ASSERT(tree.isBootstrapped() &amp;&amp; <span class="stringliteral">&quot;tree must be bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// first, sort them by height</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  std::sort(blocks.begin(),</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            blocks.end(),</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            [](<span class="keyword">const</span> stored_index_t&amp; a, <span class="keyword">const</span> stored_index_t&amp; b) {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;              return a.height &lt; b.height;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            });</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; block : blocks) {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment">// load blocks one by one</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">if</span> (!tree.loadBlock(block, state)) {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordflow">return</span> tree.loadTip(tiphash, state);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00064">64</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                                      {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keyword">using</span> stored_index_t = <span class="keyword">typename</span> BlockTreeT::stored_index_t;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">using</span> block_t = <span class="keyword">typename</span> BlockTreeT::block_t;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keywordflow">if</span> (blocks.size() == 0) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  VBK_LOG_WARN(<span class="stringliteral">&quot;Loading %d %s blocks with tip %s&quot;</span>,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;               blocks.size(),</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;               block_t::name(),</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;               <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tiphash));</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  VBK_ASSERT(tree.isBootstrapped() &amp;&amp; <span class="stringliteral">&quot;tree must be bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="comment">// first, sort them by height</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  std::sort(blocks.begin(),</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            blocks.end(),</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            [](<span class="keyword">const</span> stored_index_t&amp; a, <span class="keyword">const</span> stored_index_t&amp; b) {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;              return a.height &lt; b.height;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            });</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; block : blocks) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="comment">// load blocks one by one</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">if</span> (!tree.loadBlock(block, state)) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordflow">if</span> (!tree.loadTip(tiphash, state)) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keyword">auto</span>* t = tree.getBestChain().tip();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  VBK_ASSERT(t != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  VBK_ASSERT_MSG(detail::loadValidateTree(tree, blocks, state),</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                 <span class="stringliteral">&quot;Failed to validate stored tree, error: %s&quot;</span>,</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                 state.toString());</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}</div>
 <div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00033">strutil.hpp:33</a></div></div>
 </div><!-- fragment -->
 </div>
