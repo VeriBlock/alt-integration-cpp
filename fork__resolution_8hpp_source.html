@@ -242,7 +242,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="comment">// chain must contain relevantEndorsedBlock</span></div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : index-&gt;endorsedBy) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : index-&gt;getEndorsedBy()) {</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      <span class="keywordflow">if</span> (!allHashesInChain.count(e-&gt;containingHash)) {</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="comment">// do not count endorsement whose containingHash is not on the same</span></div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        <span class="comment">// chain as &#39;endorsedHash&#39;</span></div>

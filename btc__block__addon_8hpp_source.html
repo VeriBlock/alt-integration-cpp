@@ -125,40 +125,38 @@ $(document).ready(function(){initNavTree('btc__block__addon_8hpp_source.html',''
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">void</span> removeRef(ref_height_t referencedAtHeight);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">void</span> clearRefs();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  std::string toPrettyString() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  std::string toPrettyString() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">void</span> toVbkEncoding(WriteStream&amp; w) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordtype">void</span> toVbkEncoding(WriteStream&amp; w) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">// Ideally we would want a sorted collection with cheap addition, deletion and</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">// lookup. In practice, due to VBK/BTC block time ratio(20x) and multiple APMs</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// running, there&#39;s little chance of VTBs shipping non-empty BTC context. The</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="comment">// altchain mempool prioritization algo will realistically pick 1 VTB per VBK</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// keystone period(20 blocks), providing us with the BTC block mined during</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="comment">// this period. Thus, we can expect to have 1-2 references per block and 2x</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="comment">// that during fork resolution making std::vector the fastest storage option</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="comment">// in this case.</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="comment">// TODO: figure out if this is somehow abusable by spammers/dosers</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  std::vector&lt;ref_height_t&gt; refs{};</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="comment">// Ideally we would want a sorted collection with cheap addition, deletion and</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="comment">// lookup. In practice, due to VBK/BTC block time ratio(20x) and multiple APMs</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">// running, there&#39;s little chance of VTBs shipping non-empty BTC context. The</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">// altchain mempool prioritization algo will realistically pick 1 VTB per VBK</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// keystone period(20 blocks), providing us with the BTC block mined during</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="comment">// this period. Thus, we can expect to have 1-2 references per block and 2x</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// that during fork resolution making std::vector the fastest storage option</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="comment">// in this case.</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="comment">// TODO: figure out if this is somehow abusable by spammers/dosers</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  std::vector&lt;ref_height_t&gt; refs{};</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keywordtype">void</span> setDirty();</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keywordtype">void</span> setDirty();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keywordtype">void</span> setNull();</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keywordtype">void</span> setNull();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">friend</span> <span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(ReadStream&amp; stream,</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                         BtcBlockAddon&amp; out,</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                         ValidationState&amp; state);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;};</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#ac38161a0aee66cccf93190197c7a1a7b">   73</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(<a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                                BtcBlockAddon&amp; out,</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                                <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">friend</span> <span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(ReadStream&amp; stream,</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                                         BtcBlockAddon&amp; out,</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                                         ValidationState&amp; state);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;};</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#ac38161a0aee66cccf93190197c7a1a7b">   71</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(<a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                BtcBlockAddon&amp; out,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00017">block_status.hpp:17</a></div></div>

@@ -190,10 +190,10 @@ $(document).ready(function(){initNavTree('blockchain__util_8hpp_source.html','')
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="comment">// delay execution. this ensures atomic changes - if any of endorsemens fail</span></div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="comment">// validation, no &#39;action&#39; is actually executed.</span></div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    actions.push_back([endorsed, blockOfProof, endorsement] {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      <span class="keyword">auto</span>&amp; by = endorsed-&gt;endorsedBy;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      <span class="keyword">auto</span>&amp; by = endorsed-&gt;getEndorsedBy();</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      VBK_ASSERT_MSG(std::find(by.begin(), by.end(), endorsement) == by.end(),</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                     <span class="stringliteral">&quot;same endorsement is added to endorsedBy second time&quot;</span>);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      by.push_back(endorsement);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      endorsed-&gt;insertEndorsedBy(endorsement);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      <span class="keyword">auto</span>&amp; bop = blockOfProof-&gt;blockOfProofEndorsements;</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      VBK_ASSERT_MSG(</div>

@@ -217,7 +217,7 @@ $(document).ready(function(){initNavTree('vbk__block__tree_8hpp_source.html','')
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.endorsedBy) {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    endorsedBy.push_back(e-&gt;id);</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  }</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
