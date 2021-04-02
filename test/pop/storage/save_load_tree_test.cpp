@@ -281,4 +281,6 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
 
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   ASSERT_TRUE(endorsedIndex->isDirty());
+
+  ASSERT_TRUE(load());
 }

@@ -360,7 +360,7 @@ struct PopTestFixture {
     using stored_index_t = typename Tree::stored_index_t;
     auto blocks = LoadBlocksFromDisk<stored_index_t>();
     auto tip = LoadTipFromDisk<index_t>();
-    return loadBlocksIntoTree<Tree>(tree, tip, blocks, state);
+    return loadTree<Tree>(tree, tip, blocks, state);
   }
 };
 
