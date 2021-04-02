@@ -97,6 +97,7 @@ void VbkBlockAddon::addRef(VbkBlockAddon::ref_height_t) {
 
 void VbkBlockAddon::insertBlockOfProofEndorsement(const AltEndorsement* e) {
   this->_blockOfProofEndorsements.push_back(e);
+  setDirty();
 }
 
 bool VbkBlockAddon::eraseLastFromBlockOfProofEndorsement(
@@ -107,13 +108,14 @@ bool VbkBlockAddon::eraseLastFromBlockOfProofEndorsement(
   auto res =
       erase_last_item_if<const AltEndorsement*>(_blockOfProofEndorsements, rm);
   if (res) {
-    // setDirty();
+    setDirty();
   }
   return res;
 }
 
 void VbkBlockAddon::clearBlockOfProofEndorsement() {
   this->_blockOfProofEndorsements.clear();
+  setDirty();
 }
 
 const std::vector<const AltEndorsement*>&
