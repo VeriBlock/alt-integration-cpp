@@ -97,9 +97,9 @@ bool loadTree(BlockTreeT& tree,
   auto* t = tree.getBestChain().tip();
   VBK_ASSERT(t != nullptr);
 
-  // VBK_ASSERT_MSG(detail::loadValidateTree(tree, blocks, state),
-  //                "Failed to validate stored tree, error: %s",
-  //                state.toString());
+  VBK_ASSERT_MSG(detail::loadValidateTree(tree, blocks, state),
+                 "Failed to validate stored tree, error: %s",
+                 state.toString());
 
   return true;
 }
