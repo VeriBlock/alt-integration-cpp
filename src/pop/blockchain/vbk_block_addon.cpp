@@ -98,7 +98,7 @@ void VbkBlockAddon::addRef(VbkBlockAddon::ref_height_t) {
 void VbkBlockAddon::setNullInmemFields() {
   chainWork = 0;
   blockOfProofEndorsements.clear();
-  endorsedBy.clear();
+  _endorsedBy.clear();
 }
 
 }  // namespace altintegration

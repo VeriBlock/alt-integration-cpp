@@ -108,10 +108,10 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     // delay execution. this ensures atomic changes - if any of endorsemens fail
     // validation, no 'action' is actually executed.
     actions.push_back([endorsed, blockOfProof, endorsement] {
-      auto& by = endorsed->endorsedBy;
+      auto& by = endorsed->getEndorsedBy();
       VBK_ASSERT_MSG(std::find(by.begin(), by.end(), endorsement) == by.end(),
                      "same endorsement is added to endorsedBy second time");
-      by.push_back(endorsement);
+      endorsed->insertEndorsedBy(endorsement);
 
       auto& bop = blockOfProof->blockOfProofEndorsements;
       VBK_ASSERT_MSG(

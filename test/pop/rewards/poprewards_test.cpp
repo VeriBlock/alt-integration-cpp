@@ -369,8 +369,8 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   auto* endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   auto* endorsedPrevIndex = alttree.getBlockIndex(endorsedPrevBlock.getHash());
 
-  ASSERT_EQ(endorsedIndex->endorsedBy.size(), 1);
-  ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedIndex->getEndorsedBy().size(), 1);
+  ASSERT_EQ(endorsedPrevIndex->getEndorsedBy().size(), 0);
 
   EXPECT_EQ(altchain.back().height, 101);
   EXPECT_EQ(sampleCalculator->scoreFromEndorsements(*endorsedIndex), 1.0);
@@ -412,17 +412,17 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
   // reorgs longer than 44 blocks erase initial endorsement
   // therefore we only have 100 endorsements left
   if (depth < 44) {
-    ASSERT_EQ(endorsedIndex->endorsedBy.size(), 101);
+    ASSERT_EQ(endorsedIndex->getEndorsedBy().size(), 101);
   } else {
-    ASSERT_EQ(endorsedIndex->endorsedBy.size(), 100);
+    ASSERT_EQ(endorsedIndex->getEndorsedBy().size(), 100);
   }
 
   if (depth == 1) {
     // for depth = 1 endorsed block is before the endorsement settlement
     // interval therefore endorsedBy is not changed
-    ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 0);
+    ASSERT_EQ(endorsedPrevIndex->getEndorsedBy().size(), 0);
   } else {
-    ASSERT_EQ(endorsedPrevIndex->endorsedBy.size(), 100);
+    ASSERT_EQ(endorsedPrevIndex->getEndorsedBy().size(), 100);
   }
 
   payouts = sampleCalculator->getPopPayout(altchain.back().getHash());

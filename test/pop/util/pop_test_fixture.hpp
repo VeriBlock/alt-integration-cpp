@@ -87,7 +87,7 @@ struct PopTestFixture {
     EXPECT_EQ(std::count_if(bop.begin(), bop.end(), _), 1);
     auto* endorsed = tree.getBlockIndex(e.endorsedHash);
     ASSERT_TRUE(endorsed) << "no endorsed block " << HexStr(e.endorsedHash);
-    auto& by = endorsed->endorsedBy;
+    const auto& by = endorsed->getEndorsedBy();
     EXPECT_EQ(std::count_if(by.begin(), by.end(), _), 1);
   }
 

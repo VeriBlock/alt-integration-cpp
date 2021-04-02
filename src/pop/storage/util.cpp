@@ -88,7 +88,7 @@ bool validateLoadBlock(const AltBlockTree& tree,
   const auto* current = tree.getBlockIndex(index.header->getHash());
   const auto endorsedByIds =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
-          current->endorsedBy);
+          current->getEndorsedBy());
   if (!same_vectors_unique_unordered(endorsedByIds,
                                      index.addon.endorsedByHashes)) {
     return state.Invalid("alt-block-invalid-stored-endorsed-by");
@@ -103,7 +103,7 @@ bool validateLoadBlock(const VbkBlockTree& tree,
   const auto* current = tree.getBlockIndex(index.header->getHash());
   const auto endorsedByIds =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
-          current->endorsedBy);
+          current->getEndorsedBy());
   if (!same_vectors_unique_unordered(endorsedByIds,
                                      index.addon.endorsedByHashes)) {
     return state.Invalid("vbk-block-invalid-stored-endorsed-by");
@@ -200,13 +200,16 @@ bool loadTrees(PopContext& context,
 
   VBK_ASSERT_MSG(detail::loadValidateTree(
                      context.getAltBlockTree().btc(), btcblocks, state),
-                 "Failed to validate stored BTC tree");
+                 "Failed to validate stored BTC tree, error: %s",
+                 state.toString());
   VBK_ASSERT_MSG(detail::loadValidateTree(
                      context.getAltBlockTree().vbk(), vbkblocks, state),
-                 "Failed to validate stored VBK tree");
+                 "Failed to validate stored VBK tree, error: %s",
+                 state.toString());
   VBK_ASSERT_MSG(
       detail::loadValidateTree(context.getAltBlockTree(), altblocks, state),
-      "Failed to validate stored ALT tree");
+      "Failed to validate stored ALT tree, error: %s",
+      state.toString());
   return true;
 }
 

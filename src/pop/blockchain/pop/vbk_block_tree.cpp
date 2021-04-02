@@ -346,8 +346,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     appliedPayloads.push_back(pid);
   }
 
-  // don't defer fork resolution in the acceptBlockHeader+addPayloads flow until the
-  // validation hole is plugged
+  // don't defer fork resolution in the acceptBlockHeader+addPayloads flow until
+  // the validation hole is plugged
   doUpdateAffectedTips(*index, state);
 
   // compare to the original best chain
@@ -442,10 +442,10 @@ void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
                  "lost",
                  index.blockOfProofEndorsements.size());
 
-  VBK_ASSERT_MSG(index.endorsedBy.empty(),
+  VBK_ASSERT_MSG(index.getEndorsedBy().empty(),
                  "endorsedBy has %d pointers to endorsements, they will be "
                  "lost",
-                 index.endorsedBy.size());
+                 index.getEndorsedBy().size());
 }
 
 template <>

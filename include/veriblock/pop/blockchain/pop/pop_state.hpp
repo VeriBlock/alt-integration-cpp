@@ -10,6 +10,7 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/uint.hpp>
 
@@ -23,22 +24,31 @@ struct PopState {
   using containing_endorsement_store_t =
       std::multimap<eid_t, std::shared_ptr<endorsement_t>>;
 
-  //! (memory-only) list of endorsements pointing to this block.
-  // must be a vector, because we can have duplicates here
-  std::vector<const endorsement_t*> endorsedBy;
-
   const containing_endorsement_store_t& getContainingEndorsements() const {
     return _containingEndorsements;
   }
 
   const std::vector<const endorsement_t*>& getEndorsedBy() const {
-    return endorsedBy;
+    return _endorsedBy;
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
     VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
     _containingEndorsements.emplace(e->id, std::move(e));
     setDirty();
+  }
+
+  void insertEndorsedBy(const endorsement_t* e) {
+    VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
+    _endorsedBy.push_back(e);
+  }
+
+  bool eraseLastFromEndorsedBy(const endorsement_t* endorsement) {
+    auto rm = [&endorsement](const endorsement_t* e) -> bool {
+      return e == endorsement;
+    };
+
+    return erase_last_item_if<const endorsement_t*>(_endorsedBy, rm);
   }
 
   const typename containing_endorsement_store_t::const_iterator
@@ -68,11 +78,15 @@ struct PopState {
   //! (stored as vector) list of containing endorsements in this block
   containing_endorsement_store_t _containingEndorsements{};
 
+  //! (memory-only) list of endorsements pointing to this block.
+  // must be a vector, because we can have duplicates here
+  std::vector<const endorsement_t*> _endorsedBy;
+
   void setDirty();
 
   void setNull() {
     _containingEndorsements.clear();
-    endorsedBy.clear();
+    _endorsedBy.clear();
   }
 
   template <typename T>

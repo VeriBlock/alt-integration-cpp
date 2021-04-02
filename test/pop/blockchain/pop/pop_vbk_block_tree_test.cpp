@@ -150,19 +150,19 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   ASSERT_GE(vbkBlockTip->getHeight(), 15);
   auto* endorsedVbkBlock1 =
       vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 11);
-  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock1->getEndorsedBy().size(), 0);
   auto* endorsedVbkBlock2 =
       vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 12);
-  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock2->getEndorsedBy().size(), 0);
   auto* endorsedVbkBlock3 =
       vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 13);
-  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock3->getEndorsedBy().size(), 0);
   auto* endorsedVbkBlock4 =
       vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 14);
-  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock4->getEndorsedBy().size(), 0);
   auto* endorsedVbkBlock5 =
       vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 15);
-  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock5->getEndorsedBy().size(), 0);
 
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
@@ -177,11 +177,11 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
             vbkBlockTip->getHash());
 
   // check that we have endorsements to the VbBlocks
-  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 1);
-  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 1);
-  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 1);
-  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 1);
-  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedVbkBlock1->getEndorsedBy().size(), 1);
+  ASSERT_EQ(endorsedVbkBlock2->getEndorsedBy().size(), 1);
+  ASSERT_EQ(endorsedVbkBlock3->getEndorsedBy().size(), 1);
+  ASSERT_EQ(endorsedVbkBlock4->getEndorsedBy().size(), 1);
+  ASSERT_EQ(endorsedVbkBlock5->getEndorsedBy().size(), 1);
 
   // mine 40 Vbk blocks
   vbkBlockTip = popminer.mineVbkBlocks(40);
@@ -191,15 +191,15 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
   // Make 5 endorsements valid endorsements
   ASSERT_GE(vbkBlockTip->getHeight(), 15);
   endorsedVbkBlock1 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 11);
-  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock1->getEndorsedBy().size(), 0);
   endorsedVbkBlock2 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 12);
-  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock2->getEndorsedBy().size(), 0);
   endorsedVbkBlock3 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 13);
-  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock3->getEndorsedBy().size(), 0);
   endorsedVbkBlock4 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 14);
-  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock4->getEndorsedBy().size(), 0);
   endorsedVbkBlock5 = vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 15);
-  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock5->getEndorsedBy().size(), 0);
 
   vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
@@ -217,9 +217,9 @@ TEST_F(VbkBlockTreeTestFixture, addAllPayloads_failure_test) {
             nullptr);
 
   // check that all endorsement have not been applied
-  ASSERT_EQ(endorsedVbkBlock1->endorsedBy.size(), 0);
-  ASSERT_EQ(endorsedVbkBlock2->endorsedBy.size(), 0);
-  ASSERT_EQ(endorsedVbkBlock3->endorsedBy.size(), 0);
-  ASSERT_EQ(endorsedVbkBlock4->endorsedBy.size(), 0);
-  ASSERT_EQ(endorsedVbkBlock5->endorsedBy.size(), 0);
+  ASSERT_EQ(endorsedVbkBlock1->getEndorsedBy().size(), 0);
+  ASSERT_EQ(endorsedVbkBlock2->getEndorsedBy().size(), 0);
+  ASSERT_EQ(endorsedVbkBlock3->getEndorsedBy().size(), 0);
+  ASSERT_EQ(endorsedVbkBlock4->getEndorsedBy().size(), 0);
+  ASSERT_EQ(endorsedVbkBlock5->getEndorsedBy().size(), 0);
 }

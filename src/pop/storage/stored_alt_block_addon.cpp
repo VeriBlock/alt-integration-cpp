@@ -6,15 +6,15 @@
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/atv.hpp>
-#include <veriblock/pop/entities/vtb.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <veriblock/pop/entities/vtb.hpp>
 #include <veriblock/pop/storage/stored_alt_block_addon.hpp>
 
 namespace altintegration {
 
 StoredAltBlockAddon::StoredAltBlockAddon(const addon_t& other) {
-  endorsedByHashes =
-      map_get_id_from_pointers<uint256, const AltEndorsement>(other.endorsedBy);
+  endorsedByHashes = map_get_id_from_pointers<uint256, const AltEndorsement>(
+      other.getEndorsedBy());
   _atvids = other.getPayloadIds<ATV>();
   _vtbids = other.getPayloadIds<VTB>();
   _vbkblockids = other.getPayloadIds<VbkBlock>();
@@ -56,8 +56,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
           state,
           0,
           MAX_POPDATA_VBK,
-          [](ReadStream& stream, uint256& o, ValidationState& state)
-              -> bool {
+          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
             return readSingleByteLenValue(
                 stream, o, state, uint256::size(), uint256::size());
           })) {
@@ -90,28 +89,28 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("stored-alt-block-addon-bad-vtbid");
   }
 
-  if (!readArrayOf<VbkBlock::id_t>(
-          stream,
-          out._vbkblockids,
-          state,
-          0,
-          MAX_POPDATA_VBK,
-          [](ReadStream& stream, VbkBlock::id_t& o, ValidationState& state)
-              -> bool {
-            return readSingleByteLenValue(
+  if (!readArrayOf<VbkBlock::id_t>(stream,
+                                   out._vbkblockids,
+                                   state,
+                                   0,
+                                   MAX_POPDATA_VBK,
+                                   [](ReadStream& stream,
+                                      VbkBlock::id_t& o,
+                                      ValidationState& state) -> bool {
+                                     return readSingleByteLenValue(
                                          stream,
                                          o,
                                          state,
                                          VbkBlock::id_t::size(),
                                          VbkBlock::id_t::size());
-          })) {
+                                   })) {
     return state.Invalid("stored-alt-block-addon-bad-vbkids");
   }
 
   if (!DeserializeFromVbkEncoding(stream, out.popState, state)) {
     return state.Invalid("stored-alt-block-addon-bad-popstate");
   }
-  
+
   return true;
 }
 
