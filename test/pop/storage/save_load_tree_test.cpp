@@ -249,3 +249,36 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "load-tree+VTB-duplicate");
 }
+
+TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+  AltBlock endorsedBlock = chain[5];
+
+  auto* endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+  ASSERT_TRUE(endorsedIndex->isDirty());
+
+  save();
+
+  endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+  ASSERT_FALSE(endorsedIndex->isDirty());
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  AltBlock containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  PopData popData = generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
+  ASSERT_EQ(popData.atvs.size(), 1);
+  ASSERT_EQ(popData.vtbs.size(), 0);
+
+  // add alt payloads
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, popData);
+
+  endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
+  ASSERT_TRUE(endorsedIndex->isDirty());
+}

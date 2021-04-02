@@ -50,7 +50,7 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     auto* block = popminer->mineVbkBlocks(1, popTxs);
 
     PopData popData;
-    for (const auto& popTx: popTxs) {
+    for (const auto& popTx : popTxs) {
       popData.atvs.push_back(popminer->createATV(block->getHeader(), popTx));
     }
     fillVbkContext(popData.context,
