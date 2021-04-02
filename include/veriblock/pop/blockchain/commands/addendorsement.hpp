@@ -78,7 +78,7 @@ struct AddEndorsement : public Command {
 
     containing->insertContainingEndorsement(e_);
     endorsed->insertEndorsedBy(e_.get());
-    blockOfProof->blockOfProofEndorsements.push_back(e_.get());
+    blockOfProof->insertBlockOfProofEndorsement(e_.get());
 
     return true;
   }
@@ -118,14 +118,9 @@ struct AddEndorsement : public Command {
                    "AddEndorsement::Unexecute",
                    e_->toPrettyString());
 
-    // we added endorsements by ptr, so find them by ptr
-    auto rm = [&](const endorsement_t* e) -> bool {
-      return e == (Eit->second).get();
-    };
-
     // erase blockOfProof
-    bool p2 = erase_last_item_if<const endorsement_t*>(
-        blockOfProof->blockOfProofEndorsements, rm);
+    bool p2 =
+        blockOfProof->eraseLastFromBlockOfProofEndorsement(Eit->second.get());
     VBK_ASSERT_MSG(p2,
                    "Failed to remove endorsement %s from blockOfProof in "
                    "AddEndorsement::Unexecute",

@@ -14,7 +14,7 @@ StoredVbkBlockAddon::StoredVbkBlockAddon(const addon_t& other) {
       other.getEndorsedBy());
   blockOfProofEndorsementHashes =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
-          other.blockOfProofEndorsements);
+          other.getBlockOfProofEndorsement());
   _refCount = other.refCount();
   _vtbids = other.getPayloadIds<VTB>();
   popState = other;

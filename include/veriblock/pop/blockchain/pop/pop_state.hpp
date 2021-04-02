@@ -41,7 +41,7 @@ struct PopState {
   void insertEndorsedBy(const endorsement_t* e) {
     VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
     _endorsedBy.push_back(e);
-    // setDirty();
+    setDirty();
   }
 
   bool eraseLastFromEndorsedBy(const endorsement_t* endorsement) {
@@ -50,7 +50,7 @@ struct PopState {
     };
     auto res = erase_last_item_if<const endorsement_t*>(_endorsedBy, rm);
     if (res) {
-      // setDirty();
+      setDirty();
     }
     return res;
   }

@@ -89,7 +89,7 @@ bool validateLoadBlock(const VbkBlockTree& tree,
 
   const auto blockOfProofIds =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
-          current->blockOfProofEndorsements);
+          current->getBlockOfProofEndorsement());
   if (!same_vectors_unordered(blockOfProofIds,
                               index.addon.blockOfProofEndorsementHashes)) {
     return state.Invalid(
@@ -105,7 +105,7 @@ bool validateLoadBlock(const BtcBlockTree& tree,
   const auto* current = tree.getBlockIndex(index.header->getHash());
   const auto blockOfProofIds =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
-          current->blockOfProofEndorsements);
+          current->getBlockOfProofEndorsement());
   if (!same_vectors_unordered(blockOfProofIds,
                               index.addon.blockOfProofEndorsementHashes)) {
     return state.Invalid(

@@ -6,8 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_BTC_BLOCK_INDEX_HPP
 
-#include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/arith_uint256.hpp>
+#include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/uint.hpp>
 
 #include "block_status.hpp"
@@ -22,10 +22,6 @@ struct BtcBlockAddon {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
-  //! this block. must be a vector, because we can have duplicates here
-  std::vector<const VbkEndorsement*> blockOfProofEndorsements;
-
   static constexpr auto validTipLevel = BLOCK_VALID_TREE;
 
   void setNullInmemFields();
@@ -39,6 +35,14 @@ struct BtcBlockAddon {
   void addRef(ref_height_t referencedAtHeight);
 
   void removeRef(ref_height_t referencedAtHeight);
+
+  void insertBlockOfProofEndorsement(const VbkEndorsement* e);
+
+  bool eraseLastFromBlockOfProofEndorsement(const VbkEndorsement* endorsement);
+
+  void clearBlockOfProofEndorsement();
+
+  const std::vector<const VbkEndorsement*>& getBlockOfProofEndorsement() const;
 
   std::string toPrettyString() const;
 
@@ -57,6 +61,10 @@ struct BtcBlockAddon {
   // in this case.
   // TODO: figure out if this is somehow abusable by spammers/dosers
   std::vector<ref_height_t> refs{};
+
+  //! (memory-only) a list of endorsements of VBK blocks, whose BlockOfProof is
+  //! this block. must be a vector, because we can have duplicates here
+  std::vector<const VbkEndorsement*> _blockOfProofEndorsements;
 
   void setDirty();
 

@@ -113,11 +113,11 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
                      "same endorsement is added to endorsedBy second time");
       endorsed->insertEndorsedBy(endorsement);
 
-      auto& bop = blockOfProof->blockOfProofEndorsements;
+      const auto& bop = blockOfProof->getBlockOfProofEndorsement();
       VBK_ASSERT_MSG(
           std::find(bop.begin(), bop.end(), endorsement) == bop.end(),
           "same endorsement is added to blockOfProof second time");
-      bop.push_back(endorsement);
+      blockOfProof->insertBlockOfProofEndorsement(endorsement);
     });
   }
 

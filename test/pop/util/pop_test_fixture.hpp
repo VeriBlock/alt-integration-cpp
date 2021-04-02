@@ -81,7 +81,7 @@ struct PopTestFixture {
     auto* blockOfProof =
         comparator.getProtectingBlockTree().getBlockIndex(e.blockOfProof);
     ASSERT_TRUE(blockOfProof) << "no blockOfProof " << HexStr(e.blockOfProof);
-    auto& bop = blockOfProof->blockOfProofEndorsements;
+    auto& bop = blockOfProof->getBlockOfProofEndorsement();
 
     auto _ = [&](const E* end) -> bool { return end->id == e.id; };
     EXPECT_EQ(std::count_if(bop.begin(), bop.end(), _), 1);
