@@ -130,7 +130,7 @@ $(document).ready(function(){initNavTree('pop__state_8hpp_source.html',''); init
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">void</span> insertEndorsedBy(<span class="keyword">const</span> endorsement_t* e) {</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    VBK_ASSERT_MSG(e != <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Inserted endorsement should not be nullptr&quot;</span>);</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    _endorsedBy.push_back(e);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// setDirty();</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    setDirty();</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordtype">bool</span> eraseLastFromEndorsedBy(<span class="keyword">const</span> endorsement_t* endorsement) {</div>
@@ -139,7 +139,7 @@ $(document).ready(function(){initNavTree('pop__state_8hpp_source.html',''); init
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    };</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">auto</span> res = erase_last_item_if&lt;const endorsement_t*&gt;(_endorsedBy, rm);</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">if</span> (res) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      <span class="comment">// setDirty();</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      setDirty();</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    }</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> res;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
