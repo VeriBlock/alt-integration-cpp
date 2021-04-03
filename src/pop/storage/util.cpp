@@ -156,6 +156,21 @@ bool loadTrees(PopContext& context,
     return state.Invalid("failed-to-load-alt-tree");
   }
 
+  VBK_ASSERT_MSG(detail::loadValidateTree(
+                     context.getAltBlockTree().btc(), btcblocks, state),
+                 "Failed to validate stored BTC tree, error: %s",
+                 state.toString());
+
+  VBK_ASSERT_MSG(detail::loadValidateTree(
+                     context.getAltBlockTree().vbk(), vbkblocks, state),
+                 "Failed to validate stored VBK tree, error: %s",
+                 state.toString());
+
+  VBK_ASSERT_MSG(
+      detail::loadValidateTree(context.getAltBlockTree(), altblocks, state),
+      "Failed to validate stored ALT tree, error: %s",
+      state.toString());
+
   return true;
 }
 

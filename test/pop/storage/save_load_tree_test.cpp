@@ -32,7 +32,19 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
 
   bool load() {
     return LoadTreeWrapper(alttree2.btc()) && LoadTreeWrapper(alttree2.vbk()) &&
-           LoadTreeWrapper(alttree2);
+           LoadTreeWrapper(alttree2) &&
+           detail::loadValidateTree(
+               alttree2.btc(),
+               LoadBlocksFromDisk<typename BtcBlockTree::stored_index_t>(),
+               state) &&
+           detail::loadValidateTree(
+               alttree2.vbk(),
+               LoadBlocksFromDisk<typename VbkBlockTree::stored_index_t>(),
+               state) &&
+           detail::loadValidateTree(
+               alttree2,
+               LoadBlocksFromDisk<typename AltBlockTree::stored_index_t>(),
+               state);
   }
 
   auto assertTreesEqual() {
@@ -282,5 +294,5 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   ASSERT_TRUE(endorsedIndex->isDirty());
 
-  ASSERT_TRUE(load());
+  ASSERT_TRUE(load()) << state.toString();
 }
