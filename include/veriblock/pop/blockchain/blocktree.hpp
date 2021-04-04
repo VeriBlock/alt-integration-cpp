@@ -125,8 +125,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! @invariant NOT atomic.
-  bool loadBlock(const stored_index_t& index,
-                 ValidationState& state) override {
+  bool loadBlock(const stored_index_t& index, ValidationState& state) override {
     if (!checkBlock(*index.header, state, *param_)) {
       return state.Invalid("bad-header");
     }
@@ -154,7 +153,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     // clear blockOfProofEndorsements inmem field
-    current->blockOfProofEndorsements.clear();
+    current->clearBlockOfProofEndorsement();
 
     current->raiseValidity(BLOCK_VALID_TREE);
     return true;

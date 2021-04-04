@@ -144,7 +144,6 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_EQ(vbkAtip->getHeight(), vbkBtip->getHeight());
   ASSERT_TRUE(cmp(*vbkBtip, *popminer->vbk().getBestChain().tip()));
 
-  AltBlock endorsedBlock = altchain[90];
   AltBlock containingBlock = generateNextBlock(altchain.back());
   altchain.push_back(containingBlock);
 
@@ -189,7 +188,6 @@ TEST_F(Scenario1, scenario_1) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), altchain.back().getHash());
 
   VBK_LOG_DEBUG("Step 2");
-  endorsedBlock = altchain[90];
   containingBlock = generateNextBlock(altchain.back());
   altchain.push_back(containingBlock);
 

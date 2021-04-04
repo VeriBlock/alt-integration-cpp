@@ -26,10 +26,6 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   //! block
   ArithUint256 chainWork = 0;
 
-  //! (memory-only) a list of endorsements of ALT blocks, whose BlockOfProof is
-  //! this block. must be a vector, because we can have duplicates here
-  std::vector<const AltEndorsement*> blockOfProofEndorsements;
-
   void setNullInmemFields();
 
   static constexpr auto validTipLevel = BLOCK_VALID_TREE;
@@ -42,6 +38,14 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   void removeRef(ref_height_t);
 
   void setIsBootstrap(bool isBootstrap);
+
+  void insertBlockOfProofEndorsement(const AltEndorsement* e);
+
+  bool eraseLastFromBlockOfProofEndorsement(const AltEndorsement* endorsement);
+
+  void clearBlockOfProofEndorsement();
+
+  const std::vector<const AltEndorsement*>& getBlockOfProofEndorsement() const;
 
   bool hasPayloads() const { return !_vtbids.empty(); }
 
@@ -77,6 +81,10 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   uint32_t _refCount = 0;
   // VTB::id_t
   std::vector<uint256> _vtbids;
+
+  //! (memory-only) a list of endorsements of ALT blocks, whose BlockOfProof is
+  //! this block. must be a vector, because we can have duplicates here
+  std::vector<const AltEndorsement*> _blockOfProofEndorsements;
 
   void setDirty();
 

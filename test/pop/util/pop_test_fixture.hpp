@@ -81,13 +81,13 @@ struct PopTestFixture {
     auto* blockOfProof =
         comparator.getProtectingBlockTree().getBlockIndex(e.blockOfProof);
     ASSERT_TRUE(blockOfProof) << "no blockOfProof " << HexStr(e.blockOfProof);
-    auto& bop = blockOfProof->blockOfProofEndorsements;
+    auto& bop = blockOfProof->getBlockOfProofEndorsement();
 
     auto _ = [&](const E* end) -> bool { return end->id == e.id; };
     EXPECT_EQ(std::count_if(bop.begin(), bop.end(), _), 1);
     auto* endorsed = tree.getBlockIndex(e.endorsedHash);
     ASSERT_TRUE(endorsed) << "no endorsed block " << HexStr(e.endorsedHash);
-    auto& by = endorsed->endorsedBy;
+    const auto& by = endorsed->getEndorsedBy();
     EXPECT_EQ(std::count_if(by.begin(), by.end(), _), 1);
   }
 
@@ -360,7 +360,7 @@ struct PopTestFixture {
     using stored_index_t = typename Tree::stored_index_t;
     auto blocks = LoadBlocksFromDisk<stored_index_t>();
     auto tip = LoadTipFromDisk<index_t>();
-    return loadBlocksIntoTree<Tree>(tree, tip, blocks, state);
+    return loadTree<Tree>(tree, tip, blocks, state);
   }
 };
 

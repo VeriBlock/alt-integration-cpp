@@ -131,7 +131,7 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   vbkBlockTip = popminer->mineVbkBlocks(1, {vbkPopTx1});
 
-  EXPECT_EQ(vbkBlockTip->pprev->endorsedBy.size(), 1);
+  EXPECT_EQ(vbkBlockTip->pprev->getEndorsedBy().size(), 1);
 
   Chain<BlockIndex<VbkBlock>> chain(0, vbkBlockTip);
 
@@ -241,7 +241,7 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
 
   // mine the first endorsement
   popminer->mineVbkBlocks(1, {vbkPopTxA});
-  ASSERT_EQ(endorsedVbkBlock->endorsedBy.size(), 1);
+  ASSERT_EQ(endorsedVbkBlock->getEndorsedBy().size(), 1);
 
   auto vbkPopTxB =
       popminer->createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
