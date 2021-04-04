@@ -59,28 +59,6 @@ bool loadBlocksAndTip(
   return true;
 }
 
-template <typename BlockTreeT>
-bool loadTree(BlockTreeT& out,
-              const typename BlockTreeT::block_t::hash_t& tip_hash,
-              std::vector<typename BlockTreeT::stored_index_t>& blocks,
-              ValidationState& state) {
-  if (!loadBlocksIntoTree(out, tip_hash, blocks, state)) {
-    return state.Invalid("bad-tree");
-  }
-
-  auto* t = out.getBestChain().tip();
-  VBK_ASSERT(t != nullptr);
-
-  return true;
-}
-
-template <typename BlockTreeT>
-bool validateLoadBlock(const BlockTreeT&,
-                       const typename BlockTreeT::stored_index_t&,
-                       ValidationState&) {
-  return true;
-}
-
 template <>
 bool validateLoadBlock(const AltBlockTree& tree,
                        const typename AltBlockTree::stored_index_t& index,
@@ -88,7 +66,7 @@ bool validateLoadBlock(const AltBlockTree& tree,
   const auto* current = tree.getBlockIndex(index.header->getHash());
   const auto endorsedByIds =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
-          current->endorsedBy);
+          current->getEndorsedBy());
   if (!same_vectors_unique_unordered(endorsedByIds,
                                      index.addon.endorsedByHashes)) {
     return state.Invalid("alt-block-invalid-stored-endorsed-by");
@@ -103,7 +81,7 @@ bool validateLoadBlock(const VbkBlockTree& tree,
   const auto* current = tree.getBlockIndex(index.header->getHash());
   const auto endorsedByIds =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
-          current->endorsedBy);
+          current->getEndorsedBy());
   if (!same_vectors_unique_unordered(endorsedByIds,
                                      index.addon.endorsedByHashes)) {
     return state.Invalid("vbk-block-invalid-stored-endorsed-by");
@@ -111,7 +89,7 @@ bool validateLoadBlock(const VbkBlockTree& tree,
 
   const auto blockOfProofIds =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
-          current->blockOfProofEndorsements);
+          current->getBlockOfProofEndorsement());
   if (!same_vectors_unordered(blockOfProofIds,
                               index.addon.blockOfProofEndorsementHashes)) {
     return state.Invalid(
@@ -127,29 +105,11 @@ bool validateLoadBlock(const BtcBlockTree& tree,
   const auto* current = tree.getBlockIndex(index.header->getHash());
   const auto blockOfProofIds =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
-          current->blockOfProofEndorsements);
+          current->getBlockOfProofEndorsement());
   if (!same_vectors_unordered(blockOfProofIds,
                               index.addon.blockOfProofEndorsementHashes)) {
     return state.Invalid(
         "btc-block-invalid-stored-block-of-proof-endorsements");
-  }
-  return true;
-}
-
-template <typename BlockTreeT>
-bool loadValidateTree(
-    const BlockTreeT& tree,
-    const std::vector<typename BlockTreeT::stored_index_t>& blocks,
-    ValidationState& state) {
-  using block_t = typename BlockTreeT::block_t;
-
-  for (const auto& block : blocks) {
-    if (!validateLoadBlock(tree, block, state)) {
-      return state.Invalid("load-validate-tree",
-                           fmt::format("Invalid stored {} block {}",
-                                       block_t::name(),
-                                       block.toPrettyString()));
-    }
   }
   return true;
 }
@@ -184,29 +144,33 @@ bool loadTrees(PopContext& context,
     return state.Invalid("load-alt-tree-blocks");
   }
 
-  if (!detail::loadTree(
-          context.getAltBlockTree().btc(), btctip, btcblocks, state)) {
+  if (!loadTree(context.getAltBlockTree().btc(), btctip, btcblocks, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
 
-  if (!detail::loadTree(
-          context.getAltBlockTree().vbk(), vbktip, vbkblocks, state)) {
+  if (!loadTree(context.getAltBlockTree().vbk(), vbktip, vbkblocks, state)) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
 
-  if (!detail::loadTree(context.getAltBlockTree(), alttip, altblocks, state)) {
+  if (!loadTree(context.getAltBlockTree(), alttip, altblocks, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
 
   VBK_ASSERT_MSG(detail::loadValidateTree(
                      context.getAltBlockTree().btc(), btcblocks, state),
-                 "Failed to validate stored BTC tree");
+                 "Failed to validate stored BTC tree, error: %s",
+                 state.toString());
+
   VBK_ASSERT_MSG(detail::loadValidateTree(
                      context.getAltBlockTree().vbk(), vbkblocks, state),
-                 "Failed to validate stored VBK tree");
+                 "Failed to validate stored VBK tree, error: %s",
+                 state.toString());
+
   VBK_ASSERT_MSG(
       detail::loadValidateTree(context.getAltBlockTree(), altblocks, state),
-      "Failed to validate stored ALT tree");
+      "Failed to validate stored ALT tree, error: %s",
+      state.toString());
+
   return true;
 }
 

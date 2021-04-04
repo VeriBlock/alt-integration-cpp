@@ -77,8 +77,8 @@ struct AddEndorsement : public Command {
     }
 
     containing->insertContainingEndorsement(e_);
-    endorsed->endorsedBy.push_back(e_.get());
-    blockOfProof->blockOfProofEndorsements.push_back(e_.get());
+    endorsed->insertEndorsedBy(e_.get());
+    blockOfProof->insertBlockOfProofEndorsement(e_.get());
 
     return true;
   }
@@ -111,22 +111,16 @@ struct AddEndorsement : public Command {
     VBK_ASSERT_MSG(Eit != containing->getContainingEndorsements().end(),
                    "state corruption: containing endorsement not found");
 
-    // we added endorsements by ptr, so find them by ptr
-    auto rm = [&](const endorsement_t* e) -> bool {
-      return e == (Eit->second).get();
-    };
-
     // erase endorsedBy
-    bool p1 =
-        erase_last_item_if<const endorsement_t*>(endorsed->endorsedBy, rm);
+    bool p1 = endorsed->eraseLastFromEndorsedBy(Eit->second.get());
     VBK_ASSERT_MSG(p1,
                    "Failed to remove endorsement %s from endorsedBy in "
                    "AddEndorsement::Unexecute",
                    e_->toPrettyString());
 
     // erase blockOfProof
-    bool p2 = erase_last_item_if<const endorsement_t*>(
-        blockOfProof->blockOfProofEndorsements, rm);
+    bool p2 =
+        blockOfProof->eraseLastFromBlockOfProofEndorsement(Eit->second.get());
     VBK_ASSERT_MSG(p2,
                    "Failed to remove endorsement %s from blockOfProof in "
                    "AddEndorsement::Unexecute",

@@ -220,7 +220,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putArrayKV(obj, "containingEndorsements", endorsements);
 
   std::vector<uint256> endorsedBy;
-  for (const auto* e : i.endorsedBy) {
+  for (const auto* e : i.getEndorsedBy()) {
     endorsedBy.push_back(e->id);
   }
   json::putArrayKV(obj, "endorsedBy", endorsedBy);
@@ -234,7 +234,7 @@ JsonValue ToJSON(const BlockIndex<VbkBlock>& i) {
   json::putKV(obj, "stored", stored);
 
   auto bopEndorsements = json::makeEmptyArray<JsonValue>();
-  for (auto* e : i.blockOfProofEndorsements) {
+  for (const auto* e : i.getBlockOfProofEndorsement()) {
     if (e == nullptr) {
       continue;
     }
@@ -256,7 +256,7 @@ JsonValue ToJSON(const BlockIndex<BtcBlock>& i) {
   json::putArrayKV(obj, "vbkrefs", i.getRefs());
 
   auto bopEndorsements = json::makeEmptyArray<JsonValue>();
-  for (auto* e : i.blockOfProofEndorsements) {
+  for (const auto* e : i.getBlockOfProofEndorsement()) {
     if (e == nullptr) {
       continue;
     }

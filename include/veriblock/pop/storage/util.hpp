@@ -16,15 +16,55 @@
 
 namespace altintegration {
 
+namespace detail {
+template <typename BlockTreeT>
+bool validateLoadBlock(const BlockTreeT&,
+                       const typename BlockTreeT::stored_index_t&,
+                       ValidationState&);
+
+template <>
+bool validateLoadBlock(const AltBlockTree& tree,
+                       const typename AltBlockTree::stored_index_t& index,
+                       ValidationState& state);
+
+template <>
+bool validateLoadBlock(const VbkBlockTree& tree,
+                       const typename VbkBlockTree::stored_index_t& index,
+                       ValidationState& state);
+
+template <>
+bool validateLoadBlock(const BtcBlockTree&,
+                       const typename BtcBlockTree::stored_index_t&,
+                       ValidationState&);
+
+template <typename BlockTreeT>
+bool loadValidateTree(
+    const BlockTreeT& tree,
+    const std::vector<typename BlockTreeT::stored_index_t>& blocks,
+    ValidationState& state) {
+  using block_t = typename BlockTreeT::block_t;
+
+  for (const auto& block : blocks) {
+    if (!validateLoadBlock(tree, block, state)) {
+      return state.Invalid("load-validate-tree",
+                           fmt::format("Invalid stored {} block {}",
+                                       block_t::name(),
+                                       block.toPrettyString()));
+    }
+  }
+  return true;
+}
+
+}  // namespace detail
+
 //! efficiently loads `blocks` into tree (they must be sorted by height) and
 //! does validation of these blocks. Sets tip after loading.
 //! @invariant NOT atomic
 template <typename BlockTreeT>
-bool loadBlocksIntoTree(
-    BlockTreeT& tree,
-    const typename BlockTreeT::hash_t& tiphash,
-    std::vector<typename BlockTreeT::stored_index_t>& blocks,
-    ValidationState& state) {
+bool loadTree(BlockTreeT& tree,
+              const typename BlockTreeT::hash_t& tiphash,
+              std::vector<typename BlockTreeT::stored_index_t>& blocks,
+              ValidationState& state) {
   using stored_index_t = typename BlockTreeT::stored_index_t;
   using block_t = typename BlockTreeT::block_t;
 
@@ -50,7 +90,14 @@ bool loadBlocksIntoTree(
     }
   }
 
-  return tree.loadTip(tiphash, state);
+  if (!tree.loadTip(tiphash, state)) {
+    return state.Invalid("load-tree");
+  }
+
+  auto* t = tree.getBestChain().tip();
+  VBK_ASSERT(t != nullptr);
+
+  return true;
 }
 
 //! @private

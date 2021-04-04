@@ -34,45 +34,45 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
 
   // before cmd execution we have 0 endorsements
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk5->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk5->getEndorsedBy().size(), 0);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk10->getEndorsedBy().size(), 0);
 
   // execute command
   ASSERT_TRUE(cmd->Execute(state)) << state.toString();
 
   // verify that state has been changed
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk5->endorsedBy.size(), 1);
+  ASSERT_EQ(vbk5->getEndorsedBy().size(), 1);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 1);
-  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk10->getEndorsedBy().size(), 0);
 
   // execute again
   ASSERT_TRUE(cmd->Execute(state));
 
   // verify that another endorsement has been added
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk5->endorsedBy.size(), 2);
+  ASSERT_EQ(vbk5->getEndorsedBy().size(), 2);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 2);
-  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk10->getEndorsedBy().size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk5->endorsedBy.size(), 1);
+  ASSERT_EQ(vbk5->getEndorsedBy().size(), 1);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 1);
-  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk10->getEndorsedBy().size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk5->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk5->getEndorsedBy().size(), 0);
   ASSERT_EQ(vbk10->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(vbk10->endorsedBy.size(), 0);
+  ASSERT_EQ(vbk10->getEndorsedBy().size(), 0);
 }
 
 TEST_F(AtomicityTestFixture, AddAltEndorsement) {
@@ -101,18 +101,18 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
 
   // before cmd execution we have 0 endorsements
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt5->endorsedBy.size(), 0);
+  ASSERT_EQ(alt5->getEndorsedBy().size(), 0);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+  ASSERT_EQ(alt10->getEndorsedBy().size(), 0);
 
   // execute command
   ASSERT_TRUE(cmd->Execute(state)) << state.toString();
 
   // verify that state has been changed
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt5->endorsedBy.size(), 1);
+  ASSERT_EQ(alt5->getEndorsedBy().size(), 1);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 1);
-  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+  ASSERT_EQ(alt10->getEndorsedBy().size(), 0);
 
   // execute command second time
   ASSERT_TRUE(cmd->Execute(state));
@@ -120,27 +120,27 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
   // verify that state has been changed
   // as duplicates are filtered by addPayloads
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt5->endorsedBy.size(), 2);
+  ASSERT_EQ(alt5->getEndorsedBy().size(), 2);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 2);
-  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+  ASSERT_EQ(alt10->getEndorsedBy().size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt5->endorsedBy.size(), 1);
+  ASSERT_EQ(alt5->getEndorsedBy().size(), 1);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 1);
-  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+  ASSERT_EQ(alt10->getEndorsedBy().size(), 0);
 
   // unexecute command
   ASSERT_NO_FATAL_FAILURE(cmd->UnExecute());
 
   // endorsement is removed
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt5->endorsedBy.size(), 0);
+  ASSERT_EQ(alt5->getEndorsedBy().size(), 0);
   ASSERT_EQ(alt10->getContainingEndorsements().size(), 0);
-  ASSERT_EQ(alt10->endorsedBy.size(), 0);
+  ASSERT_EQ(alt10->getEndorsedBy().size(), 0);
 
   ASSERT_DEATH(cmd->UnExecute(), "");
 }
