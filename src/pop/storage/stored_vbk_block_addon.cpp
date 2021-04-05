@@ -10,11 +10,11 @@
 namespace altintegration {
 
 StoredVbkBlockAddon::StoredVbkBlockAddon(const addon_t& other) {
-  endorsedByHashes =
-      map_get_id_from_pointers<uint256, const VbkEndorsement>(other.endorsedBy);
+  endorsedByHashes = map_get_id_from_pointers<uint256, const VbkEndorsement>(
+      other.getEndorsedBy());
   blockOfProofEndorsementHashes =
       map_get_id_from_pointers<uint256, const AltEndorsement>(
-          other.blockOfProofEndorsements);
+          other.getBlockOfProofEndorsement());
   _refCount = other.refCount();
   _vtbids = other.getPayloadIds<VTB>();
   popState = other;

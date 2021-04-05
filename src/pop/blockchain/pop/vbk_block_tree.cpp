@@ -346,8 +346,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     appliedPayloads.push_back(pid);
   }
 
-  // don't defer fork resolution in the acceptBlockHeader+addPayloads flow until the
-  // validation hole is plugged
+  // don't defer fork resolution in the acceptBlockHeader+addPayloads flow until
+  // the validation hole is plugged
   doUpdateAffectedTips(*index, state);
 
   // compare to the original best chain
@@ -429,23 +429,23 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
 
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<BtcBlock>& index) {
-  VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
+  VBK_ASSERT_MSG(index.getBlockOfProofEndorsement().empty(),
                  "blockOfProof has %d pointers to endorsements, they will be "
                  "lost",
-                 index.blockOfProofEndorsements.size());
+                 index.getBlockOfProofEndorsement().size());
 }
 
 template <>
 void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
-  VBK_ASSERT_MSG(index.blockOfProofEndorsements.empty(),
+  VBK_ASSERT_MSG(index.getBlockOfProofEndorsement().empty(),
                  "blockOfProof has %d pointers to endorsements, they will be "
                  "lost",
-                 index.blockOfProofEndorsements.size());
+                 index.getBlockOfProofEndorsement().size());
 
-  VBK_ASSERT_MSG(index.endorsedBy.empty(),
+  VBK_ASSERT_MSG(index.getEndorsedBy().empty(),
                  "endorsedBy has %d pointers to endorsements, they will be "
                  "lost",
-                 index.endorsedBy.size());
+                 index.getEndorsedBy().size());
 }
 
 template <>

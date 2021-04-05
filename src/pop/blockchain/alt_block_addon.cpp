@@ -106,7 +106,7 @@ void AltBlockAddon::toVbkEncoding(WriteStream& w) const {
   writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
 }
 
-void AltBlockAddon::setNullInmemFields() { endorsedBy.clear(); }
+void AltBlockAddon::setNullInmemFields() { _endorsedBy.clear(); }
 
 bool AltBlockAddon::hasPayloads() const {
   return !_atvids.empty() || !_vtbids.empty() || !_vbkblockids.empty();

@@ -41,7 +41,7 @@ void BtcBlockAddon::toVbkEncoding(WriteStream& w) const {
 
 void BtcBlockAddon::setNullInmemFields() {
   chainWork = 0;
-  blockOfProofEndorsements.clear();
+  _blockOfProofEndorsements.clear();
 }
 
 void BtcBlockAddon::setIsBootstrap(bool isBootstrap) {
@@ -72,6 +72,34 @@ void BtcBlockAddon::removeRef(BtcBlockAddon::ref_height_t referencedAtHeight) {
              "BTC block");
   refs.erase(ref_it);
   setDirty();
+}
+
+void BtcBlockAddon::insertBlockOfProofEndorsement(const VbkEndorsement* e) {
+  this->_blockOfProofEndorsements.push_back(e);
+  setDirty();
+}
+
+bool BtcBlockAddon::eraseLastFromBlockOfProofEndorsement(
+    const VbkEndorsement* endorsement) {
+  auto rm = [&endorsement](const VbkEndorsement* e) -> bool {
+    return e == endorsement;
+  };
+  auto res =
+      erase_last_item_if<const VbkEndorsement*>(_blockOfProofEndorsements, rm);
+  if (res) {
+    setDirty();
+  }
+  return res;
+}
+
+void BtcBlockAddon::clearBlockOfProofEndorsement() {
+  this->_blockOfProofEndorsements.clear();
+  setDirty();
+}
+
+const std::vector<const VbkEndorsement*>&
+BtcBlockAddon::getBlockOfProofEndorsement() const {
+  return this->_blockOfProofEndorsements;
 }
 
 std::string BtcBlockAddon::toPrettyString() const {

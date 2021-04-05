@@ -11,7 +11,7 @@ namespace altintegration {
 StoredBtcBlockAddon::StoredBtcBlockAddon(const addon_t& other) {
   blockOfProofEndorsementHashes =
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
-      other.blockOfProofEndorsements);
+          other.getBlockOfProofEndorsement());
   refs = other.getRefs();
 }
 
@@ -32,9 +32,7 @@ void StoredBtcBlockAddon::toInmem(StoredBtcBlockAddon::addon_t& to) const {
 }
 
 std::string StoredBtcBlockAddon::toPrettyString() const {
-  return fmt::format("refs={}[{}]",
-                     refs.size(),
-                     fmt::join(refs, ","));
+  return fmt::format("refs={}[{}]", refs.size(), fmt::join(refs, ","));
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

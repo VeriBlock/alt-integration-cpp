@@ -154,7 +154,7 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     // chain must contain relevantEndorsedBlock
     VBK_ASSERT(index != nullptr);
 
-    for (const auto* e : index->endorsedBy) {
+    for (const auto* e : index->getEndorsedBy()) {
       if (!allHashesInChain.count(e->containingHash)) {
         // do not count endorsement whose containingHash is not on the same
         // chain as 'endorsedHash'

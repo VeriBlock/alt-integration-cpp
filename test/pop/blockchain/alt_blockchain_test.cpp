@@ -53,7 +53,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       containingBlockIndex1->getContainingEndorsements();
   EXPECT_TRUE(containingEndorsements.find(endorsement1.id) !=
               containingEndorsements.end());
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
+  EXPECT_EQ(endorsedBlockIndex->getEndorsedBy().size(), 1);
 
   // generate endorsements
   tx = popminer->createVbkTxEndorsingAltBlock(
@@ -81,7 +81,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       containingBlockIndex2->getContainingEndorsements();
   EXPECT_TRUE(containingEndorsements2.find(endorsement2.id) !=
               containingEndorsements2.end());
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
+  EXPECT_EQ(endorsedBlockIndex->getEndorsedBy().size(), 1);
 
   tx = popminer->createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
@@ -107,7 +107,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
       containingBlockIndex3->getContainingEndorsements();
   EXPECT_TRUE(containingEndorsements3.find(endorsement3.id) !=
               containingEndorsements3.end());
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
+  EXPECT_EQ(endorsedBlockIndex->getEndorsedBy().size(), 1);
 
   // remove block
   AltBlock removeBlock = chain[20];
@@ -120,7 +120,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
               containingEndorsements4.end());
 
   endorsedBlockIndex = alttree.getBlockIndex(endorsement2.endorsedHash);
-  EXPECT_EQ(endorsedBlockIndex->endorsedBy.size(), 1);
+  EXPECT_EQ(endorsedBlockIndex->getEndorsedBy().size(), 1);
 
   EXPECT_TRUE(alttree.setState(forkchain2.back().getHash(), state));
   EXPECT_TRUE(state.IsValid());
