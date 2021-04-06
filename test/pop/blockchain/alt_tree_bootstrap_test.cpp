@@ -7,6 +7,7 @@
 
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/storage/inmem_payloads_provider.hpp>
+#include <util/pop_test_fixture.hpp>
 
 using namespace altintegration;
 
@@ -88,3 +89,36 @@ INSTANTIATE_TEST_SUITE_P(AltBlockTree,
                          testing::Values(-1,
                                          std::numeric_limits<int>::min(),
                                          std::numeric_limits<int>::max()));
+
+struct AltBlockTreeTest : public testing::Test {};
+
+TEST_F(AltBlockTreeTest, AssureBootstrapBtcBlockHasRefs_test) {
+  using btc_block_tree = BlockTree<BtcBlock, BtcChainParams>;
+  using vbk_block_tree = VbkBlockTree;
+
+  ValidationState state;
+  BtcChainParamsRegTest btc_params{};
+  VbkChainParamsRegTest vbk_params{};
+  InmemPayloadsProvider payloads_provider;
+  PayloadsIndex payloads_index;
+
+  Miner<BtcBlock, BtcChainParams> btc_miner =
+      Miner<BtcBlock, BtcChainParams>(btc_params);
+
+  vbk_block_tree vbk_tree{
+      vbk_params, btc_params, payloads_provider, payloads_index};
+  btc_block_tree& btc_tree = vbk_tree.btc();
+
+  ASSERT_TRUE(btc_tree.bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  auto* tip = btc_tree.getBestChain().tip();
+  // bootstrap blocks have one ref always set
+  ASSERT_GT(tip->getRefs().size(), 0);
+
+  for (size_t i = 0; i < 10; i++) {
+    BtcBlock block = btc_miner.createNextBlock(*tip);
+    ASSERT_TRUE(btc_tree.acceptBlockHeader(block, state));
+    tip = btc_tree.getBlockIndex(block.getHash());
+    // when we mine without mock miner, there are no refs in blocks
+    ASSERT_EQ(tip->getRefs().size(), 0);
+  }
+}

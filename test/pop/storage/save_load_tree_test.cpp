@@ -296,3 +296,4 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
 
   ASSERT_TRUE(load()) << state.toString();
 }
+
