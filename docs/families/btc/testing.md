@@ -1,7 +1,5 @@
 # Testing of POP-enabled BTC fork {#btctesting}
 
-@todo
-
 [TOC]
 
 # Overview
@@ -61,7 +59,7 @@ These bunch of tests are important flag that all pop functionality works fine. A
 
 Before running all these tests you should install our python framework, you can follown the following guide [https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md](https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md).
 
-After that you can copy the following code, it is the ```test_runner``` of all our certification tests. [https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/test_runner.py](https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/test_runner.py)
+After that you can copy the following code, it is the ```test_runner``` of all our certification tests. [https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/vbitcoind_node.py](https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/vbitcoind_node.py)
 
 ```python
 
@@ -87,7 +85,7 @@ if __name__ == '__main__':
     run_tests(tests, create_node)
 ```
 
-Next you have to implement the ```node``` which will be an adaptor for your deamon. Such adaptor should can ```run```, ```stop```, ```restart``` the deamon, execute some rpc functions etc. You can use our node realisation for the original btc. [https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py](https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py)
+Next you have to implement the ```node``` which will be an adaptor for your deamon. Such adaptor should can ```run```, ```stop```, ```restart``` the deamon, execute some rpc functions etc. You can use our node realisation for the original btc. [https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py](https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py)
 
 ```python
 import distutils.spawn
