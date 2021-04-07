@@ -47,10 +47,15 @@ Before these tests are not passing it makes no sense to try run the next functio
 The original bitcoin also has the functional tests that are stands in the ```test/functional/``` directory. 
 
 
-To run all these tests firstly you should build and compile the deamon (bitcoind), then you can run all of these tests using the following command.
+To run all these tests firstly you should build and compile the deamon (bitcoind), next you should specify ```VBITCOIND_PATH``` env var, where you need to specify the path to the daemon.
+```bash
+export VBITCOIND_PATH=<path to the daemon (vbitcoind)>
+```
+
+ Then you can run all of these tests using the following command.
 
 ```bash
-./test/functional/test_runner.py
+python test/functional/test_runner.py
 ```
 
 # POP certification tests
