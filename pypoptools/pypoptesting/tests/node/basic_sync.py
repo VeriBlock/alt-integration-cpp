@@ -16,12 +16,12 @@ class NodeBasicSyncTest(PopIntegrationTestFramework):
         # disconnect all nodes
         disconnect_all(self.nodes)
 
-        self.log.info("node[0] mine 1000 blocks")
-        self.nodes[0].generate(nblocks=1000)
-        self.log.info("node[1] mine 650 blocks")
-        self.nodes[1].generate(nblocks=650)
-        self.log.info("node[2] mine 1500 blocks")
-        self.nodes[2].generate(nblocks=1500)
+        self.log.info("node[0] mine 200 blocks")
+        self.nodes[0].generate(nblocks=200)
+        self.log.info("node[1] mine 130 blocks")
+        self.nodes[1].generate(nblocks=130)
+        self.log.info("node[2] mine 300 blocks")
+        self.nodes[2].generate(nblocks=300)
 
         node_0_tip = self.nodes[0].getbestblock()
         node_1_tip = self.nodes[1].getbestblock()
