@@ -1,12 +1,5 @@
 var NAVTREEINDEX0 =
 {
-"":[3,0,0,0],
-"":[3,0,0,2],
-"":[3,0,0,4],
-"":[3,0,1],
-"":[3,0,0,5],
-"":[3,0,0,1],
-"":[3,0,0,6],
 "addblock_8hpp_source.html":[5,0,1,0,0,1,0,0],
 "addendorsement_8hpp_source.html":[5,0,1,0,0,1,0,1],
 "address_8hpp_source.html":[5,0,1,0,0,5,0],
@@ -42,6 +35,10 @@ var NAVTREEINDEX0 =
 "btcblock_8h_source.html":[5,0,1,0,0,2,0,2],
 "btcblock_8hpp_source.html":[5,0,1,0,0,5,3],
 "btctesting.html":[0,2,14],
+"btctesting.html#autotoc_md84":[0,2,14,0],
+"btctesting.html#autotoc_md85":[0,2,14,1],
+"btctesting.html#autotoc_md86":[0,2,14,2],
+"btctesting.html#autotoc_md87":[0,2,14,3],
 "btctx_8hpp_source.html":[5,0,1,0,0,5,4],
 "build.html":[0,0],
 "build.html#autotoc_md0":[0,0,0],
@@ -249,5 +246,8 @@ var NAVTREEINDEX0 =
 "functions_func_l.html":[4,3,1,9],
 "functions_func_m.html":[4,3,1,10],
 "functions_func_n.html":[4,3,1,11],
-"functions_func_o.html":[4,3,1,12]
+"functions_func_o.html":[4,3,1,12],
+"functions_func_p.html":[4,3,1,13],
+"functions_func_r.html":[4,3,1,14],
+"functions_func_s.html":[4,3,1,15]
 };

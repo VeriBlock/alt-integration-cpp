@@ -1,16 +1,16 @@
 var namespacealtintegration =
 [
     [ "cache", null, [
-      [ "Guides:", "index.html#autotoc_md92", null ],
-      [ "1. Fork vBTC", "integration.html#autotoc_md86", null ],
-      [ "2. Change naming as needed.", "integration.html#autotoc_md87", null ],
-      [ "3. Change network ID", "integration.html#autotoc_md88", null ],
-      [ "4. Change POP Altchain ID", "integration.html#autotoc_md89", null ],
-      [ "5. Rebootstrap", "integration.html#autotoc_md90", null ],
-      [ "6. Make sure all unit and functional tests pass.", "integration.html#autotoc_md91", null ],
-      [ "Legend", "rebootstrap.html#autotoc_md93", null ],
-      [ "Description", "rebootstrap.html#autotoc_md94", null ],
-      [ "Protocol", "rebootstrap.html#autotoc_md95", null ],
+      [ "Guides:", "index.html#autotoc_md96", null ],
+      [ "1. Fork vBTC", "integration.html#autotoc_md90", null ],
+      [ "2. Change naming as needed.", "integration.html#autotoc_md91", null ],
+      [ "3. Change network ID", "integration.html#autotoc_md92", null ],
+      [ "4. Change POP Altchain ID", "integration.html#autotoc_md93", null ],
+      [ "5. Rebootstrap", "integration.html#autotoc_md94", null ],
+      [ "6. Make sure all unit and functional tests pass.", "integration.html#autotoc_md95", null ],
+      [ "Legend", "rebootstrap.html#autotoc_md97", null ],
+      [ "Description", "rebootstrap.html#autotoc_md98", null ],
+      [ "Protocol", "rebootstrap.html#autotoc_md99", null ],
       [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
     ] ],
     [ "detail", null, [

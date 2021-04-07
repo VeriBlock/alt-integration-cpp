@@ -1,7 +1,7 @@
 var integration =
 [
-    [ "Integrate POP into BTC fork", "integration.html#autotoc_md84", null ],
-    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md85", null ],
+    [ "Integrate POP into BTC fork", "integration.html#autotoc_md88", null ],
+    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md89", null ],
     [ "Modifying build setup", "integration_1_build.html", [
       [ "Overview", "integration_1_build.html#autotoc_md25", null ],
       [ "1. Build and install veriblock-pop-cpp library.", "integration_1_build.html#autotoc_md26", null ],
@@ -106,5 +106,10 @@ var integration =
       [ "6. Add RPC unit test.", "integration_12_rpc.html#autotoc_md23", null ],
       [ "7. Add RPC service and test to the makefile.", "integration_12_rpc.html#autotoc_md24", null ]
     ] ],
-    [ "Testing of POP-enabled BTC fork", "btctesting.html", null ]
+    [ "Testing of POP-enabled BTC fork", "btctesting.html", [
+      [ "Overview", "btctesting.html#autotoc_md84", null ],
+      [ "Unit tests", "btctesting.html#autotoc_md85", null ],
+      [ "POP functional tests", "btctesting.html#autotoc_md86", null ],
+      [ "POP certification tests", "btctesting.html#autotoc_md87", null ]
+    ] ]
 ];

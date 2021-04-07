@@ -88,8 +88,1080 @@ $(document).ready(function(){initNavTree('btctesting.html',''); initResizable();
 <div class="title">Testing of POP-enabled BTC fork </div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="toc"><h3>Table of Contents</h3>
+<ul><li class="level1"><a href="#autotoc_md84">Overview</a></li>
+<li class="level1"><a href="#autotoc_md85">Unit tests</a></li>
+<li class="level1"><a href="#autotoc_md86">POP functional tests</a></li>
+<li class="level1"><a href="#autotoc_md87">POP certification tests</a></li>
+</ul>
+</div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_testing"></a> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd></dd></dl>
-</div></div><!-- contents -->
+<h1><a class="anchor" id="autotoc_md84"></a>
+Overview</h1>
+<p>Here we describe which POP related tests should be added and should be passed to be confident that POP security works fine. All tests separated to the following:</p><ul>
+<li><code>unit tests</code></li>
+<li><code>btc functional tests</code></li>
+<li><code>pop certification tests</code></li>
+</ul>
+<h1><a class="anchor" id="autotoc_md85"></a>
+Unit tests</h1>
+<p>First of all you should check that all original btc tests are passing and works well. On the Unix sytem you can do it using </p><div class="fragment"><div class="line">make check</div>
+</div><!-- fragment --><p> If some tests does not work properly it is better to fix it, before starting the POP integration.</p>
+<p>Here is the ful list of the pop unit tests <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/src/Makefile.test.include#L117">https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/src/Makefile.test.include#L117</a> :</p>
+<div class="fragment"><div class="line">### VeriBlock section start</div>
+<div class="line"># path is relative to src</div>
+<div class="line">VBK_TESTS = \</div>
+<div class="line">    vbk/test/unit/e2e_poptx_tests.cpp \</div>
+<div class="line">    vbk/test/unit/pop_reward_tests.cpp \</div>
+<div class="line">    vbk/test/unit/vbk_merkle_tests.cpp \</div>
+<div class="line">    vbk/test/unit/block_validation_tests.cpp \</div>
+<div class="line">    vbk/test/unit/rpc_service_tests.cpp \</div>
+<div class="line">    vbk/test/unit/genesis_block_tests.cpp \</div>
+<div class="line">    vbk/test/unit/forkresolution_tests.cpp</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line"># test_bitcoin binary #</div>
+<div class="line">BITCOIN_TESTS =\</div>
+<div class="line">  $(VBK_TESTS) \</div>
+<div class="line">  test/arith_uint256_tests.cpp \</div>
+<div class="line">  test/scriptnum10.h \</div>
+<div class="line">  ...</div>
+</div><!-- fragment --><p> All these tests you can find in the <code>vbk/tests/unit</code> directory. Before these tests are not passing it makes no sense to try run the next functional and certification tests.</p>
+<h1><a class="anchor" id="autotoc_md86"></a>
+POP functional tests</h1>
+<p>The original bitcoin also has the functional tests that are stands in the <code>test/functional/</code> directory.</p>
+<p>To run all these tests firstly you should build and compile the deamon (bitcoind), then you can run all of these tests using the following command.</p>
+<div class="fragment"><div class="line">./test/functional/test_runner.py</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md87"></a>
+POP certification tests</h1>
+<p>These bunch of tests are important flag that all pop functionality works fine. All known parts of the POP security covered by this tests. So it is important before launching even Testnet to be sure that all this tests passed.</p>
+<p>Before running all these tests you should install our python framework, you can follown the following guide <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md</a>.</p>
+<p>After that you can copy the following code, it is the <code>test_runner</code> of all our certification tests. <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/test_runner.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/test_runner.py</a></p>
+<div class="fragment"><div class="line">import pathlib</div>
+<div class="line">import sys</div>
+<div class="line"> </div>
+<div class="line">from pypoptools.pypoptesting.framework.node import Node</div>
+<div class="line">from pypoptools.pypoptesting.framework.test_util import run_tests</div>
+<div class="line">from pypoptools.pypoptesting.tests import all_tests</div>
+<div class="line">from vbitcoind_node import VBitcoindNode</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">def create_node(number: int, path: pathlib.Path) -&gt; Node:</div>
+<div class="line">    return VBitcoindNode(number=number, datadir=path)</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">if __name__ == &#39;__main__&#39;:</div>
+<div class="line">    if len(sys.argv) &gt; 1:</div>
+<div class="line">        all_tests_by_name = dict([(test.name(), test) for test in all_tests])</div>
+<div class="line">        tests = [all_tests_by_name[name] for name in sys.argv[1:]]</div>
+<div class="line">    else:</div>
+<div class="line">        tests = all_tests</div>
+<div class="line">    run_tests(tests, create_node)</div>
+</div><!-- fragment --><p>Next you have to implement the <code>node</code> which will be an adaptor for your deamon. Such adaptor should can <code>run</code>, <code>stop</code>, <code>restart</code> the deamon, execute some rpc functions etc. You can use our node realisation for the original btc. <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py</a></p>
+<div class="fragment"><div class="line">import distutils.spawn</div>
+<div class="line">import pathlib</div>
+<div class="line"> </div>
+<div class="line">from .framework.bin_util import assert_dir_accessible, get_open_port</div>
+<div class="line">from .framework.entities import *</div>
+<div class="line">from .framework.json_rpc import JsonRpcApi, JsonRpcException</div>
+<div class="line">from .framework.managers import ProcessManager</div>
+<div class="line">from .framework.node import Node</div>
+<div class="line">from .framework.sync_util import wait_until</div>
+<div class="line"> </div>
+<div class="line">PORT_MIN = 15000</div>
+<div class="line">PORT_MAX = 25000</div>
+<div class="line">BIND_TO = &#39;127.0.0.1&#39;</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">def _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password):</div>
+<div class="line">    bitcoin_conf_file = pathlib.Path(datadir, &quot;vbitcoin.conf&quot;)</div>
+<div class="line">    with open(bitcoin_conf_file, &#39;w&#39;, encoding=&#39;utf8&#39;) as f:</div>
+<div class="line">        f.write(&quot;regtest=1\n&quot;)</div>
+<div class="line">        f.write(&quot;[{}]\n&quot;.format(&quot;regtest&quot;))</div>
+<div class="line">        f.write(&quot;port={}\n&quot;.format(p2p_port))</div>
+<div class="line">        f.write(&quot;rpcport={}\n&quot;.format(rpc_port))</div>
+<div class="line">        f.write(&quot;rpcuser={}\n&quot;.format(rpc_user))</div>
+<div class="line">        f.write(&quot;rpcpassword={}\n&quot;.format(rpc_password))</div>
+<div class="line">        f.write(&quot;fallbackfee=0.0002\n&quot;)</div>
+<div class="line">        f.write(&quot;server=1\n&quot;)</div>
+<div class="line">        f.write(&quot;keypool=1\n&quot;)</div>
+<div class="line">        f.write(&quot;discover=0\n&quot;)</div>
+<div class="line">        f.write(&quot;dnsseed=0\n&quot;)</div>
+<div class="line">        f.write(&quot;listenonion=0\n&quot;)</div>
+<div class="line">        f.write(&quot;printtoconsole=0\n&quot;)</div>
+<div class="line">        f.write(&quot;upnp=0\n&quot;)</div>
+<div class="line">        f.write(&quot;shrinkdebugfile=0\n&quot;)</div>
+<div class="line">        f.write(&quot;popvbknetwork=regtest\n&quot;)</div>
+<div class="line">        f.write(&quot;popbtcnetwork=regtest\n&quot;)</div>
+<div class="line">        f.write(&quot;poplogverbosity=info\n&quot;)</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">class VBitcoindNode(Node):</div>
+<div class="line">    def __init__(self, number: int, datadir: pathlib.Path):</div>
+<div class="line">        self.number = number</div>
+<div class="line"> </div>
+<div class="line">        p2p_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)</div>
+<div class="line">        self.p2p_address = &quot;{}:{}&quot;.format(BIND_TO, p2p_port)</div>
+<div class="line"> </div>
+<div class="line">        rpc_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)</div>
+<div class="line">        rpc_url = &quot;http://{}:{}/&quot;.format(BIND_TO, rpc_port)</div>
+<div class="line">        rpc_user = &#39;testuser&#39;</div>
+<div class="line">        rpc_password = &#39;testpassword&#39;</div>
+<div class="line">        self.rpc = JsonRpcApi(rpc_url, user=rpc_user, password=rpc_password)</div>
+<div class="line"> </div>
+<div class="line">        exe = distutils.spawn.find_executable(&quot;vbitcoind&quot;)</div>
+<div class="line">        if not exe:</div>
+<div class="line">            raise Exception(&quot;VBitcoinNode: vbitcoind is not found in PATH&quot;)</div>
+<div class="line"> </div>
+<div class="line">        assert_dir_accessible(datadir)</div>
+<div class="line">        args = [</div>
+<div class="line">            exe,</div>
+<div class="line">            &quot;-datadir=&quot; + str(datadir),</div>
+<div class="line">            &quot;-logtimemicros&quot;,</div>
+<div class="line">            &quot;-logthreadnames&quot;,</div>
+<div class="line">            &quot;-debug&quot;,</div>
+<div class="line">            &quot;-debugexclude=libevent&quot;,</div>
+<div class="line">            &quot;-debugexclude=leveldb&quot;,</div>
+<div class="line">            &quot;-txindex&quot;,</div>
+<div class="line">            &quot;-uacomment=testnode{}&quot;.format(number)</div>
+<div class="line">        ]</div>
+<div class="line">        self.manager = ProcessManager(args, datadir)</div>
+<div class="line"> </div>
+<div class="line">        _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password)</div>
+<div class="line"> </div>
+<div class="line">    def start(self) -&gt; None:</div>
+<div class="line">        self.manager.start()</div>
+<div class="line">        wait_until(lambda: self.is_rpc_available(), timeout=60)</div>
+<div class="line"> </div>
+<div class="line">    def is_rpc_available(self) -&gt; bool:</div>
+<div class="line">        try:</div>
+<div class="line">            self.rpc.getblockcount()</div>
+<div class="line">            return True</div>
+<div class="line">        except Exception as e:</div>
+<div class="line">            return False</div>
+<div class="line"> </div>
+<div class="line">    def stop(self) -&gt; None:</div>
+<div class="line">        self.manager.stop()</div>
+<div class="line"> </div>
+<div class="line">    def connect(self, node):</div>
+<div class="line">        self.rpc.addnode(node.p2p_address, &#39;onetry&#39;)</div>
+<div class="line">        # poll until version handshake complete to avoid race conditions</div>
+<div class="line">        # with transaction relaying</div>
+<div class="line">        wait_until(lambda: all(peer[&#39;version&#39;] != 0 for peer in self.rpc.getpeerinfo()))</div>
+<div class="line"> </div>
+<div class="line">    def disconnect(self, node):</div>
+<div class="line">        node_num = node.number</div>
+<div class="line">        for peer_id in [peer[&#39;id&#39;] for peer in self.rpc.getpeerinfo() if</div>
+<div class="line">                        &quot;testnode{}&quot;.format(node_num) in peer[&#39;subver&#39;]]:</div>
+<div class="line">            try:</div>
+<div class="line">                self.rpc.disconnectnode(address=&#39;&#39;, nodeid=peer_id)</div>
+<div class="line">            except JsonRpcException as e:</div>
+<div class="line">                # If this node is disconnected between calculating the peer id</div>
+<div class="line">                # and issuing the disconnect, don&#39;t worry about it.</div>
+<div class="line">                # This avoids a race condition if we&#39;re mass-disconnecting peers.</div>
+<div class="line">                if e.error[&#39;code&#39;] != -29:  # RPC_CLIENT_NODE_NOT_CONNECTED</div>
+<div class="line">                    raise</div>
+<div class="line"> </div>
+<div class="line">        # wait to disconnect</div>
+<div class="line">        wait_until(</div>
+<div class="line">            lambda: not any([&quot;testnode{}&quot;.format(node_num) in peer[&#39;subver&#39;] for peer in self.rpc.getpeerinfo()]),</div>
+<div class="line">            timeout=5)</div>
+<div class="line"> </div>
+<div class="line">    def getpeers(self) -&gt; List[Peer]:</div>
+<div class="line">        s = self.rpc.getpeerinfo()</div>
+<div class="line">        return [</div>
+<div class="line">            Peer(</div>
+<div class="line">                id=peer[&#39;id&#39;],</div>
+<div class="line">                banscore=peer[&#39;banscore&#39;]</div>
+<div class="line">            )</div>
+<div class="line">            for peer in s</div>
+<div class="line">        ]</div>
+<div class="line"> </div>
+<div class="line">    def getbalance(self) -&gt; int:</div>
+<div class="line">        # convert to satoshi</div>
+<div class="line">        return int(self.rpc.getbalance() * 10**8)</div>
+<div class="line"> </div>
+<div class="line">    def getnewaddress(self) -&gt; str:</div>
+<div class="line">        return self.rpc.getnewaddress()</div>
+<div class="line"> </div>
+<div class="line">    def getpayoutinfo(self, address: str = None) -&gt; Hexstr:</div>
+<div class="line">        address = address or self.getnewaddress()</div>
+<div class="line">        s = self.rpc.validateaddress(address)</div>
+<div class="line">        return s[&#39;scriptPubKey&#39;]</div>
+<div class="line"> </div>
+<div class="line">    def generate(self, nblocks: int, address: str = None) -&gt; None:</div>
+<div class="line">        address = address or self.getnewaddress()</div>
+<div class="line">        self.rpc.generatetoaddress(nblocks, address)</div>
+<div class="line"> </div>
+<div class="line">    def getbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def getblock(self, hash: Hexstr) -&gt; BlockWithPopData:</div>
+<div class="line">        s = self.rpc.getblock(hash)</div>
+<div class="line">        return BlockWithPopData(</div>
+<div class="line">            hash=s[&#39;hash&#39;],</div>
+<div class="line">            height=s[&#39;height&#39;],</div>
+<div class="line">            prevhash=s.get(&#39;previousblockhash&#39;, &#39;&#39;),</div>
+<div class="line">            confirmations=s[&#39;confirmations&#39;],</div>
+<div class="line">            endorsedBy=s[&#39;pop&#39;][&#39;state&#39;][&#39;endorsedBy&#39;],</div>
+<div class="line">            blockOfProofEndorsements=[],</div>
+<div class="line">            containingATVs=s[&#39;pop&#39;][&#39;data&#39;][&#39;atvs&#39;],</div>
+<div class="line">            containingVTBs=s[&#39;pop&#39;][&#39;data&#39;][&#39;vtbs&#39;],</div>
+<div class="line">            containingVBKs=s[&#39;pop&#39;][&#39;data&#39;][&#39;vbkblocks&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getblockcount(self) -&gt; int:</div>
+<div class="line">        return self.rpc.getblockcount()</div>
+<div class="line"> </div>
+<div class="line">    def getblockhash(self, height: int) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getblockhash(height)</div>
+<div class="line"> </div>
+<div class="line">    def getbtcbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getbtcbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def getpopdatabyhash(self, hash: Hexstr) -&gt; GetpopdataResponse:</div>
+<div class="line">        s = self.rpc.getpopdatabyhash(hash)</div>
+<div class="line">        return GetpopdataResponse(</div>
+<div class="line">            header=s[&#39;block_header&#39;],</div>
+<div class="line">            authenticated_context=s[&#39;authenticated_context&#39;][&#39;serialized&#39;],</div>
+<div class="line">            last_known_vbk_block=s[&#39;last_known_veriblock_blocks&#39;][-1],</div>
+<div class="line">            last_known_btc_block=s[&#39;last_known_bitcoin_blocks&#39;][-1],</div>
+<div class="line">        )import distutils.spawn</div>
+<div class="line">import pathlib</div>
+<div class="line"> </div>
+<div class="line">from .framework.bin_util import assert_dir_accessible, get_open_port</div>
+<div class="line">from .framework.entities import *</div>
+<div class="line">from .framework.json_rpc import JsonRpcApi, JsonRpcException</div>
+<div class="line">from .framework.managers import ProcessManager</div>
+<div class="line">from .framework.node import Node</div>
+<div class="line">from .framework.sync_util import wait_until</div>
+<div class="line"> </div>
+<div class="line">PORT_MIN = 15000</div>
+<div class="line">PORT_MAX = 25000</div>
+<div class="line">BIND_TO = &#39;127.0.0.1&#39;</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">def _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password):</div>
+<div class="line">    bitcoin_conf_file = pathlib.Path(datadir, &quot;vbitcoin.conf&quot;)</div>
+<div class="line">    with open(bitcoin_conf_file, &#39;w&#39;, encoding=&#39;utf8&#39;) as f:</div>
+<div class="line">        f.write(&quot;regtest=1\n&quot;)</div>
+<div class="line">        f.write(&quot;[{}]\n&quot;.format(&quot;regtest&quot;))</div>
+<div class="line">        f.write(&quot;port={}\n&quot;.format(p2p_port))</div>
+<div class="line">        f.write(&quot;rpcport={}\n&quot;.format(rpc_port))</div>
+<div class="line">        f.write(&quot;rpcuser={}\n&quot;.format(rpc_user))</div>
+<div class="line">        f.write(&quot;rpcpassword={}\n&quot;.format(rpc_password))</div>
+<div class="line">        f.write(&quot;fallbackfee=0.0002\n&quot;)</div>
+<div class="line">        f.write(&quot;server=1\n&quot;)</div>
+<div class="line">        f.write(&quot;keypool=1\n&quot;)</div>
+<div class="line">        f.write(&quot;discover=0\n&quot;)</div>
+<div class="line">        f.write(&quot;dnsseed=0\n&quot;)</div>
+<div class="line">        f.write(&quot;listenonion=0\n&quot;)</div>
+<div class="line">        f.write(&quot;printtoconsole=0\n&quot;)</div>
+<div class="line">        f.write(&quot;upnp=0\n&quot;)</div>
+<div class="line">        f.write(&quot;shrinkdebugfile=0\n&quot;)</div>
+<div class="line">        f.write(&quot;popvbknetwork=regtest\n&quot;)</div>
+<div class="line">        f.write(&quot;popbtcnetwork=regtest\n&quot;)</div>
+<div class="line">        f.write(&quot;poplogverbosity=info\n&quot;)</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">class VBitcoindNode(Node):</div>
+<div class="line">    def __init__(self, number: int, datadir: pathlib.Path):</div>
+<div class="line">        self.number = number</div>
+<div class="line"> </div>
+<div class="line">        p2p_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)</div>
+<div class="line">        self.p2p_address = &quot;{}:{}&quot;.format(BIND_TO, p2p_port)</div>
+<div class="line"> </div>
+<div class="line">        rpc_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)</div>
+<div class="line">        rpc_url = &quot;http://{}:{}/&quot;.format(BIND_TO, rpc_port)</div>
+<div class="line">        rpc_user = &#39;testuser&#39;</div>
+<div class="line">        rpc_password = &#39;testpassword&#39;</div>
+<div class="line">        self.rpc = JsonRpcApi(rpc_url, user=rpc_user, password=rpc_password)</div>
+<div class="line"> </div>
+<div class="line">        exe = distutils.spawn.find_executable(&quot;vbitcoind&quot;)</div>
+<div class="line">        if not exe:</div>
+<div class="line">            raise Exception(&quot;VBitcoinNode: vbitcoind is not found in PATH&quot;)</div>
+<div class="line"> </div>
+<div class="line">        assert_dir_accessible(datadir)</div>
+<div class="line">        args = [</div>
+<div class="line">            exe,</div>
+<div class="line">            &quot;-datadir=&quot; + str(datadir),</div>
+<div class="line">            &quot;-logtimemicros&quot;,</div>
+<div class="line">            &quot;-logthreadnames&quot;,</div>
+<div class="line">            &quot;-debug&quot;,</div>
+<div class="line">            &quot;-debugexclude=libevent&quot;,</div>
+<div class="line">            &quot;-debugexclude=leveldb&quot;,</div>
+<div class="line">            &quot;-txindex&quot;,</div>
+<div class="line">            &quot;-uacomment=testnode{}&quot;.format(number)</div>
+<div class="line">        ]</div>
+<div class="line">        self.manager = ProcessManager(args, datadir)</div>
+<div class="line"> </div>
+<div class="line">        _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password)</div>
+<div class="line"> </div>
+<div class="line">    def start(self) -&gt; None:</div>
+<div class="line">        self.manager.start()</div>
+<div class="line">        wait_until(lambda: self.is_rpc_available(), timeout=60)</div>
+<div class="line"> </div>
+<div class="line">    def is_rpc_available(self) -&gt; bool:</div>
+<div class="line">        try:</div>
+<div class="line">            self.rpc.getblockcount()</div>
+<div class="line">            return True</div>
+<div class="line">        except Exception as e:</div>
+<div class="line">            return False</div>
+<div class="line"> </div>
+<div class="line">    def stop(self) -&gt; None:</div>
+<div class="line">        self.manager.stop()</div>
+<div class="line"> </div>
+<div class="line">    def connect(self, node):</div>
+<div class="line">        self.rpc.addnode(node.p2p_address, &#39;onetry&#39;)</div>
+<div class="line">        # poll until version handshake complete to avoid race conditions</div>
+<div class="line">        # with transaction relaying</div>
+<div class="line">        wait_until(lambda: all(peer[&#39;version&#39;] != 0 for peer in self.rpc.getpeerinfo()))</div>
+<div class="line"> </div>
+<div class="line">    def disconnect(self, node):</div>
+<div class="line">        node_num = node.numimport distutils.spawn</div>
+<div class="line">import pathlib</div>
+<div class="line"> </div>
+<div class="line">from .framework.bin_util import assert_dir_accessible, get_open_port</div>
+<div class="line">from .framework.entities import *</div>
+<div class="line">from .framework.json_rpc import JsonRpcApi, JsonRpcException</div>
+<div class="line">from .framework.managers import ProcessManager</div>
+<div class="line">from .framework.node import Node</div>
+<div class="line">from .framework.sync_util import wait_until</div>
+<div class="line"> </div>
+<div class="line">PORT_MIN = 15000</div>
+<div class="line">PORT_MAX = 25000</div>
+<div class="line">BIND_TO = &#39;127.0.0.1&#39;</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">def _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password):</div>
+<div class="line">    bitcoin_conf_file = pathlib.Path(datadir, &quot;vbitcoin.conf&quot;)</div>
+<div class="line">    with open(bitcoin_conf_file, &#39;w&#39;, encoding=&#39;utf8&#39;) as f:</div>
+<div class="line">        f.write(&quot;regtest=1\n&quot;)</div>
+<div class="line">        f.write(&quot;[{}]\n&quot;.format(&quot;regtest&quot;))</div>
+<div class="line">        f.write(&quot;port={}\n&quot;.format(p2p_port))</div>
+<div class="line">        f.write(&quot;rpcport={}\n&quot;.format(rpc_port))</div>
+<div class="line">        f.write(&quot;rpcuser={}\n&quot;.format(rpc_user))</div>
+<div class="line">        f.write(&quot;rpcpassword={}\n&quot;.format(rpc_password))</div>
+<div class="line">        f.write(&quot;fallbackfee=0.0002\n&quot;)</div>
+<div class="line">        f.write(&quot;server=1\n&quot;)</div>
+<div class="line">        f.write(&quot;keypool=1\n&quot;)</div>
+<div class="line">        f.write(&quot;discover=0\n&quot;)</div>
+<div class="line">        f.write(&quot;dnsseed=0\n&quot;)</div>
+<div class="line">        f.write(&quot;listenonion=0\n&quot;)</div>
+<div class="line">        f.write(&quot;printtoconsole=0\n&quot;)</div>
+<div class="line">        f.write(&quot;upnp=0\n&quot;)</div>
+<div class="line">        f.write(&quot;shrinkdebugfile=0\n&quot;)</div>
+<div class="line">        f.write(&quot;popvbknetwork=regtest\n&quot;)</div>
+<div class="line">        f.write(&quot;popbtcnetwork=regtest\n&quot;)</div>
+<div class="line">        f.write(&quot;poplogverbosity=info\n&quot;)</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">class VBitcoindNode(Node):</div>
+<div class="line">    def __init__(self, number: int, datadir: pathlib.Path):</div>
+<div class="line">        self.number = number</div>
+<div class="line"> </div>
+<div class="line">        p2p_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)</div>
+<div class="line">        self.p2p_address = &quot;{}:{}&quot;.format(BIND_TO, p2p_port)</div>
+<div class="line"> </div>
+<div class="line">        rpc_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)</div>
+<div class="line">        rpc_url = &quot;http://{}:{}/&quot;.format(BIND_TO, rpc_port)</div>
+<div class="line">        rpc_user = &#39;testuser&#39;</div>
+<div class="line">        rpc_password = &#39;testpassword&#39;</div>
+<div class="line">        self.rpc = JsonRpcApi(rpc_url, user=rpc_user, password=rpc_password)</div>
+<div class="line"> </div>
+<div class="line">        exe = distutils.spawn.find_executable(&quot;vbitcoind&quot;)</div>
+<div class="line">        if not exe:</div>
+<div class="line">            raise Exception(&quot;VBitcoinNode: vbitcoind is not found in PATH&quot;)</div>
+<div class="line"> </div>
+<div class="line">        assert_dir_accessible(datadir)</div>
+<div class="line">        args = [</div>
+<div class="line">            exe,</div>
+<div class="line">            &quot;-datadir=&quot; + str(datadir),</div>
+<div class="line">            &quot;-logtimemicros&quot;,</div>
+<div class="line">            &quot;-logthreadnames&quot;,</div>
+<div class="line">            &quot;-debug&quot;,</div>
+<div class="line">            &quot;-debugexclude=libevent&quot;,</div>
+<div class="line">            &quot;-debugexclude=leveldb&quot;,</div>
+<div class="line">            &quot;-txindex&quot;,</div>
+<div class="line">            &quot;-uacomment=testnode{}&quot;.format(number)</div>
+<div class="line">        ]</div>
+<div class="line">        self.manager = ProcessManager(args, datadir)</div>
+<div class="line"> </div>
+<div class="line">        _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password)</div>
+<div class="line"> </div>
+<div class="line">    def start(self) -&gt; None:</div>
+<div class="line">        self.manager.start()</div>
+<div class="line">        wait_until(lambda: self.is_rpc_available(), timeout=60)</div>
+<div class="line"> </div>
+<div class="line">    def is_rpc_available(self) -&gt; bool:</div>
+<div class="line">        try:</div>
+<div class="line">            self.rpc.getblockcount()</div>
+<div class="line">            return True</div>
+<div class="line">        except Exception as e:</div>
+<div class="line">            return False</div>
+<div class="line"> </div>
+<div class="line">    def stop(self) -&gt; None:</div>
+<div class="line">        self.manager.stop()</div>
+<div class="line"> </div>
+<div class="line">    def connect(self, node):</div>
+<div class="line">        self.rpc.addnode(node.p2p_address, &#39;onetry&#39;)</div>
+<div class="line">        # poll until version handshake complete to avoid race conditions</div>
+<div class="line">        # with transaction relaying</div>
+<div class="line">        wait_until(lambda: all(peer[&#39;version&#39;] != 0 for peer in self.rpc.getpeerinfo()))</div>
+<div class="line"> </div>
+<div class="line">    def disconnect(self, node):</div>
+<div class="line">        node_num = node.number</div>
+<div class="line">        for peer_id in [peer[&#39;id&#39;] for peer in self.rpc.getpeerinfo() if</div>
+<div class="line">                        &quot;testnode{}&quot;.format(node_num) in peer[&#39;subver&#39;]]:</div>
+<div class="line">            try:</div>
+<div class="line">                self.rpc.disconnectnode(address=&#39;&#39;, nodeid=peer_id)</div>
+<div class="line">            except JsonRpcException as e:</div>
+<div class="line">                # If this node is disconnected between calculating the peer id</div>
+<div class="line">                # and issuing the disconnect, don&#39;t worry about it.</div>
+<div class="line">                # This avoids a race condition if we&#39;re mass-disconnecting peers.</div>
+<div class="line">                if e.error[&#39;code&#39;] != -29:  # RPC_CLIENT_NODE_NOT_CONNECTED</div>
+<div class="line">                    raise</div>
+<div class="line"> </div>
+<div class="line">        # wait to disconnect</div>
+<div class="line">        wait_until(</div>
+<div class="line">            lambda: not any([&quot;testnode{}&quot;.format(node_num) in peer[&#39;subver&#39;] for peer in self.rpc.getpeerinfo()]),</div>
+<div class="line">            timeout=5)</div>
+<div class="line"> </div>
+<div class="line">    def getpeers(self) -&gt; List[Peer]:</div>
+<div class="line">        s = self.rpc.getpeerinfo()</div>
+<div class="line">        return [</div>
+<div class="line">            Peer(</div>
+<div class="line">                id=peer[&#39;id&#39;],</div>
+<div class="line">                banscore=peer[&#39;banscore&#39;]</div>
+<div class="line">            )</div>
+<div class="line">            for peer in s</div>
+<div class="line">        ]</div>
+<div class="line"> </div>
+<div class="line">    def getbalance(self) -&gt; int:</div>
+<div class="line">        # convert to satoshi</div>
+<div class="line">        return int(self.rpc.getbalance() * 10**8)</div>
+<div class="line"> </div>
+<div class="line">    def getnewaddress(self) -&gt; str:</div>
+<div class="line">        return self.rpc.getnewaddress()</div>
+<div class="line"> </div>
+<div class="line">    def getpayoutinfo(self, address: str = None) -&gt; Hexstr:</div>
+<div class="line">        address = address or self.getnewaddress()</div>
+<div class="line">        s = self.rpc.validateaddress(address)</div>
+<div class="line">        return s[&#39;scriptPubKey&#39;]</div>
+<div class="line"> </div>
+<div class="line">    def generate(self, nblocks: int, address: str = None) -&gt; None:</div>
+<div class="line">        address = address or self.getnewaddress()</div>
+<div class="line">        self.rpc.generatetoaddress(nblocks, address)</div>
+<div class="line"> </div>
+<div class="line">    def getbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def getblock(self, hash: Hexstr) -&gt; BlockWithPopData:</div>
+<div class="line">        s = self.rpc.getblock(hash)</div>
+<div class="line">        return BlockWithPopData(</div>
+<div class="line">            hash=s[&#39;hash&#39;],</div>
+<div class="line">            height=s[&#39;height&#39;],</div>
+<div class="line">            prevhash=s.get(&#39;previousblockhash&#39;, &#39;&#39;),</div>
+<div class="line">            confirmations=s[&#39;confirmations&#39;],</div>
+<div class="line">            endorsedBy=s[&#39;pop&#39;][&#39;state&#39;][&#39;endorsedBy&#39;],</div>
+<div class="line">            blockOfProofEndorsements=[],</div>
+<div class="line">            containingATVs=s[&#39;pop&#39;][&#39;data&#39;][&#39;atvs&#39;],</div>
+<div class="line">            containingVTBs=s[&#39;pop&#39;][&#39;data&#39;][&#39;vtbs&#39;],</div>
+<div class="line">            containingVBKs=s[&#39;pop&#39;][&#39;data&#39;][&#39;vbkblocks&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getblockcount(self) -&gt; int:</div>
+<div class="line">        return self.rpc.getblockcount()</div>
+<div class="line"> </div>
+<div class="line">    def getblockhash(self, height: int) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getblockhash(height)</div>
+<div class="line"> </div>
+<div class="line">    def getbtcbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getbtcbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def getpopdatabyhash(self, hash: Hexstr) -&gt; GetpopdataResponse:</div>
+<div class="line">        s = self.rpc.getpopdatabyhash(hash)</div>
+<div class="line">        return GetpopdataResponse(</div>
+<div class="line">            header=s[&#39;block_header&#39;],</div>
+<div class="line">            authenticated_context=s[&#39;authenticated_context&#39;][&#39;serialized&#39;],</div>
+<div class="line">            last_known_vbk_block=s[&#39;last_known_veriblock_blocks&#39;][-1],</div>
+<div class="line">            last_known_btc_block=s[&#39;last_known_bitcoin_blocks&#39;][-1],</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getpopdatabyheight(self, height: int) -&gt; GetpopdataResponse:</div>
+<div class="line">        s = self.rpc.getpopdatabyheight(height)</div>
+<div class="line">        return GetpopdataResponse(</div>
+<div class="line">            header=s[&#39;block_header&#39;],</div>
+<div class="line">            authenticated_context=s[&#39;authenticated_context&#39;][&#39;serialized&#39;],</div>
+<div class="line">            last_known_vbk_block=s[&#39;last_known_veriblock_blocks&#39;][-1],</div>
+<div class="line">            last_known_btc_block=s[&#39;last_known_bitcoin_blocks&#39;][-1],</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getpopparams(self) -&gt; PopParamsResponse:</div>
+<div class="line">        s = self.rpc.getpopparams()</div>
+<div class="line">        bootstrap = GenericBlock(</div>
+<div class="line">            hash=s[&#39;bootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">            prevhash=s[&#39;bootstrapBlock&#39;][&#39;previousBlock&#39;],</div>
+<div class="line">            height=s[&#39;bootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        vbkBootstrap = BlockAndNetwork(</div>
+<div class="line">            block=GenericBlock(</div>
+<div class="line">                hash=s[&#39;vbkBootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">                prevhash=s[&#39;vbkBootstrapBlock&#39;].get(&#39;previousBlock&#39;, &#39;&#39;),</div>
+<div class="line">                height=s[&#39;vbkBootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">            ),</div>
+<div class="line">            network=s[&#39;vbkBootstrapBlock&#39;][&#39;network&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        btcBootstrap = BlockAndNetwork(</div>
+<div class="line">            block=GenericBlock(</div>
+<div class="line">                hash=s[&#39;btcBootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">                prevhash=s[&#39;btcBootstrapBlock&#39;].get(&#39;previousBlock&#39;, &#39;&#39;),</div>
+<div class="line">                height=s[&#39;btcBootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">            ),</div>
+<div class="line">            network=s[&#39;btcBootstrapBlock&#39;][&#39;network&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return PopParamsResponse(</div>
+<div class="line">            popActivationHeight=s[&#39;popActivationHeight&#39;],</div>
+<div class="line">            popRewardPercentage=s[&#39;popRewardPercentage&#39;],</div>
+<div class="line">            popRewardCoefficient=s[&#39;popRewardCoefficient&#39;],</div>
+<div class="line">            popPayoutDelay=s[&#39;payoutParams&#39;][&#39;popPayoutDelay&#39;],</div>
+<div class="line">            bootstrapBlock=bootstrap,</div>
+<div class="line">            vbkBootstrap=vbkBootstrap,</div>
+<div class="line">            btcBootstrap=btcBootstrap,</div>
+<div class="line">            networkId=s[&#39;networkId&#39;],</div>
+<div class="line">            maxVbkBlocksInAltBlock=s[&#39;maxVbkBlocksInAltBlock&#39;],</div>
+<div class="line">            maxVTBsInAltBlock=s[&#39;maxVTBsInAltBlock&#39;],</div>
+<div class="line">            maxATVsInAltBlock=s[&#39;maxATVsInAltBlock&#39;],</div>
+<div class="line">            endorsementSettlementInterval=s[&#39;endorsementSettlementInterval&#39;],</div>
+<div class="line">            finalityDelay=s[&#39;finalityDelay&#39;],</div>
+<div class="line">            keystoneInterval=s[&#39;keystoneInterval&#39;],</div>
+<div class="line">            maxAltchainFutureBlockTime=s[&#39;maxAltchainFutureBlockTime&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getrawatv(self, atvid: Hexstr) -&gt; AtvResponse:</div>
+<div class="line">        s = self.rpc.getrawatv(atvid, 1)</div>
+<div class="line">        r = AtvResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        a = s[&#39;atv&#39;]</div>
+<div class="line">        tx = a[&#39;transaction&#39;]</div>
+<div class="line">        pd = tx[&#39;publicationData&#39;]</div>
+<div class="line">        bop = a[&#39;blockOfProof&#39;]</div>
+<div class="line">        r.atv = ATV(</div>
+<div class="line">            id=a[&#39;id&#39;],</div>
+<div class="line">            tx=VbkTx(</div>
+<div class="line">                hash=tx[&#39;hash&#39;],</div>
+<div class="line">                publicationData=PublicationData(**pd)</div>
+<div class="line">            ),</div>
+<div class="line">            blockOfProof=GenericBlock(</div>
+<div class="line">                hash=bop[&#39;hash&#39;],</div>
+<div class="line">                prevhash=bop[&#39;previousBlock&#39;],</div>
+<div class="line">                height=bop[&#39;height&#39;]</div>
+<div class="line">            )</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getrawpopmempool(self) -&gt; RawPopMempoolResponse:</div>
+<div class="line">        s = self.rpc.getrawpopmempool()</div>
+<div class="line">        return RawPopMempoolResponse(**s)</div>
+<div class="line"> </div>
+<div class="line">    def getrawvbkblock(self, vbkblockid: Hexstr) -&gt; VbkBlockResponse:</div>
+<div class="line">        s = self.rpc.getrawvbkblock(vbkblockid, 1)</div>
+<div class="line">        r = VbkBlockResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        r.vbkblock = VbkBlock(**s[&#39;vbkblock&#39;])</div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getrawvtb(self, vtbid: Hexstr) -&gt; VtbResponse:</div>
+<div class="line">        s = self.rpc.getrawvtb(vtbid, 1)</div>
+<div class="line">        r = VtbResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        v = s[&#39;vtb&#39;]</div>
+<div class="line">        tx = v[&#39;transaction&#39;]</div>
+<div class="line">        cb = v[&#39;containingBlock&#39;]</div>
+<div class="line">        r.vtb = VTB(</div>
+<div class="line">            id=v[&#39;id&#39;],</div>
+<div class="line">            tx=VbkPopTx(</div>
+<div class="line">                hash=tx[&#39;hash&#39;],</div>
+<div class="line">                publishedBlock=VbkBlock(**tx[&#39;publishedBlock&#39;]),</div>
+<div class="line">                blockOfProof=BtcBlock(**tx[&#39;blockOfProof&#39;]),</div>
+<div class="line">                blockOfProofContext=[BtcBlock(**x) for x in tx[&#39;blockOfProofContext&#39;]]</div>
+<div class="line">            ),</div>
+<div class="line">            containingBlock=GenericBlock(</div>
+<div class="line">                hash=cb[&#39;hash&#39;],</div>
+<div class="line">                prevhash=cb[&#39;previousBlock&#39;],</div>
+<div class="line">                height=cb[&#39;height&#39;]</div>
+<div class="line">            )</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getvbkbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getvbkbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def submitpopatv(self, atv: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopatv(atv)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def submitpopvbk(self, vbk: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopvbk(vbk)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def submitpopvtb(self, vtb: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopvtb(vtb)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line">stnode{}&quot;.format(node_num) in peer[&#39;subver&#39;]]:</div>
+<div class="line">            try:</div>
+<div class="line">                self.rpc.disconnectnode(address=&#39;&#39;, nodeid=peer_id)</div>
+<div class="line">            except JsonRpcException as e:</div>
+<div class="line">                # If this node is disconnected between calculating the peer id</div>
+<div class="line">                # and issuing the disconnect, don&#39;t worry about it.</div>
+<div class="line">                # This avoids a race condition if we&#39;re mass-disconnecting peers.</div>
+<div class="line">                if e.error[&#39;code&#39;] != -29:  # RPC_CLIENT_NODE_NOT_CONNECTED</div>
+<div class="line">                    raise</div>
+<div class="line"> </div>
+<div class="line">        # wait to disconnect</div>
+<div class="line">        wait_until(</div>
+<div class="line">            lambda: not any([&quot;testnode{}&quot;.format(node_num) in peer[&#39;subver&#39;] for peer in self.rpc.getpeerinfo()]),</div>
+<div class="line">            timeout=5)</div>
+<div class="line"> </div>
+<div class="line">    def getpeers(self) -&gt; List[Peer]:</div>
+<div class="line">        s = self.rpc.getpeerinfo()</div>
+<div class="line">        return [</div>
+<div class="line">            Peer(</div>
+<div class="line">                id=peer[&#39;id&#39;],</div>
+<div class="line">                banscore=peer[&#39;banscore&#39;]</div>
+<div class="line">            )</div>
+<div class="line">            for peer in s</div>
+<div class="line">        ]</div>
+<div class="line"> </div>
+<div class="line">    def getbalance(self) -&gt; int:</div>
+<div class="line">        # convert to satoshi</div>
+<div class="line">        return int(self.rpc.getbalance() * 10**8)</div>
+<div class="line"> </div>
+<div class="line">    def getnewaddress(self) -&gt; str:</div>
+<div class="line">        return self.rpc.getnewaddress()</div>
+<div class="line"> </div>
+<div class="line">    def getpayoutinfo(self, address: str = None) -&gt; Hexstr:</div>
+<div class="line">        address = address or self.getnewaddress()</div>
+<div class="line">        s = self.rpc.validateaddress(address)</div>
+<div class="line">        return s[&#39;scriptPubKey&#39;]</div>
+<div class="line"> </div>
+<div class="line">    def generate(self, nblocks: int, address: str = None) -&gt; None:</div>
+<div class="line">        address = address or self.getnewaddress()</div>
+<div class="line">        self.rpc.generatetoaddress(nblocks, address)</div>
+<div class="line"> </div>
+<div class="line">    def getbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def getblock(self, hash: Hexstr) -&gt; BlockWithPopData:</div>
+<div class="line">        s = self.rpc.getblock(hash)</div>
+<div class="line">        return BlockWithPopData(</div>
+<div class="line">            hash=s[&#39;hash&#39;],</div>
+<div class="line">            height=s[&#39;height&#39;],</div>
+<div class="line">            prevhash=s.get(&#39;previousblockhash&#39;, &#39;&#39;),</div>
+<div class="line">            confirmations=s[&#39;confirmations&#39;],</div>
+<div class="line">            endorsedBy=s[&#39;pop&#39;][&#39;state&#39;][&#39;endorsedBy&#39;],</div>
+<div class="line">            blockOfProofEndorsements=[],</div>
+<div class="line">            containingATVs=s[&#39;pop&#39;][&#39;data&#39;][&#39;atvs&#39;],</div>
+<div class="line">            containingVTBs=s[&#39;pop&#39;][&#39;data&#39;][&#39;vtbs&#39;],</div>
+<div class="line">            containingVBKs=s[&#39;pop&#39;][&#39;data&#39;][&#39;vbkblocks&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getblockcount(self) -&gt; int:</div>
+<div class="line">        return self.rpc.getblockcount()</div>
+<div class="line"> </div>
+<div class="line">    def getblockhash(self, height: int) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getblockhash(height)</div>
+<div class="line"> </div>
+<div class="line">    def getbtcbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getbtcbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def getpopdatabyhash(self, hash: Hexstr) -&gt; GetpopdataResponse:</div>
+<div class="line">        s = self.rpc.getpopdatabyhash(hash)</div>
+<div class="line">        return GetpopdataResponse(</div>
+<div class="line">            header=s[&#39;block_header&#39;],</div>
+<div class="line">            authenticated_context=s[&#39;authenticated_context&#39;][&#39;serialized&#39;],</div>
+<div class="line">            last_known_vbk_block=s[&#39;last_known_veriblock_blocks&#39;][-1],</div>
+<div class="line">            last_known_btc_block=s[&#39;last_known_bitcoin_blocks&#39;][-1],</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getpopdatabyheight(self, height: int) -&gt; GetpopdataResponse:</div>
+<div class="line">        s = self.rpc.getpopdatabyheight(height)</div>
+<div class="line">        return GetpopdataResponse(</div>
+<div class="line">            header=s[&#39;block_header&#39;],</div>
+<div class="line">            authenticated_context=s[&#39;authenticated_context&#39;][&#39;serialized&#39;],</div>
+<div class="line">            last_known_vbk_block=s[&#39;last_known_veriblock_blocks&#39;][-1],</div>
+<div class="line">            last_known_btc_block=s[&#39;last_known_bitcoin_blocks&#39;][-1],</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getpopparams(self) -&gt; PopParamsResponse:</div>
+<div class="line">        s = self.rpc.getpopparams()</div>
+<div class="line">        bootstrap = GenericBlock(</div>
+<div class="line">            hash=s[&#39;bootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">            prevhash=s[&#39;bootstrapBlock&#39;][&#39;previousBlock&#39;],</div>
+<div class="line">            height=s[&#39;bootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        vbkBootstrap = BlockAndNetwork(</div>
+<div class="line">            block=GenericBlock(</div>
+<div class="line">                hash=s[&#39;vbkBootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">                prevhash=s[&#39;vbkBootstrapBlock&#39;].get(&#39;previousBlock&#39;, &#39;&#39;),</div>
+<div class="line">                height=s[&#39;vbkBootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">            ),</div>
+<div class="line">            network=s[&#39;vbkBootstrapBlock&#39;][&#39;network&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        btcBootstrap = BlockAndNetwork(</div>
+<div class="line">            block=GenericBlock(</div>
+<div class="line">                hash=s[&#39;btcBootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">                prevhash=s[&#39;btcBootstrapBlock&#39;].get(&#39;previousBlock&#39;, &#39;&#39;),</div>
+<div class="line">                height=s[&#39;btcBootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">            ),</div>
+<div class="line">            network=s[&#39;btcBootstrapBlock&#39;][&#39;network&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return PopParamsResponse(</div>
+<div class="line">            popActivationHeight=s[&#39;popActivationHeight&#39;],</div>
+<div class="line">            popRewardPercentage=s[&#39;popRewardPercentage&#39;],</div>
+<div class="line">            popRewardCoefficient=s[&#39;popRewardCoefficient&#39;],</div>
+<div class="line">            popPayoutDelay=s[&#39;payoutParams&#39;][&#39;popPayoutDelay&#39;],</div>
+<div class="line">            bootstrapBlock=bootstrap,</div>
+<div class="line">            vbkBootstrap=vbkBootstrap,</div>
+<div class="line">            btcBootstrap=btcBootstrap,</div>
+<div class="line">            networkId=s[&#39;networkId&#39;],</div>
+<div class="line">            maxVbkBlocksInAltBlock=s[&#39;maxVbkBlocksInAltBlock&#39;],</div>
+<div class="line">            maxVTBsInAltBlock=s[&#39;maxVTBsInAltBlock&#39;],</div>
+<div class="line">            maxATVsInAltBlock=s[&#39;maxATVsInAltBlock&#39;],</div>
+<div class="line">            endorsementSettlementInterval=s[&#39;endorsementSettlementInterval&#39;],</div>
+<div class="line">            finalityDelay=s[&#39;finalityDelay&#39;],</div>
+<div class="line">            keystoneInterval=s[&#39;keystoneInterval&#39;],</div>
+<div class="line">            maxAltchainFutureBlockTime=s[&#39;maxAltchainFutureBlockTime&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getrawatv(self, atvid: Hexstr) -&gt; AtvResponse:</div>
+<div class="line">        s = self.rpc.getrawatv(atvid, 1)</div>
+<div class="line">        r = AtvResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        a = s[&#39;atv&#39;]</div>
+<div class="line">        tx = a[&#39;transaction&#39;]</div>
+<div class="line">        pd = tx[&#39;publicationData&#39;]</div>
+<div class="line">        bop = a[&#39;blockOfProof&#39;]</div>
+<div class="line">        r.atv = ATV(</div>
+<div class="line">            id=a[&#39;id&#39;],</div>
+<div class="line">            tx=VbkTx(</div>
+<div class="line">                hash=tx[&#39;hash&#39;],</div>
+<div class="line">                publicationData=PublicationData(**pd)</div>
+<div class="line">            ),</div>
+<div class="line">            blockOfProof=GenericBlock(</div>
+<div class="line">                hash=bop[&#39;hash&#39;],</div>
+<div class="line">                prevhash=bop[&#39;previousBlock&#39;],</div>
+<div class="line">                height=bop[&#39;height&#39;]</div>
+<div class="line">            )</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getrawpopmempool(self) -&gt; RawPopMempoolResponse:</div>
+<div class="line">        s = self.rpc.getrawpopmempool()</div>
+<div class="line">        return RawPopMempoolResponse(**s)</div>
+<div class="line"> </div>
+<div class="line">    def getrawvbkblock(self, vbkblockid: Hexstr) -&gt; VbkBlockResponse:</div>
+<div class="line">        s = self.rpc.getrawvbkblock(vbkblockid, 1)</div>
+<div class="line">        r = VbkBlockResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        r.vbkblock = VbkBlock(**s[&#39;vbkblock&#39;])</div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getrawvtb(self, vtbid: Hexstr) -&gt; VtbResponse:</div>
+<div class="line">        s = self.rpc.getrawvtb(vtbid, 1)</div>
+<div class="line">        r = VtbResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        v = s[&#39;vtb&#39;]</div>
+<div class="line">        tx = v[&#39;transaction&#39;]</div>
+<div class="line">        cb = v[&#39;containingBlock&#39;]</div>
+<div class="line">        r.vtb = VTB(</div>
+<div class="line">            id=v[&#39;id&#39;],</div>
+<div class="line">            tx=VbkPopTx(</div>
+<div class="line">                hash=tx[&#39;hash&#39;],</div>
+<div class="line">                publishedBlock=VbkBlock(**tx[&#39;publishedBlock&#39;]),</div>
+<div class="line">                blockOfProof=BtcBlock(**tx[&#39;blockOfProof&#39;]),</div>
+<div class="line">                blockOfProofContext=[BtcBlock(**x) for x in tx[&#39;blockOfProofContext&#39;]]</div>
+<div class="line">            ),</div>
+<div class="line">            containingBlock=GenericBlock(</div>
+<div class="line">                hash=cb[&#39;hash&#39;],</div>
+<div class="line">                prevhash=cb[&#39;previousBlock&#39;],</div>
+<div class="line">                height=cb[&#39;height&#39;]</div>
+<div class="line">            )</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getvbkbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getvbkbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def submitpopatv(self, atv: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopatv(atv)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def submitpopvbk(self, vbk: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopvbk(vbk)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def submitpopvtb(self, vtb: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopvtb(vtb)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line">elf, height: int) -&gt; GetpopdataResponse:</div>
+<div class="line">        s = self.rpc.getpopdatabyheight(height)</div>
+<div class="line">        return GetpopdataResponse(</div>
+<div class="line">            header=s[&#39;block_header&#39;],</div>
+<div class="line">            authenticated_context=s[&#39;authenticated_context&#39;][&#39;serialized&#39;],</div>
+<div class="line">            last_known_vbk_block=s[&#39;last_known_veriblock_blocks&#39;][-1],</div>
+<div class="line">            last_known_btc_block=s[&#39;last_known_bitcoin_blocks&#39;][-1],</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getpopparams(self) -&gt; PopParamsResponse:</div>
+<div class="line">        s = self.rpc.getpopparams()</div>
+<div class="line">        bootstrap = GenericBlock(</div>
+<div class="line">            hash=s[&#39;bootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">            prevhash=s[&#39;bootstrapBlock&#39;][&#39;previousBlock&#39;],</div>
+<div class="line">            height=s[&#39;bootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        vbkBootstrap = BlockAndNetwork(</div>
+<div class="line">            block=GenericBlock(</div>
+<div class="line">                hash=s[&#39;vbkBootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">                prevhash=s[&#39;vbkBootstrapBlock&#39;].get(&#39;previousBlock&#39;, &#39;&#39;),</div>
+<div class="line">                height=s[&#39;vbkBootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">            ),</div>
+<div class="line">            network=s[&#39;vbkBootstrapBlock&#39;][&#39;network&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        btcBootstrap = BlockAndNetwork(</div>
+<div class="line">            block=GenericBlock(</div>
+<div class="line">                hash=s[&#39;btcBootstrapBlock&#39;][&#39;hash&#39;],</div>
+<div class="line">                prevhash=s[&#39;btcBootstrapBlock&#39;].get(&#39;previousBlock&#39;, &#39;&#39;),</div>
+<div class="line">                height=s[&#39;btcBootstrapBlock&#39;][&#39;height&#39;]</div>
+<div class="line">            ),</div>
+<div class="line">            network=s[&#39;btcBootstrapBlock&#39;][&#39;network&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return PopParamsResponse(</div>
+<div class="line">            popActivationHeight=s[&#39;popActivationHeight&#39;],</div>
+<div class="line">            popRewardPercentage=s[&#39;popRewardPercentage&#39;],</div>
+<div class="line">            popRewardCoefficient=s[&#39;popRewardCoefficient&#39;],</div>
+<div class="line">            popPayoutDelay=s[&#39;payoutParams&#39;][&#39;popPayoutDelay&#39;],</div>
+<div class="line">            bootstrapBlock=bootstrap,</div>
+<div class="line">            vbkBootstrap=vbkBootstrap,</div>
+<div class="line">            btcBootstrap=btcBootstrap,</div>
+<div class="line">            networkId=s[&#39;networkId&#39;],</div>
+<div class="line">            maxVbkBlocksInAltBlock=s[&#39;maxVbkBlocksInAltBlock&#39;],</div>
+<div class="line">            maxVTBsInAltBlock=s[&#39;maxVTBsInAltBlock&#39;],</div>
+<div class="line">            maxATVsInAltBlock=s[&#39;maxATVsInAltBlock&#39;],</div>
+<div class="line">            endorsementSettlementInterval=s[&#39;endorsementSettlementInterval&#39;],</div>
+<div class="line">            finalityDelay=s[&#39;finalityDelay&#39;],</div>
+<div class="line">            keystoneInterval=s[&#39;keystoneInterval&#39;],</div>
+<div class="line">            maxAltchainFutureBlockTime=s[&#39;maxAltchainFutureBlockTime&#39;]</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def getrawatv(self, atvid: Hexstr) -&gt; AtvResponse:</div>
+<div class="line">        s = self.rpc.getrawatv(atvid, 1)</div>
+<div class="line">        r = AtvResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        a = s[&#39;atv&#39;]</div>
+<div class="line">        tx = a[&#39;transaction&#39;]</div>
+<div class="line">        pd = tx[&#39;publicationData&#39;]</div>
+<div class="line">        bop = a[&#39;blockOfProof&#39;]</div>
+<div class="line">        r.atv = ATV(</div>
+<div class="line">            id=a[&#39;id&#39;],</div>
+<div class="line">            tx=VbkTx(</div>
+<div class="line">                hash=tx[&#39;hash&#39;],</div>
+<div class="line">                publicationData=PublicationData(**pd)</div>
+<div class="line">            ),</div>
+<div class="line">            blockOfProof=GenericBlock(</div>
+<div class="line">                hash=bop[&#39;hash&#39;],</div>
+<div class="line">                prevhash=bop[&#39;previousBlock&#39;],</div>
+<div class="line">                height=bop[&#39;height&#39;]</div>
+<div class="line">            )</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getrawpopmempool(self) -&gt; RawPopMempoolResponse:</div>
+<div class="line">        s = self.rpc.getrawpopmempool()</div>
+<div class="line">        return RawPopMempoolResponse(**s)</div>
+<div class="line"> </div>
+<div class="line">    def getrawvbkblock(self, vbkblockid: Hexstr) -&gt; VbkBlockResponse:</div>
+<div class="line">        s = self.rpc.getrawvbkblock(vbkblockid, 1)</div>
+<div class="line">        r = VbkBlockResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        r.vbkblock = VbkBlock(**s[&#39;vbkblock&#39;])</div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getrawvtb(self, vtbid: Hexstr) -&gt; VtbResponse:</div>
+<div class="line">        s = self.rpc.getrawvtb(vtbid, 1)</div>
+<div class="line">        r = VtbResponse()</div>
+<div class="line">        r.in_active_chain = s[&#39;in_active_chain&#39;]</div>
+<div class="line">        r.confirmations = s[&#39;confirmations&#39;]</div>
+<div class="line">        if r.confirmations &gt; 0:</div>
+<div class="line">            # in block</div>
+<div class="line">            r.blockhash = s[&#39;blockhash&#39;]</div>
+<div class="line">            r.blockheight = s[&#39;blockheight&#39;]</div>
+<div class="line">            r.containingBlocks = s[&#39;containing_blocks&#39;]</div>
+<div class="line"> </div>
+<div class="line">        v = s[&#39;vtb&#39;]</div>
+<div class="line">        tx = v[&#39;transaction&#39;]</div>
+<div class="line">        cb = v[&#39;containingBlock&#39;]</div>
+<div class="line">        r.vtb = VTB(</div>
+<div class="line">            id=v[&#39;id&#39;],</div>
+<div class="line">            tx=VbkPopTx(</div>
+<div class="line">                hash=tx[&#39;hash&#39;],</div>
+<div class="line">                publishedBlock=VbkBlock(**tx[&#39;publishedBlock&#39;]),</div>
+<div class="line">                blockOfProof=BtcBlock(**tx[&#39;blockOfProof&#39;]),</div>
+<div class="line">                blockOfProofContext=[BtcBlock(**x) for x in tx[&#39;blockOfProofContext&#39;]]</div>
+<div class="line">            ),</div>
+<div class="line">            containingBlock=GenericBlock(</div>
+<div class="line">                hash=cb[&#39;hash&#39;],</div>
+<div class="line">                prevhash=cb[&#39;previousBlock&#39;],</div>
+<div class="line">                height=cb[&#39;height&#39;]</div>
+<div class="line">            )</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">        return r</div>
+<div class="line"> </div>
+<div class="line">    def getvbkbestblockhash(self) -&gt; Hexstr:</div>
+<div class="line">        return self.rpc.getvbkbestblockhash()</div>
+<div class="line"> </div>
+<div class="line">    def submitpopatv(self, atv: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopatv(atv)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def submitpopvbk(self, vbk: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopvbk(vbk)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+<div class="line"> </div>
+<div class="line">    def submitpopvtb(self, vtb: Hexstr) -&gt; SubmitPopResponse:</div>
+<div class="line">        s = self.rpc.submitpopvtb(vtb)</div>
+<div class="line">        return SubmitPopResponse(</div>
+<div class="line">            accepted=s[&#39;accepted&#39;],</div>
+<div class="line">            code=s.get(&#39;code&#39;, &#39;&#39;),</div>
+<div class="line">            message=s.get(&#39;message&#39;, &#39;&#39;)</div>
+<div class="line">        )</div>
+</div><!-- fragment --><p>Also for the debugging purposes you can run only one test from the set. </p><div class="fragment"><div class="line">python test_runner.py NodeBasicSyncTest</div>
+</div><!-- fragment --><p>The result of the successfull passing tests should look like this:</p>
+<div class="fragment"><div class="line">TEST                  | STATUS    | DURATION</div>
+<div class="line"> </div>
+<div class="line">NodeBasicSyncTest     | ✓ Passed  | 117 s</div>
+<div class="line">NodeRestartTest       | ✓ Passed  | 22 s</div>
+<div class="line">NodeStartTest         | ✓ Passed  | 11 s</div>
+<div class="line">NodeStopTest          | ✓ Passed  | 11 s</div>
+<div class="line">PopActivateTest       | ✓ Passed  | 18 s</div>
+<div class="line">PopE2ETest            | ✓ Passed  | 30 s</div>
+<div class="line">PopForkResolutionTest | ✓ Passed  | 522 s</div>
+<div class="line">PopInitTest           | ✓ Passed  | 99 s</div>
+<div class="line">PopMempoolGetpopTest  | ✓ Passed  | 376 s</div>
+<div class="line">PopMempoolReorgTest   | ✓ Passed  | 20 s</div>
+<div class="line">PopMempoolSyncTest    | ✓ Passed  | 59 s</div>
+<div class="line">PopParamsTest         | ✓ Passed  | 5 s</div>
+<div class="line">PopSyncTest           | ✓ Passed  | 24 s</div>
+<div class="line">RpcConnectTest        | ✓ Passed  | 24 s</div>
+<div class="line">RpcGenerateTest       | ✓ Passed  | 6 s</div>
+<div class="line">RpcPreflightTest      | ✓ Passed  | 11 s</div>
+<div class="line"> </div>
+<div class="line">ALL                   | ✓ Passed  | 1355 s (accumulated) </div>
+<div class="line">Runtime: 1358 s</div>
+</div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
 <script>

@@ -1,8 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e":[4,0,0,7,16],
-"structaltintegration_1_1BaseBlockTree.html#a12c423f40e6071fa56d8aefcc704f6c8":[4,0,0,7,35],
-"structaltintegration_1_1BaseBlockTree.html#a1543358a5aea3e3681cc228188ca6cde":[4,0,0,7,5],
 "structaltintegration_1_1BaseBlockTree.html#a1c244540d5a6f7e6bbe2f2b4a1e0525c":[4,0,0,7,30],
 "structaltintegration_1_1BaseBlockTree.html#a1cc6964ce332d7232a097ddc65ae3b99":[4,0,0,7,18],
 "structaltintegration_1_1BaseBlockTree.html#a2a9090e335380b4d3aad38a515d2905a":[4,0,0,7,37],
@@ -249,5 +246,8 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BtcChainParams.html#aff0c47611a36e96cf37541198f228e09":[4,0,0,10,7],
 "structaltintegration_1_1BtcChainParamsMain.html":[4,0,0,11],
 "structaltintegration_1_1BtcChainParamsMain.html#a07eb99a6263a5d991c5347a51f8121c1":[4,0,0,11,7],
-"structaltintegration_1_1BtcChainParamsMain.html#a0d52669dbbc0f8381ee38452c97277fd":[4,0,0,11,8]
+"structaltintegration_1_1BtcChainParamsMain.html#a0d52669dbbc0f8381ee38452c97277fd":[4,0,0,11,8],
+"structaltintegration_1_1BtcChainParamsMain.html#a39a97b286420a655284ac78443c6dd7b":[4,0,0,11,5],
+"structaltintegration_1_1BtcChainParamsMain.html#a863fe26c6a1ba5eca0d022e67583f6d7":[4,0,0,11,0],
+"structaltintegration_1_1BtcChainParamsMain.html#a89ba21b31975be277930863e8dbc89b8":[4,0,0,11,1]
 };
