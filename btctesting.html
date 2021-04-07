@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('btctesting.html',''); initResizable();
 <li class="level1"><a href="#autotoc_md87">POP certification tests</a></li>
 </ul>
 </div>
-<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_testing"></a> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd></dd></dl>
+<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_testing"></a></p>
 <h1><a class="anchor" id="autotoc_md84"></a>
 Overview</h1>
 <p>Here we describe which POP related tests should be added and should be passed to be confident that POP security works fine. All tests separated to the following:</p><ul>
@@ -136,7 +136,7 @@ POP functional tests</h1>
 POP certification tests</h1>
 <p>These bunch of tests are important flag that all pop functionality works fine. All known parts of the POP security covered by this tests. So it is important before launching even Testnet to be sure that all this tests passed.</p>
 <p>Before running all these tests you should install our python framework, you can follown the following guide <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md</a>.</p>
-<p>After that you can copy the following code, it is the <code>test_runner</code> of all our certification tests. <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/test_runner.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/test_runner.py</a></p>
+<p>After that you can copy the following code, it is the <code>test_runner</code> of all our certification tests. <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/vbitcoind_node.py">https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/vbitcoind_node.py</a></p>
 <div class="fragment"><div class="line">import pathlib</div>
 <div class="line">import sys</div>
 <div class="line"> </div>
@@ -157,7 +157,7 @@ POP certification tests</h1>
 <div class="line">    else:</div>
 <div class="line">        tests = all_tests</div>
 <div class="line">    run_tests(tests, create_node)</div>
-</div><!-- fragment --><p>Next you have to implement the <code>node</code> which will be an adaptor for your deamon. Such adaptor should can <code>run</code>, <code>stop</code>, <code>restart</code> the deamon, execute some rpc functions etc. You can use our node realisation for the original btc. <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py</a></p>
+</div><!-- fragment --><p>Next you have to implement the <code>node</code> which will be an adaptor for your deamon. Such adaptor should can <code>run</code>, <code>stop</code>, <code>restart</code> the deamon, execute some rpc functions etc. You can use our node realisation for the original btc. <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py">https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py</a></p>
 <div class="fragment"><div class="line">import distutils.spawn</div>
 <div class="line">import pathlib</div>
 <div class="line"> </div>
