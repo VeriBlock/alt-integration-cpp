@@ -1,0 +1,12 @@
+digraph "include/veriblock/pop/config.hpp"
+{
+ // INTERACTIVE_SVG=YES
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="include/veriblock/pop\l/config.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Altchains must configure AltBlockTree prior any usage by providing bootstrapping Config."];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="include/veriblock/pop\l/pop_context.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$pop__context_8hpp_source.html",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="include/veriblock/pop.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$pop_8hpp_source.html",tooltip=" "];
+}
