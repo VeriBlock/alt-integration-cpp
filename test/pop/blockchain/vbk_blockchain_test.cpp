@@ -30,12 +30,10 @@ struct BtcInvalidationTest {
   PayloadsIndex payloadsIndex;
 };
 
-struct VbkBlocksTest : public BtcInvalidationTest, public ::testing::Test {};
-
-TEST_F(VbkBlocksTest, basic_test) {
+TEST(VbkBlocksTest, basic_test) {
   std::vector<VbkBlock> blocks;
 
-  std::vector<std::string> hex_blocks = {
+  static std::vector<std::string> hex_blocks = {
       "001571450002DC17D1D9F25F68F4BF21CDF9DDBABD593C5513A5BFB51A7106DA6BE0F5B6"
       "E2B4A340ACBA424435528917531CAE4B605EB533040AE824000421F0C8",
       "00157146000211F6E67E45AE4FF021589FD0DDBABD593C5513A5BFB51A7106DA6BE0F5B6"
@@ -309,28 +307,34 @@ TEST_F(VbkBlocksTest, basic_test) {
 
   };
 
+  VbkChainParamsTest vbkparam;
+  BtcChainParamsRegTest btcparam;
+  InmemPayloadsProvider storage;
+  PayloadsIndex payloadsIndex;
+  ValidationState state;
+
+  int32_t starting_height = 1405253;
+
   for (size_t i = 0; i < hex_blocks.size(); ++i) {
     VbkBlock blk;
     ASSERT_TRUE(DeserializeFromRawHex(hex_blocks[i], blk, state))
         << state.toString();
 
-    ASSERT_EQ(blk.getHeight(), 1405253 + i);
+    ASSERT_EQ(blk.getHeight(), starting_height + i);
     blocks.push_back(blk);
   }
 
   auto bootstrap_chain = blocks;
-  bootstrap_chain.resize(130);
+  bootstrap_chain.resize(100);
 
-  VbkChainParamsTest vbktestparam;
+  VbkBlockTree tree(vbkparam, btcparam, storage, payloadsIndex);
 
-  VbkBlockTree tree(vbktestparam, btcparam, storage, payloadsIndex);
+  ASSERT_EQ(bootstrap_chain.size(), 100);
 
-  ASSERT_EQ(bootstrap_chain.size(), 130);
-
-  ASSERT_TRUE(tree.bootstrapWithChain(1405253, bootstrap_chain, state))
+  ASSERT_TRUE(tree.bootstrapWithChain(starting_height, bootstrap_chain, state))
       << state.toString();
 
-  for (size_t i = 130; i < blocks.size(); ++i) {
+  for (size_t i = 100; i < blocks.size(); ++i) {
     ASSERT_TRUE(tree.acceptBlockHeader(blocks[i], state))
         << "block height: " << blocks[i].getHeight() << " " << state.toString();
   }
