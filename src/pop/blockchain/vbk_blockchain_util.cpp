@@ -239,7 +239,11 @@ bool contextuallyCheckBlock(const BlockIndex<VbkBlock>& prev,
 
   if (shouldVerifyNextWork && ((uint32_t)block.getDifficulty() !=
                                getNextWorkRequired(prev, block, params))) {
-    return state.Invalid("vbk-bad-diffbits", "incorrect proof of work");
+    return state.Invalid(
+        "vbk-bad-diffbits",
+        fmt::format("incorrect proof of work, block hash: {}, block height: {}",
+                    block.getHash().toHex(),
+                    block.getHeight()));
   }
 
   // check keystones
