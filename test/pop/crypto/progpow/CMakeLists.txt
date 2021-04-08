@@ -12,5 +12,5 @@ set_test_cost(progpow_test 38000) # 38 sec
 addtest(ethash_dag_test ethash_dag_test.cpp)
 set_test_cost(ethash_dag_test 21000) # 21 sec
 
-addtest(ethash_dagseed_test ethash_dagseed_test)
+addtest(ethash_dagseed_test ethash_dagseed_test.cpp)
 set_test_cost(ethash_dagseed_test 10000) # 10 sec
