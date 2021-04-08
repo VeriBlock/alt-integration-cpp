@@ -99,6 +99,9 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
     targetDif += ArithUint256::fromBits(workBlock->pprev->getDifficulty());
   }
 
+  ArithUint256 got = ArithUint256::fromBits(67895930);
+  (void)got;
+
   targetDif *= 1000000000;
   targetDif /= (params.getRetargetPeriod() - 1);
   // Half up rounding
@@ -119,7 +122,7 @@ uint32_t getNextWorkRequired(const BlockIndex<VbkBlock>& prevBlock,
   ArithUint256 minDif = params.getMinimumDifficulty();
 
   if (targetDif < minDif) {
-    return minDif.toBits();
+    return (minDif + 500000).toBits();
   }
 
   return targetDif.toBits();
