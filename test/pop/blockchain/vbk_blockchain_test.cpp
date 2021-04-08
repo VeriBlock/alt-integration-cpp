@@ -325,16 +325,16 @@ TEST(VbkBlocksTest, basic_test1) {
   }
 
   auto bootstrap_chain = blocks;
-  bootstrap_chain.resize(130);
+  bootstrap_chain.resize(100);
 
   VbkBlockTree tree(vbkparam, btcparam, storage, payloadsIndex);
 
-  ASSERT_EQ(bootstrap_chain.size(), 130);
+  ASSERT_EQ(bootstrap_chain.size(), 100);
 
   ASSERT_TRUE(tree.bootstrapWithChain(starting_height, bootstrap_chain, state))
       << state.toString();
 
-  for (size_t i = 130; i < blocks.size(); ++i) {
+  for (size_t i = 100; i < blocks.size(); ++i) {
     ASSERT_TRUE(tree.acceptBlockHeader(blocks[i], state))
         << "block height: " << blocks[i].getHeight() << " " << state.toString();
   }
@@ -596,16 +596,16 @@ TEST(VbkBlocksTest, basic_test2) {
   }
 
   auto bootstrap_chain = blocks;
-  bootstrap_chain.resize(110);
+  bootstrap_chain.resize(100);
 
   VbkBlockTree tree(vbkparam, btcparam, storage, payloadsIndex);
 
-  ASSERT_EQ(bootstrap_chain.size(), 110);
+  ASSERT_EQ(bootstrap_chain.size(), 100);
 
   ASSERT_TRUE(tree.bootstrapWithChain(starting_height, bootstrap_chain, state))
       << state.toString();
 
-  for (size_t i = 110; i < blocks.size(); ++i) {
+  for (size_t i = 100; i < blocks.size(); ++i) {
     ASSERT_TRUE(tree.acceptBlockHeader(blocks[i], state))
         << "block height: " << blocks[i].getHeight() << " " << state.toString();
   }
