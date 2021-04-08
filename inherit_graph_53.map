@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,42,107,69"/>
+<area shape="rect" id="node2" title=" " alt="" coords="155,42,261,69"/>
+<area shape="rect" id="node3" title=" " alt="" coords="309,42,431,69"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1StateCorruptedException.html" title="Is thrown only when this library detects POP&#45;related state corruption, and can&#39;t recover." alt="" coords="493,5,682,47"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1StorageIOException.html" title="exception which is thrown on any IO errors." alt="" coords="479,71,696,98"/>
+</map>
