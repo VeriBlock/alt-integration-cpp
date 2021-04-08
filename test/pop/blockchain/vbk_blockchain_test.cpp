@@ -6,12 +6,12 @@
 #include <gtest/gtest.h>
 
 #include <memory>
-
-#include "block_headers.hpp"
 #include <veriblock/pop/blockchain/blocktree.hpp>
 #include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/storage/inmem_payloads_provider.hpp>
+
+#include "block_headers.hpp"
 
 using namespace altintegration;
 
@@ -29,6 +29,32 @@ struct BtcInvalidationTest {
   InmemPayloadsProvider storage;
   PayloadsIndex payloadsIndex;
 };
+
+struct VbkBlocksTest : public BtcInvalidationTest, public ::testing::Test {};
+
+TEST_F(VbkBlocksTest, basic_test) {
+  VbkBlock blk1;
+  VbkBlock blk2;
+
+  ASSERT_TRUE(DeserializeFromRawHex(
+      "001571C70002F26309920CF422149E24C9614AEDA24536EA8316782062B503F19BF40723"
+      "43389FFE105D6BCC222B92ACBE729178605EC434040C027A00071CF398",
+      blk1,
+      state))
+      << state.toString();
+
+  ASSERT_TRUE(DeserializeFromRawHex(
+      "001571C6000276927A414A474AC4098992284AEDA24536EA8316782062B503F19BF40723"
+      "40B82DB946F43A262DCF298D27E57066605EC3D9040BD6BE0000B42E34",
+      blk2,
+      state))
+      << state.toString();
+
+  ASSERT_EQ(blk1.getHash().toHex(),
+            "00000012115A6805C2911ACC23DD21A1ACDD7A8FEACF977B");
+  ASSERT_EQ(blk2.getHash().toHex(),
+            "000000049C8CD8818202D6E2F26309920CF422149E24C961");
+}
 
 struct VbkTestCase {
   std::string headers;
