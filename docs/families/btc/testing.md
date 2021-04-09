@@ -16,7 +16,7 @@ For example, multiple pop tx with different reward addresses on the VBK explorer
 <screenshot>
 ​
 4. Altchain explorer screenshot showing recent ATV and VTB
-![vbtc_explorer_screenshot](images/vbtc_explorer_screenshot.png)
+![](../../images/vbtc_explorer_screenshot.png)
 ​
 # Overview
 ​
