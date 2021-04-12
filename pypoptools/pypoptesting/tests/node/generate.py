@@ -2,7 +2,7 @@ from ...framework.test_framework import PopIntegrationTestFramework
 from ...framework.sync_util import wait_for_block_height
 
 
-class RpcGenerateTest(PopIntegrationTestFramework):
+class NodeGenerateTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 1
 
