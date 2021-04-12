@@ -9,8 +9,7 @@ To show that the pop-enabled altchain most likely works, once could screenshots 
 ![certification_tests](../../img/certification_tests.png)
 
 2. A single get-opereration from an APM.
-![apm_screenshot_1](../../img/apm_screenshot_1.png)
-![apm_screenshot_2](../../img/apm_screenshot_2.png)
+![apm_getoperation_screenshot](../../img/apm_getoperation_screenshot.png)
 ​
 3. A running network with multiple APM instances. For example, multiple pop tx with different reward addresses on the VBK explorer:
 @TODO add a screenshot
