@@ -13,6 +13,7 @@ To show that the pop-enabled altchain most likely works, once could screenshots 
 ​
 3. A running network with multiple APM instances. For example, multiple pop tx with different reward addresses on the VBK explorer:
 @todo add a screenshot
+
 4. Altchain explorer screenshot showing recent ATV and VTB
 ![vbtc_explorer_screenshot](../../img/vbtc_explorer_screenshot.png)
 
