@@ -88,31 +88,9 @@ $(document).ready(function(){initNavTree('btctesting.html',''); initResizable();
 <div class="title">Testing of POP-enabled BTC fork </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_docs_families_btc_testing"></a> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd></dd></dl>
-</div></div><!-- contents -->
-</div><!-- PageDoc -->
-</div><!-- doc-content -->
-<script>
-    $(document).ready(function(){
-        $('.line').each(function(){
-            var t = $(this).html()
-            if(t.startsWith("+")) {
-                $(this).addClass('diff-plus')
-                $(this).html(t.slice(1))
-                $(this).prepend(
-                    $('<div>+</div>')
-                        .addClass('noselect')
-                        .addClass('sign')
-                )
-            } else if (t.startsWith("-")) {
-                $(this).addClass('diff-minus')
-                $(this).html(t.slice(1))
-                $(this).prepend(
-                    $('<div>-</div>')
-                        .addClass('noselect')
-                        .addClass('sign')
-                )
-            }
-        })
-    });
-</script>
+<div class="toc"><h3>Table of Contents</h3>
+<ul><li class="level1"><a href="#autotoc_md84">Summary</a></li>
+<li class="level1"><a href="#autotoc_md85">Overview</a></li>
+<li class="level1"><a href="#autotoc_md86">Unit tests</a></li>
+<li class="level1"><a href="#autotoc_md87">BTC functional tests</a></li>
+<li class="level1"><a href="#autotoc_md88">POP functional tests</a></li>
