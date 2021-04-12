@@ -7,6 +7,9 @@ from .node import (
     NodeGenerateTest,
     NodePreflightTest
 )
+from .rpc import (
+    RpcPopRpcFunctionsTest
+)
 from .pop import (
     PopActivateTest,
     PopE2ETest,
@@ -31,6 +34,7 @@ node_tests = [
 ]
 
 rpc_tests = [
+    RpcPopRpcFunctionsTest()
 ]
 
 pop_tests = [

@@ -124,6 +124,7 @@ class Node(ABC):
 
     # POP Rpc
 
+    # returns the name`s list of the pop related rpc functions
     @abstractmethod
     def getpoprpcfunctions(self) -> Dict[str, str]:
         pass
