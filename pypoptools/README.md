@@ -3,7 +3,10 @@
 ### Install
 
 Make sure boost-python is installed, and python3 is installed.
-
+```bash
+python3 setup.py install
+```
+Or if you build the whole library from source
 ```bash
 # clone this repo and cd inside
 mkdir build && cd build
@@ -15,6 +18,8 @@ sudo make install
 -- Installing: $USER/.local/lib/python3.8/site-packages/pypopminer/pypopminer.so
 -- Up-to-date: $USER/.local/lib/python3.8/site-packages/pypopminer/__init__.py
 ```
+
+
 
 Now pypopminer is installed.
 
