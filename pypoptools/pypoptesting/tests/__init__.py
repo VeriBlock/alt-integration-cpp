@@ -2,12 +2,10 @@ from .node import (
     NodeRestartTest,
     NodeStartTest,
     NodeStopTest,
-    NodeBasicSyncTest
-)
-from .rpc import (
-    RpcConnectTest,
-    RpcGenerateTest,
-    RpcPreflightTest
+    NodeBasicSyncTest, 
+    NodeConnectTest, 
+    NodeGenerateTest,
+    NodePreflightTest
 )
 from .pop import (
     PopActivateTest,
@@ -25,13 +23,14 @@ node_tests = [
     NodeStartTest(),
     NodeStopTest(),
     NodeRestartTest(),
-    NodeBasicSyncTest()
+    NodeBasicSyncTest(),
+    NodeConnectTest(), 
+    NodeGenerateTest(),
+    NodePreflightTest()
+
 ]
 
 rpc_tests = [
-    RpcPreflightTest(),
-    RpcConnectTest(),
-    RpcGenerateTest()
 ]
 
 pop_tests = [
