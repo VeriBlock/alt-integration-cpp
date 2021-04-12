@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Dict
 
 from .entities import *
 
@@ -119,4 +120,10 @@ class Node(ABC):
 
     @abstractmethod
     def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
+        pass
+
+    # POP Rpc
+
+    @abstractmethod
+    def getpoprpcfunctions(self) -> Dict[str, str]:
         pass
