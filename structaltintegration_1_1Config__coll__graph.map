@@ -1,0 +1,12 @@
+<map id="altintegration::Config" name="altintegration::Config">
+<area shape="rect" id="node1" title="A container for Bitcoin and Veriblock configuration data." alt="" coords="226,900,373,1095"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Config_1_1Bootstrap.html" title=" " alt="" coords="5,687,175,837"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Config_1_1Bootstrap.html" title="per&#45;chain bootstrap config" alt="" coords="158,517,382,609"/>
+<area shape="rect" id="node9" href="$structaltintegration_1_1Config_1_1Bootstrap.html" title=" " alt="" coords="215,687,384,837"/>
+<area shape="rect" id="node4" title=" " alt="" coords="117,300,255,377"/>
+<area shape="rect" id="node5" title=" " alt="" coords="165,145,277,223"/>
+<area shape="rect" id="node6" title=" " alt="" coords="276,5,315,83"/>
+<area shape="rect" id="node8" title=" " alt="" coords="313,145,451,223"/>
+<area shape="rect" id="node7" title=" " alt="" coords="279,300,485,377"/>
+<area shape="rect" id="node10" title=" " alt="" coords="427,401,619,493"/>
+</map>

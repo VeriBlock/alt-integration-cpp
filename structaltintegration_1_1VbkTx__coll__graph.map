@@ -1,0 +1,13 @@
+<map id="altintegration::VbkTx" name="altintegration::VbkTx">
+<area shape="rect" id="node1" title="Veriblock transaction, which endorses ALT block in VBK blockchain." alt="" coords="479,873,617,995"/>
+<area shape="rect" id="node2" href="$namespacealtintegration.html#structaltintegration_1_1NetworkBytePair" title="Stores pair of TxType and VBK network byte." alt="" coords="8,719,208,796"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1VbkNetworkType.html" title="works as optional&lt;uint8_t&gt;" alt="" coords="5,469,208,605"/>
+<area shape="rect" id="node4" title=" " alt="" coords="233,498,375,575"/>
+<area shape="rect" id="node11" href="$structaltintegration_1_1PublicationData.html" title="Publication data about ALT block inside VBK blockchain." alt="" coords="350,704,543,811"/>
+<area shape="rect" id="node5" title=" " alt="" coords="317,233,429,311"/>
+<area shape="rect" id="node8" title=" " alt="" coords="567,711,734,803"/>
+<area shape="rect" id="node6" title=" " alt="" coords="354,5,393,83"/>
+<area shape="rect" id="node7" href="$structaltintegration_1_1Coin.html" title="represents VBK atomic units" alt="" coords="621,197,749,347"/>
+<area shape="rect" id="node9" href="$structaltintegration_1_1Output.html" title="Single spending output." alt="" coords="593,461,735,612"/>
+<area shape="rect" id="node10" href="$structaltintegration_1_1Address.html" title="Represents address on VBK chain." alt="" coords="801,145,983,399"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="altintegration::PopRewardsParams" name="altintegration::PopRewardsParams">
+<area shape="rect" id="node1" title="A container for PoP rewards params." alt="" coords="5,204,216,457"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1PopRewardsCurveParams.html" title="A container for curve params." alt="" coords="10,5,211,141"/>
+</map>
