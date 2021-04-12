@@ -12,8 +12,7 @@ To show that the pop-enabled altchain most likely works, once could screenshots 
 ![apm_getoperation_screenshot](../../img/apm_getoperation_screenshot.png)
 ​
 3. A running network with multiple APM instances. For example, multiple pop tx with different reward addresses on the VBK explorer:
-@TODO add a screenshot
-​
+@todo add a screenshot
 4. Altchain explorer screenshot showing recent ATV and VTB
 ![vbtc_explorer_screenshot](../../img/vbtc_explorer_screenshot.png)
 
@@ -111,4 +110,4 @@ Runtime: 1358 s
 ​
 # View APM get-operation
 Run getoperation and view an e2e pop transaction.
-@TODO add a screenshot
+@todo add a screenshot
