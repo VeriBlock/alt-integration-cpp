@@ -10,7 +10,6 @@ from pypoptools.pypoptesting.vbitcoind_node import VBitcoindNode
 def create_node(number: int, path: pathlib.Path) -> Node:
     return VBitcoindNode(number=number, datadir=path)
 
-
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         all_tests_by_name = dict([(test.name(), test) for test in all_tests])

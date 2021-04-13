@@ -1,12 +1,12 @@
 import distutils.spawn
 import pathlib
 
-from .framework.bin_util import assert_dir_accessible, get_open_port
-from .framework.entities import *
-from .framework.json_rpc import JsonRpcApi, JsonRpcException
-from .framework.managers import ProcessManager
-from .framework.node import Node
-from .framework.sync_util import wait_until
+from pypoptools.pypoptesting.framework.bin_util import assert_dir_accessible, get_open_port
+from pypoptools.pypoptesting.framework.entities import *
+from pypoptools.pypoptesting.framework.json_rpc import JsonRpcApi, JsonRpcException
+from pypoptools.pypoptesting.framework.managers import ProcessManager
+from pypoptools.pypoptesting.framework.node import Node
+from pypoptools.pypoptesting.framework.sync_util import wait_until
 
 PORT_MIN = 15000
 PORT_MAX = 25000
