@@ -331,3 +331,6 @@ class VBitcoindNode(Node):
             code=s.get('code', ''),
             message=s.get('message', '')
         )
+
+    def altchainfamilyname(self):
+        return AltchainFamily.BITCOIN

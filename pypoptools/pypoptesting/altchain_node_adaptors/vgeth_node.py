@@ -8,6 +8,7 @@ from pypoptools.pypoptesting.framework.json_rpc import JsonRpcApi, JsonRpcExcept
 from pypoptools.pypoptesting.framework.managers import ProcessManager
 from pypoptools.pypoptesting.framework.node import Node
 from pypoptools.pypoptesting.framework.sync_util import wait_until
+from .altchain_family_enum import AltchainFamily
 
 PORT_MIN = 15000
 PORT_MAX = 25000
@@ -310,3 +311,6 @@ class VGethNode(Node):
             code=s['code'],
             message=s['message']
         )
+
+    def altchainfamilyname(self):
+        return AltchainFamily.ETHEREUM
