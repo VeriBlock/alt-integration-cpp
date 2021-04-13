@@ -73,9 +73,9 @@ These tests validate that all POP functionality works fine. All important parts 
 ​
 VeriBlock Python framework should be installed to make these tests run. Follow the VeriBlock Python testing guide [here](https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md).
 ​
-Now the following POP test runner can be copied to the source code: [https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/test/integration/vbitcoind_node.py](https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/test/integration/vbitcoind_node.py)
+Now the following POP test runner can be copied to the source code: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py](https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py)
 ​
-A ```node``` which acts as an adaptor for `bitcoind` should be implemented. This adaptor should be able to ```run```, ```stop```, ```restart``` `bitcoind` and execute RPC functions. There is a sample ```node``` implementation for BTC: [https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py](https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py)
+A ```node``` which acts as an adaptor for `bitcoind` has been implemented. This adaptor able to ```run```, ```stop```, ```restart``` `bitcoind` and execute RPC functions: [https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/altchain_node_adaptors/vbitcoind_node.py](https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/altchain_node_adaptors/vbitcoind_node.py)
 ​
 For debugging purposes it is possible to run a single test from the test set:
 ```bash
@@ -87,26 +87,26 @@ The result of successfully passing tests should look like this:
 ​
 ```bash
 TEST                  | STATUS    | DURATION
-​
-NodeBasicSyncTest     | Passed  | 117 s
-NodeRestartTest       | Passed  | 22 s
-NodeStartTest         | Passed  | 11 s
-NodeStopTest          | Passed  | 11 s
-PopActivateTest       | Passed  | 18 s
-PopE2ETest            | Passed  | 30 s
-PopForkResolutionTest | Passed  | 522 s
-PopInitTest           | Passed  | 99 s
-PopMempoolGetpopTest  | Passed  | 376 s
-PopMempoolReorgTest   | Passed  | 20 s
-PopMempoolSyncTest    | Passed  | 59 s
-PopParamsTest         | Passed  | 5 s
-PopSyncTest           | Passed  | 24 s
-RpcConnectTest        | Passed  | 24 s
-RpcGenerateTest       | Passed  | 6 s
-RpcPreflightTest      | Passed  | 11 s
-​
-ALL                   | Passed  | 1355 s (accumulated) 
-Runtime: 1358 s
+
+NodeBasicSyncTest     | ✓ Passed  | 90 s
+NodeConnectTest       | ✓ Passed  | 28 s
+NodeGenerateTest      | ✓ Passed  | 8 s
+NodePreflightTest     | ✓ Passed  | 15 s
+NodeRestartTest       | ✓ Passed  | 32 s
+NodeStartTest         | ✓ Passed  | 18 s
+NodeStopTest          | ✓ Passed  | 17 s
+PopActivateTest       | ✓ Passed  | 19 s
+PopE2ETest            | ✓ Passed  | 41 s
+PopForkResolutionTest | ✓ Passed  | 436 s
+PopInitTest           | ✓ Passed  | 98 s
+PopMempoolGetpopTest  | ✓ Passed  | 326 s
+PopMempoolReorgTest   | ✓ Passed  | 38 s
+PopMempoolSyncTest    | ✓ Passed  | 64 s
+PopParamsTest         | ✓ Passed  | 8 s
+PopSyncTest           | ✓ Passed  | 31 s
+
+ALL                   | ✓ Passed  | 1269 s (accumulated) 
+Runtime: 1273 s
 ```
 ​
 # View APM get-operation
