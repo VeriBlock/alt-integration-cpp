@@ -1,5 +1,7 @@
+import os
 import distutils.spawn
-import pathlib
+
+from pathlib import Path
 
 from pypoptools.pypoptesting.framework.bin_util import assert_dir_accessible, get_open_port
 from pypoptools.pypoptesting.framework.entities import *
@@ -14,7 +16,7 @@ BIND_TO = '127.0.0.1'
 
 
 def _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password):
-    bitcoin_conf_file = pathlib.Path(datadir, "vbitcoin.conf")
+    bitcoin_conf_file = Path(datadir, "vbitcoin.conf")
     with open(bitcoin_conf_file, 'w', encoding='utf8') as f:
         f.write("regtest=1\n")
         f.write("[{}]\n".format("regtest"))
@@ -37,7 +39,7 @@ def _write_vbitcoin_conf(datadir, p2p_port, rpc_port, rpc_user, rpc_password):
 
 
 class VBitcoindNode(Node):
-    def __init__(self, number: int, datadir: pathlib.Path):
+    def __init__(self, number: int, datadir: Path):
         self.number = number
 
         p2p_port = get_open_port(PORT_MIN, PORT_MAX, BIND_TO)
@@ -49,7 +51,11 @@ class VBitcoindNode(Node):
         rpc_password = 'testpassword'
         self.rpc = JsonRpcApi(rpc_url, user=rpc_user, password=rpc_password)
 
-        exe = distutils.spawn.find_executable("vbitcoind")
+        vbitcoind_path = os.environ.get('VBITCOIND_PATH')
+        if vbitcoind_path == None:
+            raise Exception("VBITCOIND_PATH env var is not set. Set up the path to the vbitcoind binary to the VBITCOIND_PATH env var")
+
+        exe = Path(Path.cwd(), vbitcoind_path)
         if not exe:
             raise Exception("VBitcoinNode: vbitcoind is not found in PATH")
 
