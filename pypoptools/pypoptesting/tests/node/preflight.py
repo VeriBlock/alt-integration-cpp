@@ -1,7 +1,7 @@
 from ...framework.test_framework import PopIntegrationTestFramework
 
 
-class RpcPreflightTest(PopIntegrationTestFramework):
+class NodePreflightTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 1
 
