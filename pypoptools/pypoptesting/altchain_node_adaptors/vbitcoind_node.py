@@ -1,5 +1,4 @@
 import os
-import distutils.spawn
 
 from pathlib import Path
 
