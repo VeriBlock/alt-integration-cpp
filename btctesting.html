@@ -137,29 +137,29 @@ BTC functional tests</h1>
 </div><!-- fragment --><p> ​ </p>
 <h1><a class="anchor" id="autotoc_md88"></a>
 POP functional tests</h1>
-<p>​ These tests validate that all POP functionality works fine. All important parts of the POP security are covered by these tests. Therefore it is important to make sure that all tests pass before starting Mainnet or even Testnet. ​ VeriBlock Python framework should be installed to make these tests run. Follow the VeriBlock Python testing guide <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md">here</a>. ​ Now the following POP test runner can be copied to the source code: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/test/integration/vbitcoind_node.py">https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/test/integration/vbitcoind_node.py</a> ​ A <code>node</code> which acts as an adaptor for <code>bitcoind</code> should be implemented. This adaptor should be able to <code>run</code>, <code>stop</code>, <code>restart</code> <code>bitcoind</code> and execute RPC functions. There is a sample <code>node</code> implementation for BTC: <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/vbitcoind_node.py</a> ​ For debugging purposes it is possible to run a single test from the test set: </p><div class="fragment"><div class="line">python test_runner.py NodeBasicSyncTest</div>
+<p>​ These tests validate that all POP functionality works fine. All important parts of the POP security are covered by these tests. Therefore it is important to make sure that all tests pass before starting Mainnet or even Testnet. ​ VeriBlock Python framework should be installed to make these tests run. Follow the VeriBlock Python testing guide <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md">here</a>. ​ Now the following POP test runner can be copied to the source code: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py">https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py</a> ​ A <code>node</code> which acts as an adaptor for <code>bitcoind</code> has been implemented. This adaptor able to <code>run</code>, <code>stop</code>, <code>restart</code> <code>bitcoind</code> and execute RPC functions: <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/altchain_node_adaptors/vbitcoind_node.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/altchain_node_adaptors/vbitcoind_node.py</a> ​ For debugging purposes it is possible to run a single test from the test set: </p><div class="fragment"><div class="line">python test_runner.py NodeBasicSyncTest</div>
 <div class="line">​</div>
 </div><!-- fragment --><p> ​ The result of successfully passing tests should look like this: ​ </p><div class="fragment"><div class="line">TEST                  | STATUS    | DURATION</div>
-<div class="line">​</div>
-<div class="line">NodeBasicSyncTest     | Passed  | 117 s</div>
-<div class="line">NodeRestartTest       | Passed  | 22 s</div>
-<div class="line">NodeStartTest         | Passed  | 11 s</div>
-<div class="line">NodeStopTest          | Passed  | 11 s</div>
-<div class="line">PopActivateTest       | Passed  | 18 s</div>
-<div class="line">PopE2ETest            | Passed  | 30 s</div>
-<div class="line">PopForkResolutionTest | Passed  | 522 s</div>
-<div class="line">PopInitTest           | Passed  | 99 s</div>
-<div class="line">PopMempoolGetpopTest  | Passed  | 376 s</div>
-<div class="line">PopMempoolReorgTest   | Passed  | 20 s</div>
-<div class="line">PopMempoolSyncTest    | Passed  | 59 s</div>
-<div class="line">PopParamsTest         | Passed  | 5 s</div>
-<div class="line">PopSyncTest           | Passed  | 24 s</div>
-<div class="line">RpcConnectTest        | Passed  | 24 s</div>
-<div class="line">RpcGenerateTest       | Passed  | 6 s</div>
-<div class="line">RpcPreflightTest      | Passed  | 11 s</div>
-<div class="line">​</div>
-<div class="line">ALL                   | Passed  | 1355 s (accumulated) </div>
-<div class="line">Runtime: 1358 s</div>
+<div class="line"> </div>
+<div class="line">NodeBasicSyncTest     | ✓ Passed  | 90 s</div>
+<div class="line">NodeConnectTest       | ✓ Passed  | 28 s</div>
+<div class="line">NodeGenerateTest      | ✓ Passed  | 8 s</div>
+<div class="line">NodePreflightTest     | ✓ Passed  | 15 s</div>
+<div class="line">NodeRestartTest       | ✓ Passed  | 32 s</div>
+<div class="line">NodeStartTest         | ✓ Passed  | 18 s</div>
+<div class="line">NodeStopTest          | ✓ Passed  | 17 s</div>
+<div class="line">PopActivateTest       | ✓ Passed  | 19 s</div>
+<div class="line">PopE2ETest            | ✓ Passed  | 41 s</div>
+<div class="line">PopForkResolutionTest | ✓ Passed  | 436 s</div>
+<div class="line">PopInitTest           | ✓ Passed  | 98 s</div>
+<div class="line">PopMempoolGetpopTest  | ✓ Passed  | 326 s</div>
+<div class="line">PopMempoolReorgTest   | ✓ Passed  | 38 s</div>
+<div class="line">PopMempoolSyncTest    | ✓ Passed  | 64 s</div>
+<div class="line">PopParamsTest         | ✓ Passed  | 8 s</div>
+<div class="line">PopSyncTest           | ✓ Passed  | 31 s</div>
+<div class="line"> </div>
+<div class="line">ALL                   | ✓ Passed  | 1269 s (accumulated) </div>
+<div class="line">Runtime: 1273 s</div>
 </div><!-- fragment --><p> ​ </p>
 <h1><a class="anchor" id="autotoc_md89"></a>
 View APM get-operation</h1>
