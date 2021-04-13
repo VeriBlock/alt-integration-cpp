@@ -107,7 +107,7 @@ Overview</h1>
 <p>Altchain developers must ensure PopData is cryptographically authenticated in Block Header.</p>
 <p>Regular transactions are typically cryptographically authenticated by inserting Merkle Root into Block Header, we will call it Original Merkle Root.</p>
 <p>Merkle Root which is inserted into Block Header is now called <b>Top Level Merkle Root</b>.</p>
-<p><img src="../../img/toplevelmroot.png" alt="" class="inline"/></p>
+<p><img src="toplevelmroot.png" alt="" class="inline"/></p>
 <p><b>Algorithm to calculate Top Level Merkle Root</b>:</p><ol type="1">
 <li>Build Merkle Tree from individual items of PopData (those are VBK blocks, marked as VBK1 on the picture, VTBs and ATVs), resulting Merkle Root is called <b>Pop Root</b>.</li>
 <li>Insert PopRoot into vector of leaves and calculate <b>Tx Merkle Root</b></li>
