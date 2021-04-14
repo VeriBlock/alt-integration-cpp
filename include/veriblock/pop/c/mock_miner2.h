@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-
+POP_DECLARE_ENTITY(mock_miner);
 
 #ifdef __cplusplus
 }  // end of extern "C"
