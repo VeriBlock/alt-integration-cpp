@@ -119,12 +119,12 @@ $(document).ready(function(){initNavTree('type__helpers_8h_source.html',''); ini
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// declare the custom function for the pop entity</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#define POP_ENTITY_DECLARE_FUNCTION(entity, returntype, funcname, ...) \</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">  returntype pop_##entity##_function_##funcname(                       \</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">      pop_##entity##_t* self __VA_OPT__(, ) __VA_ARGS__);</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">      pop_##entity##_t* self , ##__VA_ARGS__);</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">// signature of the custom function of the pop entity</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#define POP_ENTITY_FUNCTION_SIGNATURE(entity, returntype, funcname, ...) \</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">  returntype pop_##entity##_function_##funcname(                         \</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">      pop_##entity##_t* self __VA_OPT__(, ) __VA_ARGS__)</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">      pop_##entity##_t* self , ##__VA_ARGS__)</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">// signature of the getter method of the pop entity</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#define POP_ENTITY_GETTER_SIGNATURE(entity, returntype, fieldname) \</span></div>
