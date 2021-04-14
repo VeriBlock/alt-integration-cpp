@@ -5,12 +5,7 @@
 
 #include <memory>
 
-#include "veriblock/pop/c/entities/vbkblock.h"
-#include "veriblock/pop/entities/vbkblock.hpp"
-
-struct __pop_vbk_block {
-  altintegration::VbkBlock ref;
-};
+#include "vbkblock.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(vbk_block) {
   if (self != nullptr) {
@@ -18,6 +13,8 @@ POP_ENTITY_FREE_SIGNATURE(vbk_block) {
     self = nullptr;
   }
 }
+
+POP_ENTITY_NEW_SIGNATURE(vbk_block) { return new POP_ENTITY_NAME(vbk_block); }
 
 POP_ENTITY_GETTER_SIGNATURE(vbk_block, POP_ARRAY_NAME(u8), hash) {
   auto hash = self->ref.getHash();

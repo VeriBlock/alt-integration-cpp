@@ -5,12 +5,7 @@
 
 #include <memory>
 
-#include "veriblock/pop/c/entities/btcblock.h"
-#include "veriblock/pop/entities/btcblock.hpp"
-
-struct __pop_btc_block {
-  altintegration::BtcBlock ref;
-};
+#include "btcblock.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
@@ -18,6 +13,8 @@ POP_ENTITY_FREE_SIGNATURE(btc_block) {
     self = nullptr;
   }
 }
+
+POP_ENTITY_NEW_SIGNATURE(btc_block) { return new POP_ENTITY_NAME(btc_block); }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
   auto hash = self->ref.getHash();

@@ -5,12 +5,7 @@
 
 #include <memory>
 
-#include "veriblock/pop/c/entities/altblock.h"
-#include "veriblock/pop/entities/altblock.hpp"
-
-struct __pop_alt_block {
-  altintegration::AltBlock ref;
-};
+#include "altblock.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(alt_block) {
   if (self != nullptr) {
@@ -18,6 +13,8 @@ POP_ENTITY_FREE_SIGNATURE(alt_block) {
     self = nullptr;
   }
 }
+
+POP_ENTITY_NEW_SIGNATURE(alt_block) { return new POP_ENTITY_NAME(alt_block); }
 
 POP_ENTITY_GETTER_SIGNATURE(alt_block, POP_ARRAY_NAME(u8), hash) {
   auto hash = self->ref.getHash();

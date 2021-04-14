@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_ENTITIES_BTCBLOCK_H
-#define VERIBLOCK_POP_CPP_ENTITIES_BTCBLOCK_H
+#ifndef VERIBLOCK_POP_CPP_C_ENTITIES_BTCBLOCK_H
+#define VERIBLOCK_POP_CPP_C_ENTITIES_BTCBLOCK_H
 
-#include "array.h"
-#include "serde.h"
-#include "type_helpers.h"
+#include "veriblock/pop/c/array.h"
+#include "veriblock/pop/c/entities/serde.h"
+#include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
 extern "C" {
