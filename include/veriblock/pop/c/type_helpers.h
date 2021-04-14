@@ -27,14 +27,14 @@ extern "C" {
   returntype pop_##entity##_get_##fieldname(const pop_##entity##_t* self);
 
 // declare the custom function for the pop entity
-#define POP_ENTITY_DECLARE_FUNCTION(entity, returntype, funcname, ...)  \
-  returntype pop_##entity##_function_##funcname(pop_##entity##_t* self, \
-                                                __VA_ARGS__);
+#define POP_ENTITY_DECLARE_FUNCTION(entity, returntype, funcname, ...) \
+  returntype pop_##entity##_function_##funcname(                       \
+      pop_##entity##_t* self __VA_OPT__(, ) __VA_ARGS__);
 
 // signature of the custom function of the pop entity
 #define POP_ENTITY_FUNCTION_SIGNATURE(entity, returntype, funcname, ...) \
-  returntype pop_##entity##_function_##funcname(pop_##entity##_t* self,  \
-                                                __VA_ARGS__)
+  returntype pop_##entity##_function_##funcname(                         \
+      pop_##entity##_t* self __VA_OPT__(, ) __VA_ARGS__)
 
 // signature of the getter method of the pop entity
 #define POP_ENTITY_GETTER_SIGNATURE(entity, returntype, fieldname) \
