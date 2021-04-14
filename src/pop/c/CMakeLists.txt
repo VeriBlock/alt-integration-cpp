@@ -12,7 +12,7 @@ add_library(veriblock-pop-c OBJECT
         entities/btcblock.cpp
         entities/vbkblock.cpp
         entities/altblock.cpp
-        entities/array.cpp
+        array.cpp
         )
 target_link_libraries(veriblock-pop-c
         rocksdb

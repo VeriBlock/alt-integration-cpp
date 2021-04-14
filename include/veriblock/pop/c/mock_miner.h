@@ -7,6 +7,8 @@
 #define VERIBLOCK_POP_CPP_MOCK_MINER_H
 
 #include "bytestream.h"
+#include "entities/btcblock.h"
+#include "entities/vbkblock.h"
 #include "validation_state.h"
 
 #ifdef __cplusplus
