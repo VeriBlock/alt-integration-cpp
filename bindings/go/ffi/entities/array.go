@@ -2,7 +2,7 @@ package entities
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
-// #include <veriblock/pop/c/entities/array.h>
+// #include <veriblock/pop/c/array.h>
 // #include <string.h>
 import "C"
 import "unsafe"
