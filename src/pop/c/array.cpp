@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/pop/c/entities/array.h"
+#include "veriblock/pop/c/array.h"
 
 POP_ARRAY_FREE_SIGNATURE(u8) {
   if (self != nullptr) {
