@@ -1,4 +1,4 @@
-package entities
+package ffi
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
@@ -12,6 +12,15 @@ type BtcBlock struct {
 
 func GenerateDefaultBtcBlock() *BtcBlock {
 	val := &BtcBlock{ref: C.pop_btc_block_generate_default_value()}
+	runtime.SetFinalizer(val, func(v *BtcBlock) {
+		v.Free()
+	})
+
+	return val
+}
+
+func createBtcBlock(ref *C.pop_btc_block_t) *BtcBlock {
+	val := &BtcBlock{ref: ref}
 	runtime.SetFinalizer(val, func(v *BtcBlock) {
 		v.Free()
 	})
