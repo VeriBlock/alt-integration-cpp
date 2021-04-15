@@ -361,6 +361,7 @@ func (v *PopContext) AltGetAtvContainingBlock(atvID entities.AtvID) ([]entities.
 	}
 	hashes := make([]entities.AltHash, len(encodedHashes))
 	for i, encodedHash := range encodedHashes {
+		hashes[i] = make(entities.AltHash, len(encodedHash.([]byte)))
 		copy(hashes[i][:], encodedHash.([]byte))
 	}
 	return hashes, nil
