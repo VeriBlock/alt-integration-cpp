@@ -59,14 +59,14 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"functions_func_k.html",
-"namespacealtintegration.html#a3a859f598c5cd93b8f0019e252da3c91",
-"namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c",
-"structaltintegration_1_1BaseBlockTree.html",
-"structaltintegration_1_1BtcChainParams.html#abccdcdb7869b273683a056131688e9a4",
-"structaltintegration_1_1MemPool.html#a857ee8d33550808b2034da04e4c1f175",
-"structaltintegration_1_1VbkBlock.html#ab7935b2cf5d894299bd7711642a376e9"
+"addblock_8hpp_source.html",
+"functions_func_s.html",
+"namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638",
+"namespacealtintegration.html#afb979093e5b17aa70383e10347e16600",
+"structaltintegration_1_1BaseBlockTree.html#a12c423f40e6071fa56d8aefcc704f6c8",
+"structaltintegration_1_1BtcChainParamsMain.html#a863fe26c6a1ba5eca0d022e67583f6d7",
+"structaltintegration_1_1MemPool.html#abe66b62fdd1c46309150e0f8c8702936",
+"structaltintegration_1_1VbkBlock.html#ae5ff290afb7f397a8d79d5ba4bb53b0f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
