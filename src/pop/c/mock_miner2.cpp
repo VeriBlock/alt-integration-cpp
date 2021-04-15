@@ -54,7 +54,7 @@ POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
 
 POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
                               POP_ENTITY_NAME(vbk_block) *,
-                              mineBtcBlock,
+                              mineVbkBlock,
                               const POP_ENTITY_NAME(vbk_block) * tip) {
   VBK_ASSERT(self);
   VBK_ASSERT(tip);

@@ -25,7 +25,7 @@ func createBtcBlock(ref *C.pop_btc_block_t) *BtcBlock {
 		v.Free()
 	})
 
-	return nil
+	return val
 }
 
 func (v *BtcBlock) Free() {

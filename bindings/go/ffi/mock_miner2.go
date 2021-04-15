@@ -33,7 +33,14 @@ func (v *MockMiner2) MineBtcBlockTip() *BtcBlock {
 	return createBtcBlock(C.pop_mock_miner_function_mineBtcBlockTip(v.ref))
 }
 
+func (v *MockMiner2) MineBtcBlock(block *BtcBlock) *BtcBlock {
+	return createBtcBlock(C.pop_mock_miner_function_mineBtcBlock(v.ref, block.ref))
+}
+
 func (v *MockMiner2) MineVbkBlockTip() *VbkBlock {
-	C.pop_mock_miner_function_mineVbkBlockTip(v.ref)
-	return nil
+	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlockTip(v.ref))
+}
+
+func (v *MockMiner2) MineVbkBlock(block *VbkBlock) *VbkBlock {
+	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlock(v.ref, block.ref))
 }

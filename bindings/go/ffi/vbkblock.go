@@ -19,6 +19,15 @@ func GenerateDefaultVbkBlock() *VbkBlock {
 	return val
 }
 
+func createVbkBlock(ref *C.pop_vbk_block_t) *VbkBlock {
+	val := &VbkBlock{ref: ref}
+	runtime.SetFinalizer(val, func(v *VbkBlock) {
+		v.Free()
+	})
+
+	return val
+}
+
 func (v *VbkBlock) Free() {
 	if v.ref != nil {
 		C.pop_vbk_block_free(v.ref)
