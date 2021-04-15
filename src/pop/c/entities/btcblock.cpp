@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "btcblock.hpp"
+#include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
@@ -17,6 +18,8 @@ POP_ENTITY_FREE_SIGNATURE(btc_block) {
 POP_ENTITY_NEW_SIGNATURE(btc_block) { return new POP_ENTITY_NAME(btc_block); }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getHash();
 
   POP_ARRAY_NAME(u8) res;
@@ -28,6 +31,8 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
 }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), previous_block) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getPreviousBlock();
 
   POP_ARRAY_NAME(u8) res;
@@ -39,6 +44,8 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), previous_block) {
 }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), merkle_root) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getMerkleRoot();
 
   POP_ARRAY_NAME(u8) res;
@@ -50,18 +57,26 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), merkle_root) {
 }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, version) {
+  VBK_ASSERT(self);
+
   return self->ref.getVersion();
 }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, timestamp) {
+  VBK_ASSERT(self);
+
   return self->ref.getTimestamp();
 }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, difficulty) {
+  VBK_ASSERT(self);
+
   return self->ref.getDifficulty();
 }
 
 POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, nonce) {
+  VBK_ASSERT(self);
+
   return self->ref.getNonce();
 }
 

@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "altblock.hpp"
+#include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(alt_block) {
   if (self != nullptr) {
@@ -17,6 +18,8 @@ POP_ENTITY_FREE_SIGNATURE(alt_block) {
 POP_ENTITY_NEW_SIGNATURE(alt_block) { return new POP_ENTITY_NAME(alt_block); }
 
 POP_ENTITY_GETTER_SIGNATURE(alt_block, POP_ARRAY_NAME(u8), hash) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getHash();
 
   POP_ARRAY_NAME(u8) res;
@@ -28,6 +31,8 @@ POP_ENTITY_GETTER_SIGNATURE(alt_block, POP_ARRAY_NAME(u8), hash) {
 }
 
 POP_ENTITY_GETTER_SIGNATURE(alt_block, POP_ARRAY_NAME(u8), previous_block) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getPreviousBlock();
 
   POP_ARRAY_NAME(u8) res;
@@ -39,10 +44,14 @@ POP_ENTITY_GETTER_SIGNATURE(alt_block, POP_ARRAY_NAME(u8), previous_block) {
 }
 
 POP_ENTITY_GETTER_SIGNATURE(alt_block, uint32_t, timestamp) {
+  VBK_ASSERT(self);
+
   return self->ref.getTimestamp();
 }
 
 POP_ENTITY_GETTER_SIGNATURE(alt_block, int32_t, height) {
+  VBK_ASSERT(self);
+
   return self->ref.getHeight();
 }
 
