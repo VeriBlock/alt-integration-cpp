@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "atv.hpp"
+#include "publication_data.hpp"
 #include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(publication_data) {

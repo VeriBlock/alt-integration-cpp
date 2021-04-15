@@ -11,6 +11,7 @@ add_library(veriblock-pop-c OBJECT
         array.cpp
         mock_miner2.cpp
         # entities
+        entities/publication_data.cpp
         entities/btcblock.cpp
         entities/vbkblock.cpp
         entities/altblock.cpp
