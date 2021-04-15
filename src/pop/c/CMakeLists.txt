@@ -10,6 +10,7 @@ add_library(veriblock-pop-c OBJECT
         storage.cpp
         array.cpp
         mock_miner2.cpp
+        validation_state2.cpp
         # entities
         entities/publication_data.cpp
         entities/btcblock.cpp
