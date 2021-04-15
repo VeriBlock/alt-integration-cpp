@@ -1,4 +1,4 @@
-package entities
+package ffi
 
 import (
 	"testing"
