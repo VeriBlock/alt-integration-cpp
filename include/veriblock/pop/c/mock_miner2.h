@@ -12,6 +12,7 @@
 #include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/entities/vtb.h"
 #include "veriblock/pop/c/type_helpers.h"
+#include "veriblock/pop/c/validation_state2.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,6 +67,27 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
 POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             POP_ENTITY_NAME(vbk_block) *,
                             mineVbkBlockTip);
+
+/**
+ * Mine new altintegration::ATV.
+ *
+ * @param[in] self MockMiner.
+ * @param[in] pub_data POP_ENTITY_NAME(publication_data) pointer to the
+ * altintegration::PublicationData
+ * @return POP_ENTITY_NAME(atv) pointer to the mined
+ * altintegration::ATV.
+ */
+POP_ENTITY_DECLARE_FUNCTION(mock_miner,
+                            POP_ENTITY_NAME(atv) *,
+                            mineATV,
+                            const POP_ENTITY_NAME(publication_data) * pub_data);
+
+POP_ENTITY_DECLARE_FUNCTION(mock_miner,
+                            POP_ENTITY_NAME(vtb) *,
+                            mineVTB,
+                            const POP_ENTITY_NAME(vbk_block) * endorsed_block,
+                            const POP_ENTITY_NAME(btc_block) *
+                                last_known_btc_block);
 
 #ifdef __cplusplus
 }  // end of extern "C"
