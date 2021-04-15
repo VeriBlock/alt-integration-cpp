@@ -6,8 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER2_H
 #define VERIBLOCK_POP_CPP_C_MOCK_MINER2_H
 
+#include "veriblock/pop/c/entities/atv.h"
 #include "veriblock/pop/c/entities/btcblock.h"
+#include "veriblock/pop/c/entities/publication_data.h"
 #include "veriblock/pop/c/entities/vbkblock.h"
+#include "veriblock/pop/c/entities/vtb.h"
 #include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
@@ -21,7 +24,8 @@ POP_DECLARE_ENTITY(mock_miner);
  *
  * @param[in] self MockMiner.
  * @param[in] POP_ENTITY_NAME(btc_block) pointer to to the provided block.
- * @return POP_ENTITY_NAME(btc_block) pointer to the mined btc block.
+ * @return POP_ENTITY_NAME(btc_block) pointer to the mined
+ * altintegration::BtcBlock.
  */
 POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             POP_ENTITY_NAME(btc_block) *,
@@ -32,7 +36,8 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
  * Mine new altintegration::BtcBlock on the top of the current btctree.
  *
  * @param[in] self MockMiner.
- * @return POP_ENTITY_NAME(btc_block) pointer to the mined btc block.
+ * @return POP_ENTITY_NAME(btc_block) pointer to the mined
+ * altintegration::BtcBlock.
  */
 POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             POP_ENTITY_NAME(btc_block) *,
@@ -43,7 +48,8 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
  *
  * @param[in] self MockMiner.
  * @param[in] POP_ENTITY_NAME(vbk_block) pointer to to the provided block.
- * @return POP_ENTITY_NAME(vbk_block) pointer to the mined vbk block.
+ * @return POP_ENTITY_NAME(vbk_block) pointer to the mined
+ * altintegration::VbkBlock.
  */
 POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             POP_ENTITY_NAME(vbk_block) *,
@@ -54,7 +60,8 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
  * Mine new altintegration::VbkBlock on the top of the current btctree.
  *
  * @param[in] self MockMiner.
- * @return POP_ENTITY_NAME(vbk_block) pointer to the mined vbk block.
+ * @return POP_ENTITY_NAME(vbk_block) pointer to the mined
+ * altintegration::VbkBlock.
  */
 POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             POP_ENTITY_NAME(vbk_block) *,
