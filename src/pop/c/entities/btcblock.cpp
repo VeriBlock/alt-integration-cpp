@@ -15,8 +15,6 @@ POP_ENTITY_FREE_SIGNATURE(btc_block) {
   }
 }
 
-POP_ENTITY_NEW_SIGNATURE(btc_block) { return new POP_ENTITY_NAME(btc_block); }
-
 POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
   VBK_ASSERT(self);
 
