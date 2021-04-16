@@ -6,8 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 #define VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 
+#include "veriblock/po/c/entities/vtb.h"
 #include "veriblock/pop/c/config2.h"
 #include "veriblock/pop/c/entities/altblock.h"
+#include "veriblock/pop/c/entities/atv.h"
+#include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/storage2.h"
 #include "veriblock/pop/c/type_helpers.h"
 #include "veriblock/pop/c/validation_state2.h"
@@ -58,6 +61,55 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            compare_pop_score,
                            const POP_ENTITY_NAME(alt_block) * A_block,
                            const POP_ENTITY_NAME(alt_block) * B_block);
+
+/**
+ * @copybrief altintegration::MemPool::submit
+ * @see altintegration::MemPool::submit
+ * @param[in] self PopContext
+ * @param[in] atv POP_ENTITY_NAME(atv) pointer to the altintegration::ATV
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
+ * invalid
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           submit_atv,
+                           const POP_ENTITY_NAME(atv) * atv,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * @copybrief altintegration::MemPool::submit
+ * @see altintegration::MemPool::submit
+ * @param[in] self PopContext
+ * @param[in] vtb POP_ENTITY_NAME(vtb) pointer to the altintegration::VTB
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
+ * invalid
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           submit_vtb,
+                           const POP_ENTITY_NAME(vtb) * vtb,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * @copybrief altintegration::MemPool::submit
+ * @see altintegration::MemPool::submit
+ * @param[in] self PopContext
+ * @param[in] vbk_block POP_ENTITY_NAME(vbk_block) pointer to the
+ * altintegration::VbkBlock
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
+ * invalid
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           submit_vbk,
+                           const POP_ENTITY_NAME(vbk_block) * vbk_block,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 #ifdef __cplusplus
 }  // end of extern "C"
