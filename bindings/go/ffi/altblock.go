@@ -15,7 +15,6 @@ func GenerateDefaultAltBlock() *AltBlock {
 	runtime.SetFinalizer(val, func(v *AltBlock) {
 		v.Free()
 	})
-
 	return val
 }
 

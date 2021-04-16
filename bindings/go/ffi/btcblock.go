@@ -15,7 +15,6 @@ func GenerateDefaultBtcBlock() *BtcBlock {
 	runtime.SetFinalizer(val, func(v *BtcBlock) {
 		v.Free()
 	})
-
 	return val
 }
 
@@ -38,7 +37,6 @@ func (v *BtcBlock) GetHash() []byte {
 	if v.ref == nil {
 		panic("BtcBlock does not initialized")
 	}
-
 	array := C.pop_btc_block_get_hash(v.ref)
 	return ConvertToBytes(&array)
 }

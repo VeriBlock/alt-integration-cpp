@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "atv.hpp"
+#include "vbkblock.hpp"
 #include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(atv) {
@@ -16,3 +17,30 @@ POP_ENTITY_FREE_SIGNATURE(atv) {
 }
 
 POP_ENTITY_NEW_SIGNATURE(atv) { return new POP_ENTITY_NAME(atv); }
+
+POP_ENTITY_GETTER_FUNCTION(atv,
+                           const POP_ENTITY_NAME(vbk_block) *,
+                           block_of_proof) {
+  VBK_ASSERT(self);
+
+  auto* res = new POP_ENTITY_NAME(vbk_block);
+  res->ref = self->ref.blockOfProof;
+
+  return res;
+}
+
+POP_GENERATE_DEFAULT_VALUE(atv) {
+  auto* v = new POP_ENTITY_NAME(atv);
+  v->ref = default_value::generateDefaultValue<altintegration::ATV>();
+
+  return v;
+}
+
+namespace default_value {
+template <>
+altintegration::ATV generateDefaultValue<altintegration::ATV>() {
+  altintegration::ATV res;
+  res.blockOfProof = generateDefaultValue<altintegration::VbkBlock>();
+  return res;
+}
+}  // namespace default_value

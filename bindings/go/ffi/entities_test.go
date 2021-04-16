@@ -67,8 +67,6 @@ func TestVtb(t *testing.T) {
 	vtb := GenerateDefaultVtb()
 	vbk_block := GenerateDefaultVbkBlock()
 
-	vtb.GetContainingBlock()
-
 	assert.Equal(vtb.GetContainingBlock().GetHeight(), vbk_block.GetHeight())
 	assert.Equal(vtb.GetContainingBlock().GetNonce(), vbk_block.GetNonce())
 	assert.Equal(vtb.GetContainingBlock().GetDifficulty(), vbk_block.GetDifficulty())
@@ -82,5 +80,26 @@ func TestVtb(t *testing.T) {
 
 	vtb.Free()
 	vtb.Free()
+}
+
+func TestAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	atv := GenerateDefaultAtv()
+	vbk_block := GenerateDefaultVbkBlock()
+
+	assert.Equal(atv.GetBlockOfProof().GetHeight(), vbk_block.GetHeight())
+	assert.Equal(atv.GetBlockOfProof().GetNonce(), vbk_block.GetNonce())
+	assert.Equal(atv.GetBlockOfProof().GetDifficulty(), vbk_block.GetDifficulty())
+	assert.Equal(atv.GetBlockOfProof().GetVersion(), vbk_block.GetVersion())
+	assert.Equal(atv.GetBlockOfProof().GetTimestamp(), vbk_block.GetTimestamp())
+	assert.Equal(atv.GetBlockOfProof().GetMerkleRoot(), vbk_block.GetMerkleRoot())
+	assert.Equal(atv.GetBlockOfProof().GetPreviousBlock(), vbk_block.GetPreviousBlock())
+	assert.Equal(atv.GetBlockOfProof().GetPreviousKeystone(), vbk_block.GetPreviousKeystone())
+	assert.Equal(atv.GetBlockOfProof().GetSecondPreviousKeystone(), vbk_block.GetSecondPreviousKeystone())
+	assert.Equal(atv.GetBlockOfProof().GetHash(), vbk_block.GetHash())
+
+	atv.Free()
+	atv.Free()
 }
 

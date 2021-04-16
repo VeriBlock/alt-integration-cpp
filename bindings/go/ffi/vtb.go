@@ -37,6 +37,5 @@ func (v *Vtb) GetContainingBlock() *VbkBlock {
 	if v.ref == nil {
 		panic("Vtb does not initialized")
 	}
-
 	return createVbkBlock(C.pop_vtb_get_containing_block(v.ref))
 }

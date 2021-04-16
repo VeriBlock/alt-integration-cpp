@@ -8,6 +8,7 @@
 
 #include "veriblock/pop/c/array.h"
 #include "veriblock/pop/c/entities/serde.h"
+#include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
@@ -15,6 +16,12 @@ extern "C" {
 #endif
 
 POP_DECLARE_ENTITY(atv);
+
+POP_ENTITY_GETTER_FUNCTION(atv,
+                           const POP_ENTITY_NAME(vbk_block) *,
+                           block_of_proof);
+
+POP_GENERATE_DEFAULT_VALUE(atv);
 
 #ifdef __cplusplus
 }
