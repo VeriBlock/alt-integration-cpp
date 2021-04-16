@@ -6,11 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER_HPP
 #define VERIBLOCK_POP_CPP_C_MOCK_MINER_HPP
 
-#include "veriblock/pop/c/mock_miner2.h"
-#include "veriblock/pop/mock_miner.hpp"
+#include "veriblock/pop/c/storage2.h"
+#include "adaptors/storage_interface.hpp"
 
-struct __pop_mock_miner {
-  altintegration::MockMiner ref;
+struct __pop_storage {
+  std::shared_ptr<adaptors::Storage> ref;
 };
 
 #endif

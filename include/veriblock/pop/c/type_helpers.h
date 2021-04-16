@@ -22,7 +22,7 @@ extern "C" {
 // signature of the new function of the pop entity. used for the declaration
 // and intialization.
 #define POP_ENTITY_NEW_FUNCTION(entity, ...) \
-  pop_##entity##_t* pop_##entity##_new(##__VA_ARGS__)
+  pop_##entity##_t* pop_##entity##_new(__VA_ARGS__)
 
 // signature of the getter method of the pop entity. used for the declaration
 // and intialization.
