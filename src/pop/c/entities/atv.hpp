@@ -6,11 +6,17 @@
 #ifndef VERIBLOCK_POP_CPP_C_ENTITIES_ALTBLOCK_HPP
 #define VERIBLOCK_POP_CPP_C_ENTITIES_ALTBLOCK_HPP
 
+#include "default_value.hpp"
 #include "veriblock/pop/c/entities/atv.h"
 #include "veriblock/pop/entities/atv.hpp"
 
 struct __pop_atv {
   altintegration::ATV ref;
 };
+
+namespace default_value {
+template <>
+altintegration::ATV generateDefaultValue<altintegration::ATV>();
+}
 
 #endif

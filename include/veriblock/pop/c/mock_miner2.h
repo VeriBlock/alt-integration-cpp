@@ -12,6 +12,7 @@
 #include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/entities/vtb.h"
 #include "veriblock/pop/c/type_helpers.h"
+#include "veriblock/pop/c/validation_state2.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,10 +28,10 @@ POP_DECLARE_ENTITY(mock_miner);
  * @return POP_ENTITY_NAME(btc_block) pointer to the mined
  * altintegration::BtcBlock.
  */
-POP_ENTITY_DECLARE_FUNCTION(mock_miner,
-                            POP_ENTITY_NAME(btc_block) *,
-                            mineBtcBlock,
-                            const POP_ENTITY_NAME(btc_block) * tip);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(btc_block) *,
+                           mineBtcBlock,
+                           const POP_ENTITY_NAME(btc_block) * tip);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the current btctree.
@@ -39,9 +40,9 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
  * @return POP_ENTITY_NAME(btc_block) pointer to the mined
  * altintegration::BtcBlock.
  */
-POP_ENTITY_DECLARE_FUNCTION(mock_miner,
-                            POP_ENTITY_NAME(btc_block) *,
-                            mineBtcBlockTip);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(btc_block) *,
+                           mineBtcBlockTip);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the provided block.
@@ -51,10 +52,10 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
  * @return POP_ENTITY_NAME(vbk_block) pointer to the mined
  * altintegration::VbkBlock.
  */
-POP_ENTITY_DECLARE_FUNCTION(mock_miner,
-                            POP_ENTITY_NAME(vbk_block) *,
-                            mineVbkBlock,
-                            const POP_ENTITY_NAME(vbk_block) * tip);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mineVbkBlock,
+                           const POP_ENTITY_NAME(vbk_block) * tip);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the current btctree.
@@ -63,9 +64,40 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
  * @return POP_ENTITY_NAME(vbk_block) pointer to the mined
  * altintegration::VbkBlock.
  */
-POP_ENTITY_DECLARE_FUNCTION(mock_miner,
-                            POP_ENTITY_NAME(vbk_block) *,
-                            mineVbkBlockTip);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mineVbkBlockTip);
+
+/**
+ * Mine new altintegration::ATV.
+ *
+ * @param[in] self MockMiner.
+ * @param[in] pub_data POP_ENTITY_NAME(publication_data) pointer to the
+ * altintegration::PublicationData
+ * @return POP_ENTITY_NAME(atv) pointer to the mined
+ * altintegration::ATV.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(atv) *,
+                           mineATV,
+                           const POP_ENTITY_NAME(publication_data) * pub_data);
+
+/**
+ * Mine new altintegration::VTB.
+ *
+ * @param[in] self MockMiner.
+ * @param[in] endorsed_block POP_ENTITY_NAME(vbk_block) pointer to the
+ * altintegration::VbkBlock.
+ * @param[in] last_known_btc_block POP_ENTITY_NAME(btc_block) pointer to the
+ * altintegration::BtcBlock.
+ * @return POP_ENTITY_NAME(vtb) pointer to the mined altintegration::VTB.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vtb) *,
+                           mineVTB,
+                           const POP_ENTITY_NAME(vbk_block) * endorsed_block,
+                           const POP_ENTITY_NAME(btc_block) *
+                               last_known_btc_block);
 
 #ifdef __cplusplus
 }  // end of extern "C"

@@ -44,3 +44,11 @@ func (v *MockMiner2) MineVbkBlockTip() *VbkBlock {
 func (v *MockMiner2) MineVbkBlock(block *VbkBlock) *VbkBlock {
 	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlock(v.ref, block.ref))
 }
+
+func (v *MockMiner2) MineAtv(pub_data *PublicationData) *Atv {
+	return createAtv(C.pop_mock_miner_function_mineATV(v.ref, pub_data.ref))
+}
+
+func (v *MockMiner2) MineVtb(endorsed_block *VbkBlock, last_known_btc_block *BtcBlock) *Vtb {
+	return createVtb(C.pop_mock_miner_function_mineVTB(v.ref, endorsed_block.ref, last_known_btc_block.ref))
+}
