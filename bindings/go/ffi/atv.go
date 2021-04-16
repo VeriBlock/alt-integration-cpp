@@ -4,6 +4,7 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/atv.h>
 import "C"
+import "runtime"
 
 type Atv struct {
 	ref *C.pop_atv_t

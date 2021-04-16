@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include "vbkblock.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "vtb.hpp"
 
@@ -16,3 +17,30 @@ POP_ENTITY_FREE_SIGNATURE(vtb) {
 }
 
 POP_ENTITY_NEW_SIGNATURE(vtb) { return new POP_ENTITY_NAME(vtb); }
+
+POP_ENTITY_GETTER_FUNCTION(vtb,
+                           const POP_ENTITY_NAME(vbk_block) *,
+                           containing_block) {
+  VBK_ASSERT(self);
+
+  auto* res = new POP_ENTITY_NAME(vbk_block);
+  res->ref = self->ref.containingBlock;
+
+  return res;
+}
+
+POP_GENERATE_DEFAULT_VALUE(vtb) {
+  auto* v = new POP_ENTITY_NAME(vtb);
+  v->ref = default_value::generateDefaultValue<altintegration::VTB>();
+
+  return v;
+}
+
+namespace default_value {
+template <>
+altintegration::VTB generateDefaultValue<altintegration::VTB>() {
+  altintegration::VTB res;
+  res.containingBlock = generateDefaultValue<altintegration::VbkBlock>();
+  return res;
+}
+}  // namespace default_value

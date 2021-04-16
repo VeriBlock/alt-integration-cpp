@@ -20,10 +20,10 @@ POP_ENTITY_FREE_SIGNATURE(mock_miner) {
 
 POP_ENTITY_NEW_SIGNATURE(mock_miner) { return new POP_ENTITY_NAME(mock_miner); }
 
-POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
-                              POP_ENTITY_NAME(btc_block) *,
-                              mineBtcBlock,
-                              const POP_ENTITY_NAME(btc_block) * tip) {
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(btc_block) *,
+                           mineBtcBlock,
+                           const POP_ENTITY_NAME(btc_block) * tip) {
   VBK_ASSERT(self);
   VBK_ASSERT(tip);
 
@@ -41,9 +41,9 @@ POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
   return res;
 }
 
-POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
-                              POP_ENTITY_NAME(btc_block) *,
-                              mineBtcBlockTip) {
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(btc_block) *,
+                           mineBtcBlockTip) {
   VBK_ASSERT(self);
 
   auto* new_block = self->ref.mineBtcBlocks(1);
@@ -55,10 +55,10 @@ POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
   return res;
 }
 
-POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
-                              POP_ENTITY_NAME(vbk_block) *,
-                              mineVbkBlock,
-                              const POP_ENTITY_NAME(vbk_block) * tip) {
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mineVbkBlock,
+                           const POP_ENTITY_NAME(vbk_block) * tip) {
   VBK_ASSERT(self);
   VBK_ASSERT(tip);
 
@@ -76,9 +76,9 @@ POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
   return res;
 }
 
-POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
-                              POP_ENTITY_NAME(vbk_block) *,
-                              mineVbkBlockTip) {
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mineVbkBlockTip) {
   VBK_ASSERT(self);
 
   auto* new_block = self->ref.mineVbkBlocks(1);
@@ -90,11 +90,10 @@ POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
   return res;
 }
 
-POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
-                              POP_ENTITY_NAME(atv) *,
-                              mineATV,
-                              const POP_ENTITY_NAME(publication_data) *
-                                  pub_data) {
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(atv) *,
+                           mineATV,
+                           const POP_ENTITY_NAME(publication_data) * pub_data) {
   VBK_ASSERT(self);
   VBK_ASSERT(pub_data);
 
@@ -107,12 +106,12 @@ POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
   return res;
 }
 
-POP_ENTITY_FUNCTION_SIGNATURE(mock_miner,
-                              POP_ENTITY_NAME(vtb) *,
-                              mineVTB,
-                              const POP_ENTITY_NAME(vbk_block) * endorsed_block,
-                              const POP_ENTITY_NAME(btc_block) *
-                                  last_known_btc_block) {
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vtb) *,
+                           mineVTB,
+                           const POP_ENTITY_NAME(vbk_block) * endorsed_block,
+                           const POP_ENTITY_NAME(btc_block) *
+                               last_known_btc_block) {
   VBK_ASSERT(self);
   VBK_ASSERT(endorsed_block);
   VBK_ASSERT(last_known_btc_block);
