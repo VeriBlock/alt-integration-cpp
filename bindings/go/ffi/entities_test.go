@@ -60,3 +60,46 @@ func TestAltBlock(t *testing.T) {
 	alt_block.Free()
 	alt_block.Free()
 }
+
+func TestVtb(t *testing.T) {
+	assert := assert.New(t)
+
+	vtb := GenerateDefaultVtb()
+	vbk_block := GenerateDefaultVbkBlock()
+
+	assert.Equal(vtb.GetContainingBlock().GetHeight(), vbk_block.GetHeight())
+	assert.Equal(vtb.GetContainingBlock().GetNonce(), vbk_block.GetNonce())
+	assert.Equal(vtb.GetContainingBlock().GetDifficulty(), vbk_block.GetDifficulty())
+	assert.Equal(vtb.GetContainingBlock().GetVersion(), vbk_block.GetVersion())
+	assert.Equal(vtb.GetContainingBlock().GetTimestamp(), vbk_block.GetTimestamp())
+	assert.Equal(vtb.GetContainingBlock().GetMerkleRoot(), vbk_block.GetMerkleRoot())
+	assert.Equal(vtb.GetContainingBlock().GetPreviousBlock(), vbk_block.GetPreviousBlock())
+	assert.Equal(vtb.GetContainingBlock().GetPreviousKeystone(), vbk_block.GetPreviousKeystone())
+	assert.Equal(vtb.GetContainingBlock().GetSecondPreviousKeystone(), vbk_block.GetSecondPreviousKeystone())
+	assert.Equal(vtb.GetContainingBlock().GetHash(), vbk_block.GetHash())
+
+	vtb.Free()
+	vtb.Free()
+}
+
+func TestAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	atv := GenerateDefaultAtv()
+	vbk_block := GenerateDefaultVbkBlock()
+
+	assert.Equal(atv.GetBlockOfProof().GetHeight(), vbk_block.GetHeight())
+	assert.Equal(atv.GetBlockOfProof().GetNonce(), vbk_block.GetNonce())
+	assert.Equal(atv.GetBlockOfProof().GetDifficulty(), vbk_block.GetDifficulty())
+	assert.Equal(atv.GetBlockOfProof().GetVersion(), vbk_block.GetVersion())
+	assert.Equal(atv.GetBlockOfProof().GetTimestamp(), vbk_block.GetTimestamp())
+	assert.Equal(atv.GetBlockOfProof().GetMerkleRoot(), vbk_block.GetMerkleRoot())
+	assert.Equal(atv.GetBlockOfProof().GetPreviousBlock(), vbk_block.GetPreviousBlock())
+	assert.Equal(atv.GetBlockOfProof().GetPreviousKeystone(), vbk_block.GetPreviousKeystone())
+	assert.Equal(atv.GetBlockOfProof().GetSecondPreviousKeystone(), vbk_block.GetSecondPreviousKeystone())
+	assert.Equal(atv.GetBlockOfProof().GetHash(), vbk_block.GetHash())
+
+	atv.Free()
+	atv.Free()
+}
+

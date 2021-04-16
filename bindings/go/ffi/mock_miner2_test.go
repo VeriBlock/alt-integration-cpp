@@ -68,5 +68,17 @@ func TestMineVbkBlock(t *testing.T) {
 	assert.NotEqual(block2_1.GetHash(), block2.GetHash())
 	assert.NotEqual(block3_1.GetHash(), block3.GetHash())
 	assert.NotEqual(block4_1.GetHash(), block4.GetHash())
+}
 
+func TestMineVtb(t *testing.T) {
+	assert := assert.New(t)
+
+	mockMiner := NewMockMiner2()
+
+	vbkBlock := mockMiner.MineVbkBlockTip()
+	btcBlock := mockMiner.MineBtcBlockTip()
+
+	vtb := mockMiner.MineVtb(vbkBlock, btcBlock)
+
+	assert.Equal(vtb.GetContainingBlock().GetHeight(), vbkBlock.GetHeight() + 1)
 }
