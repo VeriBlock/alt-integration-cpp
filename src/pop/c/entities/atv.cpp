@@ -16,8 +16,6 @@ POP_ENTITY_FREE_SIGNATURE(atv) {
   }
 }
 
-POP_ENTITY_NEW_SIGNATURE(atv) { return new POP_ENTITY_NAME(atv); }
-
 POP_ENTITY_GETTER_FUNCTION(atv,
                            const POP_ENTITY_NAME(vbk_block) *,
                            block_of_proof) {
