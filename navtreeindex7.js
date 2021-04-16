@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1VbkBlock.html#ac7a1e62c8aceafc287bd4f40242838ab":[4,0,0,42,38],
 "structaltintegration_1_1VbkBlock.html#ad0ac4b3654c49c6cb96251406f4bfc23":[4,0,0,42,10],
 "structaltintegration_1_1VbkBlock.html#adbb86ce5058e001d00c6be43dc00f678":[4,0,0,42,28],
 "structaltintegration_1_1VbkBlock.html#ae5ff290afb7f397a8d79d5ba4bb53b0f":[4,0,0,42,44],
@@ -161,7 +162,7 @@ var NAVTREEINDEX7 =
 "time_8hpp_source.html":[5,0,1,0,0,43],
 "todo.html":[1],
 "tree__algo_8hpp_source.html":[5,0,1,0,0,1,21],
-"type__helpers_8h_source.html":[5,0,1,0,0,2,10],
+"type__helpers_8h_source.html":[5,0,1,0,0,2,11],
 "type__traits_8hpp_source.html":[5,0,1,0,0,44],
 "uint_8hpp_source.html":[5,0,1,0,0,45],
 "util_8hpp.html#a81ea80706a3fcf2f6f1be29c33f2dc8b":[3,0,0,1,7],
@@ -170,9 +171,9 @@ var NAVTREEINDEX7 =
 "util_8hpp.html#ac65139475c1db006dd0d8b5af8f0ae33":[3,0,0,1,8],
 "util_8hpp.html#af57ae0917d044998806a180360d57018":[3,0,0,1,0],
 "util_8hpp_source.html":[5,0,1,0,0,8,11],
-"utils_8h_source.html":[5,0,1,0,0,2,11],
-"validation__state2_8h_source.html":[5,0,1,0,0,2,13],
-"validation__state_8h_source.html":[5,0,1,0,0,2,12],
+"utils_8h_source.html":[5,0,1,0,0,2,12],
+"validation__state2_8h_source.html":[5,0,1,0,0,2,14],
+"validation__state_8h_source.html":[5,0,1,0,0,2,13],
 "validation__state_8hpp_source.html":[5,0,1,0,0,46],
 "value__sorted__map_8hpp_source.html":[5,0,1,0,0,47],
 "vbk__block__addon_8hpp_source.html":[5,0,1,0,0,1,22],
@@ -188,11 +189,11 @@ var NAVTREEINDEX7 =
 "vtb_8h_source.html":[5,0,1,0,0,2,0,6],
 "vtb_8hpp_source.html":[5,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[5,0,1,0,0,48],
+"":[3,0,0,2],
+"":[3,0,0,1],
+"":[3,0,0,0],
+"":[3,0,0,4],
 "":[3,0,1],
 "":[3,0,0,6],
-"":[3,0,0,1],
-"":[3,0,0,2],
-"":[3,0,0,5],
-"":[3,0,0,4],
-"":[3,0,0,0]
+"":[3,0,0,5]
 };
