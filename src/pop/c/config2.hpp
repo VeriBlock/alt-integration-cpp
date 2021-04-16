@@ -3,16 +3,16 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_C_STORAGE_HPP
-#define VERIBLOCK_POP_CPP_C_STORAGE_HPP
+#ifndef VERIBLOCK_POP_CPP_C_CONFIG_HPP
+#define VERIBLOCK_POP_CPP_C_CONFIG_HPP
 
 #include <memory>
 
-#include "veriblock/pop/c/storage2.h"
-#include "adaptors/storage_interface.hpp"
+#include "veriblock/pop/c/config2.h"
+#include "veriblock/pop/config.hpp"
 
-struct __pop_storage {
-  std::shared_ptr<adaptors::Storage> ref;
+struct __pop_config {
+  std::shared_ptr<altintegration::Config> ref;
 };
 
 #endif
