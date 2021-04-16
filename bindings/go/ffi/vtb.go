@@ -15,3 +15,11 @@ func (v *Vtb) Free() {
 		v.ref = nil
 	}
 }
+
+func createVtb(ref *C.pop_vtb_t) *Vtb {
+	val := &Vtb{ref: ref}
+	runtime.SetFinalizer(val, func(v *Vtb) {
+		v.Free()
+	})
+	return val
+}

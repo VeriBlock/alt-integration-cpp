@@ -24,7 +24,6 @@ func createBtcBlock(ref *C.pop_btc_block_t) *BtcBlock {
 	runtime.SetFinalizer(val, func(v *BtcBlock) {
 		v.Free()
 	})
-
 	return val
 }
 

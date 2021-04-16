@@ -15,3 +15,11 @@ func (v *Atv) Free() {
 		v.ref = nil
 	}
 }
+
+func createAtv(ref *C.pop_atv_t) *Atv {
+	val := &Atv{ref: ref}
+	runtime.SetFinalizer(val, func(v *Atv) {
+		v.Free()
+	})
+	return val
+}

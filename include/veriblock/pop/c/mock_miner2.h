@@ -82,6 +82,16 @@ POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             mineATV,
                             const POP_ENTITY_NAME(publication_data) * pub_data);
 
+/**
+ * Mine new altintegration::VTB.
+ *
+ * @param[in] self MockMiner.
+ * @param[in] endorsed_block POP_ENTITY_NAME(vbk_block) pointer to the
+ * altintegration::VbkBlock.
+ * @param[in] last_known_btc_block POP_ENTITY_NAME(btc_block) pointer to the
+ * altintegration::BtcBlock.
+ * @return POP_ENTITY_NAME(vtb) pointer to the mined altintegration::VTB.
+ */
 POP_ENTITY_DECLARE_FUNCTION(mock_miner,
                             POP_ENTITY_NAME(vtb) *,
                             mineVTB,

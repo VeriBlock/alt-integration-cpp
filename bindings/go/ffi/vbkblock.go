@@ -15,7 +15,6 @@ func GenerateDefaultVbkBlock() *VbkBlock {
 	runtime.SetFinalizer(val, func(v *VbkBlock) {
 		v.Free()
 	})
-
 	return val
 }
 
