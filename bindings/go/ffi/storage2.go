@@ -3,6 +3,8 @@ package ffi
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/storage2.h>
+import "C"
+import "runtime"
 
 // Storage2 ...
 type Storage2 struct {
@@ -10,8 +12,8 @@ type Storage2 struct {
 }
 
 func NewStorage2(path string, state *ValidationState2) *Storage2 {
-	val := &MockMiner2{ref: C.pop_strage_new(C.CString(path), state.ref)}
-	runtime.SetFinalizer(val, func(v *MockMiner2) {
+	val := &Storage2{ref: C.pop_storage_new(C.CString(path), state.ref)}
+	runtime.SetFinalizer(val, func(v *Storage2) {
 		v.Free()
 	})
 	return val

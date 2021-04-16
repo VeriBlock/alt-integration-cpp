@@ -4,9 +4,7 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/mock_miner2.h>
 import "C"
-import (
-	"runtime"
-)
+import "runtime"
 
 // MockMiner ...
 type MockMiner2 struct {
