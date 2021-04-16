@@ -18,7 +18,6 @@ func NewMockMiner2() *MockMiner2 {
 	runtime.SetFinalizer(val, func(v *MockMiner2) {
 		v.Free()
 	})
-
 	return val
 }
 
