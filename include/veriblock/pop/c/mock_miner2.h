@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER2_H
-#define VERIBLOCK_POP_CPP_C_MOCK_MINER2_H
+#ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER_H
+#define VERIBLOCK_POP_CPP_C_MOCK_MINER_H
 
 #include "veriblock/pop/c/entities/atv.h"
 #include "veriblock/pop/c/entities/btcblock.h"
@@ -12,13 +12,14 @@
 #include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/entities/vtb.h"
 #include "veriblock/pop/c/type_helpers.h"
-#include "veriblock/pop/c/validation_state2.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 POP_DECLARE_ENTITY(mock_miner);
+
+POP_ENTITY_NEW_FUNCTION(mock_miner);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the provided block.

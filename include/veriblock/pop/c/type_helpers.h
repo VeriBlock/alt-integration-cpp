@@ -10,17 +10,19 @@
 extern "C" {
 #endif
 
-#define POP_DECLARE_ENTITY(entity)                  \
-  typedef struct __pop_##entity pop_##entity##_t;   \
-  void pop_##entity##_free(pop_##entity##_t* self); \
-  pop_##entity##_t* pop_##entity##_new();
+#define POP_DECLARE_ENTITY(entity)                \
+  typedef struct __pop_##entity pop_##entity##_t; \
+  void pop_##entity##_free(pop_##entity##_t* self);
 
 #define POP_ENTITY_NAME(entity) pop_##entity##_t
 
 #define POP_ENTITY_FREE_SIGNATURE(entity) \
   void pop_##entity##_free(pop_##entity##_t* self)
 
-#define POP_ENTITY_NEW_SIGNATURE(entity) pop_##entity##_t* pop_##entity##_new()
+// signature of the new function of the pop entity. used for the declaration
+// and intialization.
+#define POP_ENTITY_NEW_FUNCTION(entity, ...) \
+  pop_##entity##_t* pop_##entity##_new(__VA_ARGS__)
 
 // signature of the getter method of the pop entity. used for the declaration
 // and intialization.

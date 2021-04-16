@@ -15,8 +15,6 @@ POP_ENTITY_FREE_SIGNATURE(alt_block) {
   }
 }
 
-POP_ENTITY_NEW_SIGNATURE(alt_block) { return new POP_ENTITY_NAME(alt_block); }
-
 POP_ENTITY_GETTER_FUNCTION(alt_block, POP_ARRAY_NAME(u8), hash) {
   VBK_ASSERT(self);
 
