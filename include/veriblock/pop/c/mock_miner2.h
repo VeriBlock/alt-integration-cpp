@@ -20,6 +20,8 @@ extern "C" {
 
 POP_DECLARE_ENTITY(mock_miner);
 
+POP_ENTITY_NEW_FUNCTION(mock_miner);
+
 /**
  * Mine new altintegration::BtcBlock on the top of the provided block.
  *

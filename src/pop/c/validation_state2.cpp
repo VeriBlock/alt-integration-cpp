@@ -14,7 +14,3 @@ POP_ENTITY_FREE_SIGNATURE(validation_state) {
     self = nullptr;
   }
 }
-
-POP_ENTITY_NEW_SIGNATURE(validation_state) {
-  return new POP_ENTITY_NAME(validation_state);
-}
