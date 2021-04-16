@@ -12,5 +12,6 @@ var dir_2082450efbbb2404a3968a022866e0e9 =
     [ "storage.h", "storage_8h_source.html", null ],
     [ "type_helpers.h", "type__helpers_8h_source.html", null ],
     [ "utils.h", "utils_8h_source.html", null ],
-    [ "validation_state.h", "validation__state_8h_source.html", null ]
+    [ "validation_state.h", "validation__state_8h_source.html", null ],
+    [ "validation_state2.h", "validation__state2_8h_source.html", null ]
 ];
