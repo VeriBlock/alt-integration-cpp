@@ -13,7 +13,7 @@ set(CMAKE_DISABLE_FIND_PACKAGE_NUMA TRUE CACHE BOOL "disable find NUMA package")
 FetchContent_Declare(
         rocksdb
         GIT_REPOSITORY https://github.com/facebook/rocksdb.git
-        GIT_TAG        v6.15.5
+        GIT_TAG        v6.16.4
 )
 
 function(disable_from_all target)
