@@ -6,11 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 #define VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 
-#include "veriblock/po/c/entities/vtb.h"
 #include "veriblock/pop/c/config2.h"
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/atv.h"
 #include "veriblock/pop/c/entities/vbkblock.h"
+#include "veriblock/pop/c/entities/vtb.h"
 #include "veriblock/pop/c/storage2.h"
 #include "veriblock/pop/c/type_helpers.h"
 #include "veriblock/pop/c/validation_state2.h"
