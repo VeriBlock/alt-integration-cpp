@@ -19,6 +19,8 @@ extern "C" {
 #define POP_ENTITY_FREE_SIGNATURE(entity) \
   void pop_##entity##_free(pop_##entity##_t* self)
 
+#define POP_ENTITY_FREE(entity) pop_##entity##_free
+
 // signature of the new function of the pop entity. used for the declaration
 // and intialization.
 #define POP_ENTITY_NEW_FUNCTION(entity, ...) \

@@ -18,7 +18,7 @@ POP_ENTITY_FREE_SIGNATURE(vbk_block) {
 POP_ARRAY_FREE_SIGNATURE(vbk_block) {
   if (self != nullptr) {
     for (size_t i = 0; i < self->size; ++i) {
-      pop_vbk_block_free(self->data[i]);
+      POP_ENTITY_FREE(vbk_block)(self->data[i]);
     }
     delete[] self->data;
     self = nullptr;

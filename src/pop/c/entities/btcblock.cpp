@@ -18,7 +18,7 @@ POP_ENTITY_FREE_SIGNATURE(btc_block) {
 POP_ARRAY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
     for (size_t i = 0; i < self->size; ++i) {
-      pop_btc_block_free(self->data[i]);
+      POP_ENTITY_FREE(btc_block)(self->data[i]);
     }
     delete[] self->data;
     self = nullptr;
