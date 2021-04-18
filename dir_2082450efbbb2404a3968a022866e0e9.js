@@ -10,6 +10,7 @@ var dir_2082450efbbb2404a3968a022866e0e9 =
     [ "mock_miner.h", "mock__miner_8h_source.html", null ],
     [ "mock_miner2.h", "mock__miner2_8h_source.html", null ],
     [ "pop_context.h", "pop__context_8h_source.html", null ],
+    [ "pop_context2.h", "pop__context2_8h_source.html", null ],
     [ "storage.h", "storage_8h_source.html", null ],
     [ "storage2.h", "storage2_8h_source.html", null ],
     [ "type_helpers.h", "type__helpers_8h_source.html", null ],
