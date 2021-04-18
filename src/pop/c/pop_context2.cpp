@@ -42,3 +42,10 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
 
   return res;
 }
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           accept_block_header,
+                           const POP_ENTITY_NAME(alt_block) * block,
+                           POP_ENTITY_NAME(validation_state) * state) {}
+
