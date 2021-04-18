@@ -15,6 +15,16 @@ POP_ENTITY_FREE_SIGNATURE(btc_block) {
   }
 }
 
+POP_ARRAY_FREE_SIGNATURE(btc_block) {
+  if (self != nullptr) {
+    for (size_t i = 0; i < self->size; ++i) {
+      pop_btc_block_free(self->data[i]);
+    }
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ENTITY_GETTER_FUNCTION(btc_block, POP_ARRAY_NAME(u8), hash) {
   VBK_ASSERT(self);
 

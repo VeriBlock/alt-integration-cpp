@@ -16,6 +16,16 @@ POP_ENTITY_FREE_SIGNATURE(vtb) {
   }
 }
 
+POP_ARRAY_FREE_SIGNATURE(vtb) {
+  if (self != nullptr) {
+    for (size_t i = 0; i < self->size; ++i) {
+      pop_vtb_free(self->data[i]);
+    }
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ENTITY_GETTER_FUNCTION(vtb,
                            const POP_ENTITY_NAME(vbk_block) *,
                            containing_block) {

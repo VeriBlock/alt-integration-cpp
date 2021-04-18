@@ -16,6 +16,16 @@ POP_ENTITY_FREE_SIGNATURE(atv) {
   }
 }
 
+POP_ARRAY_FREE_SIGNATURE(atv) {
+  if (self != nullptr) {
+    for (size_t i = 0; i < self->size; ++i) {
+      pop_atv_free(self->data[i]);
+    }
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ENTITY_GETTER_FUNCTION(atv,
                            const POP_ENTITY_NAME(vbk_block) *,
                            block_of_proof) {
