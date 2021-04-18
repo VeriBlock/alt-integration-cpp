@@ -103,3 +103,9 @@ func TestAtv(t *testing.T) {
 	atv.Free()
 }
 
+func TestPopData(t *testing.T) {
+	pop_data := GenerateDefaultPopData()
+
+	pop_data.Free()
+	pop_data.Free()
+}

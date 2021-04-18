@@ -40,7 +40,6 @@ POP_ENTITY_GETTER_FUNCTION(atv,
 POP_GENERATE_DEFAULT_VALUE(atv) {
   auto* v = new POP_ENTITY_NAME(atv);
   v->ref = default_value::generateDefaultValue<altintegration::ATV>();
-
   return v;
 }
 

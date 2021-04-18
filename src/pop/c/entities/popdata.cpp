@@ -63,6 +63,12 @@ POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vbk_block), context) {
   return res;
 }
 
+POP_GENERATE_DEFAULT_VALUE(pop_data) {
+  auto* v = new POP_ENTITY_NAME(pop_data);
+  v->ref = default_value::generateDefaultValue<altintegration::PopData>();
+  return v;
+}
+
 namespace default_value {
 template <>
 altintegration::PopData generateDefaultValue<altintegration::PopData>() {

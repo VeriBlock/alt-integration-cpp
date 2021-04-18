@@ -91,7 +91,6 @@ POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, nonce) {
 POP_GENERATE_DEFAULT_VALUE(btc_block) {
   auto* v = new POP_ENTITY_NAME(btc_block);
   v->ref = default_value::generateDefaultValue<altintegration::BtcBlock>();
-
   return v;
 }
 
