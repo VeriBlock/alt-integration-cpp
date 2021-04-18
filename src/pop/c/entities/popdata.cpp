@@ -62,3 +62,18 @@ POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vbk_block), context) {
   }
   return res;
 }
+
+namespace default_value {
+template <>
+altintegration::PopData generateDefaultValue<altintegration::PopData>() {
+  altintegration::PopData res;
+  res.atvs = std::vector<altintegration::ATV>(
+      10, generateDefaultValue<altintegration::ATV>());
+  res.vtbs = std::vector<altintegration::VTB>(
+      10, generateDefaultValue<altintegration::VTB>());
+  res.context = std::vector<altintegration::VbkBlock>(
+      10, generateDefaultValue<altintegration::VbkBlock>());
+
+  return res;
+}
+}  // namespace default_value
