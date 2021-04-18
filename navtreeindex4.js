@@ -1,6 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a5cfcfc64cafae67bbb1d33f6e3b0fac1":[4,0,0,31,5],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#a60eb4f6dad65eacad88dc3b0325dc2c3":[4,0,0,31,7],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#a63f24e44a05e9ebcd86a922aff86c2fd":[4,0,0,31,0],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#ad255e822a10e00c451c16ef4ce021342":[4,0,0,31,3],
@@ -249,5 +248,6 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BtcChainParams.html#a60d3e85978ed006cffbec66fad1c48c7":[4,0,0,10,2],
 "structaltintegration_1_1BtcChainParams.html#a6d0f1b0259c0126fb4b6e583c989de64":[4,0,0,10,3],
 "structaltintegration_1_1BtcChainParams.html#a781fc64922c2dd57baa3a481165f5b09":[4,0,0,10,4],
-"structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2":[4,0,0,10,10]
+"structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2":[4,0,0,10,10],
+"structaltintegration_1_1BtcChainParams.html#a851fcab27434b19b4ad2ec71f4ec1de8":[4,0,0,10,5]
 };
