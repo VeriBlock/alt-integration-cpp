@@ -35,6 +35,10 @@ extern "C" {
   void pop_##entity##_get_##fieldname(const pop_##entity##_t* self, \
                                       fieldtype val)
 
+// signature of the toJson method of the pop entity. used for the declaration
+// and intialization.
+#define POP_ENTITY_TO_JSON_FUNCTION(entity) pop_##entity##_to_json()
+
 // signature of the custom function of the pop entity. used for the declaration
 // and intialization.
 #define POP_ENTITY_CUSTOM_FUNCTION(entity, returntype, funcname, ...)   \
