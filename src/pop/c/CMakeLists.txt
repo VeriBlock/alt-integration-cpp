@@ -13,6 +13,7 @@ add_library(veriblock-pop-c OBJECT
         validation_state2.cpp
         storage2.cpp
         config2.cpp
+        pop_context2.cpp
         # entities
         entities/publication_data.cpp
         entities/btcblock.cpp
