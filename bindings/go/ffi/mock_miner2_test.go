@@ -1,3 +1,8 @@
+// Copyright (c) 2019-2021 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
 package ffi
 
 import (
@@ -6,14 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
-
 func TestMockMiner2Free(t *testing.T) {
 	mockMiner := NewMockMiner2()
 	mockMiner.Free()
 	mockMiner.Free()
 }
-
 
 func TestMineBtcBlock(t *testing.T) {
 	assert := assert.New(t)
@@ -52,18 +54,17 @@ func TestMineVbkBlock(t *testing.T) {
 	block3 := mockMiner.MineVbkBlockTip()
 	block4 := mockMiner.MineVbkBlockTip()
 
-	assert.Equal(block1.GetHeight() + 1, block2.GetHeight())
-	assert.Equal(block2.GetHeight() + 1, block3.GetHeight())
-	assert.Equal(block3.GetHeight() + 1, block4.GetHeight())
-
+	assert.Equal(block1.GetHeight()+1, block2.GetHeight())
+	assert.Equal(block2.GetHeight()+1, block3.GetHeight())
+	assert.Equal(block3.GetHeight()+1, block4.GetHeight())
 
 	block2_1 := mockMiner.MineVbkBlock(block1)
 	block3_1 := mockMiner.MineVbkBlock(block2_1)
 	block4_1 := mockMiner.MineVbkBlock(block3_1)
 
-	assert.Equal(block1.GetHeight() + 1, block2_1.GetHeight())
-	assert.Equal(block2_1.GetHeight() + 1, block3_1.GetHeight())
-	assert.Equal(block3_1.GetHeight() + 1, block4_1.GetHeight())
+	assert.Equal(block1.GetHeight()+1, block2_1.GetHeight())
+	assert.Equal(block2_1.GetHeight()+1, block3_1.GetHeight())
+	assert.Equal(block3_1.GetHeight()+1, block4_1.GetHeight())
 
 	assert.NotEqual(block2_1.GetHash(), block2.GetHash())
 	assert.NotEqual(block3_1.GetHash(), block3.GetHash())
@@ -80,5 +81,5 @@ func TestMineVtb(t *testing.T) {
 
 	vtb := mockMiner.MineVtb(vbkBlock, btcBlock)
 
-	assert.Equal(vtb.GetContainingBlock().GetHeight(), vbkBlock.GetHeight() + 1)
+	assert.Equal(vtb.GetContainingBlock().GetHeight(), vbkBlock.GetHeight()+1)
 }
