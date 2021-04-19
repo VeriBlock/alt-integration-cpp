@@ -15,12 +15,19 @@
 extern "C" {
 #endif
 
-#define POP_DECLARE_ARRAY(type, suffix)                       \
-  struct __pop_array_##suffix {                               \
-    type* data;                                               \
-    size_t size;                                              \
-  };                                                          \
-  typedef struct __pop_array_##suffix pop_array_##suffix##_t; \
+#define POP_DECLARE_ARRAY(type, suffix)                             \
+  struct __pop_array_##suffix {                                     \
+    type* data;                                                     \
+    size_t size;                                                    \
+  };                                                                \
+  typedef struct __pop_array_##suffix pop_array_##suffix##_t;       \
+  inline type pop_array_##suffix##_at(pop_array_##suffix##_t* self, \
+                                      size_t i) {                   \
+    if (i > self->size) {                                           \
+      assert(0 && "index our of range");                            \
+    }                                                               \
+    return self->data[i];                                           \
+  }                                                                 \
   void pop_array_##suffix##_free(pop_array_##suffix##_t* self);
 
 #define POP_ARRAY_NAME(suffix) pop_array_##suffix##_t

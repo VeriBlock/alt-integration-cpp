@@ -4,7 +4,11 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/vtb.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+
+	"github.com/stretchr/testify/assert"
+)
 
 type Vtb struct {
 	ref *C.pop_vtb_t
@@ -18,13 +22,6 @@ func GenerateDefaultVtb() *Vtb {
 	return val
 }
 
-func (v *Vtb) Free() {
-	if v.ref != nil {
-		C.pop_vtb_free(v.ref)
-		v.ref = nil
-	}
-}
-
 func createVtb(ref *C.pop_vtb_t) *Vtb {
 	val := &Vtb{ref: ref}
 	runtime.SetFinalizer(val, func(v *Vtb) {
@@ -33,9 +30,32 @@ func createVtb(ref *C.pop_vtb_t) *Vtb {
 	return val
 }
 
+func freeArrayVtb(array *C.pop_array_vtb_t) {
+	C.pop_array_vtb_free(array)
+}
+
+func createArrayVtb(array *C.pop_array_vtb_t) []*Vtb {
+	res := make([]*Vtb, array.size, array.size)
+	for i := 0; i < len(res); i++ {
+		res[i] = createVtb(C.pop_array_vtb_at(array, C.size_t(i)))
+	}
+	return res
+}
+
+func (v *Vtb) Free() {
+	if v.ref != nil {
+		C.pop_vtb_free(v.ref)
+		v.ref = nil
+	}
+}
+
 func (v *Vtb) GetContainingBlock() *VbkBlock {
 	if v.ref == nil {
 		panic("Vtb does not initialized")
 	}
 	return createVbkBlock(C.pop_vtb_get_containing_block(v.ref))
+}
+
+func (val1 *Vtb) assertEquals(assert *assert.Assertions, val2 *Vtb) {
+	val1.GetContainingBlock().assertEquals(assert, val2.GetContainingBlock())
 }

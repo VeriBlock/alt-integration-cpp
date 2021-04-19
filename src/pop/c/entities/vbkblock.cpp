@@ -15,6 +15,13 @@ POP_ENTITY_FREE_SIGNATURE(vbk_block) {
   }
 }
 
+POP_ARRAY_FREE_SIGNATURE(vbk_block) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), hash) {
   VBK_ASSERT(self);
 
@@ -115,7 +122,6 @@ POP_ENTITY_GETTER_FUNCTION(vbk_block, int32_t, height) {
 POP_GENERATE_DEFAULT_VALUE(vbk_block) {
   auto* v = new POP_ENTITY_NAME(vbk_block);
   v->ref = default_value::generateDefaultValue<altintegration::VbkBlock>();
-
   return v;
 }
 

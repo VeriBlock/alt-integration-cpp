@@ -16,6 +16,13 @@ POP_ENTITY_FREE_SIGNATURE(vtb) {
   }
 }
 
+POP_ARRAY_FREE_SIGNATURE(vtb) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ENTITY_GETTER_FUNCTION(vtb,
                            const POP_ENTITY_NAME(vbk_block) *,
                            containing_block) {
@@ -30,7 +37,6 @@ POP_ENTITY_GETTER_FUNCTION(vtb,
 POP_GENERATE_DEFAULT_VALUE(vtb) {
   auto* v = new POP_ENTITY_NAME(vtb);
   v->ref = default_value::generateDefaultValue<altintegration::VTB>();
-
   return v;
 }
 

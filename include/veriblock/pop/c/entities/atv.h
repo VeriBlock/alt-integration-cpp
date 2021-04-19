@@ -21,6 +21,8 @@ POP_ENTITY_GETTER_FUNCTION(atv,
                            const POP_ENTITY_NAME(vbk_block) *,
                            block_of_proof);
 
+POP_DECLARE_ARRAY(POP_ENTITY_NAME(atv) *, atv);
+
 POP_GENERATE_DEFAULT_VALUE(atv);
 
 #ifdef __cplusplus

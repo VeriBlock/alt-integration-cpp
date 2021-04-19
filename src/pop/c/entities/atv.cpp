@@ -16,6 +16,13 @@ POP_ENTITY_FREE_SIGNATURE(atv) {
   }
 }
 
+POP_ARRAY_FREE_SIGNATURE(atv) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ENTITY_GETTER_FUNCTION(atv,
                            const POP_ENTITY_NAME(vbk_block) *,
                            block_of_proof) {
@@ -30,7 +37,6 @@ POP_ENTITY_GETTER_FUNCTION(atv,
 POP_GENERATE_DEFAULT_VALUE(atv) {
   auto* v = new POP_ENTITY_NAME(atv);
   v->ref = default_value::generateDefaultValue<altintegration::ATV>();
-
   return v;
 }
 
