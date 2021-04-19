@@ -7,7 +7,11 @@ package ffi
 import "C"
 import "unsafe"
 
-func ConvertToBytes(array *C.pop_array_u8_t) []byte {
+func freeArrayU8(array *C.pop_array_u8_t) {
+	C.pop_array_u8_free(array)
+}
+
+func createBytes(array *C.pop_array_u8_t) []byte {
 	res := make([]byte, array.size)
 	C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
 	return res

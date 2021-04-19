@@ -38,7 +38,8 @@ func (v *BtcBlock) GetHash() []byte {
 		panic("BtcBlock does not initialized")
 	}
 	array := C.pop_btc_block_get_hash(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetPreviousBlock() []byte {
@@ -46,7 +47,8 @@ func (v *BtcBlock) GetPreviousBlock() []byte {
 		panic("BtcBlock does not initialized")
 	}
 	array := C.pop_btc_block_get_previous_block(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetMerkleRoot() []byte {
@@ -54,7 +56,8 @@ func (v *BtcBlock) GetMerkleRoot() []byte {
 		panic("BtcBlock does not initialized")
 	}
 	array := C.pop_btc_block_get_merkle_root(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetVersion() uint32 {

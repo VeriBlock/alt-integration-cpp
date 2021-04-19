@@ -18,9 +18,6 @@ POP_ENTITY_FREE_SIGNATURE(vtb) {
 
 POP_ARRAY_FREE_SIGNATURE(vtb) {
   if (self != nullptr) {
-    for (size_t i = 0; i < self->size; ++i) {
-      POP_ENTITY_FREE(vtb)(self->data[i]);
-    }
     delete[] self->data;
     self = nullptr;
   }

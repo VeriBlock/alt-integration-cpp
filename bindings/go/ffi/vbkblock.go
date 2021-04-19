@@ -38,7 +38,8 @@ func (v *VbkBlock) GetHash() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_hash(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetPreviousBlock() []byte {
@@ -46,7 +47,8 @@ func (v *VbkBlock) GetPreviousBlock() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_previous_block(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetMerkleRoot() []byte {
@@ -54,7 +56,8 @@ func (v *VbkBlock) GetMerkleRoot() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_merkle_root(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetPreviousKeystone() []byte {
@@ -62,7 +65,8 @@ func (v *VbkBlock) GetPreviousKeystone() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_previous_keystone(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetSecondPreviousKeystone() []byte {
@@ -70,7 +74,8 @@ func (v *VbkBlock) GetSecondPreviousKeystone() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_second_previous_keystone(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetVersion() int16 {

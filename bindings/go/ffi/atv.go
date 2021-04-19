@@ -39,4 +39,3 @@ func (v *Atv) GetBlockOfProof() *VbkBlock {
 	}
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
 }
-

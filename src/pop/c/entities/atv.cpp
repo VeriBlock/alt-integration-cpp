@@ -18,9 +18,6 @@ POP_ENTITY_FREE_SIGNATURE(atv) {
 
 POP_ARRAY_FREE_SIGNATURE(atv) {
   if (self != nullptr) {
-    for (size_t i = 0; i < self->size; ++i) {
-      POP_ENTITY_FREE(atv)(self->data[i]);
-    }
     delete[] self->data;
     self = nullptr;
   }
