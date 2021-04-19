@@ -100,15 +100,12 @@ func TestPopData(t *testing.T) {
 	assert.Equal(len(atvs), 10)
 	assert.Equal(len(vtbs), 10)
 	assert.Equal(len(context), 10)
-
 	for _, v := range atvs {
 		v.assertEquals(assert, atv)
 	}
-
 	for _, v := range vtbs {
 		v.assertEquals(assert, vtb)
 	}
-
 	for _, v := range context {
 		v.assertEquals(assert, vbk_block)
 	}
