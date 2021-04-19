@@ -4,7 +4,9 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/vbkblock.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+)
 
 type VbkBlock struct {
 	ref *C.pop_vbk_block_t
@@ -24,6 +26,18 @@ func createVbkBlock(ref *C.pop_vbk_block_t) *VbkBlock {
 		v.Free()
 	})
 	return val
+}
+
+func freeArrayVbkBlock(array *C.pop_array_vbk_block_t) {
+	C.pop_array_vbk_block_free(array)
+}
+
+func createArrayVbkBlock(array *C.pop_array_vbk_block_t) []VbkBlock {
+	res := make([]VbkBlock, array.size, array.size)
+	for i := 0; i < len(res); i++ {
+		createVbkBlock(array.data[i])
+	}
+	return res
 }
 
 func (v *VbkBlock) Free() {
