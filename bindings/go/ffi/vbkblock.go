@@ -4,7 +4,11 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/vbkblock.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+
+	"github.com/stretchr/testify/assert"
+)
 
 type VbkBlock struct {
 	ref *C.pop_vbk_block_t
@@ -26,6 +30,18 @@ func createVbkBlock(ref *C.pop_vbk_block_t) *VbkBlock {
 	return val
 }
 
+func freeArrayVbkBlock(array *C.pop_array_vbk_block_t) {
+	C.pop_array_vbk_block_free(array)
+}
+
+func createArrayVbkBlock(array *C.pop_array_vbk_block_t) []*VbkBlock {
+	res := make([]*VbkBlock, array.size, array.size)
+	for i := 0; i < len(res); i++ {
+		res[i] = createVbkBlock(C.pop_array_vbk_block_at(array, C.size_t(i)))
+	}
+	return res
+}
+
 func (v *VbkBlock) Free() {
 	if v.ref != nil {
 		C.pop_vbk_block_free(v.ref)
@@ -38,7 +54,8 @@ func (v *VbkBlock) GetHash() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_hash(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetPreviousBlock() []byte {
@@ -46,7 +63,8 @@ func (v *VbkBlock) GetPreviousBlock() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_previous_block(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetMerkleRoot() []byte {
@@ -54,7 +72,8 @@ func (v *VbkBlock) GetMerkleRoot() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_merkle_root(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetPreviousKeystone() []byte {
@@ -62,7 +81,8 @@ func (v *VbkBlock) GetPreviousKeystone() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_previous_keystone(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetSecondPreviousKeystone() []byte {
@@ -70,7 +90,8 @@ func (v *VbkBlock) GetSecondPreviousKeystone() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_vbk_block_get_second_previous_keystone(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetVersion() int16 {
@@ -106,4 +127,17 @@ func (v *VbkBlock) GetHeight() int32 {
 		panic("VbkBlock does not initialized")
 	}
 	return int32(C.pop_vbk_block_get_height(v.ref))
+}
+
+func (val1 *VbkBlock) assertEquals(assert *assert.Assertions, val2 *VbkBlock) {
+	assert.Equal(val1.GetDifficulty(), val2.GetDifficulty())
+	assert.Equal(val1.GetHeight(), val2.GetHeight())
+	assert.Equal(val1.GetNonce(), val2.GetNonce())
+	assert.Equal(val1.GetTimestamp(), val2.GetTimestamp())
+	assert.Equal(val1.GetVersion(), val2.GetVersion())
+	assert.Equal(val1.GetMerkleRoot(), val2.GetMerkleRoot())
+	assert.Equal(val1.GetPreviousBlock(), val2.GetPreviousBlock())
+	assert.Equal(val1.GetPreviousKeystone(), val2.GetPreviousKeystone())
+	assert.Equal(val1.GetSecondPreviousKeystone(), val2.GetSecondPreviousKeystone())
+	assert.Equal(val1.GetHash(), val2.GetHash())
 }

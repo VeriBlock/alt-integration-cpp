@@ -30,7 +30,8 @@ func (v *AltBlock) GetHash() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_alt_block_get_hash(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *AltBlock) GetPreviousBlock() []byte {
@@ -38,7 +39,8 @@ func (v *AltBlock) GetPreviousBlock() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_alt_block_get_previous_block(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *AltBlock) GetTimestamp() uint32 {

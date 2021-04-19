@@ -56,7 +56,6 @@ POP_ENTITY_GETTER_FUNCTION(alt_block, int32_t, height) {
 POP_GENERATE_DEFAULT_VALUE(alt_block) {
   auto* v = new POP_ENTITY_NAME(alt_block);
   v->ref = default_value::generateDefaultValue<altintegration::AltBlock>();
-
   return v;
 }
 

@@ -21,8 +21,6 @@ POP_ENTITY_GETTER_FUNCTION(alt_block, POP_ARRAY_NAME(u8), previous_block);
 POP_ENTITY_GETTER_FUNCTION(alt_block, uint32_t, timestamp);
 POP_ENTITY_GETTER_FUNCTION(alt_block, int32_t, height);
 
-POP_DECLARE_ARRAY(POP_ENTITY_NAME(alt_block) *, alt_block);
-
 POP_GENERATE_DEFAULT_VALUE(alt_block);
 
 #ifdef __cplusplus
