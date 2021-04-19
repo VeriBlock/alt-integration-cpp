@@ -5,7 +5,7 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
+// #cgo CFLAGS: -I../../../include -fsanitize=address
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/storage.h>
 import "C"

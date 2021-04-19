@@ -22,10 +22,10 @@ jobs:
         flags: [
           "-DCLANG_TIDY=ON",
           # build fuzzers and run 1 iteration (with fixed corpus) during ctest
-          "-DASAN=ON -DFUZZING=ON",
-          "-DUBSAN=ON -DFUZZING=ON",
+          "-DASAN=ON -DFUZZING=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON",
+          "-DUBSAN=ON -DFUZZING=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON",
           # release build with all dependencies
-          "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
         ]
     env:
       CC: clang
