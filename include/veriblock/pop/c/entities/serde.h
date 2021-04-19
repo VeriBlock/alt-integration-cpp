@@ -1,14 +1,14 @@
-// Copyright (c) 2019-2020 Xenios SEZC
+// Copyright (c) 2019-2021 Xenios SEZC
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_ENTITIES_SERDE_H
-#define VERIBLOCK_POP_CPP_ENTITIES_SERDE_H
+#ifndef VERIBLOCK_POP_CPP_C_ENTITIES_SERDE_H
+#define VERIBLOCK_POP_CPP_C_ENTITIES_SERDE_H
 
 #include <stdint.h>
 
-#include "array.h"
+#include "veriblock/pop/c/array.h"
 
 #ifdef __cplusplus
 extern "C" {

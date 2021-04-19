@@ -5,12 +5,8 @@
 
 #include <memory>
 
-#include "veriblock/pop/c/entities/btcblock.h"
-#include "veriblock/pop/entities/btcblock.hpp"
-
-struct __pop_btc_block {
-  altintegration::BtcBlock ref;
-};
+#include "btcblock.hpp"
+#include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
   if (self != nullptr) {
@@ -19,7 +15,16 @@ POP_ENTITY_FREE_SIGNATURE(btc_block) {
   }
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
+POP_ARRAY_FREE_SIGNATURE(btc_block) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
+POP_ENTITY_GETTER_FUNCTION(btc_block, POP_ARRAY_NAME(u8), hash) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getHash();
 
   POP_ARRAY_NAME(u8) res;
@@ -30,7 +35,9 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), hash) {
   return res;
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), previous_block) {
+POP_ENTITY_GETTER_FUNCTION(btc_block, POP_ARRAY_NAME(u8), previous_block) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getPreviousBlock();
 
   POP_ARRAY_NAME(u8) res;
@@ -41,7 +48,9 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), previous_block) {
   return res;
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), merkle_root) {
+POP_ENTITY_GETTER_FUNCTION(btc_block, POP_ARRAY_NAME(u8), merkle_root) {
+  VBK_ASSERT(self);
+
   auto hash = self->ref.getMerkleRoot();
 
   POP_ARRAY_NAME(u8) res;
@@ -52,33 +61,48 @@ POP_ENTITY_GETTER_SIGNATURE(btc_block, POP_ARRAY_NAME(u8), merkle_root) {
   return res;
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, version) {
+POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, version) {
+  VBK_ASSERT(self);
+
   return self->ref.getVersion();
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, timestamp) {
+POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, timestamp) {
+  VBK_ASSERT(self);
+
   return self->ref.getTimestamp();
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, difficulty) {
+POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, difficulty) {
+  VBK_ASSERT(self);
+
   return self->ref.getDifficulty();
 }
 
-POP_ENTITY_GETTER_SIGNATURE(btc_block, uint32_t, nonce) {
+POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, nonce) {
+  VBK_ASSERT(self);
+
   return self->ref.getNonce();
 }
 
 POP_GENERATE_DEFAULT_VALUE(btc_block) {
   auto* v = new POP_ENTITY_NAME(btc_block);
-
-  v->ref.setNonce(1);
-  v->ref.setTimestamp(1);
-  v->ref.setVersion(1);
-  v->ref.setDifficulty(1);
-  v->ref.setPreviousBlock({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
-  v->ref.setMerkleRoot({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
-
+  v->ref = default_value::generateDefaultValue<altintegration::BtcBlock>();
   return v;
 }
+
+namespace default_value {
+template <>
+altintegration::BtcBlock generateDefaultValue<altintegration::BtcBlock>() {
+  altintegration::BtcBlock res;
+  res.setNonce(1);
+  res.setTimestamp(1);
+  res.setVersion(1);
+  res.setDifficulty(1);
+  res.setPreviousBlock({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+  res.setMerkleRoot({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+  return res;
+}
+}  // namespace default_value

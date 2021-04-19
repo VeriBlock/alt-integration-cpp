@@ -3,18 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/pop/c/entities/array.h"
+#include <memory>
 
-POP_ARRAY_FREE_SIGNATURE(u8) {
-  if (self != nullptr) {
-    delete[] self->data;
-    self = nullptr;
-  }
-}
+#include "publication_data.hpp"
+#include "veriblock/pop/assert.hpp"
 
-POP_ARRAY_FREE_SIGNATURE(u32) {
+POP_ENTITY_FREE_SIGNATURE(publication_data) {
   if (self != nullptr) {
-    delete[] self->data;
+    delete self;
     self = nullptr;
   }
 }

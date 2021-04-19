@@ -1,4 +1,9 @@
-package entities
+// Copyright (c) 2019-2021 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
+package ffi
 
 import (
 	"testing"
@@ -59,4 +64,57 @@ func TestAltBlock(t *testing.T) {
 
 	alt_block.Free()
 	alt_block.Free()
+}
+
+func TestVtb(t *testing.T) {
+	assert := assert.New(t)
+
+	vtb := GenerateDefaultVtb()
+	vbk_block := GenerateDefaultVbkBlock()
+
+	vtb.GetContainingBlock().assertEquals(assert, vbk_block)
+
+	vtb.Free()
+	vtb.Free()
+}
+
+func TestAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	atv := GenerateDefaultAtv()
+	vbk_block := GenerateDefaultVbkBlock()
+
+	atv.GetBlockOfProof().assertEquals(assert, vbk_block)
+
+	atv.Free()
+	atv.Free()
+}
+
+func TestPopData(t *testing.T) {
+	assert := assert.New(t)
+
+	pop_data := GenerateDefaultPopData()
+	atv := GenerateDefaultAtv()
+	vtb := GenerateDefaultVtb()
+	vbk_block := GenerateDefaultVbkBlock()
+
+	atvs := pop_data.GetAtvs()
+	vtbs := pop_data.GetVtbs()
+	context := pop_data.GetContext()
+
+	assert.Equal(len(atvs), 10)
+	assert.Equal(len(vtbs), 10)
+	assert.Equal(len(context), 10)
+	for _, v := range atvs {
+		v.assertEquals(assert, atv)
+	}
+	for _, v := range vtbs {
+		v.assertEquals(assert, vtb)
+	}
+	for _, v := range context {
+		v.assertEquals(assert, vbk_block)
+	}
+
+	pop_data.Free()
+	pop_data.Free()
 }

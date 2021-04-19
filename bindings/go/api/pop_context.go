@@ -1,3 +1,8 @@
+// Copyright (c) 2019-2021 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
 package api
 
 import (
@@ -361,6 +366,7 @@ func (v *PopContext) AltGetAtvContainingBlock(atvID entities.AtvID) ([]entities.
 	}
 	hashes := make([]entities.AltHash, len(encodedHashes))
 	for i, encodedHash := range encodedHashes {
+		hashes[i] = make(entities.AltHash, len(encodedHash.([]byte)))
 		copy(hashes[i][:], encodedHash.([]byte))
 	}
 	return hashes, nil
