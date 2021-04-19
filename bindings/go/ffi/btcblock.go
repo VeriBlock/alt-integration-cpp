@@ -1,10 +1,19 @@
-package entities
+// Copyright (c) 2019-2021 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
+package ffi
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/btcblock.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+
+	"github.com/stretchr/testify/assert"
+)
 
 type BtcBlock struct {
 	ref *C.pop_btc_block_t
@@ -15,7 +24,14 @@ func GenerateDefaultBtcBlock() *BtcBlock {
 	runtime.SetFinalizer(val, func(v *BtcBlock) {
 		v.Free()
 	})
+	return val
+}
 
+func createBtcBlock(ref *C.pop_btc_block_t) *BtcBlock {
+	val := &BtcBlock{ref: ref}
+	runtime.SetFinalizer(val, func(v *BtcBlock) {
+		v.Free()
+	})
 	return val
 }
 
@@ -30,9 +46,9 @@ func (v *BtcBlock) GetHash() []byte {
 	if v.ref == nil {
 		panic("BtcBlock does not initialized")
 	}
-
 	array := C.pop_btc_block_get_hash(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetPreviousBlock() []byte {
@@ -40,7 +56,8 @@ func (v *BtcBlock) GetPreviousBlock() []byte {
 		panic("BtcBlock does not initialized")
 	}
 	array := C.pop_btc_block_get_previous_block(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetMerkleRoot() []byte {
@@ -48,7 +65,8 @@ func (v *BtcBlock) GetMerkleRoot() []byte {
 		panic("BtcBlock does not initialized")
 	}
 	array := C.pop_btc_block_get_merkle_root(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetVersion() uint32 {
@@ -77,4 +95,13 @@ func (v *BtcBlock) GetDifficulty() uint32 {
 		panic("BtcBlock does not initialized")
 	}
 	return uint32(C.pop_btc_block_get_difficulty(v.ref))
+}
+
+func (val1 *BtcBlock) assertEquals(assert *assert.Assertions, val2 *BtcBlock) {
+	assert.Equal(val1.GetDifficulty(), val2.GetDifficulty())
+	assert.Equal(val1.GetNonce(), val2.GetNonce())
+	assert.Equal(val1.GetTimestamp(), val2.GetTimestamp())
+	assert.Equal(val1.GetMerkleRoot(), val2.GetMerkleRoot())
+	assert.Equal(val1.GetPreviousBlock(), val2.GetPreviousBlock())
+	assert.Equal(val1.GetHash(), val2.GetHash())
 }

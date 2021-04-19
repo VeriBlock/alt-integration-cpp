@@ -42,7 +42,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         self._4_chains_converge_random(apm)
 
     def _shorter_endorsed_chain_wins(self, apm):
-        self.log.warning("starting _shorter_endorsed_chain_wins()")
+        self.log.info("starting _shorter_endorsed_chain_wins()")
         last_block = self.nodes[3].getblockcount()
 
         # stop node3
@@ -129,10 +129,10 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
                 "node[{}] expected to select shorter chain ({}) with higher pop score\n" \
                 "but selected longer chain ({})".format(i, tip.height, best_blocks[i].height)
 
-        self.log.warning("_shorter_endorsed_chain_wins() succeeded!")
+        self.log.info("_shorter_endorsed_chain_wins() succeeded!")
 
     def _4_chains_converge(self, apm):
-        self.log.warning("_4_chains_converge() started!")
+        self.log.info("_4_chains_converge() started!")
 
         # disconnect all nodes
         disconnect_all(self.nodes)
@@ -167,10 +167,10 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         for best in best_blocks:
             assert best == expected_best
 
-        self.log.warning("_4_chains_converge() succeeded!")
+        self.log.info("_4_chains_converge() succeeded!")
 
     def _4_chains_converge_random(self, apm):
-        self.log.warning("_4_chains_random_converge() started!")
+        self.log.info("_4_chains_random_converge() started!")
 
         # disconnect all nodes
         disconnect_all(self.nodes)
@@ -197,8 +197,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         self.nodes[0].generate(nblocks=50)
 
         self.log.info("all nodes connected")
-        sync_blocks(self.nodes, timeout=60)
-        sync_pop_tips(self.nodes, timeout=60)
+        sync_all(self.nodes)
         self.log.info("all nodes have common tip")
 
         best_blocks = [node.getbestblock() for node in self.nodes]
@@ -207,4 +206,4 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
             assert best == expected_best, "all={}, expected={}".format([x.short_str() for x in best_blocks],
                                                                        expected_best.short_str())
 
-        self.log.warning("_4_chains_random_converge() succeeded!")
+        self.log.info("_4_chains_random_converge() succeeded!")

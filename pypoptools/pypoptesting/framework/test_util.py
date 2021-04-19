@@ -105,21 +105,20 @@ class TestHandler:
         self.num_running = 0
         self.jobs = []
 
+    def get_next_test_name(self):
+        return type(self.test_list[-1]).__name__
+
     def get_next(self):
 
         while self.num_running < self.num_jobs and self.test_list:
             # Add tests
             self.num_running += 1
             test = self.test_list.pop(0)
-            log_stdout = tempfile.SpooledTemporaryFile(max_size=2 ** 16)
-            log_stderr = tempfile.SpooledTemporaryFile(max_size=2 ** 16)
             p = mp.Process(target=lambda: test.main(self.create_node, self.parent))
             p.start()
             self.jobs.append((test,
                               time.time(),
-                              p,
-                              log_stdout,
-                              log_stderr))
+                              p))
         if not self.jobs:
             raise IndexError('pop from empty list')
 
@@ -127,17 +126,14 @@ class TestHandler:
             # Return first proc that finishes
             time.sleep(.5)
             for job in self.jobs:
-                (test, start_time, proc, log_out, log_err) = job
+                (test, start_time, proc) = job
                 name = type(test).__name__
                 if int(time.time() - start_time) > self.timeout_duration:
                     # Timeout individual tests if timeout is specified (to stop
                     # tests hanging and not providing useful output).
                     proc.kill()
                 if not proc.is_alive():
-                    log_out.seek(0), log_err.seek(0)
-                    [stdout, stderr] = [log_file.read().decode('utf-8') for log_file in (log_out, log_err)]
-                    log_out.close(), log_err.close()
-                    if proc.exitcode == TEST_EXIT_PASSED and stderr == "":
+                    if proc.exitcode == TEST_EXIT_PASSED:
                         status = "Passed"
                     elif proc.exitcode == TEST_EXIT_SKIPPED:
                         status = "Skipped"
@@ -145,7 +141,7 @@ class TestHandler:
                         status = "Failed"
                     self.num_running -= 1
                     self.jobs.remove(job)
-                    return TestResult(name, status, int(time.time() - start_time)), test.dir, stdout, stderr
+                    return TestResult(name, status, int(time.time() - start_time)), test.dir
 
     def kill_and_join(self):
         """Send SIGKILL to all jobs and block until all have ended."""
@@ -182,17 +178,16 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     start_time = time.time()
 
     for i in range(test_count):
-        test_result, testdir, stdout, stderr = job_queue.get_next()
+        test_str = "{}/{} - {}{}{}".format(i + 1, test_count, BOLD[1], job_queue.get_next_test_name(), BOLD[0])
+        print("%s running." % test_str)
+        test_result, testdir = job_queue.get_next()
         test_results.append(test_result)
-        done_str = "{}/{} - {}{}{}".format(i + 1, test_count, BOLD[1], test_result.name, BOLD[0])
         if test_result.status == "Passed":
-            print("%s passed, Duration: %s s" % (done_str, test_result.time))
+            print("%s passed, Duration: %s s" % (test_str, test_result.time))
         elif test_result.status == "Skipped":
-            print("%s skipped" % (done_str))
+            print("%s skipped" % (test_str))
         else:
-            print("%s failed, Duration: %s s\n" % (done_str, test_result.time))
-            print(BOLD[1] + 'stdout:\n' + BOLD[0] + stdout + '\n')
-            print(BOLD[1] + 'stderr:\n' + BOLD[0] + stderr + '\n')
+            print("%s failed, Duration: %s s\n" % (test_str, test_result.time))
 
     print_results(test_results, max_len_name, (int(time.time() - start_time)))
 

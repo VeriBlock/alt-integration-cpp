@@ -1,4 +1,9 @@
-package entities
+// Copyright (c) 2019-2021 Xenios SEZC
+// https://www.veriblock.org
+// Distributed under the MIT software license, see the accompanying
+// file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+
+package ffi
 
 // #cgo CFLAGS: -I../../../include
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
@@ -15,7 +20,6 @@ func GenerateDefaultAltBlock() *AltBlock {
 	runtime.SetFinalizer(val, func(v *AltBlock) {
 		v.Free()
 	})
-
 	return val
 }
 
@@ -31,7 +35,8 @@ func (v *AltBlock) GetHash() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_alt_block_get_hash(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *AltBlock) GetPreviousBlock() []byte {
@@ -39,7 +44,8 @@ func (v *AltBlock) GetPreviousBlock() []byte {
 		panic("VbkBlock does not initialized")
 	}
 	array := C.pop_alt_block_get_previous_block(v.ref)
-	return ConvertToBytes(&array)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
 }
 
 func (v *AltBlock) GetTimestamp() uint32 {
