@@ -7,6 +7,8 @@ import "C"
 import (
 	"runtime"
 	"unsafe"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Atv struct {
@@ -55,4 +57,8 @@ func (v *Atv) GetBlockOfProof() *VbkBlock {
 		panic("Vtb does not initialized")
 	}
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
+}
+
+func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
+	val1.GetBlockOfProof().assertEquals(assert, val2.GetBlockOfProof())
 }

@@ -24,3 +24,30 @@ func (v *PopData) Free() {
 		v.ref = nil
 	}
 }
+
+func (v *PopData) GetAtvs() []*Atv {
+	if v.ref == nil {
+		panic("PopData does not initialized")
+	}
+	array := C.pop_pop_data_get_atvs(v.ref)
+	defer freeArrayAtv(&array)
+	return createArrayAtv(&array)
+}
+
+func (v *PopData) GetVtbs() []*Vtb {
+	if v.ref == nil {
+		panic("PopData does not initialized")
+	}
+	array := C.pop_pop_data_get_vtbs(v.ref)
+	defer freeArrayVtb(&array)
+	return createArrayVtb(&array)
+}
+
+func (v *PopData) GetContext() []*VbkBlock {
+	if v.ref == nil {
+		panic("PopData does not initialized")
+	}
+	array := C.pop_pop_data_get_context(v.ref)
+	defer freeArrayVbkBlock(&array)
+	return createArrayVbkBlock(&array)
+}

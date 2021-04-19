@@ -7,6 +7,8 @@ import "C"
 import (
 	"runtime"
 	"unsafe"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Vtb struct {
@@ -55,4 +57,8 @@ func (v *Vtb) GetContainingBlock() *VbkBlock {
 		panic("Vtb does not initialized")
 	}
 	return createVbkBlock(C.pop_vtb_get_containing_block(v.ref))
+}
+
+func (val1 *Vtb) assertEquals(assert *assert.Assertions, val2 *Vtb) {
+	val1.GetContainingBlock().assertEquals(assert, val2.GetContainingBlock())
 }

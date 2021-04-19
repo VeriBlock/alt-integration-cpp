@@ -4,7 +4,11 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
 // #include <veriblock/pop/c/entities/btcblock.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+
+	"github.com/stretchr/testify/assert"
+)
 
 type BtcBlock struct {
 	ref *C.pop_btc_block_t
@@ -86,4 +90,13 @@ func (v *BtcBlock) GetDifficulty() uint32 {
 		panic("BtcBlock does not initialized")
 	}
 	return uint32(C.pop_btc_block_get_difficulty(v.ref))
+}
+
+func (val1 *BtcBlock) assertEquals(assert *assert.Assertions, val2 *BtcBlock) {
+	assert.Equal(val1.GetDifficulty(), val2.GetDifficulty())
+	assert.Equal(val1.GetNonce(), val2.GetNonce())
+	assert.Equal(val1.GetTimestamp(), val2.GetTimestamp())
+	assert.Equal(val1.GetMerkleRoot(), val2.GetMerkleRoot())
+	assert.Equal(val1.GetPreviousBlock(), val2.GetPreviousBlock())
+	assert.Equal(val1.GetHash(), val2.GetHash())
 }

@@ -7,6 +7,8 @@ import "C"
 import (
 	"runtime"
 	"unsafe"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type VbkBlock struct {
@@ -128,4 +130,17 @@ func (v *VbkBlock) GetHeight() int32 {
 		panic("VbkBlock does not initialized")
 	}
 	return int32(C.pop_vbk_block_get_height(v.ref))
+}
+
+func (val1 *VbkBlock) assertEquals(assert *assert.Assertions, val2 *VbkBlock) {
+	assert.Equal(val1.GetDifficulty(), val2.GetDifficulty())
+	assert.Equal(val1.GetHeight(), val2.GetHeight())
+	assert.Equal(val1.GetNonce(), val2.GetNonce())
+	assert.Equal(val1.GetTimestamp(), val2.GetTimestamp())
+	assert.Equal(val1.GetVersion(), val2.GetVersion())
+	assert.Equal(val1.GetMerkleRoot(), val2.GetMerkleRoot())
+	assert.Equal(val1.GetPreviousBlock(), val2.GetPreviousBlock())
+	assert.Equal(val1.GetPreviousKeystone(), val2.GetPreviousKeystone())
+	assert.Equal(val1.GetSecondPreviousKeystone(), val2.GetSecondPreviousKeystone())
+	assert.Equal(val1.GetHash(), val2.GetHash())
 }
