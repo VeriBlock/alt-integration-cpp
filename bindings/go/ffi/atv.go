@@ -6,7 +6,6 @@ package ffi
 import "C"
 import (
 	"runtime"
-	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -37,10 +36,8 @@ func freeArrayAtv(array *C.pop_array_atv_t) {
 
 func createArrayAtv(array *C.pop_array_atv_t) []*Atv {
 	res := make([]*Atv, array.size, array.size)
-	ptr := uintptr(unsafe.Pointer(array.data))
 	for i := 0; i < len(res); i++ {
-		val := (*C.pop_atv_t)(unsafe.Pointer(ptr + unsafe.Sizeof(C.int(0))*uintptr(i)))
-		res[i] = createAtv(val)
+		res[i] = createAtv(C.pop_array_atv_at(array, C.size_t(i)))
 	}
 	return res
 }

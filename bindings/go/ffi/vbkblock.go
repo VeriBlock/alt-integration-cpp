@@ -6,7 +6,6 @@ package ffi
 import "C"
 import (
 	"runtime"
-	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -37,10 +36,8 @@ func freeArrayVbkBlock(array *C.pop_array_vbk_block_t) {
 
 func createArrayVbkBlock(array *C.pop_array_vbk_block_t) []*VbkBlock {
 	res := make([]*VbkBlock, array.size, array.size)
-	ptr := uintptr(unsafe.Pointer(array.data))
 	for i := 0; i < len(res); i++ {
-		val := (*C.pop_vbk_block_t)(unsafe.Pointer(ptr + unsafe.Sizeof(C.int(0))*uintptr(i)))
-		res[i] = createVbkBlock(val)
+		res[i] = createVbkBlock(C.pop_array_vbk_block_at(array, C.size_t(i)))
 	}
 	return res
 }
