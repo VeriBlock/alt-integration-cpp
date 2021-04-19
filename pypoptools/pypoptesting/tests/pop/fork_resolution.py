@@ -197,7 +197,8 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         self.nodes[0].generate(nblocks=50)
 
         self.log.info("all nodes connected")
-        sync_all(self.nodes)
+        sync_blocks(self.nodes, timeout=60)
+        sync_pop_tips(self.nodes, timeout=60)
         self.log.info("all nodes have common tip")
 
         best_blocks = [node.getbestblock() for node in self.nodes]
