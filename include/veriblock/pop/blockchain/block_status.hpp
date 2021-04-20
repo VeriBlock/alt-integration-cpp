@@ -59,6 +59,8 @@ enum BlockValidityStatus : uint32_t {
   BLOCK_HAS_PAYLOADS = 1 << 8,
   //! the block is currently applied via SetState.
   BLOCK_ACTIVE = 1 << 9,
+  //! the block is temporarily deleted
+  BLOCK_DELETED = 1 << 10
 
 };
 

@@ -296,7 +296,9 @@ std::string AltBlockTree::toPrettyString(size_t level) const {
   std::string pad(level, ' ');
   return fmt::sprintf("%sAltTree{blocks=%llu\n%s\n%s\n%s}",
                       pad,
-                      base::blocks_.size(),
+                      // FIXME: ugly hack due to trees being compared via
+                      // toPrettyString in tests
+                      base::getNonDeletedBlockCount(),
                       base::toPrettyString(level + 2),
                       cmp_.toPrettyString(level + 2),
                       pad);
@@ -475,6 +477,7 @@ void AltBlockTree::filterInvalidPayloads(PopData& pop) {
 
   // at this point `pop` contains only valid payloads
   this->removeSubtree(*tmpindex);
+  eraseBlock(*tmpindex);
 
   guard.overrideDeferredForkResolution(originalTip);
 }

@@ -26,9 +26,8 @@ static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
   block.setHeight(1);
   block.setTimestamp(10000);
   block.setDifficulty(difficulty);
-  auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(nullptr);
+  auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(block.getHeight());
   blockIndex->setHeader(block);
-  blockIndex->setHeight(block.getHeight());
 
   std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain(chainlength);
   chain[0] = std::move(blockIndex);
@@ -44,7 +43,7 @@ static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
     blockTmp.setDifficulty(difficulty);
     auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
     temp->setHeader(blockTmp);
-    temp->setHeight(blockTmp.getHeight());
+    VBK_ASSERT(temp->getHeight() == blockTmp.getHeight());
 
     chain[i] = std::move(temp);
   }
@@ -179,10 +178,8 @@ TEST_F(SingleTest, single_test) {
   block.setHeight(1);
   block.setTimestamp(10000);
   block.setDifficulty(ArithUint256::fromHex("09184E72A000").toBits());
-  auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(nullptr);
+  auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(block.getHeight());
   blockIndex->setHeader(block);
-  blockIndex->setHeight(block.getHeight());
-  blockIndex->pprev = nullptr;
 
   std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain(chainlength);
   chain[0] = std::move(blockIndex);
@@ -198,7 +195,7 @@ TEST_F(SingleTest, single_test) {
     blockTmp.setDifficulty(ArithUint256::fromHex("09184E72A000").toBits());
     auto temp = std::make_shared<BlockIndex<VbkBlock>>(chain[i - 1].get());
     temp->setHeader(blockTmp);
-    temp->setHeight(blockTmp.getHeight());
+    ASSERT_EQ(temp->getHeight(), blockTmp.getHeight());
 
     chain[i] = std::move(temp);
   }
@@ -219,13 +216,15 @@ TEST(Vbk, CheckBlockTime1) {
   const auto startTime = 1'527'000'000;
   std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
   for (int i = 0; i < 1000; i++) {
-    auto b = std::make_shared<BlockIndex<VbkBlock>>(
-        i == 0 ? nullptr : chain.back().get());
+    auto b = i == 0
+                 ? std::make_shared<BlockIndex<VbkBlock>>(
+                       VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT)
+                 : std::make_shared<BlockIndex<VbkBlock>>(chain.back().get());
     chain.push_back(std::move(b));
     auto& index = chain.back();
     VbkBlock blockTmp{};
     blockTmp.setTimestamp(startTime + (120 * i));
-    index->setHeight(VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i);
+    ASSERT_EQ(index->getHeight(), VBK_MINIMUM_TIMESTAMP_ONSET_BLOCK_HEIGHT + i);
     index->setHeader(blockTmp);
   }
 
@@ -255,10 +254,12 @@ TEST(Vbk, CheckBlockTime2) {
   auto makeBlock = [](BlockIndex<VbkBlock>* prev,
                       int timestamp,
                       int height) -> std::shared_ptr<BlockIndex<VbkBlock>> {
-    auto index = std::make_shared<BlockIndex<VbkBlock>>(prev);
+    auto index = prev == nullptr
+                     ? std::make_shared<BlockIndex<VbkBlock>>(height)
+                     : std::make_shared<BlockIndex<VbkBlock>>(prev);
     VbkBlock blockTmp{};
     blockTmp.setTimestamp(timestamp);
-    index->setHeight(height);
+    VBK_ASSERT(index->getHeight() == height);
     index->setHeader(blockTmp);
     return index;
   };

@@ -16,6 +16,7 @@ using namespace altintegration;
 
 struct DummyAddon {
   std::string toPrettyString() const { return {}; }
+  void setNull(){};
 };
 
 struct MyDummyBlock {
@@ -52,20 +53,17 @@ struct ChainTest : public ::testing::TestWithParam<TestCase> {
 
   static BlocksOwner makeBlocks(int startHeight, int size) {
     std::vector<std::shared_ptr<BlockIndex<MyDummyBlock>>> blocks;
-    for (int i = 0; i < size; i++) {
-      auto index = std::make_shared<BlockIndex<MyDummyBlock>>(nullptr);
-      index->setHeight(i + startHeight);
-      blocks.push_back(std::move(index));
+
+    // bootstrap
+    if (size > 0) {
+      blocks.push_back(std::make_shared<BlockIndex<MyDummyBlock>>(startHeight));
     }
 
-    // fill in the links to previous blocks
-    for (int i = 0; i < (size - 1); i++) {
-      auto elem = blocks[size - i - 1].get();
-      elem->pprev = blocks[size - i - 2].get();
-      if (elem->pprev != nullptr) {
-        elem->pprev->pnext.insert(elem);
-      }
+    for (int i = 1; i < size; i++) {
+      blocks.push_back(
+          std::make_shared<BlockIndex<MyDummyBlock>>(blocks[i - 1].get()));
     }
+
     return {blocks};
   }
 };
@@ -154,9 +152,11 @@ std::shared_ptr<BlockIndex<AltBlock>> generateNextBlock(
     block.height = 0;
     block.timestamp = 0;
   }
-  auto index = std::make_shared<BlockIndex<AltBlock>>(prev);
+  auto index = prev == nullptr
+                   ? std::make_shared<BlockIndex<AltBlock>>(block.height)
+                   : std::make_shared<BlockIndex<AltBlock>>(prev);
   index->setHeader(block);
-  index->setHeight(block.height);
+  VBK_ASSERT(index->getHeight() == block.height);
   return index;
 }
 
@@ -174,9 +174,11 @@ std::shared_ptr<BlockIndex<VbkBlock>> generateNextBlock(
     block.setNonce(0);
     block.setVersion(0);
   }
-  auto index = std::make_shared<BlockIndex<VbkBlock>>(prev);
+  auto index = prev == nullptr
+                   ? std::make_shared<BlockIndex<VbkBlock>>(block.getHeight())
+                   : std::make_shared<BlockIndex<VbkBlock>>(prev);
   index->setHeader(block);
-  index->setHeight(block.getHeight());
+  VBK_ASSERT(index->getHeight() == block.getHeight());
   return index;
 }
 
