@@ -118,3 +118,16 @@ func TestPopData(t *testing.T) {
 	pop_data.Free()
 	pop_data.Free()
 }
+
+func TestNetworkBytePair(t *testing.T) {
+	assert := assert.New(t)
+
+	nbp := GenerateDefaultNetworkBytePair()
+
+	assert.Equal(nbp.HasNetworkByte(), true)
+	assert.Equal(nbp.GetNetworkByte(), uint8(1))
+	assert.Equal(nbp.GetTypeID(), uint8(1))
+
+	nbp.Free()
+	nbp.Free()
+}

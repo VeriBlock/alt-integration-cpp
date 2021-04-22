@@ -22,6 +22,7 @@ add_library(veriblock-pop-c OBJECT
         entities/atv.cpp
         entities/vtb.cpp
         entities/popdata.cpp
+        entities/network_byte_pair.cpp
         )
 target_link_libraries(veriblock-pop-c
         rocksdb
