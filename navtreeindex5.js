@@ -1,6 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structaltintegration_1_1BtcChainParams.html#a781fc64922c2dd57baa3a481165f5b09":[4,0,0,10,4],
 "structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2":[4,0,0,10,10],
 "structaltintegration_1_1BtcChainParams.html#a851fcab27434b19b4ad2ec71f4ec1de8":[4,0,0,10,5],
 "structaltintegration_1_1BtcChainParams.html#aa65ed2dcd6bec96c88ef07a36f9569c9":[4,0,0,10,1],
@@ -249,5 +248,6 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1MemPool.html#a6a1216dc68025da0a2f14b9cafd9bf04":[4,0,0,50,10],
 "structaltintegration_1_1MemPool.html#a6b296e601a6c960ac3620c785d4a325e":[4,0,0,50,11],
 "structaltintegration_1_1MemPool.html#a6b296e601a6c960ac3620c785d4a325ea081428644c854409496486ca4946e0c4":[4,0,0,50,11,1],
-"structaltintegration_1_1MemPool.html#a6b296e601a6c960ac3620c785d4a325ea792e9ac3d51f2bd35b17db51fefdf5db":[4,0,0,50,11,2]
+"structaltintegration_1_1MemPool.html#a6b296e601a6c960ac3620c785d4a325ea792e9ac3d51f2bd35b17db51fefdf5db":[4,0,0,50,11,2],
+"structaltintegration_1_1MemPool.html#a6b296e601a6c960ac3620c785d4a325ea87c2819455cca7fb41efa5391293723e":[4,0,0,50,11,0]
 };
