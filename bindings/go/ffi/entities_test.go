@@ -124,9 +124,9 @@ func TestNetworkBytePair(t *testing.T) {
 
 	nbp := GenerateDefaultNetworkBytePair()
 
-	assert.Equal(nbp.HasNetworkByte(), false)
-	assert.Equal(nbp.GetNetworkByte(), uint8(0))
-	assert.Equal(nbp.GetTypeID(), uint8(0))
+	assert.Equal(nbp.HasNetworkByte(), true)
+	assert.Equal(nbp.GetNetworkByte(), uint8(1))
+	assert.Equal(nbp.GetTypeID(), uint8(1))
 
 	nbp.Free()
 	nbp.Free()

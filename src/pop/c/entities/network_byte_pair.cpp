@@ -41,6 +41,9 @@ namespace default_value {
 template <>
 altintegration::NetworkBytePair generateDefaultValue<altintegration::NetworkBytePair>() {
   altintegration::NetworkBytePair res;
+  res.typeId = 1;
+  res.networkType.value = 1;
+  res.networkType.hasValue = true;
   return res;
 }
 }  // namespace default_value
