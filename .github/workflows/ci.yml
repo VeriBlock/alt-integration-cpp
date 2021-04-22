@@ -188,7 +188,7 @@ jobs:
           "-DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
           -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ \
-          -DCMAKE_SYSTEM_NAME=Windows -DTESTING=OFF"
+          -DCMAKE_SYSTEM_NAME=Windows -DTESTING=OFF -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON"
         ]
     steps:
       - uses: actions/checkout@v1
