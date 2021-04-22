@@ -38,7 +38,7 @@ add_library(pop_stateless_validator OBJECT
         pop_stateless_validator.cpp
         )
 if(VBK_NO_THREADS)
-    target_compile_definitions(pop_stateless_validator PRIVATE VBK_NO_THREADS)
+    add_compile_definitions(VBK_NO_THREADS)
 endif()
 
 set(SOURCES
