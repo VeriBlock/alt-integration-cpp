@@ -49,7 +49,7 @@ jobs:
       - name: update apt-get
         run: apt-get update
       - name: install dependecies
-        run: apt-get install librocksdb-dev libsnappy-dev libleveldb-dev
+        run: apt-get install -y librocksdb-dev libsnappy-dev libleveldb-dev
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
