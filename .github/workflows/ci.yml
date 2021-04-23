@@ -59,12 +59,12 @@ jobs:
           mkdir -p build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build .
+          make install -j2
       - name: install rocksdb
         run: |
           git clone https://github.com/facebook/rocksdb.git
           cd rocksdb
-          make install
+          make install -j2
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
