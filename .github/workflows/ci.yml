@@ -25,7 +25,7 @@ jobs:
           "-DASAN=ON -DFUZZING=ON",
           "-DUBSAN=ON -DFUZZING=ON",
           "-DVBK_NO_THREADS=ON",
-          # release build with all dependencies
+          # release build with all dependencies rocksdb
           "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release"
         ]
     env:
@@ -48,6 +48,8 @@ jobs:
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
         run: apt-get update
+      - name: install dependecies
+        run: apt-get install librocksdb-dev libsnappy-dev libleveldb-dev
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
