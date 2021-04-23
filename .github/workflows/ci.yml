@@ -61,7 +61,10 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ..
           cmake --build .
       - name: install rocksdb
-        run: git clone https://github.com/facebook/rocksdb.git && make static_lib
+        run: |
+          git clone https://github.com/facebook/rocksdb.git
+          cd rocksdb
+          make install
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
