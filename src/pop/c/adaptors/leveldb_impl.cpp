@@ -5,6 +5,21 @@
 
 #include "leveldb_impl.hpp"
 
+void adaptors::LevelDBWriteBatch::write(const std::vector<uint8_t>& key,
+                                        const std::vector<uint8_t>& value) {
+  leveldb::Slice key_slice((char*)key.data(), key.size());
+  leveldb::Slice value_slice((char*)value.data(), value.size());
+  batch_.Put(key_slice, value_slice);
+}
+
+void adaptors::LevelDBWriteBatch::writeBatch() {
+  leveldb::Status status = db_.Write(write_options_, &batch_);
+  if (!status.ok()) {
+    throw altintegration::StorageIOException(fmt::format(
+        "failed to write batch into the storage, err: {}", status.ToString()));
+  }
+}
+
 adaptors::LevelDBStorage::~LevelDBStorage() {
   if (db_ != nullptr) {
     delete db_;
@@ -46,4 +61,33 @@ bool adaptors::LevelDBStorage::read(const std::vector<uint8_t>& key,
     value[i] = str_value[i];
   }
   return status.ok();
+}
+
+void adaptors::LevelDBStorageIterator::seek(const std::vector<uint8_t>& val) {
+  leveldb::Slice val_slice((char*)val.data(), val.size());
+  it_->Seek(val_slice);
+}
+
+bool adaptors::LevelDBStorageIterator::key(std::vector<uint8_t>& out) const {
+  if (!it_->Valid()) {
+    return false;
+  }
+  auto key_slice = it_->key();
+  out.resize(key_slice.size());
+  for (size_t i = 0; i < key_slice.size(); ++i) {
+    out[i] = key_slice[i];
+  }
+  return true;
+}
+
+bool adaptors::LevelDBStorageIterator::value(std::vector<uint8_t>& out) const {
+  if (!it_->Valid()) {
+    return false;
+  }
+  auto value_slice = it_->value();
+  out.resize(value_slice.size());
+  for (size_t i = 0; i < value_slice.size(); ++i) {
+    out[i] = value_slice[i];
+  }
+  return true;
 }

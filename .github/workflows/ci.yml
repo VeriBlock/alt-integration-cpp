@@ -26,7 +26,7 @@ jobs:
           "-DUBSAN=ON -DFUZZING=ON",
           "-DVBK_NO_THREADS=ON",
           # release build with all dependencies rocksdb
-          "-DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release"
         ]
     env:
       CC: clang
@@ -58,7 +58,7 @@ jobs:
           cd leveldb
           mkdir -p build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DLEVELDB_BUILD_TESTS=OFF -DLEVELDB_BUILD_BENCHMARKS=OFF ..
           make install -j2
       - name: install rocksdb
         run: |
