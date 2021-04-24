@@ -143,9 +143,6 @@ target_include_directories(${LIB_NAME}
         $<INSTALL_INTERFACE:include>
         )
 
-if(WITH_ROCKSDB)
-    set(VBK_DEPENDENCIES_LIBS -lrocksdb)
-endif()
 set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"

@@ -6,16 +6,21 @@
 #ifndef VERIBLOCK_POP_CPP_ADAPTORS_STORAGE_ROCKSDB_IMPL_HPP
 #define VERIBLOCK_POP_CPP_ADAPTORS_STORAGE_ROCKSDB_IMPL_HPP
 
-#include "rocksdb/db.h"
-#include "storage_interface.hpp"
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/exceptions/storage_io.hpp>
 #include <veriblock/pop/strutil.hpp>
 
+#include "rocksdb/db.h"
+#include "storage_interface.hpp"
+
 namespace adaptors {
 
 struct RocksDBStorageIterator : public StorageIterator {
-  ~RocksDBStorageIterator() override { delete it_; };
+  ~RocksDBStorageIterator() override {
+    if (it_ != nullptr) {
+      delete it_;
+    }
+  }
 
   RocksDBStorageIterator(rocksdb::Iterator* it) : it_(it) {}
 

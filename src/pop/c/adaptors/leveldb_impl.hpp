@@ -17,7 +17,11 @@
 namespace adaptors {
 
 struct LevelDBStorageIterator : public StorageIterator {
-  ~LevelDBStorageIterator() override { delete it_; }
+  ~LevelDBStorageIterator() override {
+    if (it_ != nullptr) {
+      delete it_;
+    }
+  }
 
   LevelDBStorageIterator(leveldb::Iterator* it) : it_(it) {}
 
@@ -65,10 +69,13 @@ struct LevelDBStorage : public Storage {
   bool read(const std::vector<uint8_t>& key,
             std::vector<uint8_t>& value) override;
 
-  std::shared_ptr<WriteBatch> generateWriteBatch() override { return nullptr; }
+  std::shared_ptr<WriteBatch> generateWriteBatch() override {
+    return std::make_shared<LevelDBWriteBatch>(*db_, write_options_);
+  }
 
   std::shared_ptr<StorageIterator> generateIterator() override {
-    return nullptr;
+    return std::make_shared<LevelDBStorageIterator>(
+        db_->NewIterator(read_options_));
   }
 
  private:

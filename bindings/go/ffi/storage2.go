@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -lm
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lleveldb -lm
 // #include <veriblock/pop/c/storage2.h>
 import "C"
 import "runtime"
