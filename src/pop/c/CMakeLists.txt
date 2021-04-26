@@ -30,13 +30,21 @@ if(NOT WITH_ROCKSDB AND NOT WITH_LEVELDB)
 endif()
         
 if(WITH_ROCKSDB)
-list(APPEND C_SOURCES adaptors/rocksdb_impl.cpp)
-list(APPEND C_SOURCES $<TARGET_OBJECTS:rocksdb>)
+        list(APPEND C_SOURCES adaptors/rocksdb_impl.cpp)
+        list(APPEND C_SOURCES $<TARGET_OBJECTS:rocksdb>)
 endif()
 
 if(WITH_LEVELDB)
-list(APPEND C_SOURCES adaptors/leveldb_impl.cpp)
-list(APPEND C_SOURCES $<TARGET_OBJECTS:leveldb>)
+        list(APPEND C_SOURCES adaptors/leveldb_impl.cpp)
+        list(APPEND C_SOURCES $<TARGET_OBJECTS:leveldb>)
 endif()
 
 add_library(veriblock-pop-c OBJECT ${C_SOURCES})
+
+if(WITH_ROCKSDB)
+        target_link_libraries(veriblock-pop-c rocksdb)
+endif()
+
+if(WITH_LEVELDB)
+        target_link_libraries(veriblock-pop-c leveldb)
+endif()
