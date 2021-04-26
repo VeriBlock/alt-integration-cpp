@@ -52,19 +52,6 @@ jobs:
         run: |
           apt-get install -y python3 python3-pip
           pip3 install cmake
-      - name: install leveldb
-        run: |
-          git clone --recurse-submodules https://github.com/google/leveldb.git
-          cd leveldb
-          mkdir -p build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DLEVELDB_BUILD_TESTS=OFF -DLEVELDB_BUILD_BENCHMARKS=OFF ..
-          make install -j2
-      - name: install rocksdb
-        run: |
-          git clone https://github.com/facebook/rocksdb.git
-          cd rocksdb
-          make install -j2
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
