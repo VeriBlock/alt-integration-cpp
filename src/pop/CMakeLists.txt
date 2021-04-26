@@ -73,17 +73,8 @@ set(SOURCES
 if(WITH_C_WRAPPER)
     add_subdirectory(c)
     list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
-    if(NOT WITH_ROCKSDB AND NOT WITH_LEVELDB)
-        message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON or -DWITH_LEVELDB=ON ")
-    endif()
-
-    if(WITH_ROCKSDB)
-        list(APPEND SOURCES $<TARGET_OBJECTS:rocksdb_storage>)
-    endif()
-    if(WITH_LEVELDB)
-        list(APPEND SOURCES $<TARGET_OBJECTS:leveldb_storage>)
-    endif()
 endif()
+
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
