@@ -20,3 +20,13 @@ func createBytes(array *C.pop_array_u8_t) []byte {
 	C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
 	return res
 }
+
+func freeArrayChar(array *C.pop_array_string_t) {
+	C.pop_array_string_free(array)
+}
+
+func createString(array *C.pop_array_string_t) string {
+	res := make([]byte, array.size)
+	C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	return string(res)
+}
