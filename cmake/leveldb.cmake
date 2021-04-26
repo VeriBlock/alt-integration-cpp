@@ -22,6 +22,7 @@ endif()
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     target_add_flag(leveldb -Wno-unused-parameter)
     target_add_flag(leveldb -Wno-implicit-fallthrough)
+    target_add_flag(rocksdb -Wno-format-nonliteral)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
