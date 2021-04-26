@@ -1,7 +1,7 @@
 # use bundled leveldb
 set(LEVELDB_BUILD_TESTS OFF CACHE BOOL "Build LevelDB's unit tests")
 set(LEVELDB_BUILD_BENCHMARKS OFF CACHE BOOL "Build LevelDB's benchmarks")
-set(WITH_TESTS OFF CACHE BOOL "build with tests")
+set(HAVE_SNAPPY OFF CACHE BOOL "Build with snappy compression library")
 
 FetchContent_Declare(
         leveldb
