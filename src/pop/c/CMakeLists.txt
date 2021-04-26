@@ -24,6 +24,13 @@ add_library(veriblock-pop-c OBJECT
         entities/popdata.cpp
         entities/network_byte_pair.cpp
         )
+if(WITH_ROCKSDB)
 target_link_libraries(veriblock-pop-c
         rocksdb
         )
+endif()
+if(WITH_LEVELDB)
+target_link_libraries(veriblock-pop-c
+        leveldb
+        )
+endif()
