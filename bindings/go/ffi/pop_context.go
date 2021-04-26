@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lleveldb -lm
+// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lm
 // #include <veriblock/pop/c/pop_context.h>
 import "C"
 import (
