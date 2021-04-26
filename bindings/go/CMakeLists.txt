@@ -11,11 +11,11 @@ if(TESTING AND TESTING_GO)
     )
 
     if(WITH_ROCKSDB)
-        set(GO_TEST_ENV "VBK_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/include")
+        set(GO_TEST_ENV "VBK_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/include CGO_LDFLAGS=-lrocksdb")
     endif()
 
     if(WITH_LEVELDB)
-        set(GO_TEST_ENV "VBK_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/include")
+        set(GO_TEST_ENV "VBK_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/include CGO_LDFLAGS=-lleveldb")
     endif()
 
     set_tests_properties(go_test PROPERTIES
