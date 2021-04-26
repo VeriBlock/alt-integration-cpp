@@ -21,6 +21,7 @@ set(C_SOURCES
         entities/vtb.cpp
         entities/popdata.cpp
         entities/network_byte_pair.cpp
+        entities/address.cpp
         # adaptors
         adaptors/block_provider_impl.cpp
         )
