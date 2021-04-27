@@ -36,20 +36,6 @@ POP_ENTITY_GETTER_FUNCTION(address, POP_ARRAY_NAME(string), address) {
   return res;
 }
 
-POP_ENTITY_TO_JSON(address) {
-  VBK_ASSERT(self);
-
-  std::string json =
-      altintegration::ToJSON<picojson::value>(self->ref).serialize(true);
-
-  POP_ARRAY_NAME(string) res;
-  res.size = json.size();
-  res.data = new char[res.size];
-  strcpy(res.data, json.c_str());
-
-  return res;
-}
-
 POP_GENERATE_DEFAULT_VALUE(address) {
   auto* v = new POP_ENTITY_NAME(address);
   v->ref = default_value::generateDefaultValue<altintegration::Address>();

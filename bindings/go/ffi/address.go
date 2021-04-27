@@ -9,7 +9,9 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lm
 // #include <veriblock/pop/c/entities/address.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+)
 
 type Address struct {
 	ref *C.pop_address_t

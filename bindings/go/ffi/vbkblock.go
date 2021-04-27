@@ -9,6 +9,7 @@ package ffi
 // #include <veriblock/pop/c/entities/vbkblock.h>
 import "C"
 import (
+	"encoding/json"
 	"runtime"
 
 	"github.com/stretchr/testify/assert"
@@ -131,6 +132,19 @@ func (v *VbkBlock) GetHeight() int32 {
 		panic("VbkBlock does not initialized")
 	}
 	return int32(C.pop_vbk_block_get_height(v.ref))
+}
+
+func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("VbkBlock does not initialized")
+	}
+	str := C.pop_vbk_block_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }
 
 func (val1 *VbkBlock) assertEquals(assert *assert.Assertions, val2 *VbkBlock) {
