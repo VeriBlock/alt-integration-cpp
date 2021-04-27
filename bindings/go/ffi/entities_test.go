@@ -143,3 +143,14 @@ func TestAddress(t *testing.T) {
 	addr.Free()
 	addr.Free()
 }
+
+func TestBtcTx(t *testing.T) {
+	assert := assert.New(t)
+
+	btctx := GenerateDefaultBtcTx()
+
+	assert.Equal(btctx.GetTx(), []byte{1, 1, 1, 1, 1})
+
+	btctx.Free()
+	btctx.Free()
+}
