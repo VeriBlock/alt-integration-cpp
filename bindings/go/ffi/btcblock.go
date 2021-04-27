@@ -9,6 +9,7 @@ package ffi
 // #include <veriblock/pop/c/entities/btcblock.h>
 import "C"
 import (
+	"encoding/json"
 	"runtime"
 
 	"github.com/stretchr/testify/assert"
@@ -94,6 +95,19 @@ func (v *BtcBlock) GetDifficulty() uint32 {
 		panic("BtcBlock does not initialized")
 	}
 	return uint32(C.pop_btc_block_get_difficulty(v.ref))
+}
+
+func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("BtcBlock does not initialized")
+	}
+	str := C.pop_btc_block_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }
 
 func (val1 *BtcBlock) assertEquals(assert *assert.Assertions, val2 *BtcBlock) {
