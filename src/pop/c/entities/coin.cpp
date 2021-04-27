@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "stdint.h"
 #include "coin.hpp"
 #include "veriblock/pop/assert.hpp"
 
@@ -13,10 +14,10 @@ POP_ENTITY_FREE_SIGNATURE(coin) {
   }
 }
 
-POP_ENTITY_GETTER_FUNCTION(coin, long long, units) {
+POP_ENTITY_GETTER_FUNCTION(coin, int64_t, units) {
   VBK_ASSERT(self);
 
-  return static_cast<long long>(self->ref.units);
+  return static_cast<int64_t>(self->ref.units);
 }
 
 POP_GENERATE_DEFAULT_VALUE(coin) {

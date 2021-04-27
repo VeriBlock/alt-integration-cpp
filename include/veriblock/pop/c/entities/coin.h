@@ -6,6 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_C_ENTITIES_COIN_H
 #define VERIBLOCK_POP_CPP_C_ENTITIES_COIN_H
 
+#include "stdint.h"
 #include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
@@ -14,7 +15,7 @@ extern "C" {
 
 POP_DECLARE_ENTITY(coin);
 
-POP_ENTITY_GETTER_FUNCTION(coin, long long, units);
+POP_ENTITY_GETTER_FUNCTION(coin, int64_t, units);
 
 POP_GENERATE_DEFAULT_VALUE(coin);
 
