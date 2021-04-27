@@ -5,11 +5,11 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
+// #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/vtb.h>
 import "C"
 import (
+	"encoding/json"
 	"runtime"
 
 	"github.com/stretchr/testify/assert"
@@ -59,6 +59,19 @@ func (v *Vtb) GetContainingBlock() *VbkBlock {
 		panic("Vtb does not initialized")
 	}
 	return createVbkBlock(C.pop_vtb_get_containing_block(v.ref))
+}
+
+func (v *Vtb) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("Vtb does not initialized")
+	}
+	str := C.pop_vtb_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }
 
 func (val1 *Vtb) assertEquals(assert *assert.Assertions, val2 *Vtb) {

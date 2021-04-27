@@ -7,6 +7,9 @@
 #ifdef WITH_ROCKSDB
 #include "adaptors/rocksdb_impl.hpp"
 #endif
+#ifdef WITH_LEVELDB
+#include "adaptors/leveldb_impl.hpp"
+#endif
 #include "adaptors/inmem_storage_impl.hpp"
 #include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
@@ -32,6 +35,9 @@ POP_ENTITY_NEW_FUNCTION(storage,
     } else {
 #ifdef WITH_ROCKSDB
       res->ref = std::make_shared<adaptors::RocksDBStorage>(path);
+#endif
+#ifdef WITH_LEVELDB
+      res->ref = std::make_shared<adaptors::LevelDBStorage>(path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {

@@ -5,11 +5,13 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
+// #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/altblock.h>
 import "C"
-import "runtime"
+import (
+	"encoding/json"
+	"runtime"
+)
 
 type AltBlock struct {
 	ref *C.pop_alt_block_t
@@ -32,7 +34,7 @@ func (v *AltBlock) Free() {
 
 func (v *AltBlock) GetHash() []byte {
 	if v.ref == nil {
-		panic("VbkBlock does not initialized")
+		panic("AltBlock does not initialized")
 	}
 	array := C.pop_alt_block_get_hash(v.ref)
 	defer freeArrayU8(&array)
@@ -41,7 +43,7 @@ func (v *AltBlock) GetHash() []byte {
 
 func (v *AltBlock) GetPreviousBlock() []byte {
 	if v.ref == nil {
-		panic("VbkBlock does not initialized")
+		panic("AltBlock does not initialized")
 	}
 	array := C.pop_alt_block_get_previous_block(v.ref)
 	defer freeArrayU8(&array)
@@ -50,14 +52,27 @@ func (v *AltBlock) GetPreviousBlock() []byte {
 
 func (v *AltBlock) GetTimestamp() uint32 {
 	if v.ref == nil {
-		panic("VbkBlock does not initialized")
+		panic("AltBlock does not initialized")
 	}
 	return uint32(C.pop_alt_block_get_timestamp(v.ref))
 }
 
 func (v *AltBlock) GetHeight() int32 {
 	if v.ref == nil {
-		panic("VbkBlock does not initialized")
+		panic("AltBlock does not initialized")
 	}
 	return int32(C.pop_alt_block_get_height(v.ref))
+}
+
+func (v *AltBlock) ToJSON(reverseHashes bool) (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("AltBlock does not initialized")
+	}
+	str := C.pop_alt_block_to_json(v.ref, C.bool(reverseHashes))
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }

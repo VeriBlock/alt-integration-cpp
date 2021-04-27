@@ -5,11 +5,13 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
+// #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/popdata.h>
 import "C"
-import "runtime"
+import (
+	"encoding/json"
+	"runtime"
+)
 
 type PopData struct {
 	ref *C.pop_pop_data_t
@@ -55,4 +57,17 @@ func (v *PopData) GetContext() []*VbkBlock {
 	array := C.pop_pop_data_get_context(v.ref)
 	defer freeArrayVbkBlock(&array)
 	return createArrayVbkBlock(&array)
+}
+
+func (v *PopData) ToJSON(verbosity bool) (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("PopData does not initialized")
+	}
+	str := C.pop_pop_data_to_json(v.ref, C.bool(verbosity))
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }
