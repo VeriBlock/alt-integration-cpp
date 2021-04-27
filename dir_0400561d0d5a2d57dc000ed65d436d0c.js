@@ -5,6 +5,7 @@ var dir_0400561d0d5a2d57dc000ed65d436d0c =
     [ "atv.h", "atv_8h_source.html", null ],
     [ "btcblock.h", "btcblock_8h_source.html", null ],
     [ "btctx.h", "btctx_8h_source.html", null ],
+    [ "coin.h", "coin_8h_source.html", null ],
     [ "network_byte_pair.h", "network__byte__pair_8h_source.html", null ],
     [ "popdata.h", "popdata_8h_source.html", null ],
     [ "publication_data.h", "publication__data_8h_source.html", null ],
