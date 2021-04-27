@@ -5,6 +5,10 @@
 
 #include <memory>
 
+// clang-format off
+#include <veriblock/pop/adaptors/picojson.hpp>
+// clang-format on
+
 #include "vbkblock.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "vtb.hpp"
@@ -30,6 +34,20 @@ POP_ENTITY_GETTER_FUNCTION(vtb,
 
   auto* res = new POP_ENTITY_NAME(vbk_block);
   res->ref = self->ref.containingBlock;
+
+  return res;
+}
+
+POP_ENTITY_TO_JSON(vtb) {
+  VBK_ASSERT(self);
+
+  std::string json =
+      altintegration::ToJSON<picojson::value>(self->ref).serialize(true);
+
+  POP_ARRAY_NAME(string) res;
+  res.size = json.size();
+  res.data = new char[res.size];
+  strcpy(res.data, json.c_str());
 
   return res;
 }

@@ -5,6 +5,10 @@
 
 #include <memory>
 
+// clang-format off
+#include <veriblock/pop/adaptors/picojson.hpp>
+// clang-format on
+
 #include "btcblock.hpp"
 #include "veriblock/pop/assert.hpp"
 
@@ -83,6 +87,20 @@ POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, nonce) {
   VBK_ASSERT(self);
 
   return self->ref.getNonce();
+}
+
+POP_ENTITY_TO_JSON(btc_block) {
+  VBK_ASSERT(self);
+
+  std::string json =
+      altintegration::ToJSON<picojson::value>(self->ref).serialize(true);
+
+  POP_ARRAY_NAME(string) res;
+  res.size = json.size();
+  res.data = new char[res.size];
+  strcpy(res.data, json.c_str());
+
+  return res;
 }
 
 POP_GENERATE_DEFAULT_VALUE(btc_block) {

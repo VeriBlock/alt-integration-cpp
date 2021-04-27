@@ -41,8 +41,9 @@ extern "C" {
 
 // signature of the toJson method of the pop entity. used for the declaration
 // and intialization.
-#define POP_ENTITY_TO_JSON(entity) \
-  POP_ARRAY_NAME(string) pop_##entity##_to_json()
+#define POP_ENTITY_TO_JSON(entity, ...) \
+  POP_ARRAY_NAME(string)                \
+  pop_##entity##_to_json(const pop_##entity##_t* self, ##__VA_ARGS__)
 
 // signature of the custom function of the pop entity. used for the declaration
 // and intialization.

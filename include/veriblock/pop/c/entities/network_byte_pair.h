@@ -20,8 +20,6 @@ POP_ENTITY_GETTER_FUNCTION(network_byte_pair, bool, has_network_byte);
 POP_ENTITY_GETTER_FUNCTION(network_byte_pair, uint8_t, network_byte);
 POP_ENTITY_GETTER_FUNCTION(network_byte_pair, uint8_t, type_id);
 
-POP_ENTITY_TO_JSON(network_byte_pair);
-
 POP_GENERATE_DEFAULT_VALUE(network_byte_pair);
 
 #ifdef __cplusplus
