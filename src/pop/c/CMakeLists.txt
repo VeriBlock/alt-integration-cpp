@@ -23,6 +23,7 @@ set(C_SOURCES
         entities/network_byte_pair.cpp
         entities/address.cpp
         entities/btctx.cpp
+        entities/coin.cpp
         # adaptors
         adaptors/block_provider_impl.cpp
         )
