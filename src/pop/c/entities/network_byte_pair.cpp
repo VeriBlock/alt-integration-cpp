@@ -33,13 +33,15 @@ POP_ENTITY_GETTER_FUNCTION(network_byte_pair, uint8_t, type_id) {
 
 POP_GENERATE_DEFAULT_VALUE(network_byte_pair) {
   auto* v = new POP_ENTITY_NAME(network_byte_pair);
-  v->ref = default_value::generateDefaultValue<altintegration::NetworkBytePair>();
+  v->ref =
+      default_value::generateDefaultValue<altintegration::NetworkBytePair>();
   return v;
 }
 
 namespace default_value {
 template <>
-altintegration::NetworkBytePair generateDefaultValue<altintegration::NetworkBytePair>() {
+altintegration::NetworkBytePair
+generateDefaultValue<altintegration::NetworkBytePair>() {
   altintegration::NetworkBytePair res;
   res.typeId = 1;
   res.networkType.value = 1;

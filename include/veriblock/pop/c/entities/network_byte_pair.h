@@ -6,9 +6,9 @@
 #ifndef VERIBLOCK_POP_CPP_C_ENTITIES_NETWORK_BYTE_PAIR_H
 #define VERIBLOCK_POP_CPP_C_ENTITIES_NETWORK_BYTE_PAIR_H
 
-#include "veriblock/pop/c/type_helpers.h"
 #include "stdbool.h"
 #include "stdint.h"
+#include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
 extern "C" {

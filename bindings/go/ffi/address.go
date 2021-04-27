@@ -9,7 +9,9 @@ package ffi
 // #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lm
 // #include <veriblock/pop/c/entities/address.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+)
 
 type Address struct {
 	ref *C.pop_address_t
@@ -41,7 +43,7 @@ func (v *Address) GetAddress() string {
 	if v.ref == nil {
 		panic("Address does not initialized")
 	}
-	array := C.pop_address_get_address(v.ref)
-	defer freeArrayChar(&array)
-	return createString(&array)
+	str := C.pop_address_get_address(v.ref)
+	defer freeArrayChar(&str)
+	return createString(&str)
 }

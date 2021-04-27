@@ -3,6 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <string.h>
+
+// clang-format off
+#include <veriblock/pop/adaptors/picojson.hpp>
+// clang-format on
+
 #include "address.hpp"
 #include "veriblock/pop/assert.hpp"
 
@@ -25,9 +31,9 @@ POP_ENTITY_GETTER_FUNCTION(address, POP_ARRAY_NAME(string), address) {
   std::string addr = self->ref.toString();
 
   POP_ARRAY_NAME(string) res;
-  res.size = addr.length();
+  res.size = addr.size();
   res.data = new char[res.size];
-  strcpy(res.data, addr.c_str());
+  strncpy(res.data, addr.c_str(), res.size);
 
   return res;
 }
