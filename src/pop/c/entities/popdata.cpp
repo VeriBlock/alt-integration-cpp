@@ -67,7 +67,7 @@ POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vbk_block), context) {
   return res;
 }
 
-POP_ENTITY_TO_JSON(pop_data, bool verbose) {
+POP_ENTITY_TO_JSON(pop_data, bool verbose = false) {
   VBK_ASSERT(self);
 
   std::string json = altintegration::ToJSON<picojson::value>(self->ref, verbose)

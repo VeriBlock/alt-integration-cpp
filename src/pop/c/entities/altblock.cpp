@@ -57,7 +57,7 @@ POP_ENTITY_GETTER_FUNCTION(alt_block, int32_t, height) {
   return self->ref.getHeight();
 }
 
-POP_ENTITY_TO_JSON(alt_block, bool reverseHashes) {
+POP_ENTITY_TO_JSON(alt_block, bool reverseHashes = true) {
   VBK_ASSERT(self);
 
   std::string json =
