@@ -1,6 +1,6 @@
 var dir_0252a7abd2d5cee5cf1dc5c94a7052df =
 [
-    [ "adaptors", "dir_c8fca49c6f641d5a8a52635c698d8470.html", "dir_c8fca49c6f641d5a8a52635c698d8470" ],
+    [ "adapters", "dir_a5830c45909d5d09b176aa4f05d0fed1.html", "dir_a5830c45909d5d09b176aa4f05d0fed1" ],
     [ "blockchain", "dir_93c268aa47f4f847c999021b7dc26af0.html", "dir_93c268aa47f4f847c999021b7dc26af0" ],
     [ "c", "dir_2082450efbbb2404a3968a022866e0e9.html", "dir_2082450efbbb2404a3968a022866e0e9" ],
     [ "cache", "dir_b19a281bc7dc259eb6568822b5184d17.html", "dir_b19a281bc7dc259eb6568822b5184d17" ],
