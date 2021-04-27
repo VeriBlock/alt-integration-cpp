@@ -5,8 +5,7 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
+// #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/bytestream.h>
 import "C"
 import (
@@ -41,7 +40,7 @@ type VbkByteStream struct {
 
 // Read ...
 func (v *VbkByteStream) Read(p []byte) (n int, err error) {
-	len := C.ulong(len(p))
+	len := C.size_t(len(p))
 	if len != 0 {
 		bufferC := (*C.uint8_t)(unsafe.Pointer(&p[0]))
 		res := C.VBK_ByteStream_Read(v.ref, bufferC, len)

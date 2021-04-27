@@ -118,3 +118,39 @@ func TestPopData(t *testing.T) {
 	pop_data.Free()
 	pop_data.Free()
 }
+
+func TestNetworkBytePair(t *testing.T) {
+	assert := assert.New(t)
+
+	nbp := GenerateDefaultNetworkBytePair()
+
+	assert.Equal(nbp.HasNetworkByte(), true)
+	assert.Equal(nbp.GetNetworkByte(), uint8(1))
+	assert.Equal(nbp.GetTypeID(), uint8(1))
+
+	nbp.Free()
+	nbp.Free()
+}
+
+func TestAddress(t *testing.T) {
+	assert := assert.New(t)
+
+	addr := GenerateDefaultAddress()
+
+	assert.Equal(addr.GetAddressType(), uint8(1))
+	assert.Equal(addr.GetAddress(), "V111111111111111111111111G3LuZ")
+
+	addr.Free()
+	addr.Free()
+}
+
+func TestBtcTx(t *testing.T) {
+	assert := assert.New(t)
+
+	btctx := GenerateDefaultBtcTx()
+
+	assert.Equal(btctx.GetTx(), []byte{1, 1, 1, 1, 1})
+
+	btctx.Free()
+	btctx.Free()
+}

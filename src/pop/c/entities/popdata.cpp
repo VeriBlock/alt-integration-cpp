@@ -3,7 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <string.h>
+
 #include <memory>
+
+// clang-format off
+#include <veriblock/pop/adaptors/picojson.hpp>
+// clang-format on
 
 #include "atv.hpp"
 #include "popdata.hpp"
@@ -60,6 +66,20 @@ POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vbk_block), context) {
     res.data[i] = new POP_ENTITY_NAME(vbk_block);
     res.data[i]->ref = context[i];
   }
+  return res;
+}
+
+POP_ENTITY_TO_JSON(pop_data, bool verbose = false) {
+  VBK_ASSERT(self);
+
+  std::string json = altintegration::ToJSON<picojson::value>(self->ref, verbose)
+                         .serialize(true);
+
+  POP_ARRAY_NAME(string) res;
+  res.size = json.size();
+  res.data = new char[res.size];
+  strncpy(res.data, json.c_str(), res.size);
+
   return res;
 }
 
