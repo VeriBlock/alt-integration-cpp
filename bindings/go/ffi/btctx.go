@@ -5,8 +5,7 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lm
+// #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/btctx.h>
 import "C"
 import "runtime"

@@ -154,3 +154,14 @@ func TestBtcTx(t *testing.T) {
 	btctx.Free()
 	btctx.Free()
 }
+
+func TestCoin(t *testing.T) {
+	assert := assert.New(t)
+
+	coin := GenerateDefaultCoin()
+
+	assert.Equal(coin.GetUnits(), int64(1))
+
+	coin.Free()
+	coin.Free()
+}
