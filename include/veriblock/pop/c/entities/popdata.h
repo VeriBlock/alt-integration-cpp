@@ -23,6 +23,8 @@ POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(atv), atvs);
 POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vtb), vtbs);
 POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vbk_block), context);
 
+POP_ENTITY_TO_JSON(pop_data);
+
 POP_GENERATE_DEFAULT_VALUE(pop_data);
 
 #ifdef __cplusplus
