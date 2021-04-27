@@ -149,7 +149,7 @@ func TestBtcTx(t *testing.T) {
 
 	btctx := GenerateDefaultBtcTx()
 
-	assert.Equal(btctx.GetTx(), []byte{1})
+	assert.Equal(btctx.GetTx(), []byte{1, 1, 1, 1, 1})
 
 	btctx.Free()
 	btctx.Free()

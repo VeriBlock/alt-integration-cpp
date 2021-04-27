@@ -35,8 +35,7 @@ POP_GENERATE_DEFAULT_VALUE(btctx) {
 namespace default_value {
 template <>
 altintegration::BtcTx generateDefaultValue<altintegration::BtcTx>() {
-  std::vector<uint8_t> v;
-  v.push_back(1);
+  std::vector<uint8_t> v = {1, 1, 1, 1, 1};
   altintegration::BtcTx res(v);
   return res;
 }
