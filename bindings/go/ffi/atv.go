@@ -61,10 +61,6 @@ func (v *Atv) GetBlockOfProof() *VbkBlock {
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
 }
 
-func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
-	val1.GetBlockOfProof().assertEquals(assert, val2.GetBlockOfProof())
-}
-
 func (v *Atv) ToJSON() (map[string]interface{}, error) {
 	if v.ref == nil {
 		panic("Atv does not initialized")
@@ -76,4 +72,8 @@ func (v *Atv) ToJSON() (map[string]interface{}, error) {
 	var res map[string]interface{}
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
+}
+
+func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
+	val1.GetBlockOfProof().assertEquals(assert, val2.GetBlockOfProof())
 }

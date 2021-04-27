@@ -28,25 +28,26 @@ func TestJSONBtcBlock(t *testing.T) {
 	assert.Equal(json["hash"], "164a73ce49bb95df8f547169d5731f069a83714bb431afa09a24e088c9ff051c")
 }
 
-// func TestJSONVbkBlock(t *testing.T) {
-// 	assert := assert.New(t)
+func TestJSONVbkBlock(t *testing.T) {
+	assert := assert.New(t)
 
-// 	vbk_block := GenerateDefaultVbkBlock()
+	vbk_block := GenerateDefaultVbkBlock()
 
-// 	json, err := vbk_block.ToJSON()
-// 	assert.NoError(err)
+	json, err := vbk_block.ToJSON()
+	assert.NoError(err)
 
-// 	assert.Equal(json["height"], float64(1))
-// 	assert.Equal(json["version"], float64(1))
-// 	assert.Equal(json["timestamp"], float64(1))
-// 	assert.Equal(json["difficulty"], float64(1))
-// 	assert.Equal(json["nonce"], float64(1))
-// 	assert.Equal(json["hash"], "c8431c39104b669d234f54b2a6b76adb581c5352cad81826")
-// 	assert.Equal(json["previousBlock"], "010101010101010101010101")
-// 	assert.Equal(json["previousKeystone"], "010101010101010101")
-// 	assert.Equal(json["secondPreviousKeystone"], "010101010101010101")
-// 	assert.Equal(json["merkleRoot"], "01010101010101010101010101010101")
-// }
+	assert.Equal(json["height"], float64(1))
+	assert.Equal(json["version"], float64(1))
+	assert.Equal(json["timestamp"], float64(1))
+	assert.Equal(json["difficulty"], float64(1))
+	assert.Equal(json["nonce"], float64(1))
+	assert.Equal(json["hash"], "c8431c39104b669d234f54b2a6b76adb581c5352cad81826")
+	assert.Equal(json["previousBlock"], "010101010101010101010101")
+	assert.Equal(json["previousKeystone"], "010101010101010101")
+	assert.Equal(json["secondPreviousKeystone"], "010101010101010101")
+	assert.Equal(json["merkleRoot"], "01010101010101010101010101010101")
+
+}
 
 func TestJSONAltBlock(t *testing.T) {
 	assert := assert.New(t)
@@ -62,14 +63,30 @@ func TestJSONAltBlock(t *testing.T) {
 	assert.Equal(json["height"], float64(1))
 }
 
-func TestJSONAddress(t *testing.T) {
+func TestJSONVtb(t *testing.T) {
 	assert := assert.New(t)
 
-	addr := GenerateDefaultAddress()
+	vtb := GenerateDefaultVtb()
 
-	json, err := addr.ToJSON()
+	json_vbk_block, err := GenerateDefaultVbkBlock().ToJSON()
 	assert.NoError(err)
 
-	assert.Equal(json, "01010101010101010101010101010101")
+	json, err := vtb.ToJSON()
+	assert.NoError(err)
 
+	assert.Equal(json["containingBlock"], json_vbk_block)
+}
+
+func TestJSONAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	atv := GenerateDefaultAtv()
+
+	json_vbk_block, err := GenerateDefaultVbkBlock().ToJSON()
+	assert.NoError(err)
+
+	json, err := atv.ToJSON()
+	assert.NoError(err)
+
+	assert.Equal(json["blockOfProof"], json_vbk_block)
 }

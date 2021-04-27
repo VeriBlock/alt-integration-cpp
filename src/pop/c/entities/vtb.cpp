@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <string.h>
+
 #include <memory>
 
 // clang-format off
@@ -47,7 +49,7 @@ POP_ENTITY_TO_JSON(vtb) {
   POP_ARRAY_NAME(string) res;
   res.size = json.size();
   res.data = new char[res.size];
-  strcpy(res.data, json.c_str());
+  strncpy(res.data, json.c_str(), res.size);
 
   return res;
 }
