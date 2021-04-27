@@ -41,7 +41,7 @@ func (v *Address) GetAddress() string {
 	if v.ref == nil {
 		panic("Address does not initialized")
 	}
-	array := C.pop_address_get_address(v.ref)
-	defer freeArrayChar(&array)
-	return createString(&array)
+	str := C.pop_address_get_address(v.ref)
+	defer freeArrayChar(&str)
+	return createString(&str)
 }

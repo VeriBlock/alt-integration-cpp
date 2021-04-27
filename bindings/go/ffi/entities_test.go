@@ -62,6 +62,14 @@ func TestAltBlock(t *testing.T) {
 	assert.Equal(alt_block.GetHash(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
 	assert.Equal(alt_block.GetPreviousBlock(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
 
+	json, err := alt_block.ToJSON(true)
+	assert.NoError(err)
+
+	assert.Equal(json["hash"], "01010101010101010101010101010101")
+	assert.Equal(json["previousBlock"], "01010101010101010101010101010101")
+	assert.Equal(json["timestamp"], float64(1))
+	assert.Equal(json["height"], float64(1))
+
 	alt_block.Free()
 	alt_block.Free()
 }
