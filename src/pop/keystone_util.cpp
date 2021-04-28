@@ -72,23 +72,18 @@ bool areOnSameKeystoneInterval(int32_t height1,
   return (height1 / keystoneInterval) == (height2 / keystoneInterval);
 }
 
-int32_t getFirstPreviousKeystoneHeight(int32_t height,
-                                       uint32_t keystoneInterval) {
-  if (height <= 1) {
-    return 0;
-  }
-  int32_t ret = highestKeystoneAtOrBefore(height - 1, keystoneInterval);
-  return ret < 0 ? 0 : ret;
-}
-
-int32_t getSecondPreviousKeystoneHeight(int32_t height,
-                                        uint32_t keystoneInterval) {
-  if ((uint32_t)height <= 1 + keystoneInterval) {
+int32_t getPreviousKeystoneHeight(int32_t height,
+                                  uint32_t keystoneInterval,
+                                  uint32_t keystone_num) {
+  if ((uint32_t)height <= 1 + keystone_num * keystoneInterval) {
     return 0;
   }
 
-  int32_t ret = getFirstPreviousKeystoneHeight(height, keystoneInterval) -
-                keystoneInterval;
+  int32_t ret =
+      highestKeystoneAtOrBefore(
+          isKeystone(height - 1, keystoneInterval) ? height - 2 : height - 1,
+          keystoneInterval) -
+      keystone_num * keystoneInterval;
   return ret < 0 ? 0 : ret;
 }
 
