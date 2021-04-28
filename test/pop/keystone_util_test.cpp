@@ -12,20 +12,24 @@ using namespace altintegration;
 const static uint32_t VBK_KEYSTONE_INTERVAL = 20;
 
 TEST(KeystoneUtil, PrevKeystones) {
-  ASSERT_EQ(0, getFirstPreviousKeystoneHeight(0, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(0, getSecondPreviousKeystoneHeight(0, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(0, getFirstPreviousKeystoneHeight(19, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(0, getSecondPreviousKeystoneHeight(19, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(0, getFirstPreviousKeystoneHeight(20, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(0, getSecondPreviousKeystoneHeight(20, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(20, getFirstPreviousKeystoneHeight(25, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(0, getSecondPreviousKeystoneHeight(25, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(40, getFirstPreviousKeystoneHeight(41, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(20, getSecondPreviousKeystoneHeight(41, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(40, getFirstPreviousKeystoneHeight(59, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(20, getSecondPreviousKeystoneHeight(59, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(80, getFirstPreviousKeystoneHeight(100, VBK_KEYSTONE_INTERVAL));
-  ASSERT_EQ(60, getSecondPreviousKeystoneHeight(100, VBK_KEYSTONE_INTERVAL));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(0, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(0, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(19, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(19, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(20, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(20, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(20, getPreviousKeystoneHeight(25, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(25, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(20, getPreviousKeystoneHeight(40, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(40, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(20, getPreviousKeystoneHeight(41, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(0, getPreviousKeystoneHeight(41, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(40, getPreviousKeystoneHeight(59, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(20, getPreviousKeystoneHeight(59, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(80, getPreviousKeystoneHeight(100, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(60, getPreviousKeystoneHeight(100, VBK_KEYSTONE_INTERVAL, 1));
+  ASSERT_EQ(80, getPreviousKeystoneHeight(101, VBK_KEYSTONE_INTERVAL, 0));
+  ASSERT_EQ(60, getPreviousKeystoneHeight(101, VBK_KEYSTONE_INTERVAL, 1));
 }
 
 TEST(KeystoneUtil, testHighestKeystoneAtOrBefore) {

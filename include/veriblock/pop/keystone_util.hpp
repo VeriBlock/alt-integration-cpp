@@ -44,11 +44,13 @@ bool areOnSameKeystoneInterval(int32_t height1,
                                uint32_t keystoneInterval);
 
 //! @private
-int32_t getFirstPreviousKeystoneHeight(int32_t height,
-                                       uint32_t keystoneInterval);
-//! @private
-int32_t getSecondPreviousKeystoneHeight(int32_t height,
-                                        uint32_t keystoneInterval);
+//! keystone_num define the index of the previous keystone started at 0.
+//! if keystone_num = 0 returns First PreviousKeystone
+//! if keystone_num = 1 returns Second PreviousKeystone
+//! if keystone_num = 2 returns Third PreviousKeystone etc.
+int32_t getPreviousKeystoneHeight(int32_t height,
+                                  uint32_t keystoneInterval,
+                                  uint32_t keystone_num);
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_KEYSTONE_UTIL_HPP_
