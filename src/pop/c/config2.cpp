@@ -5,7 +5,9 @@
 
 #include "config2.hpp"
 #include "entities/altblock.hpp"
-#include "validation_state2.hpp"
+#include "entities/btcblock.hpp"
+#include "entities/vbkblock.hpp"
+#include "veriblock/pop/bootstraps.hpp"
 #include "veriblock/pop/c/extern2.h"
 #include "veriblock/pop/config.hpp"
 
@@ -76,4 +78,64 @@ POP_ENTITY_NEW_FUNCTION(config) {
   res->ref = std::make_shared<altintegration::Config>();
   res->ref->alt = std::make_shared<AltChainParamsImpl>();
   return res;
+}
+
+static std::vector<std::string> ParseBlocks(const char* blocks) {
+  std::vector<std::string> ret;
+  std::istringstream ss(blocks);
+  std::string substr;
+  while (std::getline(ss, substr, ',')) {
+    ret.push_back(substr);
+  }
+  return ret;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(config,
+                           void,
+                           select_vbk_params,
+                           const char* net,
+                           int start_height,
+                           POP_ARRAY_NAME(string) blocks) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(net);
+
+  if (blocks.size == 0) {
+    self->ref->SelectVbkParams(
+        net,
+        start_height,
+        {SerializeToRawHex(altintegration::GetRegTestVbkBlock())});
+    return;
+  }
+
+  auto b = ParseBlocks(blocks.data);
+  VBK_ASSERT_MSG(
+      !b.empty(),
+      "VBK 'blocks' does not contain valid comma-separated hexstrings");
+
+  self->ref->SelectVbkParams(net, start_height, b);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(config,
+                           void,
+                           select_btc_params,
+                           const char* net,
+                           int start_height,
+                           POP_ARRAY_NAME(string) blocks) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(net);
+
+  if (blocks.size == 0) {
+    self->ref->SelectVbkParams(
+        net,
+        start_height,
+        {SerializeToRawHex(altintegration::GetRegTestVbkBlock())});
+    return;
+  }
+
+  auto b = ParseBlocks(blocks.data);
+  VBK_ASSERT_MSG(
+      !b.empty(),
+      "VBK 'blocks' does not contain valid comma-separated hexstrings");
+
+  self->ref->SelectVbkParams(net, start_height, b);
 }
