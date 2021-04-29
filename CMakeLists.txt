@@ -107,6 +107,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wno-error=strict-overflow)
     add_flag(-Wno-unused-local-typedef)
     add_flag(-Wno-unused-function)
+    add_flag(-Wno-ignored-qualifiers)
 
     add_cxx_flag(-Wno-error=literal-suffix)
 

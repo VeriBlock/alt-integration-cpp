@@ -59,6 +59,11 @@ extern "C" {
 #define POP_GENERATE_DEFAULT_VALUE_EXECUTE(entity) \
   pop_##entity##_generate_default_value();
 
+#define POP_DECLARE_EXTERN_FUNCTION(funcname, returntype, ...) \
+  returntype pop_extern_function_##funcname(__VA_ARGS__)
+
+#define POP_EXTERN_FUNCTION_NAME(funcname) pop_extern_function_##funcname
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,20 +4,21 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "config2.hpp"
-#include "veriblock/pop/c/extern.h"
+#include "entities/altblock.hpp"
+#include "validation_state2.hpp"
+#include "veriblock/pop/c/extern2.h"
 #include "veriblock/pop/config.hpp"
 
 struct AltChainParamsImpl : public altintegration::AltChainParams {
   int64_t getIdentifier() const noexcept override {
-    // TODO: add extern function VBK_getAltchainId into C interface v2
-    return VBK_getAltchainId();
+    return POP_EXTERN_FUNCTION_NAME(get_altchain_id)();
   }
 
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
   altintegration::AltBlock getBootstrapBlock() const noexcept override {
-    return altintegration::AssertDeserializeFromRawHex<
-        altintegration::AltBlock>(VBK_getBootstrapBlock());
+    auto* res = POP_EXTERN_FUNCTION_NAME(get_bootstrap_block)();
+    return res->ref;
   }
 
   /**
@@ -28,31 +29,37 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
     VBK_ASSERT(bytes.size() != 0);
-    std::vector<uint8_t> hash(altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA,
-                              0);
-    int size = 0;
-    VBK_getBlockHeaderHash(bytes.data(), (int)bytes.size(), hash.data(), &size);
-    VBK_ASSERT(size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
-    hash.resize(size);
-    return hash;
+
+    POP_ARRAY_NAME(const_u8) input;
+    input.size = bytes.size();
+    input.data = bytes.data();
+
+    auto res = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
+
+    VBK_ASSERT(res.size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
+    return std::vector<uint8_t>(res.data, res.data + res.size);
   }
 
   bool checkBlockHeader(
-      const std::vector<uint8_t>& bytes,
+      const std::vector<uint8_t>& header,
       const std::vector<uint8_t>& root,
       altintegration::ValidationState& state) const noexcept override {
-    (void)bytes;
-    (void)root;
-    (void)state;
-    // TODO: add ectern function VBK_checkBlockHeader into C interface v2
-    // VbkValidationState c_state;
-    // if (!VBK_checkBlockHeader(bytes.data(),
-    //                           (int)bytes.size(),
-    //                           root.data(),
-    //                           (int)root.size(),
-    //                           &c_state)) {
-    //   return state.Invalid(c_state.getState().GetPath());
-    // }
+    VBK_ASSERT(header.size() != 0);
+    VBK_ASSERT(root.size() != 0);
+
+    POP_ARRAY_NAME(const_u8) header_input;
+    header_input.size = header.size();
+    header_input.data = header.data();
+
+    POP_ARRAY_NAME(const_u8) root_input;
+    root_input.size = root.size();
+    root_input.data = root.data();
+
+    if (!POP_EXTERN_FUNCTION_NAME(check_block_header)(header_input,
+                                                      root_input)) {
+      return state.Invalid("invalid altchain block header");
+    }
+
     return true;
   }
 };
