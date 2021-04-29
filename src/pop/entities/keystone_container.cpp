@@ -12,8 +12,8 @@ KeystoneContainer KeystoneContainer::createFromPrevious(
   KeystoneContainer c;
 
   const auto height = prev == nullptr ? 0 : prev->getHeight() + 1;
-  const auto first = getFirstPreviousKeystoneHeight(height, keystoneInterval);
-  const auto second = getSecondPreviousKeystoneHeight(height, keystoneInterval);
+  const auto first = getPreviousKeystoneHeight(height, keystoneInterval, 0);
+  const auto second = getPreviousKeystoneHeight(height, keystoneInterval, 1);
 
   if (prev != nullptr) {
     const auto* firstPreviousKeystone = prev->getAncestor(first);
