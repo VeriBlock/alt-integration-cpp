@@ -106,7 +106,7 @@ class TestHandler:
         self.jobs = []
 
     def get_next_test_name(self):
-        return type(self.test_list[-1]).__name__
+        return type(self.test_list[0]).__name__
 
     def get_next(self):
 
