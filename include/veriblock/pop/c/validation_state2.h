@@ -18,6 +18,8 @@ extern "C" {
 
 POP_DECLARE_ENTITY(validation_state);
 
+POP_ENTITY_NEW_FUNCTION(validation_state);
+
 /**
  * Get a debug message.
  *

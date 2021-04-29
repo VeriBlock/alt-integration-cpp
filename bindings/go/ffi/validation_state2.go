@@ -8,10 +8,21 @@ package ffi
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/validation_state2.h>
 import "C"
-import "errors"
+import (
+	"errors"
+	"runtime"
+)
 
 type ValidationState2 struct {
 	ref *C.pop_validation_state_t
+}
+
+func NewValidationState2() *ValidationState2 {
+	val := &ValidationState2{ref: C.pop_validation_state_new()}
+	runtime.SetFinalizer(val, func(v *ValidationState2) {
+		v.Free()
+	})
+	return val
 }
 
 func (v *ValidationState2) Free() {
