@@ -28,15 +28,15 @@ POP_DECLARE_EXTERN_FUNCTION(get_bootstrap_block, POP_ENTITY_NAME(alt_block) *);
 
 //! @param[in] in input byte array "to be hashed"
 POP_DECLARE_EXTERN_FUNCTION(get_block_header_hash,
-                            POP_ARRAY_NAME(const_u8),
-                            POP_ARRAY_NAME(const_u8) bytes);
+                            POP_ARRAY_NAME(u8),
+                            POP_ARRAY_NAME(u8) bytes);
 
 //! Should return 0 if input bytes are statelessly INVALID block header.
 //! Should return non-0 if input bytes are statelessly VALID block header.
 POP_DECLARE_EXTERN_FUNCTION(check_block_header,
                             bool,
-                            POP_ARRAY_NAME(const_u8) header_bytes,
-                            POP_ARRAY_NAME(const_u8) root_bytes);
+                            POP_ARRAY_NAME(u8) header_bytes,
+                            POP_ARRAY_NAME(u8) root_bytes);
 
 #ifdef __cplusplus
 }  // end of extern "C"

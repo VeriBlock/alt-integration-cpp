@@ -12,13 +12,6 @@ POP_ARRAY_FREE_SIGNATURE(u8) {
   }
 }
 
-POP_ARRAY_FREE_SIGNATURE(const_u8) {
-  if (self != nullptr) {
-    delete[] self->data;
-    self = nullptr;
-  }
-}
-
 POP_ARRAY_FREE_SIGNATURE(u32) {
   if (self != nullptr) {
     delete[] self->data;
@@ -26,21 +19,7 @@ POP_ARRAY_FREE_SIGNATURE(u32) {
   }
 }
 
-POP_ARRAY_FREE_SIGNATURE(const_u32) {
-  if (self != nullptr) {
-    delete[] self->data;
-    self = nullptr;
-  }
-}
-
 POP_ARRAY_FREE_SIGNATURE(string) {
-  if (self != nullptr) {
-    delete[] self->data;
-    self = nullptr;
-  }
-}
-
-POP_ARRAY_FREE_SIGNATURE(const_string) {
   if (self != nullptr) {
     delete[] self->data;
     self = nullptr;

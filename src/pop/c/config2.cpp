@@ -30,9 +30,9 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
       const std::vector<uint8_t>& bytes) const noexcept override {
     VBK_ASSERT(bytes.size() != 0);
 
-    POP_ARRAY_NAME(const_u8) input;
+    POP_ARRAY_NAME(u8) input;
     input.size = bytes.size();
-    input.data = bytes.data();
+    input.data = const_cast<uint8_t*>(bytes.data());
 
     auto res = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
 
@@ -47,13 +47,13 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
     VBK_ASSERT(header.size() != 0);
     VBK_ASSERT(root.size() != 0);
 
-    POP_ARRAY_NAME(const_u8) header_input;
+    POP_ARRAY_NAME(u8) header_input;
     header_input.size = header.size();
-    header_input.data = header.data();
+    header_input.data = const_cast<uint8_t*>(header.data());
 
-    POP_ARRAY_NAME(const_u8) root_input;
+    POP_ARRAY_NAME(u8) root_input;
     root_input.size = root.size();
-    root_input.data = root.data();
+    root_input.data = const_cast<uint8_t*>(root.data());
 
     if (!POP_EXTERN_FUNCTION_NAME(check_block_header)(header_input,
                                                       root_input)) {
