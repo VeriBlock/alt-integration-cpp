@@ -23,6 +23,32 @@ func NewConfig2() *Config2 {
 	return val
 }
 
+// SelectVbkParams - set VBK parameters and store them in config.
+// Param "net" should be one of: "main", "test", "regtest", "alpha"
+// Param "blocks" should be: "hex,hex,hex"
+func (v *Config2) SelectVbkParams(net string, startHeight int, blocks *string) {
+	var blocksArg *C.char
+	if blocks == nil {
+		blocksArg = nil
+	} else {
+		blocksArg = C.CString(*blocks)
+	}
+	C.pop_config_function_select_vbk_params(v.ref, C.CString(net), C.int(startHeight), blocksArg)
+}
+
+// SelectBtcParams - set BTC parameters and store them in config.
+// Param "net" should be one of: "main", "test", "regtest", "alpha"
+// Param "blocks" should be: "hex,hex,hex"
+func (v *Config2) SelectBtcParams(net string, startHeight int, blocks *string) {
+	var blocksArg *C.char
+	if blocks == nil {
+		blocksArg = nil
+	} else {
+		blocksArg = C.CString(*blocks)
+	}
+	C.pop_config_function_select_btc_params(v.ref, C.CString(net), C.int(startHeight), blocksArg)
+}
+
 func (v *Config2) Free() {
 	if v.ref != nil {
 		C.pop_config_free(v.ref)

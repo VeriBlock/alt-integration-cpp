@@ -95,11 +95,11 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
                            select_vbk_params,
                            const char* net,
                            int start_height,
-                           POP_ARRAY_NAME(string) blocks) {
+                           const char* blocks) {
   VBK_ASSERT(self);
   VBK_ASSERT(net);
 
-  if (blocks.size == 0) {
+  if (blocks == nullptr) {
     self->ref->SelectVbkParams(
         net,
         start_height,
@@ -107,7 +107,7 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
     return;
   }
 
-  auto b = ParseBlocks(blocks.data);
+  auto b = ParseBlocks(blocks);
   VBK_ASSERT_MSG(
       !b.empty(),
       "VBK 'blocks' does not contain valid comma-separated hexstrings");
@@ -120,11 +120,11 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
                            select_btc_params,
                            const char* net,
                            int start_height,
-                           POP_ARRAY_NAME(string) blocks) {
+                           const char* blocks) {
   VBK_ASSERT(self);
   VBK_ASSERT(net);
 
-  if (blocks.size == 0) {
+  if (blocks == nullptr) {
     self->ref->SelectVbkParams(
         net,
         start_height,
@@ -132,7 +132,7 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
     return;
   }
 
-  auto b = ParseBlocks(blocks.data);
+  auto b = ParseBlocks(blocks);
   VBK_ASSERT_MSG(
       !b.empty(),
       "VBK 'blocks' does not contain valid comma-separated hexstrings");

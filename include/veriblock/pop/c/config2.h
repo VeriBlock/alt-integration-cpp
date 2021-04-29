@@ -27,7 +27,7 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
                            const char* net,
                            int start_height,
                            // example: hex,hex,hex
-                           POP_ARRAY_NAME(string) blocks);
+                           const char* blocks);
 
 //! set BTC parameters and store them in config
 POP_ENTITY_CUSTOM_FUNCTION(config,
@@ -37,7 +37,7 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
                            const char* net,
                            int start_height,
                            // example: hex,hex,hex
-                           POP_ARRAY_NAME(string) blocks);
+                           const char* blocks);
 
 #ifdef __cplusplus
 }  // end of extern "C"
