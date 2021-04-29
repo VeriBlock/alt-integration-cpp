@@ -24,20 +24,20 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
                            void,
                            select_vbk_params,
                            // "main\0", "test\0", "regtest\0", "alpha\0"
-                           const char* net,
+                           POP_ARRAY_NAME(string) net,
                            int start_height,
                            // example: hex,hex,hex
-                           const char* blocks);
+                           POP_ARRAY_NAME(string) blocks);
 
 //! set BTC parameters and store them in config
 POP_ENTITY_CUSTOM_FUNCTION(config,
                            void,
                            select_btc_params,
                            // "main\0", "test\0", "regtest\0", "alpha\0"
-                           const char* net,
+                           POP_ARRAY_NAME(string) net,
                            int start_height,
                            // example: hex,hex,hex
-                           const char* blocks);
+                           POP_ARRAY_NAME(string) blocks);
 
 #ifdef __cplusplus
 }  // end of extern "C"
