@@ -6,6 +6,7 @@ var dir_2082450efbbb2404a3968a022866e0e9 =
     [ "config.h", "config_8h_source.html", null ],
     [ "config2.h", "config2_8h_source.html", null ],
     [ "extern.h", "extern_8h_source.html", null ],
+    [ "extern2.h", "extern2_8h_source.html", null ],
     [ "merkle_root_util.h", "merkle__root__util_8h_source.html", null ],
     [ "mock_miner.h", "mock__miner_8h_source.html", null ],
     [ "mock_miner2.h", "mock__miner2_8h_source.html", null ],
