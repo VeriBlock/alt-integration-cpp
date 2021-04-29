@@ -9,6 +9,7 @@ package ffi
 // #include <veriblock/pop/c/extern2.h>
 // #include <string.h>
 import "C"
+import "unsafe"
 
 // Exported functions
 var (
@@ -26,8 +27,18 @@ func pop_extern_function_get_bootstrap_block() *C.pop_alt_block_t {
 	return onGetBootstrapBlock().ref
 }
 
-func pop_extern_function_check_block_header(header C.pop_array_const_u8_t, root C.pop_array_const_u8_t) C.int {
-	res := onCheckBlockHeader(createBytes(header), createBytes(root))
+func pop_extern_function_get_block_header_hash(bytes C.pop_array_u8_t) C.pop_array_u8_t {
+	hash := onGetBlockHeaderHash(createBytes(&bytes))
+
+	var res C.pop_array_u8_t
+	res.size = C.size_t(len(hash))
+	C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&hash[0]), res.size)
+
+	return res
+}
+
+func pop_extern_function_check_block_header(header C.pop_array_u8_t, root C.pop_array_u8_t) C.int {
+	res := onCheckBlockHeader(createBytes(&header), createBytes(&root))
 	if res == true {
 		return 1
 	}
