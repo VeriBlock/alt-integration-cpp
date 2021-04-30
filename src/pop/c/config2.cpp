@@ -40,7 +40,7 @@ struct AltChainParamsImpl2 : public altintegration::AltChainParams {
 
     auto hash = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
 
-    VBK_ASSERT(res.size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
+    VBK_ASSERT(hash.size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
     auto res = std::vector<uint8_t>(hash.data, hash.data + hash.size);
     pop_array_u8_free(&hash);
     return res;
