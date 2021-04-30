@@ -17,7 +17,33 @@ var (
 	onGetBootstrapBlock  = func() AltBlock { panic("onGetBootstrapBlock not set") }
 	onGetBlockHeaderHash = func(toBeHashed []byte) []byte { panic("onGetBlockHeaderHash not set") }
 	onCheckBlockHeader   = func(header []byte, root []byte) bool { panic("onCheckBlockHeader not set") }
+	onLog                = func(log_level string, msg string) { panic("onLog not set") }
 )
+
+// SetOnGetAltchainID ...
+func SetOnGetAltchainID(fn func() int64) {
+	onGetAltchainID = fn
+}
+
+// SetOnGetBootstrapBlock ...
+func SetOnGetBootstrapBlock(fn func() AltBlock) {
+	onGetBootstrapBlock = fn
+}
+
+// SetOnGetBlockHeaderHash ...
+func SetOnGetBlockHeaderHash(fn func(toBeHashed []byte) []byte) {
+	onGetBlockHeaderHash = fn
+}
+
+// SetOnCheckBlockHeader ...
+func SetOnCheckBlockHeader(fn func(header []byte, root []byte) bool) {
+	onCheckBlockHeader = fn
+}
+
+// SetOnLog ...
+func SetOnLog(fn func(log_lvl string, msg string)) {
+	onLog = fn
+}
 
 //export pop_extern_function_get_altchain_id
 func pop_extern_function_get_altchain_id() C.int64_t {
@@ -43,4 +69,9 @@ func pop_extern_function_get_block_header_hash(bytes C.pop_array_u8_t) C.pop_arr
 //export pop_extern_function_check_block_header
 func pop_extern_function_check_block_header(header C.pop_array_u8_t, root C.pop_array_u8_t) C.bool {
 	return C.bool(onCheckBlockHeader(createBytes(&header), createBytes(&root)))
+}
+
+//export pop_extern_function_log
+func pop_extern_function_log(log_lvl C.pop_array_string_t, msg C.pop_array_string_t) {
+	onLog(createString(&log_lvl), createString(&msg))
 }

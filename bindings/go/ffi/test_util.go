@@ -6,6 +6,7 @@
 package ffi
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -15,6 +16,23 @@ func generateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 
 	config.SelectVbkParams("regtest", 0, "")
 	config.SelectBtcParams("regtest", 0, "")
+
+	SetOnGetAltchainID(func() int64 { return 1 })
+	SetOnGetBootstrapBlock(func() AltBlock {
+		return *GenerateDefaultAltBlock()
+	})
+	SetOnGetBlockHeaderHash(func(header []byte) []byte {
+		// TODO impl
+		return header
+	})
+
+	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {
+		return true
+	})
+
+	SetOnLog(func(log_lvl string, msg string) {
+		fmt.Printf("[POP] [%s]\t%s \n", log_lvl, msg)
+	})
 
 	return NewPopContext2(config, storage, "debug")
 }

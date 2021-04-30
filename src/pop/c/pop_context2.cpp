@@ -29,7 +29,7 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
   VBK_ASSERT(config->ref->alt);
 
   // set logger
-  altintegration::SetLogger<adaptors::Logger>(altintegration::StringToLevel(
+  altintegration::SetLogger<adaptors::Logger2>(altintegration::StringToLevel(
       std::string(log_lvl.data, log_lvl.data + log_lvl.size)));
 
   auto* res = new POP_ENTITY_NAME(pop_context);

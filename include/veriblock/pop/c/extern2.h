@@ -38,6 +38,14 @@ POP_DECLARE_EXTERN_FUNCTION(check_block_header,
                             POP_ARRAY_NAME(u8) header_bytes,
                             POP_ARRAY_NAME(u8) root_bytes);
 
+//! Log message.
+//! @param[in] log_level, log level altintegration::LogLevel
+//! @param[in] msg, log message.
+POP_DECLARE_EXTERN_FUNCTION(log,
+                            void,
+                            POP_ARRAY_NAME(string) log_lvl,
+                            POP_ARRAY_NAME(string) msg);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif
