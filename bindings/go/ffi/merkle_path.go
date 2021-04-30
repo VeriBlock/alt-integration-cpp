@@ -56,8 +56,12 @@ func (v *MerklePath) GetLayers() []*big.Int {
 		panic("MerklePath does not initialized")
 	}
 
-	res := make([]*big.Int, 0)
-	array := C.pop_merkle_path_get_layers(v.ref)
-	defer freeArrayArrayU8(&array)
+	layers := C.pop_merkle_path_get_layers(v.ref)
+	defer freeArrayArrayU8(&layers)
+	layersArr := createArrayOfArraysU8(&layers)
+	res := make([]*big.Int, len(layersArr))
+	for i, arr := range layersArr {
+		res[i] = new(big.Int).SetBytes(arr)
+	}
 	return res
 }

@@ -31,7 +31,16 @@ func freeArrayArrayU8(array *C.pop_array_array_u8_t) {
 	C.pop_array_array_u8_free(array)
 }
 
-func createArrayOfArraysU8(array *C.pop_array_array_u8_t)
+func createArrayOfArraysU8(array *C.pop_array_array_u8_t) [][]byte {
+	res := make([][]byte, array.size)
+	for i := 0; i < len(res); i++ {
+		arrU8 := C.pop_array_array_u8_at(array, C.size_t(i))
+		arr := make([]byte, arrU8.size)
+		C.memcpy(unsafe.Pointer(&arr[0]), unsafe.Pointer(arrU8.data), arrU8.size)
+		res[i] = arr
+	}
+	return res
+}
 
 func freeArrayChar(array *C.pop_array_string_t) {
 	C.pop_array_string_free(array)

@@ -172,9 +172,14 @@ func TestMerklePath(t *testing.T) {
 
 	mp := GenerateDefaultMerklePath()
 	sub := mp.GetSubject()
+	layers := mp.GetLayers()
 
 	assert.Equal(mp.GetIndex(), int32(1))
 	assert.Equal(sub.Cmp(new(big.Int).SetInt64(1)), 0)
+	assert.Equal(len(layers), 3)
+	for _, layer := range layers {
+		assert.Equal(layer.Cmp(new(big.Int).SetInt64(1)), 0)
+	}
 
 	mp.Free()
 	mp.Free()
