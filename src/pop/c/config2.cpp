@@ -128,10 +128,10 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
   VBK_ASSERT(blocks.data);
 
   if (blocks.size == 0) {
-    self->ref->SelectVbkParams(
+    self->ref->SelectBtcParams(
         std::string(net.data, net.data + net.size),
         start_height,
-        {SerializeToRawHex(altintegration::GetRegTestVbkBlock())});
+        {SerializeToRawHex(altintegration::GetRegTestBtcBlock())});
     return;
   }
 
@@ -140,6 +140,6 @@ POP_ENTITY_CUSTOM_FUNCTION(config,
       !b.empty(),
       "VBK 'blocks' does not contain valid comma-separated hexstrings");
 
-  self->ref->SelectVbkParams(
+  self->ref->SelectBtcParams(
       std::string(net.data, net.data + net.size), start_height, b);
 }
