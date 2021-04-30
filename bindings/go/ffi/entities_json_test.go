@@ -58,7 +58,7 @@ func TestJSONAltBlock(t *testing.T) {
 	assert.NoError(err)
 
 	assert.Equal(json["hash"], "01010101010101010101010101010101")
-	assert.Equal(json["previousBlock"], "01010101010101010101010101010101")
+	assert.Equal(json["previousBlock"], "02020202020202020202020202020202")
 	assert.Equal(json["timestamp"], float64(1))
 	assert.Equal(json["height"], float64(1))
 }

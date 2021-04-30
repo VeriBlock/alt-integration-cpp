@@ -17,6 +17,10 @@ POP_ENTITY_FREE_SIGNATURE(validation_state) {
   }
 }
 
+POP_ENTITY_NEW_FUNCTION(validation_state) {
+  return new POP_ENTITY_NAME(validation_state);
+}
+
 POP_ENTITY_GETTER_FUNCTION(validation_state,
                            POP_ARRAY_NAME(string),
                            error_message) {

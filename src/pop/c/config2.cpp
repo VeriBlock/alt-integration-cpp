@@ -5,11 +5,13 @@
 
 #include "config2.hpp"
 #include "entities/altblock.hpp"
-#include "validation_state2.hpp"
+#include "entities/btcblock.hpp"
+#include "entities/vbkblock.hpp"
+#include "veriblock/pop/bootstraps.hpp"
 #include "veriblock/pop/c/extern2.h"
 #include "veriblock/pop/config.hpp"
 
-struct AltChainParamsImpl : public altintegration::AltChainParams {
+struct AltChainParamsImpl2 : public altintegration::AltChainParams {
   int64_t getIdentifier() const noexcept override {
     return POP_EXTERN_FUNCTION_NAME(get_altchain_id)();
   }
@@ -17,8 +19,10 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
   altintegration::AltBlock getBootstrapBlock() const noexcept override {
-    auto* res = POP_EXTERN_FUNCTION_NAME(get_bootstrap_block)();
-    return res->ref;
+    auto* bootstrap_block = POP_EXTERN_FUNCTION_NAME(get_bootstrap_block)();
+    auto res = bootstrap_block->ref;
+    pop_alt_block_free(bootstrap_block);
+    return res;
   }
 
   /**
@@ -34,10 +38,12 @@ struct AltChainParamsImpl : public altintegration::AltChainParams {
     input.size = bytes.size();
     input.data = const_cast<uint8_t*>(bytes.data());
 
-    auto res = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
+    auto hash = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
 
-    VBK_ASSERT(res.size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
-    return std::vector<uint8_t>(res.data, res.data + res.size);
+    VBK_ASSERT(hash.size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
+    auto res = std::vector<uint8_t>(hash.data, hash.data + hash.size);
+    pop_array_u8_free(&hash);
+    return res;
   }
 
   bool checkBlockHeader(
@@ -74,6 +80,70 @@ POP_ENTITY_FREE_SIGNATURE(config) {
 POP_ENTITY_NEW_FUNCTION(config) {
   auto* res = new POP_ENTITY_NAME(config);
   res->ref = std::make_shared<altintegration::Config>();
-  res->ref->alt = std::make_shared<AltChainParamsImpl>();
+  res->ref->alt = std::make_shared<AltChainParamsImpl2>();
   return res;
+}
+
+static std::vector<std::string> ParseBlocks(const std::string& blocks) {
+  std::vector<std::string> ret;
+  std::istringstream ss(blocks);
+  std::string substr;
+  while (std::getline(ss, substr, ',')) {
+    ret.push_back(substr);
+  }
+  return ret;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(config,
+                           void,
+                           select_vbk_params,
+                           POP_ARRAY_NAME(string) net,
+                           int start_height,
+                           POP_ARRAY_NAME(string) blocks) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(net.data);
+  VBK_ASSERT(blocks.data);
+
+  if (blocks.size == 0) {
+    self->ref->SelectVbkParams(
+        std::string(net.data, net.data + net.size),
+        start_height,
+        {SerializeToRawHex(altintegration::GetRegTestVbkBlock())});
+    return;
+  }
+
+  auto b = ParseBlocks(std::string(blocks.data, blocks.data + blocks.size));
+  VBK_ASSERT_MSG(
+      !b.empty(),
+      "VBK 'blocks' does not contain valid comma-separated hexstrings");
+
+  self->ref->SelectVbkParams(
+      std::string(net.data, net.data + net.size), start_height, b);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(config,
+                           void,
+                           select_btc_params,
+                           POP_ARRAY_NAME(string) net,
+                           int start_height,
+                           POP_ARRAY_NAME(string) blocks) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(net.data);
+  VBK_ASSERT(blocks.data);
+
+  if (blocks.size == 0) {
+    self->ref->SelectBtcParams(
+        std::string(net.data, net.data + net.size),
+        start_height,
+        {SerializeToRawHex(altintegration::GetRegTestBtcBlock())});
+    return;
+  }
+
+  auto b = ParseBlocks(std::string(blocks.data, blocks.data + blocks.size));
+  VBK_ASSERT_MSG(
+      !b.empty(),
+      "VBK 'blocks' does not contain valid comma-separated hexstrings");
+
+  self->ref->SelectBtcParams(
+      std::string(net.data, net.data + net.size), start_height, b);
 }

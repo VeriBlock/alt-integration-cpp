@@ -15,12 +15,15 @@ type Storage2 struct {
 	ref *C.pop_storage_t
 }
 
-func NewStorage2(path string, state *ValidationState2) *Storage2 {
-	val := &Storage2{ref: C.pop_storage_new(C.CString(path), state.ref)}
+func NewStorage2(path string) (*Storage2, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	val := &Storage2{ref: C.pop_storage_new(createCString(path), state.ref)}
 	runtime.SetFinalizer(val, func(v *Storage2) {
 		v.Free()
 	})
-	return val
+	return val, state.Error()
 }
 
 func (v *Storage2) Free() {

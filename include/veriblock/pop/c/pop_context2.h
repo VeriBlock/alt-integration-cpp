@@ -24,7 +24,7 @@ POP_DECLARE_ENTITY(pop_context);
 POP_ENTITY_NEW_FUNCTION(pop_context,
                         const POP_ENTITY_NAME(config) * config,
                         const POP_ENTITY_NAME(storage) * storage,
-                        const char* log_lvl);
+                        POP_ARRAY_NAME(string) log_lvl);
 
 /**
  * @copybrief altintegration::AltBlockTree::acceptBlockHeader

@@ -6,6 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_C_STORAGE_H
 #define VERIBLOCK_POP_CPP_C_STORAGE_H
 
+#include "veriblock/pop/c/array.h"
 #include "veriblock/pop/c/type_helpers.h"
 #include "veriblock/pop/c/validation_state2.h"
 
@@ -16,7 +17,7 @@ extern "C" {
 POP_DECLARE_ENTITY(storage);
 
 POP_ENTITY_NEW_FUNCTION(storage,
-                        const char* path,
+                        POP_ARRAY_NAME(string) path,
                         POP_ENTITY_NAME(validation_state) * state);
 
 #ifdef __cplusplus

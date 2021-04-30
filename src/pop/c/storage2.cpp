@@ -22,22 +22,23 @@ POP_ENTITY_FREE_SIGNATURE(storage) {
 }
 
 POP_ENTITY_NEW_FUNCTION(storage,
-                        const char* path,
+                        POP_ARRAY_NAME(string) path,
                         POP_ENTITY_NAME(validation_state) * state) {
-  VBK_ASSERT(path);
   VBK_ASSERT(state);
+  VBK_ASSERT(path.data);
 
   auto* res = new POP_ENTITY_NAME(storage);
+  std::string str_path(path.data, path.data + path.size);
 
   try {
-    if (std::string(path) == std::string(":inmem:")) {
+    if (str_path == std::string(":inmem:")) {
       res->ref = std::make_shared<adaptors::InmemStorageImpl>();
     } else {
 #ifdef WITH_ROCKSDB
-      res->ref = std::make_shared<adaptors::RocksDBStorage>(path);
+      res->ref = std::make_shared<adaptors::RocksDBStorage>(str_path);
 #endif
 #ifdef WITH_LEVELDB
-      res->ref = std::make_shared<adaptors::LevelDBStorage>(path);
+      res->ref = std::make_shared<adaptors::LevelDBStorage>(str_path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {

@@ -20,17 +20,17 @@ POP_ENTITY_FREE_SIGNATURE(pop_context) {
 POP_ENTITY_NEW_FUNCTION(pop_context,
                         const POP_ENTITY_NAME(config) * config,
                         const POP_ENTITY_NAME(storage) * storage,
-                        const char* log_lvl) {
+                        POP_ARRAY_NAME(string) log_lvl) {
   VBK_ASSERT(config);
   VBK_ASSERT(storage);
-  VBK_ASSERT(log_lvl);
+  VBK_ASSERT(log_lvl.data);
   VBK_ASSERT(storage->ref);
   VBK_ASSERT(config->ref);
   VBK_ASSERT(config->ref->alt);
 
   // set logger
-  altintegration::SetLogger<adaptors::Logger>(
-      altintegration::StringToLevel(log_lvl));
+  altintegration::SetLogger<adaptors::Logger2>(altintegration::StringToLevel(
+      std::string(log_lvl.data, log_lvl.data + log_lvl.size)));
 
   auto* res = new POP_ENTITY_NAME(pop_context);
 
