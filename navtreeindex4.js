@@ -1,12 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"structaltintegration_1_1AltChainParams.html#af289390066132cf7bbb2845db047fa86":[4,0,0,6,6],
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html":[4,0,0,31],
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a26b593b406b329ab2da7c17b77854018":[4,0,0,31,6],
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2aca9efbe5de4f0916c14578ecbde454":[4,0,0,31,1],
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2c0fac6377f239d6b1ea515c704924a8":[4,0,0,31,2],
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a5cfcfc64cafae67bbb1d33f6e3b0fac1":[4,0,0,31,5],
-"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a60eb4f6dad65eacad88dc3b0325dc2c3":[4,0,0,31,7],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#a63f24e44a05e9ebcd86a922aff86c2fd":[4,0,0,31,0],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#ad255e822a10e00c451c16ef4ce021342":[4,0,0,31,3],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#afccdece2e700b0f336ff2b6709bf723a":[4,0,0,31,4],
@@ -249,5 +242,12 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BtcBlock.html#ae1482f4235c730c232f20c5780919431":[4,0,0,27,21],
 "structaltintegration_1_1BtcBlock.html#aec1b2c95ee60497ef47479fc58d64fff":[4,0,0,27,27],
 "structaltintegration_1_1BtcChainParams.html":[4,0,0,10],
-"structaltintegration_1_1BtcChainParams.html#a48bd355f860d1d36b56892425a54c24c":[4,0,0,10,8]
+"structaltintegration_1_1BtcChainParams.html#a48bd355f860d1d36b56892425a54c24c":[4,0,0,10,8],
+"structaltintegration_1_1BtcChainParams.html#a4e7db18ced976be2393b3e356981d4fb":[4,0,0,10,9],
+"structaltintegration_1_1BtcChainParams.html#a60d3e85978ed006cffbec66fad1c48c7":[4,0,0,10,2],
+"structaltintegration_1_1BtcChainParams.html#a6d0f1b0259c0126fb4b6e583c989de64":[4,0,0,10,3],
+"structaltintegration_1_1BtcChainParams.html#a781fc64922c2dd57baa3a481165f5b09":[4,0,0,10,4],
+"structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2":[4,0,0,10,10],
+"structaltintegration_1_1BtcChainParams.html#a851fcab27434b19b4ad2ec71f4ec1de8":[4,0,0,10,5],
+"structaltintegration_1_1BtcChainParams.html#aa65ed2dcd6bec96c88ef07a36f9569c9":[4,0,0,10,1]
 };
