@@ -19,7 +19,7 @@ func NewStorage2(path string) (*Storage2, error) {
 	state := NewValidationState2()
 	defer state.Free()
 
-	val := &Storage2{ref: C.pop_storage_new(C.CString(path), state.ref)}
+	val := &Storage2{ref: C.pop_storage_new(createCString(path), state.ref)}
 	runtime.SetFinalizer(val, func(v *Storage2) {
 		v.Free()
 	})

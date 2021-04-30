@@ -23,7 +23,7 @@ func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopCont
 	}
 
 	context := &PopContext2{
-		ref: C.pop_pop_context_new(config.ref, storage.ref, C.CString(log_lvl)),
+		ref: C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
 	}
 	runtime.SetFinalizer(context, func(v *PopContext2) {
 		v.Free()

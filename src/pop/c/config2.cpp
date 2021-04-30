@@ -93,26 +93,28 @@ static std::vector<std::string> ParseBlocks(const std::string& blocks) {
 POP_ENTITY_CUSTOM_FUNCTION(config,
                            void,
                            select_vbk_params,
-                           const char* net,
+                           POP_ARRAY_NAME(string) net,
                            int start_height,
-                           const char* blocks) {
+                           POP_ARRAY_NAME(string) blocks) {
   VBK_ASSERT(self);
-  VBK_ASSERT(net);
+  VBK_ASSERT(net.data);
+  VBK_ASSERT(blocks.data);
 
-  if (blocks == nullptr) {
+  if (blocks.size == 0) {
     self->ref->SelectVbkParams(
-        net,
+        std::string(net.data, net.data + net.size),
         start_height,
         {SerializeToRawHex(altintegration::GetRegTestVbkBlock())});
     return;
   }
 
-  auto b = ParseBlocks(blocks);
+  auto b = ParseBlocks(std::string(blocks.data, blocks.data + blocks.size));
   VBK_ASSERT_MSG(
       !b.empty(),
       "VBK 'blocks' does not contain valid comma-separated hexstrings");
 
-  self->ref->SelectVbkParams(net, start_height, b);
+  self->ref->SelectVbkParams(
+      std::string(net.data, net.data + net.size), start_height, b);
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(config,

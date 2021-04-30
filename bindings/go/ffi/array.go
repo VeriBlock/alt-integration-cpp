@@ -34,3 +34,9 @@ func createString(array *C.pop_array_string_t) string {
 	}
 	return string(res)
 }
+
+func createCString(str string) (res C.pop_array_string_t) {
+	res.size = C.size_t(len(str))
+	res.data = C.CString(str)
+	return res
+}
