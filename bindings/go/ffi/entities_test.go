@@ -6,6 +6,7 @@
 package ffi
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -164,4 +165,17 @@ func TestCoin(t *testing.T) {
 
 	coin.Free()
 	coin.Free()
+}
+
+func TestMerklePath(t *testing.T) {
+	assert := assert.New(t)
+
+	mp := GenerateDefaultMerklePath()
+	sub := mp.GetSubject()
+
+	assert.Equal(mp.GetIndex(), int32(1))
+	assert.Equal(sub.Cmp(new(big.Int).SetInt64(1)), 0)
+
+	mp.Free()
+	mp.Free()
 }

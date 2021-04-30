@@ -27,6 +27,12 @@ func createBytes(array *C.pop_array_u8_t) []byte {
 	return res
 }
 
+func freeArrayArrayU8(array *C.pop_array_array_u8_t) {
+	C.pop_array_array_u8_free(array)
+}
+
+func createArrayOfArraysU8(array *C.pop_array_array_u8_t)
+
 func freeArrayChar(array *C.pop_array_string_t) {
 	C.pop_array_string_free(array)
 }
