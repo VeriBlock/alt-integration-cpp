@@ -17,7 +17,7 @@ import (
 // Exported functions
 var (
 	OnGetAltchainID      = func() int64 { panic("OnGetAltchainID not set") }
-	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set") }
+	OnGetBootstrapBlock  = func() string { panic("OnGetBootstrapBlock not set fuck") }
 	OnGetBlockHeaderHash = func(toBeHashed []byte) []byte { panic("OnGetBlockHeaderHash not set") }
 	OnCheckBlockHeader   = func(header []byte, root []byte, state *ValidationState) bool { panic("OnCheckBlockHeader not set") }
 	OnLog                = func(log_level string, msg string) { panic("OnLog not set") }

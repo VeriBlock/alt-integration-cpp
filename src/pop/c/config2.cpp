@@ -11,7 +11,7 @@
 #include "veriblock/pop/c/extern2.h"
 #include "veriblock/pop/config.hpp"
 
-struct AltChainParamsImpl : public altintegration::AltChainParams {
+struct AltChainParamsImpl2 : public altintegration::AltChainParams {
   int64_t getIdentifier() const noexcept override {
     return POP_EXTERN_FUNCTION_NAME(get_altchain_id)();
   }
@@ -76,7 +76,7 @@ POP_ENTITY_FREE_SIGNATURE(config) {
 POP_ENTITY_NEW_FUNCTION(config) {
   auto* res = new POP_ENTITY_NAME(config);
   res->ref = std::make_shared<altintegration::Config>();
-  res->ref->alt = std::make_shared<AltChainParamsImpl>();
+  res->ref->alt = std::make_shared<AltChainParamsImpl2>();
   return res;
 }
 
