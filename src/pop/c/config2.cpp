@@ -19,8 +19,10 @@ struct AltChainParamsImpl2 : public altintegration::AltChainParams {
   //! first ALT block used in AltBlockTree. This is first block that can be
   //! endorsed.
   altintegration::AltBlock getBootstrapBlock() const noexcept override {
-    auto* res = POP_EXTERN_FUNCTION_NAME(get_bootstrap_block)();
-    return res->ref;
+    auto* bootstrap_block = POP_EXTERN_FUNCTION_NAME(get_bootstrap_block)();
+    auto res = bootstrap_block->ref;
+    pop_alt_block_free(bootstrap_block);
+    return res;
   }
 
   /**
@@ -36,10 +38,12 @@ struct AltChainParamsImpl2 : public altintegration::AltChainParams {
     input.size = bytes.size();
     input.data = const_cast<uint8_t*>(bytes.data());
 
-    auto res = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
+    auto hash = POP_EXTERN_FUNCTION_NAME(get_block_header_hash)(input);
 
     VBK_ASSERT(res.size <= altintegration::MAX_HEADER_SIZE_PUBLICATION_DATA);
-    return std::vector<uint8_t>(res.data, res.data + res.size);
+    auto res = std::vector<uint8_t>(hash.data, hash.data + hash.size);
+    pop_array_u8_free(&hash);
+    return res;
   }
 
   bool checkBlockHeader(
