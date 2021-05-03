@@ -11,7 +11,14 @@ package ffi
 // void __lsan_do_leak_check(void) {}
 // #endif
 import "C"
+import (
+	"fmt"
+	"runtime"
+)
 
 func doSanitizerCheck() {
+	fmt.Println("Do the garbage collection")
+	runtime.GC()
+	fmt.Println("Run sanitizer check")
 	C.__lsan_do_leak_check()
 }

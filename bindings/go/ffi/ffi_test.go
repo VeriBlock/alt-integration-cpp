@@ -7,14 +7,12 @@ package ffi
 
 import (
 	"os"
-	"runtime"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
 	// call flag.Parse() here if TestMain uses flags
 	res := m.Run()
-	runtime.GC()
 	doSanitizerCheck()
 	os.Exit(res)
 }
