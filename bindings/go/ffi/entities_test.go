@@ -88,8 +88,6 @@ func TestAtv(t *testing.T) {
 
 	atv.Free()
 	atv.Free()
-
-	doSanitizerCheck()
 }
 
 func TestPopData(t *testing.T) {
@@ -119,8 +117,6 @@ func TestPopData(t *testing.T) {
 
 	pop_data.Free()
 	pop_data.Free()
-
-	doSanitizerCheck()
 }
 
 func TestNetworkBytePair(t *testing.T) {
@@ -134,8 +130,6 @@ func TestNetworkBytePair(t *testing.T) {
 
 	nbp.Free()
 	nbp.Free()
-
-	doSanitizerCheck()
 }
 
 func TestAddress(t *testing.T) {
@@ -148,8 +142,6 @@ func TestAddress(t *testing.T) {
 
 	addr.Free()
 	addr.Free()
-
-	doSanitizerCheck()
 }
 
 func TestBtcTx(t *testing.T) {
@@ -161,8 +153,6 @@ func TestBtcTx(t *testing.T) {
 
 	btctx.Free()
 	btctx.Free()
-
-	doSanitizerCheck()
 }
 
 func TestCoin(t *testing.T) {
@@ -174,6 +164,4 @@ func TestCoin(t *testing.T) {
 
 	coin.Free()
 	coin.Free()
-
-	doSanitizerCheck()
 }
