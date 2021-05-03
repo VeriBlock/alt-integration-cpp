@@ -8,6 +8,7 @@ package ffi
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/array.h>
 // #include <string.h>
+// #include <stdlib.h>
 import "C"
 import (
 	"runtime"
@@ -42,7 +43,8 @@ func createCString(str string) (res C.pop_array_string_t) {
 	res.size = C.size_t(len(str))
 	res.data = C.CString(str)
 	runtime.SetFinalizer(&res, func(v *C.pop_array_string_t) {
-		freeArrayChar(v)
+		// we use C.free because CString is allocated memory using malloc
+		C.free(unsafe.Pointer(v.data))
 	})
 	return res
 }

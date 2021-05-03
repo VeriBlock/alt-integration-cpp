@@ -27,18 +27,18 @@ POP_ENTITY_NEW_FUNCTION(storage,
   VBK_ASSERT(state);
   VBK_ASSERT(path.data);
 
-  auto* res = new POP_ENTITY_NAME(storage);
   std::string str_path(path.data, path.data + path.size);
+  std::shared_ptr<adaptors::Storage> storage{nullptr};
 
   try {
     if (str_path == std::string(":inmem:")) {
-      res->ref = std::make_shared<adaptors::InmemStorageImpl>();
+      storage = std::make_shared<adaptors::InmemStorageImpl>();
     } else {
 #ifdef WITH_ROCKSDB
-      res->ref = std::make_shared<adaptors::RocksDBStorage>(str_path);
+      storage = std::make_shared<adaptors::RocksDBStorage>(str_path);
 #endif
 #ifdef WITH_LEVELDB
-      res->ref = std::make_shared<adaptors::LevelDBStorage>(str_path);
+      storage = std::make_shared<adaptors::LevelDBStorage>(str_path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {
@@ -49,8 +49,9 @@ POP_ENTITY_NEW_FUNCTION(storage,
   }
 
   VBK_ASSERT_MSG(
-      res->ref,
-      "Storage is not initialized, you should initialize the storage");
+      storage, "Storage is not initialized, you should initialize the storage");
 
+  auto* res = new POP_ENTITY_NAME(storage);
+  res->ref = std::move(storage);
   return res;
 }

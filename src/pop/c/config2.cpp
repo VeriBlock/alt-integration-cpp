@@ -20,9 +20,7 @@ struct AltChainParamsImpl2 : public altintegration::AltChainParams {
   //! endorsed.
   altintegration::AltBlock getBootstrapBlock() const noexcept override {
     auto* bootstrap_block = POP_EXTERN_FUNCTION_NAME(get_bootstrap_block)();
-    auto res = bootstrap_block->ref;
-    pop_alt_block_free(bootstrap_block);
-    return res;
+    return bootstrap_block->ref;
   }
 
   /**
