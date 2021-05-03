@@ -50,6 +50,8 @@ func TestVbkBlock(t *testing.T) {
 
 	vbk_block.Free()
 	vbk_block.Free()
+
+	DoLeakCheck()
 }
 
 func TestAltBlock(t *testing.T) {
