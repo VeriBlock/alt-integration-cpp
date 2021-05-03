@@ -142,6 +142,11 @@ if(WITH_LEVELDB)
         set(VBK_DEPENDENCIES_LIBS -lleveldb)
 endif()
 
+if(ASAN)
+        set(SANITIZERS_LIBS "-fsanitize=address")
+        set(SANITIZERS_CFLAGS "-fsanitize=address -DWITH_ASAN")
+endif()
+
 set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"

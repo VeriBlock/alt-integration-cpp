@@ -25,10 +25,12 @@ jobs:
           "-DASAN=ON -DFUZZING=ON",
           "-DUBSAN=ON -DFUZZING=ON",
           "-DVBK_NO_THREADS=ON",
+          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
           # release build with all dependencies with rocksdb
           "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
           # release build with all dependencies with leveldb
-          "-DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
         ]
     env:
       CC: clang
