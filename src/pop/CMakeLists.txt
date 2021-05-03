@@ -143,7 +143,8 @@ if(WITH_LEVELDB)
 endif()
 
 if(ASAN)
-        set(SANITIZERS -fsanitize=address)
+        set(SANITIZERS_LIBS "-fsanitize=address")
+        set(SANITIZERS_CFLAGS "-fsanitize=address -DWITH_ASAN")
 endif()
 
 set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)

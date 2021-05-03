@@ -5,9 +5,13 @@
 
 package ffi
 
+// #ifdef WITH_ASAN
 // void __lsan_do_leak_check(void);
+// #else
+// void __lsan_do_leak_check(void) {}
+// #endif
 import "C"
 
-func DoLeakCheck() {
+func doSanitizerCheck() {
 	C.__lsan_do_leak_check()
 }

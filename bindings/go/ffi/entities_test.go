@@ -11,6 +11,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEntitesSanitzerCheck(t *testing.T) {
+	doSanitizerCheck()
+}
+
 func TestBtcBlock(t *testing.T) {
 	assert := assert.New(t)
 
@@ -50,8 +54,6 @@ func TestVbkBlock(t *testing.T) {
 
 	vbk_block.Free()
 	vbk_block.Free()
-
-	DoLeakCheck()
 }
 
 func TestAltBlock(t *testing.T) {
