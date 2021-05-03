@@ -9,7 +9,10 @@ package ffi
 // #include <veriblock/pop/c/array.h>
 // #include <string.h>
 import "C"
-import "unsafe"
+import (
+	"runtime"
+	"unsafe"
+)
 
 func freeArrayU8(array *C.pop_array_u8_t) {
 	C.pop_array_u8_free(array)
@@ -38,5 +41,8 @@ func createString(array *C.pop_array_string_t) string {
 func createCString(str string) (res C.pop_array_string_t) {
 	res.size = C.size_t(len(str))
 	res.data = C.CString(str)
+	runtime.SetFinalizer(&res, func(v *C.pop_array_string_t) {
+		freeArrayChar(v)
+	})
 	return res
 }
