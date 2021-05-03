@@ -48,10 +48,10 @@ func createArrayVbkBlock(array *C.pop_array_vbk_block_t) []*VbkBlock {
 }
 
 func (v *VbkBlock) Free() {
-	if v.ref != nil {
-		C.pop_vbk_block_free(v.ref)
-		v.ref = nil
-	}
+	// if v.ref != nil {
+	// 	C.pop_vbk_block_free(v.ref)
+	// 	v.ref = nil
+	// }
 }
 
 func (v *VbkBlock) GetHash() []byte {
