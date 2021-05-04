@@ -70,6 +70,24 @@ func (v *Vtb) ToJSON() (map[string]interface{}, error) {
 	return res, err
 }
 
+func (v *Vtb) SerializeToVbk() []byte {
+	res := C.pop_vtb_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkVtb(bytes []byte) (*Vtb, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_vtb_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createVtb(res), nil
+}
+
 func (val1 *Vtb) assertEquals(assert *assert.Assertions, val2 *Vtb) {
 	val1.GetContainingBlock().assertEquals(assert, val2.GetContainingBlock())
 }
