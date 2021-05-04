@@ -17,7 +17,11 @@ type Address struct {
 }
 
 func generateDefaultAddress() *Address {
-	val := &Address{ref: C.pop_address_generate_default_value()}
+	return createAddress(C.pop_address_generate_default_value())
+}
+
+func createAddress(ref *C.pop_address_t) *Address {
+	val := &Address{ref: ref}
 	runtime.SetFinalizer(val, func(v *Address) {
 		v.Free()
 	})
@@ -45,4 +49,22 @@ func (v *Address) GetAddress() string {
 	str := C.pop_address_get_address(v.ref)
 	defer freeArrayChar(&str)
 	return createString(&str)
+}
+
+func (v *Address) SerializeToVbk() []byte {
+	res := C.pop_address_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkAddress(bytes []byte) (*Address, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_address_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createAddress(res), nil
 }
