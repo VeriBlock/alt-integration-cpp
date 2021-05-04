@@ -19,7 +19,7 @@ type Vtb struct {
 	ref *C.pop_vtb_t
 }
 
-func GenerateDefaultVtb() *Vtb {
+func generateDefaultVtb() *Vtb {
 	val := &Vtb{ref: C.pop_vtb_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *Vtb) {
 		v.Free()

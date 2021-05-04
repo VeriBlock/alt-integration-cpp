@@ -59,10 +59,8 @@ func pop_extern_function_get_bootstrap_block() *C.pop_alt_block_t {
 func pop_extern_function_get_block_header_hash(bytes C.pop_array_u8_t) C.pop_array_u8_t {
 	hash := onGetBlockHeaderHash(createBytes(&bytes))
 
-	var res C.pop_array_u8_t
-	res.size = C.size_t(len(hash))
+	res := C.pop_array_u8_new(C.size_t(len(hash)))
 	C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&hash[0]), res.size)
-
 	return res
 }
 

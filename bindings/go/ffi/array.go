@@ -27,6 +27,17 @@ func createBytes(array *C.pop_array_u8_t) []byte {
 	return res
 }
 
+func createCBytes(bytes []byte) C.pop_array_u8_t {
+	res := C.pop_array_u8_new(C.size_t(len(bytes)))
+	if res.size != 0 {
+		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&bytes[0]), res.size)
+	}
+	runtime.SetFinalizer(&res, func(v *C.pop_array_u8_t) {
+		C.pop_array_u8_free(v)
+	})
+	return res
+}
+
 func freeArrayArrayU8(array *C.pop_array_array_u8_t) {
 	C.pop_array_array_u8_free(array)
 }
@@ -56,12 +67,13 @@ func createString(array *C.pop_array_string_t) string {
 	return string(res)
 }
 
-func createCString(str string) (res C.pop_array_string_t) {
-	res.size = C.size_t(len(str))
-	res.data = C.CString(str)
+func createCString(str string) C.pop_array_string_t {
+	res := C.pop_array_string_new(C.size_t(len(str)))
+	if res.size != 0 {
+		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&[]byte(str)[0]), res.size)
+	}
 	runtime.SetFinalizer(&res, func(v *C.pop_array_string_t) {
-		// we use C.free because CString is allocated memory using malloc
-		C.free(unsafe.Pointer(v.data))
+		C.pop_array_string_free(v)
 	})
 	return res
 }

@@ -17,7 +17,7 @@ type PopData struct {
 	ref *C.pop_pop_data_t
 }
 
-func GenerateDefaultPopData() *PopData {
+func generateDefaultPopData() *PopData {
 	val := &PopData{ref: C.pop_pop_data_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *PopData) {
 		v.Free()
