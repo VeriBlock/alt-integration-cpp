@@ -14,7 +14,7 @@ type BtcTx struct {
 	ref *C.pop_btctx_t
 }
 
-func GenerateDefaultBtcTx() *BtcTx {
+func generateDefaultBtcTx() *BtcTx {
 	val := &BtcTx{ref: C.pop_btctx_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *BtcTx) {
 		v.Free()

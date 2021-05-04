@@ -14,7 +14,7 @@ type NetworkBytePair struct {
 	ref *C.pop_network_byte_pair_t
 }
 
-func GenerateDefaultNetworkBytePair() *NetworkBytePair {
+func generateDefaultNetworkBytePair() *NetworkBytePair {
 	val := &NetworkBytePair{ref: C.pop_network_byte_pair_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *NetworkBytePair) {
 		v.Free()

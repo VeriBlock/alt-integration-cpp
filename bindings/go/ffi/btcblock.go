@@ -19,7 +19,7 @@ type BtcBlock struct {
 	ref *C.pop_btc_block_t
 }
 
-func GenerateDefaultBtcBlock() *BtcBlock {
+func generateDefaultBtcBlock() *BtcBlock {
 	val := &BtcBlock{ref: C.pop_btc_block_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *BtcBlock) {
 		v.Free()

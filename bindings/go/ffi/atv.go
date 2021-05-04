@@ -19,7 +19,7 @@ type Atv struct {
 	ref *C.pop_atv_t
 }
 
-func GenerateDefaultAtv() *Atv {
+func generateDefaultAtv() *Atv {
 	val := &Atv{ref: C.pop_atv_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *Atv) {
 		v.Free()
