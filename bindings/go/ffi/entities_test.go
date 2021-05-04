@@ -169,7 +169,7 @@ func TestCoin(t *testing.T) {
 func TestMerklePath(t *testing.T) {
 	assert := assert.New(t)
 
-	mp := GenerateDefaultMerklePath()
+	mp := generateDefaultMerklePath()
 	sub := mp.GetSubject()
 	layers := mp.GetLayers()
 	bytes := make([]byte, 32)
