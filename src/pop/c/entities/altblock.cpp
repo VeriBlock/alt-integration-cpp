@@ -85,7 +85,7 @@ template <>
 altintegration::AltBlock generateDefaultValue<altintegration::AltBlock>() {
   altintegration::AltBlock res;
   res.hash = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-  res.previousBlock = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+  res.previousBlock = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
   res.timestamp = 1;
   res.height = 1;
   return res;
