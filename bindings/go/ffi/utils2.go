@@ -8,6 +8,7 @@ package ffi
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/utils2.h>
 import "C"
+import "errors"
 
 func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash []byte, payoutInfo []byte, popData *PopData) (*PublicationData, error) {
 	if v.ref == nil {
@@ -17,7 +18,10 @@ func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRoot
 		panic("PopData does not initialized")
 	}
 
-	// C.pop_pop_context_function_generate_publication_data(createCBytes(endorsedBlockHeader), createCBytes(txRootHash), createCBytes(payoutInfo), popData.ref)
+	res := C.pop_pop_context_function_generate_publication_data(v.ref, createCBytes(endorsedBlockHeader), createCBytes(txRootHash), createCBytes(payoutInfo), popData.ref)
+	if res == nil {
+		return nil, errors.New("cannot generate PublicationData")
+	}
 
-	return nil, nil
+	return createPublicationData(res), nil
 }
