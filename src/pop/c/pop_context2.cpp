@@ -54,3 +54,17 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
   return true;
 }
+
+// POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+//                            int,
+//                            submit_vbk,
+//                            const POP_ENTITY_NAME(vbk_block) * vbk_block,
+//                            POP_ENTITY_NAME(validation_state) * state) {
+//   VBK_ASSERT(self);
+//   VBK_ASSERT(vbk_block);
+//   VBK_ASSERT(state);
+
+//   auto hash = pop_vbk_block_get_hash(vbk_block);
+//   altintegration::Slice<const uint8_t> vbk_bytes(hash.data, hash.size);
+//   self->ref.get()->getMemPool().submit<altintegration::VbkBlock>(vbk_bytes, state);
+// }
