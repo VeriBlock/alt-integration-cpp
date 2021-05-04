@@ -9,7 +9,6 @@ package ffi
 // #include <veriblock/pop/c/entities/merkle_path.h>
 import "C"
 import (
-	"math/big"
 	"runtime"
 )
 
@@ -40,28 +39,21 @@ func (v *MerklePath) GetIndex() int32 {
 	return int32(index)
 }
 
-func (v *MerklePath) GetSubject() *big.Int {
+func (v *MerklePath) GetSubject() []byte {
 	if v.ref == nil {
 		panic("MerklePath does not initialized")
 	}
 	array := C.pop_merkle_path_get_subject(v.ref)
 	defer freeArrayU8(&array)
-	bytes := createBytes(&array)
-	subject := new(big.Int).SetBytes(bytes)
-	return subject
+	return createBytes(&array)
 }
 
-func (v *MerklePath) GetLayers() []*big.Int {
+func (v *MerklePath) GetLayers() [][]byte {
 	if v.ref == nil {
 		panic("MerklePath does not initialized")
 	}
 
 	layers := C.pop_merkle_path_get_layers(v.ref)
 	defer freeArrayArrayU8(&layers)
-	layersArr := createArrayOfArraysU8(&layers)
-	res := make([]*big.Int, len(layersArr))
-	for i, arr := range layersArr {
-		res[i] = new(big.Int).SetBytes(arr)
-	}
-	return res
+	return createArrayOfArraysU8(&layers)
 }
