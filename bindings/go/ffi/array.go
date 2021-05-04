@@ -35,6 +35,7 @@ func createCBytes(bytes []byte) C.pop_array_u8_t {
 	runtime.SetFinalizer(&res, func(v *C.pop_array_u8_t) {
 		C.pop_array_u8_free(v)
 	})
+	return res
 }
 
 func freeArrayArrayU8(array *C.pop_array_array_u8_t) {
