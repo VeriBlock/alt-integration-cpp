@@ -106,6 +106,24 @@ func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
 	return res, err
 }
 
+func (v *BtcBlock) SerializeToVbk() []byte {
+	res := C.pop_btc_block_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkBtcBlock(bytes []byte) (*BtcBlock, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_btc_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createBtcBlock(res), nil
+}
+
 func (val1 *BtcBlock) assertEquals(assert *assert.Assertions, val2 *BtcBlock) {
 	assert.Equal(val1.GetDifficulty(), val2.GetDifficulty())
 	assert.Equal(val1.GetNonce(), val2.GetNonce())
