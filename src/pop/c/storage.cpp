@@ -3,15 +3,21 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "storage.hpp"
-#include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/c/storage.h>
+
+#include <veriblock/pop/assert.hpp>
+
+#include "storage.hpp"
 #ifdef WITH_ROCKSDB
 #include "adaptors/rocksdb_impl.hpp"
 #endif
+#ifdef WITH_LEVELDB
+#include "adaptors/leveldb_impl.hpp"
+#endif
+#include <veriblock/pop/exceptions/storage_io.hpp>
+
 #include "adaptors/inmem_storage_impl.hpp"
 #include "validation_state.hpp"
-#include <veriblock/pop/exceptions/storage_io.hpp>
 
 Storage_t* VBK_NewStorage(const char* path, VbkValidationState* state) {
   VBK_ASSERT(path);
@@ -25,6 +31,9 @@ Storage_t* VBK_NewStorage(const char* path, VbkValidationState* state) {
     } else {
 #ifdef WITH_ROCKSDB
       v->storage = std::make_shared<adaptors::RocksDBStorage>(path);
+#endif
+#ifdef WITH_LEVELDB
+      v->storage = std::make_shared<adaptors::LevelDBStorage>(path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {

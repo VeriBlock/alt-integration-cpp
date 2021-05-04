@@ -16,6 +16,8 @@ extern "C" {
 
 POP_DECLARE_ENTITY(publication_data);
 
+POP_ENTITY_TO_JSON(publication_data);
+
 #ifdef __cplusplus
 }
 #endif

@@ -9,8 +9,4 @@ if(TESTING AND TESTING_GO)
             COMMAND go test ./...
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
-    set_tests_properties(go_test PROPERTIES
-            ENVIRONMENT
-                VBK_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/include
-            )
 endif()

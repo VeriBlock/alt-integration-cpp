@@ -3,7 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <string.h>
+
 #include <memory>
+
+// clang-format off
+#include <veriblock/pop/adaptors/picojson.hpp>
+// clang-format on
 
 #include "altblock.hpp"
 #include "veriblock/pop/assert.hpp"
@@ -53,6 +59,21 @@ POP_ENTITY_GETTER_FUNCTION(alt_block, int32_t, height) {
   return self->ref.getHeight();
 }
 
+POP_ENTITY_TO_JSON(alt_block, bool reverseHashes = true) {
+  VBK_ASSERT(self);
+
+  std::string json =
+      altintegration::ToJSON<picojson::value>(self->ref, reverseHashes)
+          .serialize(true);
+
+  POP_ARRAY_NAME(string) res;
+  res.size = json.size();
+  res.data = new char[res.size];
+  strncpy(res.data, json.c_str(), res.size);
+
+  return res;
+}
+
 POP_GENERATE_DEFAULT_VALUE(alt_block) {
   auto* v = new POP_ENTITY_NAME(alt_block);
   v->ref = default_value::generateDefaultValue<altintegration::AltBlock>();
@@ -64,7 +85,7 @@ template <>
 altintegration::AltBlock generateDefaultValue<altintegration::AltBlock>() {
   altintegration::AltBlock res;
   res.hash = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-  res.previousBlock = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+  res.previousBlock = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
   res.timestamp = 1;
   res.height = 1;
   return res;

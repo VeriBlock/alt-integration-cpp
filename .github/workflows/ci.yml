@@ -24,8 +24,13 @@ jobs:
           # build fuzzers and run 1 iteration (with fixed corpus) during ctest
           "-DASAN=ON -DFUZZING=ON",
           "-DUBSAN=ON -DFUZZING=ON",
-          # release build with all dependencies
-          "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release"
+          "-DVBK_NO_THREADS=ON",
+          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          # release build with all dependencies with rocksdb
+          "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
+          # release build with all dependencies with leveldb
+          "-DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
         ]
     env:
       CC: clang
@@ -34,6 +39,7 @@ jobs:
       VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
       ASAN_OPTIONS: detect_container_overflow=1:verbosity=1:debug=1:detect_leaks=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true
       UBSAN_OPTIONS: print_stacktrace=1
+      PKG_CONFIG_PATH: /usr/lib/pkgconfig
     steps:
       - uses: actions/checkout@v1
         name: checkout
@@ -47,6 +53,10 @@ jobs:
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
         run: apt-get update
+      - name: install new cmake
+        run: |
+          apt-get install -y python3 python3-pip
+          pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
@@ -61,10 +71,6 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
-      - name: install new cmake
-        run: |
-          apt-get install -y python3 python3-pip
-          pip3 install cmake
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build

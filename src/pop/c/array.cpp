@@ -18,3 +18,10 @@ POP_ARRAY_FREE_SIGNATURE(u32) {
     self = nullptr;
   }
 }
+
+POP_ARRAY_FREE_SIGNATURE(string) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}

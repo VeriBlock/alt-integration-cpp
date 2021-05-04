@@ -3,7 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <string.h>
+
 #include <memory>
+
+// clang-format off
+#include <veriblock/pop/adaptors/picojson.hpp>
+// clang-format on
 
 #include "btcblock.hpp"
 #include "veriblock/pop/assert.hpp"
@@ -83,6 +89,20 @@ POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, nonce) {
   VBK_ASSERT(self);
 
   return self->ref.getNonce();
+}
+
+POP_ENTITY_TO_JSON(btc_block) {
+  VBK_ASSERT(self);
+
+  std::string json =
+      altintegration::ToJSON<picojson::value>(self->ref).serialize(true);
+
+  POP_ARRAY_NAME(string) res;
+  res.size = json.size();
+  res.data = new char[res.size];
+  strncpy(res.data, json.c_str(), res.size);
+
+  return res;
 }
 
 POP_GENERATE_DEFAULT_VALUE(btc_block) {

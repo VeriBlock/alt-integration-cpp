@@ -5,11 +5,11 @@
 
 package ffi
 
-// #cgo CFLAGS: -I../../../include
-// #cgo LDFLAGS: -lveriblock-pop-cpp -lstdc++ -lrocksdb -ldl -lm
+// #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/atv.h>
 import "C"
 import (
+	"encoding/json"
 	"runtime"
 
 	"github.com/stretchr/testify/assert"
@@ -56,9 +56,22 @@ func (v *Atv) Free() {
 
 func (v *Atv) GetBlockOfProof() *VbkBlock {
 	if v.ref == nil {
-		panic("Vtb does not initialized")
+		panic("Atv does not initialized")
 	}
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
+}
+
+func (v *Atv) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("Atv does not initialized")
+	}
+	str := C.pop_atv_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }
 
 func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {

@@ -38,7 +38,7 @@ add_library(pop_stateless_validator OBJECT
         pop_stateless_validator.cpp
         )
 if(VBK_NO_THREADS)
-    target_compile_definitions(pop_stateless_validator PRIVATE VBK_NO_THREADS)
+    add_compile_definitions(VBK_NO_THREADS)
 endif()
 
 set(SOURCES
@@ -73,13 +73,8 @@ set(SOURCES
 if(WITH_C_WRAPPER)
     add_subdirectory(c)
     list(APPEND SOURCES $<TARGET_OBJECTS:veriblock-pop-c>)
-
-    if(WITH_ROCKSDB)
-        list(APPEND SOURCES $<TARGET_OBJECTS:rocksdb_storage>)
-    else()
-        message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON ")
-    endif()
 endif()
+
 if(WITH_SECP256K1)
     list(APPEND SOURCES $<TARGET_OBJECTS:secp256k1>)
 endif()
@@ -140,8 +135,18 @@ target_include_directories(${LIB_NAME}
         )
 
 if(WITH_ROCKSDB)
-    set(VBK_DEPENDENCIES_LIBS -lrocksdb)
+        set(VBK_DEPENDENCIES_LIBS -lrocksdb)
 endif()
+
+if(WITH_LEVELDB)
+        set(VBK_DEPENDENCIES_LIBS -lleveldb)
+endif()
+
+if(ASAN)
+        set(SANITIZERS_LIBS "-fsanitize=address")
+        set(SANITIZERS_CFLAGS "-fsanitize=address -DWITH_ASAN")
+endif()
+
 set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"

@@ -7,6 +7,9 @@
 #ifdef WITH_ROCKSDB
 #include "adaptors/rocksdb_impl.hpp"
 #endif
+#ifdef WITH_LEVELDB
+#include "adaptors/leveldb_impl.hpp"
+#endif
 #include "adaptors/inmem_storage_impl.hpp"
 #include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
@@ -19,19 +22,23 @@ POP_ENTITY_FREE_SIGNATURE(storage) {
 }
 
 POP_ENTITY_NEW_FUNCTION(storage,
-                        const char* path,
+                        POP_ARRAY_NAME(string) path,
                         POP_ENTITY_NAME(validation_state) * state) {
-  VBK_ASSERT(path);
   VBK_ASSERT(state);
+  VBK_ASSERT(path.data);
 
-  auto* res = new POP_ENTITY_NAME(storage);
+  std::string str_path(path.data, path.data + path.size);
+  std::shared_ptr<adaptors::Storage> storage{nullptr};
 
   try {
-    if (std::string(path) == std::string(":inmem:")) {
-      res->ref = std::make_shared<adaptors::InmemStorageImpl>();
+    if (str_path == std::string(":inmem:")) {
+      storage = std::make_shared<adaptors::InmemStorageImpl>();
     } else {
 #ifdef WITH_ROCKSDB
-      res->ref = std::make_shared<adaptors::RocksDBStorage>(path);
+      storage = std::make_shared<adaptors::RocksDBStorage>(str_path);
+#endif
+#ifdef WITH_LEVELDB
+      storage = std::make_shared<adaptors::LevelDBStorage>(str_path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {
@@ -42,8 +49,9 @@ POP_ENTITY_NEW_FUNCTION(storage,
   }
 
   VBK_ASSERT_MSG(
-      res->ref,
-      "Storage is not initialized, you should initialize the storage");
+      storage, "Storage is not initialized, you should initialize the storage");
 
+  auto* res = new POP_ENTITY_NAME(storage);
+  res->ref = std::move(storage);
   return res;
 }

@@ -24,6 +24,8 @@ POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, timestamp);
 POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, difficulty);
 POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, nonce);
 
+POP_ENTITY_TO_JSON(btc_block);
+
 POP_DECLARE_ARRAY(POP_ENTITY_NAME(btc_block) *, btc_block);
 
 POP_GENERATE_DEFAULT_VALUE(btc_block);

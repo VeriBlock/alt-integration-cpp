@@ -18,9 +18,11 @@
 
 namespace altintegration {
 
+#ifndef VBK_NO_THREADS
 //! @private
 using ValidationThreadPool =
     tp::ThreadPoolImpl<tp::FixedFunction<void(), 128>, tp::MPMCBoundedQueue>;
+#endif
 
 //! @private
 class PopValidator {

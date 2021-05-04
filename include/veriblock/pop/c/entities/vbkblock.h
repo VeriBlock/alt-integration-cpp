@@ -29,6 +29,8 @@ POP_ENTITY_GETTER_FUNCTION(vbk_block, int32_t, difficulty);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, uint64_t, nonce);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, int32_t, height);
 
+POP_ENTITY_TO_JSON(vbk_block);
+
 POP_DECLARE_ARRAY(POP_ENTITY_NAME(vbk_block) *, vbk_block);
 
 POP_GENERATE_DEFAULT_VALUE(vbk_block);

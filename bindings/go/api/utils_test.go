@@ -7,6 +7,7 @@ package api
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
@@ -44,6 +45,8 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 func TestCreateStorageFailure(t *testing.T) {
 	assert := assert.New(t)
 
+	defer os.RemoveAll("/tmp/alt-integration")
+
 	storage, err := NewStorage("/tmp/alt-integration")
 	defer storage.Free()
 
@@ -56,6 +59,8 @@ func TestCreateStorageFailure(t *testing.T) {
 
 func TestSaveLoadAllTrees(t *testing.T) {
 	assert := assert.New(t)
+
+	defer os.RemoveAll("/tmp/alt-integration")
 
 	storage, err := NewStorage("/tmp/alt-integration")
 	assert.NoError(err)

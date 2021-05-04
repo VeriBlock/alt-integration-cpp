@@ -112,7 +112,7 @@ std::future<ValidationState> PopValidator::addCheck(const VTB& b) {
   return r;
 #else
   ValidationState state;
-  checkVTB(b, state, btc_);
+  checkVTB(b, state, btc_, vbk_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }
@@ -135,7 +135,7 @@ std::future<ValidationState> PopValidator::addCheck(const ATV& b) {
   return r;
 #else
   ValidationState state;
-  checkATV(b, state, alt_);
+  checkATV(b, state, alt_, vbk_);
   return make_future<ValidationState>(std::move(state));
 #endif
 }

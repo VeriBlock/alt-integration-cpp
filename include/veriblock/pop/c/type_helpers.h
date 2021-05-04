@@ -6,6 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_C_TYPE_HELPERS_H
 #define VERIBLOCK_POP_CPP_C_TYPE_HELPERS_H
 
+#include "veriblock/pop/c/array.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,7 +41,9 @@ extern "C" {
 
 // signature of the toJson method of the pop entity. used for the declaration
 // and intialization.
-#define POP_ENTITY_TO_JSON_FUNCTION(entity) pop_##entity##_to_json()
+#define POP_ENTITY_TO_JSON(entity, ...) \
+  POP_ARRAY_NAME(string)                \
+  pop_##entity##_to_json(const pop_##entity##_t* self, ##__VA_ARGS__)
 
 // signature of the custom function of the pop entity. used for the declaration
 // and intialization.
@@ -54,6 +58,11 @@ extern "C" {
 
 #define POP_GENERATE_DEFAULT_VALUE_EXECUTE(entity) \
   pop_##entity##_generate_default_value();
+
+#define POP_DECLARE_EXTERN_FUNCTION(funcname, returntype, ...) \
+  returntype pop_extern_function_##funcname(__VA_ARGS__)
+
+#define POP_EXTERN_FUNCTION_NAME(funcname) pop_extern_function_##funcname
 
 #ifdef __cplusplus
 }

@@ -6,11 +6,10 @@
 #include <gtest/gtest.h>
 
 // clang-format off
-#include <veriblock/pop/adapters/picojson.hpp>
+#include <veriblock/pop/adaptors/picojson.hpp>
 // clang-format on
 
 #include "util/pop_test_fixture.hpp"
-#include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/mock_miner.hpp>
 
