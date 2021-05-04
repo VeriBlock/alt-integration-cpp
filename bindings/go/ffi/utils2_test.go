@@ -5,22 +5,31 @@
 
 package ffi
 
-// func TestGeneratePublicationData(t *testing.T) {
-// 	assert := assert.New(t)
+import (
+	"testing"
 
-// 	storage, err := NewStorage2(":inmem:")
-// 	assert.NoError(err)
-// 	defer storage.Free()
+	"github.com/stretchr/testify/assert"
+)
 
-// 	context := generateTestPopContext(t, storage)
+func TestGeneratePublicationData(t *testing.T) {
+	assert := assert.New(t)
 
-// 	popData := generateDefaultPopData()
-// 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
-// 	txRoot := []byte{1, 2, 3, 4, 5, 6}
-// 	endorsedBytes := []byte{1, 2, 3, 4, 5, 6}
+	storage, err := NewStorage2(":inmem:")
+	assert.NoError(err)
 
-// 	publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+	context := generateTestPopContext(t, storage)
+	defer context.Free()
 
-// 	assert.NoError(err)
-// 	assert.NotNil(publicationData)
-// }
+	popData := generateDefaultPopData()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := []byte{1, 2, 3, 4, 5, 6}
+	endorsedBytes := []byte{1, 2, 3, 4, 5, 6}
+
+	context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+
+	// TODO fix this test
+	// publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+
+	// assert.NoError(err)
+	// assert.NotNil(publicationData)
+}
