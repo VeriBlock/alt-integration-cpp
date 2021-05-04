@@ -35,6 +35,22 @@ func createCBytes(bytes []byte) C.pop_array_u8_t {
 	runtime.SetFinalizer(&res, func(v *C.pop_array_u8_t) {
 		C.pop_array_u8_free(v)
 	})
+}
+
+func freeArrayArrayU8(array *C.pop_array_array_u8_t) {
+	C.pop_array_array_u8_free(array)
+}
+
+func createArrayOfArraysU8(array *C.pop_array_array_u8_t) [][]byte {
+	res := make([][]byte, array.size)
+	if array.size != 0 {
+		for i := 0; i < len(res); i++ {
+			arrU8 := C.pop_array_array_u8_at(array, C.size_t(i))
+			arr := make([]byte, arrU8.size)
+			C.memcpy(unsafe.Pointer(&arr[0]), unsafe.Pointer(arrU8.data), arrU8.size)
+			res[i] = arr
+		}
+	}
 	return res
 }
 

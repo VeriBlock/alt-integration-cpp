@@ -25,6 +25,7 @@ set(C_SOURCES
         entities/address.cpp
         entities/btctx.cpp
         entities/coin.cpp
+        entities/merkle_path.cpp
         # adaptors
         adaptors/block_provider_impl.cpp
         )
