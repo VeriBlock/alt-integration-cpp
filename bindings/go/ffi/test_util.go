@@ -22,8 +22,11 @@ func generateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 		return *generateDefaultAltBlock()
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
-		// TODO impl
-		return header
+		altblock, err := DeserializeFromVbkAltBlock(header)
+		if err != nil {
+			panic(err)
+		}
+		return altblock.GetHash()
 	})
 
 	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {

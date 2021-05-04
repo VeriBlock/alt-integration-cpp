@@ -23,13 +23,12 @@ func TestGeneratePublicationData(t *testing.T) {
 	popData := generateDefaultPopData()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := []byte{1, 2, 3, 4, 5, 6}
-	endorsedBytes := []byte{1, 2, 3, 4, 5, 6}
+	endorsedBytes := generateDefaultAltBlock().SerializeToVbk()
 
 	context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
 
-	// TODO fix this test
-	// publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+	publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
 
-	// assert.NoError(err)
-	// assert.NotNil(publicationData)
+	assert.NoError(err)
+	assert.NotNil(publicationData)
 }
