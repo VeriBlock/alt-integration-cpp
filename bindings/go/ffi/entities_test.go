@@ -165,3 +165,23 @@ func TestCoin(t *testing.T) {
 	coin.Free()
 	coin.Free()
 }
+
+func TestMerklePath(t *testing.T) {
+	assert := assert.New(t)
+
+	mp := generateDefaultMerklePath()
+	sub := mp.GetSubject()
+	layers := mp.GetLayers()
+	bytes := make([]byte, 32)
+	bytes[31] = 1
+
+	assert.Equal(mp.GetIndex(), int32(1))
+	assert.Equal(sub, bytes)
+	assert.Equal(len(layers), 3)
+	for _, layer := range layers {
+		assert.Equal(layer, bytes)
+	}
+
+	mp.Free()
+	mp.Free()
+}
