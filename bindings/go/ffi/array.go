@@ -8,8 +8,12 @@ package ffi
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/array.h>
 // #include <string.h>
+// #include <stdlib.h>
 import "C"
-import "unsafe"
+import (
+	"runtime"
+	"unsafe"
+)
 
 func freeArrayU8(array *C.pop_array_u8_t) {
 	C.pop_array_u8_free(array)
@@ -17,7 +21,9 @@ func freeArrayU8(array *C.pop_array_u8_t) {
 
 func createBytes(array *C.pop_array_u8_t) []byte {
 	res := make([]byte, array.size)
-	C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	if array.size != 0 {
+		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	}
 	return res
 }
 
@@ -27,6 +33,18 @@ func freeArrayChar(array *C.pop_array_string_t) {
 
 func createString(array *C.pop_array_string_t) string {
 	res := make([]byte, array.size)
-	C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	if array.size != 0 {
+		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	}
 	return string(res)
+}
+
+func createCString(str string) (res C.pop_array_string_t) {
+	res.size = C.size_t(len(str))
+	res.data = C.CString(str)
+	runtime.SetFinalizer(&res, func(v *C.pop_array_string_t) {
+		// we use C.free because CString is allocated memory using malloc
+		C.free(unsafe.Pointer(v.data))
+	})
+	return res
 }
