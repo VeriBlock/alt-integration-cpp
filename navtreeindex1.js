@@ -165,7 +165,6 @@ var NAVTREEINDEX1 =
 "mempool__relations_8hpp_source.html":[5,0,1,0,0,29],
 "mempool__result_8hpp.html#ae378d56e1040bd702aec888f96a8f2d8":[3,0,0,1,4],
 "mempool__result_8hpp_source.html":[5,0,1,0,0,30],
-"merkle__path_8h_source.html":[5,0,1,0,0,2,0,6],
 "merkle__path_8hpp_source.html":[5,0,1,0,0,5,10],
 "merkle__root__util_8h_source.html":[5,0,1,0,0,2,7],
 "merkle__tree_8hpp_source.html":[5,0,1,0,0,5,11],
@@ -249,5 +248,6 @@ var NAVTREEINDEX1 =
 "namespacealtintegration.html#a3556e5c14280262e941f1bb66c67de7b":[3,0,0,178],
 "namespacealtintegration.html#a35a4d4fa7e87b4cb4114d24836d7c76a":[3,0,0,167],
 "namespacealtintegration.html#a35e7706bc7c877b469024e396547a313":[3,0,0,241],
-"namespacealtintegration.html#a36f372c191b94851869de04ccebdcdf6":[3,0,0,179]
+"namespacealtintegration.html#a36f372c191b94851869de04ccebdcdf6":[3,0,0,179],
+"namespacealtintegration.html#a36f8efe4ffbedf7459cfc36222095807":[3,0,0,354]
 };
