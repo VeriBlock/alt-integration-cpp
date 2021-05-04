@@ -12,6 +12,7 @@ set(C_SOURCES
         storage2.cpp
         config2.cpp
         pop_context2.cpp
+        utils2.cpp
         # entities
         entities/publication_data.cpp
         entities/btcblock.cpp
