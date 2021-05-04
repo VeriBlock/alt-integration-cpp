@@ -73,3 +73,21 @@ func (v *Atv) ToJSON() (map[string]interface{}, error) {
 func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
 	val1.GetBlockOfProof().assertEquals(assert, val2.GetBlockOfProof())
 }
+
+func (v *Atv) SerializeToVbk() []byte {
+	res := C.pop_atv_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkAtv(bytes []byte) (*Atv, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_atv_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createAtv(res), nil
+}
