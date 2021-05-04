@@ -17,7 +17,7 @@ type AltBlock struct {
 	ref *C.pop_alt_block_t
 }
 
-func GenerateDefaultAltBlock() *AltBlock {
+func generateDefaultAltBlock() *AltBlock {
 	val := &AltBlock{ref: C.pop_alt_block_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *AltBlock) {
 		v.Free()

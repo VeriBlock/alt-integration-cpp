@@ -27,6 +27,16 @@ func createBytes(array *C.pop_array_u8_t) []byte {
 	return res
 }
 
+func createCBytes(bytes []byte) (res C.pop_array_u8_t) {
+	res.size = C.size_t(len(bytes))
+	res.data = (*C.uint8_t)(C.CBytes(bytes))
+	runtime.SetFinalizer(&res, func(v *C.pop_array_u8_t) {
+		// we use C.free because CBytes is allocated memory using malloc
+		C.free(unsafe.Pointer(v.data))
+	})
+	return res
+}
+
 func freeArrayChar(array *C.pop_array_string_t) {
 	C.pop_array_string_free(array)
 }

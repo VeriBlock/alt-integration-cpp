@@ -9,7 +9,6 @@ package ffi
 // #include <veriblock/pop/c/extern2.h>
 // #include <string.h>
 import "C"
-import "unsafe"
 
 // Exported functions
 var (
@@ -61,8 +60,7 @@ func pop_extern_function_get_block_header_hash(bytes C.pop_array_u8_t) C.pop_arr
 
 	var res C.pop_array_u8_t
 	res.size = C.size_t(len(hash))
-	C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&hash[0]), res.size)
-
+	res.data = (*C.uint8_t)(C.CBytes(hash))
 	return res
 }
 

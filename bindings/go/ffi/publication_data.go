@@ -8,10 +8,21 @@ package ffi
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/publication_data.h>
 import "C"
-import "encoding/json"
+import (
+	"encoding/json"
+	"runtime"
+)
 
 type PublicationData struct {
 	ref *C.pop_publication_data_t
+}
+
+func createPublicationData(ref *C.pop_publication_data_t) *PublicationData {
+	val := &PublicationData{ref: ref}
+	runtime.SetFinalizer(val, func(v *PublicationData) {
+		v.Free()
+	})
+	return val
 }
 
 func (v *PublicationData) Free() {

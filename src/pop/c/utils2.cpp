@@ -15,8 +15,8 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            generate_publication_data,
                            POP_ARRAY_NAME(u8) endorsed_block_header,
                            POP_ARRAY_NAME(u8) tx_root,
-                           const POP_ENTITY_NAME(pop_data) * pop_data,
-                           POP_ARRAY_NAME(u8) payout_info) {
+                           POP_ARRAY_NAME(u8) payout_info,
+                           const POP_ENTITY_NAME(pop_data) * pop_data) {
   VBK_ASSERT(self);
   VBK_ASSERT(pop_data);
   VBK_ASSERT(endorsed_block_header.data);

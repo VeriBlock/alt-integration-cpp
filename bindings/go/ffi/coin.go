@@ -14,7 +14,7 @@ type Coin struct {
 	ref *C.pop_coin_t
 }
 
-func GenerateDefaultCoin() *Coin {
+func generateDefaultCoin() *Coin {
 	val := &Coin{ref: C.pop_coin_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *Coin) {
 		v.Free()

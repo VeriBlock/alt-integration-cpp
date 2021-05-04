@@ -19,7 +19,7 @@ type VbkBlock struct {
 	ref *C.pop_vbk_block_t
 }
 
-func GenerateDefaultVbkBlock() *VbkBlock {
+func generateDefaultVbkBlock() *VbkBlock {
 	val := &VbkBlock{ref: C.pop_vbk_block_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *VbkBlock) {
 		v.Free()
