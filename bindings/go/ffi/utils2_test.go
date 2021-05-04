@@ -5,28 +5,22 @@
 
 package ffi
 
-import (
-	"testing"
+// func TestGeneratePublicationData(t *testing.T) {
+// 	assert := assert.New(t)
 
-	"github.com/stretchr/testify/assert"
-)
+// 	storage, err := NewStorage2(":inmem:")
+// 	assert.NoError(err)
+// 	defer storage.Free()
 
-func TestGeneratePublicationData(t *testing.T) {
-	assert := assert.New(t)
+// 	context := generateTestPopContext(t, storage)
 
-	storage, err := NewStorage2(":inmem:")
-	assert.NoError(err)
-	defer storage.Free()
+// 	popData := generateDefaultPopData()
+// 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+// 	txRoot := []byte{1, 2, 3, 4, 5, 6}
+// 	endorsedBytes := []byte{1, 2, 3, 4, 5, 6}
 
-	context := generateTestPopContext(t, storage)
+// 	publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
 
-	popData := generateDefaultPopData()
-	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
-	txRoot := []byte{1, 2, 3, 4, 5, 6}
-	endorsedBytes := []byte{1, 2, 3, 4, 5, 6}
-
-	publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
-
-	assert.NoError(err)
-	assert.NotNil(publicationData)
-}
+// 	assert.NoError(err)
+// 	assert.NotNil(publicationData)
+// }
