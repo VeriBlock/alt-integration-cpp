@@ -20,11 +20,7 @@ type Vtb struct {
 }
 
 func generateDefaultVtb() *Vtb {
-	val := &Vtb{ref: C.pop_vtb_generate_default_value()}
-	runtime.SetFinalizer(val, func(v *Vtb) {
-		v.Free()
-	})
-	return val
+	return createVtb(C.pop_vtb_generate_default_value())
 }
 
 func createVtb(ref *C.pop_vtb_t) *Vtb {

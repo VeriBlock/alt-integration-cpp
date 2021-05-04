@@ -18,7 +18,11 @@ type AltBlock struct {
 }
 
 func generateDefaultAltBlock() *AltBlock {
-	val := &AltBlock{ref: C.pop_alt_block_generate_default_value()}
+	return createAltBlock(C.pop_alt_block_generate_default_value())
+}
+
+func createAltBlock(ref *C.pop_alt_block_t) *AltBlock {
+	val := &AltBlock{ref: ref}
 	runtime.SetFinalizer(val, func(v *AltBlock) {
 		v.Free()
 	})
@@ -75,4 +79,22 @@ func (v *AltBlock) ToJSON(reverseHashes bool) (map[string]interface{}, error) {
 	var res map[string]interface{}
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
+}
+
+func (v *AltBlock) SerializeToVbk() []byte {
+	res := C.pop_alt_block_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkAltBlock(bytes []byte) (*AltBlock, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_alt_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createAltBlock(res), nil
 }

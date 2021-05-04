@@ -20,11 +20,7 @@ type Atv struct {
 }
 
 func generateDefaultAtv() *Atv {
-	val := &Atv{ref: C.pop_atv_generate_default_value()}
-	runtime.SetFinalizer(val, func(v *Atv) {
-		v.Free()
-	})
-	return val
+	return createAtv(C.pop_atv_generate_default_value())
 }
 
 func createAtv(ref *C.pop_atv_t) *Atv {
