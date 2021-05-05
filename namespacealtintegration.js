@@ -420,6 +420,7 @@ var namespacealtintegration =
     [ "ToJSON", "namespacealtintegration.html#a01a2e1a142509fb69ee74c44c3baf8f0", null ],
     [ "ToJSON", "namespacealtintegration.html#aabc008fa7eddfbaf638018eb69d588b9", null ],
     [ "ToJSON", "namespacealtintegration.html#abfdbf490abeb475b108294ad74908ebd", null ],
+    [ "ToJSON", "namespacealtintegration.html#a4af046b53ac1cf8e334af94e4731fbcd", null ],
     [ "ToJSON", "namespacealtintegration.html#acb85505cbe32103717a6b19cce6203c8", null ],
     [ "ToJSON", "namespacealtintegration.html#a4d9e107898c043392b8efa60c72b1273", null ],
     [ "ToJSON", "namespacealtintegration.html#a3c6e0cdaf9e30f5c13bd9ef922b9c5ed", null ],
