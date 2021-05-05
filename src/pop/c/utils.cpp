@@ -22,6 +22,31 @@
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 
+VBK_ByteStream* VBK_AltBlock_getEndorsedBy(PopContext* self,
+                                           const uint8_t* hash,
+                                           int hash_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash);
+
+  using namespace altintegration;
+  std::vector<uint8_t> v_hash(hash, hash + hash_size);
+
+  auto* index = self->context->getAltBlockTree().getBlockIndex(v_hash);
+  if (index == nullptr) {
+    return nullptr;
+  }
+
+  WriteStream stream;
+  writeArrayOf<const AltEndorsement*>(
+      stream,
+      index->getEndorsedBy(),
+      [](WriteStream& stream, const AltEndorsement* v) {
+        v->toVbkEncoding(stream);
+      });
+
+  return nullptr;
+}
+
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
                         uint8_t* id_bytes,
