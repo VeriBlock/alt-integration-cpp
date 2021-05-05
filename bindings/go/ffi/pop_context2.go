@@ -57,7 +57,7 @@ func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
 	state := NewValidationState2()
 	defer state.Free()
 
-	res := C.pop_pop_context_function_submit_vbk(v.ref, vbk_block.ref, state.ref)
+	res := C.pop_pop_context_function_mempool_submit_vbk(v.ref, vbk_block.ref, state.ref)
 
 	return int(res), state.Error()
 }
@@ -69,7 +69,7 @@ func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 	state := NewValidationState2()
 	defer state.Free()
 
-	res := C.pop_pop_context_function_submit_vtb(v.ref, vtb.ref, state.ref)
+	res := C.pop_pop_context_function_mempool_submit_vtb(v.ref, vtb.ref, state.ref)
 
 	return int(res), state.Error()
 }
@@ -81,7 +81,7 @@ func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	state := NewValidationState2()
 	defer state.Free()
 
-	res := C.pop_pop_context_function_submit_atv(v.ref, atv.ref, state.ref)
+	res := C.pop_pop_context_function_mempool_submit_atv(v.ref, atv.ref, state.ref)
 
 	return int(res), state.Error()
 }
