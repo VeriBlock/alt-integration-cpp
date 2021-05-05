@@ -8,6 +8,7 @@
 #include "config2.hpp"
 #include "entities/altblock.hpp"
 #include "entities/atv.hpp"
+#include "entities/block_index.hpp"
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
 #include "pop_context2.hpp"
@@ -114,6 +115,152 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   auto res =
       self->ref->getMemPool().submit<altintegration::ATV>(atv->ref, state->ref);
   return handleSubmitResponse(res);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_block_index,
+                           POP_ARRAY_NAME(u8) hash) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+
+  auto* index = self->ref->getAltBlockTree().getBlockIndex(
+      std::vector<uint8_t>(hash.data, hash.data + hash.size));
+  if (index == nullptr) {
+    return nullptr;
+  }
+  return new POP_ENTITY_NAME(alt_block_index){*index};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_block_index,
+                           POP_ARRAY_NAME(u8) hash) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+
+  altintegration::VbkBlock::hash_t tmp_hash(
+      altintegration::Slice<const uint8_t>(hash.data, hash.size));
+  auto* index = self->ref->getVbkBlockTree().getBlockIndex(tmp_hash);
+  if (index == nullptr) {
+    return nullptr;
+  }
+  return new POP_ENTITY_NAME(vbk_block_index){*index};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_block_index,
+                           POP_ARRAY_NAME(u8) hash) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+
+  altintegration::BtcBlock::hash_t s_hash(
+      altintegration::Slice<const uint8_t>(hash.data, hash.size));
+  auto* index = self->ref->getBtcBlockTree().getBlockIndex(s_hash);
+  if (index == nullptr) {
+    return nullptr;
+  }
+  return new POP_ENTITY_NAME(btc_block_index){*index};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_best_block) {
+  VBK_ASSERT(self);
+
+  auto* tip = self->ref->getAltBlockTree().getBestChain().tip();
+  VBK_ASSERT(tip);
+  return new POP_ENTITY_NAME(alt_block_index){*tip};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_best_block) {
+  VBK_ASSERT(self);
+
+  auto* tip = self->ref->getVbkBlockTree().getBestChain().tip();
+  VBK_ASSERT(tip);
+  return new POP_ENTITY_NAME(vbk_block_index){*tip};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_best_block) {
+  VBK_ASSERT(self);
+
+  auto* tip = self->ref->getBtcBlockTree().getBestChain().tip();
+  VBK_ASSERT(tip);
+  return new POP_ENTITY_NAME(btc_block_index){*tip};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_bootstrap_block) {
+  VBK_ASSERT(self);
+
+  auto* first = self->ref->getAltBlockTree().getBestChain().first();
+  VBK_ASSERT(first);
+  return new POP_ENTITY_NAME(alt_block_index){*first};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_bootstrap_block) {
+  VBK_ASSERT(self);
+
+  auto* first = self->ref->getVbkBlockTree().getBestChain().first();
+  VBK_ASSERT(first);
+  return new POP_ENTITY_NAME(vbk_block_index){*first};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_bootstrap_block) {
+  VBK_ASSERT(self);
+
+  auto* first = self->ref->getBtcBlockTree().getBestChain().first();
+  VBK_ASSERT(first);
+  return new POP_ENTITY_NAME(btc_block_index){*first};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_blocK_at_active_chain,
+                           uint32_t height) {
+  VBK_ASSERT(self);
+
+  auto* index = self->ref->getAltBlockTree().getBestChain()[height];
+  if (index == nullptr) {
+    return nullptr;
+  }
+  return new POP_ENTITY_NAME(alt_block_index){*index};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_blocK_at_active_chain,
+                           uint32_t height) {
+  VBK_ASSERT(self);
+
+  auto* index = self->ref->getVbkBlockTree().getBestChain()[height];
+  if (index == nullptr) {
+    return nullptr;
+  }
+  return new POP_ENTITY_NAME(vbk_block_index){*index};
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_blocK_at_active_chain,
+                           uint32_t height) {
+  VBK_ASSERT(self);
+
+  auto* index = self->ref->getBtcBlockTree().getBestChain()[height];
+  if (index == nullptr) {
+    return nullptr;
+  }
+  return new POP_ENTITY_NAME(btc_block_index){*index};
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(atv), mempool_get_atvs) {

@@ -6,9 +6,12 @@
 #ifndef VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 #define VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 
+#include <stdint.h>
+
 #include "veriblock/pop/c/config2.h"
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/atv.h"
+#include "veriblock/pop/c/entities/block_index.h"
 #include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/entities/vtb.h"
 #include "veriblock/pop/c/storage2.h"
@@ -61,6 +64,153 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            compare_pop_score,
                            const POP_ENTITY_NAME(alt_block) * A_block,
                            const POP_ENTITY_NAME(alt_block) * B_block);
+
+/**
+ * Find a AltBlock index from the AltTree
+ *
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>, if cannot find return
+ * nullptr
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_block_index,
+                           POP_ARRAY_NAME(u8) hash);
+
+/**
+ * Find a VbkBlock index from the VbkTree
+ *
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::VbkBlock hash bytes
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>, if cannot find return
+ * nullptr
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_block_index,
+                           POP_ARRAY_NAME(u8) hash);
+
+/**
+ * Find a BtcBlock index from the BtcTree
+ *
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::BtcBlock hash bytes
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>, if cannot find return
+ * nullptr
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_block_index,
+                           POP_ARRAY_NAME(u8) hash);
+
+/**
+ * Return best block (tip) of the AltTree
+ *
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_best_block);
+
+/**
+ * Return best block (tip) of the VbkTree
+ *
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_best_block);
+
+/**
+ * Return best block (tip) of the BtcTree
+ *
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_best_block);
+
+/**
+ * Return bootsrap block (first) of the AltTree
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_bootstrap_block);
+
+/**
+ * Return bootsrap block (first) of the VbkTree
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_bootstrap_block);
+
+/**
+ * Return bootsrap block (first) of the BtcTree
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_bootstrap_block);
+
+/**
+ * Return block on the curent height from the active chain of the AltTree
+ *
+ * @param[in] self PopContext
+ * @param[in] height uint32_t
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>, if cannot find return
+ * nullptr
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_blocK_at_active_chain,
+                           uint32_t height);
+
+/**
+ * Return block on the curent height from the active chain of the VbkTree
+ *
+ * @param[in] self PopContext
+ * @param[in] height uint32_t
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>, if cannot find return
+ * nullptr
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_block_at_active_chain,
+                           uint32_t height);
+
+/**
+ * Return block on the curent height from the active chain of the BtcTree
+ *
+ * @param[in] self PopContext
+ * @param[in] height uint32_t
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>, if cannot find return
+ * nullptr
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_block_at_active_chain,
+                           uint32_t height);
 
 /**
  * @copybrief altintegration::MemPool::submit
