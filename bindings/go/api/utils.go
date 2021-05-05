@@ -13,6 +13,26 @@ import (
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
+func (v *PopContext) AltBlockGetEndorsedBy(altblockHash []byte) ([]entities.AltEndorsement, error) {
+	stream := v.popContext.AltBlockGetEndorsedBy(altblockHash)
+	if stream == nil {
+		return nil, errors.New("cannot find alt block")
+	}
+	defer stream.Free()
+	endorsements, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(stream io.Reader) (interface{}, error) {
+		endorsement := AltEndorsement{}
+		err := endorsement.FromVbkEncoding(stream)
+		if err != nil {
+			return nil, err
+		}
+		return endorsement, nil
+	})
+	if err != nil {
+		return nil, errors.New("failed to deserialize alt endorsement")
+	}
+	return endorsements, nil
+}
+
 func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error) {
 	if popData == nil {
 		popData = entities.GetEmptyPopData()
