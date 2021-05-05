@@ -85,3 +85,57 @@ func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 
 	return int(res), state.Error()
 }
+
+func (v *PopContext2) MemPoolGetAtvs() []*Atv {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_atvs(v.ref)
+	defer freeArrayAtv(&array)
+	return createArrayAtv(&array)
+}
+
+func (v *PopContext2) MemPoolGetVtbs() []*Vtb {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_vtbs(v.ref)
+	defer freeArrayVtb(&array)
+	return createArrayVtb(&array)
+}
+
+func (v *PopContext2) MemPoolGetVbkBlocks() []*VbkBlock {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_vbk_blocks(v.ref)
+	defer freeArrayVbkBlock(&array)
+	return createArrayVbkBlock(&array)
+}
+
+func (v *PopContext2) MemPoolGetAtvsInFlight() []*Atv {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_in_flight_atvs(v.ref)
+	defer freeArrayAtv(&array)
+	return createArrayAtv(&array)
+}
+
+func (v *PopContext2) MemPoolGetVtbsInFlight() []*Vtb {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_in_flight_vtbs(v.ref)
+	defer freeArrayVtb(&array)
+	return createArrayVtb(&array)
+}
+
+func (v *PopContext2) MemPoolGetVbkBlocksInFlight() []*VbkBlock {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_in_flight_vbk_blocks(v.ref)
+	defer freeArrayVbkBlock(&array)
+	return createArrayVbkBlock(&array)
+}

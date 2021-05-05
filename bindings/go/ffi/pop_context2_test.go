@@ -44,7 +44,7 @@ func TestPopContext2AltBlockTreeAcceptBlockHeader(t *testing.T) {
 	assert.Equal(res, true)
 }
 
-func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
+func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -53,6 +53,10 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 
 	context := generateTestPopContext(t, storage)
 	defer context.Free()
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 0)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
 
 	miner := NewMockMiner2()
 	defer miner.Free()
@@ -65,6 +69,29 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(res, 0)
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 0)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 1)
+
+	alt := generateDefaultAltBlock()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := generateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	res, err = context.MemPoolSubmitAtv(atv)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 1)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 2)
 }
 
 // TODO: popContext.BtcBestBlock()
@@ -101,38 +128,3 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 //	}
 // 	assert.Equal(res, 0)
 // }
-
-func TestPopContext2MemPoolSubmitAtv(t *testing.T) {
-	assert := assert.New(t)
-
-	storage, err := NewStorage2(":inmem:")
-	assert.NoError(err)
-	defer storage.Free()
-
-	context := generateTestPopContext(t, storage)
-	defer context.Free()
-
-	miner := NewMockMiner2()
-	defer miner.Free()
-
-	alt := generateDefaultAltBlock()
-	defer alt.Free()
-	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
-	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
-	defer popData.Free()
-	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer pubData.Free()
-
-	atv := miner.MineAtv(pubData)
-	defer atv.Free()
-
-	res, err := context.MemPoolSubmitAtv(atv)
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(res, 0)
-}
