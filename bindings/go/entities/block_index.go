@@ -200,8 +200,12 @@ func (v *BlockIndex) FromVbkEncodingBytes(data []byte) error {
 	return v.FromVbkEncoding(buffer)
 }
 
+type withAltBlockGetEndorsedBy interface {
+	AltBlockGetEndorsedBy(altblockHash []byte) ([]AltEndorsement, error)
+}
+
 // ToJSON ...
-func (v *BlockIndex) ToJSON() (map[string]interface{}, error) {
+func (v *BlockIndex) ToJSON(popContext withAltBlockGetEndorsedBy) (map[string]interface{}, error) {
 	var header map[string]interface{}
 	var err error
 	switch val := v.Header.(type) {
@@ -212,7 +216,7 @@ func (v *BlockIndex) ToJSON() (map[string]interface{}, error) {
 	case *AltBlock:
 		header, err = val.ToJSON()
 	default:
-		err = fmt.Errorf("Invalid Block Header")
+		err = fmt.Errorf("invalid block header")
 	}
 	if err != nil {
 		return nil, err
@@ -243,8 +247,22 @@ func (v *BlockIndex) ToJSON() (map[string]interface{}, error) {
 			"ref":       len(val.Refs),
 		}
 	case *AltBlockAddon:
+		altblockHash := v.Header.(*AltBlock).Hash
+		ends := []interface{}{}
+		if popContext != nil {
+			endorsements, err := popContext.AltBlockGetEndorsedBy(altblockHash)
+			if err != nil {
+				return nil, err
+			}
+			for i, endorsement := range endorsements {
+				ends[i] = endorsement.ID
+			}
+		}
+		res = map[string]interface{}{
+			"endorsedBy": ends,
+		}
 	default:
-		return nil, fmt.Errorf("Invalid Block Addon")
+		return nil, fmt.Errorf("invalid block addon")
 	}
 	return res, nil
 }
