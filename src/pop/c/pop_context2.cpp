@@ -9,6 +9,10 @@
 #include "pop_context2.hpp"
 #include "storage2.hpp"
 #include "veriblock/pop/assert.hpp"
+#include "entities/vbkblock.hpp"
+#include "entities/vtb.hpp"
+#include "entities/atv.hpp"
+#include "validation_state2.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_context) {
   if (self != nullptr) {
@@ -54,3 +58,57 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
   return true;
 }
+
+static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
+  using S = altintegration::MemPool::Status;
+  switch (e.status) {
+    case S::VALID:
+      return 0;
+    case S::FAILED_STATEFUL:
+      return 1;
+    case S::FAILED_STATELESS:
+      return 2;
+  }
+
+  VBK_ASSERT_MSG(false, "Unhandled case");
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           submit_vbk,
+                           const POP_ENTITY_NAME(vbk_block) * vbk_block,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(vbk_block);
+  VBK_ASSERT(state);
+
+  auto res = self->ref->getMemPool().submit<altintegration::VbkBlock>(vbk_block->ref, state->ref);
+  return handleSubmitResponse(res);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           submit_vtb,
+                           const POP_ENTITY_NAME(vtb) * vtb,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(vtb);
+  VBK_ASSERT(state);
+
+  auto res = self->ref->getMemPool().submit<altintegration::VTB>(vtb->ref, state->ref);
+  return handleSubmitResponse(res);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           submit_atv,
+                           const POP_ENTITY_NAME(atv) * atv,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(atv);
+  VBK_ASSERT(state);
+
+  auto res = self->ref->getMemPool().submit<altintegration::ATV>(atv->ref, state->ref);
+  return handleSubmitResponse(res);
+}
+
