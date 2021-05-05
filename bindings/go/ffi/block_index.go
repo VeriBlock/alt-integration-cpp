@@ -8,7 +8,10 @@ package ffi
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/entities/block_index.h>
 import "C"
-import "runtime"
+import (
+	"encoding/json"
+	"runtime"
+)
 
 type AltBlockIndex struct {
 	ref *C.pop_alt_block_index_t
@@ -107,4 +110,43 @@ func (v *BtcBlockIndex) GetStatus() uint32 {
 		panic("BtcBlockIndex does not initialized")
 	}
 	return uint32(C.pop_btc_block_index_get_status(v.ref))
+}
+
+func (v *AltBlockIndex) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("AltBlockIndex does not initialized")
+	}
+	str := C.pop_alt_block_index_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
+}
+
+func (v *VbkBlockIndex) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("VbkBlockIndex does not initialized")
+	}
+	str := C.pop_vbk_block_index_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
+}
+
+func (v *BtcBlockIndex) ToJSON() (map[string]interface{}, error) {
+	if v.ref == nil {
+		panic("BtcBlockIndex does not initialized")
+	}
+	str := C.pop_btc_block_index_to_json(v.ref)
+	defer freeArrayChar(&str)
+	json_str := createString(&str)
+
+	var res map[string]interface{}
+	err := json.Unmarshal([]byte(json_str), &res)
+	return res, err
 }
