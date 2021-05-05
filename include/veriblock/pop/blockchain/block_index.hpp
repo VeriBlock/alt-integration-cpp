@@ -390,7 +390,7 @@ const BlockIndex<Block>* getForkBlock(const BlockIndex<Block>& a,
   return nullptr;
 }
 
-//! a `candidate` is considered outdated iff it is behind `finalBlock`, or on
+//! a `candidate` is considered outdated if it is behind `finalBlock`, or on
 //! same height and not equal to `finalBlock`, or its fork block is outdated
 template <typename Block>
 bool isBlockOutdated(const BlockIndex<Block>& finalBlock,

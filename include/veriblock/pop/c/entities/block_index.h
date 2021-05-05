@@ -6,6 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_C_ENTITIES_BLOCK_INDEX_H
 #define VERIBLOCK_POP_CPP_C_ENTITIES_BLOCK_INDEX_H
 
+#include <stdint.h>
+
 #include "veriblock/pop/c/array.h"
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/btcblock.h"
@@ -21,6 +23,7 @@ POP_DECLARE_ENTITY(alt_block_index);
 POP_DECLARE_ENTITY(vbk_block_index);
 POP_DECLARE_ENTITY(btc_block_index);
 
+//! get_header
 POP_ENTITY_GETTER_FUNCTION(alt_block_index,
                            POP_ENTITY_NAME(alt_block) *,
                            get_header);
@@ -30,7 +33,12 @@ POP_ENTITY_GETTER_FUNCTION(vbk_block_index,
 POP_ENTITY_GETTER_FUNCTION(btc_block_index,
                            POP_ENTITY_NAME(btc_block) *,
                            get_header);
+//! get_status
+POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, get_status);
+POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, get_status);
+POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, get_status);
 
+//! toJSON
 POP_ENTITY_TO_JSON(alt_block_index);
 POP_ENTITY_TO_JSON(vbk_block_index);
 POP_ENTITY_TO_JSON(btc_block_index);
