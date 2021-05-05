@@ -13,6 +13,8 @@
 
 #include "altblock.hpp"
 #include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "../validation_state2.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(alt_block) {
   if (self != nullptr) {
@@ -71,6 +73,35 @@ POP_ENTITY_TO_JSON(alt_block, bool reverseHashes = true) {
   res.data = new char[res.size];
   strncpy(res.data, json.c_str(), res.size);
 
+  return res;
+}
+
+POP_ENTITY_SERIALIZE_TO_VBK(alt_block) {
+  VBK_ASSERT(self);
+
+  auto bytes = altintegration::SerializeToVbkEncoding(self->ref);
+
+  POP_ARRAY_NAME(u8) res;
+  res.data = new uint8_t[bytes.size()];
+  std::copy(bytes.begin(), bytes.end(), res.data);
+  res.size = bytes.size();
+
+  return res;
+}
+
+POP_ENTITY_DESERIALIZE_FROM_VBK(alt_block) {
+  VBK_ASSERT(state);
+  VBK_ASSERT(bytes.data);
+
+  std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
+
+  altintegration::AltBlock out;
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
+    return nullptr;
+  }
+
+  auto* res = new POP_ENTITY_NAME(alt_block);
+  res->ref = std::move(out);
   return res;
 }
 

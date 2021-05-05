@@ -20,11 +20,7 @@ type Vtb struct {
 }
 
 func generateDefaultVtb() *Vtb {
-	val := &Vtb{ref: C.pop_vtb_generate_default_value()}
-	runtime.SetFinalizer(val, func(v *Vtb) {
-		v.Free()
-	})
-	return val
+	return createVtb(C.pop_vtb_generate_default_value())
 }
 
 func createVtb(ref *C.pop_vtb_t) *Vtb {
@@ -72,6 +68,27 @@ func (v *Vtb) ToJSON() (map[string]interface{}, error) {
 	var res map[string]interface{}
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
+}
+
+func (v *Vtb) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("Vtb does not initialized")
+	}
+	res := C.pop_vtb_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkVtb(bytes []byte) (*Vtb, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_vtb_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createVtb(res), nil
 }
 
 func (val1 *Vtb) assertEquals(assert *assert.Assertions, val2 *Vtb) {

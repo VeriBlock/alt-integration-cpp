@@ -25,6 +25,9 @@ POP_ENTITY_GETTER_FUNCTION(alt_block, int32_t, height);
 
 POP_ENTITY_TO_JSON(alt_block, bool reverseHashes);
 
+POP_ENTITY_SERIALIZE_TO_VBK(alt_block);
+POP_ENTITY_DESERIALIZE_FROM_VBK(alt_block);
+
 POP_GENERATE_DEFAULT_VALUE(alt_block);
 
 #ifdef __cplusplus

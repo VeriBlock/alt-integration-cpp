@@ -16,6 +16,9 @@ extern "C" {
 
 POP_DECLARE_ENTITY(publication_data);
 
+POP_ENTITY_SERIALIZE_TO_VBK(publication_data);
+POP_ENTITY_DESERIALIZE_FROM_VBK(publication_data);
+
 POP_ENTITY_TO_JSON(publication_data);
 
 #ifdef __cplusplus
