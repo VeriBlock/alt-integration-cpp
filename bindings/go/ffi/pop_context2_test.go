@@ -62,12 +62,9 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	defer miner.Free()
 
 	vbk := miner.MineVbkBlockTip()
-	defer vbk.Free()
 
 	res, err := context.MemPoolSubmitVbk(vbk)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(err)
 	assert.Equal(res, 0)
 
 	assert.Equal(len(context.MemPoolGetAtvs()), 0)
@@ -128,3 +125,50 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 //	}
 // 	assert.Equal(res, 0)
 // }
+
+func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
+	assert := assert.New(t)
+
+	storage, err := NewStorage2(":inmem:")
+	assert.NoError(err)
+	defer storage.Free()
+
+	context := generateTestPopContext(t, storage)
+	defer context.Free()
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 0)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
+
+	miner := NewMockMiner2()
+	defer miner.Free()
+
+	vbk := miner.MineVbkBlockTip()
+
+	res, err := context.MemPoolSubmitVbk(vbk)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 0)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 1)
+
+	alt := generateDefaultAltBlock()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := generateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	res, err = context.MemPoolSubmitAtv(atv)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 1)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 2)
+}
