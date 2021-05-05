@@ -44,6 +44,7 @@ type AltBlockTree interface {
 	CheckVTB(vtb *entities.Vtb) error
 	CheckVbkBlock(blk *entities.VbkBlock) error
 	CheckPopData(popData *entities.PopData) error
+	AltBlockGetEndorsedBy(altblockHash []byte) ([]entities.AltEndorsement, error)
 }
 
 // Code for interface test
