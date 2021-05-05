@@ -79,3 +79,35 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 // 	t.Log(state.GetErrorMessage())
 // 	assert.Equal(res, 0)
 // }
+
+func TestPopContext2MemPoolSubmitAtv(t *testing.T) {
+	assert := assert.New(t)
+
+	storage, err := NewStorage2(":inmem:")
+	assert.NoError(err)
+	defer storage.Free()
+
+	context := generateTestPopContext(t, storage)
+	defer context.Free()
+
+	state := NewValidationState2()
+	defer state.Free()
+
+	miner := NewMockMiner2()
+	defer miner.Free()
+
+	alt := generateDefaultAltBlock()
+	defer alt.Free()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := generateDefaultPopData()
+	defer popData.Free()
+	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
+	defer pubData.Free()
+
+	atv := miner.MineAtv(pubData)
+	defer atv.Free()
+
+	res := context.MemPoolSubmitAtv(atv, state)
+	assert.Equal(res, 0)
+}
