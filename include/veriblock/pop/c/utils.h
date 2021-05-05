@@ -16,6 +16,10 @@
 extern "C" {
 #endif
 
+VBK_ByteStream* VBK_AltBlock_getEndorsedBy(PopContext* self,
+                                           const uint8_t* hash,
+                                           int hash_size);
+
 /**
  * Calculates an ID of the altintegration::VbkBlock.
  *
