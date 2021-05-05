@@ -136,22 +136,23 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	context := generateTestPopContext(t, storage)
 	defer context.Free()
 
-	assert.Equal(len(context.MemPoolGetAtvs()), 0)
-	assert.Equal(len(context.MemPoolGetVtbs()), 0)
-	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
+	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 0)
 
 	miner := NewMockMiner2()
 	defer miner.Free()
 
+	miner.MineVbkBlockTip()
 	vbk := miner.MineVbkBlockTip()
 
 	res, err := context.MemPoolSubmitVbk(vbk)
-	assert.NoError(err)
-	assert.Equal(res, 0)
+	assert.Error(err)
+	assert.Equal(res, 1)
 
-	assert.Equal(len(context.MemPoolGetAtvs()), 0)
-	assert.Equal(len(context.MemPoolGetVtbs()), 0)
-	assert.Equal(len(context.MemPoolGetVbkBlocks()), 1)
+	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
 
 	alt := generateDefaultAltBlock()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
@@ -168,7 +169,7 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal(res, 0)
 
-	assert.Equal(len(context.MemPoolGetAtvs()), 1)
-	assert.Equal(len(context.MemPoolGetVtbs()), 0)
-	assert.Equal(len(context.MemPoolGetVbkBlocks()), 2)
+	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 1)
+	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 2)
 }
