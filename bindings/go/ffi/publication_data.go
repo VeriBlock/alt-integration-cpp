@@ -44,3 +44,24 @@ func (v *PublicationData) ToJSON() (map[string]interface{}, error) {
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
 }
+
+func (v *PublicationData) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("PublicationData does not initialized")
+	}
+	res := C.pop_publication_data_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkPublicationData(bytes []byte) (*PublicationData, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_publication_data_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createPublicationData(res), nil
+}

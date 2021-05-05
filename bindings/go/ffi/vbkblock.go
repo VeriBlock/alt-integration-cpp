@@ -20,11 +20,7 @@ type VbkBlock struct {
 }
 
 func generateDefaultVbkBlock() *VbkBlock {
-	val := &VbkBlock{ref: C.pop_vbk_block_generate_default_value()}
-	runtime.SetFinalizer(val, func(v *VbkBlock) {
-		v.Free()
-	})
-	return val
+	return createVbkBlock(C.pop_vbk_block_generate_default_value())
 }
 
 func createVbkBlock(ref *C.pop_vbk_block_t) *VbkBlock {
@@ -145,6 +141,27 @@ func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
 	var res map[string]interface{}
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
+}
+
+func (v *VbkBlock) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("VbkBlock does not initialized")
+	}
+	res := C.pop_vbk_block_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkVbkBlock(bytes []byte) (*VbkBlock, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_vbk_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createVbkBlock(res), nil
 }
 
 func (val1 *VbkBlock) assertEquals(assert *assert.Assertions, val2 *VbkBlock) {

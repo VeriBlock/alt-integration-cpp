@@ -20,11 +20,7 @@ type BtcBlock struct {
 }
 
 func generateDefaultBtcBlock() *BtcBlock {
-	val := &BtcBlock{ref: C.pop_btc_block_generate_default_value()}
-	runtime.SetFinalizer(val, func(v *BtcBlock) {
-		v.Free()
-	})
-	return val
+	return createBtcBlock(C.pop_btc_block_generate_default_value())
 }
 
 func createBtcBlock(ref *C.pop_btc_block_t) *BtcBlock {
@@ -108,6 +104,27 @@ func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
 	var res map[string]interface{}
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
+}
+
+func (v *BtcBlock) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("Atv does not initialized")
+	}
+	res := C.pop_btc_block_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func DeserializeFromVbkBtcBlock(bytes []byte) (*BtcBlock, error) {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_btc_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return nil, state.Error()
+	}
+
+	return createBtcBlock(res), nil
 }
 
 func (val1 *BtcBlock) assertEquals(assert *assert.Assertions, val2 *BtcBlock) {
