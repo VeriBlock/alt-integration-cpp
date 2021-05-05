@@ -60,8 +60,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "",
-"functions_func_b.html",
-"namespacealtintegration.html#a36f372c191b94851869de04ccebdcdf6",
+"functions_func_c.html",
+"namespacealtintegration.html#a36f8efe4ffbedf7459cfc36222095807",
 "namespacealtintegration.html#aea29607876eddcbab5f44f2d5b17e04d",
 "structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370",
 "structaltintegration_1_1BtcChainParams.html#a48bd355f860d1d36b56892425a54c24c",
