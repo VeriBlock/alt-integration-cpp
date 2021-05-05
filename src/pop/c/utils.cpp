@@ -44,7 +44,7 @@ VBK_ByteStream* VBK_AltBlock_getEndorsedBy(PopContext* self,
         v->toVbkEncoding(stream);
       });
 
-  return nullptr;
+  return new VbkByteStream(stream.data());
 }
 
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
