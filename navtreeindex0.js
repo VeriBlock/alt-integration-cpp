@@ -31,6 +31,7 @@ var NAVTREEINDEX0 =
 "base__block__tree_8hpp_source.html":[5,0,1,0,0,1,6],
 "blob_8hpp_source.html":[5,0,1,0,0,15],
 "block__batch_8hpp_source.html":[5,0,1,0,0,8,0],
+"block__index_8h_source.html":[5,0,1,0,0,2,0,3],
 "block__index_8hpp_source.html":[5,0,1,0,0,1,7],
 "block__iterator_8hpp_source.html":[5,0,1,0,0,8,1],
 "block__reader_8hpp_source.html":[5,0,1,0,0,8,2],
@@ -41,7 +42,7 @@ var NAVTREEINDEX0 =
 "btc__block__addon_8hpp_source.html":[5,0,1,0,0,1,11],
 "btc__blockchain__util_8hpp_source.html":[5,0,1,0,0,1,12],
 "btc__chain__params_8hpp_source.html":[5,0,1,0,0,1,13],
-"btcblock_8h_source.html":[5,0,1,0,0,2,0,3],
+"btcblock_8h_source.html":[5,0,1,0,0,2,0,4],
 "btcblock_8hpp_source.html":[5,0,1,0,0,5,3],
 "btctesting.html":[0,2,14],
 "btctesting.html#autotoc_md84":[0,2,14,0],
@@ -50,7 +51,7 @@ var NAVTREEINDEX0 =
 "btctesting.html#autotoc_md87":[0,2,14,3],
 "btctesting.html#autotoc_md88":[0,2,14,4],
 "btctesting.html#autotoc_md89":[0,2,14,5],
-"btctx_8h_source.html":[5,0,1,0,0,2,0,4],
+"btctx_8h_source.html":[5,0,1,0,0,2,0,5],
 "btctx_8hpp_source.html":[5,0,1,0,0,5,4],
 "build.html":[0,0],
 "build.html#autotoc_md0":[0,0,0],
@@ -139,7 +140,7 @@ var NAVTREEINDEX0 =
 "classaltintegration_1_1reverse__range.html#a707d80d9b25196e14dd902878853522a":[4,0,0,54,1],
 "classaltintegration_1_1reverse__range.html#aab6d488dc0c434a9f8efbe2b156519a8":[4,0,0,54,2],
 "classes.html":[4,1],
-"coin_8h_source.html":[5,0,1,0,0,2,0,5],
+"coin_8h_source.html":[5,0,1,0,0,2,0,6],
 "coin_8hpp_source.html":[5,0,1,0,0,5,5],
 "command_8hpp_source.html":[5,0,1,0,0,1,16],
 "command__group_8hpp_source.html":[5,0,1,0,0,1,17],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "functions_e.html":[4,3,0,4],
 "functions_f.html":[4,3,0,5],
 "functions_func.html":[4,3,1],
-"functions_func.html":[4,3,1,0],
-"functions_func_b.html":[4,3,1,1]
+"functions_func.html":[4,3,1,0]
 };
