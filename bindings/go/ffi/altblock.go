@@ -82,6 +82,9 @@ func (v *AltBlock) ToJSON(reverseHashes bool) (map[string]interface{}, error) {
 }
 
 func (v *AltBlock) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("AltBlock does not initialized")
+	}
 	res := C.pop_alt_block_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

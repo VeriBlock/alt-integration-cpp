@@ -71,6 +71,9 @@ func (v *Vtb) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *Vtb) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("Vtb does not initialized")
+	}
 	res := C.pop_vtb_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

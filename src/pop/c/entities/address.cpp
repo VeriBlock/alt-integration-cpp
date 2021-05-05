@@ -11,8 +11,6 @@
 
 #include "address.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/serde.hpp"
-#include "../validation_state2.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(address) {
   if (self != nullptr) {
@@ -37,35 +35,6 @@ POP_ENTITY_GETTER_FUNCTION(address, POP_ARRAY_NAME(string), address) {
   res.data = new char[res.size];
   strncpy(res.data, addr.c_str(), res.size);
 
-  return res;
-}
-
-POP_ENTITY_SERIALIZE_TO_VBK(address) {
-  VBK_ASSERT(self);
-
-  auto bytes = altintegration::SerializeToVbkEncoding(self->ref);
-
-  POP_ARRAY_NAME(u8) res;
-  res.data = new uint8_t[bytes.size()];
-  std::copy(bytes.begin(), bytes.end(), res.data);
-  res.size = bytes.size();
-
-  return res;
-}
-
-POP_ENTITY_DESERIALIZE_FROM_VBK(address) {
-  VBK_ASSERT(state);
-  VBK_ASSERT(bytes.data);
-
-  std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
-
-  altintegration::Address out;
-  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
-    return nullptr;
-  }
-
-  auto* res = new POP_ENTITY_NAME(address);
-  res->ref = std::move(out);
   return res;
 }
 

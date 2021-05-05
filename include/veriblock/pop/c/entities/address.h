@@ -20,9 +20,6 @@ POP_DECLARE_ENTITY(address);
 POP_ENTITY_GETTER_FUNCTION(address, uint8_t, address_type);
 POP_ENTITY_GETTER_FUNCTION(address, POP_ARRAY_NAME(string), address);
 
-POP_ENTITY_SERIALIZE_TO_VBK(address);
-POP_ENTITY_DESERIALIZE_FROM_VBK(address);
-
 POP_GENERATE_DEFAULT_VALUE(address);
 
 #ifdef __cplusplus

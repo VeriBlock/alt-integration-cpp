@@ -75,6 +75,9 @@ func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
 }
 
 func (v *Atv) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("Atv does not initialized")
+	}
 	res := C.pop_atv_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

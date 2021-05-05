@@ -144,6 +144,9 @@ func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *VbkBlock) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("VbkBlock does not initialized")
+	}
 	res := C.pop_vbk_block_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

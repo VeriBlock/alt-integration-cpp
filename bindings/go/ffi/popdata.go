@@ -77,6 +77,9 @@ func (v *PopData) ToJSON(verbosity bool) (map[string]interface{}, error) {
 }
 
 func (v *PopData) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("PopData does not initialized")
+	}
 	res := C.pop_pop_data_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

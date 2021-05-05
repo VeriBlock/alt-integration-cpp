@@ -107,6 +107,9 @@ func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *BtcBlock) SerializeToVbk() []byte {
+	if v.ref == nil {
+		panic("Atv does not initialized")
+	}
 	res := C.pop_btc_block_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)
