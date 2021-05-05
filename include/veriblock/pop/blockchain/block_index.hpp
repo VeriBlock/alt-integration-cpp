@@ -390,7 +390,7 @@ const BlockIndex<Block>* getForkBlock(const BlockIndex<Block>& a,
   return nullptr;
 }
 
-//! a `candidate` is considered outdated iff it is behind `finalBlock`, or on
+//! a `candidate` is considered outdated if it is behind `finalBlock`, or on
 //! same height and not equal to `finalBlock`, or its fork block is outdated
 template <typename Block>
 bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
@@ -433,16 +433,6 @@ bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
-}
-
-//! @overload
-template <typename JsonValue, typename Block>
-JsonValue ToJSON(const BlockIndex<Block>& i) {
-  auto obj = json::makeEmptyObject<JsonValue>();
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
-  return obj;
 }
 
 //! @overload
