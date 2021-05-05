@@ -436,16 +436,6 @@ void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
 }
 
 //! @overload
-template <typename JsonValue, typename Block>
-JsonValue ToJSON(const BlockIndex<Block>& i) {
-  auto obj = json::makeEmptyObject<JsonValue>();
-  json::putIntKV(obj, "height", i.height);
-  json::putKV(obj, "header", ToJSON<JsonValue>(*i.header));
-  json::putIntKV(obj, "status", i.status);
-  return obj;
-}
-
-//! @overload
 template <typename Block>
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
