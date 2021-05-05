@@ -43,7 +43,7 @@ POP_ENTITY_FREE_SIGNATURE(btc_block_index) {
 //! get_header
 POP_ENTITY_GETTER_FUNCTION(alt_block_index,
                            POP_ENTITY_NAME(alt_block) *,
-                           get_header) {
+                           header) {
   VBK_ASSERT(self);
 
   auto *res = new POP_ENTITY_NAME(alt_block);
@@ -53,7 +53,7 @@ POP_ENTITY_GETTER_FUNCTION(alt_block_index,
 
 POP_ENTITY_GETTER_FUNCTION(vbk_block_index,
                            POP_ENTITY_NAME(vbk_block) *,
-                           get_header) {
+                           header) {
   VBK_ASSERT(self);
 
   auto *res = new POP_ENTITY_NAME(vbk_block);
@@ -63,7 +63,7 @@ POP_ENTITY_GETTER_FUNCTION(vbk_block_index,
 
 POP_ENTITY_GETTER_FUNCTION(btc_block_index,
                            POP_ENTITY_NAME(btc_block) *,
-                           get_header) {
+                           header) {
   VBK_ASSERT(self);
 
   auto *res = new POP_ENTITY_NAME(btc_block);
@@ -72,19 +72,19 @@ POP_ENTITY_GETTER_FUNCTION(btc_block_index,
 }
 
 //! get_status
-POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, get_status) {
+POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, status) {
   VBK_ASSERT(self);
 
   return self->ref.getStatus();
 }
 
-POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, get_status) {
+POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, status) {
   VBK_ASSERT(self);
 
   return self->ref.getStatus();
 }
 
-POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, get_status) {
+POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, status) {
   VBK_ASSERT(self);
 
   return self->ref.getStatus();
