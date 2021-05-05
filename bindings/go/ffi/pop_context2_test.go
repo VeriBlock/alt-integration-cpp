@@ -24,7 +24,7 @@ func TestPopContext2Free(t *testing.T) {
 	context.Free()
 }
 
-func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
+func TestPopContext2AltBlockTreeAcceptBlockHeader(t *testing.T) {
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -34,8 +34,25 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 	context := generateTestPopContext(t, storage)
 	defer context.Free()
 
-	state := NewValidationState2()
-	defer state.Free()
+	alt := generateDefaultAltBlock()
+	defer alt.Free()
+
+	res, err := context.AltBlockTreeAcceptBlockHeader(alt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(res, true)
+}
+
+func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
+	assert := assert.New(t)
+
+	storage, err := NewStorage2(":inmem:")
+	assert.NoError(err)
+	defer storage.Free()
+
+	context := generateTestPopContext(t, storage)
+	defer context.Free()
 
 	miner := NewMockMiner2()
 	defer miner.Free()
