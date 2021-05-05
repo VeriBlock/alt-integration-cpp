@@ -38,6 +38,18 @@ func (v *PopContext2) Free() {
 	}
 }
 
+func (v *PopContext2) AltBlockTreeAcceptBlockHeader(block *AltBlock) (bool, error) {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
+
+	return bool(res), state.Error()
+}
+
 func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
 	if v.ref == nil {
 		panic("PopContext does not initialized")

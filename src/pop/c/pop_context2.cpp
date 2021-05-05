@@ -12,6 +12,7 @@
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
 #include "entities/atv.hpp"
+#include "entities/altblock.hpp"
 #include "validation_state2.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_context) {
@@ -56,7 +57,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(block);
   VBK_ASSERT(state);
 
-  return true;
+  return self->ref->getAltBlockTree().acceptBlockHeader(block->ref, state->ref);
 }
 
 static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
