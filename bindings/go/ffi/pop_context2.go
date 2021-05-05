@@ -37,3 +37,15 @@ func (v *PopContext2) Free() {
 		v.ref = nil
 	}
 }
+
+func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock, state *ValidationState2) int {
+	return int(C.pop_pop_context_function_submit_vbk(v.ref, vbk_block.ref, state.ref))
+}
+
+func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb, state *ValidationState2) int {
+	return int(C.pop_pop_context_function_submit_vtb(v.ref, vtb.ref, state.ref))
+}
+
+func (v *PopContext2) MemPoolSubmitAtv(atv *Atv, state *ValidationState2) int {
+	return int(C.pop_pop_context_function_submit_atv(v.ref, atv.ref, state.ref))
+}
