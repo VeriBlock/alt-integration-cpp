@@ -166,10 +166,10 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	atv := miner.MineAtv(pubData)
 
 	res, err = context.MemPoolSubmitAtv(atv)
-	assert.NoError(err)
-	assert.Equal(res, 0)
+	assert.Error(err)
+	assert.Equal(res, 1)
 
 	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 1)
 	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
-	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 2)
+	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
 }
