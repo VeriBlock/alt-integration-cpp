@@ -197,12 +197,12 @@ var NAVTREEINDEX7 =
 "vbk__blockchain__util_8hpp_source.html":[5,0,1,0,0,1,23],
 "vbk__chain__params_8hpp_source.html":[5,0,1,0,0,1,24],
 "vbk__merkle__path_8hpp_source.html":[5,0,1,0,0,5,17],
-"vbkblock_8h_source.html":[5,0,1,0,0,2,0,11],
+"vbkblock_8h_source.html":[5,0,1,0,0,2,0,12],
 "vbkblock_8hpp_source.html":[5,0,1,0,0,5,18],
 "vbkpoptx_8hpp_source.html":[5,0,1,0,0,5,19],
 "vbktx_8hpp_source.html":[5,0,1,0,0,5,20],
 "vblake_8hpp_source.html":[5,0,1,0,0,4,4],
-"vtb_8h_source.html":[5,0,1,0,0,2,0,12],
+"vtb_8h_source.html":[5,0,1,0,0,2,0,13],
 "vtb_8hpp_source.html":[5,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[5,0,1,0,0,48]
 };
