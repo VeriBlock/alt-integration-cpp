@@ -115,3 +115,108 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
       self->ref->getMemPool().submit<altintegration::ATV>(atv->ref, state->ref);
   return handleSubmitResponse(res);
 }
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(atv), mempool_get_atvs) {
+  VBK_ASSERT(self);
+
+  auto& atvs = self->ref->getMemPool().getMap<altintegration::ATV>();
+
+  POP_ARRAY_NAME(atv) res;
+  res.size = atvs.size();
+  res.data = new POP_ENTITY_NAME(atv)*[atvs.size()];
+  size_t i = 0;
+  for (const auto& it : atvs) {
+    res.data[i] = new POP_ENTITY_NAME(atv);
+    res.data[i++]->ref = *it.second;
+  }
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(vtb), mempool_get_vtbs) {
+  VBK_ASSERT(self);
+
+  auto& vtbs = self->ref->getMemPool().getMap<altintegration::VTB>();
+
+  POP_ARRAY_NAME(vtb) res;
+  res.size = vtbs.size();
+  res.data = new POP_ENTITY_NAME(vtb)*[vtbs.size()];
+  size_t i = 0;
+  for (const auto& it : vtbs) {
+    res.data[i] = new POP_ENTITY_NAME(vtb);
+    res.data[i++]->ref = *it.second;
+  }
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(vbk_block),
+                           mempool_get_vbk_blocks) {
+  VBK_ASSERT(self);
+
+  auto& vbks = self->ref->getMemPool().getMap<altintegration::VbkBlock>();
+
+  POP_ARRAY_NAME(vbk_block) res;
+  res.size = vbks.size();
+  res.data = new POP_ENTITY_NAME(vbk_block)*[vbks.size()];
+  size_t i = 0;
+  for (const auto& it : vbks) {
+    res.data[i] = new POP_ENTITY_NAME(vbk_block);
+    res.data[i++]->ref = *it.second;
+  }
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(atv),
+                           mempool_get_in_flight_atvs) {
+  VBK_ASSERT(self);
+
+  auto& atvs = self->ref->getMemPool().getInFlightMap<altintegration::ATV>();
+
+  POP_ARRAY_NAME(atv) res;
+  res.size = atvs.size();
+  res.data = new POP_ENTITY_NAME(atv)*[atvs.size()];
+  size_t i = 0;
+  for (const auto& it : atvs) {
+    res.data[i] = new POP_ENTITY_NAME(atv);
+    res.data[i++]->ref = *it.second;
+  }
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(vtb),
+                           mempool_get_in_flight_vtbs) {
+  VBK_ASSERT(self);
+
+  auto& vtbs = self->ref->getMemPool().getInFlightMap<altintegration::VTB>();
+
+  POP_ARRAY_NAME(vtb) res;
+  res.size = vtbs.size();
+  res.data = new POP_ENTITY_NAME(vtb)*[vtbs.size()];
+  size_t i = 0;
+  for (const auto& it : vtbs) {
+    res.data[i] = new POP_ENTITY_NAME(vtb);
+    res.data[i++]->ref = *it.second;
+  }
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(vbk_block),
+                           mempool_get_in_flight_vbk_blocks) {
+  VBK_ASSERT(self);
+
+  auto& vbks =
+      self->ref->getMemPool().getInFlightMap<altintegration::VbkBlock>();
+
+  POP_ARRAY_NAME(vbk_block) res;
+  res.size = vbks.size();
+  res.data = new POP_ENTITY_NAME(vbk_block)*[vbks.size()];
+  size_t i = 0;
+  for (const auto& it : vbks) {
+    res.data[i] = new POP_ENTITY_NAME(vbk_block);
+    res.data[i++]->ref = *it.second;
+  }
+  return res;
+}
