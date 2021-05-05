@@ -43,7 +43,10 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 	vbk := miner.MineVbkBlockTip()
 	defer vbk.Free()
 
-	res := context.MemPoolSubmitVbk(vbk, state)
+	res, err := context.MemPoolSubmitVbk(vbk)
+	if err != nil {
+		t.Fatal(err)
+	}
 	assert.Equal(res, 0)
 }
 
@@ -75,8 +78,10 @@ func TestPopContext2MemPoolSubmitVbk(t *testing.T) {
 // 	vtb := miner.MineVtb(vbk, btc)
 // 	defer vtb.Free()
 
-// 	res = context.MemPoolSubmitVtb(vtb, state)
-// 	t.Log(state.GetErrorMessage())
+// 	res, err = context.MemPoolSubmitVtb(vtb)
+// 	if err != nil {
+//		t.Fatal(err)
+//	}
 // 	assert.Equal(res, 0)
 // }
 
@@ -90,9 +95,6 @@ func TestPopContext2MemPoolSubmitAtv(t *testing.T) {
 	context := generateTestPopContext(t, storage)
 	defer context.Free()
 
-	state := NewValidationState2()
-	defer state.Free()
-
 	miner := NewMockMiner2()
 	defer miner.Free()
 
@@ -103,11 +105,17 @@ func TestPopContext2MemPoolSubmitAtv(t *testing.T) {
 	popData := generateDefaultPopData()
 	defer popData.Free()
 	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer pubData.Free()
 
 	atv := miner.MineAtv(pubData)
 	defer atv.Free()
 
-	res := context.MemPoolSubmitAtv(atv, state)
+	res, err := context.MemPoolSubmitAtv(atv)
+	if err != nil {
+		t.Fatal(err)
+	}
 	assert.Equal(res, 0)
 }
