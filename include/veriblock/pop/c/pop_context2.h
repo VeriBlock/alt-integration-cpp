@@ -74,7 +74,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
  */
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            int,
-                           submit_atv,
+                           mempool_submit_atv,
                            const POP_ENTITY_NAME(atv) * atv,
                            POP_ENTITY_NAME(validation_state) * state);
 
@@ -90,7 +90,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
  */
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            int,
-                           submit_vtb,
+                           mempool_submit_vtb,
                            const POP_ENTITY_NAME(vtb) * vtb,
                            POP_ENTITY_NAME(validation_state) * state);
 
@@ -107,9 +107,83 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
  */
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            int,
-                           submit_vbk,
+                           mempool_submit_vbk,
                            const POP_ENTITY_NAME(vbk_block) * vbk_block,
                            POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * @copybrief return altintegration::MemPool known ATV`s
+ *
+ * This method returns a vector of the payload`s.
+ *
+ * @see altintegration::MemPool::getMap
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(atv) array with the ATV`s
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(atv), mempool_get_atvs);
+
+/**
+ * @copybrief return altintegration::MemPool known VTB`s
+ *
+ * This method returns a vector of the payload`s.
+ *
+ * @see altintegration::MemPool::getMap
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(vtb) array with the VTB`s
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(vtb), mempool_get_vtbs);
+
+/**
+ * @copybrief return altintegration::MemPool known VbkBlock`s
+ *
+ * This method returns a vector of the payload`s.
+ *
+ * @see altintegration::MemPool::getMap
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(vbk_block) array with the VbkBlock`s
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(vbk_block),
+                           mempool_get_vbk_blocks);
+
+/**
+ * @copybrief return altintegration::MemPool known ATV`s inFlight
+ *
+ * This method returns a vector of the payload`s.
+ *
+ * @see altintegration::MemPool::getInFlightMap
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(atv) array with the ATV`s
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(atv),
+                           mempool_get_in_flight_atvs);
+
+/**
+ * @copybrief return altintegration::MemPool known VTB`s inFlight
+ *
+ * This method returns a vector of the payload`s.
+ *
+ * @see altintegration::MemPool::getInFlightMap
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(vtb) array with the VTB`s
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(vtb),
+                           mempool_get_in_flight_vtbs);
+
+/**
+ * @copybrief return altintegration::MemPool known VbkBlock`s inFlight
+ *
+ * This method returns a vector of the payload`s.
+ *
+ * @see altintegration::MemPool::getInFlightMap
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(vbk_block) array with the VbkBlock`s
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(vbk_block),
+                           mempool_get_in_flight_vbk_blocks);
 
 #ifdef __cplusplus
 }  // end of extern "C"
