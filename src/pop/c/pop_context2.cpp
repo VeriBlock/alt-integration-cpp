@@ -226,7 +226,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(alt_block_index) *,
-                           alt_get_blocK_at_active_chain,
+                           alt_get_block_at_active_chain,
                            uint32_t height) {
   VBK_ASSERT(self);
 
@@ -239,7 +239,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(vbk_block_index) *,
-                           vbk_get_blocK_at_active_chain,
+                           vbk_get_block_at_active_chain,
                            uint32_t height) {
   VBK_ASSERT(self);
 
@@ -252,7 +252,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(btc_block_index) *,
-                           btc_get_blocK_at_active_chain,
+                           btc_get_block_at_active_chain,
                            uint32_t height) {
   VBK_ASSERT(self);
 

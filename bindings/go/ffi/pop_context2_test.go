@@ -71,6 +71,16 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVtbs()), 0)
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 1)
 
+	vtb := miner.MineVtb(vbk, context.BtcGetBestBlock().GetHeader())
+
+	res, err = context.MemPoolSubmitVtb(vtb)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 0)
+	assert.Equal(len(context.MemPoolGetVtbs()), 1)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 2)
+
 	alt := generateDefaultAltBlock()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
@@ -87,44 +97,9 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(res, 0)
 
 	assert.Equal(len(context.MemPoolGetAtvs()), 1)
-	assert.Equal(len(context.MemPoolGetVtbs()), 0)
-	assert.Equal(len(context.MemPoolGetVbkBlocks()), 2)
+	assert.Equal(len(context.MemPoolGetVtbs()), 1)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 3)
 }
-
-// TODO: popContext.BtcBestBlock()
-// func TestPopContext2MemPoolSubmitVtb(t *testing.T) {
-// 	assert := assert.New(t)
-
-// 	storage, err := NewStorage2(":inmem:")
-// 	assert.NoError(err)
-// 	defer storage.Free()
-
-// 	context := generateTestPopContext(t, storage)
-// 	defer context.Free()
-
-// 	state := NewValidationState2()
-// 	defer state.Free()
-
-// 	miner := NewMockMiner2()
-// 	defer miner.Free()
-
-// 	vbk := miner.MineVbkBlockTip()
-// 	defer vbk.Free()
-// 	res := context.MemPoolSubmitVbk(vbk, state)
-// 	assert.Equal(res, 0)
-
-// 	btc := context.BtcBestBlock()
-// 	defer btc.Free()
-
-// 	vtb := miner.MineVtb(vbk, btc)
-// 	defer vtb.Free()
-
-// 	res, err = context.MemPoolSubmitVtb(vtb)
-// 	if err != nil {
-//		t.Fatal(err)
-//	}
-// 	assert.Equal(res, 0)
-// }
 
 func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert := assert.New(t)
@@ -143,6 +118,7 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	miner := NewMockMiner2()
 	defer miner.Free()
 
+	// Make a context gap for the vbk blocks
 	miner.MineVbkBlockTip()
 	vbk := miner.MineVbkBlockTip()
 
@@ -152,6 +128,16 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 
 	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 0)
 	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
+
+	vtb := miner.MineVtb(vbk, context.BtcGetBestBlock().GetHeader())
+
+	res, err = context.MemPoolSubmitVtb(vtb)
+	assert.Error(err)
+	assert.Equal(res, 1)
+
+	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
 
 	alt := generateDefaultAltBlock()
@@ -170,6 +156,6 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.Equal(res, 1)
 
 	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 1)
-	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
 }

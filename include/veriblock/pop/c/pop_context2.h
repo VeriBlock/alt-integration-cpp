@@ -181,7 +181,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
  */
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(alt_block_index) *,
-                           alt_get_blocK_at_active_chain,
+                           alt_get_block_at_active_chain,
                            uint32_t height);
 
 /**

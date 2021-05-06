@@ -50,6 +50,90 @@ func (v *PopContext2) AltBlockTreeAcceptBlockHeader(block *AltBlock) (bool, erro
 	return bool(res), state.Error()
 }
 
+func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createAltBlockIndex(C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash)))
+}
+
+func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash)))
+}
+
+func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash)))
+}
+
+func (v *PopContext2) AltGetBestBlock() *AltBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createAltBlockIndex(C.pop_pop_context_function_alt_get_best_block(v.ref))
+}
+
+func (v *PopContext2) VbkGetBestBlock() *VbkBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_best_block(v.ref))
+}
+
+func (v *PopContext2) BtcGetBestBlock() *BtcBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_best_block(v.ref))
+}
+
+func (v *PopContext2) AltGetBootstrapBlock() *AltBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createAltBlockIndex(C.pop_pop_context_function_alt_get_bootstrap_block(v.ref))
+}
+
+func (v *PopContext2) VbkGetBootstrapBlock() *VbkBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_bootstrap_block(v.ref))
+}
+
+func (v *PopContext2) BtcGetBootstrapBlock() *BtcBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_bootstrap_block(v.ref))
+}
+
+func (v *PopContext2) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createAltBlockIndex(C.pop_pop_context_function_alt_get_block_at_active_chain(v.ref, C.uint32_t(height)))
+}
+
+func (v *PopContext2) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_block_at_active_chain(v.ref, C.uint32_t(height)))
+}
+
+func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockIndex {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_block_at_active_chain(v.ref, C.uint32_t(height)))
+}
+
 func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
