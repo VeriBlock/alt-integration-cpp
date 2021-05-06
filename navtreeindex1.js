@@ -1,12 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"functions_func_b.html":[4,3,1,1],
-"functions_func_c.html":[4,3,1,2],
-"functions_func_d.html":[4,3,1,3],
-"functions_func_e.html":[4,3,1,4],
-"functions_func_f.html":[4,3,1,5],
-"functions_func_g.html":[4,3,1,6],
-"functions_func_i.html":[4,3,1,7],
 "functions_func_k.html":[4,3,1,8],
 "functions_func_l.html":[4,3,1,9],
 "functions_func_m.html":[4,3,1,10],
@@ -160,6 +153,7 @@ var NAVTREEINDEX1 =
 "math_8hpp.html#a3c0b2b5cb0345a8ecb1bf1cb5d54abb6":[3,0,0,4,20],
 "math_8hpp.html#ad0bf6b06bcf4c6cef705d28ef7ac27a0":[3,0,0,4,3],
 "math_8hpp_source.html":[5,0,1,0,0,4,0,2],
+"mempool_8h_source.html":[5,0,1,0,0,2,7],
 "mempool_8hpp.html#a62eda25874348a14249551eea59b769b":[3,0,0,1,1],
 "mempool_8hpp_source.html":[5,0,1,0,0,28],
 "mempool__block__tree_8hpp_source.html":[5,0,1,0,0,1,18],
@@ -168,11 +162,11 @@ var NAVTREEINDEX1 =
 "mempool__result_8hpp_source.html":[5,0,1,0,0,30],
 "merkle__path_8h_source.html":[5,0,1,0,0,2,0,7],
 "merkle__path_8hpp_source.html":[5,0,1,0,0,5,10],
-"merkle__root__util_8h_source.html":[5,0,1,0,0,2,7],
+"merkle__root__util_8h_source.html":[5,0,1,0,0,2,8],
 "merkle__tree_8hpp_source.html":[5,0,1,0,0,5,11],
 "miner_8hpp_source.html":[5,0,1,0,0,1,19],
-"mock__miner2_8h_source.html":[5,0,1,0,0,2,9],
-"mock__miner_8h_source.html":[5,0,1,0,0,2,8],
+"mock__miner2_8h_source.html":[5,0,1,0,0,2,10],
+"mock__miner_8h_source.html":[5,0,1,0,0,2,9],
 "mock__miner_8hpp_source.html":[5,0,1,0,0,31],
 "modules.html":[2],
 "modules_8hpp_source.html":[5,0,0,0],
@@ -249,5 +243,11 @@ var NAVTREEINDEX1 =
 "namespacealtintegration.html#a34320f73eac42930b4112ee3633e3bd1":[3,0,0,330],
 "namespacealtintegration.html#a3556e5c14280262e941f1bb66c67de7b":[3,0,0,178],
 "namespacealtintegration.html#a35a4d4fa7e87b4cb4114d24836d7c76a":[3,0,0,167],
-"namespacealtintegration.html#a35e7706bc7c877b469024e396547a313":[3,0,0,241]
+"namespacealtintegration.html#a35e7706bc7c877b469024e396547a313":[3,0,0,241],
+"namespacealtintegration.html#a36f372c191b94851869de04ccebdcdf6":[3,0,0,179],
+"namespacealtintegration.html#a36f8efe4ffbedf7459cfc36222095807":[3,0,0,353],
+"namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6f":[3,0,0,85],
+"namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fa94e94133f4bdc1794c6b647b8ea134d0":[3,0,0,85,1],
+"namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fa99f999b6b8a4c347117222914f9a13dc":[3,0,0,85,0],
+"namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fadb526ad154fc99ee7a1720f9d45562a7":[3,0,0,85,2]
 };

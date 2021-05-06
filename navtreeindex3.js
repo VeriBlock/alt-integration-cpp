@@ -1,11 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"namespacealtintegration.html#aea29607876eddcbab5f44f2d5b17e04d":[3,0,0,214],
-"namespacealtintegration.html#aea6d857ba3c337f05199c53b81ee4053":[3,0,0,377],
-"namespacealtintegration.html#aea87419ccb622e04aacf6b7fd18e8990":[3,0,0,278],
-"namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef":[3,0,0,193],
-"namespacealtintegration.html#aedfa862cdcea9eab4ee1aa15ba341744":[3,0,0,370],
-"namespacealtintegration.html#aee63841a399e1460dc669cd3e7066ee3":[3,0,0,372],
 "namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c":[3,0,0,266],
 "namespacealtintegration.html#af22a236476bf9a9d72c9dfb329df0a3a":[3,0,0,219],
 "namespacealtintegration.html#af5b0d16525b7f744c295d649063697e6":[3,0,0,388],
@@ -68,8 +62,8 @@ var NAVTREEINDEX3 =
 "payloads__provider_8hpp_source.html":[5,0,1,0,0,8,6],
 "picojson_8hpp_source.html":[5,0,1,0,0,0,0],
 "pop_8hpp_source.html":[5,0,1,0,1],
-"pop__context2_8h_source.html":[5,0,1,0,0,2,11],
-"pop__context_8h_source.html":[5,0,1,0,0,2,10],
+"pop__context2_8h_source.html":[5,0,1,0,0,2,12],
+"pop__context_8h_source.html":[5,0,1,0,0,2,11],
 "pop__context_8hpp_source.html":[5,0,1,0,0,32],
 "pop__payouts_8hpp_source.html":[5,0,1,0,0,5,14],
 "pop__state_8hpp_source.html":[5,0,1,0,0,1,1,2],
@@ -130,8 +124,8 @@ var NAVTREEINDEX3 =
 "state__corrupted_8hpp_source.html":[5,0,1,0,0,6,0],
 "state__utils_8hpp_source.html":[5,0,1,0,0,39],
 "stateless__validation_8hpp_source.html":[5,0,1,0,0,40],
-"storage2_8h_source.html":[5,0,1,0,0,2,13],
-"storage_8h_source.html":[5,0,1,0,0,2,12],
+"storage2_8h_source.html":[5,0,1,0,0,2,14],
+"storage_8h_source.html":[5,0,1,0,0,2,13],
 "storage_8hpp_source.html":[5,0,1,0,0,41],
 "storage__io_8hpp_source.html":[5,0,1,0,0,6,1],
 "stored__alt__block__addon_8hpp_source.html":[5,0,1,0,0,8,7],
@@ -249,5 +243,11 @@ var NAVTREEINDEX3 =
 "structaltintegration_1_1AltChainParams.html#acc5cdebc50142e23d7d4f539d630be53":[4,0,0,6,29],
 "structaltintegration_1_1AltChainParams.html#adeadf36cdbd2e7e3713064bbb56b42cc":[4,0,0,6,3],
 "structaltintegration_1_1AltChainParams.html#ae6084de9a2ba5e8b34e8e24ef7b0ef76":[4,0,0,6,25],
-"structaltintegration_1_1AltChainParams.html#aeb332c160d18de02bc2dcdab86e2d4ef":[4,0,0,6,0]
+"structaltintegration_1_1AltChainParams.html#aeb332c160d18de02bc2dcdab86e2d4ef":[4,0,0,6,0],
+"structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370":[4,0,0,6,1],
+"structaltintegration_1_1AltChainParams.html#af289390066132cf7bbb2845db047fa86":[4,0,0,6,6],
+"structaltintegration_1_1AuthenticatedContextInfoContainer.html":[4,0,0,31],
+"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a26b593b406b329ab2da7c17b77854018":[4,0,0,31,6],
+"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2aca9efbe5de4f0916c14578ecbde454":[4,0,0,31,1],
+"structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2c0fac6377f239d6b1ea515c704924a8":[4,0,0,31,2]
 };
