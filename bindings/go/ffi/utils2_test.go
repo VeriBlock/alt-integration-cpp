@@ -6,6 +6,7 @@
 package ffi
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,4 +32,28 @@ func TestGeneratePublicationData(t *testing.T) {
 
 	assert.NoError(err)
 	assert.NotNil(publicationData)
+}
+
+func TestCalculateTopLevelMerkleRoot(t *testing.T) {
+	assert := assert.New(t)
+
+	storage, err := NewStorage2(":inmem:")
+	assert.NoError(err)
+	defer storage.Free()
+
+	context := generateTestPopContext(t, storage)
+	defer context.Free()
+
+	// generate new block
+	newBlock := generateNextAltBlock(context.AltGetBootstrapBlock().GetHeader())
+
+	err = context.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
+
+	popData := generateDefaultPopData()
+
+	txRootHash := []byte{1, 2, 3, 4}
+
+	hash := context.CalculateTopLevelMerkleRoot(txRootHash, newBlock.GetPreviousBlock(), popData)
+	assert.False(bytes.Equal(hash, []byte{}))
 }

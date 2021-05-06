@@ -38,16 +38,15 @@ func (v *PopContext2) Free() {
 	}
 }
 
-func (v *PopContext2) AltBlockTreeAcceptBlockHeader(block *AltBlock) (bool, error) {
+func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
 	state := NewValidationState2()
 	defer state.Free()
 
-	res := C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
-
-	return bool(res), state.Error()
+	C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
+	return state.Error()
 }
 
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {

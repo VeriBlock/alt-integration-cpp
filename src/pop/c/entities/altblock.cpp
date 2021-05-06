@@ -23,6 +23,23 @@ POP_ENTITY_FREE_SIGNATURE(alt_block) {
   }
 }
 
+POP_ENTITY_NEW_FUNCTION(alt_block,
+                        POP_ARRAY_NAME(u8) hash,
+                        POP_ARRAY_NAME(u8) previous_block,
+                        uint32_t timestamp,
+                        int32_t height) {
+  VBK_ASSERT(hash.data);
+  VBK_ASSERT(previous_block.data);
+
+  auto* res = new POP_ENTITY_NAME(alt_block);
+  res->ref.hash = std::vector<uint8_t>(hash.data, hash.data + hash.size);
+  res->ref.previousBlock = std::vector<uint8_t>(
+      previous_block.data, previous_block.data + previous_block.size);
+  res->ref.timestamp = timestamp;
+  res->ref.height = height;
+  return res;
+}
+
 POP_ENTITY_GETTER_FUNCTION(alt_block, POP_ARRAY_NAME(u8), hash) {
   VBK_ASSERT(self);
 

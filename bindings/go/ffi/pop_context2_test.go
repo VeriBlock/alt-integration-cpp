@@ -37,9 +37,6 @@ func TestPopContext2AltBlockTreeAcceptBlockHeader(t *testing.T) {
 	alt := generateDefaultAltBlock()
 	defer alt.Free()
 
-	res, err := context.AltBlockTreeAcceptBlockHeader(alt)
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(res, true)
+	err = context.AcceptBlockHeader(alt)
+	assert.NoError(err)
 }
