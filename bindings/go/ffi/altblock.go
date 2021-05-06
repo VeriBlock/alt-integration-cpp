@@ -29,6 +29,16 @@ func createAltBlock(ref *C.pop_alt_block_t) *AltBlock {
 	return val
 }
 
+func NewAltBlock(hash []byte, previousHash []byte, timestamp uint32, height int32) *AltBlock {
+	val := &AltBlock{
+		ref: C.pop_alt_block_new(createCBytes(hash), createCBytes(previousHash), C.uint32_t(timestamp), C.int32_t(height)),
+	}
+	runtime.SetFinalizer(val, func(v *AltBlock) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *AltBlock) Free() {
 	if v.ref != nil {
 		C.pop_alt_block_free(v.ref)
