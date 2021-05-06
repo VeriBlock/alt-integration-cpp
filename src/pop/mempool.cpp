@@ -215,6 +215,9 @@ void MemPool::clear() {
   vbkblocks_.clear();
   stored_vtbs_.clear();
   stored_atvs_.clear();
+  atvs_in_flight_.clear();
+  vtbs_in_flight_.clear();
+  vbkblocks_in_flight_.clear();
 }
 
 template <>
