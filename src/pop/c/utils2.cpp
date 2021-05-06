@@ -4,9 +4,13 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "entities/altblock.hpp"
+#include "entities/atv.hpp"
 #include "entities/popdata.hpp"
 #include "entities/publication_data.hpp"
+#include "entities/vbkblock.hpp"
+#include "entities/vtb.hpp"
 #include "pop_context2.hpp"
+#include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/c/utils2.h"
 
@@ -78,4 +82,52 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   res.size = hash.size();
 
   return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_atv,
+                           const POP_ENTITY_NAME(atv) * atv,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(atv);
+  VBK_ASSERT(state);
+
+  return self->ref->check(atv->ref, state->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_vtb,
+                           const POP_ENTITY_NAME(vtb) * vtb,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(vtb);
+  VBK_ASSERT(state);
+
+  return self->ref->check(vtb->ref, state->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_vbk_block,
+                           const POP_ENTITY_NAME(vbk_block) * vbk_block,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(vbk_block);
+  VBK_ASSERT(state);
+
+  return self->ref->check(vbk_block->ref, state->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_pop_data,
+                           const POP_ENTITY_NAME(pop_data) * pop_data,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(pop_data);
+  VBK_ASSERT(state);
+
+  return self->ref->check(pop_data->ref, state->ref);
 }
