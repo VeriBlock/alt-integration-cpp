@@ -13,6 +13,10 @@ func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
+	if vbk_block.ref == nil {
+		panic("VbkBlock does not initialized")
+	}
+
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -25,6 +29,10 @@ func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
+	if vtb.ref == nil {
+		panic("Vtb does not initialized")
+	}
+
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -37,6 +45,10 @@ func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
+	if atv.ref == nil {
+		panic("Atv does not initialized")
+	}
+
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -97,4 +109,22 @@ func (v *PopContext2) MemPoolGetVbkBlocksInFlight() []*VbkBlock {
 	array := C.pop_pop_context_function_mempool_get_in_flight_vbk_blocks(v.ref)
 	defer freeArrayVbkBlock(&array)
 	return createArrayVbkBlock(&array)
+}
+
+func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if popData.ref == nil {
+		panic("PopData does not initialized")
+	}
+	C.pop_pop_context_function_mempool_remove_all(v.ref, popData.ref)
+}
+
+func (v *PopContext2) MemPoolCleanUp() {
+	C.pop_pop_context_function_mempool_clean_up(v.ref)
+}
+
+func (v *PopContext2) MemPoolClear() {
+	C.pop_pop_context_function_mempool_clear(v.ref)
 }

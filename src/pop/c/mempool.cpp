@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "entities/atv.hpp"
+#include "entities/popdata.hpp"
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
 #include "pop_context2.hpp"
@@ -170,4 +171,26 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
     res.data[i++]->ref = *it.second;
   }
   return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           mempool_remove_all,
+                           const POP_ENTITY_NAME(pop_data) * pop_data) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(pop_data);
+
+  self->ref->getMemPool().removeAll(pop_data->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clean_up) {
+  VBK_ASSERT(self);
+
+  self->ref->getMemPool().cleanUp();
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clear) {
+  VBK_ASSERT(self);
+
+  self->ref->getMemPool().clear();
 }

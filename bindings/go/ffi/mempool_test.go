@@ -66,6 +66,12 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetAtvs()), 1)
 	assert.Equal(len(context.MemPoolGetVtbs()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 3)
+
+	context.MemPoolClear()
+
+	assert.Equal(len(context.MemPoolGetAtvs()), 0)
+	assert.Equal(len(context.MemPoolGetVtbs()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
 }
 
 func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
@@ -125,4 +131,10 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 1)
 	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
+
+	context.MemPoolClear()
+
+	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
+	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 0)
 }

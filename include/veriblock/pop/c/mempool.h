@@ -8,6 +8,7 @@
 
 #include "veriblock/pop/c/array.h"
 #include "veriblock/pop/c/entities/atv.h"
+#include "veriblock/pop/c/entities/popdata.h"
 #include "veriblock/pop/c/entities/publication_data.h"
 #include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/entities/vtb.h"
@@ -139,6 +140,32 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(vbk_block),
                            mempool_get_in_flight_vbk_blocks);
+
+/**
+ * @copybrief altintegration::MemPool::removeAll
+ * @see altintegration::MemPool::removeAll
+ * @param[in] self PopContext
+ * @param[in] pop_data POP_ENTITY_NAME(pop_data) pointer to the
+ * altintegration::PopData
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           mempool_remove_all,
+                           const POP_ENTITY_NAME(pop_data) * pop_data);
+
+/**
+ * @copybrief altintegration::MemPool::cleanUp
+ * @see altintegration::MemPool::cleanUp
+ * @param[in] self PopContext
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clean_up);
+
+/**
+ * @copybrief altintegration::MemPool::clear
+ * @see altintegration::MemPool::clear
+ * @param[in] self PopContext
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clear);
 
 #ifdef __cplusplus
 }  // end of extern "C"
