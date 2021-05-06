@@ -6,7 +6,6 @@
 package ffi
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,14 +24,14 @@ func TestStorageFree(t *testing.T) {
 func TestCreateStorageFailure(t *testing.T) {
 	assert := assert.New(t)
 
-	defer os.RemoveAll("/tmp/alt-integration")
+	dir := t.TempDir()
 
-	storage, err := NewStorage2("/tmp/alt-integration")
+	storage, err := NewStorage2(dir)
 	defer storage.Free()
 
 	assert.NoError(err)
 
-	storage, err = NewStorage2("/tmp/alt-integration")
+	storage, err = NewStorage2(dir)
 	assert.Error(err)
 	assert.Empty(storage)
 }
