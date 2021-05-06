@@ -6,11 +6,14 @@
 #ifndef VERIBLOCK_POP_CPP_C_UTILS_H
 #define VERIBLOCK_POP_CPP_C_UTILS_H
 
+#include <stdbool.h>
+
 #include "veriblock/pop/c/array.h"
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/popdata.h"
 #include "veriblock/pop/c/entities/publication_data.h"
 #include "veriblock/pop/c/pop_context2.h"
+#include "veriblock/pop/c/validation_state2.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,6 +59,68 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(u8) tx_root,
                            POP_ARRAY_NAME(u8) prev_block_hash,
                            const POP_ENTITY_NAME(pop_data) * pop_data);
+
+/**
+ * Stateless validation for the altintegration::ATV.
+ *
+ * @param[in] self PopContext
+ * @param[in] atv POP_ENTITY_NAME(atv) pointer to the altintegration::ATV
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return true if ATV is valid, false otherwise.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_atv,
+                           const POP_ENTITY_NAME(atv) * atv,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * Stateless validation for the altintegration::VTB.
+ *
+ * @param[in] self PopContext
+ * @param[in] vtb POP_ENTITY_NAME(vtb) pointer to the altintegration::VTB
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return true if VTB is valid, false otherwise.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_vtb,
+                           const POP_ENTITY_NAME(vtb) * vtb,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * Stateless validation for the altintegration::VbkBlock.
+ *
+ * @param[in] self PopContext
+ * @param[in] vbk_block POP_ENTITY_NAME(vbk_block) pointer to the
+ * altintegration::VbkBlock
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return true if VbkBlock is valid, false otherwise.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_vbk_block,
+                           const POP_ENTITY_NAME(vbk_block) * vbk_block,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * Stateless validation for the altintegration::PopData.
+ *
+ * @param[in] self PopContext
+ * @param[in] vbk_block POP_ENTITY_NAME(pop_data) pointer to the
+ * altintegration::PopData
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return true if PopData is valid, false otherwise.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           check_pop_data,
+                           const POP_ENTITY_NAME(pop_data) * pop_data,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 #ifdef __cplusplus
 }  // end of extern "C"

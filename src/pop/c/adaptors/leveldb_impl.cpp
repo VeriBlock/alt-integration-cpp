@@ -34,7 +34,7 @@ adaptors::LevelDBStorage::LevelDBStorage(const std::string& path) {
   leveldb::Status status = leveldb::DB::Open(options, path, &db_);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
-        "failed to open rocksdb storage, err: {}", status.ToString()));
+        "failed to open leveldb storage, err: {}", status.ToString()));
   }
 }
 

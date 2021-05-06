@@ -38,3 +38,63 @@ func (v *PopContext2) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash [
 	defer freeArrayU8(&res)
 	return createBytes(&res)
 }
+
+func (v *PopContext2) CheckAtv(atv *Atv) error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if atv.ref == nil {
+		panic("Atv does not initialized")
+	}
+
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_atv(v.ref, atv.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext2) CheckVtb(vtb *Vtb) error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if vtb.ref == nil {
+		panic("Vtb does not initialized")
+	}
+
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_vtb(v.ref, vtb.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if vbkBlock.ref == nil {
+		panic("VbkBlock does not initialized")
+	}
+
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_vbk_block(v.ref, vbkBlock.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext2) CheckPopData(popData *PopData) error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if popData.ref == nil {
+		panic("PopData does not initialized")
+	}
+
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_pop_data(v.ref, popData.ref, state.ref)
+	return state.Error()
+}
