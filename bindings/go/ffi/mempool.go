@@ -57,6 +57,10 @@ func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	return int(res), state.Error()
 }
 
+func (v *PopContext2) MemPoolGeneratePopData() *PopData {
+	return createPopData(C.pop_pop_context_function_mempool_generate_pop_data(v.ref))
+}
+
 func (v *PopContext2) MemPoolGetAtvs() []*Atv {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
@@ -122,9 +126,15 @@ func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
 }
 
 func (v *PopContext2) MemPoolCleanUp() {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
 	C.pop_pop_context_function_mempool_clean_up(v.ref)
 }
 
 func (v *PopContext2) MemPoolClear() {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
 	C.pop_pop_context_function_mempool_clear(v.ref)
 }

@@ -68,6 +68,16 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   return handleSubmitResponse(res);
 }
 
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(pop_data) *,
+                           mempool_generate_pop_data) {
+  VBK_ASSERT(self);
+
+  auto* res = new POP_ENTITY_NAME(pop_data);
+  res->ref = self->ref->getMemPool().generatePopData();
+  return res;
+}
+
 POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(atv), mempool_get_atvs) {
   VBK_ASSERT(self);
 

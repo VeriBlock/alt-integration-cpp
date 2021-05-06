@@ -68,6 +68,16 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(validation_state) * state);
 
 /**
+ * @copybrief altintegration::MemPool::generatePopData
+ * @see altintegration::MemPool::generatePopData
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(pop_data) pointer to the altintegration::PopData
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(pop_data) *,
+                           mempool_generate_pop_data);
+
+/**
  * @copybrief return altintegration::MemPool known ATV`s
  *
  * This method returns a vector of the payload`s.
