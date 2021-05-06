@@ -96,63 +96,36 @@ $(document).ready(function(){initNavTree('utils2_8h_source.html',''); initResiza
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef VERIBLOCK_POP_CPP_C_UTILS_H</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define VERIBLOCK_POP_CPP_C_UTILS_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/array.h&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/entities/altblock.h&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/entities/popdata.h&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/entities/publication_data.h&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/pop_context2.h&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/validation_state2.h&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                           POP_ENTITY_NAME(publication_data) *,</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                           generate_publication_data,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                           POP_ARRAY_NAME(u8) endorsed_block_header,</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                           POP_ARRAY_NAME(u8) tx_root,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                           POP_ARRAY_NAME(u8) payout_info,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(pop_data) * pop_data);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                           POP_ARRAY_NAME(u8),</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                           calculate_top_level_merkle_root,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                           POP_ARRAY_NAME(u8) tx_root,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                           POP_ARRAY_NAME(u8) prev_block_hash,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(pop_data) * pop_data);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                           <span class="keywordtype">bool</span>,</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                           check_atv,</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(atv) * atv,</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                           POP_ENTITY_NAME(validation_state) * state);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                           <span class="keywordtype">bool</span>,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                           check_vtb,</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(vtb) * vtb,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                           POP_ENTITY_NAME(validation_state) * state);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                           <span class="keywordtype">bool</span>,</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                           check_vbk_block,</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(vbk_block) * vbk_block,</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                           POP_ENTITY_NAME(validation_state) * state);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                           <span class="keywordtype">bool</span>,</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                           check_pop_data,</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(pop_data) * pop_data,</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                           POP_ENTITY_NAME(validation_state) * state);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;}  <span class="comment">// end of extern &quot;C&quot;</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/array.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/entities/altblock.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/entities/popdata.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/entities/publication_data.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/c/pop_context2.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                           POP_ENTITY_NAME(publication_data) *,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                           generate_publication_data,</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                           POP_ARRAY_NAME(u8) endorsed_block_header,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                           POP_ARRAY_NAME(u8) tx_root,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                           POP_ARRAY_NAME(u8) payout_info,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(pop_data) * pop_data);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;POP_ENTITY_CUSTOM_FUNCTION(pop_context,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                           POP_ARRAY_NAME(u8),</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                           calculate_top_level_merkle_root,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                           POP_ARRAY_NAME(u8) tx_root,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                           POP_ARRAY_NAME(u8) prev_block_hash,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                           <span class="keyword">const</span> POP_ENTITY_NAME(pop_data) * pop_data);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;}  <span class="comment">// end of extern &quot;C&quot;</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>
