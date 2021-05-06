@@ -38,16 +38,15 @@ func (v *PopContext2) Free() {
 	}
 }
 
-func (v *PopContext2) AltBlockTreeAcceptBlockHeader(block *AltBlock) (bool, error) {
+func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
 	state := NewValidationState2()
 	defer state.Free()
 
-	res := C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
-
-	return bool(res), state.Error()
+	C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
+	return state.Error()
 }
 
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
@@ -132,94 +131,4 @@ func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockI
 		panic("PopContext does not initialized")
 	}
 	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_block_at_active_chain(v.ref, C.uint32_t(height)))
-}
-
-func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	state := NewValidationState2()
-	defer state.Free()
-
-	res := C.pop_pop_context_function_mempool_submit_vbk(v.ref, vbk_block.ref, state.ref)
-
-	return int(res), state.Error()
-}
-
-func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	state := NewValidationState2()
-	defer state.Free()
-
-	res := C.pop_pop_context_function_mempool_submit_vtb(v.ref, vtb.ref, state.ref)
-
-	return int(res), state.Error()
-}
-
-func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	state := NewValidationState2()
-	defer state.Free()
-
-	res := C.pop_pop_context_function_mempool_submit_atv(v.ref, atv.ref, state.ref)
-
-	return int(res), state.Error()
-}
-
-func (v *PopContext2) MemPoolGetAtvs() []*Atv {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	array := C.pop_pop_context_function_mempool_get_atvs(v.ref)
-	defer freeArrayAtv(&array)
-	return createArrayAtv(&array)
-}
-
-func (v *PopContext2) MemPoolGetVtbs() []*Vtb {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	array := C.pop_pop_context_function_mempool_get_vtbs(v.ref)
-	defer freeArrayVtb(&array)
-	return createArrayVtb(&array)
-}
-
-func (v *PopContext2) MemPoolGetVbkBlocks() []*VbkBlock {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	array := C.pop_pop_context_function_mempool_get_vbk_blocks(v.ref)
-	defer freeArrayVbkBlock(&array)
-	return createArrayVbkBlock(&array)
-}
-
-func (v *PopContext2) MemPoolGetAtvsInFlight() []*Atv {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	array := C.pop_pop_context_function_mempool_get_in_flight_atvs(v.ref)
-	defer freeArrayAtv(&array)
-	return createArrayAtv(&array)
-}
-
-func (v *PopContext2) MemPoolGetVtbsInFlight() []*Vtb {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	array := C.pop_pop_context_function_mempool_get_in_flight_vtbs(v.ref)
-	defer freeArrayVtb(&array)
-	return createArrayVtb(&array)
-}
-
-func (v *PopContext2) MemPoolGetVbkBlocksInFlight() []*VbkBlock {
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	array := C.pop_pop_context_function_mempool_get_in_flight_vbk_blocks(v.ref)
-	defer freeArrayVbkBlock(&array)
-	return createArrayVbkBlock(&array)
 }

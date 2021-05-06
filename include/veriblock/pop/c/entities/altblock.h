@@ -18,6 +18,12 @@ extern "C" {
 
 POP_DECLARE_ENTITY(alt_block);
 
+POP_ENTITY_NEW_FUNCTION(alt_block,
+                        POP_ARRAY_NAME(u8) hash,
+                        POP_ARRAY_NAME(u8) previous_block,
+                        uint32_t timestamp,
+                        int32_t height);
+
 POP_ENTITY_GETTER_FUNCTION(alt_block, POP_ARRAY_NAME(u8), hash);
 POP_ENTITY_GETTER_FUNCTION(alt_block, POP_ARRAY_NAME(u8), previous_block);
 POP_ENTITY_GETTER_FUNCTION(alt_block, uint32_t, timestamp);

@@ -25,3 +25,16 @@ func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRoot
 
 	return createPublicationData(res), nil
 }
+
+func (v *PopContext2) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash []byte, popData *PopData) []byte {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if popData.ref == nil {
+		panic("PopData does not initialized")
+	}
+
+	res := C.pop_pop_context_function_calculate_top_level_merkle_root(v.ref, createCBytes(txRoot), createCBytes(prevBlockHash), popData.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}

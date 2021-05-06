@@ -6,6 +6,7 @@
 package ffi
 
 import (
+	"crypto/rand"
 	"fmt"
 	"testing"
 )
@@ -38,4 +39,13 @@ func generateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 	})
 
 	return NewPopContext2(config, storage, "debug")
+}
+
+func generateNextAltBlock(current *AltBlock) *AltBlock {
+	currentHash := current.GetHash()
+
+	nextHash := make([]byte, len(currentHash))
+	rand.Read(nextHash)
+
+	return NewAltBlock(nextHash, currentHash, current.GetTimestamp()+1, current.GetHeight()+1)
 }
