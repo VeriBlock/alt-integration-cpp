@@ -13,15 +13,15 @@
 #include "veriblock/pop/entities/vbkblock.hpp"
 
 struct __pop_alt_block_index {
-  altintegration::BlockIndex<altintegration::AltBlock>& ref;
+  const altintegration::BlockIndex<altintegration::AltBlock>& ref;
 };
 
 struct __pop_vbk_block_index {
-  altintegration::BlockIndex<altintegration::VbkBlock>& ref;
+  const altintegration::BlockIndex<altintegration::VbkBlock>& ref;
 };
 
 struct __pop_btc_block_index {
-  altintegration::BlockIndex<altintegration::BtcBlock>& ref;
+  const altintegration::BlockIndex<altintegration::BtcBlock>& ref;
 };
 
 #endif
