@@ -57,3 +57,56 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	hash := context.CalculateTopLevelMerkleRoot(txRootHash, newBlock.GetPreviousBlock(), popData)
 	assert.False(bytes.Equal(hash, []byte{}))
 }
+
+func TestCheckAll(t *testing.T) {
+	assert := assert.New(t)
+
+	storage, err := NewStorage2(":inmem:")
+	assert.NoError(err)
+	defer storage.Free()
+
+	context := generateTestPopContext(t, storage)
+	defer context.Free()
+
+	miner := NewMockMiner2()
+	defer miner.Free()
+
+	vbkBlock := miner.MineVbkBlockTip()
+
+	// Check VbkBlock
+	err = context.CheckVbkBlock(vbkBlock)
+	assert.NoError(err)
+
+	vtb := miner.MineVtb(vbkBlock, context.BtcGetBestBlock().GetHeader())
+
+	// Check VTB
+	err = context.CheckVtb(vtb)
+	assert.NoError(err)
+
+	alt := generateDefaultAltBlock()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := generateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	err = context.CheckAtv(atv)
+	assert.NoError(err)
+
+	// Failing checks
+	err = context.CheckVbkBlock(generateDefaultVbkBlock())
+	assert.Error(err)
+
+	err = context.CheckVtb(generateDefaultVtb())
+	assert.Error(err)
+
+	err = context.CheckAtv(generateDefaultAtv())
+	assert.Error(err)
+
+	err = context.CheckPopData(generateDefaultPopData())
+	assert.Error(err)
+}
