@@ -15,6 +15,8 @@ import (
 // MemPool tests
 
 func TestPopContextSubmitVbk(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")
@@ -50,6 +52,8 @@ func TestPopContextSubmitVbk(t *testing.T) {
 }
 
 func TestPopContextSubmitVtb(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")
@@ -96,6 +100,8 @@ func TestPopContextSubmitVtb(t *testing.T) {
 }
 
 func TestPopContextSubmitAtv(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")
@@ -139,6 +145,8 @@ func TestPopContextSubmitAtv(t *testing.T) {
 }
 
 func TestPopContextAcceptBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")

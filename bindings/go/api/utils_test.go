@@ -15,6 +15,8 @@ import (
 )
 
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")
@@ -42,6 +44,8 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 }
 
 func TestCreateStorageFailure(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	dir := t.TempDir()
@@ -57,6 +61,8 @@ func TestCreateStorageFailure(t *testing.T) {
 }
 
 func TestSaveLoadAllTrees(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	dir := t.TempDir()

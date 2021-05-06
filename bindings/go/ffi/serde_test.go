@@ -31,6 +31,8 @@ func assertHexDecode(str string) []byte {
 }
 
 func TestAltBlockSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultAltBlockEncoded)
@@ -52,6 +54,8 @@ func TestAltBlockSerde(t *testing.T) {
 }
 
 func TestVbkBlockSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultVbkBlockEncoded)
@@ -78,6 +82,8 @@ func TestVbkBlockSerde(t *testing.T) {
 }
 
 func TestBtcBlockSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultBtcBlockEncoded)
@@ -101,6 +107,8 @@ func TestBtcBlockSerde(t *testing.T) {
 }
 
 func TestVtbSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultVtbEncoded)
@@ -123,6 +131,8 @@ func TestVtbSerde(t *testing.T) {
 }
 
 func TestAtvSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultAtvEncoded)
@@ -145,6 +155,8 @@ func TestAtvSerde(t *testing.T) {
 }
 
 func TestPublicationDataSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultPublicationDataEncoded)
@@ -161,6 +173,8 @@ func TestPublicationDataSerde(t *testing.T) {
 }
 
 func TestPopDataSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	encodedBytes := assertHexDecode(defaultPopDataEncoded)

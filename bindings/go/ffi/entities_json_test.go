@@ -12,6 +12,8 @@ import (
 )
 
 func TestJSONBtcBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	btc_block := generateDefaultBtcBlock()
@@ -29,6 +31,8 @@ func TestJSONBtcBlock(t *testing.T) {
 }
 
 func TestJSONVbkBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vbk_block := generateDefaultVbkBlock()
@@ -50,6 +54,8 @@ func TestJSONVbkBlock(t *testing.T) {
 }
 
 func TestJSONAltBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	alt_block := generateDefaultAltBlock()
@@ -64,6 +70,8 @@ func TestJSONAltBlock(t *testing.T) {
 }
 
 func TestJSONVtb(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vtb := generateDefaultVtb()
@@ -78,6 +86,8 @@ func TestJSONVtb(t *testing.T) {
 }
 
 func TestJSONAtv(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	atv := generateDefaultAtv()

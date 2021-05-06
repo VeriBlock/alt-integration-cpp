@@ -8,6 +8,8 @@ package ffi
 import "testing"
 
 func TestVbkByteStreamFree(t *testing.T) {
+	t.Parallel()
+
 	stream := NewValidationState()
 	stream.Free()
 	stream.Free()

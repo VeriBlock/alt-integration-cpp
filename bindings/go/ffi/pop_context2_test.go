@@ -12,6 +12,8 @@ import (
 )
 
 func TestPopContext2Free(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -25,6 +27,8 @@ func TestPopContext2Free(t *testing.T) {
 }
 
 func TestPopContext2BlockPrecessing(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")

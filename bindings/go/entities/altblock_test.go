@@ -20,6 +20,8 @@ var defaultAltBlock = AltBlock{
 }
 
 func TestAltBlockRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	outputStream := new(bytes.Buffer)

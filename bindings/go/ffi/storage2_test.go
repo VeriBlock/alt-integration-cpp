@@ -12,6 +12,8 @@ import (
 )
 
 func TestStorageFree(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -22,6 +24,8 @@ func TestStorageFree(t *testing.T) {
 }
 
 func TestCreateStorageFailure(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	dir := t.TempDir()

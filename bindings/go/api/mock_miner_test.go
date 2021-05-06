@@ -14,6 +14,8 @@ import (
 )
 
 func TestMineBtcBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
@@ -33,6 +35,8 @@ func TestMineBtcBlock(t *testing.T) {
 }
 
 func TestMineVbkBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
@@ -52,6 +56,8 @@ func TestMineVbkBlock(t *testing.T) {
 }
 
 func TestMineAtv(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner()
@@ -72,6 +78,8 @@ func TestMineAtv(t *testing.T) {
 }
 
 func TestMineVtb(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")

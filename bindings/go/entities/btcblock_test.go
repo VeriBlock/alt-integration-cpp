@@ -38,6 +38,8 @@ func parse32Bytes(src string) [32]byte {
 }
 
 func TestBtcBlockDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultBtcBlockEncoded)
@@ -56,6 +58,8 @@ func TestBtcBlockDeserialize(t *testing.T) {
 }
 
 func TestBtcBlockSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -65,6 +69,8 @@ func TestBtcBlockSerialize(t *testing.T) {
 }
 
 func TestBtcBlockRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultBtcBlockEncoded)
@@ -80,6 +86,8 @@ func TestBtcBlockRoundTrip(t *testing.T) {
 }
 
 func TestBtcBlockGetBlockHash(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultBtcBlockEncoded)

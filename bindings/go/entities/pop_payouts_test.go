@@ -24,6 +24,8 @@ var (
 )
 
 func TestPopPayoutsDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(parseHex(defaultPopPayoutsEncoded))
@@ -46,6 +48,8 @@ func TestPopPayoutsDeserialize(t *testing.T) {
 }
 
 func TestPopPayoutsSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -55,6 +59,8 @@ func TestPopPayoutsSerialize(t *testing.T) {
 }
 
 func TestPopPayoutsRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(parseHex(defaultPopPayoutsEncoded))
