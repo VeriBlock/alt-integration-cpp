@@ -26,7 +26,7 @@ POP_ARRAY_FREE_SIGNATURE(pop_payout) {
   }
 }
 
-POP_ENTITY_GETTER_FUNCTION(pop_payout, POP_ARRAY_NAME(u8), get_payout_info) {
+POP_ENTITY_GETTER_FUNCTION(pop_payout, POP_ARRAY_NAME(u8), payout_info) {
   VBK_ASSERT(self);
 
   POP_ARRAY_NAME(u8) res;
@@ -37,7 +37,7 @@ POP_ENTITY_GETTER_FUNCTION(pop_payout, POP_ARRAY_NAME(u8), get_payout_info) {
   return res;
 }
 
-POP_ENTITY_GETTER_FUNCTION(pop_payout, uint64_t, get_amount) {
+POP_ENTITY_GETTER_FUNCTION(pop_payout, uint64_t, amount) {
   VBK_ASSERT(self);
 
   return self->amount;

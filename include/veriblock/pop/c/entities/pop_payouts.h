@@ -18,8 +18,8 @@ extern "C" {
 
 POP_DECLARE_ENTITY(pop_payout);
 
-POP_ENTITY_GETTER_FUNCTION(pop_payout, POP_ARRAY_NAME(u8), get_payout_info);
-POP_ENTITY_GETTER_FUNCTION(pop_payout, uint64_t, get_amount);
+POP_ENTITY_GETTER_FUNCTION(pop_payout, POP_ARRAY_NAME(u8), payout_info);
+POP_ENTITY_GETTER_FUNCTION(pop_payout, uint64_t, amount);
 
 POP_DECLARE_ARRAY(POP_ENTITY_NAME(pop_payout) *, pop_payout);
 
