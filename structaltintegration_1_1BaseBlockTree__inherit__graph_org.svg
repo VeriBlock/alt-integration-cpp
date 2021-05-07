@@ -18,22 +18,22 @@
 <text text-anchor="middle" x="134" y="-1021.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
 <polyline fill="none" stroke="black" points="72,-1014.5 196,-1014.5 "/>
 <text text-anchor="start" x="80" y="-1002.5" font-family="Helvetica,sans-Serif" font-size="10.00"># blocks_</text>
-<text text-anchor="start" x="80" y="-991.5" font-family="Helvetica,sans-Serif" font-size="10.00"># removed_</text>
-<text text-anchor="start" x="80" y="-980.5" font-family="Helvetica,sans-Serif" font-size="10.00"># tips_</text>
-<text text-anchor="start" x="80" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"># activeChain_</text>
-<text text-anchor="start" x="80" y="-958.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
-<polyline fill="none" stroke="black" points="72,-951.5 196,-951.5 "/>
-<text text-anchor="start" x="80" y="-939.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="80" y="-928.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="80" y="-917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="80" y="-991.5" font-family="Helvetica,sans-Serif" font-size="10.00"># tips_</text>
+<text text-anchor="start" x="80" y="-980.5" font-family="Helvetica,sans-Serif" font-size="10.00"># activeChain_</text>
+<text text-anchor="start" x="80" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
+<polyline fill="none" stroke="black" points="72,-962.5 196,-962.5 "/>
+<text text-anchor="start" x="80" y="-950.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="80" y="-939.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="80" y="-928.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="80" y="-917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="80" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="80" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="80" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="80" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="80" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="80" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="80" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
-<text text-anchor="start" x="80" y="-829.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 20 more...</text>
+<text text-anchor="start" x="80" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="80" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="80" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="80" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
+<text text-anchor="start" x="80" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
+<text text-anchor="start" x="80" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 22 more...</text>
+<text text-anchor="start" x="80" y="-829.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="80" y="-818.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 </a>
 </g>
@@ -121,22 +121,22 @@
 <text text-anchor="middle" x="281" y="-729.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; AltBlock &gt;</text>
 <polyline fill="none" stroke="black" points="219,-722.5 343,-722.5 "/>
 <text text-anchor="start" x="227" y="-710.5" font-family="Helvetica,sans-Serif" font-size="10.00"># blocks_</text>
-<text text-anchor="start" x="227" y="-699.5" font-family="Helvetica,sans-Serif" font-size="10.00"># removed_</text>
-<text text-anchor="start" x="227" y="-688.5" font-family="Helvetica,sans-Serif" font-size="10.00"># tips_</text>
-<text text-anchor="start" x="227" y="-677.5" font-family="Helvetica,sans-Serif" font-size="10.00"># activeChain_</text>
-<text text-anchor="start" x="227" y="-666.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
-<polyline fill="none" stroke="black" points="219,-659.5 343,-659.5 "/>
-<text text-anchor="start" x="227" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="227" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="227" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="227" y="-699.5" font-family="Helvetica,sans-Serif" font-size="10.00"># tips_</text>
+<text text-anchor="start" x="227" y="-688.5" font-family="Helvetica,sans-Serif" font-size="10.00"># activeChain_</text>
+<text text-anchor="start" x="227" y="-677.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
+<polyline fill="none" stroke="black" points="219,-670.5 343,-670.5 "/>
+<text text-anchor="start" x="227" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="227" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="227" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="227" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="227" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="227" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="227" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="227" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="227" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="227" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="227" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="227" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
-<text text-anchor="start" x="227" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 20 more...</text>
+<text text-anchor="start" x="227" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
+<text text-anchor="start" x="227" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
+<text text-anchor="start" x="227" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 22 more...</text>
+<text text-anchor="start" x="227" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="227" y="-526.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 </a>
 </g>
