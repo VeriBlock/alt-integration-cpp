@@ -41,6 +41,14 @@ struct BaseBlockTree {
 
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
   const block_index_t& getBlocks() const { return blocks_; }
+  // FIXME: needs a better name
+  typename block_index_t::difference_type getNonDeletedBlockCount() const {
+    return std::count_if(blocks_.begin(),
+                         blocks_.end(),
+                         [](const typename block_index_t::value_type& block) {
+                           return !block.second->isDeleted();
+                         });
+  }
 
   virtual ~BaseBlockTree() {
     if (!isBootstrapped()) {
@@ -94,6 +102,32 @@ struct BaseBlockTree {
                 std::is_same<T, hash_t>::value ||
                 std::is_same<T, prev_block_hash_t>::value>::type>
   const index_t* getBlockIndex(const T& hash) const {
+    auto blockIndex = findBlockIndex(hash);
+    return blockIndex != nullptr && blockIndex->isDeleted() ? nullptr
+                                                            : blockIndex;
+  }
+
+  /**
+   * Get BlockIndex by block hash.
+   * @tparam T block type
+   * @param[in] hash block hash
+   * @return nullptr if block is not found, or ptr to block otherwise.
+   */
+  template <typename T,
+            typename = typename std::enable_if<
+                std::is_same<T, hash_t>::value ||
+                std::is_same<T, prev_block_hash_t>::value>::type>
+  index_t* findBlockIndex(const T& hash) {
+    const auto& t = as_const(*this);
+    return const_cast<index_t*>(t.findBlockIndex(hash));
+  }
+
+  //! @overload
+  template <typename T,
+            typename = typename std::enable_if<
+                std::is_same<T, hash_t>::value ||
+                std::is_same<T, prev_block_hash_t>::value>::type>
+  const index_t* findBlockIndex(const T& hash) const {
     auto shortHash = makePrevHash(hash);
     auto it = blocks_.find(shortHash);
     return it == blocks_.end() ? nullptr : it->second.get();
@@ -117,8 +151,7 @@ struct BaseBlockTree {
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(const stored_index_t& index,
-                         ValidationState& state) {
+  virtual bool loadBlock(const stored_index_t& index, ValidationState& state) {
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
@@ -138,49 +171,56 @@ struct BaseBlockTree {
 
     auto& header = *index.header;
     auto currentHash = header.getHash();
-    auto* current = getBlockIndex(currentHash);
+    auto* current = findBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
-    if (current && !current->hasFlags(BLOCK_BOOTSTRAP)) {
-      return state.Invalid(
-          "block-exists",
-          "Found duplicate block, which is not bootstrap block");
+    if (current) {
+      if (current->isDeleted()) {
+        current->restore();
+      } else {
+        if (!current->hasFlags(BLOCK_BOOTSTRAP)) {
+          return state.Invalid(
+              "block-exists",
+              "Found duplicate block, which is not bootstrap block");
+        }
+      }
+    } else {
+      auto* prev = getBlockIndex(header.getPreviousBlock());
+      // if neither the current, nor the previous block are known
+      if (prev == nullptr) {
+        return state.Invalid("bad-prev",
+                             "Block does not connect to current tree");
+      }
+
+      current = createBlockIndex(currentHash, *prev);
+      current->restore();
     }
 
-    // if current block is not known, and previous also not known
-    auto* prev = getBlockIndex(header.getPreviousBlock());
-    if (!current && !prev) {
-      return state.Invalid("bad-prev",
-                           "Block does not connect to current tree");
-    }
-
-    current = touchBlockIndex(currentHash, prev);
     VBK_ASSERT(current);
+    VBK_ASSERT(!current->isDeleted());
 
-    // touchBlockIndex may return existing block (one of bootstrap blocks), so
-    // backup its 'pnext'
+    // touchBlockIndex may return an existing block (one of bootstrap blocks),
+    // so backup its 'pnext'
     auto next = current->pnext;
-
+    auto prev = current->pprev;
     // copy all fields
     current->mergeFrom(index);
+    // FIXME: this is an ugly HACK
     // clear inmem fields
     current->setNullInmemFields();
-    current->unsetDirty();
     // recover pnext
     current->pnext = next;
     // recover pprev
     current->pprev = prev;
-
     if (current->pprev != nullptr) {
       // prev block found
       auto expectedHeight = current->pprev->getHeight() + 1;
       if (current->getHeight() != expectedHeight) {
         return state.Invalid("bad-height");
       }
-
-      current->pprev->pnext.insert(current);
     }
 
+    VBK_ASSERT(!current->isDeleted());
     current->raiseValidity(BLOCK_VALID_TREE);
     current->unsetDirty();
 
@@ -445,52 +485,68 @@ struct BaseBlockTree {
     tips_.insert(index);
   }
 
-  //! @private
-  index_t* touchBlockIndex(const hash_t& hash, index_t* prev) {
-    auto shortHash = makePrevHash(hash);
-    auto it = blocks_.find(shortHash);
-    if (it != blocks_.end()) {
-      return it->second.get();
-    }
-
-    std::unique_ptr<index_t> newIndex = nullptr;
-    auto itr = removed_.find(shortHash);
-    if (itr != removed_.end()) {
-      newIndex = std::move(itr->second);
-      removed_.erase(itr);
-    } else {
-      newIndex = make_unique<index_t>(prev);
-    }
-
-    newIndex->setNull();
-    it = blocks_.insert({shortHash, std::move(newIndex)}).first;
-    return it->second.get();
+  //! dangerous! permanently drops the block from the tree
+  void eraseBlock(index_t& block) {
+    VBK_ASSERT_MSG(block.isDeleted(),
+                   "cannot erase a block that is not deleted %s",
+                   block.toPrettyString());
+    VBK_ASSERT_MSG(
+        block.pnext.empty(),
+        "cannot erase a block that has ancestors as that would split "
+        "the tree: %s",
+        block.toPrettyString());
+    auto shortHash = makePrevHash(block.getHash());
+    auto count = blocks_.erase(shortHash);
+    VBK_ASSERT_MSG(count == 1,
+                   "state corruption: block %s is not in the store",
+                   block.toPrettyString());
   }
 
+  //! create a new block index
+  //! @private
+  index_t* createBlockIndex(const hash_t& hash, index_t& prev) {
+    auto shortHash = makePrevHash(hash);
+
+    auto newIndex = make_unique<index_t>(&prev);
+
+    auto inserted = blocks_.emplace(shortHash, std::move(newIndex));
+    VBK_ASSERT_MSG(inserted.second,
+                   "attempted to create a blockindex with duplicate hash %s",
+                   HexStr(shortHash));
+    return inserted.first->second.get();
+  }
+
+  //! create a new root block index
+  //! @private
+  index_t* createBootstrapBlockIndex(const hash_t& hash,
+                                     block_height_t height) {
+    auto shortHash = makePrevHash(hash);
+
+    auto newIndex = make_unique<index_t>(height);
+
+    auto inserted = blocks_.emplace(shortHash, std::move(newIndex));
+    VBK_ASSERT_MSG(inserted.second,
+                   "attempted to create a blockindex with duplicate hash %s",
+                   HexStr(shortHash));
+    return inserted.first->second.get();
+  }
+
+  //! the block header is created in a deleted state
   //! @private
   index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header,
                                block_height_t bootstrapHeight = 0) {
     VBK_ASSERT(header != nullptr);
 
     auto* prev = getBlockIndex(header->getPreviousBlock());
-    index_t* current = touchBlockIndex(header->getHash(), prev);
+
+    VBK_ASSERT_MSG(isBootstrapped() == (prev != nullptr),
+                   "already bootstrapped");
+
+    index_t* current =
+        prev == nullptr
+            ? createBootstrapBlockIndex(header->getHash(), bootstrapHeight)
+            : createBlockIndex(header->getHash(), *prev);
     current->setHeader(std::move(header));
-    current->pprev = prev;
-
-    if (current->pprev != nullptr) {
-      // prev block found
-      current->setHeight(current->pprev->getHeight() + 1);
-      current->pprev->pnext.insert(current);
-
-      if (!current->pprev->isValid()) {
-        current->setFlag(BLOCK_FAILED_CHILD);
-      }
-    } else {
-      VBK_ASSERT(activeChain_.tip() == nullptr && blocks_.size() == 1);
-      current->setHeight(bootstrapHeight);
-    }
-
-    tryAddTip(current);
 
     return current;
   }
@@ -499,14 +555,27 @@ struct BaseBlockTree {
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
     assertBlockSanity(*block);
+
     auto hash = block->getHash();
-    index_t* current = getBlockIndex(hash);
+    index_t* current = findBlockIndex(hash);
+
     if (current != nullptr) {
       // it is a duplicate
-      return current;
+      if (!current->isDeleted()) {
+        return current;
+      }
+
+      VBK_ASSERT_MSG(*block == current->getHeader(),
+                     "hash collision detected between %s and %s",
+                     block->toPrettyString(),
+                     current->getHeader().toPrettyString());
+    } else {
+      current = doInsertBlockHeader(block, bootstrapHeight);
     }
 
-    current = doInsertBlockHeader(block, bootstrapHeight);
+    current->restore();
+    tryAddTip(current);
+
     this->onBlockInserted(current);
 
     // raise validity may return false if block is invalid
@@ -523,7 +592,11 @@ struct BaseBlockTree {
     std::vector<std::pair<int, index_t*>> byheight;
     byheight.reserve(blocks_.size());
     for (const auto& p : blocks_) {
-      byheight.push_back({p.second->getHeight(), p.second.get()});
+      // FIXME: ugly hack due to trees being compared via toPrettyString in
+      // tests
+      if (!p.second->isDeleted()) {
+        byheight.emplace_back(p.second->getHeight(), p.second.get());
+      }
     }
     std::sort(byheight.rbegin(), byheight.rend());
     for (const auto& p : byheight) {
@@ -765,9 +838,10 @@ struct BaseBlockTree {
 
     ValidationState dummy;
     bool success = setState(bestChain, dummy);
-    VBK_ASSERT(
-        success &&
-        "state corruption: could not revert to the saved best chain tip");
+    VBK_ASSERT_MSG(
+        success,
+        "state corruption: could not revert to the saved best chain tip: %s",
+        dummy.toString());
   }
 
   void deferForkResolution() { ++deferForkResolutionDepth; }
@@ -797,16 +871,7 @@ struct BaseBlockTree {
     // if it is a tip, we also remove it
     tips_.erase(&block);
 
-    if (block.pprev != nullptr) {
-      block.pprev->pnext.erase(&block);
-    }
-
-    auto shortHash = makePrevHash(block.getHash());
-    auto& it = blocks_.at(shortHash);
-
-    it->setNull();
-    removed_[shortHash] = std::move(it);
-    blocks_.erase(shortHash);
+    block.deleteTemporarily();
   }
 
   void doInvalidate(index_t& block, enum BlockValidityStatus reason) {
@@ -832,8 +897,6 @@ struct BaseBlockTree {
  protected:
   //! stores ALL blocks, including valid and invalid
   block_index_t blocks_;
-  //! stores all removed blocks, to ensure pointers to blocks remain stable
-  block_index_t removed_;
   //! stores ONLY VALID tips, including currently active tip
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
