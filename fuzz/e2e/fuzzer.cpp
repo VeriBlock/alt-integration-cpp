@@ -72,9 +72,9 @@ const typename Tree::index_t* selectBlock(FuzzedDataProvider& p, Tree& tree) {
     case ForkOption::NEXT_AFTER_TIP:
       return tree.getBestChain().tip();
     case ForkOption::RANDOM_BLOCK: {
-      const auto& blocks = tree.getBlocks();
+      auto blocks = tree.getBlocks();
       auto it = select_randomly(blocks.begin(), blocks.end());
-      return it->second.get();
+      return *it;
     }
     case ForkOption::ONE_OF_TIPS:
       const auto& tips = tree.getTips();
@@ -253,14 +253,14 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
           break;
         }
         case VbkSubmitType::RANDOM: {
-          const auto& blocks = state.APM().vbk().getBlocks();
+          auto blocks = state.APM().vbk().getBlocks();
           auto it = select_randomly(blocks.begin(), blocks.end());
           VBK_ASSERT(it != blocks.end());
 
           ai::ValidationState dummy;
           /* ignore= */ state.TREE()
               .popcontext->getMemPool()
-              .submit<ai::VbkBlock>(it->second->getHeader(), dummy);
+              .submit<ai::VbkBlock>(it->getHeader(), dummy);
           break;
         }
       }
