@@ -11,6 +11,7 @@
 #include "veriblock/pop/c/config2.h"
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/block_index.h"
+#include "veriblock/pop/c/entities/pop_payouts.h"
 #include "veriblock/pop/c/storage2.h"
 #include "veriblock/pop/c/type_helpers.h"
 #include "veriblock/pop/c/validation_state2.h"
@@ -46,12 +47,12 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
  * @copybrief altintegration::AltBlockTree::comparePopScore
  * @see altintegration::AltBlockTree::comparePopScore
  * @param[in] self PopContext
- * @param[in] A_block POP_ENTITY_NAME(alt_block) pointer to the
- * altintegration::AltBlock of current tip in AltBlockTree. Fails on assert if
- * current tip != A_block.
- * @param[in] B_block POP_ENTITY_NAME(alt_block) pointer to the
- * altintegration::AltBlock. Current tip will be compared against this block.
- * Must exist on chain and have BLOCK_HAS_PAYLOADS.
+ * @param[in] A_block_hash POP_ARRAY_NAME(u8) array altintegration::AltBlock
+ * hash bytes of current tip in AltBlockTree. Fails on assert if current tip !=
+ * A_block.
+ * @param[in] B_block_hash POP_ARRAY_NAME(u8) array altintegration::AltBlock
+ * hash bytes. Current tip will be compared against this block. Must exist on
+ * chain and have BLOCK_HAS_PAYLOADS.
  * @return Returns positive if chain A is better. Returns negative if chain B is
  * better. Returns 0 if blocks are equal in terms of POP. Users should fallback
  * to chain-native Fork Resolution algorithm.
@@ -59,8 +60,25 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            int,
                            compare_pop_score,
-                           const POP_ENTITY_NAME(alt_block) * A_block,
-                           const POP_ENTITY_NAME(alt_block) * B_block);
+                           POP_ARRAY_NAME(u8) A_block_hash,
+                           POP_ARRAY_NAME(u8) B_block_hash);
+
+/**
+ * @copybrief altintegration::AltBlockTree::getPopPayout
+ * @see altintegration::AltBlockTree::getPopPayout
+ *
+ * Before executing this method the state should be switched to the provided
+ * block, should execute set_state for the provided block
+ * before executing this function.
+ *
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @return POP_ARRAY_NAME(pop_payout) array of the POP_ENTITY_NAME(pop_payout)
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(pop_payout),
+                           get_pop_payouts,
+                           POP_ARRAY_NAME(u8) hash);
 
 /**
  * Find a AltBlock index from the AltTree

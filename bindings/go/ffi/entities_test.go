@@ -192,7 +192,7 @@ func TestPopPayout(t *testing.T) {
 	popPayout := generateDefaultPopPayout()
 
 	assert.Equal(popPayout.GetPayoutInfo(), []byte{1, 2, 3, 4})
-	assert.Equal(popPayout.GetAmount(), 300)
+	assert.Equal(popPayout.GetAmount(), uint64(300))
 
 	popPayout.Free()
 	popPayout.Free()
