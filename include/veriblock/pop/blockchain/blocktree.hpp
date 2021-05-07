@@ -119,9 +119,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
                         pad,
                         Block::name(),
-                        // FIXME: ugly hack due to trees being compared via
-                        // toPrettyString in tests
-                        base::getNonDeletedBlockCount(),
+                        base::getBlocks().size(),
                         base::toPrettyString(level + 2),
                         pad);
   }

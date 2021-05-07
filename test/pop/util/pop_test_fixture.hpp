@@ -394,8 +394,7 @@ template <typename Tree>
 void assertBlockTreeHasNoOrphans(const Tree& tree) {
   // orphan = block whose pprev == nullptr, and this block is not `genesis`
   // (root/bootstrap) block
-  for (auto& p : tree.getBlocks()) {
-    auto* index = p.second.get();
+  for (auto& index : tree.getBlocks()) {
     ASSERT_TRUE(index);
 
     if (index->pprev == nullptr &&

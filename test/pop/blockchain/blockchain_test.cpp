@@ -232,7 +232,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   EXPECT_EQ(this->blockchain->getTips().size(), 2);
   EXPECT_EQ(best.blocksCount(), 19);
-  EXPECT_EQ(this->blockchain->getNonDeletedBlockCount(), 21);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 21);
   EXPECT_EQ(best.tip()->getHash(), fork1[18].getHash());
 
   // remove block 'E'
@@ -243,7 +243,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   EXPECT_EQ(best.blocksCount(), 19);
   EXPECT_EQ(this->blockchain->getTips().size(), 2);
-  EXPECT_EQ(this->blockchain->getNonDeletedBlockCount(), 20);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 20);
   EXPECT_EQ(best.tip()->getHash(), fork2[18].getHash());
 
   // remove block 'G'
@@ -254,7 +254,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   EXPECT_EQ(best.blocksCount(), 18);
   EXPECT_EQ(this->blockchain->getTips().size(), 2);
-  EXPECT_EQ(this->blockchain->getNonDeletedBlockCount(), 19);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 19);
   EXPECT_EQ(best.tip()->getHash(), fork2[17].getHash());
 
   // remove block 'F'
@@ -265,7 +265,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   EXPECT_EQ(best.blocksCount(), 18);
   EXPECT_EQ(this->blockchain->getTips().size(), 1);
-  EXPECT_EQ(this->blockchain->getNonDeletedBlockCount(), 18);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 18);
   EXPECT_EQ(best.tip()->getHash(), fork1[17].getHash());
 
   // remove block 'D'
@@ -276,7 +276,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   EXPECT_EQ(best.blocksCount(), 17);
   EXPECT_EQ(this->blockchain->getTips().size(), 1);
-  EXPECT_EQ(this->blockchain->getNonDeletedBlockCount(), 17);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 17);
   EXPECT_EQ(best.tip()->getHash(), fork1[16].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[16].getHash());
 
@@ -288,7 +288,7 @@ TYPED_TEST_P(BlockchainTest, removeTip_test_scenario_1) {
 
   EXPECT_EQ(best.blocksCount(), 16);
   EXPECT_EQ(this->blockchain->getTips().size(), 1);
-  EXPECT_EQ(this->blockchain->getNonDeletedBlockCount(), 16);
+  EXPECT_EQ(this->blockchain->getBlocks().size(), 16);
   EXPECT_EQ(best.tip()->getHash(), fork1[15].getHash());
   EXPECT_EQ(best.tip()->getHash(), fork2[15].getHash());
 }

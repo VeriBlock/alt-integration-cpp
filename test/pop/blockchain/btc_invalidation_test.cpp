@@ -179,12 +179,12 @@ TEST_F(BtcInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   // revalidate subtree at (b) 6
   btc.revalidateSubtree(*Bchain[6], BLOCK_FAILED_BLOCK);
   // all blocks after 6 are valid again
-  ASSERT_EQ(btc.getNonDeletedBlockCount(), 11 + 5 + 3 + 1 + 2 + 1);
+  ASSERT_EQ(btc.getBlocks().size(), 11 + 5 + 3 + 1 + 2 + 1);
   ASSERT_EQ(btc.getTips().size(), 6);
 
   // remove subtree at (b) 6
   btc.removeSubtree(*Bchain[6]);
-  ASSERT_EQ(btc.getNonDeletedBlockCount(), 6 + 5);
+  ASSERT_EQ(btc.getBlocks().size(), 6 + 5);
   forEach(Achain, checkBlock(true));
   ASSERT_EQ(btc.getTips().size(), 2);
   ASSERT_TRUE(forkChains.count(B5));

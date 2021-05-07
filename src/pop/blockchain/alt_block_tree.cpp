@@ -296,9 +296,7 @@ std::string AltBlockTree::toPrettyString(size_t level) const {
   std::string pad(level, ' ');
   return fmt::sprintf("%sAltTree{blocks=%llu\n%s\n%s\n%s}",
                       pad,
-                      // FIXME: ugly hack due to trees being compared via
-                      // toPrettyString in tests
-                      base::getNonDeletedBlockCount(),
+                      base::getBlocks().size(),
                       base::toPrettyString(level + 2),
                       cmp_.toPrettyString(level + 2),
                       pad);

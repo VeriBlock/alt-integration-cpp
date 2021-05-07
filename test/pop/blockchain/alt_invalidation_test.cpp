@@ -28,7 +28,7 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock>*earlier, *earlierChild, *latter, *latterChild;
 
   AltInvalidationTest() {
-    tip = mineAltBlocks(*alttree.getBlocks().begin()->second,
+    tip = mineAltBlocks(*alttree.getBestChain().tip(),
                         10,
                         /*connectBlocks=*/true,
                         /*setState=*/false);
@@ -278,7 +278,7 @@ TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   auto* Gtip = mineAltBlocks(*sixth, 2, /*connectBlocks=*/true);  // 7-8
   auto* Htip = mineAltBlocks(*sixth, 1, /*connectBlocks=*/true);  // 7
 
-  ASSERT_EQ(alttree.getNonDeletedBlockCount(), 11 + 5 + 3 + 2 + 1 + 3 + 2 + 1);
+  ASSERT_EQ(alttree.getBlocks().size(), 11 + 5 + 3 + 2 + 1 + 3 + 2 + 1);
 
   ASSERT_EQ(alttree.getTips().size(), 8);
 
@@ -332,7 +332,7 @@ TEST_F(AltInvalidationTest, InvalidBlockAsBaseOfMultipleForks) {
   // remove subtree at (b) 6
   alttree.removeSubtree(*Bchain[6]);
 
-  ASSERT_EQ(alttree.getNonDeletedBlockCount(), 6 + 5);
+  ASSERT_EQ(alttree.getBlocks().size(), 6 + 5);
   validateForEach(Achain, check(true));
   ASSERT_EQ(forkChains.size(), 2);
   ASSERT_TRUE(forkChains.count(B5));

@@ -40,14 +40,15 @@ struct BaseBlockTree {
       std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
 
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
-  const block_index_t& getBlocks() const { return blocks_; }
-  // FIXME: needs a better name
-  typename block_index_t::difference_type getNonDeletedBlockCount() const {
-    return std::count_if(blocks_.begin(),
-                         blocks_.end(),
-                         [](const typename block_index_t::value_type& block) {
-                           return !block.second->isDeleted();
-                         });
+  std::vector<index_t*> getBlocks() const {
+    std::vector<index_t*> blocks;
+    blocks.reserve(blocks_.size());
+    for (const auto& el : blocks_) {
+      if (!el.second->isDeleted()) {
+        blocks.push_back(el.second.get());
+      }
+    }
+    return blocks;
   }
 
   virtual ~BaseBlockTree() {

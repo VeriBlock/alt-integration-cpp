@@ -380,6 +380,16 @@ struct BlockIndex : public Block::addon_t {
     return stream.data();
   }
 
+  friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
+    return a.getStatus() == b.getStatus() && a.getHeight() == b.getHeight() &&
+           a.getHeader() == b.getHeader();
+  }
+
+  friend bool operator!=(const BlockIndex& a, const BlockIndex& b) {
+    return a.getStatus() != b.getStatus() && a.getHeight() != b.getHeight() &&
+           a.getHeader() != b.getHeader();
+  }
+
  protected:
   //! height of the entry in the chain
   height_t height = 0;
