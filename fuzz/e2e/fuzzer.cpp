@@ -260,7 +260,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
           ai::ValidationState dummy;
           /* ignore= */ state.TREE()
               .popcontext->getMemPool()
-              .submit<ai::VbkBlock>(it->getHeader(), dummy);
+              .submit<ai::VbkBlock>((*it)->getHeader(), dummy);
           break;
         }
       }
@@ -275,7 +275,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
         ai::ValidationState dummy;
         /* ignore= */ state.TREE()
             .popcontext->getMemPool()
-            .submit<ai::VbkBlock>(block.second->getHeader(), dummy);
+            .submit<ai::VbkBlock>(block->getHeader(), dummy);
       }
 
       // submit all ATVs
