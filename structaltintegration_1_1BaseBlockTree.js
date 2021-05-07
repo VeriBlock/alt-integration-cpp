@@ -15,13 +15,10 @@ var structaltintegration_1_1BaseBlockTree =
     [ "connectOnValidityBlockChanged", "structaltintegration_1_1BaseBlockTree.html#aa3bc153df731167cab9dc8608ee6a207", null ],
     [ "deferForkResolutionGuard", "structaltintegration_1_1BaseBlockTree.html#a60141d5f2848e9f91885fd9f412a20ce", null ],
     [ "disconnectOnValidityBlockChanged", "structaltintegration_1_1BaseBlockTree.html#a88004ad8992eefd68d064c377c079495", null ],
-    [ "eraseBlock", "structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e", null ],
-    [ "findBlockIndex", "structaltintegration_1_1BaseBlockTree.html#a7b04cff9f2bbfc3b44e43a49a61e3a5b", null ],
-    [ "findBlockIndex", "structaltintegration_1_1BaseBlockTree.html#a619da2aa9e768d96e844e78139d4e244", null ],
     [ "getBestChain", "structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc", null ],
     [ "getBlockIndex", "structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e", null ],
     [ "getBlockIndex", "structaltintegration_1_1BaseBlockTree.html#abb498b97671f5b9e2681e54eaeec63b6", null ],
-    [ "getBlocks", "structaltintegration_1_1BaseBlockTree.html#a722a4734ad1c00c25f59ab6686406f51", null ],
+    [ "getBlocks", "structaltintegration_1_1BaseBlockTree.html#a1cc6964ce332d7232a097ddc65ae3b99", null ],
     [ "getRoot", "structaltintegration_1_1BaseBlockTree.html#aedac45c4fc46a40bf10029203d1da9b1", null ],
     [ "getTips", "structaltintegration_1_1BaseBlockTree.html#acdeede24636e84dff4a34cea27adf82f", null ],
     [ "invalidateSubtree", "structaltintegration_1_1BaseBlockTree.html#a92bea7a560edcd4531e90e81a75821b1", null ],
@@ -44,6 +41,7 @@ var structaltintegration_1_1BaseBlockTree =
     [ "toPrettyString", "structaltintegration_1_1BaseBlockTree.html#ac8a3d94836fcc712c6788d3e4a31234e", null ],
     [ "activeChain_", "structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69", null ],
     [ "blocks_", "structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51", null ],
+    [ "removed_", "structaltintegration_1_1BaseBlockTree.html#a8a78f7f48ff4a04715afb1065759269b", null ],
     [ "tips_", "structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736", null ],
     [ "validity_sig_", "structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b", null ]
 ];

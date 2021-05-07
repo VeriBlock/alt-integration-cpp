@@ -59,24 +59,23 @@ var sectionId = 'dynsection-1';
 <g id="node1" class="node">
 <title>Node1</title>
 <g id="a_node1"><a xlink:title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">
-<polygon fill="#bfbfbf" stroke="black" points="166.5,-0.5 166.5,-200.5 290.5,-200.5 290.5,-0.5 166.5,-0.5"/>
-<text text-anchor="start" x="174.5" y="-188.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
-<text text-anchor="middle" x="228.5" y="-177.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
-<polyline fill="none" stroke="black" points="166.5,-170.5 290.5,-170.5 "/>
-<text text-anchor="start" x="174.5" y="-158.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
-<polyline fill="none" stroke="black" points="166.5,-151.5 290.5,-151.5 "/>
-<text text-anchor="start" x="174.5" y="-139.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="174.5" y="-128.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="174.5" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
-<text text-anchor="start" x="174.5" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<polygon fill="#bfbfbf" stroke="black" points="166.5,-0.5 166.5,-189.5 290.5,-189.5 290.5,-0.5 166.5,-0.5"/>
+<text text-anchor="start" x="174.5" y="-177.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
+<text text-anchor="middle" x="228.5" y="-166.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
+<polyline fill="none" stroke="black" points="166.5,-159.5 290.5,-159.5 "/>
+<text text-anchor="start" x="174.5" y="-147.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
+<polyline fill="none" stroke="black" points="166.5,-140.5 290.5,-140.5 "/>
+<text text-anchor="start" x="174.5" y="-128.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="174.5" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="174.5" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
 <text text-anchor="start" x="174.5" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="174.5" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="174.5" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="174.5" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="174.5" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="174.5" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
-<text text-anchor="start" x="174.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 22 more...</text>
-<text text-anchor="start" x="174.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
+<text text-anchor="start" x="174.5" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="174.5" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="174.5" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="174.5" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="174.5" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
+<text text-anchor="start" x="174.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
+<text text-anchor="start" x="174.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 20 more...</text>
 <text text-anchor="start" x="174.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 </a>
 </g>
@@ -108,9 +107,9 @@ var sectionId = 'dynsection-1';
 <!-- Node2&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
 <title>Node2&#45;&gt;Node1</title>
-<path fill="none" stroke="#404040" d="M129.78,-248.33C139.46,-233.93 149.56,-218.92 159.44,-204.21"/>
-<polygon fill="none" stroke="#404040" points="159.55,-204.05 159.58,-196.84 166.25,-194.09 166.22,-201.3 159.55,-204.05"/>
-<text text-anchor="middle" x="181.5" y="-222" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
+<path fill="none" stroke="#404040" d="M128.44,-248.31C138.7,-232.7 149.47,-216.3 159.98,-200.29"/>
+<polygon fill="none" stroke="#404040" points="160.26,-199.87 160.21,-192.66 166.85,-189.84 166.9,-197.05 160.26,-199.87"/>
+<text text-anchor="middle" x="186.5" y="-216.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
 </g>
 <!-- Node3 -->
 <g id="node3" class="node">
@@ -161,9 +160,10 @@ var sectionId = 'dynsection-1';
 <!-- Node4&#45;&gt;Node1 -->
 <g id="edge3" class="edge">
 <title>Node4&#45;&gt;Node1</title>
-<path fill="none" stroke="#404040" d="M228.5,-297.96C228.5,-274.56 228.5,-243.4 228.5,-212.8"/>
-<polygon fill="none" stroke="#404040" points="228.5,-212.66 224.5,-206.66 228.5,-200.66 232.5,-206.66 228.5,-212.66"/>
-<text text-anchor="middle" x="249.5" y="-222" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
+<path fill="none" stroke="#404040" d="M228.5,-297.86C228.5,-271.73 228.5,-235.86 228.5,-201.61"/>
+<polygon fill="none" stroke="#404040" points="228.5,-201.58 224.5,-195.58 228.5,-189.58 232.5,-195.58 228.5,-201.58"/>
+<text text-anchor="middle" x="253" y="-222" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
+<text text-anchor="middle" x="253" y="-211" font-family="Helvetica,sans-Serif" font-size="10.00">#removed_</text>
 </g>
 <!-- Node5 -->
 <g id="node5" class="node">
@@ -351,9 +351,9 @@ var sectionId = 'dynsection-1';
 <!-- Node10&#45;&gt;Node1 -->
 <g id="edge10" class="edge">
 <title>Node10&#45;&gt;Node1</title>
-<path fill="none" stroke="#404040" d="M365.92,-303.33C348.04,-277.08 322.09,-238.96 297.54,-202.9"/>
-<polygon fill="none" stroke="#404040" points="297.41,-202.71 290.73,-200 290.66,-192.79 297.34,-195.5 297.41,-202.71"/>
-<text text-anchor="middle" x="328" y="-222" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
+<path fill="none" stroke="#404040" d="M366.42,-303.31C348.52,-276.4 322.27,-236.94 297.46,-199.66"/>
+<polygon fill="none" stroke="#404040" points="297.16,-199.2 290.51,-196.42 290.51,-189.21 297.17,-191.99 297.16,-199.2"/>
+<text text-anchor="middle" x="328" y="-216.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
 </g>
 <!-- Node11 -->
 <g id="node11" class="node">
@@ -369,16 +369,16 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="671" y="-621.5" font-family="Helvetica,sans-Serif" font-size="10.00"># dirty</text>
 <polyline fill="none" stroke="black" points="663,-614.5 788,-614.5 "/>
 <text text-anchor="start" x="671" y="-602.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
-<text text-anchor="start" x="671" y="-591.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
-<text text-anchor="start" x="671" y="-580.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockIndex()</text>
-<text text-anchor="start" x="671" y="-569.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
-<text text-anchor="start" x="671" y="-558.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="671" y="-547.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isDeleted()</text>
-<text text-anchor="start" x="671" y="-536.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ restore()</text>
-<text text-anchor="start" x="671" y="-525.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ deleteTemporarily()</text>
-<text text-anchor="start" x="671" y="-514.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mergeFrom()</text>
-<text text-anchor="start" x="671" y="-503.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toStoredBlockIndex()</text>
-<text text-anchor="start" x="671" y="-492.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 39 more...</text>
+<text text-anchor="start" x="671" y="-591.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockIndex()</text>
+<text text-anchor="start" x="671" y="-580.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
+<text text-anchor="start" x="671" y="-569.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="671" y="-558.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mergeFrom()</text>
+<text text-anchor="start" x="671" y="-547.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toStoredBlockIndex()</text>
+<text text-anchor="start" x="671" y="-536.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isConnected()</text>
+<text text-anchor="start" x="671" y="-525.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getStatus()</text>
+<text text-anchor="start" x="671" y="-514.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ setStatus()</text>
+<text text-anchor="start" x="671" y="-503.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getValidityLevel()</text>
+<text text-anchor="start" x="671" y="-492.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 35 more...</text>
 </a>
 </g>
 </g>
