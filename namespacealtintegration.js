@@ -188,7 +188,8 @@ var namespacealtintegration =
       [ "BLOCK_FAILED_CHILD", "namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47", null ],
       [ "BLOCK_FAILED_MASK", "namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c", null ],
       [ "BLOCK_HAS_PAYLOADS", "namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa7bb342c7692f443125121dc05d2b4ce9", null ],
-      [ "BLOCK_ACTIVE", "namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9", null ]
+      [ "BLOCK_ACTIVE", "namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9", null ],
+      [ "BLOCK_DELETED", "namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa938acc555afeff78eb795df151db9364", null ]
     ] ],
     [ "LogLevel", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61d", [
       [ "debug", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61daad42f6697b035b7580e4fef93be20b4d", null ],
