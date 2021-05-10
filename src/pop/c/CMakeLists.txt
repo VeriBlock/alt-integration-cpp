@@ -28,6 +28,7 @@ set(C_SOURCES
         entities/coin.cpp
         entities/merkle_path.cpp
         entities/block_index.cpp
+        entities/pop_payouts.cpp
         # adaptors
         adaptors/block_provider_impl.cpp
         )

@@ -185,3 +185,15 @@ func TestMerklePath(t *testing.T) {
 	mp.Free()
 	mp.Free()
 }
+
+func TestPopPayout(t *testing.T) {
+	assert := assert.New(t)
+
+	popPayout := generateDefaultPopPayout()
+
+	assert.Equal(popPayout.GetPayoutInfo(), []byte{1, 2, 3, 4})
+	assert.Equal(popPayout.GetAmount(), uint64(300))
+
+	popPayout.Free()
+	popPayout.Free()
+}
