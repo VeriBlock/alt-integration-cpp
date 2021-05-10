@@ -49,6 +49,28 @@ func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 	return state.Error()
 }
 
+func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	if popData.ref == nil {
+		panic("PopData does not initialized")
+	}
+
+	C.pop_pop_context_function_accept_block(v.ref, createCBytes(hash), popData.ref)
+}
+
+func (v *PopContext2) SetState(hash []byte) error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_set_state(v.ref, createCBytes(hash), state.ref)
+	return state.Error()
+}
+
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")

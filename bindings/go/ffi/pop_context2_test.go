@@ -24,7 +24,7 @@ func TestPopContext2Free(t *testing.T) {
 	context.Free()
 }
 
-func TestPopContext2AltBlockTreeAcceptBlockHeader(t *testing.T) {
+func TestPopContext2BlockPrecessing(t *testing.T) {
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -34,9 +34,46 @@ func TestPopContext2AltBlockTreeAcceptBlockHeader(t *testing.T) {
 	context := generateTestPopContext(t, storage)
 	defer context.Free()
 
-	alt := generateDefaultAltBlock()
-	defer alt.Free()
+	// generate new block
+	newBlock := generateNextAltBlock(context.AltGetBootstrapBlock().GetHeader())
 
-	err = context.AcceptBlockHeader(alt)
+	err = context.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
+
+	miner := NewMockMiner2()
+	defer miner.Free()
+
+	vbk := miner.MineVbkBlockTip()
+
+	res, err := context.MemPoolSubmitVbk(vbk)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	vtb := miner.MineVtb(vbk, context.BtcGetBestBlock().GetHeader())
+
+	res, err = context.MemPoolSubmitVtb(vtb)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := generateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(newBlock.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	res, err = context.MemPoolSubmitAtv(atv)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	popData = context.MemPoolGeneratePopData()
+	assert.NotNil(popData)
+
+	context.AcceptBlock(newBlock.GetHash(), popData)
+
+	err = context.SetState(newBlock.GetHash())
 	assert.NoError(err)
 }
