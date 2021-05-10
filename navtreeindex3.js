@@ -1,6 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"namespacealtintegration.html#ae9b38e2e0cf6684c8ecacb3365271045":[3,0,0,358],
 "namespacealtintegration.html#ae9feab182693629cdaae37644d546da4":[3,0,0,244],
 "namespacealtintegration.html#aea29607876eddcbab5f44f2d5b17e04d":[3,0,0,214],
 "namespacealtintegration.html#aea6d857ba3c337f05199c53b81ee4053":[3,0,0,377],
@@ -249,5 +248,6 @@ var NAVTREEINDEX3 =
 "structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d":[4,0,0,6,12],
 "structaltintegration_1_1AltChainParams.html#ac024008469dc4d2b96c9926f7c2603a8":[4,0,0,6,22],
 "structaltintegration_1_1AltChainParams.html#ac830ec898b26a093da4f0902de94d697":[4,0,0,6,18],
-"structaltintegration_1_1AltChainParams.html#acc5cdebc50142e23d7d4f539d630be53":[4,0,0,6,29]
+"structaltintegration_1_1AltChainParams.html#acc5cdebc50142e23d7d4f539d630be53":[4,0,0,6,29],
+"structaltintegration_1_1AltChainParams.html#adeadf36cdbd2e7e3713064bbb56b42cc":[4,0,0,6,3]
 };
