@@ -8,6 +8,8 @@
 #include "config2.hpp"
 #include "entities/altblock.hpp"
 #include "entities/block_index.hpp"
+#include "entities/pop_payouts.hpp"
+#include "entities/popdata.hpp"
 #include "pop_context2.hpp"
 #include "storage2.hpp"
 #include "validation_state2.hpp"
@@ -56,6 +58,55 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(state);
 
   return self->ref->getAltBlockTree().acceptBlockHeader(block->ref, state->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           accept_block,
+                           POP_ARRAY_NAME(u8) hash,
+                           const POP_ENTITY_NAME(pop_data) * pop_data) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+  VBK_ASSERT(pop_data);
+
+  self->ref->getAltBlockTree().acceptBlock(
+      std::vector<uint8_t>(hash.data, hash.data + hash.size), pop_data->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           set_state,
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+  VBK_ASSERT(state);
+
+  return self->ref->getAltBlockTree().setState(
+      std::vector<uint8_t>(hash.data, hash.data + hash.size), state->ref);
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(pop_payout),
+                           get_pop_payouts,
+                           POP_ARRAY_NAME(u8) hash) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+
+  auto payouts = self->ref->getPopPayout(
+      std::vector<uint8_t>(hash.data, hash.data + hash.size));
+
+  POP_ARRAY_NAME(pop_payout) res;
+  res.size = payouts.size();
+  res.data = new POP_ENTITY_NAME(pop_payout)*[payouts.size()];
+  size_t i = 0;
+  for (auto& el : payouts) {
+    res.data[i] = new POP_ENTITY_NAME(pop_payout);
+    res.data[i]->payout_info = el.first;
+    res.data[i]->amount = el.second;
+  }
+
+  return res;
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,

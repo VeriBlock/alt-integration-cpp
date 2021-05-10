@@ -12,6 +12,7 @@
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/block_index.h"
 #include "veriblock/pop/c/entities/pop_payouts.h"
+#include "veriblock/pop/c/entities/popdata.h"
 #include "veriblock/pop/c/storage2.h"
 #include "veriblock/pop/c/type_helpers.h"
 #include "veriblock/pop/c/validation_state2.h"
@@ -41,6 +42,40 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            bool,
                            accept_block_header,
                            const POP_ENTITY_NAME(alt_block) * block,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * @copybrief altintegration::AltBlockTree::acceptBlock
+ * @see altintegration::AltBlockTree::acceptBlock
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @param[in] pop_data POP_ENTITY_NAME(pop_data) pointer to the
+ * altintegration::PopData
+ *
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           accept_block,
+                           POP_ARRAY_NAME(u8) hash,
+                           const POP_ENTITY_NAME(pop_data) * pop_data);
+
+/**
+ * @copybrief altintegration::AltBlockTree::setState
+ * @see altintegration::AltBlockTree::setState
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return `false` if intermediate or target block is invalid. In this case
+ * tree will rollback into original state. `true` if state change is
+ * successful.
+ * @invariant atomic - either switches to new state, or does nothing.
+ * @warning Expensive operation.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           set_state,
+                           POP_ARRAY_NAME(u8) hash,
                            POP_ENTITY_NAME(validation_state) * state);
 
 /**
