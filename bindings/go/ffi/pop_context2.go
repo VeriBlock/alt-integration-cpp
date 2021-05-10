@@ -89,25 +89,38 @@ func (v *PopContext2) GetPopPayouts(hash []byte) []*PopPayout {
 	return createArrayPopPayout(&array)
 }
 
+func (v *PopContext2) RemoveSubtree(hash []byte) {
+	C.pop_pop_context_function_remove_subtree(v.ref, createCBytes(hash))
+}
+
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-	return createAltBlockIndex(C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash)))
+	if res := C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash)); res != nil {
+		createAltBlockIndex(res)
+	}
+	return nil
 }
 
 func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash)))
+	if res := C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash)); res != nil {
+		createVbkBlockIndex(res)
+	}
+	return nil
 }
 
 func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash)))
+	if res := C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash)); res != nil {
+		createBtcBlockIndex(res)
+	}
+	return nil
 }
 
 func (v *PopContext2) AltGetBestBlock() *AltBlockIndex {
@@ -156,19 +169,28 @@ func (v *PopContext2) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockI
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-	return createAltBlockIndex(C.pop_pop_context_function_alt_get_block_at_active_chain(v.ref, C.uint32_t(height)))
+	if res := C.pop_pop_context_function_alt_get_block_at_active_chain(v.ref, C.uint32_t(height)); res != nil {
+		createAltBlockIndex(res)
+	}
+	return nil
 }
 
 func (v *PopContext2) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_block_at_active_chain(v.ref, C.uint32_t(height)))
+	if res := C.pop_pop_context_function_vbk_get_block_at_active_chain(v.ref, C.uint32_t(height)); res != nil {
+		createVbkBlockIndex(res)
+	}
+	return nil
 }
 
 func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_block_at_active_chain(v.ref, C.uint32_t(height)))
+	if res := C.pop_pop_context_function_btc_get_block_at_active_chain(v.ref, C.uint32_t(height)); res != nil {
+		createBtcBlockIndex(res)
+	}
+	return nil
 }

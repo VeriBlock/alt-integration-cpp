@@ -76,4 +76,14 @@ func TestPopContext2BlockPrecessing(t *testing.T) {
 
 	err = context.SetState(newBlock.GetHash())
 	assert.NoError(err)
+
+	index := context.AltGetBestBlock()
+	assert.NotNil(index)
+
+	assert.Equal(index.GetHeader().GetHash(), newBlock.GetHash())
+
+	context.RemoveSubtree(newBlock.GetHash())
+
+	index = context.AltGetBlockIndex(newBlock.GetHash())
+	assert.Nil(index)
 }

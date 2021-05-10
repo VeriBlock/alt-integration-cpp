@@ -116,6 +116,18 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(u8) hash);
 
 /**
+ * @copybrief altintegration::AltBlockTree::removeSubtree
+ * @see altintegration::AltBlockTree::removeSubtree
+ * @param[in] self PopContext
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @warning fails on assert if block can not be found in this tree.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           remove_subtree,
+                           POP_ARRAY_NAME(u8) hash);
+
+/**
  * Find a AltBlock index from the AltTree
  *
  * @param[in] self PopContext

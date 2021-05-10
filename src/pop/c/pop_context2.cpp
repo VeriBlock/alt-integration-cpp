@@ -126,6 +126,17 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           remove_subtree,
+                           POP_ARRAY_NAME(u8) hash) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash.data);
+
+  self->ref->getAltBlockTree().removeSubtree(
+      std::vector<uint8_t>(hash.data, hash.data + hash.size));
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(alt_block_index) *,
                            alt_get_block_index,
                            POP_ARRAY_NAME(u8) hash) {
