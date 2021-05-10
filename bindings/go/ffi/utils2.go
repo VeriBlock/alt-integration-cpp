@@ -39,6 +39,28 @@ func (v *PopContext2) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash [
 	return createBytes(&res)
 }
 
+func (v *PopContext2) SaveAllTrees() error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_save_all_trees(v.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext2) LoadAllTrees() error {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	state := NewValidationState2()
+	defer state.Free()
+
+	C.pop_pop_context_function_load_all_trees(v.ref, state.ref)
+	return state.Error()
+}
+
 func (v *PopContext2) CheckAtv(atv *Atv) error {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
@@ -46,7 +68,6 @@ func (v *PopContext2) CheckAtv(atv *Atv) error {
 	if atv.ref == nil {
 		panic("Atv does not initialized")
 	}
-
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -61,7 +82,6 @@ func (v *PopContext2) CheckVtb(vtb *Vtb) error {
 	if vtb.ref == nil {
 		panic("Vtb does not initialized")
 	}
-
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -76,7 +96,6 @@ func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
 	if vbkBlock.ref == nil {
 		panic("VbkBlock does not initialized")
 	}
-
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -91,7 +110,6 @@ func (v *PopContext2) CheckPopData(popData *PopData) error {
 	if popData.ref == nil {
 		panic("PopData does not initialized")
 	}
-
 	state := NewValidationState2()
 	defer state.Free()
 

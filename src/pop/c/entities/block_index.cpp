@@ -90,6 +90,25 @@ POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, status) {
   return self->ref.getStatus();
 }
 
+//! get_height
+POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, height) {
+  VBK_ASSERT(self);
+
+  return self->ref.getHeight();
+}
+
+POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, height) {
+  VBK_ASSERT(self);
+
+  return self->ref.getHeight();
+}
+
+POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, height) {
+  VBK_ASSERT(self);
+
+  return self->ref.getHeight();
+}
+
 //! toJSON
 POP_ENTITY_TO_JSON(alt_block_index) {
   VBK_ASSERT(self);

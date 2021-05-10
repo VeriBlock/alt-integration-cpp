@@ -91,6 +91,27 @@ func (v *BtcBlockIndex) GetHeader() *BtcBlock {
 	return createBtcBlock(C.pop_btc_block_index_get_header(v.ref))
 }
 
+func (v *AltBlockIndex) GetHeight() uint32 {
+	if v.ref == nil {
+		panic("AltBlockIndex does not initialized")
+	}
+	return uint32(C.pop_alt_block_index_get_height(v.ref))
+}
+
+func (v *VbkBlockIndex) GetHeight() uint32 {
+	if v.ref == nil {
+		panic("VbkBlockIndex does not initialized")
+	}
+	return uint32(C.pop_vbk_block_index_get_height(v.ref))
+}
+
+func (v *BtcBlockIndex) GetHeight() uint32 {
+	if v.ref == nil {
+		panic("BtcBlockIndex does not initialized")
+	}
+	return uint32(C.pop_btc_block_index_get_height(v.ref))
+}
+
 func (v *AltBlockIndex) GetStatus() uint32 {
 	if v.ref == nil {
 		panic("AltBlockIndex does not initialized")
