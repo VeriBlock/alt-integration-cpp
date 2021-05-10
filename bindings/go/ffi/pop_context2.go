@@ -71,6 +71,24 @@ func (v *PopContext2) SetState(hash []byte) error {
 	return state.Error()
 }
 
+func (v *PopContext2) ComparePopScore(A_hash []byte, B_hash []byte) int {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+
+	return int(C.pop_pop_context_function_compare_pop_score(v.ref, createCBytes(A_hash), createCBytes(B_hash)))
+}
+
+func (v *PopContext2) GetPopPayouts(hash []byte) []*PopPayout {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+
+	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash))
+	defer freeArrayPopPayout(&array)
+	return createArrayPopPayout(&array)
+}
+
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 	if v.ref == nil {
 		panic("PopContext does not initialized")

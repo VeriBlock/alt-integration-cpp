@@ -26,6 +26,18 @@ func createPopPayout(ref *C.pop_pop_payout_t) *PopPayout {
 	return val
 }
 
+func freeArrayPopPayout(array *C.pop_array_pop_payout_t) {
+	C.pop_array_pop_payout_free(array)
+}
+
+func createArrayPopPayout(array *C.pop_array_pop_payout_t) []*PopPayout {
+	res := make([]*PopPayout, array.size, array.size)
+	for i := 0; i < len(res); i++ {
+		res[i] = createPopPayout(C.pop_array_pop_payout_at(array, C.size_t(i)))
+	}
+	return res
+}
+
 func (v *PopPayout) Free() {
 	if v.ref != nil {
 		C.pop_pop_payout_free(v.ref)

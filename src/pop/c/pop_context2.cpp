@@ -87,6 +87,22 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           compare_pop_score,
+                           POP_ARRAY_NAME(u8) A_block_hash,
+                           POP_ARRAY_NAME(u8) B_block_hash) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(A_block_hash.data);
+  VBK_ASSERT(B_block_hash.data);
+
+  return self->ref->getAltBlockTree().comparePopScore(
+      std::vector<uint8_t>(A_block_hash.data,
+                           A_block_hash.data + A_block_hash.size),
+      std::vector<uint8_t>(B_block_hash.data,
+                           B_block_hash.data + B_block_hash.size));
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(pop_payout),
                            get_pop_payouts,
                            POP_ARRAY_NAME(u8) hash) {
