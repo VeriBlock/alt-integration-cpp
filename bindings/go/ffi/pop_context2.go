@@ -56,7 +56,6 @@ func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
 	if popData.ref == nil {
 		panic("PopData does not initialized")
 	}
-
 	C.pop_pop_context_function_accept_block(v.ref, createCBytes(hash), popData.ref)
 }
 
@@ -75,7 +74,6 @@ func (v *PopContext2) ComparePopScore(A_hash []byte, B_hash []byte) int {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-
 	return int(C.pop_pop_context_function_compare_pop_score(v.ref, createCBytes(A_hash), createCBytes(B_hash)))
 }
 
@@ -83,13 +81,15 @@ func (v *PopContext2) GetPopPayouts(hash []byte) []*PopPayout {
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
-
 	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash))
 	defer freeArrayPopPayout(&array)
 	return createArrayPopPayout(&array)
 }
 
 func (v *PopContext2) RemoveSubtree(hash []byte) {
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
 	C.pop_pop_context_function_remove_subtree(v.ref, createCBytes(hash))
 }
 
