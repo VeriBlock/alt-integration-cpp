@@ -1,7 +1,7 @@
 var integration =
 [
-    [ "Integrate POP into BTC fork", "integration.html#autotoc_md90", null ],
-    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md91", null ],
+    [ "Integrate POP into BTC fork", "integration.html#autotoc_md88", null ],
+    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md89", null ],
     [ "Modifying build setup", "integration_1_build.html", [
       [ "Overview", "integration_1_build.html#autotoc_md25", null ],
       [ "1. Build and install veriblock-pop-cpp library.", "integration_1_build.html#autotoc_md26", null ],
@@ -108,10 +108,8 @@ var integration =
     ] ],
     [ "Testing of POP-enabled BTC fork", "btctesting.html", [
       [ "Summary", "btctesting.html#autotoc_md84", null ],
-      [ "Overview", "btctesting.html#autotoc_md85", null ],
-      [ "Unit tests", "btctesting.html#autotoc_md86", null ],
-      [ "BTC functional tests", "btctesting.html#autotoc_md87", null ],
-      [ "POP functional tests", "btctesting.html#autotoc_md88", null ],
-      [ "View APM get-operation", "btctesting.html#autotoc_md89", null ]
+      [ "BTC functional tests", "btctesting.html#autotoc_md85", null ],
+      [ "POP functional tests", "btctesting.html#autotoc_md86", null ],
+      [ "View APM get-operation", "btctesting.html#autotoc_md87", null ]
     ] ]
 ];
