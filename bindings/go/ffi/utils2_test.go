@@ -7,6 +7,7 @@ package ffi
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -109,4 +110,82 @@ func TestCheckAll(t *testing.T) {
 
 	err = context.CheckPopData(generateDefaultPopData())
 	assert.Error(err)
+}
+
+func TestSaveLoadAllTrees(t *testing.T) {
+	assert := assert.New(t)
+
+	defer os.RemoveAll("/tmp/alt-integration")
+
+	storage, err := NewStorage2("/tmp/alt-integration")
+	defer storage.Free()
+
+	assert.NoError(err)
+
+	context := generateTestPopContext(t, storage)
+
+	// generate new block
+	newBlock := generateNextAltBlock(context.AltGetBootstrapBlock().GetHeader())
+
+	err = context.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
+
+	miner := NewMockMiner2()
+	defer miner.Free()
+
+	vbk := miner.MineVbkBlockTip()
+
+	res, err := context.MemPoolSubmitVbk(vbk)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	vtb := miner.MineVtb(vbk, context.BtcGetBestBlock().GetHeader())
+
+	res, err = context.MemPoolSubmitVtb(vtb)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := generateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(newBlock.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	res, err = context.MemPoolSubmitAtv(atv)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	popData = context.MemPoolGeneratePopData()
+	assert.NotNil(popData)
+
+	context.AcceptBlock(newBlock.GetHash(), popData)
+
+	err = context.SetState(newBlock.GetHash())
+	assert.NoError(err)
+
+	alt_saved_height := context.AltGetBestBlock().GetHeight()
+	vbk_saved_height := context.VbkGetBestBlock().GetHeight()
+	btc_saved_height := context.BtcGetBestBlock().GetHeight()
+
+	err = context.SaveAllTrees()
+	assert.NoError(err)
+
+	context.Free()
+	context = generateTestPopContext(t, storage)
+	defer context.Free()
+
+	assert.NotEqual(alt_saved_height, context.AltGetBestBlock().GetHeight())
+	assert.NotEqual(vbk_saved_height, context.VbkGetBestBlock().GetHeight())
+	assert.NotEqual(btc_saved_height, context.BtcGetBestBlock().GetHeight())
+
+	err = context.LoadAllTrees()
+	assert.NoError(err)
+
+	assert.Equal(alt_saved_height, context.AltGetBestBlock().GetHeight())
+	assert.Equal(vbk_saved_height, context.VbkGetBestBlock().GetHeight())
+	assert.Equal(btc_saved_height, context.BtcGetBestBlock().GetHeight())
 }
