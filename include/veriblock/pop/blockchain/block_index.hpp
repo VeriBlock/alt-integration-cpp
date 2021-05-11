@@ -45,20 +45,23 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) if true, this block can not be reorganized
   bool finalized = false;
 
-  BlockIndex(BlockIndex* prev) {
-    if (prev != nullptr) {
-      pprev = prev;
-      prev->pnext.insert(this);
-      height = prev->getHeight() + 1;
-    } else {
-      height = 0;
-    }
+  //! create a regular block in a deleted state
+  BlockIndex(BlockIndex* prev) : pprev(prev) {
+    // FIXME: prev should be a reference
+    VBK_ASSERT(prev != nullptr);
+
+    height = prev->getHeight() + 1;
+
+    // TODO: what dirtiness should it have here?
   }
+
+  //! create a bootstrap block in a deleted state
+  explicit BlockIndex(height_t _height) : pprev(nullptr), height(_height) {}
 
   ~BlockIndex() {
     // make sure we deleted this block from prev->pnext
-    if (pprev != nullptr) {
-      pprev->pnext.erase(this);
+    if (!isDeleted()) {
+      deleteTemporarily();
     }
 
     // disconnect from next blocks so that next blocks won't have invalid
@@ -72,6 +75,42 @@ struct BlockIndex : public Block::addon_t {
   // BlockIndex is movable
   BlockIndex(BlockIndex&& other) = default;
   BlockIndex& operator=(BlockIndex&& other) = default;
+
+  bool isDeleted() const { return hasFlags(BLOCK_DELETED); };
+
+  void restore() {
+    VBK_ASSERT_MSG(isDeleted(),
+                   "tried to restore block %s that is not deleted",
+                   toPrettyString());
+
+    if (pprev != nullptr) {
+      pprev->pnext.insert(this);
+
+      if (!pprev->isValid()) {
+        setFlag(BLOCK_FAILED_CHILD);
+      }
+    }
+
+    // unsetFlag runs setDirty() for us
+    unsetFlag(BLOCK_DELETED);
+  }
+
+  void deleteTemporarily() {
+    VBK_ASSERT_MSG(!isDeleted(),
+                   "tried to delete block %s that is already deleted",
+                   toPrettyString());
+
+    if (pprev != nullptr) {
+      pprev->pnext.erase(this);
+    }
+
+    // FIXME: this is a hack that might eventually bite us
+    addon_t::setNull();
+
+    this->status = BLOCK_VALID_UNKNOWN | BLOCK_DELETED;
+    // make it dirty by default
+    setDirty();
+  }
 
   // loads on-disk fields from 'other' block index.
   // works like (explicit) copy constructor
@@ -341,6 +380,16 @@ struct BlockIndex : public Block::addon_t {
     return stream.data();
   }
 
+  friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
+    return a.getStatus() == b.getStatus() && a.getHeight() == b.getHeight() &&
+           a.getHeader() == b.getHeader();
+  }
+
+  friend bool operator!=(const BlockIndex& a, const BlockIndex& b) {
+    return a.getStatus() != b.getStatus() && a.getHeight() != b.getHeight() &&
+           a.getHeader() != b.getHeader();
+  }
+
  protected:
   //! height of the entry in the chain
   height_t height = 0;
@@ -349,7 +398,7 @@ struct BlockIndex : public Block::addon_t {
   std::shared_ptr<block_t> header = std::make_shared<block_t>();
 
   //! contains status flags
-  uint32_t status = BLOCK_VALID_UNKNOWN;
+  uint32_t status = BLOCK_VALID_UNKNOWN | BLOCK_DELETED;
 
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;

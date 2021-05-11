@@ -119,7 +119,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
                         pad,
                         Block::name(),
-                        base::blocks_.size(),
+                        base::getBlocks().size(),
                         base::toPrettyString(level + 2),
                         pad);
   }
