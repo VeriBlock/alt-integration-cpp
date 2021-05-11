@@ -28,6 +28,8 @@ func addressFromString(src string) Address {
 }
 
 func TestAddressDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(AddressBytes)
@@ -41,6 +43,8 @@ func TestAddressDeserialize(t *testing.T) {
 }
 
 func TestAddressSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	address := addressFromString(AddressValue)
@@ -50,6 +54,8 @@ func TestAddressSerialize(t *testing.T) {
 }
 
 func TestAddressRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(AddressBytes)
@@ -63,6 +69,8 @@ func TestAddressRoundTrip(t *testing.T) {
 }
 
 func TestAddressValidStandard(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	addressString := "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d"
@@ -72,6 +80,8 @@ func TestAddressValidStandard(t *testing.T) {
 }
 
 func TestAddressValidMultisig(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	addressString := "V23Cuyc34u5rdk9psJ86aFcwhB1md0"
@@ -81,6 +91,8 @@ func TestAddressValidMultisig(t *testing.T) {
 }
 
 func TestAddressDerivedFromPublicKey(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	publicKey := parseHex("3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002f6c86952be4823a4c08e65e4cdbeb904a8b95763aa")
@@ -90,6 +102,8 @@ func TestAddressDerivedFromPublicKey(t *testing.T) {
 }
 
 func TestAddressNotDerivedFromPublicKey(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	publicKey := parseHex("3056301006072a8648ce3d020106052b8104000a03420004cb427e41a0114874080a4b1e2ab7920e22cd2d188c87140defa447ee5fc44bb848e1c0db5ef206de2e7002f6c86952be4823a4c08e65e4cdbeb904a8b95763aa")
@@ -99,6 +113,8 @@ func TestAddressNotDerivedFromPublicKey(t *testing.T) {
 }
 
 func TestAddressParseStandard(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	addressString := "VFFDWUMLJwLRuNzH4NX8Rm32E59n6d"
@@ -115,6 +131,8 @@ func TestAddressParseStandard(t *testing.T) {
 }
 
 func TestAddressParseMultisig(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	addressString := "V23Cuyc34u5rdk9psJ86aFcwhB1md0"

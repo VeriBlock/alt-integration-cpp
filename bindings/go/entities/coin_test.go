@@ -13,6 +13,8 @@ import (
 )
 
 func TestCoinRound(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	coin := Coin{1}

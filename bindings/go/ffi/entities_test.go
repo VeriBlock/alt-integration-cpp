@@ -12,6 +12,8 @@ import (
 )
 
 func TestBtcBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	btc_block := generateDefaultBtcBlock()
@@ -32,6 +34,8 @@ func TestBtcBlock(t *testing.T) {
 }
 
 func TestVbkBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vbk_block := generateDefaultVbkBlock()
@@ -53,6 +57,8 @@ func TestVbkBlock(t *testing.T) {
 }
 
 func TestAltBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	alt_block := generateDefaultAltBlock()
@@ -67,6 +73,8 @@ func TestAltBlock(t *testing.T) {
 }
 
 func TestVtb(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vtb := generateDefaultVtb()
@@ -79,6 +87,8 @@ func TestVtb(t *testing.T) {
 }
 
 func TestAtv(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	atv := generateDefaultAtv()
@@ -91,6 +101,8 @@ func TestAtv(t *testing.T) {
 }
 
 func TestPopData(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	pop_data := generateDefaultPopData()
@@ -120,6 +132,8 @@ func TestPopData(t *testing.T) {
 }
 
 func TestNetworkBytePair(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	nbp := generateDefaultNetworkBytePair()
@@ -133,6 +147,8 @@ func TestNetworkBytePair(t *testing.T) {
 }
 
 func TestAddress(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	addr := generateDefaultAddress()
@@ -145,6 +161,8 @@ func TestAddress(t *testing.T) {
 }
 
 func TestBtcTx(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	btctx := generateDefaultBtcTx()
@@ -156,6 +174,8 @@ func TestBtcTx(t *testing.T) {
 }
 
 func TestCoin(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	coin := generateDefaultCoin()
@@ -167,6 +187,8 @@ func TestCoin(t *testing.T) {
 }
 
 func TestMerklePath(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mp := generateDefaultMerklePath()

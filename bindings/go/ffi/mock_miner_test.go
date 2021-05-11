@@ -8,6 +8,8 @@ package ffi
 import "testing"
 
 func TestMockMinerFree(t *testing.T) {
+	t.Parallel()
+
 	miner := NewMockMiner()
 	miner.Free()
 	miner.Free()

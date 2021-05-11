@@ -51,6 +51,8 @@ func parse16Bytes(src string) [16]byte {
 }
 
 func TestVbkBlockDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vbkblock := parseHex(defaultVbkBlockEncoded)
@@ -70,6 +72,8 @@ func TestVbkBlockDeserialize(t *testing.T) {
 }
 
 func TestVbkBlockSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -79,6 +83,8 @@ func TestVbkBlockSerialize(t *testing.T) {
 }
 
 func TestVbkBlockRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded, err := hex.DecodeString(defaultVbkBlockEncoded)
@@ -94,6 +100,8 @@ func TestVbkBlockRoundTrip(t *testing.T) {
 }
 
 func TestVbkBlockGetBlockHash(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	block := VbkBlock{}
@@ -112,6 +120,8 @@ func TestVbkBlockGetBlockHash(t *testing.T) {
 }
 
 func TestVbkBlockGetID(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	atvBytes, err := hex.DecodeString(defaultVbkBlockEncoded)
@@ -124,6 +134,8 @@ func TestVbkBlockGetID(t *testing.T) {
 }
 
 func TestVbkToJSON(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	defaultJSON := `{"difficulty":16842752,"hash":"2ba076219b4ff7ed36512275cd97599e23096ad42f119b5a","height":5000,"id":"cd97599e23096ad42f119b5a","merkleRoot":"26bbfda7d5e4462ef24ae02d67e47d78","nonce":1,"previousBlock":"449c60619294546ad825af03","previousKeystone":"b0935637860679ddd5","secondPreviousKeystone":"5ee4fd21082e18686e","timestamp":1553699059,"version":2}`

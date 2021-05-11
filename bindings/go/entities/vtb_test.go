@@ -44,6 +44,8 @@ var (
 )
 
 func TestVtbDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vtbBytes := parseHex(defaultVtbEncoded)
@@ -56,6 +58,8 @@ func TestVtbDeserialize(t *testing.T) {
 }
 
 func TestVtbSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -65,6 +69,8 @@ func TestVtbSerialize(t *testing.T) {
 }
 
 func TestVtbRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vtbBytes := parseHex(defaultVtbEncoded)
@@ -80,6 +86,8 @@ func TestVtbRoundTrip(t *testing.T) {
 }
 
 func TestVtbGetID(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vtbBytes := parseHex(defaultVtbEncoded)
@@ -92,6 +100,8 @@ func TestVtbGetID(t *testing.T) {
 }
 
 func TestVtbToJSON(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	defaultJSON := `{"containingBlock":{"difficulty":117576138,"hash":"9314b8e3d4ae11db85f006720f04294253c9f603e3ab6512","height":4976,"id":"0f04294253c9f603e3ab6512","merkleRoot":"b53c1f4e259e6a0df23721a0b3b4b7ab","nonce":1099245043457,"previousBlock":"449c60619294546ad825af03","previousKeystone":"b0935637860679ddd5","secondPreviousKeystone":"5ee4fd21082e18686e","timestamp":1553699345,"version":2},"id":"32dd01ab6285a92318e374fcdbd6b023c1ae1268150ce3484961870b8beb71fc","merklePath":{"index":13,"layers":["5b977ea09a554ad56957f662284044e7d37450ddadf7db3647712f5969399787","20d0a3d873eeeee6a222a75316dce60b53ca43eaea09d27f0ece897303a53ae9","c06fe913dca5dc2736563b80834d69e6dfdf1b1e92383ea62791e410421b6c11","049f68d350eeb8b3df630c8308b5c8c2ba4cd6210868395b084af84d19ff0e90","0000000000000000000000000000000000000000000000000000000000000000","36252dfc621de420fb083ad9d8767cba627eddeec64e421e9576cee21297dd0a"],"subject":"2a014e88ed7ab65cdfaa85daeab07eea6cba5e147f736edd8d02c2f9ddf0dec6","treeIndex":0},"transaction":{"address":"VE6MJFzmGdYdrxC8o6UCovVv7BdhdX","bitcoinTransaction":"01000000010ce74f1fb694a001eebb1d7d08ce6208033f5bf7263ebad2de07bbf518672732000000006a47304402200cf4998aba1682abeb777e762807a9dd2635a0b77773f66491b83ee3c87099ba022033b7ca24dc520915b8b0200cbdcf95ba6ae866354585af9c53ee86f27362ebec012103e5baf0709c395a82ef0bd63bc8847564ac201d69a8e6bf448d87aa53a1c431aaffffffff02b7270d00000000001976a9148b9ea8545059f3a922457afd14ddf3855d8b109988ac0000000000000000536a4c50000013350002a793c872d6f6460e90bed62342bb968195f8c515d3eed7277a09efac4be99f95f0a15628b06ba3b44c0190b5c0495c9b8acd0701c5235ebbbe9cd4e943efe1864df04216615cf92083f400000000","blockOfProof":{"bits":388767596,"hash":"08432b58e00c66a96e1a69a063fb9d32b0f66239de7e1a78061f99cba88de7f8","merkleRoot":"ce0b1a9a77dd0db127b5df4bc368cd6ac299a9747d991ec2dacbc0b699a2e4a5","nonce":3225120883,"previousBlock":"134f09d43659eb53982d9afb444b96fa4bb58c037d2914000000000000000000","timestamp":1553699251,"version":549453824},"blockOfProofContext":[{"bits":388767596,"hash":"6170e8d73507ca1fddb4ef10d22f6d43360658c68d35b664a968d5788097d0ed","merkleRoot":"a31508d4b101d0ad11e43ef9419c23fc277f67edae83c598ee70866dbcef5e25","nonce":2943621345,"previousBlock":"fc61cc9d4eac4b2d14761a4d06af8a9ef073dcd7fb5e0d000000000000000000","timestamp":1553697574,"version":545259520},{"bits":388767596,"hash":"c11dcd341d3815fa39d30bc70734b2d4254ce48bb49a8fa2711409bfaa3e957a","merkleRoot":"39a72c22268381bd8d9dcfe002f472634a24cf0454de8b50f89e10891e5ffb1d","nonce":2450139460,"previousBlock":"3f8e3980304439d853c302f6e496285e110e2512515313000000000000000000","timestamp":1553698272,"version":541065216},{"bits":388767596,"hash":"a84f0e968c19379abb479787fc282f85bef51d6863b5ad421adca7770b894853","merkleRoot":"a33ad6be0634647b26633ab85fa8de258480bbb25e59c68e48bb0b608b12362b","nonce":4040279113,"previousBlock":"baa42e40345a7f826a31d37db1a5d64b67b72732477422000000000000000000","timestamp":1553699088,"version":536870912}],"hash":"0000000000000000000000000000000000000000000000000000000000000000","merklePath":{"index":1659,"layers":["4d66077fdf24246ffd6b6979dfedef5d46588654addeb35edb11e993c131f612","023d1abe8758c6f917ec0c65674bbd43d66ee14dc667b3117dfc44690c6f5af1","096ddba03ca952af133fb06307c24171e53bf50ab76f1edeabde5e99f78d4ead","2f32cf1bee50349d56fc1943af84f2d2abda520f64dc4db37b2f3db20b0ecb57","93e70120f1b539d0c1495b368061129f30d35f9e436f32d69967ae86031a2756","f554378a116e2142f9f6315a38b19bd8a1b2e6dc31201f2d37a058f03c39c06c","0824705685ceca003c95140434ee9d8bbbf4474b83fd4ecc2766137db9a44d74","b7b9e52f3ee8ce4fbb8be7d6cf66d33a20293f806c69385136662a74453fb162","1732c9a35e80d4796babea76aace50b49f6079ea3e349f026b4491cfe720ad17","2d9b57e92ab51fe28a587050fd82abb30abd699a5ce8b54e7cd49b2a827bcb99","dcba229acdc6b7f028ba756fd5abbfebd31b4227cd4137d728ec5ea56c457618","2cf1439a6dbcc1a35e96574bddbf2c5db9174af5ad0d278fe92e06e4ac349a42"],"subject":"94e097b110ba3adbb7b6c4c599d31d675de7be6e722407410c08ef352be585f1"},"networkByte":0,"publicKey":"3056301006072a8648ce3d020106052b8104000a03420004b3c10470c8e8e426f1937758d9fb5e97a1891176cb37d4c12d4af4107b1aa3e8a8a754c06a22760e44c60642fba883967c19740d5231336326f7962750c8df99","publishedBlock":{"difficulty":117556515,"hash":"e5fcf4d45317a7de93a03fb12e785abd956fadd2bff6336b","height":4917,"id":"2e785abd956fadd2bff6336b","merkleRoot":"9f95f0a15628b06ba3b44c0190b5c049","nonce":1589362332,"previousBlock":"a793c872d6f6460e90bed623","previousKeystone":"42bb968195f8c515d3","secondPreviousKeystone":"eed7277a09efac4be9","timestamp":1553697485,"version":2},"signature":"3045022100f4dce45edcc6bfc4a1f44ef04e47e90a348efd471f742f18b882ac77a8d0e89e0220617cf7c4a22211991687b17126c1bb007a3b2a25c550f75d66b857a8fd9d75e7","type":2},"version":1}`

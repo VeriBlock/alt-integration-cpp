@@ -12,6 +12,8 @@ import (
 )
 
 func TestValidationState2Free(t *testing.T) {
+	t.Parallel()
+
 	state := NewValidationState2()
 
 	state.Free()
@@ -19,6 +21,8 @@ func TestValidationState2Free(t *testing.T) {
 }
 
 func TestValidationState2Basic(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	state := NewValidationState2()

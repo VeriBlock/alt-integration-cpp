@@ -12,6 +12,8 @@ import (
 )
 
 func TestPopContext2MemPoolSubmitAll(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -75,6 +77,8 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 }
 
 func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")

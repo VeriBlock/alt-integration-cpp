@@ -21,6 +21,8 @@ var (
 )
 
 func TestBtcBlockAddonDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultBtcBlockAddonEncoded)
@@ -34,6 +36,8 @@ func TestBtcBlockAddonDeserialize(t *testing.T) {
 }
 
 func TestBtcBlockAddonSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -43,6 +47,8 @@ func TestBtcBlockAddonSerialize(t *testing.T) {
 }
 
 func TestBtcBlockAddonRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultBtcBlockAddonEncoded)

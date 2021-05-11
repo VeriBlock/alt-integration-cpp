@@ -23,6 +23,8 @@ var (
 )
 
 func TestVbkBlockAddonDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultVbkBlockAddonEncoded)
@@ -36,6 +38,8 @@ func TestVbkBlockAddonDeserialize(t *testing.T) {
 }
 
 func TestVbkBlockAddonSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -45,6 +49,8 @@ func TestVbkBlockAddonSerialize(t *testing.T) {
 }
 
 func TestVbkBlockAddonRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultVbkBlockAddonEncoded)
