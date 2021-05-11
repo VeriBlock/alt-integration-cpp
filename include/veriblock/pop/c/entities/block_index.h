@@ -38,6 +38,11 @@ POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, status);
 POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, status);
 POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, status);
 
+//! get_height
+POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, height);
+POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, height);
+POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, height);
+
 //! toJSON
 POP_ENTITY_TO_JSON(alt_block_index);
 POP_ENTITY_TO_JSON(vbk_block_index);

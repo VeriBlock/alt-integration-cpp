@@ -61,6 +61,32 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            const POP_ENTITY_NAME(pop_data) * pop_data);
 
 /**
+ * Save library`s trees state into the database.
+ *
+ * @param[in] self PopContext.
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return true if successfullty saved, false otherwise.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           save_all_trees,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * Load library`s trees state from the database.
+ *
+ * @param[in] self PopContext.
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
+ * @return true if successfullty loaded, false loaded.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           load_all_trees,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
  * Stateless validation for the altintegration::ATV.
  *
  * @param[in] self PopContext
