@@ -8,6 +8,8 @@ package ffi
 import "testing"
 
 func TestConfig2Free(t *testing.T) {
+	t.Parallel()
+
 	config := NewConfig2()
 
 	config.Free()

@@ -8,6 +8,8 @@ package ffi
 import "testing"
 
 func TestConfigFree(t *testing.T) {
+	t.Parallel()
+
 	config := NewConfig()
 	config.Free()
 	config.Free()
@@ -15,6 +17,8 @@ func TestConfigFree(t *testing.T) {
 
 // TODO fix memory leaks
 // func TestConfig(t *testing.T) {
+//	t.Parallel()
+
 // 	config := NewConfig()
 // 	defer config.Free()
 

@@ -38,6 +38,8 @@ var arraysBase58 = []struct {
 }
 
 func TestDecodeAndEncodeBase58(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 	for _, st := range arraysBase58 {
 		bytes, err := DecodeBase58(st.str)
@@ -82,6 +84,8 @@ func parseHex(src string) []byte {
 }
 
 func TestDecodeAndEncodeBase59(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 	for _, st := range arraysBase59 {
 		bytes, err := DecodeBase59(st.str)

@@ -31,6 +31,8 @@ func parse24Bytes(src string) [24]byte {
 }
 
 func TestAltEndorsementDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultAltEndorsementEncoded)
@@ -47,6 +49,8 @@ func TestAltEndorsementDeserialize(t *testing.T) {
 }
 
 func TestAltEndorsementSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -56,6 +60,8 @@ func TestAltEndorsementSerialize(t *testing.T) {
 }
 
 func TestAltEndorsementRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultAltEndorsementEncoded)

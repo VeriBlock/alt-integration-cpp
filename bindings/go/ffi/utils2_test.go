@@ -14,6 +14,8 @@ import (
 )
 
 func TestGeneratePublicationData(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")
@@ -36,6 +38,8 @@ func TestGeneratePublicationData(t *testing.T) {
 }
 
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage2(":inmem:")

@@ -40,6 +40,8 @@ var (
 )
 
 func TestVbkTxDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	vbktx := parseHex(defaultVbkTxEncoded)
@@ -61,6 +63,8 @@ func TestVbkTxDeserialize(t *testing.T) {
 }
 
 func TestVbkTxSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -70,6 +74,8 @@ func TestVbkTxSerialize(t *testing.T) {
 }
 
 func TestVbkTxRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	txEncoded := parseHex(defaultVbkTxEncoded)
