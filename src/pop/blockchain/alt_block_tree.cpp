@@ -87,21 +87,6 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
   }
 }
 
-template <typename P, typename T>
-bool hasDuplicates(BlockIndex<AltBlock>& index,
-                   std::vector<T> payloads,
-                   AltBlockTree& tree,
-                   ValidationState& state) {
-  auto duplicates = findDuplicates<T>(index, payloads, tree);
-  return duplicates == payloads.end()
-             ? false
-             : !state.Invalid(
-                   P::name() + "-duplicate",
-                   fmt::format("Found {} duplicate {}",
-                               std::distance(duplicates, payloads.end()),
-                               P::name()));
-}
-
 void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
   auto* index = getBlockIndex(block);
   VBK_ASSERT_MSG(index, "cannot find block %s", HexStr(block));
@@ -162,6 +147,23 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
   index.setFlag(BLOCK_HAS_PAYLOADS);
 }
 
+template <typename Payload>
+bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
+                           ValidationState& state) {
+  for (const auto& pid : mutator.getBlock().getPayloadIds<Payload>()) {
+    if (mutator.isStatefulDuplicate(pid.asVector())) {
+      return !state.Invalid(
+          Payload ::name() + "-duplicate",
+          fmt::format("Payload {}:{} in block {} is a stateful duplicate",
+                      Payload::name(),
+                      pid.toHex(),
+                      mutator.getBlock().toPrettyString()));
+    }
+  }
+
+  return false;
+}
+
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added",
@@ -186,10 +188,11 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   // FIXME: eventually we want to perform full stateful validation here,
   // effectively find out whether setState(index) will be successful
 
-  if (hasDuplicates<VbkBlock>(
-          index, index.getPayloadIds<VbkBlock>(), *this, state) ||
-      hasDuplicates<VTB>(index, index.getPayloadIds<VTB>(), *this, state) ||
-      hasDuplicates<ATV>(index, index.getPayloadIds<ATV>(), *this, state)) {
+  auto mutator = makeConnectedLeafPayloadMutator(index);
+
+  if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
+      hasStatefulDuplicates<VTB>(mutator, state) ||
+      hasStatefulDuplicates<ATV>(mutator, state)) {
     invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
@@ -357,6 +360,124 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
   tryAddTip(index.pprev);
 }
 
+template <typename Payload, typename Block>
+void appendIds(std::unordered_set<std::vector<uint8_t>>& ids,
+               const Block& block) {
+  for (const auto& id : block.template getPayloadIds<Payload>()) {
+    ids.emplace(id.asVector());
+  }
+}
+
+AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(tree_t& tree,
+                                                       block_index_t& block)
+    : tree_(tree),
+      block_(block),
+      payload_index_(tree.getPayloadsIndex()),
+      // don't look for duplicates in the block itself
+      chain_(tree.getParams().getBootstrapBlock().height, block_.pprev) {
+  VBK_ASSERT_MSG(block_.pprev,
+                 "Adding payloads to a bootstrap block is not allowed");
+  VBK_ASSERT_MSG(block_.isValidUpTo(BLOCK_VALID_TREE),
+                 "block %s should be valid",
+                 block_.toPrettyString());
+
+  VBK_ASSERT_MSG(block_.isConnected(),
+                 "block %s must be connected",
+                 block_.toPrettyString());
+
+  // an expensive check
+  VBK_ASSERT_MSG(block_.allDescendantsUnconnected(),
+                 "a descendant of block %s is connected",
+                 block_.toPrettyString());
+
+  appendIds<ATV>(ids_, block_);
+  appendIds<VTB>(ids_, block_);
+  appendIds<VbkBlock>(ids_, block_);
+}
+
+bool AltBlockTree::BlockPayloadMutator::isStatefulDuplicate(
+    const id_vector_t& payload_id) {
+  // make sure existing blocks do not contain this id
+  for (const auto& hash : payload_index_.getContainingAltBlocks(payload_id)) {
+    const auto* candidate = tree_.getBlockIndex(hash);
+    if (chain_.contains(candidate)) {
+      // duplicate found in 'candidate'
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool AltBlockTree::BlockPayloadMutator::isStatelessDuplicate(
+    const id_vector_t& payload_id) {
+  return ids_.count(payload_id) > 0;
+}
+
+template <typename Payload>
+bool AltBlockTree::BlockPayloadMutator::add(const Payload& payload,
+                                            ValidationState& state) {
+  auto pid = payload.getId();
+  VBK_LOG_DEBUG("Adding and applying payload %s in block %s",
+                pid.toHex(),
+                block_.toShortPrettyString());
+
+  VBK_ASSERT_MSG(
+      !isStatelessDuplicate(pid.asVector()),
+      "attempted to add a statelessly duplicate payload %s to block %s",
+      pid.toHex(),
+      block_.toShortPrettyString());
+
+  if (isStatefulDuplicate(pid.asVector())) {
+    return state.Invalid(
+        Payload ::name() + "-duplicate",
+        fmt::format("Payload {}:{} in block {} is a stateful duplicate",
+                    Payload::name(),
+                    pid.toHex(),
+                    block_.toShortPrettyString()));
+  }
+
+  block_.insertPayloadIds<Payload>({pid});
+  payload_index_.addAltPayloadIndex(block_.getHash(), pid.asVector());
+
+  bool inserted = ids_.insert(pid.asVector()).second;
+  VBK_ASSERT(inserted);
+
+  if (!block_.hasFlags(BLOCK_ACTIVE)) return true;
+
+  auto cgroup =
+      tree_.getCommandGroupStore().getCommand<Payload>(block_, pid, state);
+
+  if (!cgroup || !cgroup->execute(state)) {
+    VBK_LOG_INFO("%s cannot be added to block %s: %s",
+                 payload.toPrettyString(),
+                 block_.toShortPrettyString(),
+                 state.toString());
+
+    // remove the failed payload
+    block_.removePayloadId<Payload>(pid);
+    payload_index_.removeAltPayloadIndex(block_.getHash(), pid.asVector());
+
+    return false;
+  }
+
+  return true;
+}
+
+template bool AltBlockTree::BlockPayloadMutator::add(const ATV& payload,
+                                                     ValidationState& state);
+
+template bool AltBlockTree::BlockPayloadMutator::add(const VTB& payload,
+                                                     ValidationState& state);
+
+template bool AltBlockTree::BlockPayloadMutator::add(const VbkBlock& payload,
+                                                     ValidationState& state);
+
+AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
+    index_t& block) {
+  return {*this, block};
+}
+
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
@@ -365,8 +486,9 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   if (success) {
     overrideTip(to);
   } else {
-    // if setState failed, then 'to' must be invalid
-    VBK_ASSERT(!to.isValid());
+    VBK_ASSERT_MSG(!to.isValid(),
+                   "if setState failed, then '%s must be invalid",
+                   to.toShortPrettyString());
   }
   return success;
 }
@@ -409,10 +531,20 @@ bool AltBlockTree::loadBlock(const stored_index_t& index,
   if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
   if (!checkIdsForDuplicates<ATV>(atvIds, state)) return false;
 
-  if (hasDuplicates<VbkBlock>(*current, vbkblockIds, *this, state) ||
-      hasDuplicates<VTB>(*current, vtbIds, *this, state) ||
-      hasDuplicates<ATV>(*current, atvIds, *this, state)) {
-    return false;
+  if (current->pprev != nullptr) {
+    // if the block is not yet connected, defer the stateful duplicate check to
+    // connectBlock()
+    if (current->isConnected()) {
+      auto mutator = makeConnectedLeafPayloadMutator(*current);
+      if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
+          hasStatefulDuplicates<VTB>(mutator, state) ||
+          hasStatefulDuplicates<ATV>(mutator, state)) {
+        return false;
+      }
+    }
+  } else {
+    VBK_ASSERT_MSG(!current->hasPayloads(),
+                   "the bootstrap block is not allowed to have payloads");
   }
 
   // recover `endorsedBy` and `blockOfProofEndorsements`
@@ -490,8 +622,7 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(index_t& index,
-                                 ValidationState& state) {
+bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
   return this->finalizeBlockImpl(
       index, getParams().preserveBlocksBehindFinal(), state);
 }

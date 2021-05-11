@@ -463,10 +463,7 @@ struct PopAwareForkResolutionComparator {
   // atomic: either changes the state to 'to' or leaves it unchanged
   bool setState(ProtectedBlockTree& ed,
                 protected_index_t& to,
-                ValidationState& state,
-                // if set, setState will be in "validation mode"
-                // if invalid payloads found, mark it as invalid and continue
-                ContinueOnInvalidContext* continueOnInvalid = nullptr) {
+                ValidationState& state) {
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive != nullptr && "should be bootstrapped");
 
@@ -482,7 +479,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsIndex_, continueOnInvalid);
+    sm_t sm(ed, *ing_, payloadsIndex_);
     if (sm.setState(*currentActive, to, state)) {
       return true;
     }
