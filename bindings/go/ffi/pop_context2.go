@@ -11,7 +11,8 @@ import "C"
 import "runtime"
 
 type PopContext2 struct {
-	ref *C.pop_pop_context_t
+	ref   *C.pop_pop_context_t
+	mutex *SafeMutex
 }
 
 func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopContext2 {
@@ -32,6 +33,8 @@ func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopCont
 }
 
 func (v *PopContext2) Free() {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref != nil {
 		C.pop_pop_context_free(v.ref)
 		v.ref = nil
@@ -39,6 +42,8 @@ func (v *PopContext2) Free() {
 }
 
 func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -50,6 +55,8 @@ func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 }
 
 func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -60,6 +67,8 @@ func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
 }
 
 func (v *PopContext2) SetState(hash []byte) error {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -71,6 +80,8 @@ func (v *PopContext2) SetState(hash []byte) error {
 }
 
 func (v *PopContext2) ComparePopScore(A_hash []byte, B_hash []byte) int {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -78,6 +89,8 @@ func (v *PopContext2) ComparePopScore(A_hash []byte, B_hash []byte) int {
 }
 
 func (v *PopContext2) GetPopPayouts(hash []byte) []*PopPayout {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -87,6 +100,8 @@ func (v *PopContext2) GetPopPayouts(hash []byte) []*PopPayout {
 }
 
 func (v *PopContext2) RemoveSubtree(hash []byte) {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -94,6 +109,8 @@ func (v *PopContext2) RemoveSubtree(hash []byte) {
 }
 
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -104,6 +121,8 @@ func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 }
 
 func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -114,6 +133,8 @@ func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
 }
 
 func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -124,6 +145,8 @@ func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
 }
 
 func (v *PopContext2) AltGetBestBlock() *AltBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -131,6 +154,8 @@ func (v *PopContext2) AltGetBestBlock() *AltBlockIndex {
 }
 
 func (v *PopContext2) VbkGetBestBlock() *VbkBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -138,6 +163,8 @@ func (v *PopContext2) VbkGetBestBlock() *VbkBlockIndex {
 }
 
 func (v *PopContext2) BtcGetBestBlock() *BtcBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -145,6 +172,8 @@ func (v *PopContext2) BtcGetBestBlock() *BtcBlockIndex {
 }
 
 func (v *PopContext2) AltGetBootstrapBlock() *AltBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -152,6 +181,8 @@ func (v *PopContext2) AltGetBootstrapBlock() *AltBlockIndex {
 }
 
 func (v *PopContext2) VbkGetBootstrapBlock() *VbkBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -159,6 +190,8 @@ func (v *PopContext2) VbkGetBootstrapBlock() *VbkBlockIndex {
 }
 
 func (v *PopContext2) BtcGetBootstrapBlock() *BtcBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -166,6 +199,8 @@ func (v *PopContext2) BtcGetBootstrapBlock() *BtcBlockIndex {
 }
 
 func (v *PopContext2) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -176,6 +211,8 @@ func (v *PopContext2) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockI
 }
 
 func (v *PopContext2) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -186,6 +223,8 @@ func (v *PopContext2) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockI
 }
 
 func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockIndex {
+	v.mutex.AssertMutexLocked("pop context is not locked")
+
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -193,4 +232,11 @@ func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockI
 		createBtcBlockIndex(res)
 	}
 	return nil
+}
+
+func (v *PopContext2) Lock() (unlock func()) {
+	v.mutex.Lock()
+	return func() {
+		v.mutex.Unlock()
+	}
 }
