@@ -255,7 +255,7 @@ func (v *BlockIndex) ToJSON(popContext withAltBlockGetEndorsedBy) (map[string]in
 				return nil, err
 			}
 			for i, endorsement := range endorsements {
-				ends[i] = endorsement.ID
+				ends[i] = append(ends, endorsement.ID)
 			}
 		}
 		res = map[string]interface{}{
