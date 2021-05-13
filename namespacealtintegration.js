@@ -306,6 +306,7 @@ var namespacealtintegration =
     [ "estimateContainerSize", "namespacealtintegration.html#a203f05734842bb1530c6f54f9ae3c5dc", null ],
     [ "findBlockContainingEndorsement", "namespacealtintegration.html#a48e216f55cb1951a188959e649fe15ed", null ],
     [ "findBlockContainingEndorsement", "namespacealtintegration.html#a6ac2a345a2a24aa29be1cff60a638cf7", null ],
+    [ "findDuplicates", "namespacealtintegration.html#af5b06fe8283fa62c3c958e70bf5fd4a7", null ],
     [ "findFork", "namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef", null ],
     [ "findValidTips", "namespacealtintegration.html#afbec238293412b60961aeaf060bde22b", null ],
     [ "findValidTips", "namespacealtintegration.html#ad65f24a687808bac04113adb107b62e8", null ],

@@ -25,6 +25,7 @@ var structaltintegration_1_1AltBlockTree =
     [ "removeSubtree", "structaltintegration_1_1AltBlockTree.html#a99ca69840eb2e8cfe725fa521381750e", null ],
     [ "setState", "structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd", null ],
     [ "vbk", "structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919", null ],
+    [ "MemPoolBlockTree", "structaltintegration_1_1AltBlockTree.html#ac093a74a6972a5e1a1ce467b2c0ef789", null ],
     [ "onBeforeOverrideTip", "structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a", null ],
     [ "onBlockConnected", "structaltintegration_1_1AltBlockTree.html#a2702e94f571026684e4b5968ce1e3c25", null ],
     [ "onInvalidBlockConnected", "structaltintegration_1_1AltBlockTree.html#a1d42aa835fa1d2f37edffc2ae06b2bc8", null ]
