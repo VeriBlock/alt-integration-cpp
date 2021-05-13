@@ -20,7 +20,6 @@
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
-#include "alt_block_tree_util.hpp"
 #include "alt_chain_params.hpp"
 #include "base_block_tree.hpp"
 #include "chain.hpp"
@@ -371,11 +370,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    */
   void removePayloads(const hash_t& hash);
 
-  // use this method for stateful validation of pop data. invalid pop data will
-  // be removed from `pop`
-  //! @private
-  void filterInvalidPayloads(PopData& pop);
-
   // clang-format off
   //! @private
   VbkBlockTree& vbk() { return cmp_.getProtectingBlockTree(); }
@@ -406,6 +400,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @invariant the tip must be fully validated
   void overrideTip(index_t& to) override;
 
+  friend struct MemPoolBlockTree;
+
   //! @private
   using base::removeLeaf;
 
@@ -428,9 +424,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * @private
    */
   bool connectBlock(index_t& index, ValidationState& state);
-
-  //! @private
-  void setTipContinueOnInvalid(index_t& to);
 
   //! @private
   void removeAllPayloads(index_t& index);
