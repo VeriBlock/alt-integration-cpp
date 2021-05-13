@@ -89,7 +89,7 @@ PopData MemPool::generatePopData() {
   });
 
   PopData ret = generatePopDataImpl(blocks, mempool_tree_.alt().getParams());
-  mempool_tree_.alt().filterInvalidPayloads(ret);
+  mempool_tree_.filterInvalidPayloads(ret);
   return ret;
 }
 
