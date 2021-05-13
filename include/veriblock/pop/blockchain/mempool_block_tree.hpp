@@ -87,6 +87,10 @@ struct MemPoolBlockTree {
 
   const TempBlockTree<BtcBlockTree>& btc() const { return temp_btc_tree_; }
 
+  // use this method for stateful validation of pop data. invalid pop data will
+  // be removed from `pop`
+  void filterInvalidPayloads(PopData& pop);
+
   AltBlockTree& alt() { return *tree_; }
 
   const AltBlockTree& alt() const { return *tree_; }
@@ -102,6 +106,9 @@ struct MemPoolBlockTree {
   }
 
  private:
+  //! @private
+  void setTipContinueOnInvalid(AltBlockTree::index_t& to);
+
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
   AltBlockTree* tree_;
