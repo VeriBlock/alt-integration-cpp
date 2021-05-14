@@ -66,7 +66,7 @@ var NAVTREEINDEX =
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html",
 "structaltintegration_1_1BtcBlock.html#abeaa7c735d68ba0ad7c10246efee665e",
 "structaltintegration_1_1MemPool.html#a0b9e73ccb7247f1294cc86a86b049471",
-"structaltintegration_1_1VbkBlock.html#a6c6580d6dd2a6d98abe1735ce23f6c74"
+"structaltintegration_1_1VbkBlock.html#a5d888f2026acda90eca7410b5df224b6"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -186,6 +186,9 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 <tr class="memitem:a019ff92ea7c53f1dbc340cfd68a6cf74"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">SubmitResult</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a019ff92ea7c53f1dbc340cfd68a6cf74">submit</a> (const std::shared_ptr&lt; T &gt; &amp;pl, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a019ff92ea7c53f1dbc340cfd68a6cf74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add new payload to mempool.  <a href="structaltintegration_1_1MemPool.html#a019ff92ea7c53f1dbc340cfd68a6cf74">More...</a><br /></td></tr>
 <tr class="separator:a019ff92ea7c53f1dbc340cfd68a6cf74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab965446db0fde49fabfa2d4530256e1a"><td class="memItemLeft" align="right" valign="top"><a id="ab965446db0fde49fabfa2d4530256e1a"></a>
+std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getMissingBtcBlocks</b> () const</td></tr>
+<tr class="separator:ab965446db0fde49fabfa2d4530256e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a857ee8d33550808b2034da04e4c1f175"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1PopData.html">PopData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a857ee8d33550808b2034da04e4c1f175">generatePopData</a> ()</td></tr>
 <tr class="memdesc:a857ee8d33550808b2034da04e4c1f175"><td class="mdescLeft">&#160;</td><td class="mdescRight">(POW) Miners should execute this to get POP content for "next block".  <a href="structaltintegration_1_1MemPool.html#a857ee8d33550808b2034da04e4c1f175">More...</a><br /></td></tr>
 <tr class="separator:a857ee8d33550808b2034da04e4c1f175"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -360,11 +363,11 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>subscription id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00268">268</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                                                     {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keyword">auto</span>&amp; sig = getSignal&lt;T&gt;();</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">return</span> sig.connect(f);</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00270">270</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                                                     {</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keyword">auto</span>&amp; sig = getSignal&lt;T&gt;();</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordflow">return</span> sig.connect(f);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
