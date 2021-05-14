@@ -24,10 +24,7 @@ func (v *PopContext2) validate() {
 
 func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopContext2 {
 	config.validate()
-	if storage == nil {
-		panic("Storage not provided")
-	}
-
+	storage.validate()
 	context := &PopContext2{
 		ref:   C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
 		mutex: NewSafeMutex(),
@@ -41,7 +38,6 @@ func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopCont
 
 func (v *PopContext2) Free() {
 	v.mutex.AssertMutexLocked("PopContext is not locked")
-
 	if v.ref != nil {
 		C.pop_pop_context_free(v.ref)
 		v.ref = nil

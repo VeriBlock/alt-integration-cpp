@@ -37,7 +37,6 @@ func NewMockMiner2() *MockMiner2 {
 
 func (v *MockMiner2) Free() {
 	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
 	if v.ref != nil {
 		C.pop_mock_miner_free(v.ref)
 		v.ref = nil
