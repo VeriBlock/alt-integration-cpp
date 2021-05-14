@@ -8,6 +8,7 @@ package entities
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"io"
 
@@ -255,7 +256,7 @@ func (v *BlockIndex) ToJSON(popContext withAltBlockGetEndorsedBy) (map[string]in
 				return nil, err
 			}
 			for _, endorsement := range endorsements {
-				ends = append(ends, endorsement.ID)
+				ends = append(ends, hex.EncodeToString(endorsement.ID[:]))
 			}
 		}
 		res = map[string]interface{}{
