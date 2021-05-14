@@ -17,6 +17,12 @@ type PublicationData struct {
 	ref *C.pop_publication_data_t
 }
 
+func (v *PublicationData) validate() {
+	if v.ref == nil {
+		panic("PublicationData does not initialized")
+	}
+}
+
 func createPublicationData(ref *C.pop_publication_data_t) *PublicationData {
 	val := &PublicationData{ref: ref}
 	runtime.SetFinalizer(val, func(v *PublicationData) {
@@ -33,9 +39,7 @@ func (v *PublicationData) Free() {
 }
 
 func (v *PublicationData) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("PublicationData does not initialized")
-	}
+	v.validate()
 	str := C.pop_publication_data_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -46,9 +50,7 @@ func (v *PublicationData) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *PublicationData) SerializeToVbk() []byte {
-	if v.ref == nil {
-		panic("PublicationData does not initialized")
-	}
+	v.validate()
 	res := C.pop_publication_data_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

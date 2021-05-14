@@ -19,6 +19,12 @@ type BtcBlock struct {
 	ref *C.pop_btc_block_t
 }
 
+func (v *BtcBlock) validate() {
+	if v.ref == nil {
+		panic("BtcBlock does not initialized")
+	}
+}
+
 func generateDefaultBtcBlock() *BtcBlock {
 	return createBtcBlock(C.pop_btc_block_generate_default_value())
 }
@@ -39,64 +45,48 @@ func (v *BtcBlock) Free() {
 }
 
 func (v *BtcBlock) GetHash() []byte {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_btc_block_get_hash(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetPreviousBlock() []byte {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_btc_block_get_previous_block(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetMerkleRoot() []byte {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_btc_block_get_merkle_root(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *BtcBlock) GetVersion() uint32 {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_btc_block_get_version(v.ref))
 }
 
 func (v *BtcBlock) GetTimestamp() uint32 {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_btc_block_get_timestamp(v.ref))
 }
 
 func (v *BtcBlock) GetNonce() uint32 {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_btc_block_get_nonce(v.ref))
 }
 
 func (v *BtcBlock) GetDifficulty() uint32 {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_btc_block_get_difficulty(v.ref))
 }
 
 func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("BtcBlock does not initialized")
-	}
+	v.validate()
 	str := C.pop_btc_block_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -107,9 +97,7 @@ func (v *BtcBlock) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *BtcBlock) SerializeToVbk() []byte {
-	if v.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
 	res := C.pop_btc_block_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)
