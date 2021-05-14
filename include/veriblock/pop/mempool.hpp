@@ -222,6 +222,8 @@ struct MemPool {
                   "Undefined type used in MemPool::getInFlightMap");
   }
 
+  std::vector<BtcBlock::hash_t> getMissingBtcBlocks() const;
+
   /**
    * (POW) Miners should execute this to get POP content for "next block".
    *
@@ -330,12 +332,7 @@ struct MemPool {
       auto& pl = **it;
       ValidationState state;
       auto valid = mempool_tree_.checkContextually(pl, state);
-      if (!valid) {
-        remove(pl);
-        it = c.erase(it);
-      } else {
-        ++it;
-      }
+      it = !valid ? (remove(pl), c.erase(it)) : std::next(it);
     }
   }
 
