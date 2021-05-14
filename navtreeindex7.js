@@ -1,5 +1,12 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1VbkBlock.html#a5095acd6498e909c1ac7a1aaefe0d05a":[4,0,0,42,37],
+"structaltintegration_1_1VbkBlock.html#a51ba04a054bd7406fe2263eae76934ec":[4,0,0,42,22],
+"structaltintegration_1_1VbkBlock.html#a52fdaf1c228b2fbe8133713b4226a4d4":[4,0,0,42,4],
+"structaltintegration_1_1VbkBlock.html#a555ec3c76c657c395c66641ab417fc07":[4,0,0,42,39],
+"structaltintegration_1_1VbkBlock.html#a57775a64dab87a06edf34ae09ef014ae":[4,0,0,42,14],
+"structaltintegration_1_1VbkBlock.html#a58abefc405486f1b3eac53fe84fa4fac":[4,0,0,42,36],
+"structaltintegration_1_1VbkBlock.html#a5d888f2026acda90eca7410b5df224b6":[4,0,0,42,11],
 "structaltintegration_1_1VbkBlock.html#a6c6580d6dd2a6d98abe1735ce23f6c74":[4,0,0,42,15],
 "structaltintegration_1_1VbkBlock.html#a6c9f0a40a89eadd1b7afe7bcb6ddffeb":[4,0,0,42,18],
 "structaltintegration_1_1VbkBlock.html#a6d2fec81ad371360308df0f9894bb05a":[4,0,0,42,0],
@@ -210,12 +217,5 @@ var NAVTREEINDEX7 =
 "vblake_8hpp_source.html":[5,0,1,0,0,4,4],
 "vtb_8h_source.html":[5,0,1,0,0,2,0,14],
 "vtb_8hpp_source.html":[5,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[5,0,1,0,0,48],
-"":[3,0,0,6],
-"":[3,0,0,4],
-"":[3,0,1],
-"":[3,0,0,2],
-"":[3,0,0,5],
-"":[3,0,0,0],
-"":[3,0,0,1]
+"write__stream_8hpp_source.html":[5,0,1,0,0,48]
 };
