@@ -10,6 +10,7 @@ package ffi
 import "C"
 
 func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -26,6 +27,7 @@ func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
 }
 
 func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -42,6 +44,7 @@ func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 }
 
 func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -58,10 +61,15 @@ func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 }
 
 func (v *PopContext2) MemPoolGeneratePopData() *PopData {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
 	return createPopData(C.pop_pop_context_function_mempool_generate_pop_data(v.ref))
 }
 
 func (v *PopContext2) MemPoolGetAtvs() []*Atv {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -71,6 +79,7 @@ func (v *PopContext2) MemPoolGetAtvs() []*Atv {
 }
 
 func (v *PopContext2) MemPoolGetVtbs() []*Vtb {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -80,6 +89,7 @@ func (v *PopContext2) MemPoolGetVtbs() []*Vtb {
 }
 
 func (v *PopContext2) MemPoolGetVbkBlocks() []*VbkBlock {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -89,6 +99,7 @@ func (v *PopContext2) MemPoolGetVbkBlocks() []*VbkBlock {
 }
 
 func (v *PopContext2) MemPoolGetAtvsInFlight() []*Atv {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -98,6 +109,7 @@ func (v *PopContext2) MemPoolGetAtvsInFlight() []*Atv {
 }
 
 func (v *PopContext2) MemPoolGetVtbsInFlight() []*Vtb {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -107,12 +119,23 @@ func (v *PopContext2) MemPoolGetVtbsInFlight() []*Vtb {
 }
 
 func (v *PopContext2) MemPoolGetVbkBlocksInFlight() []*VbkBlock {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
 	array := C.pop_pop_context_function_mempool_get_in_flight_vbk_blocks(v.ref)
 	defer freeArrayVbkBlock(&array)
 	return createArrayVbkBlock(&array)
+}
+
+func (v *PopContext2) MemPoolGetMissingBtcBlocks() [][]byte {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
+	if v.ref == nil {
+		panic("PopContext does not initialized")
+	}
+	array := C.pop_pop_context_function_mempool_get_missing_btc_blocks(v.ref)
+	defer freeArrayArrayU8(&array)
+	return createArrayOfArraysU8(&array)
 }
 
 func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
