@@ -24,9 +24,11 @@ func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopCont
 	}
 
 	context := &PopContext2{
-		ref: C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
+		ref:   C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
+		mutex: NewSafeMutex(),
 	}
 	runtime.SetFinalizer(context, func(v *PopContext2) {
+		defer v.Lock()()
 		v.Free()
 	})
 	return context

@@ -17,8 +17,12 @@ type MockMiner2 struct {
 }
 
 func NewMockMiner2() *MockMiner2 {
-	val := &MockMiner2{ref: C.pop_mock_miner_new()}
+	val := &MockMiner2{
+		ref:   C.pop_mock_miner_new(),
+		mutex: NewSafeMutex(),
+	}
 	runtime.SetFinalizer(val, func(v *MockMiner2) {
+		defer v.Lock()()
 		v.Free()
 	})
 	return val
