@@ -22,6 +22,7 @@ func TestGeneratePublicationData(t *testing.T) {
 	assert.NoError(err)
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	popData := generateDefaultPopData()
@@ -47,6 +48,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	// generate new block
@@ -71,9 +73,11 @@ func TestCheckAll(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	miner := NewMockMiner2()
+	defer miner.Lock()()
 	defer miner.Free()
 
 	vbkBlock := miner.MineVbkBlockTip()
@@ -127,6 +131,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	assert.NoError(err)
 
 	context := generateTestPopContext(t, storage)
+	unlock := context.Lock()
 
 	// generate new block
 	newBlock := generateNextAltBlock(context.AltGetBootstrapBlock().GetHeader())
@@ -135,6 +140,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	assert.NoError(err)
 
 	miner := NewMockMiner2()
+	defer miner.Lock()()
 	defer miner.Free()
 
 	vbk := miner.MineVbkBlockTip()
@@ -179,7 +185,9 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	assert.NoError(err)
 
 	context.Free()
+	unlock()
 	context = generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	assert.NotEqual(alt_saved_height, context.AltGetBestBlock().GetHeight())

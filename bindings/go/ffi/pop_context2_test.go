@@ -21,6 +21,7 @@ func TestPopContext2Free(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 
 	context.Free()
 	context.Free()
@@ -36,6 +37,7 @@ func TestPopContext2BlockPrecessing(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	// generate new block
@@ -45,6 +47,7 @@ func TestPopContext2BlockPrecessing(t *testing.T) {
 	assert.NoError(err)
 
 	miner := NewMockMiner2()
+	defer miner.Lock()()
 	defer miner.Free()
 
 	vbk := miner.MineVbkBlockTip()
