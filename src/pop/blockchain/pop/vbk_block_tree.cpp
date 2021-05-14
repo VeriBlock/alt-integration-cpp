@@ -206,7 +206,6 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          "Can not find the BTC block referenced by the first "
                          "block of the VTB context");
   }
-  invalid_vtbs.erase(vtb.getId());
 
   bool isValid = std::any_of(connectingIndex->getRefs().begin(),
                              connectingIndex->getRefs().end(),
@@ -214,7 +213,10 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  return isValid ? true : state.Invalid("block-referenced-too-early");
+  return isValid
+             ? (invalid_vtbs.erase(vtb.getId()), true)
+             : (invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash,
+                state.Invalid("block-referenced-too-early"));
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,

@@ -634,11 +634,11 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     mempool->removeAll(pop2);
   }
 
-  ASSERT_TRUE(mempool->getMissingBtcBlocks().empty());
-
   // At this moment, VTB1 is not expected to be connected, because BTC block 8
   // can not be connected to previous block 6.
   // add to mempool
+  ASSERT_TRUE(mempool->getMissingBtcBlocks().empty());
+
   ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
   // mine VTB1 in ALT3
   mineAltBlocks(1, chain, false, false);
