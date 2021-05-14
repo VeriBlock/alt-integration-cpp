@@ -23,9 +23,7 @@ func (v *PopContext2) validate() {
 }
 
 func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopContext2 {
-	if config == nil {
-		panic("Config not provided")
-	}
+	config.validate()
 	if storage == nil {
 		panic("Storage not provided")
 	}

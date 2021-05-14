@@ -15,6 +15,12 @@ type Config2 struct {
 	ref *C.pop_config_t
 }
 
+func (v *Config2) validate() {
+	if v.ref == nil {
+		panic("Config does not initialized")
+	}
+}
+
 func NewConfig2() *Config2 {
 	val := &Config2{ref: C.pop_config_new()}
 	runtime.SetFinalizer(val, func(v *Config2) {
@@ -27,6 +33,7 @@ func NewConfig2() *Config2 {
 // Param "net" should be one of: "main", "test", "regtest", "alpha"
 // Param "blocks" should be: "hex,hex,hex"
 func (v *Config2) SelectVbkParams(net string, startHeight int, blocks string) {
+	v.validate()
 	C.pop_config_function_select_vbk_params(v.ref, createCString(net), C.int(startHeight), createCString(blocks))
 }
 
@@ -34,6 +41,7 @@ func (v *Config2) SelectVbkParams(net string, startHeight int, blocks string) {
 // Param "net" should be one of: "main", "test", "regtest", "alpha"
 // Param "blocks" should be: "hex,hex,hex"
 func (v *Config2) SelectBtcParams(net string, startHeight int, blocks string) {
+	v.validate()
 	C.pop_config_function_select_btc_params(v.ref, createCString(net), C.int(startHeight), createCString(blocks))
 }
 
