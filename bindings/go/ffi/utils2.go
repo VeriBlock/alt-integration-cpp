@@ -11,13 +11,8 @@ import "C"
 import "errors"
 
 func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash []byte, payoutInfo []byte, popData *PopData) (*PublicationData, error) {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	if popData.ref == nil {
-		panic("PopData does not initialized")
-	}
+	v.validate()
+	popData.validate()
 
 	res := C.pop_pop_context_function_generate_publication_data(v.ref, createCBytes(endorsedBlockHeader), createCBytes(txRootHash), createCBytes(payoutInfo), popData.ref)
 	if res == nil {
@@ -28,24 +23,15 @@ func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRoot
 }
 
 func (v *PopContext2) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash []byte, popData *PopData) []byte {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	if popData.ref == nil {
-		panic("PopData does not initialized")
-	}
-
+	v.validate()
+	popData.validate()
 	res := C.pop_pop_context_function_calculate_top_level_merkle_root(v.ref, createCBytes(txRoot), createCBytes(prevBlockHash), popData.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)
 }
 
 func (v *PopContext2) SaveAllTrees() error {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
+	v.validate()
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -54,10 +40,7 @@ func (v *PopContext2) SaveAllTrees() error {
 }
 
 func (v *PopContext2) LoadAllTrees() error {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
+	v.validate()
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -66,13 +49,8 @@ func (v *PopContext2) LoadAllTrees() error {
 }
 
 func (v *PopContext2) CheckAtv(atv *Atv) error {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	if atv.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
+	atv.validate()
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -81,13 +59,8 @@ func (v *PopContext2) CheckAtv(atv *Atv) error {
 }
 
 func (v *PopContext2) CheckVtb(vtb *Vtb) error {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	if vtb.ref == nil {
-		panic("Vtb does not initialized")
-	}
+	v.validate()
+	vtb.validate()
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -96,13 +69,8 @@ func (v *PopContext2) CheckVtb(vtb *Vtb) error {
 }
 
 func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	if vbkBlock.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
+	vbkBlock.validate()
 	state := NewValidationState2()
 	defer state.Free()
 
@@ -111,13 +79,8 @@ func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
 }
 
 func (v *PopContext2) CheckPopData(popData *PopData) error {
-	v.mutex.AssertMutexLocked("PopContext is not locked")
-	if v.ref == nil {
-		panic("PopContext does not initialized")
-	}
-	if popData.ref == nil {
-		panic("PopData does not initialized")
-	}
+	v.validate()
+	popData.validate()
 	state := NewValidationState2()
 	defer state.Free()
 

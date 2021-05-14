@@ -19,6 +19,12 @@ type VbkBlock struct {
 	ref *C.pop_vbk_block_t
 }
 
+func (v *VbkBlock) validate() {
+	if v.ref == nil {
+		panic("VbkBlock does not initialized")
+	}
+}
+
 func generateDefaultVbkBlock() *VbkBlock {
 	return createVbkBlock(C.pop_vbk_block_generate_default_value())
 }
@@ -51,89 +57,67 @@ func (v *VbkBlock) Free() {
 }
 
 func (v *VbkBlock) GetHash() []byte {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_vbk_block_get_hash(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetPreviousBlock() []byte {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_vbk_block_get_previous_block(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetMerkleRoot() []byte {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_vbk_block_get_merkle_root(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetPreviousKeystone() []byte {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_vbk_block_get_previous_keystone(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetSecondPreviousKeystone() []byte {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	array := C.pop_vbk_block_get_second_previous_keystone(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *VbkBlock) GetVersion() int16 {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	return int16(C.pop_vbk_block_get_version(v.ref))
 }
 
 func (v *VbkBlock) GetTimestamp() uint32 {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_vbk_block_get_timestamp(v.ref))
 }
 
 func (v *VbkBlock) GetDifficulty() int32 {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	return int32(C.pop_vbk_block_get_difficulty(v.ref))
 }
 
 func (v *VbkBlock) GetNonce() uint64 {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	return uint64(C.pop_vbk_block_get_nonce(v.ref))
 }
 
 func (v *VbkBlock) GetHeight() int32 {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	return int32(C.pop_vbk_block_get_height(v.ref))
 }
 
 func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	str := C.pop_vbk_block_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -144,9 +128,7 @@ func (v *VbkBlock) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *VbkBlock) SerializeToVbk() []byte {
-	if v.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	v.validate()
 	res := C.pop_vbk_block_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

@@ -14,6 +14,12 @@ type NetworkBytePair struct {
 	ref *C.pop_network_byte_pair_t
 }
 
+func (v *NetworkBytePair) validate() {
+	if v.ref == nil {
+		panic("NetworkBytePair does not initialized")
+	}
+}
+
 func generateDefaultNetworkBytePair() *NetworkBytePair {
 	val := &NetworkBytePair{ref: C.pop_network_byte_pair_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *NetworkBytePair) {
@@ -30,22 +36,16 @@ func (v *NetworkBytePair) Free() {
 }
 
 func (v *NetworkBytePair) HasNetworkByte() bool {
-	if v.ref == nil {
-		panic("NetworkBytePair does not initialized")
-	}
+	v.validate()
 	return bool(C.pop_network_byte_pair_get_has_network_byte(v.ref))
 }
 
 func (v *NetworkBytePair) GetNetworkByte() uint8 {
-	if v.ref == nil {
-		panic("NetworkBytePair does not initialized")
-	}
+	v.validate()
 	return uint8(C.pop_network_byte_pair_get_network_byte(v.ref))
 }
 
 func (v *NetworkBytePair) GetTypeID() uint8 {
-	if v.ref == nil {
-		panic("NetworkBytePair does not initialized")
-	}
+	v.validate()
 	return uint8(C.pop_network_byte_pair_get_type_id(v.ref))
 }
