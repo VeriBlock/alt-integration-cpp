@@ -14,6 +14,12 @@ type BtcTx struct {
 	ref *C.pop_btctx_t
 }
 
+func (v *BtcTx) validate() {
+	if v.ref == nil {
+		panic("BtcTx does not initialized")
+	}
+}
+
 func generateDefaultBtcTx() *BtcTx {
 	val := &BtcTx{ref: C.pop_btctx_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *BtcTx) {
@@ -30,9 +36,7 @@ func (v *BtcTx) Free() {
 }
 
 func (v *BtcTx) GetTx() []byte {
-	if v.ref == nil {
-		panic("BtcTx does not initialized")
-	}
+	v.validate()
 	array := C.pop_btctx_get_tx(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)

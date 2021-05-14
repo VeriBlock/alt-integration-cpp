@@ -25,6 +25,24 @@ type BtcBlockIndex struct {
 	ref *C.pop_btc_block_index_t
 }
 
+func (v *AltBlockIndex) validate() {
+	if v.ref == nil {
+		panic("AltBlockIndex does not initialized")
+	}
+}
+
+func (v *VbkBlockIndex) validate() {
+	if v.ref == nil {
+		panic("VbkBlockIndex does not initialized")
+	}
+}
+
+func (v *BtcBlockIndex) validate() {
+	if v.ref == nil {
+		panic("BtcBlockIndex does not initialized")
+	}
+}
+
 func createAltBlockIndex(ref *C.pop_alt_block_index_t) *AltBlockIndex {
 	val := &AltBlockIndex{ref: ref}
 	runtime.SetFinalizer(val, func(v *AltBlockIndex) {
@@ -71,72 +89,52 @@ func (v *BtcBlockIndex) Free() {
 }
 
 func (v *AltBlockIndex) GetHeader() *AltBlock {
-	if v.ref == nil {
-		panic("AltBlockIndex does not initialized")
-	}
+	v.validate()
 	return createAltBlock(C.pop_alt_block_index_get_header(v.ref))
 }
 
 func (v *VbkBlockIndex) GetHeader() *VbkBlock {
-	if v.ref == nil {
-		panic("VbkBlockIndex does not initialized")
-	}
+	v.validate()
 	return createVbkBlock(C.pop_vbk_block_index_get_header(v.ref))
 }
 
 func (v *BtcBlockIndex) GetHeader() *BtcBlock {
-	if v.ref == nil {
-		panic("BtcBlockIndex does not initialized")
-	}
+	v.validate()
 	return createBtcBlock(C.pop_btc_block_index_get_header(v.ref))
 }
 
 func (v *AltBlockIndex) GetHeight() uint32 {
-	if v.ref == nil {
-		panic("AltBlockIndex does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_alt_block_index_get_height(v.ref))
 }
 
 func (v *VbkBlockIndex) GetHeight() uint32 {
-	if v.ref == nil {
-		panic("VbkBlockIndex does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_vbk_block_index_get_height(v.ref))
 }
 
 func (v *BtcBlockIndex) GetHeight() uint32 {
-	if v.ref == nil {
-		panic("BtcBlockIndex does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_btc_block_index_get_height(v.ref))
 }
 
 func (v *AltBlockIndex) GetStatus() uint32 {
-	if v.ref == nil {
-		panic("AltBlockIndex does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_alt_block_index_get_status(v.ref))
 }
 
 func (v *VbkBlockIndex) GetStatus() uint32 {
-	if v.ref == nil {
-		panic("VbkBlockIndex does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_vbk_block_index_get_status(v.ref))
 }
 
 func (v *BtcBlockIndex) GetStatus() uint32 {
-	if v.ref == nil {
-		panic("BtcBlockIndex does not initialized")
-	}
+	v.validate()
 	return uint32(C.pop_btc_block_index_get_status(v.ref))
 }
 
 func (v *AltBlockIndex) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("AltBlockIndex does not initialized")
-	}
+	v.validate()
 	str := C.pop_alt_block_index_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -147,9 +145,7 @@ func (v *AltBlockIndex) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *VbkBlockIndex) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("VbkBlockIndex does not initialized")
-	}
+	v.validate()
 	str := C.pop_vbk_block_index_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -160,9 +156,7 @@ func (v *VbkBlockIndex) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *BtcBlockIndex) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("BtcBlockIndex does not initialized")
-	}
+	v.validate()
 	str := C.pop_btc_block_index_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
