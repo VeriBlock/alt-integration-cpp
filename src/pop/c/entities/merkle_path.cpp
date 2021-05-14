@@ -41,12 +41,12 @@ POP_ENTITY_GETTER_FUNCTION(merkle_path, POP_ARRAY_NAME(array_u8), layers) {
   POP_ARRAY_NAME(array_u8) res;
   res.size = v.size();
   res.data = new POP_ARRAY_NAME(u8)[res.size];
-  for (int i = 0; i < int(res.size); i++) {
-      auto src = v[i];
-      auto dst = &res.data[i];
-      (*dst).size = src.size();
-      (*dst).data = new uint8_t[(*dst).size];
-      std::copy(src.begin(), src.end(), (*dst).data);
+  for (size_t i = 0; i < res.size; i++) {
+    auto& src = v[i];
+    auto& dst = res.data[i];
+    dst.size = src.size();
+    dst.data = new uint8_t[dst.size];
+    std::copy(src.begin(), src.end(), dst.data);
   }
 
   return res;
@@ -61,7 +61,8 @@ POP_GENERATE_DEFAULT_VALUE(merkle_path) {
 namespace default_value {
 template <>
 altintegration::MerklePath generateDefaultValue<altintegration::MerklePath>() {
-  altintegration::uint256 value{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+  altintegration::uint256 value{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 
   altintegration::MerklePath res;
   res.layers = std::vector<altintegration::uint256>{value, value, value};
