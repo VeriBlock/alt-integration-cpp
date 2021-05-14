@@ -139,6 +139,7 @@ func (v *PopContext2) MemPoolGetMissingBtcBlocks() [][]byte {
 }
 
 func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -149,6 +150,7 @@ func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
 }
 
 func (v *PopContext2) MemPoolCleanUp() {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
@@ -156,6 +158,7 @@ func (v *PopContext2) MemPoolCleanUp() {
 }
 
 func (v *PopContext2) MemPoolClear() {
+	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
