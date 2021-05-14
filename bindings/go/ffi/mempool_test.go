@@ -21,6 +21,7 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	assert.Equal(len(context.MemPoolGetAtvs()), 0)
@@ -28,6 +29,7 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
 
 	miner := NewMockMiner2()
+	defer miner.Lock()()
 	defer miner.Free()
 
 	vbk := miner.MineVbkBlockTip()
@@ -86,6 +88,7 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	assert.Equal(len(context.MemPoolGetAtvsInFlight()), 0)
@@ -93,6 +96,7 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 0)
 
 	miner := NewMockMiner2()
+	defer miner.Lock()()
 	defer miner.Free()
 
 	// Make a context gap for the vbk blocks
@@ -151,9 +155,11 @@ func TestPopContext2MempoolGeneratePopData(t *testing.T) {
 	defer storage.Free()
 
 	context := generateTestPopContext(t, storage)
+	defer context.Lock()()
 	defer context.Free()
 
 	miner := NewMockMiner2()
+	defer miner.Lock()()
 	defer miner.Free()
 
 	vbk := miner.MineVbkBlockTip()
