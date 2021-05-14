@@ -22,7 +22,6 @@ var annotated_dup =
       [ "Chain", "structaltintegration_1_1Chain.html", "structaltintegration_1_1Chain" ],
       [ "ChainSlice", "structaltintegration_1_1ChainSlice.html", "structaltintegration_1_1ChainSlice" ],
       [ "CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", "structaltintegration_1_1CheckPublicationData" ],
-      [ "VTBInvalidationInfo", "namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo", "namespacealtintegration_structaltintegration_1_1VTBInvalidationInfo_dup" ],
       [ "VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html", "structaltintegration_1_1VbkBlockTree" ],
       [ "VbkChainParams", "structaltintegration_1_1VbkChainParams.html", "structaltintegration_1_1VbkChainParams" ],
       [ "VbkChainParamsMain", "structaltintegration_1_1VbkChainParamsMain.html", "structaltintegration_1_1VbkChainParamsMain" ],

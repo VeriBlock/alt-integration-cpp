@@ -94,6 +94,5 @@ var hierarchy =
     [ "altintegration::VbkTx", "structaltintegration_1_1VbkTx.html", null ],
     [ "altintegration::vblake_ctx", "namespacealtintegration.html#structaltintegration_1_1vblake__ctx", null ],
     [ "altintegration::VTB", "structaltintegration_1_1VTB.html", null ],
-    [ "altintegration::VTBInvalidationInfo", "namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo", null ],
     [ "altintegration::WriteStream", "classaltintegration_1_1WriteStream.html", null ]
 ];
