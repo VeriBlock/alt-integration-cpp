@@ -46,6 +46,7 @@ func (v *PopContext2) Free() {
 
 func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 	v.validate()
+	block.validate()
 	state := NewValidationState2()
 	defer state.Free()
 	C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
@@ -54,9 +55,7 @@ func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 
 func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
 	v.validate()
-	if popData.ref == nil {
-		panic("PopData does not initialized")
-	}
+	popData.validate()
 	C.pop_pop_context_function_accept_block(v.ref, createCBytes(hash), popData.ref)
 }
 

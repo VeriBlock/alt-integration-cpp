@@ -19,6 +19,12 @@ type Vtb struct {
 	ref *C.pop_vtb_t
 }
 
+func (v *Vtb) validate() {
+	if v.ref == nil {
+		panic("Vtb does not initialized")
+	}
+}
+
 func generateDefaultVtb() *Vtb {
 	return createVtb(C.pop_vtb_generate_default_value())
 }
@@ -51,16 +57,12 @@ func (v *Vtb) Free() {
 }
 
 func (v *Vtb) GetContainingBlock() *VbkBlock {
-	if v.ref == nil {
-		panic("Vtb does not initialized")
-	}
+	v.validate()
 	return createVbkBlock(C.pop_vtb_get_containing_block(v.ref))
 }
 
 func (v *Vtb) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("Vtb does not initialized")
-	}
+	v.validate()
 	str := C.pop_vtb_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -71,9 +73,7 @@ func (v *Vtb) ToJSON() (map[string]interface{}, error) {
 }
 
 func (v *Vtb) SerializeToVbk() []byte {
-	if v.ref == nil {
-		panic("Vtb does not initialized")
-	}
+	v.validate()
 	res := C.pop_vtb_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)

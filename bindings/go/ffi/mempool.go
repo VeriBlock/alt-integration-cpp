@@ -9,25 +9,21 @@ package ffi
 // #include <veriblock/pop/c/mempool.h>
 import "C"
 
-func (v *PopContext2) MemPoolSubmitVbk(vbk_block *VbkBlock) (int, error) {
+func (v *PopContext2) MemPoolSubmitVbk(vbkBlock *VbkBlock) (int, error) {
 	v.validate()
-	if vbk_block.ref == nil {
-		panic("VbkBlock does not initialized")
-	}
+	vbkBlock.validate()
 
 	state := NewValidationState2()
 	defer state.Free()
 
-	res := C.pop_pop_context_function_mempool_submit_vbk(v.ref, vbk_block.ref, state.ref)
+	res := C.pop_pop_context_function_mempool_submit_vbk(v.ref, vbkBlock.ref, state.ref)
 
 	return int(res), state.Error()
 }
 
 func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 	v.validate()
-	if vtb.ref == nil {
-		panic("Vtb does not initialized")
-	}
+	vtb.validate()
 
 	state := NewValidationState2()
 	defer state.Free()
@@ -39,9 +35,7 @@ func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 
 func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	v.validate()
-	if atv.ref == nil {
-		panic("Atv does not initialized")
-	}
+	atv.validate()
 
 	state := NewValidationState2()
 	defer state.Free()
@@ -107,9 +101,7 @@ func (v *PopContext2) MemPoolGetMissingBtcBlocks() [][]byte {
 
 func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
 	v.validate()
-	if popData.ref == nil {
-		panic("PopData does not initialized")
-	}
+	popData.validate()
 	C.pop_pop_context_function_mempool_remove_all(v.ref, popData.ref)
 }
 
