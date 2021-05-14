@@ -198,12 +198,15 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (connectingIndex == nullptr) {
+    invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash;
+
     VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
                   vtb.toPrettyString());
     return state.Invalid("bad-prev-block",
                          "Can not find the BTC block referenced by the first "
                          "block of the VTB context");
   }
+  invalid_vtbs.erase(vtb.getId());
 
   bool isValid = std::any_of(connectingIndex->getRefs().begin(),
                              connectingIndex->getRefs().end(),
