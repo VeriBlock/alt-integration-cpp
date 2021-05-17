@@ -81,4 +81,28 @@ func TestConfig2(t *testing.T) {
 
 	config.SetPopPayoutDelay(1000)
 	assert.Equal(uint32(1000), config.GetPopPayoutDelay())
+
+	res := config.GetMaxVbkBlocksInAltBlock()
+	assert.NotEqual(uint32(0), res)
+
+	res = config.GetMaxVTBsInAltBlock()
+	assert.NotEqual(uint32(0), res)
+
+	res = config.GetMaxATVsInAltBlock()
+	assert.NotEqual(uint32(0), res)
+
+	res = config.GetFinalityDelay()
+	assert.NotEqual(uint32(0), res)
+
+	res = config.GetMaxAltchainFutureBlockTime()
+	assert.NotEqual(uint32(0), res)
+
+	alt := config.AltGetBootstrapBlock()
+	assert.NotEqual(nil, alt)
+
+	name := config.GetVbkNetworkName()
+	assert.NotEqual("", name)
+
+	name = config.GetBtcNetworkName()
+	assert.NotEqual("", name)
 }
