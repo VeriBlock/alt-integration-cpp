@@ -402,6 +402,11 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   BaseBlockTree::removeSubtree(toRemove);
 }
 
+bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
+                                     int32_t preserveBlocksBehindFinal) {
+  return base::finalizeBlockImpl(block, preserveBlocksBehindFinal);
+}
+
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
                            PayloadsStorage& payloadsProvider,
