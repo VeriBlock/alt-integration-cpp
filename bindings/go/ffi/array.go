@@ -38,6 +38,52 @@ func createCBytes(bytes []byte) C.pop_array_u8_t {
 	return res
 }
 
+func freeCArrayDouble(array *C.pop_array_double_t) {
+	C.pop_array_double_free(array)
+}
+
+func createCArrDouble(floats []float64) C.pop_array_double_t {
+	res := C.pop_array_double_new(C.size_t(len(floats)))
+	if res.size != 0 {
+		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&floats[0]), res.size)
+	}
+	runtime.SetFinalizer(&res, func(v *C.pop_array_double_t) {
+		C.pop_array_double_free(v)
+	})
+	return res
+}
+
+func createArrFloat64(array *C.pop_array_double_t) []float64 {
+	res := make([]float64, array.size)
+	if array.size != 0 {
+		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	}
+	return res
+}
+
+func freeCArrayU32(array *C.pop_array_u32_t) {
+	C.pop_array_u32_free(array)
+}
+
+func createCArrU32(nums []uint32) C.pop_array_u32_t {
+	res := C.pop_array_u32_new(C.size_t(len(nums)))
+	if res.size != 0 {
+		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&nums[0]), res.size)
+	}
+	runtime.SetFinalizer(&res, func(v *C.pop_array_u32_t) {
+		C.pop_array_u32_free(v)
+	})
+	return res
+}
+
+func createArrU32(array *C.pop_array_u32_t) []uint32 {
+	res := make([]uint32, array.size)
+	if array.size != 0 {
+		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+	}
+	return res
+}
+
 func freeArrayArrayU8(array *C.pop_array_array_u8_t) {
 	C.pop_array_array_u8_free(array)
 }
