@@ -19,7 +19,7 @@ using namespace altintegration;
  *        \-Z251
  *
  */
-struct BlockFinalization : public ::testing::Test, public PopTestFixture {
+struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *A504 = nullptr;
   BlockIndex<AltBlock> *B503 = nullptr;
   BlockIndex<AltBlock> *E503 = nullptr;
@@ -47,7 +47,7 @@ struct BlockFinalization : public ::testing::Test, public PopTestFixture {
   }
 };
 
-TEST_F(BlockFinalization, FinalizeRoot) {
+TEST_F(AltBlockFinalization, FinalizeRoot) {
   auto *bootstrap = alttree.getBestChain().first();
   ASSERT_TRUE(alttree.finalizeBlock(bootstrap->getHash()));
   // unchanged
@@ -56,7 +56,7 @@ TEST_F(BlockFinalization, FinalizeRoot) {
   assertTreesHaveNoOrphans(alttree);
 }
 
-TEST_F(BlockFinalization, FinalizeTip0Window) {
+TEST_F(AltBlockFinalization, FinalizeTip0Window) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
   auto *tip = alttree.getBestChain().tip();
@@ -67,7 +67,7 @@ TEST_F(BlockFinalization, FinalizeTip0Window) {
 }
 
 // finalize a block A251, which has one parallel block Z251 (tip).
-TEST_F(BlockFinalization, FinalizeA251) {
+TEST_F(AltBlockFinalization, FinalizeA251) {
   auto *A251 = A504->getAncestor(251);
   ASSERT_TRUE(alttree.finalizeBlock(A251->getHash()));
 
@@ -84,7 +84,7 @@ TEST_F(BlockFinalization, FinalizeA251) {
 
 // finalize a block A501. all tips starting at A500 should be removed. single
 // chain should remain.
-TEST_F(BlockFinalization, FinalizeA501) {
+TEST_F(AltBlockFinalization, FinalizeA501) {
   auto *A501 = A504->getAncestor(501);
   ASSERT_TRUE(alttree.finalizeBlock(A501->getHash()));
 
@@ -101,7 +101,7 @@ TEST_F(BlockFinalization, FinalizeA501) {
 }
 
 // finalize a block A500. all tips that start at 500 should remain.
-TEST_F(BlockFinalization, FinalizeA500) {
+TEST_F(AltBlockFinalization, FinalizeA500) {
   auto *A500 = A504->getAncestor(500);
   ASSERT_TRUE(alttree.finalizeBlock(A500->getHash()));
 
@@ -117,7 +117,7 @@ TEST_F(BlockFinalization, FinalizeA500) {
   assertTreesHaveNoOrphans(alttree);
 }
 
-TEST_F(BlockFinalization, FinalizeActiveChainOneByOne) {
+TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
   Chain<BlockIndex<AltBlock>> chain = alttree.getBestChain();
   for (auto *index : chain) {
     ASSERT_TRUE(alttree.finalizeBlock(index->getHash())) << index->getHeight();

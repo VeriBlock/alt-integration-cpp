@@ -404,6 +404,16 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 
 bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
                                      int32_t preserveBlocksBehindFinal) {
+  // Finalizing btc blocks
+  uint32_t finalBtcHeight = std::max(btc().getBestChain().tip()->getHeight() -
+                                         btc().getParams().getOldBlocksWindow(),
+                                     btc().getRoot().getHeight());
+
+  auto* finalizedIndex = btc().getBestChain()[finalBtcHeight];
+  if (finalizedIndex != nullptr) {
+    btc().finalizeBlock(finalizedIndex->getHash());
+  }
+
   return base::finalizeBlockImpl(block, preserveBlocksBehindFinal);
 }
 
