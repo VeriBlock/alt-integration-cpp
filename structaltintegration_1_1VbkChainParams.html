@@ -86,7 +86,6 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1VbkChainParams
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="structaltintegration_1_1VbkChainParams-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -165,6 +164,10 @@ virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getKeysto
 <tr class="memitem:a9e5be95382333ffa0319da3fa55d3c37"><td class="memItemLeft" align="right" valign="top"><a id="a9e5be95382333ffa0319da3fa55d3c37"></a>
 virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getFinalityDelay</b> () const noexcept</td></tr>
 <tr class="separator:a9e5be95382333ffa0319da3fa55d3c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bc0dfd7d0393195f9f8e892bc85f5ad"><td class="memItemLeft" align="right" valign="top"><a id="a4bc0dfd7d0393195f9f8e892bc85f5ad"></a>
+virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkChainParams.html#a4bc0dfd7d0393195f9f8e892bc85f5ad">getHistoryOverwriteLimit</a> () const noexcept</td></tr>
+<tr class="memdesc:a4bc0dfd7d0393195f9f8e892bc85f5ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">addPayloads in VBK tree will reject all payloads that are added this number of blocks behind of current tip in active chain <br /></td></tr>
+<tr class="separator:a4bc0dfd7d0393195f9f8e892bc85f5ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf2dbbf05276d23c2dc232ac7ce595ec"><td class="memItemLeft" align="right" valign="top"><a id="abf2dbbf05276d23c2dc232ac7ce595ec"></a>
 virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkChainParams.html#abf2dbbf05276d23c2dc232ac7ce595ec">getOldBlocksWindow</a> () const noexcept</td></tr>
 <tr class="memdesc:abf2dbbf05276d23c2dc232ac7ce595ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">all blocks further than this number of blocks are considered "old" <br /></td></tr>
@@ -178,18 +181,6 @@ virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getEndorse
 <tr class="memitem:a0ca06292a7f9d15af8190267c0f479f3"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3">preserveBlocksBehindFinal</a> () const noexcept</td></tr>
 <tr class="memdesc:a0ca06292a7f9d15af8190267c0f479f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">when finalizeBlockImpl is called, this many blocks behind final block will be preserved in RAM.  <a href="structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3">More...</a><br /></td></tr>
 <tr class="separator:a0ca06292a7f9d15af8190267c0f479f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a8725ae6d823d775e14b7d77805b225f3"><td class="memItemLeft" align="right" valign="top"><a id="a8725ae6d823d775e14b7d77805b225f3"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mOldBlocksWindow</b> = 12000</td></tr>
-<tr class="separator:a8725ae6d823d775e14b7d77805b225f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04eb68862d4ce8f8c71056670d0dd2c5"><td class="memItemLeft" align="right" valign="top"><a id="a04eb68862d4ce8f8c71056670d0dd2c5"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mEndorsementSettlementInterval</b> = 400</td></tr>
-<tr class="separator:a04eb68862d4ce8f8c71056670d0dd2c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b6d2f85b80519becfd4eed68f15f885"><td class="memItemLeft" align="right" valign="top"><a id="a8b6d2f85b80519becfd4eed68f15f885"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mPreserveBlocksBehindFinal</b> = mEndorsementSettlementInterval</td></tr>
-<tr class="separator:a8b6d2f85b80519becfd4eed68f15f885"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -250,13 +241,12 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxFutureBlockTi
   </tr>
 </table>
 </div><div class="memdoc">
-<p>In VBK we should preserve at least last <code>endorsementSettlementInterval</code> blocks before finalized (not including finalized). </p>
+<p>In VBK this number depends on endorsement settlement interval. </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__chain__params_8hpp_source.html#l00063">63</a> of file <a class="el" href="vbk__chain__params_8hpp_source.html">vbk_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                                                      {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    VBK_ASSERT(mPreserveBlocksBehindFinal &gt;= mEndorsementSettlementInterval);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">return</span> mPreserveBlocksBehindFinal;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="vbk__chain__params_8hpp_source.html#l00070">70</a> of file <a class="el" href="vbk__chain__params_8hpp_source.html">vbk_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                                                      {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">return</span> getEndorsementSettlementInterval();</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -283,7 +273,7 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxFutureBlockTi
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
 <div class="line">      100, 100, 95, 89, 80, 69, 56, 40, 21}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="vbk__chain__params_8hpp_source.html#l00077">77</a> of file <a class="el" href="vbk__chain__params_8hpp_source.html">vbk_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vbk__chain__params_8hpp_source.html#l00076">76</a> of file <a class="el" href="vbk__chain__params_8hpp_source.html">vbk_chain_params.hpp</a>.</p>
 
 </div>
 </div>

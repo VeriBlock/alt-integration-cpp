@@ -13,6 +13,7 @@ var structaltintegration_1_1VbkBlockTree =
     [ "addPayloads", "structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411", null ],
     [ "btc", "structaltintegration_1_1VbkBlockTree.html#a8bd01148477ec5f462de35a85eedddbe", null ],
     [ "btc", "structaltintegration_1_1VbkBlockTree.html#a06180fdcb1566eede8a53ba4d03af282", null ],
+    [ "finalizeBlockImpl", "structaltintegration_1_1VbkBlockTree.html#a5a19748fba09e4552ffb07f3705c38d6", null ],
     [ "getComparator", "structaltintegration_1_1VbkBlockTree.html#acac5820df22bee06262a367cc11c95f2", null ],
     [ "getComparator", "structaltintegration_1_1VbkBlockTree.html#adaa3d7518fbb08989f64359ed69c68d3", null ],
     [ "getInvalidVTBs", "structaltintegration_1_1VbkBlockTree.html#a19311caf1bd7104abd13dd18a3dac05e", null ],
