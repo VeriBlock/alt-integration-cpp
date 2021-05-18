@@ -203,6 +203,8 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (connectingIndex == nullptr) {
+    invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash;
+
     VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
                   vtb.toPrettyString());
     return state.Invalid("bad-prev-block",
@@ -216,7 +218,10 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  return isValid ? true : state.Invalid("block-referenced-too-early");
+  return isValid
+             ? (invalid_vtbs.erase(vtb.getId()), true)
+             : (invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash,
+                state.Invalid("block-referenced-too-early"));
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,

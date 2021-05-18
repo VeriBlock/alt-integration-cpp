@@ -6,17 +6,23 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_
 
+#include <unordered_map>
 #include <utility>
-#include <veriblock/pop/blockchain/blocktree.hpp>
-#include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
-#include <veriblock/pop/blockchain/pop/pop_state_machine.hpp>
-#include <veriblock/pop/blockchain/vbk_block_addon.hpp>
-#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
-#include <veriblock/pop/entities/btcblock.hpp>
-#include <veriblock/pop/finalizer.hpp>
-#include <veriblock/pop/storage/payloads_index.hpp>
+
+#include "veriblock/pop/blockchain/blocktree.hpp"
+#include "veriblock/pop/blockchain/pop/fork_resolution.hpp"
+#include "veriblock/pop/blockchain/pop/pop_state_machine.hpp"
+#include "veriblock/pop/blockchain/vbk_block_addon.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/finalizer.hpp"
+#include "veriblock/pop/storage/payloads_index.hpp"
 
 namespace altintegration {
+
+struct VTBInvalidationInfo {
+  BtcBlock::hash_t missing_btc_block;
+};
 
 // defined in vbk_block_tree.cpp
 extern template struct BlockIndex<BtcBlock>;
@@ -164,6 +170,13 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removeSubtree(index_t& toRemove) override;
 
+  void removeInvalidVTB(const VTB::id_t& id) { invalid_vtbs.erase(id); }
+
+  const std::unordered_map<VTB::id_t, VTBInvalidationInfo>& getInvalidVTBs()
+      const {
+    return invalid_vtbs;
+  }
+
  private:
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**
@@ -183,6 +196,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator cmp_;
   PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
+
+  std::unordered_map<VTB::id_t, VTBInvalidationInfo> invalid_vtbs;
 };
 
 //! @private

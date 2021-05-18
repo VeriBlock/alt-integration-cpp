@@ -184,6 +184,27 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(array_u8),
+                           mempool_get_missing_btc_blocks) {
+  VBK_ASSERT(self);
+
+  auto missing_hashes = self->ref->getMemPool().getMissingBtcBlocks();
+
+  POP_ARRAY_NAME(array_u8) res;
+  res.size = missing_hashes.size();
+  res.data = new POP_ARRAY_NAME(u8)[res.size];
+  for (size_t i = 0; i < res.size; ++i) {
+    auto& src = missing_hashes[i];
+    auto& dst = res.data[i];
+    dst.size = src.size();
+    dst.data = new uint8_t[dst.size];
+    std::copy(src.begin(), src.end(), dst.data);
+  }
+
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            void,
                            mempool_remove_all,
                            const POP_ENTITY_NAME(pop_data) * pop_data) {

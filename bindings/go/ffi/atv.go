@@ -19,6 +19,12 @@ type Atv struct {
 	ref *C.pop_atv_t
 }
 
+func (v *Atv) validate() {
+	if v.ref == nil {
+		panic("Atv does not initialized")
+	}
+}
+
 func generateDefaultAtv() *Atv {
 	return createAtv(C.pop_atv_generate_default_value())
 }
@@ -51,16 +57,12 @@ func (v *Atv) Free() {
 }
 
 func (v *Atv) GetBlockOfProof() *VbkBlock {
-	if v.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
 }
 
 func (v *Atv) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
 	str := C.pop_atv_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -70,14 +72,8 @@ func (v *Atv) ToJSON() (map[string]interface{}, error) {
 	return res, err
 }
 
-func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
-	val1.GetBlockOfProof().assertEquals(assert, val2.GetBlockOfProof())
-}
-
 func (v *Atv) SerializeToVbk() []byte {
-	if v.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
 	res := C.pop_atv_serialize_to_vbk(v.ref)
 	defer freeArrayU8(&res)
 	return createBytes(&res)
@@ -93,4 +89,8 @@ func DeserializeFromVbkAtv(bytes []byte) (*Atv, error) {
 	}
 
 	return createAtv(res), nil
+}
+
+func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {
+	val1.GetBlockOfProof().assertEquals(assert, val2.GetBlockOfProof())
 }

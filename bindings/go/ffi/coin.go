@@ -14,6 +14,12 @@ type Coin struct {
 	ref *C.pop_coin_t
 }
 
+func (v *Coin) validate() {
+	if v.ref == nil {
+		panic("Coin does not initialized")
+	}
+}
+
 func generateDefaultCoin() *Coin {
 	val := &Coin{ref: C.pop_coin_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *Coin) {
@@ -30,8 +36,6 @@ func (v *Coin) Free() {
 }
 
 func (v *Coin) GetUnits() int64 {
-	if v.ref == nil {
-		panic("Address does not initialized")
-	}
+	v.validate()
 	return int64(C.pop_coin_get_units(v.ref))
 }

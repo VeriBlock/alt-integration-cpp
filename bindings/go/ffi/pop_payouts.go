@@ -14,6 +14,12 @@ type PopPayout struct {
 	ref *C.pop_pop_payout_t
 }
 
+func (v *PopPayout) validate() {
+	if v.ref == nil {
+		panic("PopPayout does not initialized")
+	}
+}
+
 func generateDefaultPopPayout() *PopPayout {
 	return createPopPayout(C.pop_pop_payout_generate_default_value())
 }
@@ -46,17 +52,13 @@ func (v *PopPayout) Free() {
 }
 
 func (v *PopPayout) GetPayoutInfo() []byte {
-	if v.ref == nil {
-		panic("PopPayout does not initialized")
-	}
+	v.validate()
 	array := C.pop_pop_payout_get_payout_info(v.ref)
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
 
 func (v *PopPayout) GetAmount() uint64 {
-	if v.ref == nil {
-		panic("PopPayout does not initialized")
-	}
+	v.validate()
 	return uint64(C.pop_pop_payout_get_amount(v.ref))
 }

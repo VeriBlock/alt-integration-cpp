@@ -16,6 +16,13 @@ type MockMiner2 struct {
 	mutex *SafeMutex
 }
 
+func (v *MockMiner2) validate() {
+	v.mutex.AssertMutexLocked("MockMiner is not locked")
+	if v.ref == nil {
+		panic("MockMiner does not initialized")
+	}
+}
+
 func NewMockMiner2() *MockMiner2 {
 	val := &MockMiner2{
 		ref:   C.pop_mock_miner_new(),
@@ -30,7 +37,6 @@ func NewMockMiner2() *MockMiner2 {
 
 func (v *MockMiner2) Free() {
 	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
 	if v.ref != nil {
 		C.pop_mock_miner_free(v.ref)
 		v.ref = nil
@@ -38,56 +44,37 @@ func (v *MockMiner2) Free() {
 }
 
 func (v *MockMiner2) MineBtcBlockTip() *BtcBlock {
-	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
-	if v.ref == nil {
-		panic("MockMiner does not initialized")
-	}
+	v.validate()
 	return createBtcBlock(C.pop_mock_miner_function_mineBtcBlockTip(v.ref))
 }
 
 func (v *MockMiner2) MineBtcBlock(block *BtcBlock) *BtcBlock {
-	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
-	if v.ref == nil {
-		panic("MockMiner does not initialized")
-	}
+	v.validate()
+	block.validate()
 	return createBtcBlock(C.pop_mock_miner_function_mineBtcBlock(v.ref, block.ref))
 }
 
 func (v *MockMiner2) MineVbkBlockTip() *VbkBlock {
-	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
-	if v.ref == nil {
-		panic("MockMiner does not initialized")
-	}
+	v.validate()
 	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlockTip(v.ref))
 }
 
 func (v *MockMiner2) MineVbkBlock(block *VbkBlock) *VbkBlock {
-	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
-	if v.ref == nil {
-		panic("MockMiner does not initialized")
-	}
+	v.validate()
+	block.validate()
 	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlock(v.ref, block.ref))
 }
 
 func (v *MockMiner2) MineAtv(pub_data *PublicationData) *Atv {
-	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
-	if v.ref == nil {
-		panic("MockMiner does not initialized")
-	}
+	v.validate()
+	pub_data.validate()
 	return createAtv(C.pop_mock_miner_function_mineATV(v.ref, pub_data.ref))
 }
 
 func (v *MockMiner2) MineVtb(endorsed_block *VbkBlock, last_known_btc_block *BtcBlock) *Vtb {
-	v.mutex.AssertMutexLocked("MockMiner is not locked")
-
-	if v.ref == nil {
-		panic("MockMiner does not initialized")
-	}
+	v.validate()
+	endorsed_block.validate()
+	last_known_btc_block.validate()
 	return createVtb(C.pop_mock_miner_function_mineVTB(v.ref, endorsed_block.ref, last_known_btc_block.ref))
 }
 

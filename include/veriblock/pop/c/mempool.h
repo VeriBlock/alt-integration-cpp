@@ -152,6 +152,19 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            mempool_get_in_flight_vbk_blocks);
 
 /**
+ * @copybrief return altintegration::MemPool known VbkBlock`s inFlight
+ *
+ * This method returns a vector altintegration::BtcBlock hashes of the missing blocks.
+ *
+ * @see altintegration::MemPool::getMissingBtcBlocks
+ * @param[in] self PopContext
+ * @return POP_ARRAY_NAME(array_u8) array of the altintegration::BtcBlock hashes
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(array_u8),
+                           mempool_get_missing_btc_blocks);
+
+/**
  * @copybrief altintegration::MemPool::removeAll
  * @see altintegration::MemPool::removeAll
  * @param[in] self PopContext

@@ -15,6 +15,12 @@ type Storage2 struct {
 	ref *C.pop_storage_t
 }
 
+func (v *Storage2) validate() {
+	if v.ref == nil {
+		panic("Storage does not initialized")
+	}
+}
+
 func NewStorage2(path string) (*Storage2, error) {
 	state := NewValidationState2()
 	defer state.Free()
