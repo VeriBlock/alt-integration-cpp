@@ -705,23 +705,23 @@ struct BaseBlockTree {
       return false;
     }
 
-    return finalizeBlockImpl(index, preserveBlocksBehindFinal);
+    return finalizeBlockImpl(*index, preserveBlocksBehindFinal);
   }
 
-  virtual bool finalizeBlockImpl(index_t* index,
+  virtual bool finalizeBlockImpl(index_t& index,
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal) {
     // first, update active chain (it should start with
     // 'index' but we also need to preserve `preserveBlocksBehindFinal` blocks
     // before it). all outdated blocks behind `index` block will be deallocated
-    int32_t firstBlockHeight = index->getHeight() - preserveBlocksBehindFinal;
+    int32_t firstBlockHeight = index.getHeight() - preserveBlocksBehindFinal;
     int32_t bootstrapBlockHeight = getRoot().getHeight();
     firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
     // second, erase candidates from tips_ that will never be activated
     erase_if<decltype(tips_), index_t*>(
-        tips_, [this, index](const index_t* const& tip) -> bool {
+        tips_, [this, &index](const index_t* const& tip) -> bool {
           VBK_ASSERT(tip);
 
           // tip from active chain can not be outdated
@@ -729,7 +729,7 @@ struct BaseBlockTree {
             return false;
           }
 
-          return isBlockOutdated(*index, *tip);
+          return isBlockOutdated(index, *tip);
         });
 
     // before we deallocate subtree, disconnect "new root block" from previous
@@ -745,9 +745,9 @@ struct BaseBlockTree {
 
       // erase "parallel" blocks - blocks that are on same height as `index`,
       // but since `index` is final, will never be active.
-      if (index->pprev != nullptr) {
-        auto parallelBlocks = index->pprev->pnext;
-        parallelBlocks.erase(index);
+      if (index.pprev != nullptr) {
+        auto parallelBlocks = index.pprev->pnext;
+        parallelBlocks.erase(&index);
         for (auto* par : parallelBlocks) {
           // disconnect `par` from prev block
           if (par->pprev != nullptr) {
@@ -760,7 +760,7 @@ struct BaseBlockTree {
     }
 
     // fourth, mark `index` and all predecessors as finalized
-    index_t* ptr = index;
+    index_t* ptr = &index;
     while (ptr != nullptr && !ptr->finalized) {
       ptr->finalized = true;
       ptr = ptr->pprev;
