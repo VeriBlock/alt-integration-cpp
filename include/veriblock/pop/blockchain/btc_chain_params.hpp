@@ -34,12 +34,12 @@ struct BtcChainParams {
     return mMaxFutureBlockTime;
   }
 
-  //! when finalizeBlockImpl is called, this many blocks behind final block will be
-  //! preserved in RAM. In BTC we can deallocate all blocks past final block.
+  //! when finalizeBlockImpl is called, this many blocks behind final block will
+  //! be preserved in RAM. In BTC we can deallocate all blocks past final block.
   uint32_t preserveBlocksBehindFinal() const noexcept { return 0; }
 
   //! all blocks further than this number of blocks are considered "old"
-  int32_t getOldBlocksWindow() const noexcept { return 1000; }
+  int32_t getOldBlocksWindow() const noexcept { return 12000; }
 
  protected:
   uint32_t mMaxFutureBlockTime = 2 * 60 * 60;  // 2 hours
