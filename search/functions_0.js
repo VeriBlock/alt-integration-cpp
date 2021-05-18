@@ -1,16 +1,16 @@
 var searchData=
 [
-  ['acceptblock_513',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)'],['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)']]],
-  ['acceptblockheader_514',['acceptBlockHeader',['../structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c',1,'altintegration::AltBlockTree']]],
-  ['addblocks_515',['addBlocks',['../namespacealtintegration.html#ae2894d7158d84c3ccc3cf26fe76afc6b',1,'altintegration']]],
-  ['addpayloads_516',['addPayloads',['../structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411',1,'altintegration::VbkBlockTree']]],
-  ['alldescendantsunapplied_517',['allDescendantsUnapplied',['../structaltintegration_1_1BlockIndex.html#abd263336def008808db24eb3507645aa',1,'altintegration::BlockIndex']]],
-  ['alldescendantsunconnected_518',['allDescendantsUnconnected',['../structaltintegration_1_1BlockIndex.html#aa097bbec0f88a7c94f3b6738c8771a78',1,'altintegration::BlockIndex']]],
-  ['appendtocache_519',['appendToCache',['../structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454',1,'altintegration::DefaultPopRewardsCalculator']]],
-  ['assertdecodebase58_520',['AssertDecodeBase58',['../namespacealtintegration.html#aa0a07869f3be03ff2487448621a34997',1,'altintegration']]],
-  ['assertdecodebase59_521',['AssertDecodeBase59',['../namespacealtintegration.html#aa79cffa7e82b68d843402c124e1dced3',1,'altintegration']]],
-  ['assertdeserializefromhex_522',['AssertDeserializeFromHex',['../namespacealtintegration.html#ab982318b9fcddb8d73626e7fd22781cf',1,'altintegration']]],
-  ['assertdeserializefromraw_523',['AssertDeserializeFromRaw',['../namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1',1,'altintegration']]],
-  ['assertdeserializefromrawhex_524',['AssertDeserializeFromRawHex',['../namespacealtintegration.html#a840937815279ab03555cbb38cfbe06c8',1,'altintegration']]],
-  ['assertdeserializefromvbkencoding_525',['AssertDeserializeFromVbkEncoding',['../namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce',1,'altintegration']]]
+  ['acceptblock_512',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)'],['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)']]],
+  ['acceptblockheader_513',['acceptBlockHeader',['../structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c',1,'altintegration::AltBlockTree']]],
+  ['addblocks_514',['addBlocks',['../namespacealtintegration.html#ae2894d7158d84c3ccc3cf26fe76afc6b',1,'altintegration']]],
+  ['addpayloads_515',['addPayloads',['../structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411',1,'altintegration::VbkBlockTree']]],
+  ['alldescendantsunapplied_516',['allDescendantsUnapplied',['../structaltintegration_1_1BlockIndex.html#abd263336def008808db24eb3507645aa',1,'altintegration::BlockIndex']]],
+  ['alldescendantsunconnected_517',['allDescendantsUnconnected',['../structaltintegration_1_1BlockIndex.html#aa097bbec0f88a7c94f3b6738c8771a78',1,'altintegration::BlockIndex']]],
+  ['appendtocache_518',['appendToCache',['../structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454',1,'altintegration::DefaultPopRewardsCalculator']]],
+  ['assertdecodebase58_519',['AssertDecodeBase58',['../namespacealtintegration.html#aa0a07869f3be03ff2487448621a34997',1,'altintegration']]],
+  ['assertdecodebase59_520',['AssertDecodeBase59',['../namespacealtintegration.html#aa79cffa7e82b68d843402c124e1dced3',1,'altintegration']]],
+  ['assertdeserializefromhex_521',['AssertDeserializeFromHex',['../namespacealtintegration.html#ab982318b9fcddb8d73626e7fd22781cf',1,'altintegration']]],
+  ['assertdeserializefromraw_522',['AssertDeserializeFromRaw',['../namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1',1,'altintegration']]],
+  ['assertdeserializefromrawhex_523',['AssertDeserializeFromRawHex',['../namespacealtintegration.html#a840937815279ab03555cbb38cfbe06c8',1,'altintegration']]],
+  ['assertdeserializefromvbkencoding_524',['AssertDeserializeFromVbkEncoding',['../namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce',1,'altintegration']]]
 ];

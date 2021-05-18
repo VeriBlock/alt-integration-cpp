@@ -16,7 +16,6 @@ var structaltintegration_1_1BaseBlockTree =
     [ "deferForkResolutionGuard", "structaltintegration_1_1BaseBlockTree.html#a60141d5f2848e9f91885fd9f412a20ce", null ],
     [ "disconnectOnValidityBlockChanged", "structaltintegration_1_1BaseBlockTree.html#a88004ad8992eefd68d064c377c079495", null ],
     [ "eraseBlock", "structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e", null ],
-    [ "finalizeBlockImpl", "structaltintegration_1_1BaseBlockTree.html#a09a9a2d4d3473e2d1f6cdf30efa463c7", null ],
     [ "findBlockIndex", "structaltintegration_1_1BaseBlockTree.html#a7b04cff9f2bbfc3b44e43a49a61e3a5b", null ],
     [ "findBlockIndex", "structaltintegration_1_1BaseBlockTree.html#a619da2aa9e768d96e844e78139d4e244", null ],
     [ "getBestChain", "structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc", null ],
