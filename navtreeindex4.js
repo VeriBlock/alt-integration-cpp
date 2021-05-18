@@ -1,5 +1,12 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1AltChainParams.html#ac830ec898b26a093da4f0902de94d697":[4,0,0,6,18],
+"structaltintegration_1_1AltChainParams.html#acc5cdebc50142e23d7d4f539d630be53":[4,0,0,6,29],
+"structaltintegration_1_1AltChainParams.html#adeadf36cdbd2e7e3713064bbb56b42cc":[4,0,0,6,3],
+"structaltintegration_1_1AltChainParams.html#ae6084de9a2ba5e8b34e8e24ef7b0ef76":[4,0,0,6,25],
+"structaltintegration_1_1AltChainParams.html#aeb332c160d18de02bc2dcdab86e2d4ef":[4,0,0,6,0],
+"structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370":[4,0,0,6,1],
+"structaltintegration_1_1AltChainParams.html#af289390066132cf7bbb2845db047fa86":[4,0,0,6,6],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html":[4,0,0,32],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#a26b593b406b329ab2da7c17b77854018":[4,0,0,32,6],
 "structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2aca9efbe5de4f0916c14578ecbde454":[4,0,0,32,1],
@@ -15,6 +22,7 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610":[4,0,0,7,36],
 "structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b":[4,0,0,7,46],
 "structaltintegration_1_1BaseBlockTree.html#a08ba4d38aab03b3f66f328f77c56851e":[4,0,0,7,6],
+"structaltintegration_1_1BaseBlockTree.html#a09a9a2d4d3473e2d1f6cdf30efa463c7":[4,0,0,7,16],
 "structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e":[4,0,0,7,15],
 "structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e":[4,0,0,7,20],
 "structaltintegration_1_1BaseBlockTree.html#a12c423f40e6071fa56d8aefcc704f6c8":[4,0,0,7,39],
@@ -43,7 +51,6 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BaseBlockTree.html#a93c4cdc057693bd4f126409cec1b325b":[4,0,0,7,7],
 "structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51":[4,0,0,7,44],
 "structaltintegration_1_1BaseBlockTree.html#a96c9e0f2cf70379d32ea8833cbb3a933":[4,0,0,7,4],
-"structaltintegration_1_1BaseBlockTree.html#a99754233be4e72d02f1f814800a29cfc":[4,0,0,7,16],
 "structaltintegration_1_1BaseBlockTree.html#a9feee17d9c4768461b195dec5b0d4ea0":[4,0,0,7,37],
 "structaltintegration_1_1BaseBlockTree.html#aa3bc153df731167cab9dc8608ee6a207":[4,0,0,7,12],
 "structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc":[4,0,0,7,19],
@@ -242,12 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BtcBlock.html#a75eae66350ff58816f4533a4528759b2":[4,0,0,28,22],
 "structaltintegration_1_1BtcBlock.html#a7a1d03b6e8859ee8e7c1872f52be8b9b":[4,0,0,28,23],
 "structaltintegration_1_1BtcBlock.html#a7a54d8e2957293dd0dd7fead50898a03":[4,0,0,28,29],
-"structaltintegration_1_1BtcBlock.html#a7a570a1ebb1eafd857ca2af6ee038b50":[4,0,0,28,20],
-"structaltintegration_1_1BtcBlock.html#a7b60d0ec73d9b811e09279930cbcacb0":[4,0,0,28,4],
-"structaltintegration_1_1BtcBlock.html#a7d2fee16561a3e3c7f91b366be832788":[4,0,0,28,10],
-"structaltintegration_1_1BtcBlock.html#a941ef0670ae0f95f4579b1cc610e8fb5":[4,0,0,28,5],
-"structaltintegration_1_1BtcBlock.html#aa90e0eb918cd31625c4331b13830a5fa":[4,0,0,28,6],
-"structaltintegration_1_1BtcBlock.html#aaa0218a6cc38f1366422057216bebbc0":[4,0,0,28,0],
-"structaltintegration_1_1BtcBlock.html#aab1e06aae431e992937a8b30ed066384":[4,0,0,28,15],
-"structaltintegration_1_1BtcBlock.html#ab1e005bc1b6e992d50125afde62bb3be":[4,0,0,28,16]
+"structaltintegration_1_1BtcBlock.html#a7a570a1ebb1eafd857ca2af6ee038b50":[4,0,0,28,20]
 };

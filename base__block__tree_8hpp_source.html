@@ -697,23 +697,23 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    }</div>
 <div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160; </div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;    <span class="keywordflow">return</span> finalizeBlockImpl(index, preserveBlocksBehindFinal);</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;    <span class="keywordflow">return</span> finalizeBlockImpl(*index, preserveBlocksBehindFinal);</div>
 <div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;  }</div>
 <div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160; </div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> finalizeBlockImpl(index_t* index,</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> finalizeBlockImpl(index_t&amp; index,</div>
 <div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                                 <span class="comment">// see config.preserveBlocksBehindFinal()</span></div>
 <div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;                                 int32_t preserveBlocksBehindFinal) {</div>
 <div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;    <span class="comment">// first, update active chain (it should start with</span></div>
 <div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;    <span class="comment">// &#39;index&#39; but we also need to preserve `preserveBlocksBehindFinal` blocks</span></div>
 <div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;    <span class="comment">// before it). all outdated blocks behind `index` block will be deallocated</span></div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;    int32_t firstBlockHeight = index-&gt;getHeight() - preserveBlocksBehindFinal;</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;    int32_t firstBlockHeight = index.getHeight() - preserveBlocksBehindFinal;</div>
 <div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;    int32_t bootstrapBlockHeight = getRoot().getHeight();</div>
 <div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);</div>
 <div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a> = Chain&lt;index_t&gt;(firstBlockHeight, <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip());</div>
 <div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160; </div>
 <div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    <span class="comment">// second, erase candidates from tips_ that will never be activated</span></div>
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    erase_if&lt;decltype(tips_), index_t*&gt;(</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;        <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>, [<span class="keyword">this</span>, index](<span class="keyword">const</span> index_t* <span class="keyword">const</span>&amp; tip) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;        <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>, [<span class="keyword">this</span>, &amp;index](<span class="keyword">const</span> index_t* <span class="keyword">const</span>&amp; tip) -&gt; <span class="keywordtype">bool</span> {</div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;          VBK_ASSERT(tip);</div>
 <div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160; </div>
 <div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;          <span class="comment">// tip from active chain can not be outdated</span></div>
@@ -721,7 +721,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;          }</div>
 <div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160; </div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;          <span class="keywordflow">return</span> <a class="code" href="namespacealtintegration.html#a1a12e777e52a4a4aa3d8b0b1275bf5d2">isBlockOutdated</a>(*index, *tip);</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;          <span class="keywordflow">return</span> <a class="code" href="namespacealtintegration.html#a1a12e777e52a4a4aa3d8b0b1275bf5d2">isBlockOutdated</a>(index, *tip);</div>
 <div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;        });</div>
 <div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160; </div>
 <div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    <span class="comment">// before we deallocate subtree, disconnect &quot;new root block&quot; from previous</span></div>
@@ -737,9 +737,9 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160; </div>
 <div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;      <span class="comment">// erase &quot;parallel&quot; blocks - blocks that are on same height as `index`,</span></div>
 <div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;      <span class="comment">// but since `index` is final, will never be active.</span></div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;      <span class="keywordflow">if</span> (index-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        <span class="keyword">auto</span> parallelBlocks = index-&gt;pprev-&gt;pnext;</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        parallelBlocks.erase(index);</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;      <span class="keywordflow">if</span> (index.pprev != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;        <span class="keyword">auto</span> parallelBlocks = index.pprev-&gt;pnext;</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        parallelBlocks.erase(&amp;index);</div>
 <div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* par : parallelBlocks) {</div>
 <div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;          <span class="comment">// disconnect `par` from prev block</span></div>
 <div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;          <span class="keywordflow">if</span> (par-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
@@ -752,7 +752,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;    }</div>
 <div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160; </div>
 <div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;    <span class="comment">// fourth, mark `index` and all predecessors as finalized</span></div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;    index_t* ptr = index;</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;    index_t* ptr = &amp;index;</div>
 <div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;    <span class="keywordflow">while</span> (ptr != <span class="keyword">nullptr</span> &amp;&amp; !ptr-&gt;finalized) {</div>
 <div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;      ptr-&gt;finalized = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;      ptr = ptr-&gt;pprev;</div>
