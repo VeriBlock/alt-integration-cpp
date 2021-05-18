@@ -294,11 +294,13 @@ func (v *Config2) AltGetBootstrapBlock() *AltBlock {
 // GetVbkNetworkName ...
 func (v *Config2) GetVbkNetworkName() string {
 	c_str := C.pop_config_get_vbk_network_name(v.ref)
+	defer freeArrayChar(&c_str)
 	return createString(&c_str)
 }
 
 // GetBtcNetworkName ...
 func (v *Config2) GetBtcNetworkName() string {
 	c_str := C.pop_config_get_btc_network_name(v.ref)
+	defer freeArrayChar(&c_str)
 	return createString(&c_str)
 }

@@ -28,6 +28,9 @@ func TestConfig2(t *testing.T) {
 	config := NewConfig2()
 	defer config.Free()
 
+	config.SelectVbkParams("regtest", 0, "")
+	config.SelectBtcParams("regtest", 0, "")
+
 	config.SetStartOfSlope(1000)
 	assert.Equal(float64(1000), config.GetStartOfSlope())
 
