@@ -19,7 +19,7 @@ using namespace altintegration;
  *        \-Z251
  *
  */
-/*struct BlockFinalization : public ::testing::Test, public PopTestFixture {
+struct BlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *A504 = nullptr;
   BlockIndex<AltBlock> *B503 = nullptr;
   BlockIndex<AltBlock> *E503 = nullptr;
@@ -49,7 +49,7 @@ using namespace altintegration;
 
 TEST_F(BlockFinalization, FinalizeRoot) {
   auto *bootstrap = alttree.getBestChain().first();
-  ASSERT_TRUE(alttree.finalizeBlock(bootstrap->getHash()));
+  ASSERT_TRUE(alttree.finalizeBlock(bootstrap->getHash(), state));
   // unchanged
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
   assertTreeTips(alttree, {A504, B503, C502, D502, E503, Z251});
@@ -60,7 +60,7 @@ TEST_F(BlockFinalization, FinalizeTip0Window) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
   auto *tip = alttree.getBestChain().tip();
-  ASSERT_TRUE(alttree.finalizeBlock(tip->getHash()));
+  ASSERT_TRUE(alttree.finalizeBlock(tip->getHash(), state));
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
   assertTreesHaveNoOrphans(alttree);
@@ -69,7 +69,7 @@ TEST_F(BlockFinalization, FinalizeTip0Window) {
 // finalize a block A251, which has one parallel block Z251 (tip).
 TEST_F(BlockFinalization, FinalizeA251) {
   auto *A251 = A504->getAncestor(251);
-  ASSERT_TRUE(alttree.finalizeBlock(A251->getHash()));
+  ASSERT_TRUE(alttree.finalizeBlock(A251->getHash(), state));
 
   auto *A201 = A251->getAncestor(201);
   ASSERT_TRUE(A201);
@@ -86,7 +86,7 @@ TEST_F(BlockFinalization, FinalizeA251) {
 // chain should remain.
 TEST_F(BlockFinalization, FinalizeA501) {
   auto *A501 = A504->getAncestor(501);
-  ASSERT_TRUE(alttree.finalizeBlock(A501->getHash()));
+  ASSERT_TRUE(alttree.finalizeBlock(A501->getHash(), state));
 
   // 501, 502, 503, 504 + 50 prev blocks
   EXPECT_EQ(alttree.getBlocks().size(), 4 + 50);
@@ -103,7 +103,7 @@ TEST_F(BlockFinalization, FinalizeA501) {
 // finalize a block A500. all tips that start at 500 should remain.
 TEST_F(BlockFinalization, FinalizeA500) {
   auto *A500 = A504->getAncestor(500);
-  ASSERT_TRUE(alttree.finalizeBlock(A500->getHash()));
+  ASSERT_TRUE(alttree.finalizeBlock(A500->getHash(), state));
 
   // 50 prev blocks + 5 chain A + 2 chain C + 1 chain D + 3 chain B + 1 chain E
   EXPECT_EQ(alttree.getBlocks().size(), 50 + 5 + 2 + 1 + 3 + 1);
@@ -120,12 +120,12 @@ TEST_F(BlockFinalization, FinalizeA500) {
 TEST_F(BlockFinalization, FinalizeActiveChainOneByOne) {
   Chain<BlockIndex<AltBlock>> chain = alttree.getBestChain();
   for (auto *index : chain) {
-    ASSERT_TRUE(alttree.finalizeBlock(index->getHash())) << index->getHeight();
+    ASSERT_TRUE(alttree.finalizeBlock(index->getHash(), state)) << index->getHeight();
   }
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
   assertTreesHaveNoOrphans(alttree);
-}*/
+}
 
 struct VbkBlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *tip = nullptr;
