@@ -411,7 +411,7 @@ bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
 
   auto* finalizedIndex = btc().getBestChain()[finalBtcHeight];
   if (finalizedIndex != nullptr) {
-    // btc().finalizeBlock(finalizedIndex->getHash());
+    btc().finalizeBlock(finalizedIndex->getHash());
   }
 
   return base::finalizeBlockImpl(block, preserveBlocksBehindFinal);

@@ -12,17 +12,18 @@ using namespace altintegration;
 struct VbkBlockFinalization : public ::testing::Test, public PopTestFixture {
   VbkBlockTree* tree{nullptr};
 
-  BlockIndex<VbkBlock>* A100{nullptr};
+  BlockIndex<VbkBlock>* finalizedBlock{nullptr};
 
   size_t vbkTotalBlocks = 0;
 
   void SetUp() override {
     tree = &popminer->vbk();
 
-    A100 = popminer->mineVbkBlocks(100);
+    finalizedBlock = popminer->mineVbkBlocks(
+        tree->getParams().preserveBlocksBehindFinal() * 2);
 
     vbkTotalBlocks = tree->getBlocks().size();
-    ASSERT_EQ(vbkTotalBlocks, A100->getHeight() + 1);
+    ASSERT_EQ(vbkTotalBlocks, finalizedBlock->getHeight() + 1);
   }
 };
 
@@ -50,7 +51,7 @@ TEST_F(VbkBlockFinalization, BasicTest) {
 
   ASSERT_TRUE(tree->setState(vtb0containing->pprev->getHash(), state));
 
-  ASSERT_TRUE(tree->finalizeBlock(A100->getHash()));
+  ASSERT_TRUE(tree->finalizeBlock(finalizedBlock->getHash()));
   ASSERT_TRUE(tree->setState(vtb0containing->getHash(), state));
   ASSERT_LT(tree->getBlocks().size(), vbkTotalBlocks);
   ASSERT_LT(tree->btc().getBlocks().size(), btcTotalBlocks);
