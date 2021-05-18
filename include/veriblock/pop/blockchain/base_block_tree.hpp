@@ -666,6 +666,7 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
+      --appliedBlockCount;
       blocks_.erase(h);
     });
   }
