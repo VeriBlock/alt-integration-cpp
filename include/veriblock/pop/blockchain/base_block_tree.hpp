@@ -705,6 +705,12 @@ struct BaseBlockTree {
       return false;
     }
 
+    return finalizeBlockImpl(index, preserveBlocksBehindFinal);
+  }
+
+  virtual bool finalizeBlockImpl(index_t* index,
+                                 // see config.preserveBlocksBehindFinal()
+                                 int32_t preserveBlocksBehindFinal) {
     // first, update active chain (it should start with
     // 'index' but we also need to preserve `preserveBlocksBehindFinal` blocks
     // before it). all outdated blocks behind `index` block will be deallocated
