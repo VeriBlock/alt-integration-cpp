@@ -268,9 +268,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memitem:ac8a3d94836fcc712c6788d3e4a31234e"><td class="memItemLeft" align="right" valign="top"><a id="ac8a3d94836fcc712c6788d3e4a31234e"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> (size_t level=0) const</td></tr>
 <tr class="separator:ac8a3d94836fcc712c6788d3e4a31234e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09a9a2d4d3473e2d1f6cdf30efa463c7"><td class="memItemLeft" align="right" valign="top"><a id="a09a9a2d4d3473e2d1f6cdf30efa463c7"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>finalizeBlockImpl</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;index, int32_t preserveBlocksBehindFinal)</td></tr>
-<tr class="separator:a09a9a2d4d3473e2d1f6cdf30efa463c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -369,7 +366,7 @@ template&lt;typename Block &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00076">76</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{ <span class="keywordflow">return</span> this-&gt;<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>; }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00911">base_block_tree.hpp:911</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00904">base_block_tree.hpp:904</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -621,7 +618,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;        <span class="stringliteral">&quot;state corruption: the blockchain is neither bootstrapped nor empty&quot;</span>);</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00907">base_block_tree.hpp:907</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00900">base_block_tree.hpp:900</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -783,11 +780,11 @@ template&lt;typename Block &gt; </div>
 <p>In this weird case, when Block=<a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a>, we may call <code>getBlockIndex(block-&gt;previousBlock)</code>, it is a call <code>getBlockIndex(<a class="el" href="structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size.">Blob</a>&lt;12&gt;). But when</code>getBlockIndex` accepts it, it does an implicit cast to full hash (hash_t), adding zeroes in the end. Then, .trimLE returns 12 zeroes.</p>
 <p>This hack allows us to inject explicit conversion hash_t (Blob&lt;24&gt;) -&gt; prev_block_hash_t (Blob&lt;12&gt;). </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00301">301</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                           {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00298">298</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                           {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
