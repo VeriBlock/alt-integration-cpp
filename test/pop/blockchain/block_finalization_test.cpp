@@ -19,7 +19,7 @@ using namespace altintegration;
  *        \-Z251
  *
  */
-struct BlockFinalization : public ::testing::Test, public PopTestFixture {
+/*struct BlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *A504 = nullptr;
   BlockIndex<AltBlock> *B503 = nullptr;
   BlockIndex<AltBlock> *E503 = nullptr;
@@ -124,5 +124,60 @@ TEST_F(BlockFinalization, FinalizeActiveChainOneByOne) {
   }
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
+  assertTreesHaveNoOrphans(alttree);
+}*/
+
+struct VbkBlockFinalization : public ::testing::Test, public PopTestFixture {
+  BlockIndex<AltBlock> *tip = nullptr;
+  size_t totalBlocks = 0;
+
+  void SetUp() override {
+    altparam.mMaxReorgDistance = 500;
+    altparam.mEndorsementSettlementInterval = 50;
+    altparam.mPreserveBlocksBehindFinal = 50;
+
+    tip = mineAltBlocks(alttree.getRoot(), 100);
+    ASSERT_TRUE(alttree.setState(*tip, state));
+    totalBlocks = alttree.getBlocks().size();
+  }
+};
+
+TEST_F(VbkBlockFinalization, FinalizeVbkTip) {
+  altparam.mEndorsementSettlementInterval = 0;
+  altparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mEndorsementSettlementInterval = 0;
+  vbkparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mOldBlocksWindow = 0;
+
+  PopData altPayloads;
+
+  auto* vbktip = popminer->mineVbkBlocks(10);
+  fillVbkContext(altPayloads.context,
+                 GetRegTestVbkBlock().getHash(),
+                 vbktip->getHash(),
+                 popminer->vbk());
+
+  AltBlock containingBlock = generateNextBlock(alttree.getBestChain().tip()->getHeader());
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state))
+      << state.toString();
+  ASSERT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads))
+      << state.toString();
+  ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
+      << state.toString();
+  EXPECT_TRUE(state.IsValid());
+  vbktip = alttree.vbk().getBestChain().tip();
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
+
+  // mine ALT block without any contained VBK context
+  tip = mineAltBlocks(*alttree.getBestChain().tip(), 1);
+  ASSERT_EQ(alttree.getBlocks().size(), 103);
+
+  ASSERT_TRUE(alttree.finalizeBlock(tip->getHash(), state));
+  ASSERT_EQ(alttree.getBlocks().size(), 1);
+  assertTreeTips(alttree, {tip});
+
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
+  assertTreeTips(alttree.vbk(), {vbktip});
+
   assertTreesHaveNoOrphans(alttree);
 }

@@ -689,10 +689,11 @@ struct BaseBlockTree {
   //! @private
   virtual bool finalizeBlockImpl(const hash_t& block,
                                  // see config.preserveBlocksBehindFinal()
-                                 int32_t preserveBlocksBehindFinal) {
+                                 int32_t preserveBlocksBehindFinal,
+                                 ValidationState& state) {
     auto* index = getBlockIndex(block);
     if (!index) {
-      return false;
+      return state.Invalid("block-not-found");
     }
 
     // block is already final
@@ -702,7 +703,7 @@ struct BaseBlockTree {
 
     // prereq is not met - finalized block must be on active chain
     if (!activeChain_.contains(index)) {
-      return false;
+      return state.Invalid("block-not-on-active-chain");
     }
 
     // first, update active chain (it should start with

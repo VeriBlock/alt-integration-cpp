@@ -50,6 +50,11 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   }
 }
 
+bool VbkBlockTree::finalizeBlock(const VbkBlockTree::hash_t& block,
+                                 ValidationState& state) {
+  return base::finalizeBlockImpl(block, getParams().preserveBlocksBehindFinal(), state);
+}
+
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {

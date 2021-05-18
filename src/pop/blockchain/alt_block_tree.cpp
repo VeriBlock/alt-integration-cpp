@@ -489,9 +489,19 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(const AltBlockTree::hash_t& block) {
-  return base::finalizeBlockImpl(block,
-                                 getParams().preserveBlocksBehindFinal());
+bool AltBlockTree::finalizeBlock(const AltBlockTree::hash_t& block,
+                                 ValidationState& state) {
+  if (!base::finalizeBlockImpl(
+          block, getParams().preserveBlocksBehindFinal(), state)) {
+    return state.Invalid("alttree-finalize-error");
+  }
+
+  int32_t firstBlockHeight = vbk().getBestChain().tip()->getHeight() - vbk().getParams().getOldBlocksWindow();
+  int32_t bootstrapBlockHeight = vbk().getRoot().getHeight();
+  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+  auto *vbkIndex = vbk().getBestChain()[firstBlockHeight];
+  VBK_ASSERT_MSG(vbkIndex != nullptr, "Invalid VBK tree state");
+  return vbk().finalizeBlock(vbkIndex->getHash(), state);
 }
 
 template <typename Payloads>

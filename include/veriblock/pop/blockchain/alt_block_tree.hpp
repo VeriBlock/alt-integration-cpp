@@ -352,7 +352,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using base::setState;
 
   //! @private
-  bool finalizeBlock(const hash_t& block);
+  bool finalizeBlock(const hash_t& block, ValidationState& state);
 
   /**
    * Removes given block and all blocks after it.

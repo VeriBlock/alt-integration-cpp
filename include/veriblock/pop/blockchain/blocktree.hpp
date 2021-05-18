@@ -179,8 +179,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     return isBlockOld(index->getHeight());
   }
 
-  bool finalizeBlock(const hash_t& block) {
-    return base::finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
+  bool finalizeBlock(const hash_t& block, ValidationState& state) {
+    return base::finalizeBlockImpl(
+        block, param_->preserveBlocksBehindFinal(), state);
   }
 
  protected:
