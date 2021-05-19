@@ -167,9 +167,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removeSubtree(index_t& toRemove) override;
 
-  bool finalizeBlockImpl(const VbkBlock::hash_t& block,
-                         int32_t preserveBlocksBehindFinal) override;
-
   void removeInvalidVTB(const VTB::id_t& id) { invalid_vtbs.erase(id); }
 
   const std::unordered_map<VTB::id_t, VTBInvalidationInfo>& getInvalidVTBs()
@@ -178,6 +175,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   }
 
  private:
+  bool finalizeBlockImpl(const VbkBlock::hash_t& block,
+                         int32_t preserveBlocksBehindFinal) override;
+
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**
    * Add, apply and validate a payload to a block that's currently applied
