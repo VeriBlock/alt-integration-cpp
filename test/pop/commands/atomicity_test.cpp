@@ -210,6 +210,19 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   ASSERT_EQ(vtbids3.size(), 1);
   ASSERT_EQ(vtbids3.at(0), vtb1.getId());
 
+  {  // roll back the VTB
+    ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
+    auto vtbids = altvbkcontaining->template getPayloadIds<VTB>();
+    ASSERT_EQ(vtbids.size(), 0);
+
+    // return the state
+    ASSERT_TRUE(cmd1->Execute(state));
+    vtbids = altvbkcontaining->template getPayloadIds<VTB>();
+
+    ASSERT_EQ(vtbids.size(), 1);
+    ASSERT_EQ(vtbids.at(0), vtb1.getId());
+  }
+
   // add vtb2
   auto cmd2 = std::make_shared<AddVTB>(alttree, vtb2);
   ASSERT_TRUE(cmd2->Execute(state));
