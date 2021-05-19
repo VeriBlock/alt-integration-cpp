@@ -42,10 +42,10 @@ func freeCArrayDouble(array *C.pop_array_double_t) {
 	C.pop_array_double_free(array)
 }
 
-func createCArrDouble(floats []float64) C.pop_array_double_t {
-	res := C.pop_array_double_new(C.size_t(len(floats)))
+func createCArrDouble(array []float64) C.pop_array_double_t {
+	res := C.pop_array_double_new(C.size_t(len(array)))
 	if res.size != 0 {
-		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&floats[0]), res.size)
+		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&array[0]), C.uint64_t(unsafe.Sizeof(float64(0)))*res.size)
 	}
 	runtime.SetFinalizer(&res, func(v *C.pop_array_double_t) {
 		C.pop_array_double_free(v)
@@ -56,7 +56,7 @@ func createCArrDouble(floats []float64) C.pop_array_double_t {
 func createArrFloat64(array *C.pop_array_double_t) []float64 {
 	res := make([]float64, array.size)
 	if array.size != 0 {
-		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), C.uint64_t(unsafe.Sizeof(float64(0)))*array.size)
 	}
 	return res
 }
@@ -65,10 +65,10 @@ func freeCArrayU32(array *C.pop_array_u32_t) {
 	C.pop_array_u32_free(array)
 }
 
-func createCArrU32(nums []uint32) C.pop_array_u32_t {
-	res := C.pop_array_u32_new(C.size_t(len(nums)))
+func createCArrU32(array []uint32) C.pop_array_u32_t {
+	res := C.pop_array_u32_new(C.size_t(len(array)))
 	if res.size != 0 {
-		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&nums[0]), res.size)
+		C.memcpy(unsafe.Pointer(res.data), unsafe.Pointer(&array[0]), C.uint64_t(unsafe.Sizeof(uint32(0)))*res.size)
 	}
 	runtime.SetFinalizer(&res, func(v *C.pop_array_u32_t) {
 		C.pop_array_u32_free(v)
@@ -79,7 +79,7 @@ func createCArrU32(nums []uint32) C.pop_array_u32_t {
 func createArrU32(array *C.pop_array_u32_t) []uint32 {
 	res := make([]uint32, array.size)
 	if array.size != 0 {
-		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), array.size)
+		C.memcpy(unsafe.Pointer(&res[0]), unsafe.Pointer(array.data), C.uint64_t(unsafe.Sizeof(uint32(0)))*array.size)
 	}
 	return res
 }

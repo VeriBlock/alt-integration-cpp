@@ -58,11 +58,11 @@ func TestConfig2(t *testing.T) {
 	config.SetDifficultyAveragingInterval(1000)
 	assert.Equal(uint32(1000), config.GetDifficultyAveragingInterval())
 
-	// config.SetRoundRatios([]float64{0.5, 1.5})
-	// assert.Equal([]float64{0.5, 1.5}, config.GetRoundRatios())
+	config.SetRoundRatios([]float64{0.5, 1.5})
+	assert.Equal([]float64{0.5, 1.5}, config.GetRoundRatios())
 
-	// config.SetPopRewardsLookupTable([]float64{0.5, 1.5})
-	// assert.Equal([]float64{0.5, 1.5}, config.GetPopRewardsLookupTable())
+	config.SetPopRewardsLookupTable([]float64{0.5, 1.5})
+	assert.Equal([]float64{0.5, 1.5}, config.GetPopRewardsLookupTable())
 
 	config.SetMaxFutureBlockTime(1000)
 	assert.Equal(uint32(1000), config.GetMaxFutureBlockTime())
@@ -79,8 +79,8 @@ func TestConfig2(t *testing.T) {
 	config.SetMaxPopDataSize(1000)
 	assert.Equal(uint32(1000), config.GetMaxPopDataSize())
 
-	// config.SetForkResolutionLookupTable([]uint32{5, 15})
-	// assert.Equal([]uint32{5, 15}, config.GetForkResolutionLookupTable())
+	config.SetForkResolutionLookupTable([]uint32{5, 15})
+	assert.Equal([]uint32{5, 15}, config.GetForkResolutionLookupTable())
 
 	config.SetPopPayoutDelay(1000)
 	assert.Equal(uint32(1000), config.GetPopPayoutDelay())
