@@ -125,8 +125,9 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
   Chain<BlockIndex<AltBlock>> chain = alttree.getBestChain();
   for (auto *index : chain) {
     ASSERT_TRUE(alttree.finalizeBlock(index->getHash())) << index->getHeight();
-    ASSERT_TRUE(alttree.setState(index->getHash(), state)) << state.toString();
   }
+  ASSERT_TRUE(alttree.setState(alttree.getBestChain().tip()->getHash(), state))
+      << state.toString();
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
   assertTreesHaveNoOrphans(alttree);
