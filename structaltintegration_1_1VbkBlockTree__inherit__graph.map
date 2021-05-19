@@ -1,6 +1,6 @@
 <map id="altintegration::VbkBlockTree" name="altintegration::VbkBlockTree">
-<area shape="rect" id="node1" title="Veriblock block tree." alt="" coords="17,1161,201,1385"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="5,771,213,1112"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="21,5,187,317"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="125,367,304,708"/>
+<area shape="rect" id="node1" title="Veriblock block tree." alt="" coords="17,1176,201,1400"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="5,785,213,1127"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="21,5,187,332"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="125,381,304,723"/>
 </map>
