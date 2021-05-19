@@ -229,6 +229,11 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                 pid.toHex(),
                 index.toShortPrettyString());
 
+  if (index.getContainingEndorsements().find(pid) !=
+      index.getContainingEndorsements().end()) {
+    return true;
+  }
+
   if (!validateBTCContext(payload, state)) {
     return state.Invalid(
         block_t::name() + "-btc-context-does-not-connect",
