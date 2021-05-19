@@ -175,6 +175,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   }
 
  private:
+  bool finalizeBlockImpl(const VbkBlock::hash_t& block,
+                         int32_t preserveBlocksBehindFinal) override;
+
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**
    * Add, apply and validate a payload to a block that's currently applied
