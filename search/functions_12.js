@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['unsafelyremovepayload_713',['unsafelyRemovePayload',['../structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50',1,'altintegration::VbkBlockTree']]],
-  ['useflatscoreround_714',['useFlatScoreRound',['../structaltintegration_1_1PopPayoutsParams.html#a24e2482f28718a5e67c02f46e91a66b0',1,'altintegration::PopPayoutsParams']]]
+  ['unsafelyremovepayload_711',['unsafelyRemovePayload',['../structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50',1,'altintegration::VbkBlockTree']]],
+  ['useflatscoreround_712',['useFlatScoreRound',['../structaltintegration_1_1PopPayoutsParams.html#a24e2482f28718a5e67c02f46e91a66b0',1,'altintegration::PopPayoutsParams']]]
 ];
