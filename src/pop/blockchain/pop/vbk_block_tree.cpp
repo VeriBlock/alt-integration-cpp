@@ -408,7 +408,8 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 }
 
 bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
-                                     int32_t preserveBlocksBehindFinal) {
+                                     int32_t preserveBlocksBehindFinal,
+                                     ValidationState& state) {
   // Finalizing btc blocks
   uint32_t finalBtcHeight = std::max(btc().getBestChain().tip()->getHeight() -
                                          btc().getParams().getOldBlocksWindow(),
@@ -416,10 +417,10 @@ bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
 
   auto* finalizedIndex = btc().getBestChain()[finalBtcHeight];
   if (finalizedIndex != nullptr) {
-    btc().finalizeBlock(finalizedIndex->getHash());
+    btc().finalizeBlock(finalizedIndex->getHash(), state);
   }
 
-  return base::finalizeBlockImpl(block, preserveBlocksBehindFinal);
+  return base::finalizeBlockImpl(block, preserveBlocksBehindFinal, state);
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

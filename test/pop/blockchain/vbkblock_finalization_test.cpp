@@ -51,7 +51,7 @@ TEST_F(VbkBlockFinalization, BasicTest) {
 
   ASSERT_TRUE(tree->setState(vtb0containing->pprev->getHash(), state));
 
-  ASSERT_TRUE(tree->finalizeBlock(finalizedBlock->getHash()));
+  ASSERT_TRUE(tree->finalizeBlock(finalizedBlock->getHash(), state));
   ASSERT_TRUE(tree->setState(vtb0containing->getHash(), state));
   ASSERT_LT(tree->getBlocks().size(), vbkTotalBlocks);
   // TODO fix it
