@@ -202,7 +202,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
       popminer->mineVbkBlocks(1, {vbkPopTx1});
 
   auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
-  popData.vtbs = {vtb1, vtb1};
+  popData.vtbs = {vtb1};
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
                  containingVbkBlock->getHash(),
@@ -218,6 +218,13 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
   ASSERT_TRUE(alttree.vbk().addPayloads(
       containingVbkBlock->getHash(), popData.vtbs, state))
       << state.toString();
+
+  // manually add duplicated VTBs
+  auto* containingVbkBlock_index =
+      alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
+  containingVbkBlock_index->insertPayloadId<VTB>(vtb1.getId());
+  alttree.getPayloadsIndex().addVbkPayloadIndex(
+      containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
   ASSERT_DEATH(save(), "");
 }
@@ -235,7 +242,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
       popminer->mineVbkBlocks(1, {vbkPopTx1});
 
   auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
-  popData.vtbs = {vtb1, vtb1};
+  popData.vtbs = {vtb1};
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
                  containingVbkBlock->getHash(),
@@ -251,6 +258,13 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   ASSERT_TRUE(alttree.vbk().addPayloads(
       containingVbkBlock->getHash(), popData.vtbs, state))
       << state.toString();
+
+  // manually add duplicated VTBs
+  auto* containingVbkBlock_index =
+      alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
+  containingVbkBlock_index->insertPayloadId<VTB>(vtb1.getId());
+  alttree.getPayloadsIndex().addVbkPayloadIndex(
+      containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
   auto writer = InmemBlockBatch(blockStorage);
   saveTree(alttree.btc(), writer);
@@ -296,4 +310,3 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
 
   ASSERT_TRUE(load()) << state.toString();
 }
-
