@@ -180,8 +180,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   bool finalizeBlock(const hash_t& block, ValidationState& state) {
-    return base::finalizeBlockImpl(
-        block, param_->preserveBlocksBehindFinal(), state);
+    return this->finalizeBlockImpl(block, param_->preserveBlocksBehindFinal(), state);
   }
 
  protected:

@@ -197,7 +197,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          : tx.blockOfProof;
 
   // if 'firstBlock' is not genesis block, use 'previousBlock' as connectingHash
-  auto connectingHash = firstBlock.getPreviousBlock() != ArithUint256()
+  auto connectingHash = firstBlock.getPreviousBlock() != uint256()
                             ? firstBlock.getPreviousBlock()
                             : firstBlock.getHash();
 
@@ -405,6 +405,21 @@ bool VbkBlockTree::loadBlock(const stored_index_t& index,
 void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   payloadsIndex_.removePayloadsIndex(toRemove);
   BaseBlockTree::removeSubtree(toRemove);
+}
+
+bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
+                                     int32_t preserveBlocksBehindFinal) {
+  // Finalizing btc blocks
+  uint32_t finalBtcHeight = std::max(btc().getBestChain().tip()->getHeight() -
+                                         btc().getParams().getOldBlocksWindow(),
+                                     btc().getRoot().getHeight());
+
+  auto* finalizedIndex = btc().getBestChain()[finalBtcHeight];
+  if (finalizedIndex != nullptr) {
+    btc().finalizeBlock(finalizedIndex->getHash());
+  }
+
+  return base::finalizeBlockImpl(block, preserveBlocksBehindFinal);
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

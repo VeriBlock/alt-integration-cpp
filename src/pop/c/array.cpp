@@ -33,6 +33,20 @@ POP_ARRAY_FREE_SIGNATURE(u32) {
   }
 }
 
+POP_ARRAY_NEW_SIGNATURE(double) {
+  POP_ARRAY_NAME(double) res;
+  res.size = size;
+  res.data = new double[size];
+  return res;
+}
+
+POP_ARRAY_FREE_SIGNATURE(double) {
+  if (self != nullptr) {
+    delete[] self->data;
+    self = nullptr;
+  }
+}
+
 POP_ARRAY_NEW_SIGNATURE(string) {
   POP_ARRAY_NAME(string) res;
   res.size = size;
