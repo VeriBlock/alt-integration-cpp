@@ -666,6 +666,9 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
+      if (activeChain_.contains(&next)) {
+        --appliedBlockCount;
+      }
       blocks_.erase(h);
     });
   }
@@ -687,10 +690,10 @@ struct BaseBlockTree {
   //!
   //! @returns false if block not found or prereq are not met
   //! @private
-  virtual bool finalizeBlockImpl(const hash_t& block,
+  virtual bool finalizeBlockImpl(const hash_t& hash,
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal) {
-    auto* index = getBlockIndex(block);
+    auto* index = getBlockIndex(hash);
     if (!index) {
       return false;
     }
@@ -711,7 +714,6 @@ struct BaseBlockTree {
     int32_t firstBlockHeight = index->getHeight() - preserveBlocksBehindFinal;
     int32_t bootstrapBlockHeight = getRoot().getHeight();
     firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
-    activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
     // second, erase candidates from tips_ that will never be activated
     erase_if<decltype(tips_), index_t*>(
@@ -728,11 +730,11 @@ struct BaseBlockTree {
 
     // before we deallocate subtree, disconnect "new root block" from previous
     // tree
-    auto& root = getRoot();
-    auto* rootPrev = root.pprev;
-    if (root.pprev != nullptr) {
-      root.pprev->pnext.erase(&root);
-      root.pprev = nullptr;
+    auto* newRoot = activeChain_[firstBlockHeight];
+    auto* rootPrev = newRoot->pprev;
+    if (newRoot->pprev != nullptr) {
+      newRoot->pprev->pnext.erase(newRoot);
+      newRoot->pprev = nullptr;
 
       // do deallocate
       deallocateTree(*rootPrev);
@@ -752,6 +754,8 @@ struct BaseBlockTree {
         }
       }
     }
+
+    activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
     // fourth, mark `index` and all predecessors as finalized
     index_t* ptr = index;
