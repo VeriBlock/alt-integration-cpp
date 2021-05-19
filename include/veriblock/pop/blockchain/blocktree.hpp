@@ -180,7 +180,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   bool finalizeBlock(const hash_t& block) {
-    return finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
+    return this->finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
   }
 
  protected:
