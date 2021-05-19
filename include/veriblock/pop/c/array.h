@@ -42,6 +42,7 @@ extern "C" {
 // declare arrays of simple types here
 POP_DECLARE_ARRAY(uint8_t, u8);
 POP_DECLARE_ARRAY(uint32_t, u32);
+POP_DECLARE_ARRAY(double, double);
 POP_DECLARE_ARRAY(POP_ARRAY_NAME(u8), array_u8);
 POP_DECLARE_ARRAY(char, string);
 
