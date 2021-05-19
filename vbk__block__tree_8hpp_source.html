@@ -178,17 +178,17 @@ $(document).ready(function(){initNavTree('vbk__block__tree_8hpp_source.html','')
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
 <div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">  168</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">removeSubtree</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; toRemove) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="keywordtype">bool</span> finalizeBlockImpl(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>&amp; block,</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                         int32_t preserveBlocksBehindFinal) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  <span class="keywordtype">void</span> removeInvalidVTB(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">VTB::id_t</a>&amp; <span class="keywordtype">id</span>) { invalid_vtbs.erase(<span class="keywordtype">id</span>); }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;VTB::id_t, VTBInvalidationInfo&gt;&amp; getInvalidVTBs()<span class="keyword"></span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="keyword">      const </span>{</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">return</span> invalid_vtbs;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  }</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="keywordtype">void</span> removeInvalidVTB(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">VTB::id_t</a>&amp; <span class="keywordtype">id</span>) { invalid_vtbs.erase(<span class="keywordtype">id</span>); }</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;VTB::id_t, VTBInvalidationInfo&gt;&amp; getInvalidVTBs()<span class="keyword"></span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="keyword">      const </span>{</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordflow">return</span> invalid_vtbs;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  }</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="keywordtype">bool</span> finalizeBlockImpl(<span class="keyword">const</span> VbkBlock::hash_t&amp; block,</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                         int32_t preserveBlocksBehindFinal) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  <span class="keywordtype">bool</span> validateBTCContext(<span class="keyword">const</span> payloads_t&amp; vtb, ValidationState&amp; state);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <span class="keywordtype">bool</span> addPayloadToAppliedBlock(index_t&amp; index,</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                                <span class="keyword">const</span> payloads_t&amp; payload,</div>
