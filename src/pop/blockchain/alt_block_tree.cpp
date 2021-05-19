@@ -490,8 +490,7 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
 }
 
 bool AltBlockTree::finalizeBlock(const AltBlockTree::hash_t& block) {
-  return base::finalizeBlockImpl(block,
-                                 getParams().preserveBlocksBehindFinal());
+  return finalizeBlockImpl(block, getParams().preserveBlocksBehindFinal());
 }
 
 template <typename Payloads>
