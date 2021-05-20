@@ -213,9 +213,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">isBlockOld</a> (const hash_t &amp;hash) const</td></tr>
 <tr class="memdesc:ae60dda418fe822190cbd54741a3c10f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:ae60dda418fe822190cbd54741a3c10f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefde5ca55f4b7d0f37e3bfa3011db6d5"><td class="memItemLeft" align="right" valign="top"><a id="aefde5ca55f4b7d0f37e3bfa3011db6d5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>finalizeBlock</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="separator:aefde5ca55f4b7d0f37e3bfa3011db6d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcbad8e8de52aa7437fb59ae6fb3fe97"><td class="memItemLeft" align="right" valign="top"><a id="abcbad8e8de52aa7437fb59ae6fb3fe97"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>finalizeBlock</b> (const hash_t &amp;block)</td></tr>
+<tr class="separator:abcbad8e8de52aa7437fb59ae6fb3fe97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structaltintegration_1_1BaseBlockTree"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structaltintegration_1_1BaseBlockTree')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a></td></tr>
 <tr class="memitem:acdeede24636e84dff4a34cea27adf82f inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="acdeede24636e84dff4a34cea27adf82f"></a>
 const std::unordered_set&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getTips</b> () const</td></tr>
@@ -548,24 +548,24 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00290">290</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                                                                               {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    }</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;      this-&gt;setState(candidate, state);</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00289">289</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                                                                               {</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    }</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    }</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;      this-&gt;setState(candidate, state);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    }</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  }</div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00076">base_block_tree.hpp:76</a></div></div>
 </div><!-- fragment -->
 </div>
