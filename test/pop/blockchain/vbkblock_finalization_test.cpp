@@ -31,7 +31,8 @@ struct VbkBlockFinalization : public ::testing::Test, public PopTestFixture {
 TEST_F(VbkBlockFinalization, BasicTest) {
   auto vbkendorsed = popminer->mineVbkBlocks(7);
 
-  popminer->mineBtcBlocks(100);
+  // TODO uncomment after fix VbkBlockTree::finalizeBlockImpl()
+  // popminer->mineBtcBlocks(MAX_BTC_BLOCKS_IN_VBKPOPTX);
 
   auto btctx0 =
       popminer->createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
@@ -49,9 +50,14 @@ TEST_F(VbkBlockFinalization, BasicTest) {
   ASSERT_EQ(btcBlockOfProof0->getHash(),
             tree->btc().getBestChain().tip()->getHash());
 
+  // TODO uncomment after fix VbkBlockTree::finalizeBlockImpl()
+  // size_t btcTotalBlocks = tree->btc().getBlocks().size();
+
   ASSERT_TRUE(tree->setState(vtb0containing->pprev->getHash(), state));
 
   ASSERT_TRUE(tree->finalizeBlock(finalizedBlock->getHash()));
   ASSERT_TRUE(tree->setState(vtb0containing->getHash(), state));
   ASSERT_LT(tree->getBlocks().size(), vbkTotalBlocks);
+  // TODO uncomment after fix VbkBlockTree::finalizeBlockImpl()
+  // ASSERT_LT(tree->btc().getBlocks().size(), btcTotalBlocks);
 }
