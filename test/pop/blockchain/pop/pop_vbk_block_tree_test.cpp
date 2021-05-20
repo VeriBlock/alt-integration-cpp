@@ -261,3 +261,39 @@ TEST_F(VbkBlockTreeTestFixture, addDuplicatedVTB) {
   ASSERT_EQ(vtb0containing->getPayloadIds<VTB>().size(), 1);
   ASSERT_EQ(vtb0containing->getPayloadIds<VTB>()[0], VTB0.getId());
 }
+
+TEST_F(VbkBlockTreeTestFixture, maxPopTxsPerBlockValidation) {
+  // start with 65 VBK blocks
+  auto* vbkBlockTip = popminer.mineVbkBlocks(65);
+
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->getHash(),
+            vbkBlockTip->getHash());
+
+  // Make MAX_VBKPOPTX_PER_VBK_BLOCK endorsements valid endorsements
+  ASSERT_GE(vbkBlockTip->getHeight(), 15);
+  auto* endorsedVbkBlock =
+      vbkBlockTip->getAncestor(vbkBlockTip->getHeight() - 1);
+
+  std::vector<VbkPopTx> popTxs;
+  for (int i = 0; i < MAX_VBKPOPTX_PER_VBK_BLOCK; ++i) {
+    popTxs.push_back(generatePopTx(endorsedVbkBlock->getHeader()));
+  }
+
+  ASSERT_EQ(popTxs.size(), MAX_VBKPOPTX_PER_VBK_BLOCK);
+
+  auto* vbkBlockContaining = popminer.mineVbkBlocks(1, popTxs);
+
+  ASSERT_EQ(vbkBlockContaining->getPayloadIds<VTB>().size(),
+            MAX_VBKPOPTX_PER_VBK_BLOCK);
+
+  popTxs.clear();
+  for (int i = 0; i < MAX_VBKPOPTX_PER_VBK_BLOCK + 1; ++i) {
+    popTxs.push_back(generatePopTx(endorsedVbkBlock->getHeader()));
+  }
+
+  ASSERT_EQ(popTxs.size(), MAX_VBKPOPTX_PER_VBK_BLOCK + 1);
+
+  vbkBlockContaining = popminer.mineVbkBlocks(1, popTxs);
+
+  ASSERT_EQ(vbkBlockContaining, nullptr);
+}
