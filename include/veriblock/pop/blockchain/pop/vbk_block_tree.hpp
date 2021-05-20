@@ -175,7 +175,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   }
 
  private:
-  bool finalizeBlockImpl(index_t* index,
+  bool finalizeBlockImpl(index_t& index,
                          int32_t preserveBlocksBehindFinal,
                          ValidationState& state) override;
 

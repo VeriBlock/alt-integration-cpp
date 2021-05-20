@@ -489,13 +489,13 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(index_t* index,
+bool AltBlockTree::finalizeBlock(index_t& index,
                                  ValidationState& state) {
   return this->finalizeBlockImpl(
       index, getParams().preserveBlocksBehindFinal(), state);
 }
 
-bool AltBlockTree::finalizeBlockImpl(index_t* index,
+bool AltBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
   int32_t firstBlockHeight = vbk().getBestChain().tip()->getHeight() -
@@ -504,7 +504,7 @@ bool AltBlockTree::finalizeBlockImpl(index_t* index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
-  if (!vbk().finalizeBlock(finalizedIndex, state)) {
+  if (!vbk().finalizeBlock(*finalizedIndex, state)) {
     return state.Invalid("vbktree-finalize-error");
   }
   return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);

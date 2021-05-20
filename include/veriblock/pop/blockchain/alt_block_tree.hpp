@@ -352,7 +352,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using base::setState;
 
   //! @private
-  bool finalizeBlock(index_t* index, ValidationState& state);
+  bool finalizeBlock(index_t& index, ValidationState& state);
 
   /**
    * Removes given block and all blocks after it.
@@ -418,7 +418,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   void setPayloads(index_t& index, const PopData& payloads);
 
   //! @private
-  bool finalizeBlockImpl(index_t* index,
+  bool finalizeBlockImpl(index_t& index,
                          int32_t preserveBlocksBehindFinal,
                          ValidationState& state) override;
 

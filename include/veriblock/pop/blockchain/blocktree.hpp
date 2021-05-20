@@ -179,7 +179,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     return isBlockOld(index->getHeight());
   }
 
-  bool finalizeBlock(index_t* index, ValidationState& state) {
+  bool finalizeBlock(index_t& index, ValidationState& state) {
     return this->finalizeBlockImpl(
         index, param_->preserveBlocksBehindFinal(), state);
   }

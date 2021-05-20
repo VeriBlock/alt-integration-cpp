@@ -415,7 +415,7 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   BaseBlockTree::removeSubtree(toRemove);
 }
 
-bool VbkBlockTree::finalizeBlockImpl(index_t* index,
+bool VbkBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
   int32_t firstBlockHeight = btc().getBestChain().tip()->getHeight() -
@@ -424,7 +424,7 @@ bool VbkBlockTree::finalizeBlockImpl(index_t* index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
-  if (!btc().finalizeBlock(finalizedIndex, state)) {
+  if (!btc().finalizeBlock(*finalizedIndex, state)) {
     return state.Invalid("btctree-finalize-error");
   }
   return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
