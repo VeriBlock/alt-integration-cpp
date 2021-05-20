@@ -237,6 +237,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   // we compare with the previous amount of payloads because we have not add the
   // current payload into this vector
   if (index.getPayloadIds<payloads_t>().size() >= MAX_VBKPOPTX_PER_VBK_BLOCK) {
+    invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
     return state.Invalid(block_t::name() + "-invalid-poptxs-amount",
                          "The amount of the pop txs which we try to add into "
                          "the block more than maximum");
