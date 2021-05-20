@@ -682,7 +682,7 @@ struct BaseBlockTree {
   //! endorsements in blocks after finalized block will point to an existing
   //! *endorsed* block.
   //!
-  //! @param[in] block hash of block to be finalized. Must be part of active
+  //! @param[in] block index to be finalized. Must be a part of active
   //! chain.
   //!
   //! @warning This action is irreversible. You will need to reload the whole
