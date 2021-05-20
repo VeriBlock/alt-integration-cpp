@@ -409,7 +409,10 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 
 bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
                                      int32_t preserveBlocksBehindFinal) {
-  // Finalizing btc blocks
+  // TODO determine the proper getOldBlocksWindow() parametr for the
+  // BtcChainParams
+
+  // // Finalizing btc blocks
   // uint32_t finalBtcHeight = std::max(btc().getBestChain().tip()->getHeight()
   // -
   //                                        btc().getParams().getOldBlocksWindow(),
