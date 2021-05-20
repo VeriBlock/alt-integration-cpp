@@ -50,11 +50,6 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   }
 }
 
-bool VbkBlockTree::finalizeBlock(const VbkBlockTree::hash_t& block,
-                                 ValidationState& state) {
-  return base::finalizeBlockImpl(block, getParams().preserveBlocksBehindFinal(), state);
-}
-
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {
@@ -407,20 +402,19 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   BaseBlockTree::removeSubtree(toRemove);
 }
 
-bool VbkBlockTree::finalizeBlockImpl(const VbkBlock::hash_t& block,
+bool VbkBlockTree::finalizeBlockImpl(index_t* index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
-  // Finalizing btc blocks
-  uint32_t finalBtcHeight = std::max(btc().getBestChain().tip()->getHeight() -
-                                         btc().getParams().getOldBlocksWindow(),
-                                     btc().getRoot().getHeight());
-
-  auto* finalizedIndex = btc().getBestChain()[finalBtcHeight];
-  if (finalizedIndex != nullptr) {
-    btc().finalizeBlock(finalizedIndex->getHash(), state);
+  int32_t firstBlockHeight = btc().getBestChain().tip()->getHeight() -
+                             btc().getParams().getOldBlocksWindow();
+  int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
+  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+  auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
+  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
+  if (!btc().finalizeBlock(finalizedIndex, state)) {
+    return state.Invalid("btctree-finalize-error");
   }
-
-  return base::finalizeBlockImpl(block, preserveBlocksBehindFinal, state);
+  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

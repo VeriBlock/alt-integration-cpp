@@ -160,9 +160,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::string toPrettyString(size_t level = 0) const;
 
-  //! @private
-  bool finalizeBlock(const hash_t& block, ValidationState& state);
-
   using base::setState;
   bool setState(index_t& to, ValidationState& state) override;
 
@@ -178,7 +175,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   }
 
  private:
-  bool finalizeBlockImpl(const VbkBlock::hash_t& block,
+  bool finalizeBlockImpl(index_t* index,
                          int32_t preserveBlocksBehindFinal,
                          ValidationState& state) override;
 

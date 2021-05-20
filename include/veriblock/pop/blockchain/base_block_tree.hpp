@@ -690,14 +690,11 @@ struct BaseBlockTree {
   //!
   //! @returns false if block not found or prereq are not met
   //! @private
-  virtual bool finalizeBlockImpl(const hash_t& hash,
+  virtual bool finalizeBlockImpl(index_t* index,
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
-    auto* index = getBlockIndex(hash);
-    if (!index) {
-      return state.Invalid("block-not-found");
-    }
+    VBK_ASSERT_MSG(index != nullptr, "Block index should not be null");
 
     // block is already final
     if (index->finalized) {
