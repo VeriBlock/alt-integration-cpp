@@ -5,7 +5,8 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
+#include "util/pop_test_fixture.hpp"
+#include "veriblock/pop/consts.hpp"
 
 using namespace altintegration;
 
@@ -29,8 +30,9 @@ struct VbkBlockFinalization : public ::testing::Test, public PopTestFixture {
 
 TEST_F(VbkBlockFinalization, BasicTest) {
   auto vbkendorsed = popminer->mineVbkBlocks(7);
-  // TODO fix it
-  // popminer->mineBtcBlocks(tree->btc().getParams().getOldBlocksWindow() * 2);
+
+  popminer->mineBtcBlocks(100);
+
   auto btctx0 =
       popminer->createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
   auto btcBlockOfProof0 = popminer->mineBtcBlocks(1, {btctx0});
@@ -47,13 +49,9 @@ TEST_F(VbkBlockFinalization, BasicTest) {
   ASSERT_EQ(btcBlockOfProof0->getHash(),
             tree->btc().getBestChain().tip()->getHash());
 
-  // size_t btcTotalBlocks = tree->btc().getBlocks().size();
-
   ASSERT_TRUE(tree->setState(vtb0containing->pprev->getHash(), state));
 
   ASSERT_TRUE(tree->finalizeBlock(finalizedBlock->getHash()));
   ASSERT_TRUE(tree->setState(vtb0containing->getHash(), state));
   ASSERT_LT(tree->getBlocks().size(), vbkTotalBlocks);
-  // TODO fix it
-  // ASSERT_LT(tree->btc().getBlocks().size(), btcTotalBlocks);
 }
