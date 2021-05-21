@@ -30,6 +30,19 @@ POP_ARRAY_FREE_SIGNATURE(vbk_block) {
   }
 }
 
+POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), id) {
+  VBK_ASSERT(self);
+
+  auto id = self->ref.getId();
+
+  POP_ARRAY_NAME(u8) res;
+  res.size = id.size();
+  res.data = new uint8_t[res.size];
+  std::copy(id.begin(), id.end(), res.data);
+
+  return res;
+}
+
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), hash) {
   VBK_ASSERT(self);
 
