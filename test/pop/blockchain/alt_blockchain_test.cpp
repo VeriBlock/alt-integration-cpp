@@ -210,14 +210,3 @@ TEST_F(AltTreeFixture, assertBlockSanity_test) {
       },
       "Previous block hash should NOT be equal to the current block hash");
 }
-
-TEST_F(AltTreeFixture, max_VbkBlocks_in_PopData_test) {
-  //   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-
-  //   // mine VBK blocks
-  //   popminer->mineVbkBlocks(MAX_POPDATA_VBK * 1.5);
-
-  //   auto popData = generateAltPayloads({}, GetRegTestVbkBlock().getHash());
-
-  //   ASSERT_GT(popData.context.size(), MAX_POPDATA_VBK);
-}

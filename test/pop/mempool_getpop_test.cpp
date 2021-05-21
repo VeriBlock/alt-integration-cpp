@@ -733,19 +733,3 @@ TEST_F(MemPoolFixture, getPop_scenario_14) {
   EXPECT_EQ(mempool->getMap<VTB>().size(), 0);
   EXPECT_EQ(mempool->getInFlightMap<VTB>().size(), 0);
 }
-
-TEST_F(MemPoolFixture, getPop_scenario_15) {
-  // // mine VBK blocks
-  // popminer->mineVbkBlocks(MAX_POPDATA_VBK * 1.5);
-
-  // // submit VbkBlocks into the mempool
-  // std::vector<VbkBlock> context;
-  // fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
-  // for (const auto& b : context) {
-  //   submitVBK(b);
-  // }
-
-  // auto popData = checkedGetPop();
-
-  // ASSERT_EQ(popData.context.size(), MAX_POPDATA_VBK);
-}
