@@ -16,6 +16,7 @@ extern "C" {
 
 POP_DECLARE_ENTITY(vbk_block);
 
+POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), id);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), hash);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), previous_block);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), merkle_root);

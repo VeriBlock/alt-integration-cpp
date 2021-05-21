@@ -56,6 +56,13 @@ func (v *VbkBlock) Free() {
 	}
 }
 
+func (v *VbkBlock) GetID() []byte {
+	v.validate()
+	array := C.pop_vbk_block_get_id(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
 func (v *VbkBlock) GetHash() []byte {
 	v.validate()
 	array := C.pop_vbk_block_get_hash(v.ref)

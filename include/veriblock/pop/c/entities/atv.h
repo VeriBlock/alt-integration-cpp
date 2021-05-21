@@ -17,6 +17,7 @@ extern "C" {
 
 POP_DECLARE_ENTITY(atv);
 
+POP_ENTITY_GETTER_FUNCTION(atv, POP_ARRAY_NAME(u8), id);
 POP_ENTITY_GETTER_FUNCTION(atv,
                            const POP_ENTITY_NAME(vbk_block) *,
                            block_of_proof);
