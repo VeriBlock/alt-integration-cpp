@@ -230,6 +230,8 @@ func TestMerklePath(t *testing.T) {
 }
 
 func TestPopPayout(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	popPayout := generateDefaultPopPayout()

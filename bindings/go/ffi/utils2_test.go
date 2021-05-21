@@ -26,16 +26,22 @@ func TestGeneratePublicationData(t *testing.T) {
 	defer context.Free()
 
 	popData := generateDefaultPopData()
+	defer popData.Free()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := []byte{1, 2, 3, 4, 5, 6}
-	endorsedBytes := generateDefaultAltBlock().SerializeToVbk()
-
-	context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+	altBlock := generateDefaultAltBlock()
+	defer altBlock.Free()
+	endorsedBytes := altBlock.SerializeToVbk()
 
 	publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+	defer publicationData.Free()
 
 	assert.NoError(err)
 	assert.NotNil(publicationData)
+	assert.Equal(payoutInfo, publicationData.GetPayoutInfo())
+	assert.Equal(int64(1), publicationData.GetIdentifier())
+	assert.NotNil(publicationData.GetHeader())
+	assert.NotNil(publicationData.GetContextInfo())
 }
 
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
