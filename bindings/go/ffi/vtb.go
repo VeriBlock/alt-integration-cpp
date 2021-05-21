@@ -56,6 +56,13 @@ func (v *Vtb) Free() {
 	}
 }
 
+func (v *Vtb) GetID() []byte {
+	v.validate()
+	array := C.pop_vtb_get_id(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
 func (v *Vtb) GetContainingBlock() *VbkBlock {
 	v.validate()
 	return createVbkBlock(C.pop_vtb_get_containing_block(v.ref))

@@ -56,6 +56,13 @@ func (v *Atv) Free() {
 	}
 }
 
+func (v *Atv) GetID() []byte {
+	v.validate()
+	array := C.pop_atv_get_id(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
 func (v *Atv) GetBlockOfProof() *VbkBlock {
 	v.validate()
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
