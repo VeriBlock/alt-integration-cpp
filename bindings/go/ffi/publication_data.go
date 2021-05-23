@@ -38,6 +38,33 @@ func (v *PublicationData) Free() {
 	}
 }
 
+func (v *PublicationData) GetIdentifier() int64 {
+	v.validate()
+	res := C.pop_publication_data_get_identifier(v.ref)
+	return int64(res)
+}
+
+func (v *PublicationData) GetHeader() []byte {
+	v.validate()
+	array := C.pop_publication_data_get_header(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
+func (v *PublicationData) GetPayoutInfo() []byte {
+	v.validate()
+	array := C.pop_publication_data_get_payout_info(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
+func (v *PublicationData) GetContextInfo() []byte {
+	v.validate()
+	array := C.pop_publication_data_get_context_info(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
 func (v *PublicationData) ToJSON() (map[string]interface{}, error) {
 	v.validate()
 	str := C.pop_publication_data_to_json(v.ref)

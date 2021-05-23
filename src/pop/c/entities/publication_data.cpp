@@ -52,6 +52,50 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(publication_data) {
   return res;
 }
 
+POP_ENTITY_GETTER_FUNCTION(publication_data, int64_t, identifier) {
+  VBK_ASSERT(self);
+  return self->ref.identifier;
+}
+
+POP_ENTITY_GETTER_FUNCTION(publication_data, POP_ARRAY_NAME(u8), header) {
+  VBK_ASSERT(self);
+
+  auto header = self->ref.header;
+  
+  POP_ARRAY_NAME(u8) res;
+  res.size = header.size();
+  res.data = new uint8_t[res.size];
+  std::copy(header.begin(), header.end(), res.data);
+
+  return res;
+}
+
+POP_ENTITY_GETTER_FUNCTION(publication_data, POP_ARRAY_NAME(u8), payout_info) {
+  VBK_ASSERT(self);
+
+  auto payout_info = self->ref.payoutInfo;
+  
+  POP_ARRAY_NAME(u8) res;
+  res.size = payout_info.size();
+  res.data = new uint8_t[res.size];
+  std::copy(payout_info.begin(), payout_info.end(), res.data);
+
+  return res;
+}
+
+POP_ENTITY_GETTER_FUNCTION(publication_data, POP_ARRAY_NAME(u8), context_info) {
+  VBK_ASSERT(self);
+
+  auto context_info = self->ref.contextInfo;
+  
+  POP_ARRAY_NAME(u8) res;
+  res.size = context_info.size();
+  res.data = new uint8_t[res.size];
+  std::copy(context_info.begin(), context_info.end(), res.data);
+
+  return res;
+}
+
 POP_ENTITY_TO_JSON(publication_data) {
   VBK_ASSERT(self);
 
