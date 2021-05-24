@@ -254,7 +254,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
       containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
   auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*storage.generateWriteBatch());
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTree(alttree.btc(), writer);
   saveTree(alttree.vbk(), writer, emptyValidator);
   saveTree(alttree, writer);
@@ -262,7 +262,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+VTB-duplicate");
+  EXPECT_EQ(state.GetPath(), "failed-to-load-vbk-tree+load-tree+VTB-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
