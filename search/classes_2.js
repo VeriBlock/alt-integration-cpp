@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['chain_475',['Chain',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
-  ['chain_3c_20altintegration_3a_3ablockindex_20_3e_476',['Chain&lt; altintegration::BlockIndex &gt;',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
-  ['chainslice_477',['ChainSlice',['../structaltintegration_1_1ChainSlice.html',1,'altintegration']]],
-  ['checkpublicationdata_478',['CheckPublicationData',['../structaltintegration_1_1CheckPublicationData.html',1,'altintegration']]],
-  ['coin_479',['Coin',['../structaltintegration_1_1Coin.html',1,'altintegration']]],
-  ['config_480',['Config',['../structaltintegration_1_1Config.html',1,'altintegration']]],
-  ['connection_481',['Connection',['../structaltintegration_1_1signals_1_1Connection.html',1,'altintegration::signals']]],
-  ['contextinfocontainer_482',['ContextInfoContainer',['../structaltintegration_1_1ContextInfoContainer.html',1,'altintegration']]]
+  ['chain_474',['Chain',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
+  ['chain_3c_20altintegration_3a_3ablockindex_20_3e_475',['Chain&lt; altintegration::BlockIndex &gt;',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
+  ['chainslice_476',['ChainSlice',['../structaltintegration_1_1ChainSlice.html',1,'altintegration']]],
+  ['checkpublicationdata_477',['CheckPublicationData',['../structaltintegration_1_1CheckPublicationData.html',1,'altintegration']]],
+  ['coin_478',['Coin',['../structaltintegration_1_1Coin.html',1,'altintegration']]],
+  ['config_479',['Config',['../structaltintegration_1_1Config.html',1,'altintegration']]],
+  ['connection_480',['Connection',['../structaltintegration_1_1signals_1_1Connection.html',1,'altintegration::signals']]],
+  ['contextinfocontainer_481',['ContextInfoContainer',['../structaltintegration_1_1ContextInfoContainer.html',1,'altintegration']]]
 ];

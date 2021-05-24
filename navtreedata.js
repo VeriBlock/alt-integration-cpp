@@ -61,13 +61,13 @@ var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
 "functions.html",
-"namespacealtintegration.html#a2e3562e80b6619d356b9b69d118cefda",
-"namespacealtintegration.html#ae2894d7158d84c3ccc3cf26fe76afc6b",
-"structaltintegration_1_1AltChainParams.html#a0d153f5cdaa0e9448f7ea0cc6a1aaeae",
-"structaltintegration_1_1BlockTree.html#af3d489ecf6bf8eb15ab0ce4805403927",
-"structaltintegration_1_1InmemBlockProvider.html#a6dcecdd1d8a65dfb7675eb08d29e601d",
-"structaltintegration_1_1VTB.html#a6039844a160b788fb51bef24498e48af",
-"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#aa6842bfb7db548c2928e1856c33a22c4"
+"namespacealtintegration.html#a2ecf7eac8bcfa9ea8d36bc1634ffcb4a",
+"namespacealtintegration.html#ae3f6a3f87bdce049dca0317643f63444",
+"structaltintegration_1_1AltChainParams.html#a1a13ff9ad72512351f4aeb58c2fa93ea",
+"structaltintegration_1_1BlockTree.html#af4761021ddc1f8dddad0392210105b2b",
+"structaltintegration_1_1KeystoneContainer.html#ac551b999891eb6d596a9d2135605ba94",
+"structaltintegration_1_1VbkBlock.html#a08aa8a8514c56c42a1811501b9ed1fd1",
+"structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
