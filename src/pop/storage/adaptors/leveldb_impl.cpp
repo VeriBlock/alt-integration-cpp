@@ -3,16 +3,20 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "leveldb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/leveldb_impl.hpp"
 
-void adaptors::LevelDBWriteBatch::write(const std::vector<uint8_t>& key,
-                                        const std::vector<uint8_t>& value) {
+namespace altintegration {
+
+namespace adaptors {
+
+void LevelDBWriteBatch::write(const std::vector<uint8_t>& key,
+                              const std::vector<uint8_t>& value) {
   leveldb::Slice key_slice((char*)key.data(), key.size());
   leveldb::Slice value_slice((char*)value.data(), value.size());
   batch_.Put(key_slice, value_slice);
 }
 
-void adaptors::LevelDBWriteBatch::writeBatch() {
+void LevelDBWriteBatch::writeBatch() {
   leveldb::Status status = db_.Write(write_options_, &batch_);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
@@ -20,13 +24,13 @@ void adaptors::LevelDBWriteBatch::writeBatch() {
   }
 }
 
-adaptors::LevelDBStorage::~LevelDBStorage() {
+LevelDBStorage::~LevelDBStorage() {
   if (db_ != nullptr) {
     delete db_;
   }
 }
 
-adaptors::LevelDBStorage::LevelDBStorage(const std::string& path) {
+LevelDBStorage::LevelDBStorage(const std::string& path) {
   leveldb::Options options;
   options.create_if_missing = true;
 
@@ -38,8 +42,8 @@ adaptors::LevelDBStorage::LevelDBStorage(const std::string& path) {
   }
 }
 
-void adaptors::LevelDBStorage::write(const std::vector<uint8_t>& key,
-                                     const std::vector<uint8_t>& value) {
+void LevelDBStorage::write(const std::vector<uint8_t>& key,
+                           const std::vector<uint8_t>& value) {
   leveldb::Slice key_slice((char*)key.data(), key.size());
   leveldb::Slice value_slice((char*)value.data(), value.size());
 
@@ -50,8 +54,8 @@ void adaptors::LevelDBStorage::write(const std::vector<uint8_t>& key,
   }
 }
 
-bool adaptors::LevelDBStorage::read(const std::vector<uint8_t>& key,
-                                    std::vector<uint8_t>& value) {
+bool LevelDBStorage::read(const std::vector<uint8_t>& key,
+                          std::vector<uint8_t>& value) {
   leveldb::Slice key_slice((char*)key.data(), key.size());
   std::string str_value;
 
@@ -63,12 +67,12 @@ bool adaptors::LevelDBStorage::read(const std::vector<uint8_t>& key,
   return status.ok();
 }
 
-void adaptors::LevelDBStorageIterator::seek(const std::vector<uint8_t>& val) {
+void LevelDBStorageIterator::seek(const std::vector<uint8_t>& val) {
   leveldb::Slice val_slice((char*)val.data(), val.size());
   it_->Seek(val_slice);
 }
 
-bool adaptors::LevelDBStorageIterator::key(std::vector<uint8_t>& out) const {
+bool LevelDBStorageIterator::key(std::vector<uint8_t>& out) const {
   if (!it_->Valid()) {
     return false;
   }
@@ -80,7 +84,7 @@ bool adaptors::LevelDBStorageIterator::key(std::vector<uint8_t>& out) const {
   return true;
 }
 
-bool adaptors::LevelDBStorageIterator::value(std::vector<uint8_t>& out) const {
+bool LevelDBStorageIterator::value(std::vector<uint8_t>& out) const {
   if (!it_->Valid()) {
     return false;
   }
@@ -91,3 +95,7 @@ bool adaptors::LevelDBStorageIterator::value(std::vector<uint8_t>& out) const {
   }
   return true;
 }
+
+}  // namespace adaptors
+
+}  // namespace altintegration

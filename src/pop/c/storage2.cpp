@@ -5,14 +5,14 @@
 
 #include "storage2.hpp"
 #ifdef WITH_ROCKSDB
-#include "adaptors/rocksdb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/rocksdb_impl.hpp"
 #endif
 #ifdef WITH_LEVELDB
-#include "adaptors/leveldb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/leveldb_impl.hpp"
 #endif
-#include "adaptors/inmem_storage_impl.hpp"
 #include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/storage/adaptors/inmem_storage_impl.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(storage) {
   if (self != nullptr) {
@@ -28,17 +28,19 @@ POP_ENTITY_NEW_FUNCTION(storage,
   VBK_ASSERT(path.data);
 
   std::string str_path(path.data, path.data + path.size);
-  std::shared_ptr<adaptors::Storage> storage{nullptr};
+  std::shared_ptr<altintegration::adaptors::Storage> storage{nullptr};
 
   try {
     if (str_path == std::string(":inmem:")) {
-      storage = std::make_shared<adaptors::InmemStorageImpl>();
+      storage = std::make_shared<altintegration::adaptors::InmemStorageImpl>();
     } else {
 #ifdef WITH_ROCKSDB
-      storage = std::make_shared<adaptors::RocksDBStorage>(str_path);
+      storage =
+          std::make_shared<altintegration::adaptors::RocksDBStorage>(str_path);
 #endif
 #ifdef WITH_LEVELDB
-      storage = std::make_shared<adaptors::LevelDBStorage>(str_path);
+      storage =
+          std::make_shared<altintegration::adaptors::LevelDBStorage>(str_path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {

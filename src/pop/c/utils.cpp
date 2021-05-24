@@ -17,10 +17,10 @@
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
-#include "adaptors/block_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
+#include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
 
 VBK_ByteStream* VBK_AltBlock_getEndorsedBy(PopContext* self,
                                            const uint8_t* hash,

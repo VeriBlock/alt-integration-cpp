@@ -9,15 +9,15 @@
 
 #include "storage.hpp"
 #ifdef WITH_ROCKSDB
-#include "adaptors/rocksdb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/rocksdb_impl.hpp"
 #endif
 #ifdef WITH_LEVELDB
-#include "adaptors/leveldb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/leveldb_impl.hpp"
 #endif
 #include <veriblock/pop/exceptions/storage_io.hpp>
 
-#include "adaptors/inmem_storage_impl.hpp"
 #include "validation_state.hpp"
+#include "veriblock/pop/storage/adaptors/inmem_storage_impl.hpp"
 
 Storage_t* VBK_NewStorage(const char* path, VbkValidationState* state) {
   VBK_ASSERT(path);
@@ -27,13 +27,16 @@ Storage_t* VBK_NewStorage(const char* path, VbkValidationState* state) {
 
   try {
     if (std::string(path) == std::string(":inmem:")) {
-      v->storage = std::make_shared<adaptors::InmemStorageImpl>();
+      v->storage =
+          std::make_shared<altintegration::adaptors::InmemStorageImpl>();
     } else {
 #ifdef WITH_ROCKSDB
-      v->storage = std::make_shared<adaptors::RocksDBStorage>(path);
+      v->storage =
+          std::make_shared<altintegration::adaptors::RocksDBStorage>(path);
 #endif
 #ifdef WITH_LEVELDB
-      v->storage = std::make_shared<adaptors::LevelDBStorage>(path);
+      v->storage =
+          std::make_shared<altintegration::adaptors::LevelDBStorage>(path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {
