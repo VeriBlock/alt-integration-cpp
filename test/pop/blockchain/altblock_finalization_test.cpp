@@ -20,7 +20,7 @@ using namespace altintegration;
  *        \-Z251
  *
  */
-/*struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
+struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *A504 = nullptr;
   BlockIndex<AltBlock> *B503 = nullptr;
   BlockIndex<AltBlock> *E503 = nullptr;
@@ -132,7 +132,7 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
   assertTreesHaveNoOrphans(alttree);
-}*/
+}
 
 struct VbkBlockFinalization : public MemPoolFixture {
   BlockIndex<AltBlock> *tip = nullptr;
