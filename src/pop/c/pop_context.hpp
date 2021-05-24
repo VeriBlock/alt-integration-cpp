@@ -8,15 +8,15 @@
 
 #include <memory>
 
-#include "adaptors/storage_interface.hpp"
 #include "veriblock/pop/pop_context.hpp"
+#include "veriblock/pop/storage/adaptors/storage_interface.hpp"
 #include "veriblock/pop/storage/block_reader.hpp"
 
 // all-in-one thing
 struct PopContext {
   std::shared_ptr<altintegration::PopContext> context;
   std::shared_ptr<altintegration::PayloadsStorage> payloads_storage;
-  std::shared_ptr<adaptors::Storage> storage;
+  std::shared_ptr<altintegration::adaptors::Storage> storage;
 };
 
 #endif  // VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS

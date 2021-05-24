@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "adaptors/logger.hpp"
-#include "adaptors/payloads_provider_impl.hpp"
 #include "config2.hpp"
 #include "entities/altblock.hpp"
 #include "entities/block_index.hpp"
@@ -14,6 +13,7 @@
 #include "storage2.hpp"
 #include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_context) {
   if (self != nullptr) {
@@ -41,7 +41,8 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
 
   res->storage = storage->ref;
   res->payloads_storage =
-      std::make_shared<adaptors::PayloadsStorageImpl>(*storage->ref);
+      std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
+          *storage->ref);
   res->ref =
       altintegration::PopContext::create(config->ref, res->payloads_storage);
 
