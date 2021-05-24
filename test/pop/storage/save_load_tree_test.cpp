@@ -26,26 +26,11 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   void save() {
-    auto writer = InmemBlockBatch(blockStorage);
+    auto writer = adaptors::BlockBatchImpl(*storage.generateWriteBatch());
     saveTrees(alttree, writer);
   }
 
-  bool load() {
-    return LoadTreeWrapper(alttree2.btc()) && LoadTreeWrapper(alttree2.vbk()) &&
-           LoadTreeWrapper(alttree2) &&
-           detail::loadValidateTree(
-               alttree2.btc(),
-               LoadBlocksFromDisk<typename BtcBlockTree::stored_index_t>(),
-               state) &&
-           detail::loadValidateTree(
-               alttree2.vbk(),
-               LoadBlocksFromDisk<typename VbkBlockTree::stored_index_t>(),
-               state) &&
-           detail::loadValidateTree(
-               alttree2,
-               LoadBlocksFromDisk<typename AltBlockTree::stored_index_t>(),
-               state);
-  }
+  bool load() { return loadTrees(alttree, blockProvider, state); }
 
   auto assertTreesEqual() {
     assertTreesHaveNoOrphans(alttree);
@@ -266,7 +251,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   alttree.getPayloadsIndex().addVbkPayloadIndex(
       containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
-  auto writer = InmemBlockBatch(blockStorage);
+  auto writer = adaptors::BlockBatchImpl(*storage.generateWriteBatch());
   saveTree(alttree.btc(), writer);
   saveTree(alttree.vbk(), writer, emptyValidator);
   saveTree(alttree, writer);

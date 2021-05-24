@@ -19,9 +19,9 @@
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/mock_miner.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
 #include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
 #include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
-#include <veriblock/pop/storage/inmem_block_storage.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
 #include "util/comparator_test.hpp"
@@ -44,7 +44,7 @@ struct PopTestFixture {
   AltChainParamsRegTest altparam{};
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
-  InmemBlockProvider blockStorage;
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   // miners
   std::shared_ptr<MockMiner> popminer;
@@ -345,25 +345,6 @@ struct PopTestFixture {
       EXPECT_TRUE(SetState(alttree, next->getHash()));
       altTip = next;
     }
-  }
-
-  template <typename stored_index_t>
-  std::vector<stored_index_t> LoadBlocksFromDisk() {
-    return blockStorage.load<typename stored_index_t::block_t>();
-  }
-
-  template <typename index_t>
-  typename index_t::hash_t LoadTipFromDisk() {
-    return blockStorage.getTip<typename index_t::block_t>();
-  }
-
-  template <typename Tree>
-  bool LoadTreeWrapper(Tree& tree) {
-    using index_t = typename Tree::index_t;
-    using stored_index_t = typename Tree::stored_index_t;
-    auto blocks = LoadBlocksFromDisk<stored_index_t>();
-    auto tip = LoadTipFromDisk<index_t>();
-    return loadTree<Tree>(tree, tip, blocks, state);
   }
 };
 

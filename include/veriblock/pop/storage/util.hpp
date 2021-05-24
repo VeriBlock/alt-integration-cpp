@@ -150,12 +150,8 @@ struct AltBlockTree;
 //! Save all (BTC/VBK/ALT) trees on disk in a single Batch.
 void saveTrees(const AltBlockTree& tree, BlockBatch& batch);
 
-struct PopContext;
-
 //! Load all (ALT/VBK/BTC) trees from disk into memory.
-bool loadTrees(PopContext& context,
-               BlockReader& reader,
-               ValidationState& state);
+bool loadTrees(AltBlockTree& tree, BlockReader& reader, ValidationState& state);
 
 }  // namespace altintegration
 
