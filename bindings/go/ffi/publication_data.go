@@ -31,6 +31,15 @@ func createPublicationData(ref *C.pop_publication_data_t) *PublicationData {
 	return val
 }
 
+// CreatePublicationData initializes new PublicationData with empty ref. Use DeserializeFromVbk to initialize ref.
+func CreatePublicationData() *PublicationData {
+	val := &PublicationData{ref: nil}
+	runtime.SetFinalizer(val, func(v *PublicationData) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *PublicationData) Free() {
 	if v.ref != nil {
 		C.pop_publication_data_free(v.ref)
@@ -83,14 +92,16 @@ func (v *PublicationData) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkPublicationData(bytes []byte) (*PublicationData, error) {
+func (v *PublicationData) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_publication_data_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createPublicationData(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }

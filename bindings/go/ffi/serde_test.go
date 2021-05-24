@@ -37,7 +37,8 @@ func TestAltBlockSerde(t *testing.T) {
 
 	encodedBytes := assertHexDecode(defaultAltBlockEncoded)
 
-	block, err := DeserializeFromVbkAltBlock(encodedBytes)
+	block := NewAltBlock([]byte{}, []byte{}, 0, 0)
+	err := block.DeserializeFromVbkAltBlock(encodedBytes)
 	assert.NoError(err)
 	assert.NotNil(block)
 
@@ -48,9 +49,8 @@ func TestAltBlockSerde(t *testing.T) {
 
 	assert.Equal(block.SerializeToVbk(), encodedBytes)
 
-	block, err = DeserializeFromVbkAltBlock([]byte{1, 2, 3, 4})
+	err = block.DeserializeFromVbkAltBlock([]byte{1, 2, 3, 4})
 	assert.Error(err)
-	assert.Nil(block)
 }
 
 func TestVbkBlockSerde(t *testing.T) {
@@ -88,7 +88,8 @@ func TestBtcBlockSerde(t *testing.T) {
 
 	encodedBytes := assertHexDecode(defaultBtcBlockEncoded)
 
-	btcBlock, err := DeserializeFromVbkBtcBlock(encodedBytes)
+	btcBlock := CreateBtcBlock()
+	err := btcBlock.DeserializeFromVbk(encodedBytes)
 	assert.NoError(err)
 	assert.NotNil(btcBlock)
 
@@ -101,9 +102,8 @@ func TestBtcBlockSerde(t *testing.T) {
 
 	assert.Equal(btcBlock.SerializeToVbk(), encodedBytes)
 
-	btcBlock, err = DeserializeFromVbkBtcBlock([]byte{1, 2, 3, 4})
+	err = btcBlock.DeserializeFromVbk([]byte{1, 2, 3, 4})
 	assert.Error(err)
-	assert.Nil(btcBlock)
 }
 
 func TestVtbSerde(t *testing.T) {
@@ -163,15 +163,15 @@ func TestPublicationDataSerde(t *testing.T) {
 
 	encodedBytes := assertHexDecode(defaultPublicationDataEncoded)
 
-	publicationData, err := DeserializeFromVbkPublicationData(encodedBytes)
+	publicationData := CreatePublicationData()
+	err := publicationData.DeserializeFromVbk(encodedBytes)
 	assert.NoError(err)
 	assert.NotNil(publicationData)
 
 	assert.Equal(publicationData.SerializeToVbk(), encodedBytes)
 
-	publicationData, err = DeserializeFromVbkPublicationData([]byte{1, 2, 3, 4})
+	err = publicationData.DeserializeFromVbk([]byte{1, 2, 3, 4})
 	assert.Error(err)
-	assert.Nil(publicationData)
 }
 
 func TestPopDataSerde(t *testing.T) {
@@ -196,7 +196,8 @@ func TestPopDataSerde(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(vbkBlock)
 
-	popData, err := DeserializeFromVbkPopData(encodedBytes)
+	popData := CreatePopData()
+	err = popData.DeserializeFromVbk(encodedBytes)
 	assert.NoError(err)
 	assert.NotNil(popData)
 
@@ -210,7 +211,6 @@ func TestPopDataSerde(t *testing.T) {
 
 	assert.Equal(popData.SerializeToVbk(), encodedBytes)
 
-	popData, err = DeserializeFromVbkPopData([]byte{1, 2, 3, 4})
+	err = popData.DeserializeFromVbk([]byte{1, 2, 3, 4})
 	assert.Error(err)
-	assert.Nil(popData)
 }

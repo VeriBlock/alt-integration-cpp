@@ -52,6 +52,7 @@ func createArrayVbkBlock(array *C.pop_array_vbk_block_t) []*VbkBlock {
 	return res
 }
 
+// CreateVbkBlock initializes new VbkBlock with empty ref. Use DeserializeFromVbk to initialize ref.
 func CreateVbkBlock() *VbkBlock {
 	val := &VbkBlock{ref: nil}
 	runtime.SetFinalizer(val, func(v *VbkBlock) {

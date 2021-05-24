@@ -52,6 +52,7 @@ func createArrayAtv(array *C.pop_array_atv_t) []*Atv {
 	return res
 }
 
+// CreateAtv initializes new Atv with empty ref. Use DeserializeFromVbk to initialize ref.
 func CreateAtv() *Atv {
 	val := &Atv{ref: nil}
 	runtime.SetFinalizer(val, func(v *Atv) {

@@ -94,14 +94,16 @@ func (v *AltBlock) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkAltBlock(bytes []byte) (*AltBlock, error) {
+func (v *AltBlock) DeserializeFromVbkAltBlock(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_alt_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createAltBlock(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }

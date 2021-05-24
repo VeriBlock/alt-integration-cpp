@@ -52,6 +52,7 @@ func createArrayVtb(array *C.pop_array_vtb_t) []*Vtb {
 	return res
 }
 
+// CreateVtb initializes new Vtb with empty ref. Use DeserializeFromVbk to initialize ref.
 func CreateVtb() *Vtb {
 	val := &Vtb{ref: nil}
 	runtime.SetFinalizer(val, func(v *Vtb) {
