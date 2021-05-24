@@ -173,19 +173,19 @@ struct AltChainParams {
 
   //! total maximum number of VBK blocks per 1 ALT block
   size_t getMaxVbkBlocksInAltBlock() const noexcept {
-    VBK_ASSERT(mMaxVbkBlocksInAltBlock < MAX_POPDATA_VBK);
+    VBK_ASSERT(mMaxVbkBlocksInAltBlock <= MAX_POPDATA_VBK);
     return mMaxVbkBlocksInAltBlock;
   }
 
   //! total maximum number of VTBs per 1 ALT block
   size_t getMaxVTBsInAltBlock() const noexcept {
-    VBK_ASSERT(mMaxVtbsInAltBlock < MAX_POPDATA_VTB);
+    VBK_ASSERT(mMaxVTBsInAltBlock <= MAX_POPDATA_VTB);
     return mMaxVTBsInAltBlock;
   }
 
   //! total maximum number of ATVs per 1 ALT block
   size_t getMaxATVsInAltBlock() const noexcept {
-    VBK_ASSERT(mMaxATVsInAltBlock < MAX_POPDATA_ATV);
+    VBK_ASSERT(mMaxATVsInAltBlock <= MAX_POPDATA_ATV);
     return mMaxATVsInAltBlock;
   }
 
