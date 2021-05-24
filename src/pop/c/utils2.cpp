@@ -3,7 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "adaptors/block_provider_impl.hpp"
 #include "entities/altblock.hpp"
 #include "entities/atv.hpp"
 #include "entities/popdata.hpp"
@@ -15,6 +14,7 @@
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/c/utils2.h"
 #include "veriblock/pop/exceptions/storage_io.hpp"
+#include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
 #include "veriblock/pop/storage/util.hpp"
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
@@ -95,7 +95,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(state);
 
   auto write_batch = self->storage->generateWriteBatch();
-  adaptors::BlockBatchImpl block_batch(*write_batch);
+  altintegration::adaptors::BlockBatchImpl block_batch(*write_batch);
   try {
     self->ref->saveAllTrees(block_batch);
     write_batch->writeBatch();
@@ -116,7 +116,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
 
-  adaptors::BlockReaderImpl block_reader(*self->storage);
+  altintegration::adaptors::BlockReaderImpl block_reader(*self->storage);
   return loadTrees(*self->ref, block_reader, state->ref);
 }
 

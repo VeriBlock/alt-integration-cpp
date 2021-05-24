@@ -8,10 +8,10 @@
 
 #include <memory>
 
-#include "adaptors/storage_interface.hpp"
+#include "veriblock/pop/storage/adaptors/storage_interface.hpp"
 
 struct Storage {
-  std::shared_ptr<adaptors::Storage> storage;
+  std::shared_ptr<altintegration::adaptors::Storage> storage;
 };
 
 #endif  // VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS

@@ -10,8 +10,6 @@
 
 #include <vector>
 
-#include <veriblock/pop/storage/stored_block_index.hpp>
-
 namespace altintegration {
 
 /**

@@ -3,10 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "rocksdb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/rocksdb_impl.hpp"
 
-void adaptors::RocksDBWriteBatch::write(const std::vector<uint8_t>& key,
-                                        const std::vector<uint8_t>& value) {
+namespace altintegration {
+
+namespace adaptors {
+
+void RocksDBWriteBatch::write(const std::vector<uint8_t>& key,
+                              const std::vector<uint8_t>& value) {
   rocksdb::Slice key_slice((char*)key.data(), key.size());
   rocksdb::Slice value_slice((char*)value.data(), value.size());
   rocksdb::Status status = batch_.Put(key_slice, value_slice);
@@ -15,19 +19,19 @@ void adaptors::RocksDBWriteBatch::write(const std::vector<uint8_t>& key,
         "failed to write into the storage, err: {}", status.ToString()));
   }
 }
-void adaptors::RocksDBWriteBatch::writeBatch() {
+void RocksDBWriteBatch::writeBatch() {
   rocksdb::Status status = db_.Write(write_options_, &batch_);
   if (!status.ok()) {
     throw altintegration::StorageIOException(fmt::format(
         "failed to write batch into the storage, err: {}", status.ToString()));
   }
 }
-adaptors::RocksDBStorage::~RocksDBStorage() {
+RocksDBStorage::~RocksDBStorage() {
   if (db_ != nullptr) {
     delete db_;
   }
 }
-adaptors::RocksDBStorage::RocksDBStorage(const std::string& path) {
+RocksDBStorage::RocksDBStorage(const std::string& path) {
   rocksdb::Options options;
   options.IncreaseParallelism();
   options.OptimizeLevelStyleCompaction();
@@ -40,8 +44,8 @@ adaptors::RocksDBStorage::RocksDBStorage(const std::string& path) {
         "failed to open rocksdb storage, err: {}", status.ToString()));
   }
 }
-void adaptors::RocksDBStorage::write(const std::vector<uint8_t>& key,
-                                     const std::vector<uint8_t>& value) {
+void RocksDBStorage::write(const std::vector<uint8_t>& key,
+                           const std::vector<uint8_t>& value) {
   rocksdb::Slice key_slice((char*)key.data(), key.size());
   rocksdb::Slice value_slice((char*)value.data(), value.size());
 
@@ -51,8 +55,8 @@ void adaptors::RocksDBStorage::write(const std::vector<uint8_t>& key,
         "failed to write into the storage, err: {}", status.ToString()));
   }
 }
-bool adaptors::RocksDBStorage::read(const std::vector<uint8_t>& key,
-                                    std::vector<uint8_t>& value) {
+bool RocksDBStorage::read(const std::vector<uint8_t>& key,
+                          std::vector<uint8_t>& value) {
   rocksdb::Slice key_slice((char*)key.data(), key.size());
   std::string str_value;
 
@@ -63,11 +67,11 @@ bool adaptors::RocksDBStorage::read(const std::vector<uint8_t>& key,
   }
   return status.ok();
 }
-void adaptors::RocksDBStorageIterator::seek(const std::vector<uint8_t>& val) {
+void RocksDBStorageIterator::seek(const std::vector<uint8_t>& val) {
   rocksdb::Slice val_slice((char*)val.data(), val.size());
   it_->Seek(val_slice);
 }
-bool adaptors::RocksDBStorageIterator::key(std::vector<uint8_t>& out) const {
+bool RocksDBStorageIterator::key(std::vector<uint8_t>& out) const {
   if (!it_->Valid()) {
     return false;
   }
@@ -78,7 +82,7 @@ bool adaptors::RocksDBStorageIterator::key(std::vector<uint8_t>& out) const {
   }
   return true;
 }
-bool adaptors::RocksDBStorageIterator::value(std::vector<uint8_t>& out) const {
+bool RocksDBStorageIterator::value(std::vector<uint8_t>& out) const {
   if (!it_->Valid()) {
     return false;
   }
@@ -89,3 +93,7 @@ bool adaptors::RocksDBStorageIterator::value(std::vector<uint8_t>& out) const {
   }
   return true;
 }
+
+}  // namespace adaptors
+
+}  // namespace altintegration
