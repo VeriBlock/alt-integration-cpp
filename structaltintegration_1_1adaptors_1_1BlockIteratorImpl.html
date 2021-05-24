@@ -223,7 +223,7 @@ template&lt;typename BlockT &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00082">82</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                              {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">char</span> prefix = block_key&lt;BlockT&gt;({})[0];</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint8_t prefix = block_key&lt;BlockT&gt;({})[0];</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    std::vector&lt;uint8_t&gt; <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">return</span> it_-&gt;valid() &amp;&amp; it_-&gt;key(<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>) &amp;&amp; !<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>.empty() &amp;&amp; <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>[0] == prefix;</div>
