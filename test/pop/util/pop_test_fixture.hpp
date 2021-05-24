@@ -19,6 +19,8 @@
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/mock_miner.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+#include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 #include <veriblock/pop/storage/inmem_block_storage.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
@@ -40,7 +42,8 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
-  InmemPayloadsProvider payloadsProvider;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloadsProvider{storage};
   InmemBlockProvider blockStorage;
 
   // miners
