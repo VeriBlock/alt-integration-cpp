@@ -26,8 +26,10 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   void save() {
-    auto writer = adaptors::BlockBatchImpl(*storage.generateWriteBatch());
+    auto batch = storage.generateWriteBatch();
+    auto writer = adaptors::BlockBatchImpl(*batch);
     saveTrees(alttree, writer);
+    batch->writeBatch();
   }
 
   bool load() { return loadTrees(alttree, blockProvider, state); }
@@ -251,10 +253,12 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   alttree.getPayloadsIndex().addVbkPayloadIndex(
       containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
+  auto batch = storage.generateWriteBatch();
   auto writer = adaptors::BlockBatchImpl(*storage.generateWriteBatch());
   saveTree(alttree.btc(), writer);
   saveTree(alttree.vbk(), writer, emptyValidator);
   saveTree(alttree, writer);
+  batch->writeBatch();
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());

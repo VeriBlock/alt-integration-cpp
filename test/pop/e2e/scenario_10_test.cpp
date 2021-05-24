@@ -75,8 +75,10 @@ TEST_F(Scenario10, scenario_10) {
             2);
 
   VBK_LOG_DEBUG("Step 3");
-  auto writer = adaptors::BlockBatchImpl(*storage.generateWriteBatch());
+  auto batch = storage.generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTrees(alttree, writer);
+  batch->writeBatch();
 
   VBK_LOG_DEBUG("Step 4");
   AltBlockTree reloadedAltTree{
