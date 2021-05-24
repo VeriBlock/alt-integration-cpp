@@ -32,7 +32,7 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
     batch->writeBatch();
   }
 
-  bool load() { return loadTrees(alttree, blockProvider, state); }
+  bool load() { return loadTrees(alttree2, blockProvider, state); }
 
   auto assertTreesEqual() {
     assertTreesHaveNoOrphans(alttree);
