@@ -15,6 +15,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// AtvBlockName ...
+const AtvBlockName = "ATV"
+
 type Atv struct {
 	ref *C.pop_atv_t
 }
@@ -49,12 +52,22 @@ func createArrayAtv(array *C.pop_array_atv_t) []*Atv {
 	return res
 }
 
+func CreateAtv() *Atv {
+	val := &Atv{ref: nil}
+	runtime.SetFinalizer(val, func(v *Atv) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *Atv) Free() {
 	if v.ref != nil {
 		C.pop_atv_free(v.ref)
 		v.ref = nil
 	}
 }
+
+func (v *Atv) Name() string { return AtvBlockName }
 
 func (v *Atv) GetID() []byte {
 	v.validate()
@@ -86,16 +99,18 @@ func (v *Atv) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkAtv(bytes []byte) (*Atv, error) {
+func (v *Atv) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_atv_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createAtv(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }
 
 func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {

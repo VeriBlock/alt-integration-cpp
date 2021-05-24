@@ -15,6 +15,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// VtbBlockName ...
+const VtbBlockName = "VTB"
+
 type Vtb struct {
 	ref *C.pop_vtb_t
 }
@@ -49,12 +52,22 @@ func createArrayVtb(array *C.pop_array_vtb_t) []*Vtb {
 	return res
 }
 
+func CreateVtb() *Vtb {
+	val := &Vtb{ref: nil}
+	runtime.SetFinalizer(val, func(v *Vtb) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *Vtb) Free() {
 	if v.ref != nil {
 		C.pop_vtb_free(v.ref)
 		v.ref = nil
 	}
 }
+
+func (v *Vtb) Name() string { return VtbBlockName }
 
 func (v *Vtb) GetID() []byte {
 	v.validate()
@@ -86,16 +99,18 @@ func (v *Vtb) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkVtb(bytes []byte) (*Vtb, error) {
+func (v *Vtb) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_vtb_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createVtb(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }
 
 func (val1 *Vtb) assertEquals(assert *assert.Assertions, val2 *Vtb) {
