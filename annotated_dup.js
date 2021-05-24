@@ -86,6 +86,7 @@ var annotated_dup =
       [ "BlockBatch", "structaltintegration_1_1BlockBatch.html", "structaltintegration_1_1BlockBatch" ],
       [ "BlockIterator", "structaltintegration_1_1BlockIterator.html", "structaltintegration_1_1BlockIterator" ],
       [ "BlockReader", "structaltintegration_1_1BlockReader.html", "structaltintegration_1_1BlockReader" ],
+      [ "InmemBlockProvider", "structaltintegration_1_1InmemBlockProvider.html", "structaltintegration_1_1InmemBlockProvider" ],
       [ "PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", "structaltintegration_1_1PayloadsStorage" ],
       [ "StoredBlockIndex", "structaltintegration_1_1StoredBlockIndex.html", "structaltintegration_1_1StoredBlockIndex" ],
       [ "IsPopPayload", "structaltintegration_1_1IsPopPayload.html", "structaltintegration_1_1IsPopPayload" ],

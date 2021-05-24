@@ -286,6 +286,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An abstraction over on-disk storage iterator.  <a href="structaltintegration_1_1BlockReader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1InmemBlockProvider.html">InmemBlockProvider</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">In-memory block storage, used in tests.  <a href="structaltintegration_1_1InmemBlockProvider.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accessor for ATV/VTB/VbkBlock bodies given hash.  <a href="structaltintegration_1_1PayloadsStorage.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1024,10 +1027,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995">saveTrees</a> (const <a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree, <a class="el" href="structaltintegration_1_1BlockBatch.html">BlockBatch</a> &amp;batch)</td></tr>
 <tr class="memdesc:a1036e0889afa590fec23e3efc7b3c995"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save all (BTC/VBK/ALT) trees on disk in a single Batch. <br /></td></tr>
 <tr class="separator:a1036e0889afa590fec23e3efc7b3c995"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e64d692c7a3d75b1cb687fa76b4715f"><td class="memItemLeft" align="right" valign="top"><a id="a8e64d692c7a3d75b1cb687fa76b4715f"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a8e64d692c7a3d75b1cb687fa76b4715f">loadTrees</a> (<a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree, <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;reader, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="memdesc:a8e64d692c7a3d75b1cb687fa76b4715f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load all (ALT/VBK/BTC) trees from disk into memory. <br /></td></tr>
-<tr class="separator:a8e64d692c7a3d75b1cb687fa76b4715f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a967e6111ef2ca4672fc0314dcdb90dc5"><td class="memItemLeft" align="right" valign="top"><a id="a967e6111ef2ca4672fc0314dcdb90dc5"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">loadTrees</a> (<a class="el" href="structaltintegration_1_1PopContext.html">PopContext</a> &amp;context, <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;reader, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a967e6111ef2ca4672fc0314dcdb90dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load all (ALT/VBK/BTC) trees from disk into memory. <br /></td></tr>
+<tr class="separator:a967e6111ef2ca4672fc0314dcdb90dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f057df0f1567971f7172c0c3c9fa7cc"><td class="memItemLeft" align="right" valign="top"><a id="a7f057df0f1567971f7172c0c3c9fa7cc"></a>
 std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a7f057df0f1567971f7172c0c3c9fa7cc">ParseHex</a> (const char *psz)</td></tr>
 <tr class="memdesc:a7f057df0f1567971f7172c0c3c9fa7cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse bytes from hex. <br /></td></tr>
