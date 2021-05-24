@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 #include <util/pop_test_fixture.hpp>
+#include <mempool_fixture.hpp>
 
 using namespace altintegration;
 
@@ -19,7 +20,7 @@ using namespace altintegration;
  *        \-Z251
  *
  */
-struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
+/*struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *A504 = nullptr;
   BlockIndex<AltBlock> *B503 = nullptr;
   BlockIndex<AltBlock> *E503 = nullptr;
@@ -131,9 +132,9 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
   assertTreesHaveNoOrphans(alttree);
-}
+}*/
 
-struct VbkBlockFinalization : public ::testing::Test, public PopTestFixture {
+struct VbkBlockFinalization : public MemPoolFixture {
   BlockIndex<AltBlock> *tip = nullptr;
   size_t totalBlocks = 0;
 
@@ -181,6 +182,51 @@ TEST_F(VbkBlockFinalization, FinalizeVbkTip) {
   ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
+
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
+  assertTreeTips(alttree.vbk(), {vbktip});
+
+  assertTreesHaveNoOrphans(alttree);
+}
+
+TEST_F(VbkBlockFinalization, FinalizeMaxVbks) {
+  altparam.mEndorsementSettlementInterval = 0;
+  altparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mEndorsementSettlementInterval = 0;
+  vbkparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mOldBlocksWindow = 0;
+
+  popminer->mineVbkBlocks(100);
+  std::vector<VbkBlock> context;
+  fillVbkContext(context,
+                 GetRegTestVbkBlock().getHash(),
+                 popminer->vbk());
+  for (const auto &b : context) {
+    submitVBK(b);
+  }
+
+  auto popdata = checkedGetPop();
+  // size of the context in the popdata should be less or equal to the
+  // MAX_POPDATA_VBK
+  ASSERT_LE(popdata.context.size(), 100);
+
+  applyInNextBlock(popdata);
+
+  // mine one more block on top of the block full of VBK payloads
+  popdata = checkedGetPop();
+  applyInNextBlock(popdata);
+
+  tip = alttree.getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
+
+  // finalize block
+  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
+
+  ASSERT_EQ(alttree.getBlocks().size(), 2);
+  assertTreeTips(alttree, {tip});
+
+  // check the state after finalization
+  ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
   ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
   assertTreeTips(alttree.vbk(), {vbktip});
