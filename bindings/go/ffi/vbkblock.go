@@ -15,6 +15,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// VbkBlockName ...
+const VbkBlockName = "VBK"
+
 type VbkBlock struct {
 	ref *C.pop_vbk_block_t
 }
@@ -49,12 +52,23 @@ func createArrayVbkBlock(array *C.pop_array_vbk_block_t) []*VbkBlock {
 	return res
 }
 
+// CreateVbkBlock initializes new VbkBlock with empty ref. Use DeserializeFromVbk to initialize ref.
+func CreateVbkBlock() *VbkBlock {
+	val := &VbkBlock{ref: nil}
+	runtime.SetFinalizer(val, func(v *VbkBlock) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *VbkBlock) Free() {
 	if v.ref != nil {
 		C.pop_vbk_block_free(v.ref)
 		v.ref = nil
 	}
 }
+
+func (v *VbkBlock) Name() string { return VbkBlockName }
 
 func (v *VbkBlock) GetID() []byte {
 	v.validate()
@@ -141,16 +155,18 @@ func (v *VbkBlock) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkVbkBlock(bytes []byte) (*VbkBlock, error) {
+func (v *VbkBlock) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_vbk_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createVbkBlock(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }
 
 func (val1 *VbkBlock) assertEquals(assert *assert.Assertions, val2 *VbkBlock) {

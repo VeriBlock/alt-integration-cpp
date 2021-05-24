@@ -35,6 +35,15 @@ func createPopData(ref *C.pop_pop_data_t) *PopData {
 	return val
 }
 
+// CreatePopData initializes new PopData with empty ref. Use DeserializeFromVbk to initialize ref.
+func CreatePopData() *PopData {
+	val := &PopData{ref: nil}
+	runtime.SetFinalizer(val, func(v *PopData) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *PopData) Free() {
 	if v.ref != nil {
 		C.pop_pop_data_free(v.ref)
@@ -81,14 +90,16 @@ func (v *PopData) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkPopData(bytes []byte) (*PopData, error) {
+func (v *PopData) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_pop_data_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createPopData(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }

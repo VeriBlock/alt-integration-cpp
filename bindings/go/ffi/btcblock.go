@@ -37,6 +37,15 @@ func createBtcBlock(ref *C.pop_btc_block_t) *BtcBlock {
 	return val
 }
 
+// CreateBtcBlock initializes new BtcBlock with empty ref. Use DeserializeFromVbk to initialize ref.
+func CreateBtcBlock() *BtcBlock {
+	val := &BtcBlock{ref: nil}
+	runtime.SetFinalizer(val, func(v *BtcBlock) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *BtcBlock) Free() {
 	if v.ref != nil {
 		C.pop_btc_block_free(v.ref)
@@ -103,16 +112,18 @@ func (v *BtcBlock) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func DeserializeFromVbkBtcBlock(bytes []byte) (*BtcBlock, error) {
+func (v *BtcBlock) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState2()
 	defer state.Free()
 
 	res := C.pop_btc_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
-		return nil, state.Error()
+		return state.Error()
 	}
 
-	return createBtcBlock(res), nil
+	v.Free()
+	v.ref = res
+	return nil
 }
 
 func (val1 *BtcBlock) assertEquals(assert *assert.Assertions, val2 *BtcBlock) {
