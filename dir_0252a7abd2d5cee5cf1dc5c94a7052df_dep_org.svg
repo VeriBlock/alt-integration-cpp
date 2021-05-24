@@ -105,7 +105,7 @@
 <g id="node10" class="node">
 <title>dir_2147af00f9f685658bd28d9b0a2db18c</title>
 <g id="a_node10"><a xlink:href="dir_2147af00f9f685658bd28d9b0a2db18c.html" target="_top" xlink:title="storage">
-<polygon fill="white" stroke="black" points="78,-60 24,-60 24,-24 78,-24 78,-60"/>
+<polygon fill="white" stroke="red" points="78,-60 24,-60 24,-24 78,-24 78,-60"/>
 <text text-anchor="middle" x="51" y="-39.5" font-family="Helvetica,sans-Serif" font-size="10.00">storage</text>
 </a>
 </g>

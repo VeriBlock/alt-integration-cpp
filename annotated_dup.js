@@ -1,6 +1,24 @@
 var annotated_dup =
 [
     [ "altintegration", "namespacealtintegration.html", [
+      [ "adaptors", null, [
+        [ "BlockIteratorImpl", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl" ],
+        [ "BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", "structaltintegration_1_1adaptors_1_1BlockReaderImpl" ],
+        [ "BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html", "structaltintegration_1_1adaptors_1_1BlockBatchImpl" ],
+        [ "InmemStorageIterator", "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html", "structaltintegration_1_1adaptors_1_1InmemStorageIterator" ],
+        [ "InmemWriteBatch", "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html", "structaltintegration_1_1adaptors_1_1InmemWriteBatch" ],
+        [ "InmemStorageImpl", "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html", "structaltintegration_1_1adaptors_1_1InmemStorageImpl" ],
+        [ "LevelDBStorageIterator", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator" ],
+        [ "LevelDBWriteBatch", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch" ],
+        [ "LevelDBStorage", "structaltintegration_1_1adaptors_1_1LevelDBStorage.html", "structaltintegration_1_1adaptors_1_1LevelDBStorage" ],
+        [ "PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl" ],
+        [ "RocksDBStorageIterator", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator" ],
+        [ "RocksDBWriteBatch", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch" ],
+        [ "RocksDBStorage", "structaltintegration_1_1adaptors_1_1RocksDBStorage.html", "structaltintegration_1_1adaptors_1_1RocksDBStorage" ],
+        [ "StorageIterator", "structaltintegration_1_1adaptors_1_1StorageIterator.html", "structaltintegration_1_1adaptors_1_1StorageIterator" ],
+        [ "WriteBatch", "structaltintegration_1_1adaptors_1_1WriteBatch.html", "structaltintegration_1_1adaptors_1_1WriteBatch" ],
+        [ "Storage", "structaltintegration_1_1adaptors_1_1Storage.html", "structaltintegration_1_1adaptors_1_1Storage" ]
+      ] ],
       [ "cache", null, [
         [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
       ] ],
