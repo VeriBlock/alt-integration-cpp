@@ -1,13 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"structaltintegration_1_1StoredBlockIndex.html#ae1baf71b2003d0ec0ae7fe816e721c1e":[4,0,0,66,6],
-"structaltintegration_1_1StoredBlockIndex.html#ae881b5a063dc9353f9acaa0ec0a73f09":[4,0,0,66,1],
-"structaltintegration_1_1StoredBlockIndex.html#ae8dad64f527cebf0c449a56c43d747a0":[4,0,0,66,9],
-"structaltintegration_1_1StoredBlockIndex.html#aeae5fe43a02d70340e7146a6b4c2ca45":[4,0,0,66,4],
-"structaltintegration_1_1VTB.html":[4,0,0,47],
-"structaltintegration_1_1VTB.html#a09d5f0529495a6d852461ad5076a6c6a":[4,0,0,47,10],
-"structaltintegration_1_1VTB.html#a20d9f3a641c8d5350490a1da3da40266":[4,0,0,47,1],
-"structaltintegration_1_1VTB.html#a389493364912b3b7c9b5bbaa3ae42b03":[4,0,0,47,11],
 "structaltintegration_1_1VTB.html#a3d01efdef24e1705cfa0041cba456813":[4,0,0,47,7],
 "structaltintegration_1_1VTB.html#a6039844a160b788fb51bef24498e48af":[4,0,0,47,13],
 "structaltintegration_1_1VTB.html#a8983b35112c156b9fa6565eaa31b446b":[4,0,0,47,0],
@@ -249,5 +241,13 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html":[4,0,0,0,3],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a13b6d644263af696b862af9a8385423f":[4,0,0,0,3,0],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3b0d6be950cb324ceae43af01e56d2df":[4,0,0,0,3,7],
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3df1c96e45628b662b16a5f9083f8e8d":[4,0,0,0,3,6]
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3df1c96e45628b662b16a5f9083f8e8d":[4,0,0,0,3,6],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a4be421e7e77a49279b15f01b63c03b69":[4,0,0,0,3,2],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#aae176a1b057a95225193c09ddaac9258":[4,0,0,0,3,5],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ab5824d97826eb193446320fc283c650d":[4,0,0,0,3,3],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ac2d07a78f10dbfa03fdbef09d2c51122":[4,0,0,0,3,4],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e":[4,0,0,0,3,1],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html":[4,0,0,0,4],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a8f39c95af8bcdfa166489f8467a56601":[4,0,0,0,4,2],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a9d6aff9fb0723273a850a504a1857733":[4,0,0,0,4,0]
 };
