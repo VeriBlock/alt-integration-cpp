@@ -60,14 +60,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "",
-"fmt_8hpp_source.html",
-"namespacealtintegration.html#a25a27ef7d9a529ef3319249059a4a4e6",
-"namespacealtintegration.html#adc0ec1aed0b80c7de5cf6993aef0745b",
-"structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27",
-"structaltintegration_1_1BlockTree.html#a7d7d68b2699688ea2bb943dc060a0e4d",
-"structaltintegration_1_1Endorsement.html#afa2e05111722e21a6afc616aa20b90cd",
-"structaltintegration_1_1StoredBlockIndex.html#ae1baf71b2003d0ec0ae7fe816e721c1e",
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a4be421e7e77a49279b15f01b63c03b69"
+"functions_func_b.html",
+"namespacealtintegration.html#a35e7706bc7c877b469024e396547a313",
+"namespacealtintegration.html#ae9b38e2e0cf6684c8ecacb3365271045",
+"structaltintegration_1_1AltChainParams.html#ac830ec898b26a093da4f0902de94d697",
+"structaltintegration_1_1BtcBlock.html#a7d2fee16561a3e3c7f91b366be832788",
+"structaltintegration_1_1Logger.html#a44629fca6dc81a4561d860ff7d1d50e1",
+"structaltintegration_1_1VbkBlock.html#a204535221fd4326b6c6c81e71b111323"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

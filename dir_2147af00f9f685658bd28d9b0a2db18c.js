@@ -1,6 +1,5 @@
 var dir_2147af00f9f685658bd28d9b0a2db18c =
 [
-    [ "adaptors", "dir_923528710592f5f54c90584462e308a4.html", "dir_923528710592f5f54c90584462e308a4" ],
     [ "block_batch.hpp", "block__batch_8hpp_source.html", null ],
     [ "block_iterator.hpp", "block__iterator_8hpp_source.html", null ],
     [ "block_reader.hpp", "block__reader_8hpp_source.html", null ],

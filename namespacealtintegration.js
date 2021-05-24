@@ -1,6 +1,6 @@
 var namespacealtintegration =
 [
-    [ "adaptors", null, [
+    [ "cache", null, [
       [ "Guides:", "index.html#autotoc_md98", null ],
       [ "1. Fork vBTC", "integration.html#autotoc_md92", null ],
       [ "2. Change naming as needed.", "integration.html#autotoc_md93", null ],
@@ -11,45 +11,6 @@ var namespacealtintegration =
       [ "Legend", "rebootstrap.html#autotoc_md99", null ],
       [ "Description", "rebootstrap.html#autotoc_md100", null ],
       [ "Protocol", "rebootstrap.html#autotoc_md101", null ],
-      [ "BlockIteratorImpl", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl" ],
-      [ "BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", "structaltintegration_1_1adaptors_1_1BlockReaderImpl" ],
-      [ "BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html", "structaltintegration_1_1adaptors_1_1BlockBatchImpl" ],
-      [ "InmemStorageIterator", "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html", "structaltintegration_1_1adaptors_1_1InmemStorageIterator" ],
-      [ "InmemWriteBatch", "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html", "structaltintegration_1_1adaptors_1_1InmemWriteBatch" ],
-      [ "InmemStorageImpl", "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html", "structaltintegration_1_1adaptors_1_1InmemStorageImpl" ],
-      [ "LevelDBStorageIterator", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator" ],
-      [ "LevelDBWriteBatch", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch" ],
-      [ "LevelDBStorage", "structaltintegration_1_1adaptors_1_1LevelDBStorage.html", "structaltintegration_1_1adaptors_1_1LevelDBStorage" ],
-      [ "PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl" ],
-      [ "RocksDBStorageIterator", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator" ],
-      [ "RocksDBWriteBatch", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch" ],
-      [ "RocksDBStorage", "structaltintegration_1_1adaptors_1_1RocksDBStorage.html", "structaltintegration_1_1adaptors_1_1RocksDBStorage" ],
-      [ "StorageIterator", "structaltintegration_1_1adaptors_1_1StorageIterator.html", "structaltintegration_1_1adaptors_1_1StorageIterator" ],
-      [ "WriteBatch", "structaltintegration_1_1adaptors_1_1WriteBatch.html", "structaltintegration_1_1adaptors_1_1WriteBatch" ],
-      [ "Storage", "structaltintegration_1_1adaptors_1_1Storage.html", "structaltintegration_1_1adaptors_1_1Storage" ],
-      [ "block_key", "block__provider__impl_8hpp.html#af2af9ad87e3079c4d21c400d7be29fdb", null ],
-      [ "block_key< AltBlock >", "block__provider__impl_8hpp.html#a50c4f2444dec717dfd87114ba7b89f42", null ],
-      [ "block_key< BtcBlock >", "block__provider__impl_8hpp.html#a98e03c418cbaf2c3b4b9634c3565463c", null ],
-      [ "block_key< VbkBlock >", "block__provider__impl_8hpp.html#aa2f9fbce7f372e6fcc5b83c3241535bd", null ],
-      [ "payloads_key", "payloads__provider__impl_8hpp.html#a4d5a63af87ba560732717905c1bca422", null ],
-      [ "payloads_key< ATV >", "payloads__provider__impl_8hpp.html#a12f9d45e682ea406cff6d41ffa98ec44", null ],
-      [ "payloads_key< VbkBlock >", "payloads__provider__impl_8hpp.html#ac6d1bc9732b8396728d812263807edb7", null ],
-      [ "payloads_key< VTB >", "payloads__provider__impl_8hpp.html#aefb73773ef58584a8c475f8fd136ac0e", null ],
-      [ "tip_key", "block__provider__impl_8hpp.html#ac4b04ca6ee430e832e97e9128379eba3", null ],
-      [ "tip_key< AltBlock >", "block__provider__impl_8hpp.html#a8706b061d42ba9168172b25234072a5b", null ],
-      [ "tip_key< BtcBlock >", "block__provider__impl_8hpp.html#a9ebd133d46779d7342d5fe337942d714", null ],
-      [ "tip_key< VbkBlock >", "block__provider__impl_8hpp.html#ae1c1f498a55afcb5fef49fc016079b51", null ],
-      [ "DB_ALT_BLOCK", "block__provider__impl_8hpp.html#aab21d818a0fdb42d34ed3da106c489a9", null ],
-      [ "DB_ALT_TIP", "block__provider__impl_8hpp.html#a82efdfaa387cdc0d43f1564e95196866", null ],
-      [ "DB_ATV_PREFIX", "payloads__provider__impl_8hpp.html#a31849a12c1bfe9c2b9ecc31b700b52a3", null ],
-      [ "DB_BTC_BLOCK", "block__provider__impl_8hpp.html#ae6022ac41ac88070cca75c1309505660", null ],
-      [ "DB_BTC_TIP", "block__provider__impl_8hpp.html#a3fbf887a90604ef1befc066304c886f1", null ],
-      [ "DB_VBK_BLOCK", "block__provider__impl_8hpp.html#a866a3d0aa01b49aeb3bf4e2a7417152c", null ],
-      [ "DB_VBK_PREFIX", "payloads__provider__impl_8hpp.html#a431a0378180d0cdf23c45afef6f6fc09", null ],
-      [ "DB_VBK_TIP", "block__provider__impl_8hpp.html#a0191c4b1f3356497fee0d15171650978", null ],
-      [ "DB_VTB_PREFIX", "payloads__provider__impl_8hpp.html#a17d90c84bd4907ed0141bfced4a24ef7", null ]
-    ] ],
-    [ "cache", null, [
       [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
     ] ],
     [ "detail", null, [
