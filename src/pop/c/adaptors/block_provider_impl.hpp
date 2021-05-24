@@ -6,11 +6,13 @@
 #ifndef VERIBLOCK_POP_CPP_ADAPTORS_BLOCK_PROVIDER_IMPL_BINDINGS
 #define VERIBLOCK_POP_CPP_ADAPTORS_BLOCK_PROVIDER_IMPL_BINDINGS
 
-#include "storage_interface.hpp"
 #include <veriblock/pop/c/extern.h>
+
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/storage/block_batch.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
+
+#include "storage_interface.hpp"
 
 namespace adaptors {
 
@@ -121,6 +123,24 @@ struct BlockReaderImpl : public altintegration::BlockReader {
     return true;
   }
 
+  bool getAltBlock(const altintegration::AltBlock::hash_t& hash,
+                   altintegration::StoredBlockIndex<altintegration::AltBlock>&
+                       out) const override {
+    return getBlock<altintegration::AltBlock>(hash, out);
+  }
+
+  bool getVbkBlock(const altintegration::VbkBlock::hash_t& hash,
+                   altintegration::StoredBlockIndex<altintegration::VbkBlock>&
+                       out) const override {
+    return getBlock<altintegration::VbkBlock>(hash, out);
+  }
+
+  bool getBtcBlock(const altintegration::BtcBlock::hash_t& hash,
+                   altintegration::StoredBlockIndex<altintegration::BtcBlock>&
+                       out) const override {
+    return getBlock<altintegration::BtcBlock>(hash, out);
+  }
+
   std::shared_ptr<altintegration::BlockIterator<altintegration::AltBlock>>
   getAltBlockIterator() const override {
     return std::make_shared<BlockIteratorImpl<altintegration::AltBlock>>(
@@ -138,6 +158,20 @@ struct BlockReaderImpl : public altintegration::BlockReader {
   }
 
  private:
+  template <typename block_t>
+  bool getBlock(const typename block_t::hash_t& hash,
+                altintegration::StoredBlockIndex<block_t>& out) const {
+    std::vector<uint8_t> bytes_out;
+    if (!storage_.read(block_key<block_t>(hash), bytes_out)) {
+      return false;
+    }
+    altintegration::ValidationState tmp;
+    if (!altintegration::DeserializeFromVbkEncoding(bytes_out, out, tmp)) {
+      return false;
+    }
+    return true;
+  }
+
   Storage& storage_;
 };
 
@@ -146,41 +180,49 @@ struct BlockBatchImpl : public altintegration::BlockBatch {
 
   BlockBatchImpl(WriteBatch& batch) : batch_(batch) {}
 
-  void writeBlock(const altintegration::StoredBlockIndex<altintegration::AltBlock>&
-                      blk) override {
+  void writeBlock(
+      const altintegration::StoredBlockIndex<altintegration::AltBlock>& blk)
+      override {
     batch_.write(block_key<altintegration::AltBlock>(blk.header->getHash()),
                  altintegration::SerializeToVbkEncoding(blk));
   }
 
-  void writeBlock(const altintegration::StoredBlockIndex<altintegration::VbkBlock>&
-                      blk) override {
+  void writeBlock(
+      const altintegration::StoredBlockIndex<altintegration::VbkBlock>& blk)
+      override {
     batch_.write(block_key<altintegration::VbkBlock>(blk.header->getHash()),
                  altintegration::SerializeToVbkEncoding(blk));
   }
 
-  void writeBlock(const altintegration::StoredBlockIndex<altintegration::BtcBlock>&
-                      blk) override {
+  void writeBlock(
+      const altintegration::StoredBlockIndex<altintegration::BtcBlock>& blk)
+      override {
     batch_.write(block_key<altintegration::BtcBlock>(blk.header->getHash()),
                  altintegration::SerializeToVbkEncoding(blk));
   }
 
-  void writeTip(const altintegration::StoredBlockIndex<altintegration::AltBlock>& blk)
+  void writeTip(
+      const altintegration::StoredBlockIndex<altintegration::AltBlock>& blk)
       override {
     batch_.write(tip_key<altintegration::AltBlock>(), blk.header->getHash());
     batch_.write(block_key<altintegration::AltBlock>(blk.header->getHash()),
                  altintegration::SerializeToVbkEncoding(blk));
   }
 
-  void writeTip(const altintegration::StoredBlockIndex<altintegration::VbkBlock>& blk)
+  void writeTip(
+      const altintegration::StoredBlockIndex<altintegration::VbkBlock>& blk)
       override {
-    batch_.write(tip_key<altintegration::VbkBlock>(), blk.header->getHash().asVector());
+    batch_.write(tip_key<altintegration::VbkBlock>(),
+                 blk.header->getHash().asVector());
     batch_.write(block_key<altintegration::VbkBlock>(blk.header->getHash()),
                  altintegration::SerializeToVbkEncoding(blk));
   }
 
-  void writeTip(const altintegration::StoredBlockIndex<altintegration::BtcBlock>& blk)
+  void writeTip(
+      const altintegration::StoredBlockIndex<altintegration::BtcBlock>& blk)
       override {
-    batch_.write(tip_key<altintegration::BtcBlock>(), blk.header->getHash().asVector());
+    batch_.write(tip_key<altintegration::BtcBlock>(),
+                 blk.header->getHash().asVector());
     batch_.write(block_key<altintegration::BtcBlock>(blk.header->getHash()),
                  altintegration::SerializeToVbkEncoding(blk));
   }
