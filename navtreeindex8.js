@@ -1,13 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#a28c802d470378781825a904e68746847":[4,0,0,0,6,1],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#a3e3ba1e020f90151e206b5351594324f":[4,0,0,0,6,2],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#a695a8a295f753a5c576a8c0c13187e6f":[4,0,0,0,6,0],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#a76301f359f08ef2607e6ff5f1cc75b59":[4,0,0,0,6,4],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#a801d5fc17a7b5e239020988994cb12f0":[4,0,0,0,6,6],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#aa9989c510eb9aac9632997c87d2a1e4b":[4,0,0,0,6,3],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#ab64ab9cb03ffa3633f31e42c8614bf04":[4,0,0,0,6,7],
-"structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html#ad93b657920e074312199535f2b4b105a":[4,0,0,0,6,5],
 "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html":[4,0,0,0,7],
 "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html#a18e3f588dfdd61d123c08b9eddc55341":[4,0,0,0,7,1],
 "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html#a7909d2158869bed0ed0bcb7acd34e497":[4,0,0,0,7,2],
@@ -103,5 +95,13 @@ var NAVTREEINDEX8 =
 "vblake_8hpp_source.html":[5,0,1,0,0,4,4],
 "vtb_8h_source.html":[5,0,1,0,0,2,0,14],
 "vtb_8hpp_source.html":[5,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[5,0,1,0,0,48]
+"write__stream_8hpp_source.html":[5,0,1,0,0,48],
+"":[3,0,1],
+"":[3,0,0,0],
+"":[3,0,0,6],
+"":[3,0,0,3],
+"":[3,0,0,7],
+"":[3,0,0,2],
+"":[3,0,0,5],
+"":[3,0,0,1]
 };
