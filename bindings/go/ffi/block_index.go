@@ -13,6 +13,32 @@ import (
 	"runtime"
 )
 
+// BlockValidityStatus ...
+type BlockValidityStatus uint32
+
+var (
+	// BlockValidUnknown - Default state for validity - validity state is unknown
+	BlockValidUnknown BlockValidityStatus = BlockValidityStatus(C.BLOCK_VALID_UNKNOWN)
+	// BlockBootstrap - This is a bootstrap block
+	BlockBootstrap BlockValidityStatus = BlockValidityStatus(C.BLOCK_BOOTSTRAP)
+	// BlockFailedBlock - Block is statelessly valid, but the altchain marked it as failed
+	BlockFailedBlock BlockValidityStatus =  BlockValidityStatus(C.BLOCK_FAILED_BLOCK)
+	// BlockFailedPop - Block failed state{less,ful} validation due to its payloads
+	BlockFailedPop BlockValidityStatus = BlockValidityStatus(C.BLOCK_FAILED_POP)
+	// BlockFailedChild - Block is state{lessly,fully} valid and the altchain did not report it as
+	// invalid, but some of the ancestor blocks are invalid
+	BlockFailedChild BlockValidityStatus = BlockValidityStatus(C.BLOCK_FAILED_CHILD)
+	// BlockFailedMask - All invalidity flags
+	BlockFailedMask BlockValidityStatus = BlockValidityStatus(C.BLOCK_FAILED_MASK)
+	// BlockHasPayloads - AcceptBlock has been executed on this block
+	BlockHasPayloads BlockValidityStatus = BlockValidityStatus(C.BLOCK_HAS_PAYLOADS)
+	// BlockApplied - The block has been applied via PopStateMachine
+	BlockApplied BlockValidityStatus = BlockValidityStatus(C.BLOCK_ACTIVE)
+	// BlockApplied - The block is temporarily deleted
+	BlockDeleted BlockValidityStatus = BlockValidityStatus(C.BLOCK_DELETED)
+)
+
+
 type AltBlockIndex struct {
 	ref *C.pop_alt_block_index_t
 }
@@ -131,6 +157,21 @@ func (v *VbkBlockIndex) GetStatus() uint32 {
 func (v *BtcBlockIndex) GetStatus() uint32 {
 	v.validate()
 	return uint32(C.pop_btc_block_index_get_status(v.ref))
+}
+
+func (v *AltBlockIndex) HasFlag(flag BlockValidityStatus) bool {
+	v.validate()
+	return bool(C.pop_alt_block_index_function_has_flag(v.ref, C.uint32_t(flag)))
+}
+
+func (v *VbkBlockIndex) HasFlag(flag BlockValidityStatus) bool {
+	v.validate()
+	return bool(C.pop_vbk_block_index_function_has_flag(v.ref, C.uint32_t(flag)))
+}
+
+func (v *BtcBlockIndex) HasFlag(flag BlockValidityStatus) bool {
+	v.validate()
+	return bool(C.pop_btc_block_index_function_has_flag(v.ref, C.uint32_t(flag)))
 }
 
 func (v *AltBlockIndex) ToJSON() (map[string]interface{}, error) {
