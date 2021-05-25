@@ -19,6 +19,17 @@
 extern "C" {
 #endif
 
+// BlockValidityStatus
+extern const uint32_t BLOCK_VALID_UNKNOWN;
+extern const uint32_t BLOCK_BOOTSTRAP;
+extern const uint32_t BLOCK_FAILED_BLOCK;
+extern const uint32_t BLOCK_FAILED_POP;
+extern const uint32_t BLOCK_FAILED_CHILD;
+extern const uint32_t BLOCK_FAILED_MASK;
+extern const uint32_t BLOCK_HAS_PAYLOADS;
+extern const uint32_t BLOCK_ACTIVE;
+extern const uint32_t BLOCK_DELETED;
+
 POP_DECLARE_ENTITY(alt_block_index);
 POP_DECLARE_ENTITY(vbk_block_index);
 POP_DECLARE_ENTITY(btc_block_index);
@@ -42,6 +53,11 @@ POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, status);
 POP_ENTITY_GETTER_FUNCTION(alt_block_index, uint32_t, height);
 POP_ENTITY_GETTER_FUNCTION(vbk_block_index, uint32_t, height);
 POP_ENTITY_GETTER_FUNCTION(btc_block_index, uint32_t, height);
+
+//! has_flag
+POP_ENTITY_CUSTOM_FUNCTION(alt_block_index, bool, has_flag, uint32_t flag);
+POP_ENTITY_CUSTOM_FUNCTION(vbk_block_index, bool, has_flag, uint32_t flag);
+POP_ENTITY_CUSTOM_FUNCTION(btc_block_index, bool, has_flag, uint32_t flag);
 
 //! toJSON
 POP_ENTITY_TO_JSON(alt_block_index);
