@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1adaptors_1_1LevelDBStorage.html":[4,0,0,0,8],
 "structaltintegration_1_1adaptors_1_1LevelDBStorage.html#a8828864c4192b5400f3942f427464409":[4,0,0,0,8,5],
 "structaltintegration_1_1adaptors_1_1LevelDBStorage.html#a956ef62464c637ff01e8002a75902db0":[4,0,0,0,8,3],
 "structaltintegration_1_1adaptors_1_1LevelDBStorage.html#ab06d7b36b6bcd710c8ec5821188d1c28":[4,0,0,0,8,0],
@@ -112,12 +113,12 @@ var NAVTREEINDEX8 =
 "vtb_8h_source.html":[5,0,1,0,0,2,0,14],
 "vtb_8hpp_source.html":[5,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[5,0,1,0,0,48],
-"":[3,0,0,5],
-"":[3,0,0,6],
-"":[3,0,0,0],
-"":[3,0,0,3],
 "":[3,0,0,7],
+"":[3,0,0,5],
+"":[3,0,0,3],
 "":[3,0,1],
 "":[3,0,0,1],
-"":[3,0,0,2]
+"":[3,0,0,0],
+"":[3,0,0,2],
+"":[3,0,0,6]
 };

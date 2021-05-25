@@ -54,6 +54,7 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1BtcChainParams.html#aaa39054eed31fa6ed188edc8594b667c":[4,0,0,11,0],
 "structaltintegration_1_1BtcChainParams.html#aad38f3f1118c6234925dbd1805206a95":[4,0,0,11,11],
 "structaltintegration_1_1BtcChainParams.html#ab79123e917c60dfc7a13cee35fb30d46":[4,0,0,11,13],
+"structaltintegration_1_1BtcChainParams.html#abbb41e428a57577882c8a7149a6578f3":[4,0,0,11,14],
 "structaltintegration_1_1BtcChainParams.html#abccdcdb7869b273683a056131688e9a4":[4,0,0,11,6],
 "structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110":[4,0,0,11,12],
 "structaltintegration_1_1BtcChainParams.html#aff0c47611a36e96cf37541198f228e09":[4,0,0,11,7],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1Endorsement.html#aad4a71fe10a5e1a6f8c5d62c1aedbf31":[4,0,0,36,18],
 "structaltintegration_1_1Endorsement.html#ab64b35c2668e23913cde9032bcf9b88e":[4,0,0,36,2],
 "structaltintegration_1_1Endorsement.html#af2b430a741721086052f2c3bc980ff40":[4,0,0,36,15],
-"structaltintegration_1_1Endorsement.html#afa2e05111722e21a6afc616aa20b90cd":[4,0,0,36,19],
-"structaltintegration_1_1Endorsement.html#afd6ed580b12d51d0477fbda1d6c01b2a":[4,0,0,36,7]
+"structaltintegration_1_1Endorsement.html#afa2e05111722e21a6afc616aa20b90cd":[4,0,0,36,19]
 };
