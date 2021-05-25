@@ -5,9 +5,10 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/pop/blockchain/alt_block_tree.hpp>
-#include <veriblock/pop/storage/inmem_payloads_provider.hpp>
 #include <util/pop_test_fixture.hpp>
+#include <veriblock/pop/blockchain/alt_block_tree.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+#include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 
 using namespace altintegration;
 
@@ -49,7 +50,8 @@ TEST_P(PositiveTest, BootstrapSuccess) {
   AltChainParamsNon0Bootstrap alt(HEIGHT);
   VbkChainParamsRegTest vbk;
   BtcChainParamsRegTest btc;
-  InmemPayloadsProvider pp;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl pp{storage};
 
   AltBlockTree tree(alt, vbk, btc, pp);
   ValidationState state;
@@ -72,7 +74,8 @@ TEST_P(NegativeTest, BootstrapFail) {
   AltChainParamsNon0Bootstrap alt(HEIGHT);
   VbkChainParamsRegTest vbk;
   BtcChainParamsRegTest btc;
-  InmemPayloadsProvider pp;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl pp{storage};
 
   AltBlockTree tree(alt, vbk, btc, pp);
   ValidationState state;
@@ -99,7 +102,8 @@ TEST_F(AltBlockTreeTest, AssureBootstrapBtcBlockHasRefs_test) {
   ValidationState state;
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
-  InmemPayloadsProvider payloads_provider;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloads_provider{storage};
   PayloadsIndex payloads_index;
 
   Miner<BtcBlock, BtcChainParams> btc_miner =

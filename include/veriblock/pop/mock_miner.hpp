@@ -21,10 +21,10 @@
 #include "entities/vbkblock.hpp"
 #include "entities/vbktx.hpp"
 #include "entities/vtb.hpp"
-#include "storage/inmem_payloads_provider.hpp"
+#include "storage/adaptors/inmem_storage_impl.hpp"
+#include "storage/adaptors/payloads_provider_impl.hpp"
 
 namespace altintegration {
-
 
 //! @private
 template <typename T>
@@ -123,7 +123,7 @@ class MockMiner {
     VBK_ASSERT_MSG(ret, state.toString());
   }
 
-  InmemPayloadsProvider& getPayloadsProvider() { return payloads_provider_; }
+  PayloadsStorage& getPayloadsProvider() { return payloads_provider_; }
 
  private:
   template <typename BlockTree, typename Block>
@@ -158,7 +158,8 @@ class MockMiner {
 
   BtcChainParamsRegTest btc_params_{};
   VbkChainParamsRegTest vbk_params_{};
-  InmemPayloadsProvider payloads_provider_;
+  adaptors::InmemStorageImpl storage_{};
+  adaptors::PayloadsStorageImpl payloads_provider_{storage_};
   PayloadsIndex payloads_index_;
 
   Miner<BtcBlock, BtcChainParams> btc_miner_ =

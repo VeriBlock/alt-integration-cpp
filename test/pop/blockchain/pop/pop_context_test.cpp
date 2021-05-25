@@ -3,20 +3,21 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/pop_context.hpp>
-
 #include <gtest/gtest.h>
 
 #include <veriblock/pop/config.hpp>
 #include <veriblock/pop/mock_miner.hpp>
-#include <veriblock/pop/storage/inmem_payloads_provider.hpp>
+#include <veriblock/pop/pop_context.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+#include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 
 using namespace altintegration;
 
 struct PopContextFixture : public ::testing::Test {
   VbkChainParamsRegTest vbkp;
   BtcChainParamsRegTest btcp;
-  InmemPayloadsProvider payloadsProvider;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloadsProvider{storage};
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
       VbkBlockTree(vbkp, btcp, payloadsProvider, payloadsIndex);

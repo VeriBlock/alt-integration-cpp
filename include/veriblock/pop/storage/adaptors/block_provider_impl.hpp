@@ -80,13 +80,17 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
   }
 
   bool valid() const override {
-    static char prefix = block_key<BlockT>({})[0];
+    static const uint8_t prefix = block_key<BlockT>({})[0];
 
     std::vector<uint8_t> key;
     return it_->valid() && it_->key(key) && !key.empty() && key[0] == prefix;
   }
 
-  void seek_start() override { it_->seek(block_key<BlockT>({})); }
+  void seek_start() override {
+    static const uint8_t prefix = block_key<BlockT>({})[0];
+
+    it_->seek({prefix});
+  }
 
  private:
   std::shared_ptr<StorageIterator> it_;

@@ -10,11 +10,10 @@ namespace fuzz {
 Block genesisBlock = []() -> Block {
   Block b;
   b.timestamp = 0;
-  b.hash = {1,2,3,4};
+  b.hash = {1, 2, 3, 4};
   b.height = 0;
   return b;
 }();
-
 
 bool Tree::acceptBlock(const Block& block) {
   if (block.prevhash == block.hash) {
@@ -86,7 +85,7 @@ Tree::Tree() {
   blocks[genesisBlock.hash] = std::make_shared<Block>(genesisBlock);
   bestBlock = genesisBlock.hash;
   params = std::make_shared<FuzzAltChainParams>();
-  pp = std::make_shared<altintegration::InmemPayloadsProvider>();
+  pp = std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(storage);
 
   auto config = std::make_shared<altintegration::Config>();
   config->SelectBtcParams("regtest", 0, {});

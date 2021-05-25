@@ -26,26 +26,13 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
       AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
 
   void save() {
-    auto writer = InmemBlockBatch(blockStorage);
+    auto batch = storage.generateWriteBatch();
+    auto writer = adaptors::BlockBatchImpl(*batch);
     saveTrees(alttree, writer);
+    batch->writeBatch();
   }
 
-  bool load() {
-    return LoadTreeWrapper(alttree2.btc()) && LoadTreeWrapper(alttree2.vbk()) &&
-           LoadTreeWrapper(alttree2) &&
-           detail::loadValidateTree(
-               alttree2.btc(),
-               LoadBlocksFromDisk<typename BtcBlockTree::stored_index_t>(),
-               state) &&
-           detail::loadValidateTree(
-               alttree2.vbk(),
-               LoadBlocksFromDisk<typename VbkBlockTree::stored_index_t>(),
-               state) &&
-           detail::loadValidateTree(
-               alttree2,
-               LoadBlocksFromDisk<typename AltBlockTree::stored_index_t>(),
-               state);
-  }
+  bool load() { return loadTrees(alttree2, blockProvider, state); }
 
   auto assertTreesEqual() {
     assertTreesHaveNoOrphans(alttree);
@@ -109,7 +96,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+VBK-duplicate");
+  EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+VBK-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
@@ -147,7 +134,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+VBK-duplicate");
+  EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+VBK-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
@@ -188,7 +175,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+ATV-duplicate");
+  EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+ATV-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
@@ -266,14 +253,16 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   alttree.getPayloadsIndex().addVbkPayloadIndex(
       containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
-  auto writer = InmemBlockBatch(blockStorage);
+  auto batch = storage.generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTree(alttree.btc(), writer);
   saveTree(alttree.vbk(), writer, emptyValidator);
   saveTree(alttree, writer);
+  batch->writeBatch();
 
   EXPECT_FALSE(load());
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "load-tree+VTB-duplicate");
+  EXPECT_EQ(state.GetPath(), "failed-to-load-vbk-tree+load-tree+VTB-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {

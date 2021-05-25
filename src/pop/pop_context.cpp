@@ -138,7 +138,7 @@ void PopContext::saveAllTrees(BlockBatch& batch) const {
 }
 
 bool PopContext::loadAllTrees(BlockReader& reader, ValidationState& state) {
-  return loadTrees(*this, reader, state);
+  return loadTrees(getAltBlockTree(), reader, state);
 }
 
 bool PopContext::check(const PopData& pd, ValidationState& state) {

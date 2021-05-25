@@ -116,7 +116,7 @@ bool validateLoadBlock(const BtcBlockTree& tree,
 
 }  // namespace detail
 
-bool loadTrees(PopContext& context,
+bool loadTrees(AltBlockTree& tree,
                BlockReader& storage,
                ValidationState& state) {
   std::vector<typename BtcBlockTree::stored_index_t> btcblocks;
@@ -144,32 +144,29 @@ bool loadTrees(PopContext& context,
     return state.Invalid("load-alt-tree-blocks");
   }
 
-  if (!loadTree(context.getAltBlockTree().btc(), btctip, btcblocks, state)) {
+  if (!loadTree(tree.btc(), btctip, btcblocks, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
 
-  if (!loadTree(context.getAltBlockTree().vbk(), vbktip, vbkblocks, state)) {
+  if (!loadTree(tree.vbk(), vbktip, vbkblocks, state)) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
 
-  if (!loadTree(context.getAltBlockTree(), alttip, altblocks, state)) {
+  if (!loadTree(tree, alttip, altblocks, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
 
-  VBK_ASSERT_MSG(detail::loadValidateTree(
-                     context.getAltBlockTree().btc(), btcblocks, state),
+  VBK_ASSERT_MSG(detail::loadValidateTree(tree.btc(), btcblocks, state),
                  "Failed to validate stored BTC tree, error: %s",
                  state.toString());
 
-  VBK_ASSERT_MSG(detail::loadValidateTree(
-                     context.getAltBlockTree().vbk(), vbkblocks, state),
+  VBK_ASSERT_MSG(detail::loadValidateTree(tree.vbk(), vbkblocks, state),
                  "Failed to validate stored VBK tree, error: %s",
                  state.toString());
 
-  VBK_ASSERT_MSG(
-      detail::loadValidateTree(context.getAltBlockTree(), altblocks, state),
-      "Failed to validate stored ALT tree, error: %s",
-      state.toString());
+  VBK_ASSERT_MSG(detail::loadValidateTree(tree, altblocks, state),
+                 "Failed to validate stored ALT tree, error: %s",
+                 state.toString());
 
   return true;
 }
