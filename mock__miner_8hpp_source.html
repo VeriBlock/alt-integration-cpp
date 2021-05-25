@@ -111,10 +111,10 @@ $(document).ready(function(){initNavTree('mock__miner_8hpp_source.html',''); ini
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;entities/vbkblock.hpp&quot;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;entities/vbktx.hpp&quot;</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;entities/vtb.hpp&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;storage/adaptors/inmem_storage_impl.hpp&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;storage/adaptors/payloads_provider_impl.hpp&quot;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;storage/inmem_payloads_provider.hpp&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;std::vector&lt;typename T::hash_t&gt; hashAll(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; txs) {</div>
@@ -211,7 +211,7 @@ $(document).ready(function(){initNavTree('mock__miner_8hpp_source.html',''); ini
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    VBK_ASSERT_MSG(ret, state.toString());</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  PayloadsStorage&amp; getPayloadsProvider() { <span class="keywordflow">return</span> payloads_provider_; }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  InmemPayloadsProvider&amp; getPayloadsProvider() { <span class="keywordflow">return</span> payloads_provider_; }</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> BlockTree, <span class="keyword">typename</span> Block&gt;</div>
@@ -246,27 +246,26 @@ $(document).ready(function(){initNavTree('mock__miner_8hpp_source.html',''); ini
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  BtcChainParamsRegTest btc_params_{};</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  VbkChainParamsRegTest vbk_params_{};</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  adaptors::InmemStorageImpl storage_{};</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  adaptors::PayloadsStorageImpl payloads_provider_{storage_};</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  PayloadsIndex payloads_index_;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  Miner&lt;BtcBlock, BtcChainParams&gt; btc_miner_ =</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;      Miner&lt;BtcBlock, BtcChainParams&gt;(btc_params_);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  Miner&lt;VbkBlock, VbkChainParams&gt; vbk_miner_ =</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;      Miner&lt;VbkBlock, VbkChainParams&gt;(vbk_params_);</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  vbk_block_tree vbk_tree_{</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;      vbk_params_, btc_params_, payloads_provider_, payloads_index_};</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  btc_block_tree&amp; btc_tree_ = vbk_tree_.btc();</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  std::unordered_map&lt;VbkBlock::hash_t, std::vector&lt;VTB&gt;&gt; vtbs_;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  std::unordered_map&lt;VbkBlock::hash_t, VbkMerkleTree&gt; vbk_merkle_trees_;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  std::unordered_map&lt;BtcBlock::hash_t, BtcMerkleTree&gt; btc_merkle_trees_;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;};</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  InmemPayloadsProvider payloads_provider_;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  PayloadsIndex payloads_index_;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  Miner&lt;BtcBlock, BtcChainParams&gt; btc_miner_ =</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      Miner&lt;BtcBlock, BtcChainParams&gt;(btc_params_);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  Miner&lt;VbkBlock, VbkChainParams&gt; vbk_miner_ =</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;      Miner&lt;VbkBlock, VbkChainParams&gt;(vbk_params_);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  vbk_block_tree vbk_tree_{</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;      vbk_params_, btc_params_, payloads_provider_, payloads_index_};</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  btc_block_tree&amp; btc_tree_ = vbk_tree_.btc();</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  std::unordered_map&lt;VbkBlock::hash_t, std::vector&lt;VTB&gt;&gt; vtbs_;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  std::unordered_map&lt;VbkBlock::hash_t, VbkMerkleTree&gt; vbk_merkle_trees_;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;  std::unordered_map&lt;BtcBlock::hash_t, BtcMerkleTree&gt; btc_merkle_trees_;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;};</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a0113326bdf77bb9899f62b959aad5bcd"><div class="ttname"><a href="namespacealtintegration.html#a0113326bdf77bb9899f62b959aad5bcd">altintegration::GetRegTestBtcBlock</a></div><div class="ttdeci">BtcBlock GetRegTestBtcBlock()</div><div class="ttdoc">Getter for regtest BTC network genesis block.</div></div>
 <div class="ttc" id="anamespacealtintegration_html_ab2edf8bfcba7d373340b6bac3f80bf14"><div class="ttname"><a href="namespacealtintegration.html#ab2edf8bfcba7d373340b6bac3f80bf14">altintegration::GetRegTestVbkBlock</a></div><div class="ttdeci">VbkBlock GetRegTestVbkBlock()</div><div class="ttdoc">Getter for regtest_progpow VBK network genesis block.</div></div>

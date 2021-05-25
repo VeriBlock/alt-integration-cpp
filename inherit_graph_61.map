@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structaltintegration_1_1VbkCommandGroupStore.html" title="A wrapper for the payload store that constructs command objects." alt="" coords="5,5,189,47"/>
+<area shape="rect" id="node1" href="$structaltintegration_1_1VbkChainParams.html" title="VeriBlock chain parameters." alt="" coords="5,71,164,112"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1VbkChainParamsMain.html" title="MainNet VBK parameters." alt="" coords="212,5,371,47"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1VbkChainParamsRegTest.html" title="RegTest VBK config." alt="" coords="212,71,371,112"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1VbkChainParamsTest.html" title="TestNet VBK config." alt="" coords="212,136,371,177"/>
 </map>
