@@ -35,11 +35,11 @@ PopContext* VBK_NewPopContext(Config_t* config,
   auto* v = new PopContext();
 
   v->storage = storage->storage;
-
-  v->payloads_storage =
+  v->context = altintegration::PopContext::create(
+      c,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
-          *v->storage);
-  v->context = altintegration::PopContext::create(c, v->payloads_storage);
+          *v->storage),
+      std::make_shared<altintegration::adaptors::BlockReaderImpl>(*v->storage));
 
   return v;
 }

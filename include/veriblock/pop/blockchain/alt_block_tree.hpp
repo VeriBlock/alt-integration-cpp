@@ -17,6 +17,7 @@
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/validation_state.hpp>
@@ -194,7 +195,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   explicit AltBlockTree(const alt_config_t& alt_config,
                         const vbk_config_t& vbk_config,
                         const btc_config_t& btc_config,
-                        PayloadsStorage& storagePayloads);
+                        PayloadsStorage& payloadsProvider,
+                        BlockReader& blockProvider);
 
   /**
    * Set very first (bootstrap) altchain block with enabled POP.
@@ -417,6 +419,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
+  BlockReader& blockProvider_;
   command_group_store_t commandGroupStore_;
 
   //! @private

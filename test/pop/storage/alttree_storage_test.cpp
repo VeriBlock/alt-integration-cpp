@@ -51,8 +51,11 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   saveTrees(this->alttree, writer);
   batch->writeBatch();
 
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               this->payloadsProvider,
+                               this->blockProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
@@ -117,8 +120,11 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   saveTrees(this->alttree, writer);
   batch->writeBatch();
 
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               this->payloadsProvider,
+                               this->blockProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
@@ -194,8 +200,11 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   saveTrees(this->alttree, writer);
   batch->writeBatch();
 
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               this->payloadsProvider,
+                               this->blockProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);

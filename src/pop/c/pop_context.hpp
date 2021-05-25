@@ -15,7 +15,6 @@
 // all-in-one thing
 struct PopContext {
   std::shared_ptr<altintegration::PopContext> context;
-  std::shared_ptr<altintegration::PayloadsStorage> payloads_storage;
   std::shared_ptr<altintegration::adaptors::Storage> storage;
 };
 

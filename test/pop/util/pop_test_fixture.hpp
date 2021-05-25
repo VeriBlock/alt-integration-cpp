@@ -54,7 +54,8 @@ struct PopTestFixture {
 
   ValidationState state;
 
-  PopTestFixture() : alttree(altparam, vbkparam, btcparam, payloadsProvider) {
+  PopTestFixture()
+      : alttree(altparam, vbkparam, btcparam, payloadsProvider, blockProvider) {
     auto BTCgenesis = GetRegTestBtcBlock();
     auto VBKgenesis = GetRegTestVbkBlock();
 

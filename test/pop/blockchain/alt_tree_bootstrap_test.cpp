@@ -52,8 +52,9 @@ TEST_P(PositiveTest, BootstrapSuccess) {
   BtcChainParamsRegTest btc;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl pp{storage};
+  adaptors::BlockReaderImpl bp{storage};
 
-  AltBlockTree tree(alt, vbk, btc, pp);
+  AltBlockTree tree(alt, vbk, btc, pp, bp);
   ValidationState state;
   ASSERT_TRUE(tree.bootstrap(state));
 
@@ -76,8 +77,9 @@ TEST_P(NegativeTest, BootstrapFail) {
   BtcChainParamsRegTest btc;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl pp{storage};
+  adaptors::BlockReaderImpl bp{storage};
 
-  AltBlockTree tree(alt, vbk, btc, pp);
+  AltBlockTree tree(alt, vbk, btc, pp, bp);
   ValidationState state;
   ASSERT_DEATH(
       {

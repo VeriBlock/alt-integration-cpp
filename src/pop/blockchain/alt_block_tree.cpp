@@ -431,7 +431,8 @@ bool AltBlockTree::loadBlock(const stored_index_t& index,
 AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            const AltBlockTree::vbk_config_t& vbk_config,
                            const AltBlockTree::btc_config_t& btc_config,
-                           PayloadsStorage& payloadsProvider)
+                           PayloadsStorage& payloadsProvider,
+                           BlockReader& blockProvider)
     : alt_config_(&alt_config),
       cmp_(std::make_shared<VbkBlockTree>(
                vbk_config, btc_config, payloadsProvider, payloadsIndex_),
@@ -439,6 +440,7 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
            payloadsProvider,
            payloadsIndex_),
       payloadsProvider_(payloadsProvider),
+      blockProvider_(blockProvider),
       commandGroupStore_(*this, payloadsProvider_) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
@@ -490,8 +492,7 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(index_t& index,
-                                 ValidationState& state) {
+bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
   return this->finalizeBlockImpl(
       index, getParams().preserveBlocksBehindFinal(), state);
 }

@@ -40,11 +40,12 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
   auto* res = new POP_ENTITY_NAME(pop_context);
 
   res->storage = storage->ref;
-  res->payloads_storage =
+  res->ref = altintegration::PopContext::create(
+      config->ref,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
-          *storage->ref);
-  res->ref =
-      altintegration::PopContext::create(config->ref, res->payloads_storage);
+          *res->storage),
+      std::make_shared<altintegration::adaptors::BlockReaderImpl>(
+          *res->storage));
 
   return res;
 }

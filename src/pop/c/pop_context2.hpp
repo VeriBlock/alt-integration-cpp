@@ -15,7 +15,6 @@
 
 struct __pop_pop_context {
   std::shared_ptr<altintegration::PopContext> ref;
-  std::shared_ptr<altintegration::PayloadsStorage> payloads_storage;
   std::shared_ptr<altintegration::adaptors::Storage> storage;
 };
 

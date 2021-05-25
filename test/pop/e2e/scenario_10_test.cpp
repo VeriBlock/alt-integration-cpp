@@ -81,8 +81,11 @@ TEST_F(Scenario10, scenario_10) {
   batch->writeBatch();
 
   VBK_LOG_DEBUG("Step 4");
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               payloadsProvider,
+                               blockProvider};
 
   ASSERT_TRUE(reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
                                                          this->state));
