@@ -75,8 +75,10 @@ TEST_F(Scenario10, scenario_10) {
             2);
 
   VBK_LOG_DEBUG("Step 3");
-  auto writer = InmemBlockBatch(blockStorage);
+  auto batch = storage.generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTrees(alttree, writer);
+  batch->writeBatch();
 
   VBK_LOG_DEBUG("Step 4");
   AltBlockTree reloadedAltTree{
@@ -88,9 +90,7 @@ TEST_F(Scenario10, scenario_10) {
                                                          this->state));
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
 
   ASSERT_TRUE(reloadedAltTree.getBlockIndex(chainA.back().getHash()) !=
               nullptr);

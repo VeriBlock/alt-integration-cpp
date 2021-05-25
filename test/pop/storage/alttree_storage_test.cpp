@@ -21,51 +21,6 @@ BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
   return tip->getHash();
 }
 
-TEST_F(AltTreeRepositoryTest, ValidBlocks) {
-  auto* vbkTip = this->popminer->mineVbkBlocks(1);
-  // create endorsement of VBKTIP in BTC_1
-  auto btctx =
-      this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
-  // add BTC tx endorsing VBKTIP into next block
-  auto* chainAtip = this->popminer->mineBtcBlocks(1, {btctx});
-
-  // create VBK pop tx that has 'block of proof=CHAIN A'
-  auto vbkpoptx = this->popminer->createVbkPopTxEndorsingVbkBlock(
-      chainAtip->getHeader(),
-      btctx,
-      vbkTip->getHeader(),
-      lastKnownLocalBtcBlock(*this->popminer));
-  // erase part of BTC - it will be restored from payloads anyway
-  this->popminer->btc().removeLeaf(*this->popminer->btc().getBestChain().tip());
-
-  // mine txA into VBK 2nd block
-  this->popminer->mineVbkBlocks(1, {vbkpoptx});
-
-  auto writer = InmemBlockBatch(blockStorage);
-  saveTree(this->popminer->btc(), writer);
-  saveTree(this->popminer->vbk(), writer);
-
-  VbkBlockTree newvbk{this->vbkparam,
-                      this->btcparam,
-                      popminer->getPayloadsProvider(),
-                      payloadsIndex};
-  newvbk.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  newvbk.bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-
-  ASSERT_TRUE(LoadTreeWrapper(newvbk.btc())) << this->state.toString();
-  ASSERT_TRUE(LoadTreeWrapper(newvbk)) << this->state.toString();
-
-  ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
-  ASSERT_TRUE(this->cmp(newvbk, this->popminer->vbk()));
-  this->popminer->vbk().removeLeaf(*this->popminer->vbk().getBestChain().tip());
-  ASSERT_FALSE(this->cmp(newvbk, this->popminer->vbk(), true));
-
-  // commands should be properly restored to make it pass
-  newvbk.removeLeaf(*newvbk.getBestChain().tip());
-  ASSERT_TRUE(this->cmp(newvbk, this->popminer->vbk()));
-  ASSERT_TRUE(this->cmp(newvbk.btc(), this->popminer->btc()));
-}
-
 TEST_F(AltTreeRepositoryTest, Altchain) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
@@ -91,8 +46,10 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto writer = InmemBlockBatch(blockStorage);
+  auto batch = storage.generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTrees(this->alttree, writer);
+  batch->writeBatch();
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -102,24 +59,21 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   bool bootstrapped = reloadedAltTree.bootstrap(this->state);
   ASSERT_TRUE(bootstrapped);
 
-
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc())) << state.toString();
+  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk().btc(), this->alttree.btc()))
-                << "initial : \n"
-                << alttree.toPrettyString() << "\n\n"
-                << "reloaded: \n"
-                << reloadedAltTree.toPrettyString();
+      << "initial : \n"
+      << alttree.toPrettyString() << "\n\n"
+      << "reloaded: \n"
+      << reloadedAltTree.toPrettyString();
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 
   ASSERT_TRUE(this->cmp(reloadedAltTree.btc(), this->alttree.btc()))
-                << "initial : \n"
-                << alttree.toPrettyString() << "\n\n"
-                << "reloaded: \n"
-                << reloadedAltTree.toPrettyString();
+      << "initial : \n"
+      << alttree.toPrettyString() << "\n\n"
+      << "reloaded: \n"
+      << reloadedAltTree.toPrettyString();
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk(), this->alttree.vbk()));
   ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 
@@ -158,8 +112,10 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto writer = InmemBlockBatch(blockStorage);
+  auto batch = storage.generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTrees(this->alttree, writer);
+  batch->writeBatch();
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -168,9 +124,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -235,8 +189,10 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   validateAlttreeIndexState(
       this->alttree, containingBlock, popData, /*payloads_validation =*/true);
 
-  auto writer = InmemBlockBatch(blockStorage);
+  auto batch = storage.generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
   saveTrees(this->alttree, writer);
+  batch->writeBatch();
 
   AltBlockTree reloadedAltTree{
       this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
@@ -245,9 +201,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
