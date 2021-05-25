@@ -20,7 +20,7 @@ using namespace altintegration;
  *        \-Z251
  *
  */
-struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
+/*struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *A504 = nullptr;
   BlockIndex<AltBlock> *B503 = nullptr;
   BlockIndex<AltBlock> *E503 = nullptr;
@@ -132,7 +132,7 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
   assertTreesHaveNoOrphans(alttree);
-}
+}*/
 
 struct VbkBlockFinalization : public MemPoolFixture {
   BlockIndex<AltBlock> *tip = nullptr;
@@ -208,7 +208,8 @@ TEST_F(VbkBlockFinalization, FinalizeMaxVbks) {
   auto popdata = checkedGetPop();
   // size of the context in the popdata should be less or equal to the
   // MAX_POPDATA_VBK
-  ASSERT_LE(popdata.context.size(), 100);
+  ASSERT_LE(popdata.context.size(), MAX_POPDATA_VBK);
+  ASSERT_GT(popdata.context.size(), vbkparam.mOldBlocksWindow);
 
   applyInNextBlock(popdata);
 
@@ -230,6 +231,81 @@ TEST_F(VbkBlockFinalization, FinalizeMaxVbks) {
 
   ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
   assertTreeTips(alttree.vbk(), {vbktip});
+
+  assertTreesHaveNoOrphans(alttree);
+}
+
+TEST_F(VbkBlockFinalization, FinalizeMaxBtcs) {
+  altparam.mEndorsementSettlementInterval = 0;
+  altparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mEndorsementSettlementInterval = 15;
+  vbkparam.mPreserveBlocksBehindFinal = 15;
+  vbkparam.mOldBlocksWindow = 15;
+  btcparam.mOldBlocksWindow = 15;
+
+  auto* vbkTip = popminer->mineVbkBlocks(100);
+  popminer->mineBtcBlocks(100);
+
+  const auto *endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  auto vbkPopTx = generatePopTx(endorsedVbkBlock->getHeader());
+
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
+
+  auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+
+  // mine 10 blocks
+  //mineAltBlocks(1, chain);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+
+  for (const auto &b : context) {
+    submitVBK(b);
+  }
+  submitVTB(vtb);
+
+  //ASSERT_TRUE(alttree.setState(chain.back().getHash(), state));
+  //EXPECT_EQ(alttree.getBestChain().tip()->getHeight(), 101);
+
+  auto popdata = checkedGetPop();
+  // size of the context in the popdata should be less or equal to the
+  // MAX_POPDATA_VBK
+  ASSERT_LE(popdata.context.size(), MAX_POPDATA_VBK);
+  ASSERT_GT(popdata.context.size(), vbkparam.mOldBlocksWindow);
+  ASSERT_EQ(popdata.vtbs.size(), 1);
+  ASSERT_LE(popdata.vtbs[0].transaction.blockOfProofContext.size(),
+            MAX_BTC_BLOCKS_IN_VBKPOPTX);
+  ASSERT_GT(popdata.vtbs[0].transaction.blockOfProofContext.size(),
+            btcparam.mOldBlocksWindow);
+
+  applyInNextBlock(popdata);
+
+  // mine one more block on top of the block full of VBK payloads
+  popdata = checkedGetPop();
+  applyInNextBlock(popdata);
+
+  tip = alttree.getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
+  auto *btctip = alttree.btc().getBestChain().tip();
+
+  // finalize block
+  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
+
+  ASSERT_EQ(alttree.getBlocks().size(), 2);
+  assertTreeTips(alttree, {tip});
+
+  // check the state after finalization
+  ASSERT_TRUE(alttree.setState(*tip->pprev, state));
+
+  ASSERT_EQ(
+      alttree.vbk().getBlocks().size(),
+      vbkparam.mOldBlocksWindow + vbkparam.mPreserveBlocksBehindFinal + 1);
+  assertTreeTips(alttree.vbk(), {vbktip});
+
+  ASSERT_EQ(
+      alttree.btc().getBlocks().size(),
+      btcparam.mOldBlocksWindow + 1);
+  assertTreeTips(alttree.btc(), {btctip});
 
   assertTreesHaveNoOrphans(alttree);
 }
