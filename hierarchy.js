@@ -63,7 +63,6 @@ var hierarchy =
     ] ],
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
-    [ "altintegration::InmemBlockProvider", "structaltintegration_1_1InmemBlockProvider.html", null ],
     [ "altintegration::IsPopPayload< T >", "structaltintegration_1_1IsPopPayload.html", null ],
     [ "altintegration::KeystoneContainer", "structaltintegration_1_1KeystoneContainer.html", null ],
     [ "altintegration::Logger", "structaltintegration_1_1Logger.html", null ],
