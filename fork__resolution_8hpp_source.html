@@ -566,7 +566,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
 <div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;    <span class="keyword">auto</span> originalTip = ing_-&gt;getBestChain().tip();</div>
 <div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160; </div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, continueOnInvalid);</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;    sm_t sm(ed, *ing_, payloadsIndex_, continueOnInvalid);</div>
 <div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    <span class="keywordflow">if</span> (sm.setState(*currentActive, to, state)) {</div>
 <div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    }</div>
@@ -614,7 +614,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160; </div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160; </div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;      sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;      sm_t sm(ed, *ing_, payloadsIndex_);</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;      <span class="keywordflow">if</span> (!sm.apply(*bestTip, candidate, state)) {</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        <span class="comment">// new chain is invalid. our current chain is definitely better.</span></div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        VBK_LOG_INFO(<span class="stringliteral">&quot;Candidate contains INVALID command(s): %s&quot;</span>,</div>
@@ -675,7 +675,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    <span class="comment">// (chainB)</span></div>
 <div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;    VBK_ASSERT(chainA.tip() == bestTip);</div>
 <div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160; </div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;    sm_t sm(ed, *ing_, payloadsIndex_);</div>
 <div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160; </div>
 <div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;    <span class="comment">// we are at chainA.</span></div>
 <div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;    <span class="comment">// apply all payloads from chain B (both chains have same first block - the</span></div>

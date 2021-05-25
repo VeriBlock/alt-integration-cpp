@@ -3,6 +3,7 @@ var structaltintegration_1_1AltBlockTree =
     [ "alt_config_t", "structaltintegration_1_1AltBlockTree.html#a5bb50da4e66bd36151daf777c500cc04", null ],
     [ "base", "structaltintegration_1_1AltBlockTree.html#a62347a05a325388bc52f9bcbed5e0be0", null ],
     [ "btc_config_t", "structaltintegration_1_1AltBlockTree.html#aff544139ceb38b4bccf018b9b111d4f8", null ],
+    [ "command_group_store_t", "structaltintegration_1_1AltBlockTree.html#ab3e39a5c648002f06af4cb607f508e18", null ],
     [ "eid_t", "structaltintegration_1_1AltBlockTree.html#a07648b57d3fc92bf96e92d26c574a89f", null ],
     [ "endorsement_t", "structaltintegration_1_1AltBlockTree.html#ac31836a34ff44f707091c4ea2c5cd4d1", null ],
     [ "hash_t", "structaltintegration_1_1AltBlockTree.html#a8747831b242c792839e9acb940338c81", null ],

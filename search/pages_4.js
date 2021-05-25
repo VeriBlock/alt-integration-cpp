@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['how_20to_20rebootstrap_20btc_20and_20vbk_20blockchains_877',['How to rebootstrap BTC and VBK blockchains',['../rebootstrap.html',1,'index']]]
+  ['how_20to_20rebootstrap_20btc_20and_20vbk_20blockchains_887',['How to rebootstrap BTC and VBK blockchains',['../rebootstrap.html',1,'index']]]
 ];

@@ -1,6 +1,7 @@
 var structaltintegration_1_1VbkBlockTree =
 [
     [ "BtcTree", "structaltintegration_1_1VbkBlockTree.html#a5b6c3adc24ce4e6d9705cf92dff656e3", null ],
+    [ "command_group_store_t", "structaltintegration_1_1VbkBlockTree.html#a642a342fc4d8ea21f5a88bc6db12b015", null ],
     [ "endorsement_t", "structaltintegration_1_1VbkBlockTree.html#a2667b39ae3722d0968f2badc4655fb4e", null ],
     [ "index_t", "structaltintegration_1_1VbkBlockTree.html#a4f11ad34376ea20bc562564d3b8efd65", null ],
     [ "payloads_t", "structaltintegration_1_1VbkBlockTree.html#a8d319a390dcd3f4b411bcd78c5ddd811", null ],

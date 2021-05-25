@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['pop_20description_881',['PoP Description',['../description.html',1,'index']]],
-  ['pop_20fork_20resolution_882',['Pop fork resolution',['../integration_10_fr.html',1,'integration']]],
-  ['pop_20mempool_20support_883',['Pop mempool support',['../integration_6_mempool.html',1,'integration']]],
-  ['pop_20merkle_20trees_884',['Pop Merkle trees',['../integration_8_merkle.html',1,'integration']]],
-  ['pop_20rewards_885',['Pop rewards',['../integration_9_rewards.html',1,'integration']]]
+  ['pop_20description_891',['PoP Description',['../description.html',1,'index']]],
+  ['pop_20fork_20resolution_892',['Pop fork resolution',['../integration_10_fr.html',1,'integration']]],
+  ['pop_20mempool_20support_893',['Pop mempool support',['../integration_6_mempool.html',1,'integration']]],
+  ['pop_20merkle_20trees_894',['Pop Merkle trees',['../integration_8_merkle.html',1,'integration']]],
+  ['pop_20rewards_895',['Pop rewards',['../integration_9_rewards.html',1,'integration']]]
 ];

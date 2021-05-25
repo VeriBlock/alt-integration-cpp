@@ -7,6 +7,7 @@ var hierarchy =
     [ "altintegration::Address", "structaltintegration_1_1Address.html", null ],
     [ "altintegration::AltBlock", "structaltintegration_1_1AltBlock.html", null ],
     [ "altintegration::AltChainParams", "structaltintegration_1_1AltChainParams.html", null ],
+    [ "altintegration::AltCommandGroupStore", "structaltintegration_1_1AltCommandGroupStore.html", null ],
     [ "altintegration::ATV", "structaltintegration_1_1ATV.html", null ],
     [ "altintegration::AuthenticatedContextInfoContainer", "structaltintegration_1_1AuthenticatedContextInfoContainer.html", null ],
     [ "altintegration::BaseBlockTree< Block >", "structaltintegration_1_1BaseBlockTree.html", [
@@ -62,6 +63,7 @@ var hierarchy =
     ] ],
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
+    [ "altintegration::InmemBlockProvider", "structaltintegration_1_1InmemBlockProvider.html", null ],
     [ "altintegration::IsPopPayload< T >", "structaltintegration_1_1IsPopPayload.html", null ],
     [ "altintegration::KeystoneContainer", "structaltintegration_1_1KeystoneContainer.html", null ],
     [ "altintegration::Logger", "structaltintegration_1_1Logger.html", null ],
@@ -105,6 +107,7 @@ var hierarchy =
       [ "altintegration::VbkChainParamsRegTest", "structaltintegration_1_1VbkChainParamsRegTest.html", null ],
       [ "altintegration::VbkChainParamsTest", "structaltintegration_1_1VbkChainParamsTest.html", null ]
     ] ],
+    [ "altintegration::VbkCommandGroupStore", "structaltintegration_1_1VbkCommandGroupStore.html", null ],
     [ "altintegration::VbkMerklePath", "structaltintegration_1_1VbkMerklePath.html", null ],
     [ "altintegration::VbkNetworkType", "structaltintegration_1_1VbkNetworkType.html", null ],
     [ "altintegration::VbkPopTx", "structaltintegration_1_1VbkPopTx.html", null ],
