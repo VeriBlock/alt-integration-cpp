@@ -78,6 +78,45 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            mempool_generate_pop_data);
 
 /**
+ * @copybrief return altintegration::MemPool known altintegration::ATV by its id
+ *
+ * @see altintegration::MemPool::get
+ * @param[in] self PopContext
+ * @param[in] id POP_ARRAY_NAME(u8)
+ * @return POP_ENTITY_NAME(atv) pointer to altintegration::ATV
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(atv) *,
+                           mempool_get_atv,
+                           POP_ARRAY_NAME(u8) id);
+
+/**
+ * @copybrief return altintegration::MemPool known VTB`s
+ *
+ * @see altintegration::MemPool::get
+ * @param[in] self PopContext
+ * @param[in] id POP_ARRAY_NAME(u8)
+ * @return POP_ENTITY_NAME(vtb) pointer to altintegration::VTB
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vtb) *,
+                           mempool_get_vtb,
+                           POP_ARRAY_NAME(u8) id);
+
+/**
+ * @copybrief return altintegration::MemPool known VbkBlock`s
+ *
+ * @see altintegration::MemPool::get
+ * @param[in] self PopContext
+ * @param[in] id POP_ARRAY_NAME(u8)
+ * @return POP_ENTITY_NAME(vbk_block) pointer to altintegration::VbkBlock
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mempool_get_vbk_block,
+                           POP_ARRAY_NAME(u8) id);
+
+/**
  * @copybrief return altintegration::MemPool known ATV`s
  *
  * This method returns a vector of the payload`s.

@@ -78,6 +78,51 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   return res;
 }
 
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(atv) *,
+                           mempool_get_atv,
+                           POP_ARRAY_NAME(u8) id) {
+  VBK_ASSERT(self);
+
+  auto atv_id = altintegration::ATV::id_t(
+      altintegration::Slice<const uint8_t>(id.data, id.size));
+  auto atv = self->ref->getMemPool().get<altintegration::ATV>(atv_id);
+
+  auto res = new POP_ENTITY_NAME(atv);
+  res->ref = *atv;
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vtb) *,
+                           mempool_get_vtb,
+                           POP_ARRAY_NAME(u8) id) {
+  VBK_ASSERT(self);
+
+  auto vtb_id = altintegration::VTB::id_t(
+      altintegration::Slice<const uint8_t>(id.data, id.size));
+  auto vtb = self->ref->getMemPool().get<altintegration::VTB>(vtb_id);
+
+  auto res = new POP_ENTITY_NAME(vtb);
+  res->ref = *vtb;
+  return res;
+}
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mempool_get_vbk_block,
+                           POP_ARRAY_NAME(u8) id) {
+  VBK_ASSERT(self);
+
+  auto vbk_id = altintegration::VbkBlock::id_t(
+      altintegration::Slice<const uint8_t>(id.data, id.size));
+  auto vbk = self->ref->getMemPool().get<altintegration::VbkBlock>(vbk_id);
+
+  auto res = new POP_ENTITY_NAME(vbk_block);
+  res->ref = *vbk;
+  return res;
+}
+
 POP_ENTITY_CUSTOM_FUNCTION(pop_context, POP_ARRAY_NAME(atv), mempool_get_atvs) {
   VBK_ASSERT(self);
 
