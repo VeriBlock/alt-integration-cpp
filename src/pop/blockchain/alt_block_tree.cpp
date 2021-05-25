@@ -438,7 +438,8 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
            alt_config,
            payloadsProvider,
            payloadsIndex_),
-      payloadsProvider_(payloadsProvider) {}
+      payloadsProvider_(payloadsProvider),
+      commandGroupStore_(*this, payloadsProvider_) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
   payloadsIndex_.removePayloadsIndex(toRemove);

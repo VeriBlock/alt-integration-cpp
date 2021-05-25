@@ -482,7 +482,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_, continueOnInvalid);
+    sm_t sm(ed, *ing_, payloadsIndex_, continueOnInvalid);
     if (sm.setState(*currentActive, to, state)) {
       return true;
     }
@@ -536,7 +536,7 @@ struct PopAwareForkResolutionComparator {
 
       auto guard = ing_->deferForkResolutionGuard();
 
-      sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
+      sm_t sm(ed, *ing_, payloadsIndex_);
       if (!sm.apply(*bestTip, candidate, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
@@ -597,7 +597,7 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed, *ing_, payloadsProvider_, payloadsIndex_);
+    sm_t sm(ed, *ing_, payloadsIndex_);
 
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
