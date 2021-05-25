@@ -1,6 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ab5824d97826eb193446320fc283c650d":[4,0,0,0,3,3],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ac2d07a78f10dbfa03fdbef09d2c51122":[4,0,0,0,3,4],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e":[4,0,0,0,3,1],
 "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html":[4,0,0,0,4],
