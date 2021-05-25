@@ -153,6 +153,23 @@ void payloadToCommands(Tree& tree,
 struct PopData;
 
 //! @private
+template <typename Tree, typename Payload>
+void payloadToCommandGroup(Tree& tree,
+                           const Payload& payload,
+                           const std::vector<uint8_t>& containingHash,
+                           CommandGroup& cg) {
+  // NOTE: disabled to remove the overhead of querying the unimplemented
+  // validity map; uncomment if implemented
+
+  // cg.valid = tree.getPayloadsIndex().getValidity(containingHash, cg.id);
+
+  cg.payload_type_name = &Payload::name();
+  cg.id = payload.getId().asVector();
+
+  payloadToCommands(tree, payload, containingHash, cg.commands);
+}
+
+//! @private
 template <typename Tree, typename PayloadsT>
 std::vector<CommandGroup> payloadsToCommandGroups(
     Tree& tree,

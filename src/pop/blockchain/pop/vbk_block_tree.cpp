@@ -153,24 +153,19 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 
   bool isApplied = activeChain_.contains(&index);
   if (isApplied) {
-    ValidationState dummy;
-    std::vector<CommandGroup> cmdGroups;
-    payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
+    ValidationState state;
+    auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
-    auto group_it = std::find_if(
-        cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
-          return group.id == pid;
-        });
-
-    VBK_ASSERT(group_it != cmdGroups.end() &&
-               "state corruption: could not find the supposedly applied "
-               "command group");
+    VBK_ASSERT_MSG(cmdGroup,
+                   "state corruption: could not pre-validate a supposedly "
+                   "applied command group: %s",
+                   state.toString());
 
     VBK_LOG_DEBUG("Unapplying payload %s in block %s",
                   HexStr(pid),
                   index.toShortPrettyString());
 
-    group_it->unExecute();
+    cmdGroup->unExecute();
   }
 
   index.removePayloadId<VTB>(pid);
@@ -254,20 +249,9 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   index.insertPayloadId<payloads_t>(pid);
   payloadsIndex_.addVbkPayloadIndex(index.getHash(), pid.asVector());
 
-  // load commands from block
-  std::vector<CommandGroup> cmdGroups;
-  payloadsProvider_.getCommands(*this, index, cmdGroups, state);
+  auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
-  auto group_it = std::find_if(
-      cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
-        return group.id == pid;
-      });
-
-  VBK_ASSERT(group_it != cmdGroups.end() &&
-             "state corruption: could not find the command group that "
-             "corresponds to the payload we have just added");
-
-  if (!group_it->execute(state)) {
+  if (!cmdGroup || !cmdGroup->execute(state)) {
     VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
                   index.toPrettyString(),
                   pid.toHex(),
@@ -440,7 +424,8 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
            payloadsProvider,
            payloadsIndex),
       payloadsProvider_(payloadsProvider),
-      payloadsIndex_(payloadsIndex) {}
+      payloadsIndex_(payloadsIndex),
+      commandGroupStore_(*this, payloadsProvider_) {}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   if (!base::loadTip(hash, state)) {

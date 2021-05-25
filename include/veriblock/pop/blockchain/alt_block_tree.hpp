@@ -11,6 +11,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <veriblock/pop/blockchain/commands/alt_command_group_store.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
@@ -181,6 +182,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using endorsement_t = typename index_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
   using hash_t = typename AltBlock::hash_t;
+  using command_group_store_t = AltCommandGroupStore;
 
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
@@ -391,6 +393,11 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PayloadsStorage& getPayloadsProvider()  { return payloadsProvider_; }
   //! @private
   const PayloadsStorage& getPayloadsProvider() const { return payloadsProvider_; }
+  //! @private
+  AltCommandGroupStore& getCommandGroupStore()  { return commandGroupStore_; }
+  //! @private
+  const AltCommandGroupStore& getCommandGroupStore() const { return commandGroupStore_; }
+
   // clang-format on
 
   //! @private
@@ -410,6 +417,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
+  command_group_store_t commandGroupStore_;
 
   //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;

@@ -425,7 +425,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       bool payloads_validation = true,
                                       bool payloads_existance = true) {
   auto& payloadsIndex = tree.getPayloadsIndex();
-  auto& payloadsProvider = tree.getPayloadsProvider();
+  auto& commandGroupStore = tree.getCommandGroupStore();
   auto containingHash = containing.getHash();
 
   validatePayloadsIndexState(
@@ -435,14 +435,15 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
   validatePayloadsIndexState(
       payloadsIndex, containingHash, popData.vtbs, payloads_existance);
 
-  std::vector<CommandGroup> commands;
+  std::unique_ptr<AltCommandGroupStore::command_groups_t> commands;
   ValidationState state;
-  EXPECT_NO_THROW(payloadsProvider.getCommands(
-      tree, *tree.getBlockIndex(containingHash), commands, state))
+  EXPECT_NO_THROW(commands = commandGroupStore.getCommands(
+                      *tree.getBlockIndex(containingHash), state))
       << state.toString();
 
-  EXPECT_EQ(commands.size() == popData.context.size() + popData.atvs.size() +
-                                   popData.vtbs.size(),
+  ASSERT_NE(commands, nullptr);
+  EXPECT_EQ(commands->size() == popData.context.size() + popData.atvs.size() +
+                                    popData.vtbs.size(),
             payloads_existance);
 
   EXPECT_EQ(

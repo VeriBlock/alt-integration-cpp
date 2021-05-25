@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "veriblock/pop/blockchain/blocktree.hpp"
+#include "veriblock/pop/blockchain/commands/vbk_command_group_store.hpp"
 #include "veriblock/pop/blockchain/pop/fork_resolution.hpp"
 #include "veriblock/pop/blockchain/pop/pop_state_machine.hpp"
 #include "veriblock/pop/blockchain/vbk_block_addon.hpp"
@@ -97,6 +98,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using payloads_t = typename index_t::payloads_t;
   using pid_t = typename payloads_t::id_t;
   using endorsement_t = typename index_t::endorsement_t;
+  using command_group_store_t = VbkCommandGroupStore;
   using PopForkComparator = PopAwareForkResolutionComparator<VbkBlock,
                                                              VbkChainParams,
                                                              BtcTree,
@@ -123,6 +125,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
   PayloadsIndex& getPayloadsIndex() { return payloadsIndex_; }
+  //! @private
+  VbkCommandGroupStore& getCommandGroupStore() { return commandGroupStore_; }
+  //! @private
+  const VbkCommandGroupStore& getCommandGroupStore() const {
+    return commandGroupStore_;
+  }
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
@@ -197,6 +205,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator cmp_;
   PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
+  command_group_store_t commandGroupStore_;
 
   std::unordered_map<VTB::id_t, VTBInvalidationInfo> invalid_vtbs;
 };
