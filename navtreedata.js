@@ -59,15 +59,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"fork__resolution_8hpp_source.html",
-"namespacealtintegration.html#a2c149a6b531cbe07691abd2d36c6ebde",
-"namespacealtintegration.html#ae121eeaf87b05f90f2b92bc4b5b2b8ae",
-"structaltintegration_1_1AltChainParams.html",
-"structaltintegration_1_1BlockTree.html#a7d7d68b2699688ea2bb943dc060a0e4d",
-"structaltintegration_1_1Endorsement.html#afa2e05111722e21a6afc616aa20b90cd",
-"structaltintegration_1_1StoredBlockIndex.html#ad03f28f9e717ece7e050d2b30e40f985",
-"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#a7c1bcb6f404595fed505ac9f73162131"
+"",
+"finalizer_8hpp_source.html",
+"namespacealtintegration.html#a25cfedf093235ec04556781202be423a",
+"namespacealtintegration.html#adc0ec1aed0b80c7de5cf6993aef0745b",
+"structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c",
+"structaltintegration_1_1BlockTree.html#a5a7939bc0e983e603b6336b1030cf31c",
+"structaltintegration_1_1Endorsement.html#a8da54e585c9a44c607ce17771b4bd869",
+"structaltintegration_1_1VTB.html#a6039844a160b788fb51bef24498e48af",
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ac2d07a78f10dbfa03fdbef09d2c51122"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

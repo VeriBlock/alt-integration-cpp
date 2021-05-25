@@ -1,15 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"structaltintegration_1_1StoredBlockIndex.html#ad03f28f9e717ece7e050d2b30e40f985":[4,0,0,68,8],
-"structaltintegration_1_1StoredBlockIndex.html#ae1baf71b2003d0ec0ae7fe816e721c1e":[4,0,0,68,6],
-"structaltintegration_1_1StoredBlockIndex.html#ae881b5a063dc9353f9acaa0ec0a73f09":[4,0,0,68,1],
-"structaltintegration_1_1StoredBlockIndex.html#ae8dad64f527cebf0c449a56c43d747a0":[4,0,0,68,9],
-"structaltintegration_1_1StoredBlockIndex.html#aeae5fe43a02d70340e7146a6b4c2ca45":[4,0,0,68,4],
-"structaltintegration_1_1VTB.html":[4,0,0,49],
-"structaltintegration_1_1VTB.html#a09d5f0529495a6d852461ad5076a6c6a":[4,0,0,49,10],
-"structaltintegration_1_1VTB.html#a20d9f3a641c8d5350490a1da3da40266":[4,0,0,49,1],
-"structaltintegration_1_1VTB.html#a389493364912b3b7c9b5bbaa3ae42b03":[4,0,0,49,11],
-"structaltintegration_1_1VTB.html#a3d01efdef24e1705cfa0041cba456813":[4,0,0,49,7],
 "structaltintegration_1_1VTB.html#a6039844a160b788fb51bef24498e48af":[4,0,0,49,13],
 "structaltintegration_1_1VTB.html#a8983b35112c156b9fa6565eaa31b446b":[4,0,0,49,0],
 "structaltintegration_1_1VTB.html#a94c26224c74fb94092c832f7db21b41c":[4,0,0,49,2],
@@ -249,5 +239,15 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#ad448494dc3233114860f220d7d4d41da":[4,0,0,0,1,1],
 "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html":[4,0,0,0,5],
 "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#a41807a298e185c3778f5a0af51467caa":[4,0,0,0,5,3],
-"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#a518c20d61b68660562d8968ade85663a":[4,0,0,0,5,0]
+"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#a518c20d61b68660562d8968ade85663a":[4,0,0,0,5,0],
+"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#a7c1bcb6f404595fed505ac9f73162131":[4,0,0,0,5,2],
+"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#ad34b27e3177a245b48d322a547c9f103":[4,0,0,0,5,4],
+"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#aebc1c4b379b4e2c35d8f3946bf709a50":[4,0,0,0,5,1],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html":[4,0,0,0,3],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a13b6d644263af696b862af9a8385423f":[4,0,0,0,3,0],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3b0d6be950cb324ceae43af01e56d2df":[4,0,0,0,3,7],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3df1c96e45628b662b16a5f9083f8e8d":[4,0,0,0,3,6],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a4be421e7e77a49279b15f01b63c03b69":[4,0,0,0,3,2],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#aae176a1b057a95225193c09ddaac9258":[4,0,0,0,3,5],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ab5824d97826eb193446320fc283c650d":[4,0,0,0,3,3]
 };
