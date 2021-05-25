@@ -50,6 +50,27 @@ func (v *PopContext2) MemPoolGeneratePopData() *PopData {
 	return createPopData(C.pop_pop_context_function_mempool_generate_pop_data(v.ref))
 }
 
+func (v *PopContext2) MemPoolGetAtv(id []byte) *Atv {
+	v.validate()
+	atv_c := C.pop_pop_context_function_mempool_get_atv(v.ref, createCBytes(id))
+	atv := createAtv(atv_c)
+	return atv
+}
+
+func (v *PopContext2) MemPoolGetVtb(id []byte) *Vtb {
+	v.validate()
+	vtb_c := C.pop_pop_context_function_mempool_get_vtb(v.ref, createCBytes(id))
+	vtb := createVtb(vtb_c)
+	return vtb
+}
+
+func (v *PopContext2) MemPoolGetVbkBlock(id []byte) *VbkBlock {
+	v.validate()
+	vbk_c := C.pop_pop_context_function_mempool_get_vbk_block(v.ref, createCBytes(id))
+	vbk := createVbkBlock(vbk_c)
+	return vbk
+}
+
 func (v *PopContext2) MemPoolGetAtvs() []*Atv {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_atvs(v.ref)

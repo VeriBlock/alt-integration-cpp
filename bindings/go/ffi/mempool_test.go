@@ -71,6 +71,10 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVtbs()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 3)
 
+	atv.assertEquals(assert, context.MemPoolGetAtv(atv.GetID()))
+	vtb.assertEquals(assert, context.MemPoolGetVtb(vtb.GetID()))
+	vbk.assertEquals(assert, context.MemPoolGetVbkBlock(vbk.GetID()))
+
 	context.MemPoolClear()
 
 	assert.Equal(len(context.MemPoolGetAtvs()), 0)
