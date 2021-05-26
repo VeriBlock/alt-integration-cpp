@@ -196,8 +196,6 @@ The next endpoints are accessible at the ABFI API (http://localhost:8080 by defa
 
 ### Altchain BFI last-finalized-btc endpoint
 In order to get responses there should be at least one APM mining at the altchain network also it could take a while (hours), here is a response example for that endpoint:
-<details>
-  <summary>Example</summary>
 
 ````json
 {
@@ -264,5 +262,3 @@ In order to get responses there should be at least one APM mining at the altchai
   "isAttackInProgress" : false
 }
 ````
-
-</details>
