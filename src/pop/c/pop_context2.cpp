@@ -69,7 +69,6 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(self);
   VBK_ASSERT(hash.data);
 
-  altintegration::PopData data;
   if (pop_data == nullptr) {
     self->ref->getAltBlockTree().acceptBlock(
       std::vector<uint8_t>(hash.data, hash.data + hash.size), altintegration::PopData());
