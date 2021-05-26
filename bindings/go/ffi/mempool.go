@@ -122,8 +122,10 @@ func (v *PopContext2) MemPoolGetMissingBtcBlocks() [][]byte {
 
 func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
 	v.validate()
-	popData.validate()
-	C.pop_pop_context_function_mempool_remove_all(v.ref, popData.ref)
+	if popData != nil {
+		popData.validate()
+		C.pop_pop_context_function_mempool_remove_all(v.ref, popData.ref)
+	}
 }
 
 func (v *PopContext2) MemPoolCleanUp() {

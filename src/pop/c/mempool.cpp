@@ -254,9 +254,10 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            mempool_remove_all,
                            const POP_ENTITY_NAME(pop_data) * pop_data) {
   VBK_ASSERT(self);
-  VBK_ASSERT(pop_data);
 
-  self->ref->getMemPool().removeAll(pop_data->ref);
+  if (pop_data != nullptr) {
+    self->ref->getMemPool().removeAll(pop_data->ref);
+  }
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clean_up) {
