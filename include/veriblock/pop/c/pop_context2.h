@@ -274,6 +274,11 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            btc_get_block_at_active_chain,
                            uint32_t height);
 
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(array_u8),
+                           get_payload_containing_blocks,
+                           POP_ARRAY_NAME(u8) id);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif
