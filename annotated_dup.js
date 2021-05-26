@@ -1,24 +1,6 @@
 var annotated_dup =
 [
     [ "altintegration", "namespacealtintegration.html", [
-      [ "adaptors", null, [
-        [ "BlockIteratorImpl", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl" ],
-        [ "BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", "structaltintegration_1_1adaptors_1_1BlockReaderImpl" ],
-        [ "BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html", "structaltintegration_1_1adaptors_1_1BlockBatchImpl" ],
-        [ "InmemStorageIterator", "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html", "structaltintegration_1_1adaptors_1_1InmemStorageIterator" ],
-        [ "InmemWriteBatch", "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html", "structaltintegration_1_1adaptors_1_1InmemWriteBatch" ],
-        [ "InmemStorageImpl", "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html", "structaltintegration_1_1adaptors_1_1InmemStorageImpl" ],
-        [ "LevelDBStorageIterator", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator" ],
-        [ "LevelDBWriteBatch", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch" ],
-        [ "LevelDBStorage", "structaltintegration_1_1adaptors_1_1LevelDBStorage.html", "structaltintegration_1_1adaptors_1_1LevelDBStorage" ],
-        [ "PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl" ],
-        [ "RocksDBStorageIterator", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator" ],
-        [ "RocksDBWriteBatch", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch" ],
-        [ "RocksDBStorage", "structaltintegration_1_1adaptors_1_1RocksDBStorage.html", "structaltintegration_1_1adaptors_1_1RocksDBStorage" ],
-        [ "StorageIterator", "structaltintegration_1_1adaptors_1_1StorageIterator.html", "structaltintegration_1_1adaptors_1_1StorageIterator" ],
-        [ "WriteBatch", "structaltintegration_1_1adaptors_1_1WriteBatch.html", "structaltintegration_1_1adaptors_1_1WriteBatch" ],
-        [ "Storage", "structaltintegration_1_1adaptors_1_1Storage.html", "structaltintegration_1_1adaptors_1_1Storage" ]
-      ] ],
       [ "cache", null, [
         [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
       ] ],
@@ -39,10 +21,7 @@ var annotated_dup =
       [ "BtcChainParamsRegTest", "structaltintegration_1_1BtcChainParamsRegTest.html", "structaltintegration_1_1BtcChainParamsRegTest" ],
       [ "Chain", "structaltintegration_1_1Chain.html", "structaltintegration_1_1Chain" ],
       [ "ChainSlice", "structaltintegration_1_1ChainSlice.html", "structaltintegration_1_1ChainSlice" ],
-      [ "AltCommandGroupStore", "structaltintegration_1_1AltCommandGroupStore.html", "structaltintegration_1_1AltCommandGroupStore" ],
       [ "CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", "structaltintegration_1_1CheckPublicationData" ],
-      [ "VbkCommandGroupStore", "structaltintegration_1_1VbkCommandGroupStore.html", "structaltintegration_1_1VbkCommandGroupStore" ],
-      [ "VTBInvalidationInfo", "namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo", "namespacealtintegration_structaltintegration_1_1VTBInvalidationInfo_dup" ],
       [ "VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html", "structaltintegration_1_1VbkBlockTree" ],
       [ "VbkChainParams", "structaltintegration_1_1VbkChainParams.html", "structaltintegration_1_1VbkChainParams" ],
       [ "VbkChainParamsMain", "structaltintegration_1_1VbkChainParamsMain.html", "structaltintegration_1_1VbkChainParamsMain" ],
@@ -88,6 +67,7 @@ var annotated_dup =
       [ "BlockBatch", "structaltintegration_1_1BlockBatch.html", "structaltintegration_1_1BlockBatch" ],
       [ "BlockIterator", "structaltintegration_1_1BlockIterator.html", "structaltintegration_1_1BlockIterator" ],
       [ "BlockReader", "structaltintegration_1_1BlockReader.html", "structaltintegration_1_1BlockReader" ],
+      [ "InmemBlockProvider", "structaltintegration_1_1InmemBlockProvider.html", "structaltintegration_1_1InmemBlockProvider" ],
       [ "PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", "structaltintegration_1_1PayloadsStorage" ],
       [ "StoredBlockIndex", "structaltintegration_1_1StoredBlockIndex.html", "structaltintegration_1_1StoredBlockIndex" ],
       [ "IsPopPayload", "structaltintegration_1_1IsPopPayload.html", "structaltintegration_1_1IsPopPayload" ],

@@ -3,7 +3,6 @@ var structaltintegration_1_1AltBlockTree =
     [ "alt_config_t", "structaltintegration_1_1AltBlockTree.html#a5bb50da4e66bd36151daf777c500cc04", null ],
     [ "base", "structaltintegration_1_1AltBlockTree.html#a62347a05a325388bc52f9bcbed5e0be0", null ],
     [ "btc_config_t", "structaltintegration_1_1AltBlockTree.html#aff544139ceb38b4bccf018b9b111d4f8", null ],
-    [ "command_group_store_t", "structaltintegration_1_1AltBlockTree.html#ab3e39a5c648002f06af4cb607f508e18", null ],
     [ "eid_t", "structaltintegration_1_1AltBlockTree.html#a07648b57d3fc92bf96e92d26c574a89f", null ],
     [ "endorsement_t", "structaltintegration_1_1AltBlockTree.html#ac31836a34ff44f707091c4ea2c5cd4d1", null ],
     [ "hash_t", "structaltintegration_1_1AltBlockTree.html#a8747831b242c792839e9acb940338c81", null ],
@@ -26,7 +25,6 @@ var structaltintegration_1_1AltBlockTree =
     [ "removeSubtree", "structaltintegration_1_1AltBlockTree.html#a99ca69840eb2e8cfe725fa521381750e", null ],
     [ "setState", "structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd", null ],
     [ "vbk", "structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919", null ],
-    [ "MemPoolBlockTree", "structaltintegration_1_1AltBlockTree.html#ac093a74a6972a5e1a1ce467b2c0ef789", null ],
     [ "onBeforeOverrideTip", "structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a", null ],
     [ "onBlockConnected", "structaltintegration_1_1AltBlockTree.html#a2702e94f571026684e4b5968ce1e3c25", null ],
     [ "onInvalidBlockConnected", "structaltintegration_1_1AltBlockTree.html#a1d42aa835fa1d2f37edffc2ae06b2bc8", null ]

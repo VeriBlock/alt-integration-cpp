@@ -1,7 +1,7 @@
 var integration =
 [
-    [ "Integrate POP into BTC fork", "integration.html#autotoc_md90", null ],
-    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md91", null ],
+    [ "Integrate POP into BTC fork", "integration.html#autotoc_md94", null ],
+    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md95", null ],
     [ "Modifying build setup", "integration_1_build.html", [
       [ "Overview", "integration_1_build.html#autotoc_md25", null ],
       [ "1. Build and install veriblock-pop-cpp library.", "integration_1_build.html#autotoc_md26", null ],
@@ -112,6 +112,19 @@ var integration =
       [ "Unit tests", "btctesting.html#autotoc_md86", null ],
       [ "BTC functional tests", "btctesting.html#autotoc_md87", null ],
       [ "POP functional tests", "btctesting.html#autotoc_md88", null ],
-      [ "View APM get-operation", "btctesting.html#autotoc_md89", null ]
+      [ "View APM get-operation", "btctesting.html#autotoc_md89", null ],
+      [ "Altchain BFI", "btctesting.html#autotoc_md90", [
+        [ "Guides:", "index.html#autotoc_md102", null ],
+        [ "1. Fork vBTC", "integration.html#autotoc_md96", null ],
+        [ "2. Change naming as needed.", "integration.html#autotoc_md97", null ],
+        [ "3. Change network ID", "integration.html#autotoc_md98", null ],
+        [ "4. Change POP Altchain ID", "integration.html#autotoc_md99", null ],
+        [ "5. Rebootstrap", "integration.html#autotoc_md100", null ],
+        [ "6. Make sure all unit and functional tests pass.", "integration.html#autotoc_md101", [
+          [ "Altchain BFI configuration", "btctesting.html#autotoc_md91", null ],
+          [ "Altchain BFI API", "btctesting.html#autotoc_md92", null ],
+          [ "Altchain BFI last-finalized-btc endpoint", "btctesting.html#autotoc_md93", null ]
+        ] ]
+      ] ]
     ] ]
 ];

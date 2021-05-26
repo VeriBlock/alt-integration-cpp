@@ -249,9 +249,9 @@ $(document).ready(function(){initNavTree('temp__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="comment">// intentionally do not pass &#39;prev&#39; here - we don&#39;t want &#39;stable&#39; blocks</span></div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="comment">// have pnext ptr to temp blocks.</span></div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">auto</span> newIndex = make_unique&lt;wrapped_index_t&gt;(0);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">auto</span> newIndex = make_unique&lt;wrapped_index_t&gt;(<span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    newIndex-&gt;setNull();</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    it = temp_blocks_.emplace(shortHash, std::move(newIndex)).first;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">return</span> it-&gt;second.get();</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  }</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
