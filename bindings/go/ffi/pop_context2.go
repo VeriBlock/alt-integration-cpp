@@ -164,7 +164,7 @@ func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockI
 
 func (v *PopContext2) GetPayloadContainingBlocks(id []byte) [][]byte {
 	v.validate()
-	array := C.pop_pop_context_function_get_payload_containing_blocks(v.ref, createCBytes(hash))
+	array := C.pop_pop_context_function_get_payload_containing_blocks(v.ref, createCBytes(id))
 	defer freeArrayArrayU8(&array)
 	return createArrayOfArraysU8(&array)
 }
