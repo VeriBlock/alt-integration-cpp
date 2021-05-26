@@ -129,9 +129,9 @@ class VGethNode(Node):
             prevhash=s['parentHash'],
             confirmations=s['confirmations'],
             blockOfProofEndorsements=[],
-            containingATVs=[atv['id'] for atv in s['pop']['data']['atvs']],
-            containingVTBs=[vtb['id'] for vtb in s['pop']['data']['vtbs']],
-            containingVBKs=[vbk['id'] for vbk in s['pop']['data']['context']],
+            containingATVs=s['pop']['data']['atvs'],
+            containingVTBs=s['pop']['data']['vtbs'],
+            containingVBKs=s['pop']['data']['vbkblocks'],
             endorsedBy=s['pop']['state']['endorsedBy']
         )
 
