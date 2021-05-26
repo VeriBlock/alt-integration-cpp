@@ -1,5 +1,13 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ac2d07a78f10dbfa03fdbef09d2c51122":[4,0,0,0,3,4],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e":[4,0,0,0,3,1],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html":[4,0,0,0,4],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a8f39c95af8bcdfa166489f8467a56601":[4,0,0,0,4,2],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a9d6aff9fb0723273a850a504a1857733":[4,0,0,0,4,0],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#aa2c78db81bde8431e92e82cc3baab0a2":[4,0,0,0,4,3],
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#aa6842bfb7db548c2928e1856c33a22c4":[4,0,0,0,4,1],
+"structaltintegration_1_1adaptors_1_1LevelDBStorage.html":[4,0,0,0,8],
 "structaltintegration_1_1adaptors_1_1LevelDBStorage.html#a8828864c4192b5400f3942f427464409":[4,0,0,0,8,5],
 "structaltintegration_1_1adaptors_1_1LevelDBStorage.html#a956ef62464c637ff01e8002a75902db0":[4,0,0,0,8,3],
 "structaltintegration_1_1adaptors_1_1LevelDBStorage.html#ab06d7b36b6bcd710c8ec5821188d1c28":[4,0,0,0,8,0],
@@ -111,13 +119,5 @@ var NAVTREEINDEX8 =
 "vblake_8hpp_source.html":[5,0,1,0,0,4,4],
 "vtb_8h_source.html":[5,0,1,0,0,2,0,14],
 "vtb_8hpp_source.html":[5,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[5,0,1,0,0,48],
-"":[3,0,0,5],
-"":[3,0,0,6],
-"":[3,0,0,0],
-"":[3,0,0,3],
-"":[3,0,0,7],
-"":[3,0,1],
-"":[3,0,0,1],
-"":[3,0,0,2]
+"write__stream_8hpp_source.html":[5,0,1,0,0,48]
 };
