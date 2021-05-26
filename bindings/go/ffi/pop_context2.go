@@ -55,7 +55,9 @@ func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 
 func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
 	v.validate()
-	popData.validate()
+	if popData == nil {
+		popData = CreatePopData()
+	}
 	C.pop_pop_context_function_accept_block(v.ref, createCBytes(hash), popData.ref)
 }
 
