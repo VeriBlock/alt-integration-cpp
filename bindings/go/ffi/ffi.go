@@ -7,6 +7,7 @@ package ffi
 
 type Payload interface {
 	Name() string
+	GetID() []byte
 	ToJSON() (map[string]interface{}, error)
 	SerializeToVbk() []byte
 	DeserializeFromVbk(data []byte) error
