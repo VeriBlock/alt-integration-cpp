@@ -55,7 +55,9 @@ func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 
 func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
 	v.validate()
-	popData.validate()
+	if popData == nil {
+		popData = CreatePopData()
+	}
 	C.pop_pop_context_function_accept_block(v.ref, createCBytes(hash), popData.ref)
 }
 
@@ -87,7 +89,7 @@ func (v *PopContext2) RemoveSubtree(hash []byte) {
 func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash)); res != nil {
-		createAltBlockIndex(res)
+		return createAltBlockIndex(res)
 	}
 	return nil
 }
@@ -95,7 +97,7 @@ func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash)); res != nil {
-		createVbkBlockIndex(res)
+		return createVbkBlockIndex(res)
 	}
 	return nil
 }
@@ -103,7 +105,7 @@ func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
 func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash)); res != nil {
-		createBtcBlockIndex(res)
+		return createBtcBlockIndex(res)
 	}
 	return nil
 }
