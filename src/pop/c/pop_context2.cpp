@@ -282,3 +282,27 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   }
   return new POP_ENTITY_NAME(btc_block_index){*index};
 }
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(array_u8),
+                           get_payload_containing_blocks,
+                           POP_ARRAY_NAME(u8) id) {
+  VBK_ASSERT(self);
+
+  auto alt_hashes =
+      self->ref->getAltBlockTree().getPayloadsIndex().getContainingAltBlocks(
+          std::vector<uint8_t>(id.data, id.data + id.size));
+
+  POP_ARRAY_NAME(array_u8) res;
+  res.size = alt_hashes.size();
+  res.data = new POP_ARRAY_NAME(u8)[res.size];
+  auto it = alt_hashes.begin();
+  for (size_t i = 0; i < res.size; ++i, ++it) {
+    auto& src = *it;
+    auto& dst = res.data[i];
+    dst.size = src.size();
+    dst.data = new uint8_t[dst.size];
+    std::copy(src.begin(), src.end(), dst.data);
+  }
+  return res;
+}
