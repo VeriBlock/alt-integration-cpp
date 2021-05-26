@@ -50,6 +50,9 @@ func (v *PopContext2) LoadAllTrees() error {
 
 func (v *PopContext2) CheckAtv(atv *Atv) error {
 	v.validate()
+	if atv == nil {
+		return nil
+	}
 	atv.validate()
 	state := NewValidationState2()
 	defer state.Free()
@@ -60,6 +63,9 @@ func (v *PopContext2) CheckAtv(atv *Atv) error {
 
 func (v *PopContext2) CheckVtb(vtb *Vtb) error {
 	v.validate()
+	if vtb == nil {
+		return nil
+	}
 	vtb.validate()
 	state := NewValidationState2()
 	defer state.Free()
@@ -70,6 +76,9 @@ func (v *PopContext2) CheckVtb(vtb *Vtb) error {
 
 func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
 	v.validate()
+	if vbkBlock == nil {
+		return nil
+	}
 	vbkBlock.validate()
 	state := NewValidationState2()
 	defer state.Free()
@@ -80,6 +89,9 @@ func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
 
 func (v *PopContext2) CheckPopData(popData *PopData) error {
 	v.validate()
+	if popData == nil {
+		return nil
+	}
 	popData.validate()
 	state := NewValidationState2()
 	defer state.Free()

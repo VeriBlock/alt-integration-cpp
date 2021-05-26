@@ -87,6 +87,9 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   auto atv_id = altintegration::ATV::id_t(
       altintegration::Slice<const uint8_t>(id.data, id.size));
   auto atv = self->ref->getMemPool().get<altintegration::ATV>(atv_id);
+  if (atv == nullptr) {
+    return nullptr;
+  }
 
   auto res = new POP_ENTITY_NAME(atv);
   res->ref = *atv;
@@ -102,6 +105,9 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   auto vtb_id = altintegration::VTB::id_t(
       altintegration::Slice<const uint8_t>(id.data, id.size));
   auto vtb = self->ref->getMemPool().get<altintegration::VTB>(vtb_id);
+  if (vtb == nullptr) {
+    return nullptr;
+  }
 
   auto res = new POP_ENTITY_NAME(vtb);
   res->ref = *vtb;
@@ -117,6 +123,9 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   auto vbk_id = altintegration::VbkBlock::id_t(
       altintegration::Slice<const uint8_t>(id.data, id.size));
   auto vbk = self->ref->getMemPool().get<altintegration::VbkBlock>(vbk_id);
+  if (vbk == nullptr) {
+    return nullptr;
+  }
 
   auto res = new POP_ENTITY_NAME(vbk_block);
   res->ref = *vbk;
@@ -254,9 +263,10 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            mempool_remove_all,
                            const POP_ENTITY_NAME(pop_data) * pop_data) {
   VBK_ASSERT(self);
-  VBK_ASSERT(pop_data);
 
-  self->ref->getMemPool().removeAll(pop_data->ref);
+  if (pop_data != nullptr) {
+    self->ref->getMemPool().removeAll(pop_data->ref);
+  }
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clean_up) {
