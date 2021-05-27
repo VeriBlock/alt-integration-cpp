@@ -206,7 +206,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   PopForkComparator cmp_;
   PayloadsStorage& payloadsProvider_;
-  BlockReader& blockProvider_;
   PayloadsIndex& payloadsIndex_;
   command_group_store_t commandGroupStore_;
 

@@ -7,12 +7,14 @@
 
 #include <fstream>
 #include <memory>
-
-#include "block_headers.hpp"
 #include <veriblock/pop/blockchain/blocktree.hpp>
 #include <veriblock/pop/blockchain/btc_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/miner.hpp>
 #include <veriblock/pop/literals.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+
+#include "block_headers.hpp"
 
 using namespace altintegration;
 
@@ -25,6 +27,8 @@ struct BtcInvalidationTest {
 
   std::shared_ptr<param_t> params;
   ValidationState state;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   BtcInvalidationTest() { params = std::make_shared<BtcChainParamsRegTest>(); }
 };
@@ -115,7 +119,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap(),
       allblocks.end()};
 
-  BlockTree<BtcBlock, BtcChainParams> tree(*value.params);
+  BlockTree<BtcBlock, BtcChainParams> tree(*value.params, blockProvider);
   ASSERT_TRUE(tree.bootstrapWithChain(value.startHeight, bootstrapChain, state))
       << state.GetDebugMessage();
   EXPECT_TRUE(state.IsValid());

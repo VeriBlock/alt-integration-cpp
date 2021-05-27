@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 #include "base_block_tree.hpp"
@@ -38,7 +39,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   ~BlockTree() override = default;
 
-  BlockTree(const ChainParams& param) : param_(&param) {}
+  BlockTree(const ChainParams& param, const BlockReader& blockProvider)
+      : param_(&param), blockProvider_(blockProvider) {}
 
   const ChainParams& getParams() const { return *param_; }
 
@@ -186,6 +188,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
  protected:
   const ChainParams* param_ = nullptr;
+  const BlockReader& blockProvider_;
 
   bool acceptBlockHeaderImpl(const std::shared_ptr<block_t>& block,
                              ValidationState& state,
