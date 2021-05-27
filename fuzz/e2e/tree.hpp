@@ -91,6 +91,7 @@ class Tree {
   std::vector<uint8_t> bestBlock;
   altintegration::adaptors::InmemStorageImpl storage{};
   std::shared_ptr<altintegration::adaptors::PayloadsStorageImpl> pp = nullptr;
+  std::shared_ptr<altintegration::adaptors::BlockReaderImpl> bp = nullptr;
   std::shared_ptr<altintegration::AltChainParams> params = nullptr;
   std::shared_ptr<altintegration::PopContext> popcontext = nullptr;
   std::unordered_map<std::vector<uint8_t>, std::shared_ptr<Block>> blocks;
