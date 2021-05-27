@@ -12,7 +12,9 @@ import "errors"
 
 func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash []byte, payoutInfo []byte, popData *PopData) (*PublicationData, error) {
 	v.validate()
-	popData.validate()
+	if popData == nil {
+		popData = CreatePopData()
+	}
 
 	res := C.pop_pop_context_function_generate_publication_data(v.ref, createCBytes(endorsedBlockHeader), createCBytes(txRootHash), createCBytes(payoutInfo), popData.ref)
 	if res == nil {
