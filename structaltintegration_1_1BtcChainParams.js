@@ -13,6 +13,5 @@ var structaltintegration_1_1BtcChainParams =
     [ "networkName", "structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2", null ],
     [ "numBlocksForBootstrap", "structaltintegration_1_1BtcChainParams.html#aad38f3f1118c6234925dbd1805206a95", null ],
     [ "preserveBlocksBehindFinal", "structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110", null ],
-    [ "mMaxFutureBlockTime", "structaltintegration_1_1BtcChainParams.html#ab79123e917c60dfc7a13cee35fb30d46", null ],
-    [ "mOldBlocksWindow", "structaltintegration_1_1BtcChainParams.html#abbb41e428a57577882c8a7149a6578f3", null ]
+    [ "mMaxFutureBlockTime", "structaltintegration_1_1BtcChainParams.html#ab79123e917c60dfc7a13cee35fb30d46", null ]
 ];
