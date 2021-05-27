@@ -126,18 +126,18 @@ struct BlockReaderImpl : public BlockReader {
     return true;
   }
 
-  bool getAltBlock(const AltBlock::hash_t& hash,
-                   StoredBlockIndex<AltBlock>& out) const override {
+  bool getBlock(const AltBlock::hash_t& hash,
+                StoredBlockIndex<AltBlock>& out) const override {
     return getBlock<AltBlock>(hash, out);
   }
 
-  bool getVbkBlock(const VbkBlock::hash_t& hash,
-                   StoredBlockIndex<VbkBlock>& out) const override {
+  bool getBlock(const VbkBlock::hash_t& hash,
+                StoredBlockIndex<VbkBlock>& out) const override {
     return getBlock<VbkBlock>(hash, out);
   }
 
-  bool getBtcBlock(const BtcBlock::hash_t& hash,
-                   StoredBlockIndex<BtcBlock>& out) const override {
+  bool getBlock(const BtcBlock::hash_t& hash,
+                StoredBlockIndex<BtcBlock>& out) const override {
     return getBlock<BtcBlock>(hash, out);
   }
 

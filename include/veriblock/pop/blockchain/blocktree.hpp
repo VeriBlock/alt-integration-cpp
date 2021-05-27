@@ -190,6 +190,13 @@ struct BlockTree : public BaseBlockTree<Block> {
   const ChainParams* param_ = nullptr;
   const BlockReader& blockProvider_;
 
+  bool reloadBlock(const typename block_t::hash_t& hash,
+                   ValidationState& state) {
+    (void)hash;
+    (void)state;
+    return true;
+  }
+
   bool acceptBlockHeaderImpl(const std::shared_ptr<block_t>& block,
                              ValidationState& state,
                              bool shouldContextuallyCheck) {
