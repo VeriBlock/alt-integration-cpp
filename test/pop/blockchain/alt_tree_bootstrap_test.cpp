@@ -7,6 +7,7 @@
 
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
 #include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
 #include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 
@@ -106,13 +107,17 @@ TEST_F(AltBlockTreeTest, AssureBootstrapBtcBlockHasRefs_test) {
   VbkChainParamsRegTest vbk_params{};
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloads_provider{storage};
+  adaptors::BlockReaderImpl block_provider{storage};
   PayloadsIndex payloads_index;
 
   Miner<BtcBlock, BtcChainParams> btc_miner =
       Miner<BtcBlock, BtcChainParams>(btc_params);
 
-  vbk_block_tree vbk_tree{
-      vbk_params, btc_params, payloads_provider, payloads_index};
+  vbk_block_tree vbk_tree{vbk_params,
+                          btc_params,
+                          payloads_provider,
+                          block_provider,
+                          payloads_index};
   btc_block_tree& btc_tree = vbk_tree.btc();
 
   ASSERT_TRUE(btc_tree.bootstrapWithGenesis(GetRegTestBtcBlock(), state));

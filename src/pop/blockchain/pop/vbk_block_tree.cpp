@@ -417,6 +417,7 @@ bool VbkBlockTree::finalizeBlockImpl(index_t& index,
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
                            PayloadsStorage& payloadsProvider,
+                           BlockReader& blockProvider,
                            PayloadsIndex& payloadsIndex)
     : VbkTree(vbkp),
       cmp_(std::make_shared<BtcTree>(btcp),
@@ -424,8 +425,11 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
            payloadsProvider,
            payloadsIndex),
       payloadsProvider_(payloadsProvider),
+      blockProvider_(blockProvider),
       payloadsIndex_(payloadsIndex),
-      commandGroupStore_(*this, payloadsProvider_) {}
+      commandGroupStore_(*this, payloadsProvider_) {
+  (void)blockProvider_;
+}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   if (!base::loadTip(hash, state)) {

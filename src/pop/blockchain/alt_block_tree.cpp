@@ -434,8 +434,11 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            PayloadsStorage& payloadsProvider,
                            BlockReader& blockProvider)
     : alt_config_(&alt_config),
-      cmp_(std::make_shared<VbkBlockTree>(
-               vbk_config, btc_config, payloadsProvider, payloadsIndex_),
+      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
+                                          btc_config,
+                                          payloadsProvider,
+                                          blockProvider,
+                                          payloadsIndex_),
            alt_config,
            payloadsProvider,
            payloadsIndex_),
