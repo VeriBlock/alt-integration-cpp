@@ -12,15 +12,22 @@ import (
 )
 
 func TestMockMiner2Free(t *testing.T) {
+	t.Parallel()
+
 	mockMiner := NewMockMiner2()
+	defer mockMiner.Lock()()
 	mockMiner.Free()
 	mockMiner.Free()
 }
 
 func TestMineBtcBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner2()
+	defer mockMiner.Lock()()
+	defer mockMiner.Free()
 
 	block1 := mockMiner.MineBtcBlockTip()
 	block2 := mockMiner.MineBtcBlockTip()
@@ -45,9 +52,13 @@ func TestMineBtcBlock(t *testing.T) {
 }
 
 func TestMineVbkBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner2()
+	defer mockMiner.Lock()()
+	defer mockMiner.Free()
 
 	block1 := mockMiner.MineVbkBlockTip()
 	block2 := mockMiner.MineVbkBlockTip()
@@ -72,9 +83,13 @@ func TestMineVbkBlock(t *testing.T) {
 }
 
 func TestMineVtb(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	mockMiner := NewMockMiner2()
+	defer mockMiner.Lock()()
+	defer mockMiner.Free()
 
 	vbkBlock := mockMiner.MineVbkBlockTip()
 	btcBlock := mockMiner.MineBtcBlockTip()

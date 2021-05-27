@@ -6,15 +6,15 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/pop/blockchain/blocktree.hpp>
-#include <veriblock/pop/bootstraps.hpp>
-
-#include "util/visualize.hpp"
 #include <veriblock/pop/blockchain/btc_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/miner.hpp>
 #include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
+#include <veriblock/pop/bootstraps.hpp>
 #include <veriblock/pop/time.hpp>
+
+#include "util/visualize.hpp"
 
 using namespace altintegration;
 

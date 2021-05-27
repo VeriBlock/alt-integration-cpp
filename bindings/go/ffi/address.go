@@ -16,8 +16,12 @@ type Address struct {
 	ref *C.pop_address_t
 }
 
-func GenerateDefaultAddress() *Address {
-	val := &Address{ref: C.pop_address_generate_default_value()}
+func generateDefaultAddress() *Address {
+	return createAddress(C.pop_address_generate_default_value())
+}
+
+func createAddress(ref *C.pop_address_t) *Address {
+	val := &Address{ref: ref}
 	runtime.SetFinalizer(val, func(v *Address) {
 		v.Free()
 	})

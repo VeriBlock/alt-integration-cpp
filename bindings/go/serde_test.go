@@ -15,6 +15,8 @@ import (
 )
 
 func TestPad(t *testing.T) {
+	t.Parallel()
+
 	v := []byte{1, 2, 3, 4, 5}
 	res := Pad(v, 8)
 	if res[0] != 0 || len(res) != 8 {
@@ -23,6 +25,8 @@ func TestPad(t *testing.T) {
 }
 
 func TestWriteSingleByteLenValue(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	v := []byte{1, 2, 3, 4, 5}
@@ -36,6 +40,8 @@ func TestWriteSingleByteLenValue(t *testing.T) {
 }
 
 func TestSerde(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	arr := make([][32]byte, 3)

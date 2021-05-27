@@ -118,6 +118,16 @@ func (v *PopContext) AltBlockGeneratePublicationData(endorsedBlockHeader []byte,
 	return NewVbkByteStream(res)
 }
 
+// AltBlockGetEndorsedBy ...
+func (v *PopContext) AltBlockGetEndorsedBy(altblockHash []byte) *VbkByteStream {
+	altblockHashC := (*C.uint8_t)(unsafe.Pointer(&altblockHash[0]))
+	res := C.VBK_AltBlock_getEndorsedBy(v.ref, altblockHashC, C.int(len(altblockHash)))
+	if res == nil {
+		return nil
+	}
+	return NewVbkByteStream(res)
+}
+
 // checkATV ...
 func (v *PopContext) CheckATV(atv_bytes []byte, state *ValidationState) bool {
 	atvBytesC := (*C.uint8_t)(unsafe.Pointer(&atv_bytes[0]))

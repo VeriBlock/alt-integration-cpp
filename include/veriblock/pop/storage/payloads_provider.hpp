@@ -43,29 +43,20 @@ struct PayloadsStorage {
   //! @pure
   virtual void writePayloads(const PopData& payloads) = 0;
 
-  /**
-   * Load commands from a particular block.
-   * @param[in] tree load from this tree
-   * @param[in] block load from this block
-   * @param[out] out output vector of commands
-   * @param[out] state if commands can't be loaded, will be set to Error
-   */
-  virtual void getCommands(AltBlockTree& tree,
-                           const BlockIndex<AltBlock>& block,
-                           std::vector<CommandGroup>& out,
-                           ValidationState& state);
-
-  /**
-   * Load commands from a particular block.
-   * @param[in] tree load from this tree
-   * @param[in] block load from this block
-   * @param[out] out output vector of commands
-   * @param[out] state if commands can't be loaded, will be set to Error
-   */
-  virtual void getCommands(VbkBlockTree& tree,
-                           const BlockIndex<VbkBlock>& block,
-                           std::vector<CommandGroup>& out,
-                           ValidationState& state);
+  //! alias for getVBK
+  bool getPayload(const VbkBlock::id_t& id,
+                  VbkBlock& out,
+                  ValidationState& state) {
+    return getVBK(id, out, state);
+  }
+  //! alias for getVTB
+  bool getPayload(const VTB::id_t& id, VTB& out, ValidationState& state) {
+    return getVTB(id, out, state);
+  }
+  //! alias for getATV
+  bool getPayload(const ATV::id_t& id, ATV& out, ValidationState& state) {
+    return getATV(id, out, state);
+  }
 };
 
 }  // namespace altintegration

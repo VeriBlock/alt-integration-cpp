@@ -41,6 +41,8 @@ var (
 )
 
 func TestPopStateDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(parseHex(defaultPopStateEncoded))
@@ -53,6 +55,8 @@ func TestPopStateDeserialize(t *testing.T) {
 }
 
 func TestPopStateSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -62,6 +66,8 @@ func TestPopStateSerialize(t *testing.T) {
 }
 
 func TestPopStateRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(parseHex(defaultAltPopStateEncoded))

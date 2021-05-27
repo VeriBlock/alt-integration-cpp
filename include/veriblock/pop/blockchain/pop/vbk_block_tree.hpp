@@ -6,17 +6,24 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_
 
+#include <unordered_map>
 #include <utility>
-#include <veriblock/pop/blockchain/blocktree.hpp>
-#include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
-#include <veriblock/pop/blockchain/pop/pop_state_machine.hpp>
-#include <veriblock/pop/blockchain/vbk_block_addon.hpp>
-#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
-#include <veriblock/pop/entities/btcblock.hpp>
-#include <veriblock/pop/finalizer.hpp>
-#include <veriblock/pop/storage/payloads_index.hpp>
+
+#include "veriblock/pop/blockchain/blocktree.hpp"
+#include "veriblock/pop/blockchain/commands/vbk_command_group_store.hpp"
+#include "veriblock/pop/blockchain/pop/fork_resolution.hpp"
+#include "veriblock/pop/blockchain/pop/pop_state_machine.hpp"
+#include "veriblock/pop/blockchain/vbk_block_addon.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/finalizer.hpp"
+#include "veriblock/pop/storage/payloads_index.hpp"
 
 namespace altintegration {
+
+struct VTBInvalidationInfo {
+  BtcBlock::hash_t missing_btc_block;
+};
 
 // defined in vbk_block_tree.cpp
 extern template struct BlockIndex<BtcBlock>;
@@ -91,6 +98,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   using payloads_t = typename index_t::payloads_t;
   using pid_t = typename payloads_t::id_t;
   using endorsement_t = typename index_t::endorsement_t;
+  using command_group_store_t = VbkCommandGroupStore;
   using PopForkComparator = PopAwareForkResolutionComparator<VbkBlock,
                                                              VbkChainParams,
                                                              BtcTree,
@@ -117,6 +125,12 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
   PayloadsIndex& getPayloadsIndex() { return payloadsIndex_; }
+  //! @private
+  VbkCommandGroupStore& getCommandGroupStore() { return commandGroupStore_; }
+  //! @private
+  const VbkCommandGroupStore& getCommandGroupStore() const {
+    return commandGroupStore_;
+  }
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
@@ -161,7 +175,18 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removeSubtree(index_t& toRemove) override;
 
+  void removeInvalidVTB(const VTB::id_t& id) { invalid_vtbs.erase(id); }
+
+  const std::unordered_map<VTB::id_t, VTBInvalidationInfo>& getInvalidVTBs()
+      const {
+    return invalid_vtbs;
+  }
+
  private:
+  bool finalizeBlockImpl(index_t& index,
+                         int32_t preserveBlocksBehindFinal,
+                         ValidationState& state) override;
+
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**
    * Add, apply and validate a payload to a block that's currently applied
@@ -180,6 +205,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PopForkComparator cmp_;
   PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
+  command_group_store_t commandGroupStore_;
+
+  std::unordered_map<VTB::id_t, VTBInvalidationInfo> invalid_vtbs;
 };
 
 //! @private

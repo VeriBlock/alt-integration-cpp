@@ -11,6 +11,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <veriblock/pop/blockchain/commands/alt_command_group_store.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
@@ -20,7 +21,6 @@
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
-#include "alt_block_tree_util.hpp"
 #include "alt_chain_params.hpp"
 #include "base_block_tree.hpp"
 #include "chain.hpp"
@@ -182,6 +182,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using endorsement_t = typename index_t::endorsement_t;
   using eid_t = typename endorsement_t::id_t;
   using hash_t = typename AltBlock::hash_t;
+  using command_group_store_t = AltCommandGroupStore;
 
   using PopForkComparator = PopAwareForkResolutionComparator<AltBlock,
                                                              AltChainParams,
@@ -353,7 +354,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using base::setState;
 
   //! @private
-  bool finalizeBlock(const hash_t& block);
+  bool finalizeBlock(index_t& index, ValidationState& state);
 
   /**
    * Removes given block and all blocks after it.
@@ -370,11 +371,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * @private
    */
   void removePayloads(const hash_t& hash);
-
-  // use this method for stateful validation of pop data. invalid pop data will
-  // be removed from `pop`
-  //! @private
-  void filterInvalidPayloads(PopData& pop);
 
   // clang-format off
   //! @private
@@ -397,6 +393,11 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PayloadsStorage& getPayloadsProvider()  { return payloadsProvider_; }
   //! @private
   const PayloadsStorage& getPayloadsProvider() const { return payloadsProvider_; }
+  //! @private
+  AltCommandGroupStore& getCommandGroupStore()  { return commandGroupStore_; }
+  //! @private
+  const AltCommandGroupStore& getCommandGroupStore() const { return commandGroupStore_; }
+
   // clang-format on
 
   //! @private
@@ -406,6 +407,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @invariant the tip must be fully validated
   void overrideTip(index_t& to) override;
 
+  friend struct MemPoolBlockTree;
+
   //! @private
   using base::removeLeaf;
 
@@ -414,12 +417,18 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
+  command_group_store_t commandGroupStore_;
 
   //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;
 
   //! @private
   void setPayloads(index_t& index, const PopData& payloads);
+
+  //! @private
+  bool finalizeBlockImpl(index_t& index,
+                         int32_t preserveBlocksBehindFinal,
+                         ValidationState& state) override;
 
   /**
    * Connect the block to the tree, doing stateful validation(incomplete at this
@@ -428,9 +437,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * @private
    */
   bool connectBlock(index_t& index, ValidationState& state);
-
-  //! @private
-  void setTipContinueOnInvalid(index_t& to);
 
   //! @private
   void removeAllPayloads(index_t& index);

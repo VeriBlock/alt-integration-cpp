@@ -2,8 +2,6 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include "pop_context.hpp"
-
 #include <veriblock/pop/c/extern.h>
 #include <veriblock/pop/c/pop_context.h>
 
@@ -11,13 +9,14 @@
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/pop_context.hpp>
 
-#include "adaptors/block_provider_impl.hpp"
 #include "adaptors/logger.hpp"
-#include "adaptors/payloads_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "config.hpp"
+#include "pop_context.hpp"
 #include "storage.hpp"
 #include "validation_state.hpp"
+#include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
+#include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
 
 PopContext* VBK_NewPopContext(Config_t* config,
                               Storage_t* storage,
@@ -38,7 +37,8 @@ PopContext* VBK_NewPopContext(Config_t* config,
   v->storage = storage->storage;
 
   v->payloads_storage =
-      std::make_shared<adaptors::PayloadsStorageImpl>(*v->storage);
+      std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
+          *v->storage);
   v->context = altintegration::PopContext::create(c, v->payloads_storage);
 
   return v;

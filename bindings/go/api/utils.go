@@ -7,11 +7,37 @@ package api
 
 import (
 	"errors"
+	"io"
+	"math"
 
 	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
 	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
+
+func (v *PopContext) AltBlockGetEndorsedBy(altblockHash []byte) ([]entities.AltEndorsement, error) {
+	stream := v.popContext.AltBlockGetEndorsedBy(altblockHash)
+	if stream == nil {
+		return nil, errors.New("cannot find alt block")
+	}
+	defer stream.Free()
+	endorsements, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(stream io.Reader) (interface{}, error) {
+		endorsement := entities.AltEndorsement{}
+		err := endorsement.FromVbkEncoding(stream)
+		if err != nil {
+			return nil, err
+		}
+		return endorsement, nil
+	})
+	if err != nil {
+		return nil, errors.New("failed to deserialize alt endorsement")
+	}
+	ends := make([]entities.AltEndorsement, len(endorsements))
+	for i, endorsement := range endorsements {
+		ends[i] = endorsement.(entities.AltEndorsement)
+	}
+	return ends, nil
+}
 
 func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error) {
 	if popData == nil {

@@ -10,6 +10,8 @@ import (
 )
 
 func TestValidationStateFree(t *testing.T) {
+	t.Parallel()
+
 	state := NewValidationState()
 	state.Free()
 	state.Free()
@@ -17,6 +19,8 @@ func TestValidationStateFree(t *testing.T) {
 
 // TODO fix memory leaks
 // func TestValidationStateBasic(t *testing.T) {
+//	t.Parallel()
+
 // 	assert := assert.New(t)
 
 // 	state := NewValidationState()

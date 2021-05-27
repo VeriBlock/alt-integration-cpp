@@ -19,6 +19,8 @@ var (
 )
 
 func TestOutputDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(outputBytes)
@@ -29,6 +31,8 @@ func TestOutputDeserialize(t *testing.T) {
 }
 
 func TestOutputSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -37,6 +41,8 @@ func TestOutputSerialize(t *testing.T) {
 }
 
 func TestOutputRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := bytes.NewReader(outputBytes)

@@ -126,17 +126,17 @@ void PayloadsIndex::reindex(const AltBlockTree& tree) {
   payload_in_vbk.clear();
 
   // reindex vbk blocks
-  auto& vbkblocks = tree.vbk().getBlocks();
+  auto vbkblocks = tree.vbk().getBlocks();
   VBK_LOG_WARN("Reindexing %d VBK blocks...", vbkblocks.size());
   for (auto& b : vbkblocks) {
-    addBlockToIndex(*b.second);
+    addBlockToIndex(*b);
   }
 
   // reindex alt blocks
-  auto& altblocks = tree.getBlocks();
+  auto altblocks = tree.getBlocks();
   VBK_LOG_WARN("Reindexing %d ALT blocks...", altblocks.size());
   for (auto& b : altblocks) {
-    addBlockToIndex(*b.second);
+    addBlockToIndex(*b);
   }
   VBK_LOG_WARN("Reindexing finished");
 }

@@ -17,6 +17,12 @@ type ValidationState2 struct {
 	ref *C.pop_validation_state_t
 }
 
+func (v *ValidationState2) validate() {
+	if v.ref == nil {
+		panic("ValidationState does not initialized")
+	}
+}
+
 func NewValidationState2() *ValidationState2 {
 	val := &ValidationState2{ref: C.pop_validation_state_new()}
 	runtime.SetFinalizer(val, func(v *ValidationState2) {
@@ -33,30 +39,25 @@ func (v *ValidationState2) Free() {
 }
 
 func (v *ValidationState2) GetErrorMessage() string {
-	if v.ref == nil {
-		panic("ValidationState does not initialized")
-	}
+	v.validate()
 	str := C.pop_validation_state_get_error_message(v.ref)
 	defer freeArrayChar(&str)
 	return createString(&str)
 }
 
 func (v *ValidationState2) IsValid() bool {
-	if v.ref == nil {
-		panic("ValidationState does not initialized")
-	}
+	v.validate()
 	return bool(C.pop_validation_state_get_is_valid(v.ref))
 }
 
 func (v *ValidationState2) IsInvalid() bool {
-	if v.ref == nil {
-		panic("ValidationState does not initialized")
-	}
+	v.validate()
 	return bool(C.pop_validation_state_get_is_invalid(v.ref))
 }
 
 // Error ...
 func (v *ValidationState2) Error() error {
+	v.validate()
 	if v.IsInvalid() {
 		return errors.New(v.GetErrorMessage())
 	}

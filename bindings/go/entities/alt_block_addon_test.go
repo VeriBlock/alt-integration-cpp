@@ -24,6 +24,8 @@ var (
 )
 
 func TestAltBlockAddonDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultAltBlockAddonEncoded)
@@ -39,6 +41,8 @@ func TestAltBlockAddonDeserialize(t *testing.T) {
 }
 
 func TestAltBlockAddonSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -48,6 +52,8 @@ func TestAltBlockAddonSerialize(t *testing.T) {
 }
 
 func TestAltBlockAddonRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultAltBlockAddonEncoded)

@@ -15,16 +15,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// AtvBlockName ...
+const AtvBlockName = "ATV"
+
 type Atv struct {
 	ref *C.pop_atv_t
 }
 
-func GenerateDefaultAtv() *Atv {
-	val := &Atv{ref: C.pop_atv_generate_default_value()}
-	runtime.SetFinalizer(val, func(v *Atv) {
-		v.Free()
-	})
-	return val
+func (v *Atv) validate() {
+	if v.ref == nil {
+		panic("Atv does not initialized")
+	}
+}
+
+func generateDefaultAtv() *Atv {
+	return createAtv(C.pop_atv_generate_default_value())
 }
 
 func createAtv(ref *C.pop_atv_t) *Atv {
@@ -47,6 +52,15 @@ func createArrayAtv(array *C.pop_array_atv_t) []*Atv {
 	return res
 }
 
+// CreateAtv initializes new Atv with empty ref. Use DeserializeFromVbk to initialize ref.
+func CreateAtv() *Atv {
+	val := &Atv{ref: nil}
+	runtime.SetFinalizer(val, func(v *Atv) {
+		v.Free()
+	})
+	return val
+}
+
 func (v *Atv) Free() {
 	if v.ref != nil {
 		C.pop_atv_free(v.ref)
@@ -54,17 +68,22 @@ func (v *Atv) Free() {
 	}
 }
 
+func (v *Atv) Name() string { return AtvBlockName }
+
+func (v *Atv) GetID() []byte {
+	v.validate()
+	array := C.pop_atv_get_id(v.ref)
+	defer freeArrayU8(&array)
+	return createBytes(&array)
+}
+
 func (v *Atv) GetBlockOfProof() *VbkBlock {
-	if v.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
 	return createVbkBlock(C.pop_atv_get_block_of_proof(v.ref))
 }
 
 func (v *Atv) ToJSON() (map[string]interface{}, error) {
-	if v.ref == nil {
-		panic("Atv does not initialized")
-	}
+	v.validate()
 	str := C.pop_atv_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
@@ -72,6 +91,27 @@ func (v *Atv) ToJSON() (map[string]interface{}, error) {
 	var res map[string]interface{}
 	err := json.Unmarshal([]byte(json_str), &res)
 	return res, err
+}
+
+func (v *Atv) SerializeToVbk() []byte {
+	v.validate()
+	res := C.pop_atv_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func (v *Atv) DeserializeFromVbk(bytes []byte) error {
+	state := NewValidationState2()
+	defer state.Free()
+
+	res := C.pop_atv_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return state.Error()
+	}
+
+	v.Free()
+	v.ref = res
+	return nil
 }
 
 func (val1 *Atv) assertEquals(assert *assert.Assertions, val2 *Atv) {

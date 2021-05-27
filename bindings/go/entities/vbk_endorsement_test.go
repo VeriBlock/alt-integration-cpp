@@ -24,6 +24,8 @@ var (
 )
 
 func TestVbkEndorsementDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultVbkEndorsementEncoded)
@@ -40,6 +42,8 @@ func TestVbkEndorsementDeserialize(t *testing.T) {
 }
 
 func TestVbkEndorsementSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -49,6 +53,8 @@ func TestVbkEndorsementSerialize(t *testing.T) {
 }
 
 func TestVbkEndorsementRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	blockEncoded := parseHex(defaultVbkEndorsementEncoded)

@@ -6,6 +6,7 @@
 package ffi
 
 import (
+	"crypto/rand"
 	"fmt"
 	"testing"
 )
@@ -19,11 +20,15 @@ func generateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 
 	SetOnGetAltchainID(func() int64 { return 1 })
 	SetOnGetBootstrapBlock(func() AltBlock {
-		return *GenerateDefaultAltBlock()
+		return *generateDefaultAltBlock()
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
-		// TODO impl
-		return header
+		altblock := NewAltBlock([]byte{}, []byte{}, 0, 0)
+		err := altblock.DeserializeFromVbkAltBlock(header)
+		if err != nil {
+			panic(err)
+		}
+		return altblock.GetHash()
 	})
 
 	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {
@@ -35,4 +40,13 @@ func generateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 	})
 
 	return NewPopContext2(config, storage, "debug")
+}
+
+func generateNextAltBlock(current *AltBlock) *AltBlock {
+	currentHash := current.GetHash()
+
+	nextHash := make([]byte, len(currentHash))
+	rand.Read(nextHash)
+
+	return NewAltBlock(nextHash, currentHash, current.GetTimestamp()+1, current.GetHeight()+1)
 }

@@ -114,11 +114,10 @@ void saveTree(
   std::vector<const index_t*> dirty_indices;
 
   // map pair<hash, shared_ptr<index_t>> to vector<index_t*>
-  for (auto& block : tree.getBlocks()) {
-    auto& index = block.second;
+  for (auto& index : tree.getBlocks()) {
     if (index->isDirty()) {
       index->unsetDirty();
-      dirty_indices.push_back(index.get());
+      dirty_indices.push_back(index);
     }
   }
 
@@ -151,12 +150,8 @@ struct AltBlockTree;
 //! Save all (BTC/VBK/ALT) trees on disk in a single Batch.
 void saveTrees(const AltBlockTree& tree, BlockBatch& batch);
 
-struct PopContext;
-
 //! Load all (ALT/VBK/BTC) trees from disk into memory.
-bool loadTrees(PopContext& context,
-               BlockReader& reader,
-               ValidationState& state);
+bool loadTrees(AltBlockTree& tree, BlockReader& reader, ValidationState& state);
 
 }  // namespace altintegration
 

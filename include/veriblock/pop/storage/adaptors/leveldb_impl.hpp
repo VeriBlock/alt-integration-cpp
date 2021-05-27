@@ -3,26 +3,29 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_ADAPTORS_STORAGE_ROCKSDB_IMPL_HPP
-#define VERIBLOCK_POP_CPP_ADAPTORS_STORAGE_ROCKSDB_IMPL_HPP
+#ifndef VERIBLOCK_POP_CPP_STORAGE_ADAPTORS_LEVELDB_IMPL_HPP
+#define VERIBLOCK_POP_CPP_STORAGE_ADAPTORS_LEVELDB_IMPL_HPP
 
-#include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/exceptions/storage_io.hpp>
-#include <veriblock/pop/strutil.hpp>
-
-#include "rocksdb/db.h"
+#include "leveldb/db.h"
+#include "leveldb/iterator.h"
+#include "leveldb/write_batch.h"
 #include "storage_interface.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/exceptions/storage_io.hpp"
+#include "veriblock/pop/strutil.hpp"
+
+namespace altintegration {
 
 namespace adaptors {
 
-struct RocksDBStorageIterator : public StorageIterator {
-  ~RocksDBStorageIterator() override {
+struct LevelDBStorageIterator : public StorageIterator {
+  ~LevelDBStorageIterator() override {
     if (it_ != nullptr) {
       delete it_;
     }
   }
 
-  RocksDBStorageIterator(rocksdb::Iterator* it) : it_(it) {}
+  LevelDBStorageIterator(leveldb::Iterator* it) : it_(it) {}
 
   bool value(std::vector<uint8_t>& out) const override;
 
@@ -37,13 +40,13 @@ struct RocksDBStorageIterator : public StorageIterator {
   void seek(const std::vector<uint8_t>& val) override;
 
  private:
-  rocksdb::Iterator* it_;
+  leveldb::Iterator* it_;
 };
 
-struct RocksDBWriteBatch : public WriteBatch {
-  ~RocksDBWriteBatch() override = default;
+struct LevelDBWriteBatch : public WriteBatch {
+  ~LevelDBWriteBatch() override = default;
 
-  RocksDBWriteBatch(rocksdb::DB& db, rocksdb::WriteOptions& write_options)
+  LevelDBWriteBatch(leveldb::DB& db, leveldb::WriteOptions& write_options)
       : db_(db), write_options_(write_options) {}
 
   void write(const std::vector<uint8_t>& key,
@@ -52,15 +55,15 @@ struct RocksDBWriteBatch : public WriteBatch {
   void writeBatch() override;
 
  private:
-  rocksdb::DB& db_;
-  rocksdb::WriteOptions& write_options_;
-  rocksdb::WriteBatch batch_{};
+  leveldb::DB& db_;
+  leveldb::WriteOptions& write_options_;
+  leveldb::WriteBatch batch_{};
 };
 
-struct RocksDBStorage : public Storage {
-  ~RocksDBStorage() override;
+struct LevelDBStorage : public Storage {
+  ~LevelDBStorage() override;
 
-  RocksDBStorage(const std::string& path);
+  LevelDBStorage(const std::string& path);
 
   void write(const std::vector<uint8_t>& key,
              const std::vector<uint8_t>& value) override;
@@ -69,20 +72,22 @@ struct RocksDBStorage : public Storage {
             std::vector<uint8_t>& value) override;
 
   std::shared_ptr<WriteBatch> generateWriteBatch() override {
-    return std::make_shared<RocksDBWriteBatch>(*db_, write_options_);
+    return std::make_shared<LevelDBWriteBatch>(*db_, write_options_);
   }
 
   std::shared_ptr<StorageIterator> generateIterator() override {
-    return std::make_shared<RocksDBStorageIterator>(
+    return std::make_shared<LevelDBStorageIterator>(
         db_->NewIterator(read_options_));
   }
 
  private:
-  rocksdb::DB* db_{nullptr};
-  rocksdb::WriteOptions write_options_{};
-  rocksdb::ReadOptions read_options_{};
+  leveldb::DB* db_{nullptr};
+  leveldb::WriteOptions write_options_{};
+  leveldb::ReadOptions read_options_{};
 };
 
 }  // namespace adaptors
+
+}  // namespace altintegration
 
 #endif

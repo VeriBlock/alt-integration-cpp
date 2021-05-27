@@ -17,11 +17,15 @@ extern "C" {
 
 POP_DECLARE_ENTITY(atv);
 
+POP_ENTITY_GETTER_FUNCTION(atv, POP_ARRAY_NAME(u8), id);
 POP_ENTITY_GETTER_FUNCTION(atv,
                            const POP_ENTITY_NAME(vbk_block) *,
                            block_of_proof);
 
 POP_ENTITY_TO_JSON(atv);
+
+POP_ENTITY_SERIALIZE_TO_VBK(atv);
+POP_ENTITY_DESERIALIZE_FROM_VBK(atv);
 
 POP_DECLARE_ARRAY(POP_ENTITY_NAME(atv) *, atv);
 

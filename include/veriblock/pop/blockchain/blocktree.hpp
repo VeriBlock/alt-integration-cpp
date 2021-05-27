@@ -119,7 +119,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
                         pad,
                         Block::name(),
-                        base::blocks_.size(),
+                        base::getBlocks().size(),
                         base::toPrettyString(level + 2),
                         pad);
   }
@@ -179,8 +179,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     return isBlockOld(index->getHeight());
   }
 
-  bool finalizeBlock(const hash_t& block) {
-    return base::finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
+  bool finalizeBlock(index_t& index, ValidationState& state) {
+    return this->finalizeBlockImpl(
+        index, param_->preserveBlocksBehindFinal(), state);
   }
 
  protected:

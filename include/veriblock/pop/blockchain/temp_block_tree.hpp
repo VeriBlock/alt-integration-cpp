@@ -166,9 +166,9 @@ struct TempBlockTree {
 
     // intentionally do not pass 'prev' here - we don't want 'stable' blocks
     // have pnext ptr to temp blocks.
-    auto newIndex = make_unique<wrapped_index_t>(nullptr);
+    auto newIndex = make_unique<wrapped_index_t>(0);
     newIndex->setNull();
-    it = temp_blocks_.insert({shortHash, std::move(newIndex)}).first;
+    it = temp_blocks_.emplace(shortHash, std::move(newIndex)).first;
     return it->second.get();
   }
 

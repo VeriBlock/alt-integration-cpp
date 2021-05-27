@@ -12,9 +12,11 @@ import (
 )
 
 func TestBtcBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	btc_block := GenerateDefaultBtcBlock()
+	btc_block := generateDefaultBtcBlock()
 
 	assert.Equal(btc_block.GetDifficulty(), uint32(1))
 	assert.Equal(btc_block.GetNonce(), uint32(1))
@@ -32,9 +34,11 @@ func TestBtcBlock(t *testing.T) {
 }
 
 func TestVbkBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	vbk_block := GenerateDefaultVbkBlock()
+	vbk_block := generateDefaultVbkBlock()
 
 	assert.Equal(vbk_block.GetHeight(), int32(1))
 	assert.Equal(vbk_block.GetNonce(), uint64(1))
@@ -47,15 +51,18 @@ func TestVbkBlock(t *testing.T) {
 	assert.Equal(vbk_block.GetSecondPreviousKeystone(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1})
 	assert.Equal(vbk_block.GetHash(), []byte{0xc8, 0x43, 0x1c, 0x39, 0x10, 0x4b, 0x66, 0x9d, 0x23,
 		0x4f, 0x54, 0xb2, 0xa6, 0xb7, 0x6a, 0xdb, 0x58, 0x1c, 0x53, 0x52, 0xca, 0xd8, 0x18, 0x26})
+	assert.Equal(vbk_block.GetID(), []byte{0xa6, 0xb7, 0x6a, 0xdb, 0x58, 0x1c, 0x53, 0x52, 0xca, 0xd8, 0x18, 0x26})
 
 	vbk_block.Free()
 	vbk_block.Free()
 }
 
 func TestAltBlock(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	alt_block := GenerateDefaultAltBlock()
+	alt_block := generateDefaultAltBlock()
 
 	assert.Equal(alt_block.GetHeight(), int32(1))
 	assert.Equal(alt_block.GetTimestamp(), uint32(1))
@@ -67,36 +74,62 @@ func TestAltBlock(t *testing.T) {
 }
 
 func TestVtb(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	vtb := GenerateDefaultVtb()
-	vbk_block := GenerateDefaultVbkBlock()
+	vtb := generateDefaultVtb()
+	vbk_block := generateDefaultVbkBlock()
 
 	vtb.GetContainingBlock().assertEquals(assert, vbk_block)
+
+	assert.Equal(vtb.GetID(), []byte{
+		0xdc, 0x3d, 0xde, 0x98, 0xde,
+		0x60, 0xfc, 0xcb, 0x20, 0xd1,
+		0x45, 0x18, 0x4c, 0x8d, 0x46,
+		0x3b, 0x1b, 0x52, 0x36, 0x58,
+		0x8a, 0xf7, 0xa8, 0x01, 0x44,
+		0x72, 0x7b, 0xf1, 0xf7, 0x87,
+		0xf2, 0xcb,
+	})
 
 	vtb.Free()
 	vtb.Free()
 }
 
 func TestAtv(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	atv := GenerateDefaultAtv()
-	vbk_block := GenerateDefaultVbkBlock()
+	atv := generateDefaultAtv()
+	vbk_block := generateDefaultVbkBlock()
 
 	atv.GetBlockOfProof().assertEquals(assert, vbk_block)
+
+	assert.Equal(atv.GetID(), []byte{
+		0x2b, 0x30, 0x75, 0x20, 0xcc,
+		0xd0, 0x2d, 0x78, 0x17, 0x61,
+		0x97, 0xdf, 0x05, 0x4c, 0x20,
+		0x71, 0xca, 0xf0, 0x5f, 0xac,
+		0xeb, 0x6a, 0xa6, 0x18, 0xa9,
+		0xb4, 0x55, 0xc8, 0x25, 0x06,
+		0xa0, 0x06,
+	})
 
 	atv.Free()
 	atv.Free()
 }
 
 func TestPopData(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	pop_data := GenerateDefaultPopData()
-	atv := GenerateDefaultAtv()
-	vtb := GenerateDefaultVtb()
-	vbk_block := GenerateDefaultVbkBlock()
+	pop_data := generateDefaultPopData()
+	atv := generateDefaultAtv()
+	vtb := generateDefaultVtb()
+	vbk_block := generateDefaultVbkBlock()
 
 	atvs := pop_data.GetAtvs()
 	vtbs := pop_data.GetVtbs()
@@ -120,9 +153,11 @@ func TestPopData(t *testing.T) {
 }
 
 func TestNetworkBytePair(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	nbp := GenerateDefaultNetworkBytePair()
+	nbp := generateDefaultNetworkBytePair()
 
 	assert.Equal(nbp.HasNetworkByte(), true)
 	assert.Equal(nbp.GetNetworkByte(), uint8(1))
@@ -133,9 +168,11 @@ func TestNetworkBytePair(t *testing.T) {
 }
 
 func TestAddress(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	addr := GenerateDefaultAddress()
+	addr := generateDefaultAddress()
 
 	assert.Equal(addr.GetAddressType(), uint8(1))
 	assert.Equal(addr.GetAddress(), "V111111111111111111111111G3LuZ")
@@ -145,9 +182,11 @@ func TestAddress(t *testing.T) {
 }
 
 func TestBtcTx(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	btctx := GenerateDefaultBtcTx()
+	btctx := generateDefaultBtcTx()
 
 	assert.Equal(btctx.GetTx(), []byte{1, 1, 1, 1, 1})
 
@@ -156,12 +195,50 @@ func TestBtcTx(t *testing.T) {
 }
 
 func TestCoin(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	coin := GenerateDefaultCoin()
+	coin := generateDefaultCoin()
 
 	assert.Equal(coin.GetUnits(), int64(1))
 
 	coin.Free()
 	coin.Free()
+}
+
+func TestMerklePath(t *testing.T) {
+	t.Parallel()
+
+	assert := assert.New(t)
+
+	mp := generateDefaultMerklePath()
+	sub := mp.GetSubject()
+	layers := mp.GetLayers()
+	bytes := make([]byte, 32)
+	bytes[31] = 1
+
+	assert.Equal(mp.GetIndex(), int32(1))
+	assert.Equal(sub, bytes)
+	assert.Equal(len(layers), 3)
+	for _, layer := range layers {
+		assert.Equal(layer, bytes)
+	}
+
+	mp.Free()
+	mp.Free()
+}
+
+func TestPopPayout(t *testing.T) {
+	t.Parallel()
+
+	assert := assert.New(t)
+
+	popPayout := generateDefaultPopPayout()
+
+	assert.Equal(popPayout.GetPayoutInfo(), []byte{1, 2, 3, 4})
+	assert.Equal(popPayout.GetAmount(), uint64(300))
+
+	popPayout.Free()
+	popPayout.Free()
 }

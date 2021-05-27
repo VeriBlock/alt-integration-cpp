@@ -17,10 +17,35 @@
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
-#include "adaptors/block_provider_impl.hpp"
 #include "bytestream.hpp"
 #include "pop_context.hpp"
 #include "validation_state.hpp"
+#include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
+
+VBK_ByteStream* VBK_AltBlock_getEndorsedBy(PopContext* self,
+                                           const uint8_t* hash,
+                                           int hash_size) {
+  VBK_ASSERT(self);
+  VBK_ASSERT(hash);
+
+  using namespace altintegration;
+  std::vector<uint8_t> v_hash(hash, hash + hash_size);
+
+  auto* index = self->context->getAltBlockTree().getBlockIndex(v_hash);
+  if (index == nullptr) {
+    return nullptr;
+  }
+
+  WriteStream stream;
+  writeArrayOf<const AltEndorsement*>(
+      stream,
+      index->getEndorsedBy(),
+      [](WriteStream& stream, const AltEndorsement* v) {
+        v->toVbkEncoding(stream);
+      });
+
+  return new VbkByteStream(stream.data());
+}
 
 void VBK_VbkBlock_getId(const uint8_t* block_bytes,
                         int block_bytes_size,
@@ -270,5 +295,6 @@ bool VBK_LoadAllTrees(PopContext* self, VbkValidationState* state) {
   using namespace altintegration;
 
   adaptors::BlockReaderImpl block_reader(*self->storage);
-  return loadTrees(*self->context, block_reader, state->getState());
+  return loadTrees(
+      self->context->getAltBlockTree(), block_reader, state->getState());
 }

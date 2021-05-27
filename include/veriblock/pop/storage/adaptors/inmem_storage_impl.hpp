@@ -3,15 +3,17 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_ADAPTORS_STORAGE_INMEM_STORAGE_IMPL_HPP
-#define VERIBLOCK_POP_CPP_ADAPTORS_STORAGE_INMEM_STORAGE_IMPL_HPP
+#ifndef VERIBLOCK_POP_CPP_STORAGE_ADAPTORS_INMEM_STORAGE_IMPL_HPP
+#define VERIBLOCK_POP_CPP_STORAGE_ADAPTORS_INMEM_STORAGE_IMPL_HPP
 
 #include <map>
-
-#include "storage_interface.hpp"
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/exceptions/storage_io.hpp>
 #include <veriblock/pop/strutil.hpp>
+
+#include "storage_interface.hpp"
+
+namespace altintegration {
 
 namespace adaptors {
 
@@ -113,5 +115,7 @@ struct InmemStorageImpl : public Storage {
 };
 
 }  // namespace adaptors
+
+}  // namespace altintegration
 
 #endif

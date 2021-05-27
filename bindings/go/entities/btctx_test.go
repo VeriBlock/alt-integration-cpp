@@ -13,6 +13,8 @@ import (
 )
 
 func TestBtcTxRound(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	btcTx := BtcTx{[]byte{1, 2, 3}}

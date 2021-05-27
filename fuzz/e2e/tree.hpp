@@ -72,22 +72,25 @@ class Tree {
   std::string toPrettyString() const {
     std::string s;
     std::vector<Block*> b;
-    for(auto& it : blocks) {
+    for (auto& it : blocks) {
       b.push_back(it.second.get());
     }
-    std::sort(b.begin(), b.end(), [](const Block* a, const Block* b){
+    std::sort(b.begin(), b.end(), [](const Block* a, const Block* b) {
       return a->height < b->height;
     });
 
-    for(auto& p : b) {
-      s += fmt::format("Block(height={} hash={})\n", p->height, altintegration::HexStr(p->hash));
+    for (auto& p : b) {
+      s += fmt::format("Block(height={} hash={})\n",
+                       p->height,
+                       altintegration::HexStr(p->hash));
     }
 
     return s;
   }
 
   std::vector<uint8_t> bestBlock;
-  std::shared_ptr<altintegration::InmemPayloadsProvider> pp = nullptr;
+  altintegration::adaptors::InmemStorageImpl storage{};
+  std::shared_ptr<altintegration::adaptors::PayloadsStorageImpl> pp = nullptr;
   std::shared_ptr<altintegration::AltChainParams> params = nullptr;
   std::shared_ptr<altintegration::PopContext> popcontext = nullptr;
   std::unordered_map<std::vector<uint8_t>, std::shared_ptr<Block>> blocks;

@@ -24,6 +24,8 @@ var (
 )
 
 func TestPublicationDataDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	pub := parseHex(defaultPublicationEncoded)
@@ -40,6 +42,8 @@ func TestPublicationDataDeserialize(t *testing.T) {
 }
 
 func TestPublicationDataSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	stream := new(bytes.Buffer)
@@ -48,6 +52,8 @@ func TestPublicationDataSerialize(t *testing.T) {
 }
 
 func TestPublicationDataRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	pub := parseHex(defaultPublicationEncoded)

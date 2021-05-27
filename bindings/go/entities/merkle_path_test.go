@@ -34,6 +34,8 @@ var (
 )
 
 func TestMerklePathDeserialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	merklePath := parseHex(defaultPathEncoded)
@@ -50,6 +52,8 @@ func TestMerklePathDeserialize(t *testing.T) {
 }
 
 func TestMerklePathSerialize(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	subject := parse32Bytes(defaultSubject)
@@ -61,6 +65,8 @@ func TestMerklePathSerialize(t *testing.T) {
 }
 
 func TestMerklePathRoundTrip(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	merklePath := parseHex(defaultPathEncoded)

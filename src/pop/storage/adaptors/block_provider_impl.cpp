@@ -3,7 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "block_provider_impl.hpp"
+#include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
+
+namespace altintegration {
 
 namespace adaptors {
 
@@ -47,3 +49,5 @@ std::vector<uint8_t> tip_key<altintegration::AltBlock>() {
 }
 
 }  // namespace adaptors
+
+}  // namespace altintegration
