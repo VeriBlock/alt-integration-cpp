@@ -89,17 +89,17 @@ $(document).ready(function(){initNavTree('integration_6_mempool.html',''); initR
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md55">Overview</a></li>
-<li class="level1"><a href="#autotoc_md56">1. Implement mempool related methods in the pop_service.hpp and pop_service.cpp source files.</a></li>
-<li class="level1"><a href="#autotoc_md57">2. Add PopData during block mining.</a></li>
-<li class="level1"><a href="#autotoc_md58">3. Remove PopData after successfully submitting to the blockchain.</a></li>
+<ul><li class="level1"><a href="#autotoc_md59">Overview</a></li>
+<li class="level1"><a href="#autotoc_md60">1. Implement mempool related methods in the pop_service.hpp and pop_service.cpp source files.</a></li>
+<li class="level1"><a href="#autotoc_md61">2. Add PopData during block mining.</a></li>
+<li class="level1"><a href="#autotoc_md62">3. Remove PopData after successfully submitting to the blockchain.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_6_mempool"></a></p>
-<h1><a class="anchor" id="autotoc_md55"></a>
+<h1><a class="anchor" id="autotoc_md59"></a>
 Overview</h1>
 <p>Next step is to add the Pop mempool support for the ALT blockchain. We should implement methods for submitting Pop payloads to the mempool, fetching payloads during the block mining and removing payloads after successfully submitting a block to the blockchain.</p>
-<h1><a class="anchor" id="autotoc_md56"></a>
+<h1><a class="anchor" id="autotoc_md60"></a>
 1. Implement mempool related methods in the pop_service.hpp and pop_service.cpp source files.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp</a> </p><div class="fragment"><div class="line">+</div>
 <div class="line">+<a class="code" href="structaltintegration_1_1PopData.html">altintegration::PopData</a> getPopData();</div>
@@ -123,7 +123,7 @@ Overview</h1>
 <div class="line">+{</div>
 <div class="line">+    disconnected_popdata.push_back(popData);</div>
 <div class="line">+}</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md57"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md61"></a>
 2. Add PopData during block mining.</h1>
 <p>Update <code>CreateNewBlock()</code> in the miner.cpp.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp</a> </p><div class="fragment"><div class="line"><span class="preprocessor"> #include &lt;util/system.h&gt;</span></div>
@@ -142,7 +142,7 @@ Overview</h1>
 <div class="line">     }</div>
 <div class="line"> </div>
 <div class="line">     int64_t nTime1 = GetTimeMicros();</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md58"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md62"></a>
 3. Remove PopData after successfully submitting to the blockchain.</h1>
 <p>Modify <code>ConnectTip()</code> and <code>DisconnectTip()</code> methods in the validation.cpp.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp</a></p>

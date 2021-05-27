@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mockminer_875',['MockMiner',['../group__mockminer.html',1,'']]]
+  ['mockminer_876',['MockMiner',['../group__mockminer.html',1,'']]]
 ];
