@@ -1,0 +1,6 @@
+<map id="altintegration::adaptors::StorageIterator" name="altintegration::adaptors::StorageIterator">
+<area shape="rect" id="node1" title=" " alt="" coords="221,5,373,185"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1adaptors_1_1InmemStorageIterator.html" title=" " alt="" coords="5,233,180,428"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html" title=" " alt="" coords="205,233,389,428"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html" title=" " alt="" coords="413,233,602,428"/>
+</map>

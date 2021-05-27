@@ -28,7 +28,7 @@
 <text text-anchor="start" x="17" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPayloadsIndex()</text>
 <text text-anchor="start" x="17" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
 <text text-anchor="start" x="17" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
-<text text-anchor="start" x="17" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 10 more...</text>
+<text text-anchor="start" x="17" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 12 more...</text>
 </a>
 </g>
 </g>
@@ -78,22 +78,22 @@
 <text text-anchor="middle" x="74" y="-1011.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
 <polyline fill="none" stroke="black" points="12,-1004.5 136,-1004.5 "/>
 <text text-anchor="start" x="20" y="-992.5" font-family="Helvetica,sans-Serif" font-size="10.00"># blocks_</text>
-<text text-anchor="start" x="20" y="-981.5" font-family="Helvetica,sans-Serif" font-size="10.00"># removed_</text>
-<text text-anchor="start" x="20" y="-970.5" font-family="Helvetica,sans-Serif" font-size="10.00"># tips_</text>
-<text text-anchor="start" x="20" y="-959.5" font-family="Helvetica,sans-Serif" font-size="10.00"># activeChain_</text>
-<text text-anchor="start" x="20" y="-948.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
-<polyline fill="none" stroke="black" points="12,-941.5 136,-941.5 "/>
-<text text-anchor="start" x="20" y="-929.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="20" y="-918.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="20" y="-907.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="20" y="-981.5" font-family="Helvetica,sans-Serif" font-size="10.00"># tips_</text>
+<text text-anchor="start" x="20" y="-970.5" font-family="Helvetica,sans-Serif" font-size="10.00"># activeChain_</text>
+<text text-anchor="start" x="20" y="-959.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validity_sig_</text>
+<polyline fill="none" stroke="black" points="12,-952.5 136,-952.5 "/>
+<text text-anchor="start" x="20" y="-940.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="20" y="-929.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="20" y="-918.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="20" y="-907.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="20" y="-896.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="20" y="-885.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="20" y="-874.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="20" y="-863.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="20" y="-852.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="20" y="-841.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="20" y="-830.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
-<text text-anchor="start" x="20" y="-819.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 20 more...</text>
+<text text-anchor="start" x="20" y="-885.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="20" y="-874.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="20" y="-863.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="20" y="-852.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
+<text text-anchor="start" x="20" y="-841.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makePrevHash()</text>
+<text text-anchor="start" x="20" y="-830.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 22 more...</text>
+<text text-anchor="start" x="20" y="-819.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="20" y="-808.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 </a>
 </g>

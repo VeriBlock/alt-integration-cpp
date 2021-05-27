@@ -149,9 +149,17 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1ChainSlice.html">ChainSlice</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-owning partial chain view similar to std::span.  <a href="structaltintegration_1_1ChainSlice.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltCommandGroupStore.html">AltCommandGroupStore</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A wrapper for the payload store that constructs command objects.  <a href="structaltintegration_1_1AltCommandGroupStore.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1CheckPublicationData.html">CheckPublicationData</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A command which performs stateful check of <a class="el" href="structaltintegration_1_1PublicationData.html" title="Publication data about ALT block inside VBK blockchain.">PublicationData</a> stored in <a class="el" href="structaltintegration_1_1ATV.html" title="Atlchain endorsement.">ATV</a>.  <a href="structaltintegration_1_1CheckPublicationData.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkCommandGroupStore.html">VbkCommandGroupStore</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A wrapper for the payload store that constructs command objects.  <a href="structaltintegration_1_1VbkCommandGroupStore.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structaltintegration_1_1VTBInvalidationInfo"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo">VTBInvalidationInfo</a></td></tr>
+<tr class="separator:structaltintegration_1_1VTBInvalidationInfo"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Veriblock block tree.  <a href="structaltintegration_1_1VbkBlockTree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -284,9 +292,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An abstraction over on-disk storage iterator.  <a href="structaltintegration_1_1BlockReader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1InmemBlockProvider.html">InmemBlockProvider</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">In-memory block storage, used in tests.  <a href="structaltintegration_1_1InmemBlockProvider.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accessor for ATV/VTB/VbkBlock bodies given hash.  <a href="structaltintegration_1_1PayloadsStorage.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -352,6 +357,8 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c">BLOCK_FAILED_MASK</a>
 , <a class="el" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa7bb342c7692f443125121dc05d2b4ce9">BLOCK_HAS_PAYLOADS</a> = 1 &lt;&lt; 8
 , <a class="el" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9">BLOCK_ACTIVE</a> = 1 &lt;&lt; 9
+, <br />
+&#160;&#160;<a class="el" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa938acc555afeff78eb795df151db9364">BLOCK_DELETED</a> = 1 &lt;&lt; 10
 <br />
  }</td></tr>
 <tr class="memdesc:a798d9fc435a987ae04ecc3ef4f5e736a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags that describe block status.  <a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">More...</a><br /></td></tr>
@@ -466,6 +473,10 @@ template&lt;typename Value , size_t N&gt; </td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, AltBlockAddon &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a88b8b3c0c6658d96fe684ffad67e2476"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a88b8b3c0c6658d96fe684ffad67e2476"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5b06fe8283fa62c3c958e70bf5fd4a7"><td class="memTemplParams" colspan="2">template&lt;typename Element , typename Container &gt; </td></tr>
+<tr class="memitem:af5b06fe8283fa62c3c958e70bf5fd4a7"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af5b06fe8283fa62c3c958e70bf5fd4a7">findDuplicates</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;index, Container &amp;payloads, <a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree) -&gt; decltype(payloads.end())</td></tr>
+<tr class="memdesc:af5b06fe8283fa62c3c958e70bf5fd4a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find stateless and stateful duplicates Reorder the container items, moving all found duplicates to the back.  <a href="namespacealtintegration.html#af5b06fe8283fa62c3c958e70bf5fd4a7">More...</a><br /></td></tr>
+<tr class="separator:af5b06fe8283fa62c3c958e70bf5fd4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad16cdd0016f804b0db8d707523992e83"><td class="memTemplParams" colspan="2"><a id="ad16cdd0016f804b0db8d707523992e83"></a>
 template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:ad16cdd0016f804b0db8d707523992e83"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ad16cdd0016f804b0db8d707523992e83">ToJSON</a> (const <a class="el" href="structaltintegration_1_1PopPayoutsParams.html">PopPayoutsParams</a> &amp;p)</td></tr>
@@ -484,13 +495,8 @@ template&lt;typename Block &gt; </td></tr>
 <tr class="memitem:a1a12e777e52a4a4aa3d8b0b1275bf5d2"><td class="memTemplParams" colspan="2"><a id="a1a12e777e52a4a4aa3d8b0b1275bf5d2"></a>
 template&lt;typename Block &gt; </td></tr>
 <tr class="memitem:a1a12e777e52a4a4aa3d8b0b1275bf5d2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a1a12e777e52a4a4aa3d8b0b1275bf5d2">isBlockOutdated</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;finalBlock, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;candidate, int window=0)</td></tr>
-<tr class="memdesc:a1a12e777e52a4a4aa3d8b0b1275bf5d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">a <code>candidate</code> is considered outdated iff it is behind <code>finalBlock</code>, or on same height and not equal to <code>finalBlock</code>, or its fork block is outdated <br /></td></tr>
+<tr class="memdesc:a1a12e777e52a4a4aa3d8b0b1275bf5d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">a <code>candidate</code> is considered outdated if it is behind <code>finalBlock</code>, or on same height and not equal to <code>finalBlock</code>, or its fork block is outdated <br /></td></tr>
 <tr class="separator:a1a12e777e52a4a4aa3d8b0b1275bf5d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4af046b53ac1cf8e334af94e4731fbcd"><td class="memTemplParams" colspan="2"><a id="a4af046b53ac1cf8e334af94e4731fbcd"></a>
-template&lt;typename JsonValue , typename Block &gt; </td></tr>
-<tr class="memitem:a4af046b53ac1cf8e334af94e4731fbcd"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4af046b53ac1cf8e334af94e4731fbcd">ToJSON</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;i)</td></tr>
-<tr class="memdesc:a4af046b53ac1cf8e334af94e4731fbcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
-<tr class="separator:a4af046b53ac1cf8e334af94e4731fbcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47d7e3b4c00fdc32fba7f549ae4d8801"><td class="memTemplParams" colspan="2"><a id="a47d7e3b4c00fdc32fba7f549ae4d8801"></a>
 template&lt;typename Block &gt; </td></tr>
 <tr class="memitem:a47d7e3b4c00fdc32fba7f549ae4d8801"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a47d7e3b4c00fdc32fba7f549ae4d8801">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, typename Block::hash_t precalculatedHash=typename Block::hash_t())</td></tr>
@@ -1024,10 +1030,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995">saveTrees</a> (const <a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree, <a class="el" href="structaltintegration_1_1BlockBatch.html">BlockBatch</a> &amp;batch)</td></tr>
 <tr class="memdesc:a1036e0889afa590fec23e3efc7b3c995"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save all (BTC/VBK/ALT) trees on disk in a single Batch. <br /></td></tr>
 <tr class="separator:a1036e0889afa590fec23e3efc7b3c995"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a967e6111ef2ca4672fc0314dcdb90dc5"><td class="memItemLeft" align="right" valign="top"><a id="a967e6111ef2ca4672fc0314dcdb90dc5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a967e6111ef2ca4672fc0314dcdb90dc5">loadTrees</a> (<a class="el" href="structaltintegration_1_1PopContext.html">PopContext</a> &amp;context, <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;reader, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="memdesc:a967e6111ef2ca4672fc0314dcdb90dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load all (ALT/VBK/BTC) trees from disk into memory. <br /></td></tr>
-<tr class="separator:a967e6111ef2ca4672fc0314dcdb90dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e64d692c7a3d75b1cb687fa76b4715f"><td class="memItemLeft" align="right" valign="top"><a id="a8e64d692c7a3d75b1cb687fa76b4715f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a8e64d692c7a3d75b1cb687fa76b4715f">loadTrees</a> (<a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree, <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;reader, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a8e64d692c7a3d75b1cb687fa76b4715f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load all (ALT/VBK/BTC) trees from disk into memory. <br /></td></tr>
+<tr class="separator:a8e64d692c7a3d75b1cb687fa76b4715f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f057df0f1567971f7172c0c3c9fa7cc"><td class="memItemLeft" align="right" valign="top"><a id="a7f057df0f1567971f7172c0c3c9fa7cc"></a>
 std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a7f057df0f1567971f7172c0c3c9fa7cc">ParseHex</a> (const char *psz)</td></tr>
 <tr class="memdesc:a7f057df0f1567971f7172c0c3c9fa7cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse bytes from hex. <br /></td></tr>
@@ -1238,6 +1244,39 @@ template&lt;&gt; </td></tr>
 <li>OFF - disable logs </li>
 </ul>
 </div><hr/><h2 class="groupheader">Class Documentation</h2>
+<a name="structaltintegration_1_1VTBInvalidationInfo" id="structaltintegration_1_1VTBInvalidationInfo"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structaltintegration_1_1VTBInvalidationInfo">&#9670;&nbsp;</a></span>altintegration::VTBInvalidationInfo</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct altintegration::VTBInvalidationInfo</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock">
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00024">24</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::VTBInvalidationInfo:</div>
+<div id="dynsection-0-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-0-content" class="dyncontent" style="display:none;">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1VTBInvalidationInfo__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+</div>
+<table class="fieldtable">
+<tr><th colspan="3">Class Members</th></tr>
+<tr><td class="fieldtype">
+<a id="abe1813c2b53f19ac95dcae22b0c68a58"></a>hash_t</td>
+<td class="fieldname">
+missing_btc_block</td>
+<td class="fielddoc">
+</td></tr>
+</table>
+
+</div>
+</div>
 <a name="structaltintegration_1_1vblake__ctx" id="structaltintegration_1_1vblake__ctx"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#structaltintegration_1_1vblake__ctx">&#9670;&nbsp;</a></span>altintegration::vblake_ctx</h2>
 
@@ -1251,11 +1290,11 @@ template&lt;&gt; </td></tr>
 </div><div class="memdoc">
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="vblake_8hpp_source.html#l00018">18</a> of file <a class="el" href="vblake_8hpp_source.html">vblake.hpp</a>.</p>
-</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::vblake_ctx:</div>
-<div id="dynsection-0-summary" class="dynsummary" style="display:block;">
+</div><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::vblake_ctx:</div>
+<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
 </div>
-<div id="dynsection-0-content" class="dyncontent" style="display:none;">
+<div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1vblake__ctx__coll__graph.svg" width="175" height="103"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
@@ -1290,11 +1329,11 @@ chained state </td></tr>
 </div><div class="memdoc">
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="network__byte__pair_8hpp_source.html#l00052">52</a> of file <a class="el" href="network__byte__pair_8hpp_source.html">network_byte_pair.hpp</a>.</p>
-</div><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::NetworkBytePair:</div>
-<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
+</div><div id="dynsection-2" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-2-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::NetworkBytePair:</div>
+<div id="dynsection-2-summary" class="dynsummary" style="display:block;">
 </div>
-<div id="dynsection-1-content" class="dyncontent" style="display:none;">
+<div id="dynsection-2-content" class="dyncontent" style="display:none;">
 <div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1NetworkBytePair__coll__graph.svg" width="214" height="287"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
@@ -1329,11 +1368,11 @@ typeId</td>
 </div><div class="memdoc">
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="mempool__result_8hpp_source.html#l00019">19</a> of file <a class="el" href="mempool__result_8hpp_source.html">mempool_result.hpp</a>.</p>
-</div><div id="dynsection-2" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-2-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::MempoolResult:</div>
-<div id="dynsection-2-summary" class="dynsummary" style="display:block;">
+</div><div id="dynsection-3" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-3-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::MempoolResult:</div>
+<div id="dynsection-3-summary" class="dynsummary" style="display:block;">
 </div>
-<div id="dynsection-2-content" class="dyncontent" style="display:none;">
+<div id="dynsection-3-content" class="dyncontent" style="display:none;">
 <div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1MempoolResult__coll__graph.svg" width="264" height="596"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
@@ -1437,6 +1476,8 @@ vtbs</td>
 </td></tr>
 <tr><td class="fieldname"><a id="a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9"></a>BLOCK_ACTIVE&#160;</td><td class="fielddoc"><p>the block is currently applied via SetState. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a798d9fc435a987ae04ecc3ef4f5e736aa938acc555afeff78eb795df151db9364"></a>BLOCK_DELETED&#160;</td><td class="fielddoc"><p>the block is temporarily deleted </p>
+</td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="block__status_8hpp_source.html#l00040">40</a> of file <a class="el" href="block__status_8hpp_source.html">block_status.hpp</a>.</p>
@@ -1453,12 +1494,14 @@ vtbs</td>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a> | <a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7">BLOCK_FAILED_POP</a> | <a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa12343296a7f3939747d6728499a4efee">BLOCK_FAILED_BLOCK</a>,</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa7bb342c7692f443125121dc05d2b4ce9">BLOCK_HAS_PAYLOADS</a> = 1 &lt;&lt; 8,</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9">BLOCK_ACTIVE</a> = 1 &lt;&lt; 9,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa938acc555afeff78eb795df151db9364">BLOCK_DELETED</a> = 1 &lt;&lt; 10</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;};</div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa12343296a7f3939747d6728499a4efee"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa12343296a7f3939747d6728499a4efee">altintegration::BLOCK_FAILED_BLOCK</a></div><div class="ttdeci">@ BLOCK_FAILED_BLOCK</div><div class="ttdoc">block is statelessly valid, but the altchain marked it as failed</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00049">block_status.hpp:49</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa3615516983ff36f7672f7098edf17b1d"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa3615516983ff36f7672f7098edf17b1d">altintegration::BLOCK_VALID_UNKNOWN</a></div><div class="ttdeci">@ BLOCK_VALID_UNKNOWN</div><div class="ttdoc">default state for validity - validity state is unknown</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00042">block_status.hpp:42</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">altintegration::BLOCK_FAILED_CHILD</a></div><div class="ttdeci">@ BLOCK_FAILED_CHILD</div><div class="ttdoc">block is state{lessly,fully} valid and the altchain did not report it as invalid, but some of the anc...</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00054">block_status.hpp:54</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa7bb342c7692f443125121dc05d2b4ce9"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa7bb342c7692f443125121dc05d2b4ce9">altintegration::BLOCK_HAS_PAYLOADS</a></div><div class="ttdeci">@ BLOCK_HAS_PAYLOADS</div><div class="ttdoc">acceptBlockHeader has been executed on this block;</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00059">block_status.hpp:59</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa938acc555afeff78eb795df151db9364"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa938acc555afeff78eb795df151db9364">altintegration::BLOCK_DELETED</a></div><div class="ttdeci">@ BLOCK_DELETED</div><div class="ttdoc">the block is temporarily deleted</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00065">block_status.hpp:63</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9">altintegration::BLOCK_ACTIVE</a></div><div class="ttdeci">@ BLOCK_ACTIVE</div><div class="ttdoc">the block is currently applied via SetState.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00061">block_status.hpp:61</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c">altintegration::BLOCK_FAILED_MASK</a></div><div class="ttdeci">@ BLOCK_FAILED_MASK</div><div class="ttdoc">all invalidity flags</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00057">block_status.hpp:56</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7">altintegration::BLOCK_FAILED_POP</a></div><div class="ttdeci">@ BLOCK_FAILED_POP</div><div class="ttdoc">block failed state{less,ful} validation due to its payloads</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00051">block_status.hpp:51</a></div></div>
@@ -1756,6 +1799,71 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structaltintegration_1_1Address.html" title="Represents address on VBK chain.">Address</a> containing VBK address </dd></dl>
 
+</div>
+</div>
+<a id="af5b06fe8283fa62c3c958e70bf5fd4a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5b06fe8283fa62c3c958e70bf5fd4a7">&#9670;&nbsp;</a></span>findDuplicates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Element , typename Container &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto altintegration::findDuplicates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Container &amp;&#160;</td>
+          <td class="paramname"><em>payloads</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;&#160;</td>
+          <td class="paramname"><em>tree</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; decltype(payloads.end()) </td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>an iterator to the first duplicate </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="alt__block__tree__util_8hpp_source.html#l00025">25</a> of file <a class="el" href="alt__block__tree__util_8hpp_source.html">alt_block_tree_util.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                                {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span> startHeight = tree.getParams().getBootstrapBlock().height;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="comment">// don&#39;t look for duplicates in index itself</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  Chain&lt;BlockIndex&lt;AltBlock&gt;&gt; chain(startHeight, index.pprev);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  std::unordered_set&lt;std::vector&lt;uint8_t&gt;&gt; ids;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; storage = tree.getPayloadsIndex();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">auto</span> duplicates =</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      std::remove_if(payloads.begin(), payloads.end(), [&amp;](<span class="keyword">const</span> Element&amp; p) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        const auto id = getIdVector(p);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">// ensure existing blocks do not contain this id</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        for (const auto&amp; hash : storage.getContainingAltBlocks(id)) {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;          const auto* candidate = tree.getBlockIndex(hash);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;          if (chain.contains(candidate)) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="comment">// duplicate in &#39;candidate&#39;</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            return true;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;          }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// ensure ids are unique within `pop`</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">bool</span> inserted = ids.insert(<span class="keywordtype">id</span>).second;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordflow">return</span> !inserted;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      });</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordflow">return</span> duplicates;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;}</div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="aedfa430433cd4a67f1627f2e4f4000ef"></a>

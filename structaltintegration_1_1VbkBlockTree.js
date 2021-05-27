@@ -1,6 +1,7 @@
 var structaltintegration_1_1VbkBlockTree =
 [
     [ "BtcTree", "structaltintegration_1_1VbkBlockTree.html#a5b6c3adc24ce4e6d9705cf92dff656e3", null ],
+    [ "command_group_store_t", "structaltintegration_1_1VbkBlockTree.html#a642a342fc4d8ea21f5a88bc6db12b015", null ],
     [ "endorsement_t", "structaltintegration_1_1VbkBlockTree.html#a2667b39ae3722d0968f2badc4655fb4e", null ],
     [ "index_t", "structaltintegration_1_1VbkBlockTree.html#a4f11ad34376ea20bc562564d3b8efd65", null ],
     [ "payloads_t", "structaltintegration_1_1VbkBlockTree.html#a8d319a390dcd3f4b411bcd78c5ddd811", null ],
@@ -15,10 +16,12 @@ var structaltintegration_1_1VbkBlockTree =
     [ "btc", "structaltintegration_1_1VbkBlockTree.html#a06180fdcb1566eede8a53ba4d03af282", null ],
     [ "getComparator", "structaltintegration_1_1VbkBlockTree.html#acac5820df22bee06262a367cc11c95f2", null ],
     [ "getComparator", "structaltintegration_1_1VbkBlockTree.html#adaa3d7518fbb08989f64359ed69c68d3", null ],
+    [ "getInvalidVTBs", "structaltintegration_1_1VbkBlockTree.html#a19311caf1bd7104abd13dd18a3dac05e", null ],
     [ "getPayloadsIndex", "structaltintegration_1_1VbkBlockTree.html#a3c926c33efb7e59cfe01c44fc48898f5", null ],
     [ "loadBlock", "structaltintegration_1_1VbkBlockTree.html#a2705f0b812488d1770a98e6e0f748df2", null ],
     [ "loadTip", "structaltintegration_1_1VbkBlockTree.html#aba7f9010e94294a5d6eb523c3f1ed04c", null ],
     [ "overrideTip", "structaltintegration_1_1VbkBlockTree.html#a1213330b1a05be755a1ca5311e7e079c", null ],
+    [ "removeInvalidVTB", "structaltintegration_1_1VbkBlockTree.html#a10dddc77e6474c137515b12e9ca4ace1", null ],
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#a6db4ccc2d38fc47f903d62f33a94f00d", null ],
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#a5659af106030eb9c34732ce6335d5569", null ],
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#abc9fb8eea7a1b36c65de56c139d62d1d", null ],

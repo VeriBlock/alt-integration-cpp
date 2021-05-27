@@ -213,16 +213,16 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">isBlockOld</a> (const hash_t &amp;hash) const</td></tr>
 <tr class="memdesc:ae60dda418fe822190cbd54741a3c10f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:ae60dda418fe822190cbd54741a3c10f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcbad8e8de52aa7437fb59ae6fb3fe97"><td class="memItemLeft" align="right" valign="top"><a id="abcbad8e8de52aa7437fb59ae6fb3fe97"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>finalizeBlock</b> (const hash_t &amp;block)</td></tr>
-<tr class="separator:abcbad8e8de52aa7437fb59ae6fb3fe97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d4d15bb06e7eeae2ecf12eb6ab6f935"><td class="memItemLeft" align="right" valign="top"><a id="a7d4d15bb06e7eeae2ecf12eb6ab6f935"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>finalizeBlock</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="separator:a7d4d15bb06e7eeae2ecf12eb6ab6f935"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structaltintegration_1_1BaseBlockTree"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structaltintegration_1_1BaseBlockTree')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a></td></tr>
 <tr class="memitem:acdeede24636e84dff4a34cea27adf82f inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="acdeede24636e84dff4a34cea27adf82f"></a>
 const std::unordered_set&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getTips</b> () const</td></tr>
 <tr class="separator:acdeede24636e84dff4a34cea27adf82f inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cc6964ce332d7232a097ddc65ae3b99 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a1cc6964ce332d7232a097ddc65ae3b99"></a>
-const block_index_t &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlocks</b> () const</td></tr>
-<tr class="separator:a1cc6964ce332d7232a097ddc65ae3b99 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a722a4734ad1c00c25f59ab6686406f51 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a722a4734ad1c00c25f59ab6686406f51"></a>
+std::vector&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlocks</b> () const</td></tr>
+<tr class="separator:a722a4734ad1c00c25f59ab6686406f51 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05d3ee700667bdd574f9f4372b56d468 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a05d3ee700667bdd574f9f4372b56d468"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BaseBlockTree</b> (const <a class="el" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree</a> &amp;)=delete</td></tr>
 <tr class="separator:a05d3ee700667bdd574f9f4372b56d468 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -251,6 +251,15 @@ template&lt;typename T , typename  = typename std::enable_if&lt;                
 <tr class="memitem:abb498b97671f5b9e2681e54eaeec63b6 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#abb498b97671f5b9e2681e54eaeec63b6">getBlockIndex</a> (const T &amp;hash) const</td></tr>
 <tr class="memdesc:abb498b97671f5b9e2681e54eaeec63b6 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:abb498b97671f5b9e2681e54eaeec63b6 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b04cff9f2bbfc3b44e43a49a61e3a5b inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;                std::is_same&lt;T, hash_t&gt;::value ||                std::is_same&lt;T, prev_block_hash_t&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:a7b04cff9f2bbfc3b44e43a49a61e3a5b inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a7b04cff9f2bbfc3b44e43a49a61e3a5b">findBlockIndex</a> (const T &amp;hash)</td></tr>
+<tr class="memdesc:a7b04cff9f2bbfc3b44e43a49a61e3a5b inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="structaltintegration_1_1BlockIndex.html" title="A node in a block tree.">BlockIndex</a> by block hash.  <a href="structaltintegration_1_1BaseBlockTree.html#a7b04cff9f2bbfc3b44e43a49a61e3a5b">More...</a><br /></td></tr>
+<tr class="separator:a7b04cff9f2bbfc3b44e43a49a61e3a5b inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplParams" colspan="2"><a id="a619da2aa9e768d96e844e78139d4e244"></a>
+template&lt;typename T , typename  = typename std::enable_if&lt;                std::is_same&lt;T, hash_t&gt;::value ||                std::is_same&lt;T, prev_block_hash_t&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a619da2aa9e768d96e844e78139d4e244">findBlockIndex</a> (const T &amp;hash) const</td></tr>
+<tr class="memdesc:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78f4ab76e6419449175a99f7b66d7ad4 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a78f4ab76e6419449175a99f7b66d7ad4"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>loadTip</b> (const hash_t &amp;hash, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a78f4ab76e6419449175a99f7b66d7ad4 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -327,6 +336,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memdesc:a3aa99cb1232cd715b3a48ac55d71f10e"><td class="mdescLeft">&#160;</td><td class="mdescRight">whenever new block is inserted, <a class="el" href="structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root.">BlockTree</a> has to update its ChainWork <br /></td></tr>
 <tr class="separator:a3aa99cb1232cd715b3a48ac55d71f10e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_structaltintegration_1_1BaseBlockTree"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_structaltintegration_1_1BaseBlockTree')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a></td></tr>
+<tr class="memitem:a09b11b0e5e3fd03e322bd24942a6424e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a09b11b0e5e3fd03e322bd24942a6424e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e">eraseBlock</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;block)</td></tr>
+<tr class="memdesc:a09b11b0e5e3fd03e322bd24942a6424e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">dangerous! permanently drops the block from the tree <br /></td></tr>
+<tr class="separator:a09b11b0e5e3fd03e322bd24942a6424e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8a3d94836fcc712c6788d3e4a31234e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ac8a3d94836fcc712c6788d3e4a31234e"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> (size_t level=0) const</td></tr>
 <tr class="separator:ac8a3d94836fcc712c6788d3e4a31234e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -341,10 +354,6 @@ const ChainParams *&#160;</td><td class="memItemRight" valign="bottom"><b>param_
 block_index_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a></td></tr>
 <tr class="memdesc:a93f2c656424f783f65c8d5527e115a51 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores ALL blocks, including valid and invalid <br /></td></tr>
 <tr class="separator:a93f2c656424f783f65c8d5527e115a51 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a78f7f48ff4a04715afb1065759269b inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a8a78f7f48ff4a04715afb1065759269b"></a>
-block_index_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a8a78f7f48ff4a04715afb1065759269b">removed_</a></td></tr>
-<tr class="memdesc:a8a78f7f48ff4a04715afb1065759269b inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores all removed blocks, to ensure pointers to blocks remain stable <br /></td></tr>
-<tr class="separator:a8a78f7f48ff4a04715afb1065759269b inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4226fb8644befc047f78f38d88b7f736 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a4226fb8644befc047f78f38d88b7f736"></a>
 std::unordered_set&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a></td></tr>
 <tr class="memdesc:a4226fb8644befc047f78f38d88b7f736 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores ONLY VALID tips, including currently active tip <br /></td></tr>
@@ -449,8 +458,8 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0a1ab4ab0c45ad2691be3f192e1c6d1e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00086">base_block_tree.hpp:86</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00370">base_block_tree.hpp:370</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0a1ab4ab0c45ad2691be3f192e1c6d1e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00095">base_block_tree.hpp:95</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00411">base_block_tree.hpp:411</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -539,25 +548,25 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00289">289</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                                                                               {</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    }</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;      this-&gt;setState(candidate, state);</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    }</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00067">base_block_tree.hpp:67</a></div></div>
+<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00290">290</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                                                                               {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    }</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    }</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;      this-&gt;setState(candidate, state);</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  }</div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00076">base_block_tree.hpp:76</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -637,7 +646,7 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00017">block_status.hpp:17</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">altintegration::BLOCK_BOOTSTRAP</a></div><div class="ttdeci">@ BLOCK_BOOTSTRAP</div><div class="ttdoc">this is a bootstrap block</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00047">block_status.hpp:47</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8f11a78c3709de515ce810b744ac05f6"><div class="ttname"><a href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">altintegration::checkBlock</a></div><div class="ttdeci">bool checkBlock(const BtcBlock &amp;block, ValidationState &amp;state, const BtcChainParams &amp;params)</div><div class="ttdoc">Stateless validation for a single block.</div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a925899dfacc9a135c77c2ffc24f9321a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a925899dfacc9a135c77c2ffc24f9321a">altintegration::BaseBlockTree::loadBlock</a></div><div class="ttdeci">virtual bool loadBlock(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00120">base_block_tree.hpp:120</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a925899dfacc9a135c77c2ffc24f9321a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a925899dfacc9a135c77c2ffc24f9321a">altintegration::BaseBlockTree::loadBlock</a></div><div class="ttdeci">virtual bool loadBlock(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00155">base_block_tree.hpp:155</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['key_640',['key',['../structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3',1,'altintegration::BlockIterator']]],
-  ['keystoneround_641',['keystoneRound',['../structaltintegration_1_1PopPayoutsParams.html#ac6b586dce677ce41a8d6da3c4c6e1d9c',1,'altintegration::PopPayoutsParams']]],
-  ['kiss99_642',['kiss99',['../namespacealtintegration.html#aa5909c3f85b096e25a712638582d2b62',1,'altintegration']]]
+  ['key_685',['key',['../structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f',1,'altintegration::adaptors::BlockIteratorImpl::key()'],['../structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3',1,'altintegration::BlockIterator::key()']]],
+  ['keystoneround_686',['keystoneRound',['../structaltintegration_1_1PopPayoutsParams.html#ac6b586dce677ce41a8d6da3c4c6e1d9c',1,'altintegration::PopPayoutsParams']]],
+  ['kiss99_687',['kiss99',['../namespacealtintegration.html#aa5909c3f85b096e25a712638582d2b62',1,'altintegration']]]
 ];

@@ -5,7 +5,6 @@ var structaltintegration_1_1VbkChainParams =
     [ "getEndorsementSettlementInterval", "structaltintegration_1_1VbkChainParams.html#a4cb58ed3c06e17d29714c0034e3d807d", null ],
     [ "getFinalityDelay", "structaltintegration_1_1VbkChainParams.html#a9e5be95382333ffa0319da3fa55d3c37", null ],
     [ "getForkResolutionLookUpTable", "structaltintegration_1_1VbkChainParams.html#ae9f65fc5fb7bc514a1d5f8a46a884e43", null ],
-    [ "getHistoryOverwriteLimit", "structaltintegration_1_1VbkChainParams.html#a4bc0dfd7d0393195f9f8e892bc85f5ad", null ],
     [ "getKeystoneInterval", "structaltintegration_1_1VbkChainParams.html#add95d77ca720bda96f88c4dd96305999", null ],
     [ "getMaxReorgBlocks", "structaltintegration_1_1VbkChainParams.html#a1da72c2e4090b8269995c4bc3d8da834", null ],
     [ "getMinimumDifficulty", "structaltintegration_1_1VbkChainParams.html#a0ecd5428a507344f184a6995111ac40d", null ],
@@ -22,5 +21,8 @@ var structaltintegration_1_1VbkChainParams =
     [ "numBlocksForBootstrap", "structaltintegration_1_1VbkChainParams.html#add46ddb4623900ade62aa823372305a7", null ],
     [ "preserveBlocksBehindFinal", "structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3", null ],
     [ "forkResolutionLookUpTable_", "structaltintegration_1_1VbkChainParams.html#a1043a920046e44330867eb552a90470e", null ],
-    [ "mMaxFutureBlockTime", "structaltintegration_1_1VbkChainParams.html#ad6b531407322bb51c30aff50379bf280", null ]
+    [ "mEndorsementSettlementInterval", "structaltintegration_1_1VbkChainParams.html#a04eb68862d4ce8f8c71056670d0dd2c5", null ],
+    [ "mMaxFutureBlockTime", "structaltintegration_1_1VbkChainParams.html#ad6b531407322bb51c30aff50379bf280", null ],
+    [ "mOldBlocksWindow", "structaltintegration_1_1VbkChainParams.html#a8725ae6d823d775e14b7d77805b225f3", null ],
+    [ "mPreserveBlocksBehindFinal", "structaltintegration_1_1VbkChainParams.html#a8b6d2f85b80519becfd4eed68f15f885", null ]
 ];

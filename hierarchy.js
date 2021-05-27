@@ -7,6 +7,7 @@ var hierarchy =
     [ "altintegration::Address", "structaltintegration_1_1Address.html", null ],
     [ "altintegration::AltBlock", "structaltintegration_1_1AltBlock.html", null ],
     [ "altintegration::AltChainParams", "structaltintegration_1_1AltChainParams.html", null ],
+    [ "altintegration::AltCommandGroupStore", "structaltintegration_1_1AltCommandGroupStore.html", null ],
     [ "altintegration::ATV", "structaltintegration_1_1ATV.html", null ],
     [ "altintegration::AuthenticatedContextInfoContainer", "structaltintegration_1_1AuthenticatedContextInfoContainer.html", null ],
     [ "altintegration::BaseBlockTree< Block >", "structaltintegration_1_1BaseBlockTree.html", [
@@ -24,9 +25,15 @@ var hierarchy =
     ] ],
     [ "altintegration::Blob< VBK_MERKLE_ROOT_HASH_SIZE >", "structaltintegration_1_1Blob.html", null ],
     [ "altintegration::Blob< VBK_PREVIOUS_BLOCK_HASH_SIZE >", "structaltintegration_1_1Blob.html", null ],
-    [ "altintegration::BlockBatch", "structaltintegration_1_1BlockBatch.html", null ],
-    [ "altintegration::BlockIterator< BlockT >", "structaltintegration_1_1BlockIterator.html", null ],
-    [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", null ],
+    [ "altintegration::BlockBatch", "structaltintegration_1_1BlockBatch.html", [
+      [ "altintegration::adaptors::BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html", null ]
+    ] ],
+    [ "altintegration::BlockIterator< BlockT >", "structaltintegration_1_1BlockIterator.html", [
+      [ "altintegration::adaptors::BlockIteratorImpl< BlockT >", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", null ]
+    ] ],
+    [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", [
+      [ "altintegration::adaptors::BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", null ]
+    ] ],
     [ "altintegration::Config::Bootstrap< Block, ChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::BtcBlock, altintegration::BtcChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::VbkBlock, altintegration::VbkChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
@@ -56,7 +63,6 @@ var hierarchy =
     ] ],
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
-    [ "altintegration::InmemBlockProvider", "structaltintegration_1_1InmemBlockProvider.html", null ],
     [ "altintegration::IsPopPayload< T >", "structaltintegration_1_1IsPopPayload.html", null ],
     [ "altintegration::KeystoneContainer", "structaltintegration_1_1KeystoneContainer.html", null ],
     [ "altintegration::Logger", "structaltintegration_1_1Logger.html", null ],
@@ -65,7 +71,9 @@ var hierarchy =
     [ "altintegration::MerklePath", "structaltintegration_1_1MerklePath.html", null ],
     [ "altintegration::NetworkBytePair", "namespacealtintegration.html#structaltintegration_1_1NetworkBytePair", null ],
     [ "altintegration::Output", "structaltintegration_1_1Output.html", null ],
-    [ "altintegration::PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", null ],
+    [ "altintegration::PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", [
+      [ "altintegration::adaptors::PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", null ]
+    ] ],
     [ "altintegration::PopContext", "structaltintegration_1_1PopContext.html", null ],
     [ "altintegration::PopData", "structaltintegration_1_1PopData.html", null ],
     [ "altintegration::PopPayouts", "structaltintegration_1_1PopPayouts.html", null ],
@@ -79,6 +87,16 @@ var hierarchy =
     [ "altintegration::ReadStream", "structaltintegration_1_1ReadStream.html", null ],
     [ "altintegration::reverse_range< T >", "classaltintegration_1_1reverse__range.html", null ],
     [ "altintegration::cache::SmallLFRUCache< Key, Value, Size, TimeWindow, typename >", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", null ],
+    [ "altintegration::adaptors::Storage", "structaltintegration_1_1adaptors_1_1Storage.html", [
+      [ "altintegration::adaptors::InmemStorageImpl", "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html", null ],
+      [ "altintegration::adaptors::LevelDBStorage", "structaltintegration_1_1adaptors_1_1LevelDBStorage.html", null ],
+      [ "altintegration::adaptors::RocksDBStorage", "structaltintegration_1_1adaptors_1_1RocksDBStorage.html", null ]
+    ] ],
+    [ "altintegration::adaptors::StorageIterator", "structaltintegration_1_1adaptors_1_1StorageIterator.html", [
+      [ "altintegration::adaptors::InmemStorageIterator", "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html", null ],
+      [ "altintegration::adaptors::LevelDBStorageIterator", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html", null ],
+      [ "altintegration::adaptors::RocksDBStorageIterator", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html", null ]
+    ] ],
     [ "altintegration::StoredBlockIndex< Block >", "structaltintegration_1_1StoredBlockIndex.html", null ],
     [ "altintegration::MemPool::SubmitResult", "structaltintegration_1_1MemPool_1_1SubmitResult.html", null ],
     [ "altintegration::ValidationState", "classaltintegration_1_1ValidationState.html", null ],
@@ -88,11 +106,18 @@ var hierarchy =
       [ "altintegration::VbkChainParamsRegTest", "structaltintegration_1_1VbkChainParamsRegTest.html", null ],
       [ "altintegration::VbkChainParamsTest", "structaltintegration_1_1VbkChainParamsTest.html", null ]
     ] ],
+    [ "altintegration::VbkCommandGroupStore", "structaltintegration_1_1VbkCommandGroupStore.html", null ],
     [ "altintegration::VbkMerklePath", "structaltintegration_1_1VbkMerklePath.html", null ],
     [ "altintegration::VbkNetworkType", "structaltintegration_1_1VbkNetworkType.html", null ],
     [ "altintegration::VbkPopTx", "structaltintegration_1_1VbkPopTx.html", null ],
     [ "altintegration::VbkTx", "structaltintegration_1_1VbkTx.html", null ],
     [ "altintegration::vblake_ctx", "namespacealtintegration.html#structaltintegration_1_1vblake__ctx", null ],
     [ "altintegration::VTB", "structaltintegration_1_1VTB.html", null ],
+    [ "altintegration::VTBInvalidationInfo", "namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo", null ],
+    [ "altintegration::adaptors::WriteBatch", "structaltintegration_1_1adaptors_1_1WriteBatch.html", [
+      [ "altintegration::adaptors::InmemWriteBatch", "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html", null ],
+      [ "altintegration::adaptors::LevelDBWriteBatch", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html", null ],
+      [ "altintegration::adaptors::RocksDBWriteBatch", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html", null ]
+    ] ],
     [ "altintegration::WriteStream", "classaltintegration_1_1WriteStream.html", null ]
 ];

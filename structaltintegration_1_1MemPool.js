@@ -24,6 +24,7 @@ var structaltintegration_1_1MemPool =
     [ "get", "structaltintegration_1_1MemPool.html#ae10e6a8ad87fb1617cc6fc2a4ae7d15b", null ],
     [ "getInFlightMap", "structaltintegration_1_1MemPool.html#a7ced15979f468651e878758b7159b1f9", null ],
     [ "getMap", "structaltintegration_1_1MemPool.html#a7ddec8b4bb32e57104f19af8fe91a550", null ],
+    [ "getMissingBtcBlocks", "structaltintegration_1_1MemPool.html#ab965446db0fde49fabfa2d4530256e1a", null ],
     [ "isKnown", "structaltintegration_1_1MemPool.html#ac12ccabcc8eb02e59adfaa4d21e19d1b", null ],
     [ "onAccepted", "structaltintegration_1_1MemPool.html#a87af523ce69a470b4470f76920724dfa", null ],
     [ "removeAll", "structaltintegration_1_1MemPool.html#a0a338bda64c5577f8d346e02f941ebdc", null ],

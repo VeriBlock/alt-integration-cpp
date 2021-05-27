@@ -1,9 +1,0 @@
-<map id="altintegration::InmemBlockProvider" name="altintegration::InmemBlockProvider">
-<area shape="rect" id="node1" title="In&#45;memory block storage, used in tests." alt="" coords="5,819,180,1043"/>
-<area shape="rect" id="node2" title=" " alt="" coords="8,387,151,464"/>
-<area shape="rect" id="node3" title=" " alt="" coords="29,145,141,223"/>
-<area shape="rect" id="node4" title=" " alt="" coords="131,5,169,83"/>
-<area shape="rect" id="node7" title=" " alt="" coords="166,145,270,223"/>
-<area shape="rect" id="node5" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="139,488,299,741"/>
-<area shape="rect" id="node6" title=" " alt="" coords="131,285,305,363"/>
-</map>
