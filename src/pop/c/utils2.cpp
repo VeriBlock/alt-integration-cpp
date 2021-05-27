@@ -25,7 +25,6 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(u8) payout_info,
                            const POP_ENTITY_NAME(pop_data) * pop_data) {
   VBK_ASSERT(self);
-  VBK_ASSERT(pop_data);
   VBK_ASSERT(endorsed_block_header.data);
   VBK_ASSERT(tx_root.data);
   VBK_ASSERT(payout_info.data);
@@ -40,12 +39,22 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                                      payout_info.data + payout_info.size);
 
   PublicationData publication_data;
-  if (!self->ref->generatePublicationData(publication_data,
-                                          v_endorsed_block_header,
-                                          v_tx_root,
-                                          pop_data->ref,
-                                          v_payout_info)) {
-    return nullptr;
+  if (pop_data == nullptr) {
+    if (!self->ref->generatePublicationData(publication_data,
+                                            v_endorsed_block_header,
+                                            v_tx_root,
+                                            altintegration::PopData(),
+                                            v_payout_info)) {
+      return nullptr;
+    }
+  } else {
+    if (!self->ref->generatePublicationData(publication_data,
+                                            v_endorsed_block_header,
+                                            v_tx_root,
+                                            pop_data->ref,
+                                            v_payout_info)) {
+      return nullptr;
+    }
   }
 
   auto* res = new POP_ENTITY_NAME(publication_data);
