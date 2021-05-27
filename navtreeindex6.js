@@ -1,8 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1Endorsement.html#a7f169890a19a44060e7d31d5af582f1d":[4,0,0,36,0],
-"structaltintegration_1_1Endorsement.html#a80f7788e72241e80dfbe949e5a2e52a1":[4,0,0,36,8],
-"structaltintegration_1_1Endorsement.html#a87638c1f4f5f9b6787b837dbdfb966fb":[4,0,0,36,3],
 "structaltintegration_1_1Endorsement.html#a8d6a1f1b535281eb6d79a7c167338b4f":[4,0,0,36,5],
 "structaltintegration_1_1Endorsement.html#a8da54e585c9a44c607ce17771b4bd869":[4,0,0,36,13],
 "structaltintegration_1_1Endorsement.html#a968f9d0ef9707ff14ab90c9f1b5a807b":[4,0,0,36,11],
@@ -249,5 +246,8 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1StoredBlockIndex.html#ae881b5a063dc9353f9acaa0ec0a73f09":[4,0,0,67,1],
 "structaltintegration_1_1StoredBlockIndex.html#ae8dad64f527cebf0c449a56c43d747a0":[4,0,0,67,9],
 "structaltintegration_1_1StoredBlockIndex.html#aeae5fe43a02d70340e7146a6b4c2ca45":[4,0,0,67,4],
-"structaltintegration_1_1VTB.html":[4,0,0,49]
+"structaltintegration_1_1VTB.html":[4,0,0,49],
+"structaltintegration_1_1VTB.html#a09d5f0529495a6d852461ad5076a6c6a":[4,0,0,49,10],
+"structaltintegration_1_1VTB.html#a20d9f3a641c8d5350490a1da3da40266":[4,0,0,49,1],
+"structaltintegration_1_1VTB.html#a389493364912b3b7c9b5bbaa3ae42b03":[4,0,0,49,11]
 };

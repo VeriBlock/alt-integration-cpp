@@ -89,20 +89,20 @@ $(document).ready(function(){initNavTree('rebootstrap.html',''); initResizable()
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_docs_rebootstrap"></a> </p>
-<h3><a class="anchor" id="autotoc_md103"></a>
+<h3><a class="anchor" id="autotoc_md99"></a>
 Legend</h3>
 <ul>
 <li>VBK - VeriBlock</li>
 <li>BTC - Bitcoin</li>
 <li>Finalized - blocks that have 100% chance of being final, e.g. which will never reorganize. For BTC it is same to assume that all blocks behind 11 blocks from current tip are final. For VBK, 2000.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md104"></a>
+<h3><a class="anchor" id="autotoc_md100"></a>
 Description</h3>
 <p>Rebootstrapping is a process of changing bootstrap blocks stored in altchain.</p>
 <dl class="section note"><dt>Note</dt><dd>Example from vBTC: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.cpp</a></dd></dl>
 <p>To properly validate every ATV and VTB, Altchain should maintain a SPV view on BTC and VBK blockchains. Every blockchain starts with a genesis block - a single hand-crafted block, which is a "root" of a tree.</p>
 <p>Similarly, VBK and BTC blockchains should start with a root block. Since we don't start at block 0, we should specify at least 1 <code>difficulty adjustment interval</code> worth of contiguous blocks, otherwise we won't be able to statefully validate their difficulty. For BTC we require at least 2016 blocks, and for VBK we require at least 100 blocks.</p>
-<h3><a class="anchor" id="autotoc_md105"></a>
+<h3><a class="anchor" id="autotoc_md101"></a>
 Protocol</h3>
 <dl class="section warning"><dt>Warning</dt><dd>For Altchain <code>mainnet</code> you ALWAYS should use VBK <code>mainnet</code> and BTC <code>mainnet</code>, otherwise there will be serious security issues. </dd>
 <dd>
