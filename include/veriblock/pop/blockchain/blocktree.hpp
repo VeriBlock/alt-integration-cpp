@@ -190,8 +190,12 @@ struct BlockTree : public BaseBlockTree<Block> {
   const ChainParams* param_ = nullptr;
   const BlockReader& blockProvider_;
 
-  bool reloadBlock(const typename block_t::hash_t& hash,
-                   ValidationState& state) {
+  bool restoreBlock(const typename block_t::hash_t& hash,
+                    ValidationState& state) {
+    if (this->getBlockIndex(hash) != nullptr) {
+      return true;
+    }
+
     stored_index_t stored_index;
     if (!blockProvider_.getBlock(this->makePrevHash(hash), stored_index)) {
       return state.Invalid("can-not-find-block-in-storage");
