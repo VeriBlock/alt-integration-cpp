@@ -72,8 +72,6 @@ TEST_F(VbkBlockFinalization, OverBtcLimitTest) {
 
   ASSERT_EQ(btctip->getHash(), tree->btc().getBestChain().tip()->getHash());
 
-  size_t btcTotalBlocks = tree->btc().getBlocks().size();
-
   ASSERT_TRUE(tree->setState(vbktip->pprev->getHash(), state));
 
   ASSERT_TRUE(tree->finalizeBlock(*finalizedBlock, state));
