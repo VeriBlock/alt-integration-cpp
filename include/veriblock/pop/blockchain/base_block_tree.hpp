@@ -156,7 +156,7 @@ struct BaseBlockTree {
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
-    const auto& root = getRoot();
+    auto& root = getRoot();
     if (index.height == root.getHeight() &&
         index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
@@ -192,6 +192,9 @@ struct BaseBlockTree {
                  makePrevHash(currentHash)) {
         current = createBootstrapBlockIndex(currentHash, index.height);
         current->restore();
+        current->pnext.insert(&root);
+        VBK_ASSERT(root.pprev == nullptr);
+        root.pprev = current;
       } else {
         return state.Invalid("bad-prev",
                              "Block does not connect to current tree");
@@ -223,7 +226,7 @@ struct BaseBlockTree {
     } else if (activeChain_.first() != current) {
       // set a new bootstrap block which is the prev block for the current
       // bootstrap block
-      activeChain_.appendBootstrap(current);
+      activeChain_.appendRoot(current);
     }
 
     VBK_ASSERT(!current->isDeleted());
