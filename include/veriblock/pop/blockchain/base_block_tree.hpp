@@ -157,10 +157,6 @@ struct BaseBlockTree {
 
     // quick check if given block is sane
     const auto& root = getRoot();
-    if (index.height < root.getHeight()) {
-      return state.Invalid("cant-connect", "Loaded block is too far");
-    }
-
     if (index.height == root.getHeight() &&
         index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
@@ -174,7 +170,8 @@ struct BaseBlockTree {
     auto currentHash = header.getHash();
     auto* current = findBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
-    // bootstrap block
+    // bootstrap block or we can not load block which is not connected to the
+    // bootstrapblock
     if (current) {
       if (current->isDeleted()) {
         current->restore();
@@ -188,13 +185,17 @@ struct BaseBlockTree {
     } else {
       auto* prev = getBlockIndex(header.getPreviousBlock());
       // if neither the current, nor the previous block are known
-      if (prev == nullptr) {
+      if (prev != nullptr) {
+        current = createBlockIndex(currentHash, *prev);
+        current->restore();
+      } else if (root.getHeader().getPreviousBlock() ==
+                 makePrevHash(currentHash)) {
+        current = createBootstrapBlockIndex(currentHash, index.height);
+        current->restore();
+      } else {
         return state.Invalid("bad-prev",
                              "Block does not connect to current tree");
       }
-
-      current = createBlockIndex(currentHash, *prev);
-      current->restore();
     }
 
     VBK_ASSERT(current);
@@ -219,6 +220,10 @@ struct BaseBlockTree {
       if (current->getHeight() != expectedHeight) {
         return state.Invalid("bad-height");
       }
+    } else if (activeChain_.first() != current) {
+      // set a new bootstrap block which is the prev block for the current
+      // bootstrap block
+      activeChain_.appendBootstrap(current);
     }
 
     VBK_ASSERT(!current->isDeleted());
@@ -519,7 +524,8 @@ struct BaseBlockTree {
 
   //! create a new block index with the empty prev field
   //! @private
-  index_t* createBlockIndex(const hash_t& hash, block_height_t height) {
+  index_t* createBootstrapBlockIndex(const hash_t& hash,
+                                     block_height_t height) {
     auto shortHash = makePrevHash(hash);
 
     auto newIndex = make_unique<index_t>(height);
@@ -543,8 +549,9 @@ struct BaseBlockTree {
                    "already bootstrapped");
 
     index_t* current =
-        prev == nullptr ? createBlockIndex(header->getHash(), bootstrapHeight)
-                        : createBlockIndex(header->getHash(), *prev);
+        prev == nullptr
+            ? createBootstrapBlockIndex(header->getHash(), bootstrapHeight)
+            : createBlockIndex(header->getHash(), *prev);
     current->setHeader(std::move(header));
 
     return current;

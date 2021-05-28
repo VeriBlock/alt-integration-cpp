@@ -190,25 +190,29 @@ struct BlockTree : public BaseBlockTree<Block> {
   const ChainParams* param_ = nullptr;
   const BlockReader& blockProvider_;
 
-  // bool reloadBlock(const typename block_t::hash_t& hash,
-  //                  ValidationState& state) {
-  //   stored_index_t stored_index;
-  //   if (!blockProvider_.getBlock(this->makePrevHash(hash), stored_index)) {
-  //     return state.Invalid("can-not-find-block-in-storage");
-  //   }
+  bool reloadBlock(const typename block_t::hash_t& hash,
+                   ValidationState& state) {
+    stored_index_t stored_index;
+    if (!blockProvider_.getBlock(this->makePrevHash(hash), stored_index)) {
+      return state.Invalid("can-not-find-block-in-storage");
+    }
 
-  //   index_t& index = this->getRoot();
-  //   while (index.getHeight() != stored_index.height) {
-  //     stored_index_t tmp_stored;
-  //     if (!blockProvider_.getBlock(index.getHeader().getPreviousBlock(),
-  //                                  tmp_stored) &&
-  //         !loadBlock(tmp_stored, state)) {
-  //       VBK_ASSERT_MSG(false, "");
-  //     }
-  //   }
+    index_t* index = &this->getRoot();
+    while (index->getHeight() != stored_index.height) {
+      stored_index_t tmp_stored;
+      auto prev_hash = index->getHeader().getPreviousBlock();
+      if (!blockProvider_.getBlock(prev_hash, tmp_stored) ||
+          !loadBlock(tmp_stored, state)) {
+        VBK_ASSERT_MSG(
+            false, "can not load block, state: %s", state.toString());
+      }
 
-  //   return true;
-  // }
+      index = this->getBlockIndex(prev_hash);
+      VBK_ASSERT(index);
+    }
+
+    return true;
+  }
 
   bool acceptBlockHeaderImpl(const std::shared_ptr<block_t>& block,
                              ValidationState& state,
