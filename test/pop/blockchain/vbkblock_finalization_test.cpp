@@ -77,3 +77,24 @@ TEST_F(VbkBlockFinalization, OverBtcLimitTest) {
   ASSERT_TRUE(tree->finalizeBlock(*finalizedBlock, state));
   ASSERT_DEATH(tree->setState(vbktip->getHash(), state), "");
 }
+
+TEST_F(VbkBlockFinalization, NegativeBtcAppliedBlockCountTest) {
+  auto* vbkendorsed = popminer->mineVbkBlocks(7);
+  popminer->mineBtcBlocks(popminer->btc().getParams().getOldBlocksWindow() * 2);
+  auto btctx0 =
+      popminer->createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+  auto* btctip = popminer->mineBtcBlocks(1, {btctx0});
+  auto poptx0 = popminer->createVbkPopTxEndorsingVbkBlock(
+      btctip->getHeader(),
+      btctx0,
+      vbkendorsed->getHeader(),
+      // equals to genesis
+      tree->btc().getBestChain().tip()->getHash());
+  auto* vbktip = popminer->mineVbkBlocks(1, *vbkendorsed, {poptx0});
+  vbktip = popminer->mineVbkBlocks(10);
+  ASSERT_TRUE(tree->setState(vbktip->getHash(), state));
+
+  ASSERT_EQ(btctip->getHash(), tree->btc().getBestChain().tip()->getHash());
+  ASSERT_TRUE(tree->finalizeBlock(*vbktip, state));
+  ASSERT_LT(tree->btc().appliedBlockCount, 0);
+}
