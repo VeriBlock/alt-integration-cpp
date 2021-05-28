@@ -40,7 +40,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   ~BlockTree() override = default;
 
   BlockTree(const ChainParams& param, const BlockReader& blockProvider)
-      : param_(&param), blockProvider_(blockProvider) {}
+      : base(blockProvider), param_(&param) {}
 
   const ChainParams& getParams() const { return *param_; }
 
@@ -188,7 +188,6 @@ struct BlockTree : public BaseBlockTree<Block> {
 
  protected:
   const ChainParams* param_ = nullptr;
-  const BlockReader& blockProvider_;
 
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
@@ -197,7 +196,8 @@ struct BlockTree : public BaseBlockTree<Block> {
     }
 
     stored_index_t stored_index;
-    if (!blockProvider_.getBlock(this->makePrevHash(hash), stored_index)) {
+    if (!this->blockProvider_.getBlock(this->makePrevHash(hash),
+                                       stored_index)) {
       return state.Invalid("can-not-find-block-in-storage");
     }
 
@@ -205,12 +205,12 @@ struct BlockTree : public BaseBlockTree<Block> {
     while (index->getHeight() != stored_index.height) {
       stored_index_t tmp_stored;
       auto prev_hash = index->getHeader().getPreviousBlock();
-      if (!blockProvider_.getBlock(prev_hash, tmp_stored) ||
+      if (!this->blockProvider_.getBlock(prev_hash, tmp_stored) ||
           !loadBlock(tmp_stored, state)) {
         VBK_ASSERT_MSG(
             false, "can not load block, state: %s", state.toString());
       }
-      
+
       ++base::appliedBlockCount;
       index = this->getBlockIndex(prev_hash);
       VBK_ASSERT(index);

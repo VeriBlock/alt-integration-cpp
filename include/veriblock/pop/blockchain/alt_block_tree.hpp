@@ -421,7 +421,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
-  BlockReader& blockProvider_;
   command_group_store_t commandGroupStore_;
 
   //! @private

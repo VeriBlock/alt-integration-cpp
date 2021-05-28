@@ -433,7 +433,8 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            const AltBlockTree::btc_config_t& btc_config,
                            PayloadsStorage& payloadsProvider,
                            BlockReader& blockProvider)
-    : alt_config_(&alt_config),
+    : base(blockProvider),
+      alt_config_(&alt_config),
       cmp_(std::make_shared<VbkBlockTree>(vbk_config,
                                           btc_config,
                                           payloadsProvider,
@@ -443,7 +444,6 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
            payloadsProvider,
            payloadsIndex_),
       payloadsProvider_(payloadsProvider),
-      blockProvider_(blockProvider),
       commandGroupStore_(*this, payloadsProvider_) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {

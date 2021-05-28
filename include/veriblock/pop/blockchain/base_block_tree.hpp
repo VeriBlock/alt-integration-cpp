@@ -13,6 +13,7 @@
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/signals.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/stored_block_index.hpp>
 
 #include "block_index.hpp"
@@ -59,7 +60,8 @@ struct BaseBlockTree {
     deallocateTree(getRoot());
   }
 
-  BaseBlockTree() = default;
+  BaseBlockTree(const BlockReader& blockProvider)
+      : blockProvider_(blockProvider) {}
 
   // non-copyable
   BaseBlockTree(const BaseBlockTree&) = delete;
@@ -912,6 +914,8 @@ struct BaseBlockTree {
   Chain<index_t> activeChain_;
   //! signals to the end user that block have been invalidated
   signals::Signal<on_invalidate_t> validity_sig_;
+
+  const BlockReader& blockProvider_;
 };
 
 }  // namespace altintegration
