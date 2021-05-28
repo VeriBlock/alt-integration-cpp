@@ -85,7 +85,7 @@ func TestMineVtb(t *testing.T) {
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := GenerateTestPopContext(t, storage)
+	popContext := generateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer popContext.Lock()()
 
