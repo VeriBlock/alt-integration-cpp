@@ -66,7 +66,7 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
     return true;
   }
 
-  bool key(typename BlockT::hash_t& out) const override {
+  bool key(typename BlockT::prev_hash_t& out) const override {
     std::vector<uint8_t> bytes;
     if (!it_->key(bytes)) {
       return false;

@@ -292,6 +292,7 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   assertTreesHaveNoOrphans(alttree);
 
   // insert the old vtb into the popdata
+  // TODO fix it
   // popdata.vtbs = {vtb};
   // popdata.atvs = {atv};
   // ASSERT_EQ(popdata.vtbs.size(), 1);
