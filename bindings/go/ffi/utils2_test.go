@@ -21,7 +21,7 @@ func TestGeneratePublicationData(t *testing.T) {
 	storage, err := NewStorage2(":inmem:")
 	assert.NoError(err)
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -53,7 +53,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -78,7 +78,7 @@ func TestCheckAll(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -136,7 +136,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	assert.NoError(err)
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	unlock := context.Lock()
 
 	// generate new block
@@ -192,7 +192,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	context.Free()
 	unlock()
-	context = generateTestPopContext(t, storage)
+	context = GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 

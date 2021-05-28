@@ -20,7 +20,7 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -91,7 +91,7 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -158,7 +158,7 @@ func TestPopContext2MempoolGeneratePopData(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 
