@@ -20,7 +20,7 @@ func TestPopContext2Free(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 
 	context.Free()
@@ -36,7 +36,7 @@ func TestPopContext2BlockPrecessing(t *testing.T) {
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := generateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage)
 	defer context.Lock()()
 	defer context.Free()
 

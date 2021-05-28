@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func generateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
+func GenerateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 	config := NewConfig2()
 	defer config.Free()
 
