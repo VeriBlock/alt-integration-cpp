@@ -210,7 +210,8 @@ struct BlockTree : public BaseBlockTree<Block> {
         VBK_ASSERT_MSG(
             false, "can not load block, state: %s", state.toString());
       }
-
+      
+      ++base::appliedBlockCount;
       index = this->getBlockIndex(prev_hash);
       VBK_ASSERT(index);
     }
