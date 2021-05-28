@@ -26,12 +26,6 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
-    [ "Setup ABFI", "integration_13_setup_abfi.html", [
-      [ "Overview", "integration_13_setup_abfi.html#autotoc_md25", null ],
-      [ "1. Altchain BFI configuration.", "integration_13_setup_abfi.html#autotoc_md26", null ],
-      [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
-      [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
-    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -66,14 +60,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
-"fork__resolution_8hpp.html#ac67d1886fd51f7a49fb511a1c20d74ec",
-"namespacealtintegration.html#a27c7717688e5cf09522a34d15543e7d7",
-"namespacealtintegration.html#ade563f016cc34d9adc79f02a6217bb6f",
-"structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856",
-"structaltintegration_1_1BlockTree.html#a6a31085507dd4cf1bd97f74b02326ac5",
-"structaltintegration_1_1Endorsement.html#a968f9d0ef9707ff14ab90c9f1b5a807b",
-"structaltintegration_1_1VTB.html#a8983b35112c156b9fa6565eaa31b446b",
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e"
+"fork__resolution_8hpp.html#a5011cf3c07ca9102c2ab65d0b4737cf6",
+"namespacealtintegration.html#a29f82823fc29f3b0e720adb256c9760a",
+"namespacealtintegration.html#adf6752c44ca710f7a213a0f339a9f242",
+"structaltintegration_1_1AltBlockTree.html#ae7940d71bf588458cd482b542a8f000e",
+"structaltintegration_1_1BlockTree.html#a7c94d18cec972bc1a06fdcc6feafd97b",
+"structaltintegration_1_1Endorsement.html#aad4a71fe10a5e1a6f8c5d62c1aedbf31",
+"structaltintegration_1_1VTB.html#acae954054a38e2fe2f7de8fd618c1ade",
+"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a8f39c95af8bcdfa166489f8467a56601"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,16 +1,9 @@
 var namespacealtintegration =
 [
     [ "adaptors", null, [
-      [ "Guides:", "index.html#autotoc_md103", null ],
-      [ "1. Fork vBTC", "integration.html#autotoc_md97", null ],
-      [ "2. Change naming as needed.", "integration.html#autotoc_md98", null ],
-      [ "3. Change network ID", "integration.html#autotoc_md99", null ],
-      [ "4. Change POP Altchain ID", "integration.html#autotoc_md100", null ],
-      [ "5. Rebootstrap", "integration.html#autotoc_md101", null ],
-      [ "6. Make sure all unit and functional tests pass.", "integration.html#autotoc_md102", null ],
-      [ "Legend", "rebootstrap.html#autotoc_md104", null ],
-      [ "Description", "rebootstrap.html#autotoc_md105", null ],
-      [ "Protocol", "rebootstrap.html#autotoc_md106", null ],
+      [ "Legend", "rebootstrap.html#autotoc_md103", null ],
+      [ "Description", "rebootstrap.html#autotoc_md104", null ],
+      [ "Protocol", "rebootstrap.html#autotoc_md105", null ],
       [ "BlockIteratorImpl", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl" ],
       [ "BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", "structaltintegration_1_1adaptors_1_1BlockReaderImpl" ],
       [ "BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html", "structaltintegration_1_1adaptors_1_1BlockBatchImpl" ],
