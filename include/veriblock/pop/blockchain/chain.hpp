@@ -95,6 +95,7 @@ struct Chain {
     // set a new bootstrap block which should be connected to the current one
     VBK_ASSERT_MSG(index == first()->pprev,
                    "new bootstrap block does not connects to the current one");
+    startHeight_ = index->getHeight();
     chain.insert(chain.begin(), index);
   }
 

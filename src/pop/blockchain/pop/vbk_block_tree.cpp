@@ -251,6 +251,12 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
   auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
+  // trying to restore endorsedBlock
+  {
+    ValidationState state;
+    restoreBlock(payload.transaction.publishedBlock.getHash(), state);
+  }
+
   if (!cmdGroup || !cmdGroup->execute(state)) {
     VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
                   index.toPrettyString(),
@@ -280,7 +286,7 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (index == nullptr) {
-    if (!reloadBlock(hash, state)) {
+    if (!restoreBlock(hash, state)) {
       return state.Invalid(
           block_t::name() + "-bad-containing",
           "Can not find VTB containing block: " + hash.toHex());

@@ -237,8 +237,8 @@ TEST_F(VbkBlockFinalization, FinalizeMaxVbks) {
 TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
-  vbkparam.mEndorsementSettlementInterval = 0;
-  vbkparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mEndorsementSettlementInterval = 10;
+  vbkparam.mPreserveBlocksBehindFinal = 10;
   vbkparam.mOldBlocksWindow = 0;
 
   // generate VTB which will store in the old block
@@ -286,16 +286,16 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   // check the state after finalization
   ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
-  ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
   assertTreeTips(alttree.vbk(), {vbktip});
 
   assertTreesHaveNoOrphans(alttree);
 
   // insert the old vtb into the popdata
   popdata.vtbs = {vtb};
-  popdata.atvs = {atv};
+  // popdata.atvs = {atv};
   ASSERT_EQ(popdata.vtbs.size(), 1);
-  ASSERT_EQ(popdata.atvs.size(), 1);
+  // ASSERT_EQ(popdata.atvs.size(), 1);
   ASSERT_EQ(popdata.context.size(), 0);
 
   applyInNextBlock(popdata);
