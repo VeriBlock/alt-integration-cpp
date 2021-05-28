@@ -272,6 +272,8 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   popdata = checkedGetPop();
   applyInNextBlock(popdata);
 
+  save(alttree);
+
   tip = alttree.getBestChain().tip();
   auto *vbktip = alttree.vbk().getBestChain().tip();
 

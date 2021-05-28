@@ -347,6 +347,17 @@ struct PopTestFixture {
       altTip = next;
     }
   }
+
+  void save(AltBlockTree& tree) {
+    auto batch = storage.generateWriteBatch();
+    auto writer = adaptors::BlockBatchImpl(*batch);
+    saveTrees(tree, writer);
+    batch->writeBatch();
+  }
+
+  bool load(AltBlockTree& tree) {
+    return loadTrees(tree, blockProvider, state);
+  }
 };
 
 template <typename pop_t>

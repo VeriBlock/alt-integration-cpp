@@ -46,10 +46,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(this->alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
   AltBlockTree reloadedAltTree{this->altparam,
                                this->vbkparam,
@@ -115,10 +112,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(this->alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
   AltBlockTree reloadedAltTree{this->altparam,
                                this->vbkparam,
@@ -195,10 +189,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   validateAlttreeIndexState(
       this->alttree, containingBlock, popData, /*payloads_validation =*/true);
 
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(this->alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
   AltBlockTree reloadedAltTree{this->altparam,
                                this->vbkparam,

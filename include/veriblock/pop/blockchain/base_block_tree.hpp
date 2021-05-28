@@ -517,10 +517,9 @@ struct BaseBlockTree {
     return inserted.first->second.get();
   }
 
-  //! create a new root block index
+  //! create a new block index with the empty prev field
   //! @private
-  index_t* createBootstrapBlockIndex(const hash_t& hash,
-                                     block_height_t height) {
+  index_t* createBlockIndex(const hash_t& hash, block_height_t height) {
     auto shortHash = makePrevHash(hash);
 
     auto newIndex = make_unique<index_t>(height);
@@ -544,9 +543,8 @@ struct BaseBlockTree {
                    "already bootstrapped");
 
     index_t* current =
-        prev == nullptr
-            ? createBootstrapBlockIndex(header->getHash(), bootstrapHeight)
-            : createBlockIndex(header->getHash(), *prev);
+        prev == nullptr ? createBlockIndex(header->getHash(), bootstrapHeight)
+                        : createBlockIndex(header->getHash(), *prev);
     current->setHeader(std::move(header));
 
     return current;
