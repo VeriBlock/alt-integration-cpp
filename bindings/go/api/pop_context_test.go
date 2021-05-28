@@ -22,7 +22,7 @@ func TestPopContextSubmitVbk(t *testing.T) {
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
+	popContext := GenerateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer popContext.Lock()()
 
@@ -59,7 +59,7 @@ func TestPopContextSubmitVtb(t *testing.T) {
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
+	popContext := GenerateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer popContext.Lock()()
 
@@ -107,7 +107,7 @@ func TestPopContextSubmitAtv(t *testing.T) {
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
+	popContext := GenerateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer popContext.Lock()()
 
@@ -152,7 +152,7 @@ func TestPopContextAcceptBlock(t *testing.T) {
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
+	popContext := GenerateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer popContext.Lock()()
 

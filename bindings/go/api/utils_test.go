@@ -22,7 +22,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
+	popContext := GenerateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer popContext.Lock()()
 
@@ -70,7 +70,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	storage, err := NewStorage(dir)
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
+	popContext := GenerateTestPopContext(t, storage)
 	defer popContext.Lock()()
 
 	miner := NewMockMiner()
@@ -121,7 +121,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	// reset state of the popContext
 	popContext.popContext.Free()
-	popContext = generateTestPopContext(t, storage)
+	popContext = GenerateTestPopContext(t, storage)
 	defer popContext.popContext.Free()
 	defer storage.Free()
 	defer popContext.Lock()()
