@@ -50,7 +50,9 @@ extern template struct BaseBlockTree<AltBlock>;
 //! BtcChainParamsMain btcp;
 //! // your implementation of PayloadsStorage
 //! PayloadsProviderImpl provider;
-//! AltBlockTree tree(altp, vbkp, btcp, provider);
+//! // your implementation of BlockReader
+//! BlockReaderImpl blockProvider
+//! AltBlockTree tree(altp, vbkp, btcp, provider, blockProvider);
 //! ```
 //!
 //! After initialization AltBlockTree does not contain any blocks.
