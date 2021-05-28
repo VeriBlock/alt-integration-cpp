@@ -23,7 +23,7 @@ TEST_F(VbkBlockFinalization, BasicTest) {
   auto* finalizedBlock = popminer->mineVbkBlocks(100);
   auto* vbkendorsed = popminer->mineVbkBlocks(7);
   ASSERT_LT(popminer->vbk().getBestChain().chainHeight(),
-            popminer->vbk() .getParams().getOldBlocksWindow());
+            popminer->vbk().getParams().getOldBlocksWindow());
   popminer->mineBtcBlocks(100);
   ASSERT_LT(popminer->btc().getBestChain().chainHeight(),
             popminer->btc().getParams().getOldBlocksWindow());
