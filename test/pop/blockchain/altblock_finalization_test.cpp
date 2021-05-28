@@ -292,13 +292,13 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   assertTreesHaveNoOrphans(alttree);
 
   // insert the old vtb into the popdata
-  popdata.vtbs = {vtb};
-  popdata.atvs = {atv};
-  ASSERT_EQ(popdata.vtbs.size(), 1);
-  ASSERT_EQ(popdata.atvs.size(), 1);
-  ASSERT_EQ(popdata.context.size(), 0);
+  // popdata.vtbs = {vtb};
+  // popdata.atvs = {atv};
+  // ASSERT_EQ(popdata.vtbs.size(), 1);
+  // ASSERT_EQ(popdata.atvs.size(), 1);
+  // ASSERT_EQ(popdata.context.size(), 0);
 
-  applyInNextBlock(popdata);
+  // applyInNextBlock(popdata);
 }
 
 TEST_F(VbkBlockFinalization, FinalizeMaxBtcs) {

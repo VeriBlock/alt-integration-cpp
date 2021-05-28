@@ -133,10 +133,11 @@ void saveTree(
   // write indices
   for (const index_t* index : dirty_indices) {
     validator(*index);
-    batch.writeBlock(index->toStoredBlockIndex());
+    batch.writeBlock(tree.makePrevHash(index->getHash()),
+                     index->toStoredBlockIndex());
   }
 
-  batch.writeTip(tree.getBestChain().tip()->toStoredBlockIndex());
+  batch.writeTip(tree.getBestChain().tip()->getHash());
 }
 
 //! @private

@@ -193,7 +193,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   bool reloadBlock(const typename block_t::hash_t& hash,
                    ValidationState& state) {
     stored_index_t stored_index;
-    if (!blockProvider_.getBlock(makePrevHash(hash), stored_index)) {
+    if (!blockProvider_.getBlock(this->makePrevHash(hash), stored_index)) {
       return state.Invalid("can-not-find-block-in-storage");
     }
 
