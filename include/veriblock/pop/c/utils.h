@@ -12,8 +12,8 @@
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/popdata.h"
 #include "veriblock/pop/c/entities/publication_data.h"
-#include "veriblock/pop/c/pop_context2.h"
-#include "veriblock/pop/c/validation_state2.h"
+#include "veriblock/pop/c/pop_context.h"
+#include "veriblock/pop/c/validation_state.h"
 
 #ifdef __cplusplus
 extern "C" {

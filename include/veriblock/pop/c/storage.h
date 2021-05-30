@@ -8,7 +8,7 @@
 
 #include "veriblock/pop/c/array.h"
 #include "veriblock/pop/c/type_helpers.h"
-#include "veriblock/pop/c/validation_state2.h"
+#include "veriblock/pop/c/validation_state.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -8,14 +8,14 @@
 
 #include <stdint.h>
 
-#include "veriblock/pop/c/config2.h"
+#include "veriblock/pop/c/config.h"
 #include "veriblock/pop/c/entities/altblock.h"
 #include "veriblock/pop/c/entities/block_index.h"
 #include "veriblock/pop/c/entities/pop_payouts.h"
 #include "veriblock/pop/c/entities/popdata.h"
-#include "veriblock/pop/c/storage2.h"
+#include "veriblock/pop/c/storage.h"
 #include "veriblock/pop/c/type_helpers.h"
-#include "veriblock/pop/c/validation_state2.h"
+#include "veriblock/pop/c/validation_state.h"
 
 #ifdef __cplusplus
 extern "C" {
