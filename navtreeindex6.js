@@ -1,13 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1Endorsement.html#a7eaee4186ccdf5fe301c9cf6a9d79ef6":[4,0,0,36,12],
-"structaltintegration_1_1Endorsement.html#a7f169890a19a44060e7d31d5af582f1d":[4,0,0,36,0],
-"structaltintegration_1_1Endorsement.html#a80f7788e72241e80dfbe949e5a2e52a1":[4,0,0,36,8],
-"structaltintegration_1_1Endorsement.html#a87638c1f4f5f9b6787b837dbdfb966fb":[4,0,0,36,3],
-"structaltintegration_1_1Endorsement.html#a8d6a1f1b535281eb6d79a7c167338b4f":[4,0,0,36,5],
-"structaltintegration_1_1Endorsement.html#a8da54e585c9a44c607ce17771b4bd869":[4,0,0,36,13],
-"structaltintegration_1_1Endorsement.html#a968f9d0ef9707ff14ab90c9f1b5a807b":[4,0,0,36,11],
-"structaltintegration_1_1Endorsement.html#aaae94fb3c6df0fee18685fef458bd4c9":[4,0,0,36,14],
 "structaltintegration_1_1Endorsement.html#aad4a71fe10a5e1a6f8c5d62c1aedbf31":[4,0,0,36,18],
 "structaltintegration_1_1Endorsement.html#ab64b35c2668e23913cde9032bcf9b88e":[4,0,0,36,2],
 "structaltintegration_1_1Endorsement.html#af2b430a741721086052f2c3bc980ff40":[4,0,0,36,15],
@@ -249,5 +241,13 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1StoredBlockIndex.html#ae1baf71b2003d0ec0ae7fe816e721c1e":[4,0,0,67,6],
 "structaltintegration_1_1StoredBlockIndex.html#ae881b5a063dc9353f9acaa0ec0a73f09":[4,0,0,67,1],
 "structaltintegration_1_1StoredBlockIndex.html#ae8dad64f527cebf0c449a56c43d747a0":[4,0,0,67,9],
-"structaltintegration_1_1StoredBlockIndex.html#aeae5fe43a02d70340e7146a6b4c2ca45":[4,0,0,67,4]
+"structaltintegration_1_1StoredBlockIndex.html#aeae5fe43a02d70340e7146a6b4c2ca45":[4,0,0,67,4],
+"structaltintegration_1_1VTB.html":[4,0,0,49],
+"structaltintegration_1_1VTB.html#a09d5f0529495a6d852461ad5076a6c6a":[4,0,0,49,10],
+"structaltintegration_1_1VTB.html#a20d9f3a641c8d5350490a1da3da40266":[4,0,0,49,1],
+"structaltintegration_1_1VTB.html#a389493364912b3b7c9b5bbaa3ae42b03":[4,0,0,49,11],
+"structaltintegration_1_1VTB.html#a3d01efdef24e1705cfa0041cba456813":[4,0,0,49,7],
+"structaltintegration_1_1VTB.html#a6039844a160b788fb51bef24498e48af":[4,0,0,49,13],
+"structaltintegration_1_1VTB.html#a8983b35112c156b9fa6565eaa31b446b":[4,0,0,49,0],
+"structaltintegration_1_1VTB.html#a94c26224c74fb94092c832f7db21b41c":[4,0,0,49,2]
 };
