@@ -13,7 +13,7 @@
 
 #include "btcblock.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "../validation_state2.hpp"
+#include "../validation_state.hpp"
 #include "veriblock/pop/serde.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(btc_block) {

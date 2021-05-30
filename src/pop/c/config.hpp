@@ -3,15 +3,16 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
-#define VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
+#ifndef VERIBLOCK_POP_CPP_C_CONFIG_HPP
+#define VERIBLOCK_POP_CPP_C_CONFIG_HPP
 
 #include <memory>
 
-#include <veriblock/pop/config.hpp>
+#include "veriblock/pop/c/config2.h"
+#include "veriblock/pop/config.hpp"
 
-struct Config {
-  std::shared_ptr<altintegration::Config> config;
+struct __pop_config {
+  std::shared_ptr<altintegration::Config> ref;
 };
 
-#endif  // VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
+#endif

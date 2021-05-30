@@ -3,78 +3,94 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_CONFIG_H
-#define VERIBLOCK_POP_CPP_CONFIG_H
+#ifndef VERIBLOCK_POP_CPP_C_CONFIG_H
+#define VERIBLOCK_POP_CPP_C_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "bytestream.h"
+#include "veriblock/pop/c/array.h"
+#include "veriblock/pop/c/entities/altblock.h"
+#include "veriblock/pop/c/entities/btcblock.h"
+#include "veriblock/pop/c/entities/vbkblock.h"
+#include "veriblock/pop/c/bytestream.h"
+#include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct Config Config_t;
+POP_DECLARE_ENTITY(config);
 
-//! allocate new config
-Config_t* VBK_NewConfig();
-//! deallocate config
-void VBK_FreeConfig(Config_t* config);
+POP_ENTITY_NEW_FUNCTION(config);
 
 //! set VBK parameters and store them in config
-bool VBK_SelectVbkParams(Config_t* config,
-                         // "main\0", "test\0", "regtest\0", "alpha\0"
-                         const char* net,
-                         int startHeight,
-                         // example: hex,hex,hex
-                         const char* blocks);
+POP_ENTITY_CUSTOM_FUNCTION(config,
+                           void,
+                           select_vbk_params,
+                           // "main\0", "test\0", "regtest\0", "alpha\0"
+                           POP_ARRAY_NAME(string) net,
+                           int start_height,
+                           // example: hex,hex,hex
+                           POP_ARRAY_NAME(string) blocks);
 
 //! set BTC parameters and store them in config
-bool VBK_SelectBtcParams(Config_t* config,
-                         // "main\0", "test\0", "regtest\0"
-                         const char* net,
-                         int startHeight,
-                         // example: hex,hex,hex
-                         const char* blocks);
+POP_ENTITY_CUSTOM_FUNCTION(config,
+                           void,
+                           select_btc_params,
+                           // "main\0", "test\0", "regtest\0", "alpha\0"
+                           POP_ARRAY_NAME(string) net,
+                           int start_height,
+                           // example: hex,hex,hex
+                           POP_ARRAY_NAME(string) blocks);
 
-void VBK_SetStartOfSlope(Config_t* params, double val);
-void VBK_SetSlopeNormal(Config_t* params, double val);
-void VBK_SetSlopeKeystone(Config_t* params, double val);
-void VBK_SetKeystoneRound(Config_t* params, uint32_t val);
-void VBK_SetFlatScoreRound(Config_t* params, uint32_t val);
-void VBK_SetUseFlatScoreRound(Config_t* params, bool val);
-void VBK_SetMaxScoreThresholdNormal(Config_t* params, double val);
-void VBK_SetMaxScoreThresholdKeystone(Config_t* params, double val);
-void VBK_SetDifficultyAveragingInterval(Config_t* params, uint32_t val);
-void VBK_SetRoundRatios(Config_t* params, const double* vals, int valslen);
-void VBK_SetPopRewardsLookupTable(Config_t* params,
-                                  const double* vals,
-                                  int valslen);
-void VBK_SetMaxFutureBlockTime(Config_t* params, uint32_t val);
-void VBK_SetKeystoneInterval(Config_t* params, uint32_t val);
-void VBK_SetVbkFinalityDelay(Config_t* params, uint32_t val);
-void VBK_SetEndorsementSettlementInterval(Config_t* params, uint32_t val);
-void VBK_SetMaxPopDataSize(Config_t* params, uint32_t val);
-void VBK_SetForkResolutionLookupTable(Config_t* params,
-                                      const uint32_t* vals,
-                                      int valslen);
-void VBK_SetPopPayoutDelay(Config_t* params, int32_t val);
+POP_ENTITY_SETTER_FUNCTION(config, double, start_of_slope);
+POP_ENTITY_SETTER_FUNCTION(config, double, slope_normal);
+POP_ENTITY_SETTER_FUNCTION(config, double, slope_keystone);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, keystone_round);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, flat_score_round);
+POP_ENTITY_SETTER_FUNCTION(config, bool, use_flat_score_round);
+POP_ENTITY_SETTER_FUNCTION(config, double, max_score_threshold_normal);
+POP_ENTITY_SETTER_FUNCTION(config, double, max_score_threshold_keystone);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, difficulty_averaging_interval);
+POP_ENTITY_SETTER_FUNCTION(config, POP_ARRAY_NAME(double), round_ratios);
+POP_ENTITY_SETTER_FUNCTION(config, POP_ARRAY_NAME(double), pop_rewards_lookup_table);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, max_future_block_time);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, keystone_interval);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, vbk_finality_delay);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, endorsement_settlement_interval);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, max_pop_data_size);
+POP_ENTITY_SETTER_FUNCTION(config, POP_ARRAY_NAME(u32), fork_resolution_lookup_table);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, pop_payout_delay);
 
-uint32_t VBK_GetMaxPopDataSize(Config_t* params);
-uint32_t VBK_GetMaxVbkBlocksInAltBlock(Config_t* params);
-uint32_t VBK_GetMaxVTBsInAltBlock(Config_t* params);
-uint32_t VBK_GetMaxATVsInAltBlock(Config_t* params);
-int32_t VBK_GetEndorsementSettlementInterval(Config_t* params);
-uint32_t VBK_GetFinalityDelay(Config_t* params);
-uint32_t VBK_GetKeystoneInterval(Config_t* params);
-uint32_t VBK_GetMaxAltchainFutureBlockTime(Config_t* params);
-VBK_ByteStream* VBK_AltGetBootstrapBlock(Config_t* params);
-const char* VBK_GetVbkNetworkName(Config_t* params);
-const char* VBK_GetBtcNetworkName(Config_t* params);
+POP_ENTITY_GETTER_FUNCTION(config, double, start_of_slope);
+POP_ENTITY_GETTER_FUNCTION(config, double, slope_normal);
+POP_ENTITY_GETTER_FUNCTION(config, double, slope_keystone);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, keystone_round);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, flat_score_round);
+POP_ENTITY_GETTER_FUNCTION(config, bool, use_flat_score_round);
+POP_ENTITY_GETTER_FUNCTION(config, double, max_score_threshold_normal);
+POP_ENTITY_GETTER_FUNCTION(config, double, max_score_threshold_keystone);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, difficulty_averaging_interval);
+POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(double), round_ratios);
+POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(double), pop_rewards_lookup_table);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_future_block_time);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, keystone_interval);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, vbk_finality_delay);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, endorsement_settlement_interval);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_pop_data_size);
+POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(u32), fork_resolution_lookup_table);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, pop_payout_delay);
+
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_vbk_blocks_in_alt_block);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_vtbs_in_alt_block);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_atvs_in_alt_block);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, finality_delay);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_altchain_future_block_time);
+POP_ENTITY_GETTER_FUNCTION(config, POP_ENTITY_NAME(alt_block)*, alt_bootstrap_block);
+POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(string), vbk_network_name);
+POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(string), btc_network_name);
+
 
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif
 
-#endif  // VERIBLOCK_POP_CPP_CONFIG_H
+#endif
