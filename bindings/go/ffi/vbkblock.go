@@ -28,7 +28,7 @@ func (v *VbkBlock) validate() {
 	}
 }
 
-func generateDefaultVbkBlock() *VbkBlock {
+func GenerateDefaultVbkBlock() *VbkBlock {
 	return createVbkBlock(C.pop_vbk_block_generate_default_value())
 }
 

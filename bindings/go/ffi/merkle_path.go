@@ -22,7 +22,7 @@ func (v *MerklePath) validate() {
 	}
 }
 
-func generateDefaultMerklePath() *MerklePath {
+func GenerateDefaultMerklePath() *MerklePath {
 	val := &MerklePath{ref: C.pop_merkle_path_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *MerklePath) {
 		v.Free()

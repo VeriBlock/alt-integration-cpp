@@ -25,7 +25,7 @@ func (v *BtcBlock) validate() {
 	}
 }
 
-func generateDefaultBtcBlock() *BtcBlock {
+func GenerateDefaultBtcBlock() *BtcBlock {
 	return createBtcBlock(C.pop_btc_block_generate_default_value())
 }
 

@@ -20,7 +20,7 @@ func (v *PopPayout) validate() {
 	}
 }
 
-func generateDefaultPopPayout() *PopPayout {
+func GenerateDefaultPopPayout() *PopPayout {
 	return createPopPayout(C.pop_pop_payout_generate_default_value())
 }
 
