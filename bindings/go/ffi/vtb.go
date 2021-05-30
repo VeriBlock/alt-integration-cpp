@@ -101,7 +101,7 @@ func (v *Vtb) SerializeToVbk() []byte {
 }
 
 func (v *Vtb) DeserializeFromVbk(bytes []byte) error {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_vtb_deserialize_from_vbk(createCBytes(bytes), state.ref)

@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo pkg-config: veriblock-pop-cpp
-// #include <veriblock/pop/c/pop_context2.h>
+// #include <veriblock/pop/c/pop_context.h>
 import "C"
 import "runtime"
 
@@ -47,7 +47,7 @@ func (v *PopContext) Free() {
 func (v *PopContext) AcceptBlockHeader(block *AltBlock) error {
 	v.validate()
 	block.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 	C.pop_pop_context_function_accept_block_header(v.ref, block.ref, state.ref)
 	return state.Error()
@@ -63,7 +63,7 @@ func (v *PopContext) AcceptBlock(hash []byte, popData *PopData) {
 
 func (v *PopContext) SetState(hash []byte) error {
 	v.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 	C.pop_pop_context_function_set_state(v.ref, createCBytes(hash), state.ref)
 	return state.Error()

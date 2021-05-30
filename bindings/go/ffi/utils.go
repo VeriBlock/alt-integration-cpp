@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo pkg-config: veriblock-pop-cpp
-// #include <veriblock/pop/c/utils2.h>
+// #include <veriblock/pop/c/utils.h>
 import "C"
 import "errors"
 
@@ -34,7 +34,7 @@ func (v *PopContext) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash []
 
 func (v *PopContext) SaveAllTrees() error {
 	v.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	C.pop_pop_context_function_save_all_trees(v.ref, state.ref)
@@ -43,7 +43,7 @@ func (v *PopContext) SaveAllTrees() error {
 
 func (v *PopContext) LoadAllTrees() error {
 	v.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	C.pop_pop_context_function_load_all_trees(v.ref, state.ref)
@@ -56,7 +56,7 @@ func (v *PopContext) CheckAtv(atv *Atv) error {
 		return nil
 	}
 	atv.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	C.pop_pop_context_function_check_atv(v.ref, atv.ref, state.ref)
@@ -69,7 +69,7 @@ func (v *PopContext) CheckVtb(vtb *Vtb) error {
 		return nil
 	}
 	vtb.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	C.pop_pop_context_function_check_vtb(v.ref, vtb.ref, state.ref)
@@ -82,7 +82,7 @@ func (v *PopContext) CheckVbkBlock(vbkBlock *VbkBlock) error {
 		return nil
 	}
 	vbkBlock.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	C.pop_pop_context_function_check_vbk_block(v.ref, vbkBlock.ref, state.ref)
@@ -95,7 +95,7 @@ func (v *PopContext) CheckPopData(popData *PopData) error {
 		return nil
 	}
 	popData.validate()
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	C.pop_pop_context_function_check_pop_data(v.ref, popData.ref, state.ref)

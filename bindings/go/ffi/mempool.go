@@ -13,7 +13,7 @@ func (v *PopContext) MemPoolSubmitVbk(vbkBlock *VbkBlock) (int, error) {
 	v.validate()
 	vbkBlock.validate()
 
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_pop_context_function_mempool_submit_vbk(v.ref, vbkBlock.ref, state.ref)
@@ -25,7 +25,7 @@ func (v *PopContext) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 	v.validate()
 	vtb.validate()
 
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_pop_context_function_mempool_submit_vtb(v.ref, vtb.ref, state.ref)
@@ -37,7 +37,7 @@ func (v *PopContext) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	v.validate()
 	atv.validate()
 
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_pop_context_function_mempool_submit_atv(v.ref, atv.ref, state.ref)

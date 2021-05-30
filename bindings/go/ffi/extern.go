@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo pkg-config: veriblock-pop-cpp
-// #include <veriblock/pop/c/extern2.h>
+// #include <veriblock/pop/c/extern.h>
 // #include <string.h>
 import "C"
 import "unsafe"

@@ -11,21 +11,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidationState2Free(t *testing.T) {
+func TestValidationStateFree(t *testing.T) {
 	t.Parallel()
 
-	state := NewValidationState2()
+	state := NewValidationState()
 
 	state.Free()
 	state.Free()
 }
 
-func TestValidationState2Basic(t *testing.T) {
+func TestValidationStateBasic(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
 
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	assert.Equal(state.IsValid(), true)

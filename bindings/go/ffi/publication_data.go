@@ -93,7 +93,7 @@ func (v *PublicationData) SerializeToVbk() []byte {
 }
 
 func (v *PublicationData) DeserializeFromVbk(bytes []byte) error {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_publication_data_deserialize_from_vbk(createCBytes(bytes), state.ref)

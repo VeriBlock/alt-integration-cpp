@@ -95,7 +95,7 @@ func (v *AltBlock) SerializeToVbk() []byte {
 }
 
 func (v *AltBlock) DeserializeFromVbkAltBlock(bytes []byte) error {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_alt_block_deserialize_from_vbk(createCBytes(bytes), state.ref)

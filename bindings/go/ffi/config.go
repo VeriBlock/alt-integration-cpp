@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo pkg-config: veriblock-pop-cpp
-// #include <veriblock/pop/c/config2.h>
+// #include <veriblock/pop/c/config.h>
 import "C"
 import (
 	"runtime"

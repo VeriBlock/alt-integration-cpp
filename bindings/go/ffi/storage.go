@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo pkg-config: veriblock-pop-cpp
-// #include <veriblock/pop/c/storage2.h>
+// #include <veriblock/pop/c/storage.h>
 import "C"
 import "runtime"
 
@@ -22,7 +22,7 @@ func (v *Storage) validate() {
 }
 
 func NewStorage(path string) (*Storage, error) {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	val := &Storage{ref: C.pop_storage_new(createCString(path), state.ref)}

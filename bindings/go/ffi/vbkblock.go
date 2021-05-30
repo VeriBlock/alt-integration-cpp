@@ -156,7 +156,7 @@ func (v *VbkBlock) SerializeToVbk() []byte {
 }
 
 func (v *VbkBlock) DeserializeFromVbk(bytes []byte) error {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_vbk_block_deserialize_from_vbk(createCBytes(bytes), state.ref)

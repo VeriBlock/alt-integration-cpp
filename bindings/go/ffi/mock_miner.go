@@ -6,7 +6,7 @@
 package ffi
 
 // #cgo pkg-config: veriblock-pop-cpp
-// #include <veriblock/pop/c/mock_miner2.h>
+// #include <veriblock/pop/c/mock_miner.h>
 import "C"
 import "runtime"
 

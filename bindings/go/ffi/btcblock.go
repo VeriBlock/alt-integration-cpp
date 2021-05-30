@@ -113,7 +113,7 @@ func (v *BtcBlock) SerializeToVbk() []byte {
 }
 
 func (v *BtcBlock) DeserializeFromVbk(bytes []byte) error {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_btc_block_deserialize_from_vbk(createCBytes(bytes), state.ref)

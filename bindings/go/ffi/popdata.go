@@ -91,7 +91,7 @@ func (v *PopData) SerializeToVbk() []byte {
 }
 
 func (v *PopData) DeserializeFromVbk(bytes []byte) error {
-	state := NewValidationState2()
+	state := NewValidationState()
 	defer state.Free()
 
 	res := C.pop_pop_data_deserialize_from_vbk(createCBytes(bytes), state.ref)
