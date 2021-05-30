@@ -23,7 +23,7 @@ func (v *PopData) validate() {
 	}
 }
 
-func generateDefaultPopData() *PopData {
+func GenerateDefaultPopData() *PopData {
 	return createPopData(C.pop_pop_data_generate_default_value())
 }
 

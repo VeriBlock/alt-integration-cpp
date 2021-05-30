@@ -64,7 +64,7 @@ func TestPopContext2BlockPrecessing(t *testing.T) {
 
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	pubData, err := context.GeneratePublicationData(newBlock.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)

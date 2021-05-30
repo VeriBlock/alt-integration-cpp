@@ -20,7 +20,7 @@ func (v *NetworkBytePair) validate() {
 	}
 }
 
-func generateDefaultNetworkBytePair() *NetworkBytePair {
+func GenerateDefaultNetworkBytePair() *NetworkBytePair {
 	val := &NetworkBytePair{ref: C.pop_network_byte_pair_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *NetworkBytePair) {
 		v.Free()

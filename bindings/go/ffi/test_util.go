@@ -20,7 +20,7 @@ func GenerateTestPopContext(t *testing.T, storage *Storage2) *PopContext2 {
 
 	SetOnGetAltchainID(func() int64 { return 1 })
 	SetOnGetBootstrapBlock(func() AltBlock {
-		return *generateDefaultAltBlock()
+		return *GenerateDefaultAltBlock()
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
 		altblock := NewAltBlock([]byte{}, []byte{}, 0, 0)

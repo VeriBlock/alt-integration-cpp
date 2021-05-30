@@ -23,7 +23,7 @@ func (v *AltBlock) validate() {
 	}
 }
 
-func generateDefaultAltBlock() *AltBlock {
+func GenerateDefaultAltBlock() *AltBlock {
 	return createAltBlock(C.pop_alt_block_generate_default_value())
 }
 

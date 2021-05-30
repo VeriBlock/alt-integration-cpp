@@ -25,11 +25,11 @@ func TestGeneratePublicationData(t *testing.T) {
 	defer context.Lock()()
 	defer context.Free()
 
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 	defer popData.Free()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := []byte{1, 2, 3, 4, 5, 6}
-	altBlock := generateDefaultAltBlock()
+	altBlock := GenerateDefaultAltBlock()
 	defer altBlock.Free()
 	endorsedBytes := altBlock.SerializeToVbk()
 
@@ -63,7 +63,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	err = context.AcceptBlockHeader(newBlock)
 	assert.NoError(err)
 
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	txRootHash := []byte{1, 2, 3, 4}
 
@@ -98,10 +98,10 @@ func TestCheckAll(t *testing.T) {
 	err = context.CheckVtb(vtb)
 	assert.NoError(err)
 
-	alt := generateDefaultAltBlock()
+	alt := GenerateDefaultAltBlock()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)
@@ -113,16 +113,16 @@ func TestCheckAll(t *testing.T) {
 	assert.NoError(err)
 
 	// Failing checks
-	err = context.CheckVbkBlock(generateDefaultVbkBlock())
+	err = context.CheckVbkBlock(GenerateDefaultVbkBlock())
 	assert.Error(err)
 
-	err = context.CheckVtb(generateDefaultVtb())
+	err = context.CheckVtb(GenerateDefaultVtb())
 	assert.Error(err)
 
-	err = context.CheckAtv(generateDefaultAtv())
+	err = context.CheckAtv(GenerateDefaultAtv())
 	assert.Error(err)
 
-	err = context.CheckPopData(generateDefaultPopData())
+	err = context.CheckPopData(GenerateDefaultPopData())
 	assert.Error(err)
 }
 
@@ -163,7 +163,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	pubData, err := context.GeneratePublicationData(newBlock.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)
