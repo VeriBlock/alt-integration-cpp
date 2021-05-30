@@ -9,8 +9,8 @@ set(C_SOURCES
         array.cpp
         mock_miner2.cpp
         validation_state2.cpp
-        Storage.cpp
-        Config.cpp
+        storage2.cpp
+        config2.cpp
         pop_context2.cpp
         utils2.cpp
         mempool.cpp

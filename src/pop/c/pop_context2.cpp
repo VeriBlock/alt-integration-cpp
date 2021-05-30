@@ -4,13 +4,13 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "adaptors/logger.hpp"
-#include "Config.hpp"
+#include "config2.hpp"
 #include "entities/altblock.hpp"
 #include "entities/block_index.hpp"
 #include "entities/pop_payouts.hpp"
 #include "entities/popdata.hpp"
 #include "pop_context2.hpp"
-#include "Storage.hpp"
+#include "storage2.hpp"
 #include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
@@ -71,10 +71,11 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
   if (pop_data == nullptr) {
     self->ref->getAltBlockTree().acceptBlock(
-      std::vector<uint8_t>(hash.data, hash.data + hash.size), altintegration::PopData());
+        std::vector<uint8_t>(hash.data, hash.data + hash.size),
+        altintegration::PopData());
   } else {
     self->ref->getAltBlockTree().acceptBlock(
-      std::vector<uint8_t>(hash.data, hash.data + hash.size), pop_data->ref);
+        std::vector<uint8_t>(hash.data, hash.data + hash.size), pop_data->ref);
   }
 }
 
