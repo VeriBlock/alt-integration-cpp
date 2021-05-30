@@ -1,8 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"fork__resolution_8hpp.html#a5011cf3c07ca9102c2ab65d0b4737cf6":[3,0,0,3,0],
-"fork__resolution_8hpp.html#abcb0c190b8039c1bb2db31a8871f4ba5":[3,0,0,3,1],
-"fork__resolution_8hpp.html#abd90b06b1dfdd56b59448f1bdb5c32b8":[3,0,0,3,5],
 "fork__resolution_8hpp.html#ac67d1886fd51f7a49fb511a1c20d74ec":[3,0,0,3,3],
 "fork__resolution_8hpp_source.html":[5,0,1,0,0,1,1,1],
 "functions.html":[4,3,0],
@@ -174,7 +171,7 @@ var NAVTREEINDEX1 =
 "math_8hpp.html#a3c0b2b5cb0345a8ecb1bf1cb5d54abb6":[3,0,0,5,20],
 "math_8hpp.html#ad0bf6b06bcf4c6cef705d28ef7ac27a0":[3,0,0,5,3],
 "math_8hpp_source.html":[5,0,1,0,0,4,0,2],
-"mempool_8h_source.html":[5,0,1,0,0,2,7],
+"mempool_8h_source.html":[5,0,1,0,0,2,4],
 "mempool_8hpp.html#a62eda25874348a14249551eea59b769b":[3,0,0,2,1],
 "mempool_8hpp_source.html":[5,0,1,0,0,28],
 "mempool__block__tree_8hpp_source.html":[5,0,1,0,0,1,18],
@@ -183,11 +180,9 @@ var NAVTREEINDEX1 =
 "mempool__result_8hpp_source.html":[5,0,1,0,0,30],
 "merkle__path_8h_source.html":[5,0,1,0,0,2,0,7],
 "merkle__path_8hpp_source.html":[5,0,1,0,0,5,10],
-"merkle__root__util_8h_source.html":[5,0,1,0,0,2,8],
 "merkle__tree_8hpp_source.html":[5,0,1,0,0,5,11],
 "miner_8hpp_source.html":[5,0,1,0,0,1,19],
-"mock__miner2_8h_source.html":[5,0,1,0,0,2,10],
-"mock__miner_8h_source.html":[5,0,1,0,0,2,9],
+"mock__miner_8h_source.html":[5,0,1,0,0,2,5],
 "mock__miner_8hpp_source.html":[5,0,1,0,0,31],
 "modules.html":[2],
 "modules_8hpp_source.html":[5,0,0,0],
@@ -249,5 +244,10 @@ var NAVTREEINDEX1 =
 "namespacealtintegration.html#a25cfedf093235ec04556781202be423a":[3,0,0,121],
 "namespacealtintegration.html#a275f3b9dba773d582e80b108523e46f5":[3,0,0,333],
 "namespacealtintegration.html#a27c7717688e5cf09522a34d15543e7d7":[3,0,0,119],
-"namespacealtintegration.html#a29ad8667f9a76014921cfded2e3ae59f":[3,0,0,256]
+"namespacealtintegration.html#a29ad8667f9a76014921cfded2e3ae59f":[3,0,0,256],
+"namespacealtintegration.html#a29f82823fc29f3b0e720adb256c9760a":[3,0,0,86],
+"namespacealtintegration.html#a2a9fbfcd0f482d19f850469af5647d85":[3,0,0,143],
+"namespacealtintegration.html#a2c149a6b531cbe07691abd2d36c6ebde":[3,0,0,185],
+"namespacealtintegration.html#a2caa72fe1fec5c8370ed7c25df4aff33":[3,0,0,154],
+"namespacealtintegration.html#a2e3562e80b6619d356b9b69d118cefda":[3,0,0,85]
 };
