@@ -16,7 +16,7 @@ type Address struct {
 	ref *C.pop_address_t
 }
 
-func generateDefaultAddress() *Address {
+func GenerateDefaultAddress() *Address {
 	return createAddress(C.pop_address_generate_default_value())
 }
 

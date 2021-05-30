@@ -28,7 +28,7 @@ func (v *Atv) validate() {
 	}
 }
 
-func generateDefaultAtv() *Atv {
+func GenerateDefaultAtv() *Atv {
 	return createAtv(C.pop_atv_generate_default_value())
 }
 

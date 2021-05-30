@@ -16,7 +16,7 @@ func TestBtcBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	btc_block := generateDefaultBtcBlock()
+	btc_block := GenerateDefaultBtcBlock()
 
 	assert.Equal(btc_block.GetDifficulty(), uint32(1))
 	assert.Equal(btc_block.GetNonce(), uint32(1))
@@ -38,7 +38,7 @@ func TestVbkBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	vbk_block := generateDefaultVbkBlock()
+	vbk_block := GenerateDefaultVbkBlock()
 
 	assert.Equal(vbk_block.GetHeight(), int32(1))
 	assert.Equal(vbk_block.GetNonce(), uint64(1))
@@ -62,7 +62,7 @@ func TestAltBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	alt_block := generateDefaultAltBlock()
+	alt_block := GenerateDefaultAltBlock()
 
 	assert.Equal(alt_block.GetHeight(), int32(1))
 	assert.Equal(alt_block.GetTimestamp(), uint32(1))
@@ -78,8 +78,8 @@ func TestVtb(t *testing.T) {
 
 	assert := assert.New(t)
 
-	vtb := generateDefaultVtb()
-	vbk_block := generateDefaultVbkBlock()
+	vtb := GenerateDefaultVtb()
+	vbk_block := GenerateDefaultVbkBlock()
 
 	vtb.GetContainingBlock().assertEquals(assert, vbk_block)
 
@@ -102,8 +102,8 @@ func TestAtv(t *testing.T) {
 
 	assert := assert.New(t)
 
-	atv := generateDefaultAtv()
-	vbk_block := generateDefaultVbkBlock()
+	atv := GenerateDefaultAtv()
+	vbk_block := GenerateDefaultVbkBlock()
 
 	atv.GetBlockOfProof().assertEquals(assert, vbk_block)
 
@@ -126,10 +126,10 @@ func TestPopData(t *testing.T) {
 
 	assert := assert.New(t)
 
-	pop_data := generateDefaultPopData()
-	atv := generateDefaultAtv()
-	vtb := generateDefaultVtb()
-	vbk_block := generateDefaultVbkBlock()
+	pop_data := GenerateDefaultPopData()
+	atv := GenerateDefaultAtv()
+	vtb := GenerateDefaultVtb()
+	vbk_block := GenerateDefaultVbkBlock()
 
 	atvs := pop_data.GetAtvs()
 	vtbs := pop_data.GetVtbs()
@@ -157,7 +157,7 @@ func TestNetworkBytePair(t *testing.T) {
 
 	assert := assert.New(t)
 
-	nbp := generateDefaultNetworkBytePair()
+	nbp := GenerateDefaultNetworkBytePair()
 
 	assert.Equal(nbp.HasNetworkByte(), true)
 	assert.Equal(nbp.GetNetworkByte(), uint8(1))
@@ -172,7 +172,7 @@ func TestAddress(t *testing.T) {
 
 	assert := assert.New(t)
 
-	addr := generateDefaultAddress()
+	addr := GenerateDefaultAddress()
 
 	assert.Equal(addr.GetAddressType(), uint8(1))
 	assert.Equal(addr.GetAddress(), "V111111111111111111111111G3LuZ")
@@ -186,7 +186,7 @@ func TestBtcTx(t *testing.T) {
 
 	assert := assert.New(t)
 
-	btctx := generateDefaultBtcTx()
+	btctx := GenerateDefaultBtcTx()
 
 	assert.Equal(btctx.GetTx(), []byte{1, 1, 1, 1, 1})
 
@@ -199,7 +199,7 @@ func TestCoin(t *testing.T) {
 
 	assert := assert.New(t)
 
-	coin := generateDefaultCoin()
+	coin := GenerateDefaultCoin()
 
 	assert.Equal(coin.GetUnits(), int64(1))
 
@@ -212,7 +212,7 @@ func TestMerklePath(t *testing.T) {
 
 	assert := assert.New(t)
 
-	mp := generateDefaultMerklePath()
+	mp := GenerateDefaultMerklePath()
 	sub := mp.GetSubject()
 	layers := mp.GetLayers()
 	bytes := make([]byte, 32)
@@ -234,7 +234,7 @@ func TestPopPayout(t *testing.T) {
 
 	assert := assert.New(t)
 
-	popPayout := generateDefaultPopPayout()
+	popPayout := GenerateDefaultPopPayout()
 
 	assert.Equal(popPayout.GetPayoutInfo(), []byte{1, 2, 3, 4})
 	assert.Equal(popPayout.GetAmount(), uint64(300))

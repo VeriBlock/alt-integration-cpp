@@ -28,7 +28,7 @@ func (v *Vtb) validate() {
 	}
 }
 
-func generateDefaultVtb() *Vtb {
+func GenerateDefaultVtb() *Vtb {
 	return createVtb(C.pop_vtb_generate_default_value())
 }
 

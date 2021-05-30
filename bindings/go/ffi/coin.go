@@ -20,7 +20,7 @@ func (v *Coin) validate() {
 	}
 }
 
-func generateDefaultCoin() *Coin {
+func GenerateDefaultCoin() *Coin {
 	val := &Coin{ref: C.pop_coin_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *Coin) {
 		v.Free()

@@ -20,7 +20,7 @@ func (v *BtcTx) validate() {
 	}
 }
 
-func generateDefaultBtcTx() *BtcTx {
+func GenerateDefaultBtcTx() *BtcTx {
 	val := &BtcTx{ref: C.pop_btctx_generate_default_value()}
 	runtime.SetFinalizer(val, func(v *BtcTx) {
 		v.Free()

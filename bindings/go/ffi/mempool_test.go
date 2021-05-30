@@ -52,10 +52,10 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVtbs()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 2)
 
-	alt := generateDefaultAltBlock()
+	alt := GenerateDefaultAltBlock()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)
@@ -125,10 +125,10 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 1)
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 1)
 
-	alt := generateDefaultAltBlock()
+	alt := GenerateDefaultAltBlock()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)
@@ -178,10 +178,10 @@ func TestPopContext2MempoolGeneratePopData(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal(res, 0)
 
-	alt := generateDefaultAltBlock()
+	alt := GenerateDefaultAltBlock()
 	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
 	txRoot := make([]byte, 32)
-	popData := generateDefaultPopData()
+	popData := GenerateDefaultPopData()
 
 	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)

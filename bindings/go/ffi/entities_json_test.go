@@ -16,7 +16,7 @@ func TestJSONBtcBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	btc_block := generateDefaultBtcBlock()
+	btc_block := GenerateDefaultBtcBlock()
 
 	json, err := btc_block.ToJSON()
 	assert.NoError(err)
@@ -35,7 +35,7 @@ func TestJSONVbkBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	vbk_block := generateDefaultVbkBlock()
+	vbk_block := GenerateDefaultVbkBlock()
 
 	json, err := vbk_block.ToJSON()
 	assert.NoError(err)
@@ -58,7 +58,7 @@ func TestJSONAltBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	alt_block := generateDefaultAltBlock()
+	alt_block := GenerateDefaultAltBlock()
 
 	json, err := alt_block.ToJSON(true)
 	assert.NoError(err)
@@ -74,9 +74,9 @@ func TestJSONVtb(t *testing.T) {
 
 	assert := assert.New(t)
 
-	vtb := generateDefaultVtb()
+	vtb := GenerateDefaultVtb()
 
-	json_vbk_block, err := generateDefaultVbkBlock().ToJSON()
+	json_vbk_block, err := GenerateDefaultVbkBlock().ToJSON()
 	assert.NoError(err)
 
 	json, err := vtb.ToJSON()
@@ -90,9 +90,9 @@ func TestJSONAtv(t *testing.T) {
 
 	assert := assert.New(t)
 
-	atv := generateDefaultAtv()
+	atv := GenerateDefaultAtv()
 
-	json_vbk_block, err := generateDefaultVbkBlock().ToJSON()
+	json_vbk_block, err := GenerateDefaultVbkBlock().ToJSON()
 	assert.NoError(err)
 
 	json, err := atv.ToJSON()
