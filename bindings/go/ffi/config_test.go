@@ -11,21 +11,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfig2Free(t *testing.T) {
+func TestConfigFree(t *testing.T) {
 	t.Parallel()
 
-	config := NewConfig2()
+	config := NewConfig()
 
 	config.Free()
 	config.Free()
 }
 
-func TestConfig2(t *testing.T) {
+func TestConfig(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
 
-	config := NewConfig2()
+	config := NewConfig()
 	defer config.Free()
 
 	config.SelectVbkParams("regtest", 0, "")

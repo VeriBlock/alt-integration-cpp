@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPopContext2Free(t *testing.T) {
+func TestPopContextFree(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -27,12 +27,12 @@ func TestPopContext2Free(t *testing.T) {
 	context.Free()
 }
 
-func TestPopContext2BlockPrecessing(t *testing.T) {
+func TestPopContextBlockPrecessing(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -46,7 +46,7 @@ func TestPopContext2BlockPrecessing(t *testing.T) {
 	err = context.AcceptBlockHeader(newBlock)
 	assert.NoError(err)
 
-	miner := NewMockMiner2()
+	miner := NewMockMiner()
 	defer miner.Lock()()
 	defer miner.Free()
 

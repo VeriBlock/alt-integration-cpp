@@ -23,7 +23,7 @@ addtest(uint_test uint_test.cpp)
 addtest(stateless_validation_test stateless_validation_test.cpp)
 addtest(arith_uint256_test arith_uint256_test.cpp)
 addtest(keystone_util_test keystone_util_test.cpp)
-addtest(validationstate_test validationstate_test.cpp)
+addtest(ValidationState_test ValidationState_test.cpp)
 addtest(alt-util_test alt-util_test.cpp)
 addtest(mempool_test mempool_test.cpp)
 set_test_cost(mempool_test 41000) # 41 sec

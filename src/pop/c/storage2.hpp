@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "veriblock/pop/c/storage2.h"
+#include "veriblock/pop/c/Storage.h"
 #include "veriblock/pop/storage/adaptors/storage_interface.hpp"
 
 struct __pop_storage {

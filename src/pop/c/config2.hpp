@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "veriblock/pop/c/config2.h"
+#include "veriblock/pop/c/Config.h"
 #include "veriblock/pop/config.hpp"
 
 struct __pop_config {

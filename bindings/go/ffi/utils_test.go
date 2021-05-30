@@ -18,7 +18,7 @@ func TestGeneratePublicationData(t *testing.T) {
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
 	context := GenerateTestPopContext(t, storage)
@@ -49,7 +49,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -74,7 +74,7 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 func TestCheckAll(t *testing.T) {
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -82,7 +82,7 @@ func TestCheckAll(t *testing.T) {
 	defer context.Lock()()
 	defer context.Free()
 
-	miner := NewMockMiner2()
+	miner := NewMockMiner()
 	defer miner.Lock()()
 	defer miner.Free()
 
@@ -131,7 +131,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	defer os.RemoveAll("/tmp/alt-integration")
 
-	storage, err := NewStorage2("/tmp/alt-integration")
+	storage, err := NewStorage("/tmp/alt-integration")
 	defer storage.Free()
 
 	assert.NoError(err)
@@ -145,7 +145,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	err = context.AcceptBlockHeader(newBlock)
 	assert.NoError(err)
 
-	miner := NewMockMiner2()
+	miner := NewMockMiner()
 	defer miner.Lock()()
 	defer miner.Free()
 

@@ -10,29 +10,29 @@ package ffi
 import "C"
 import "runtime"
 
-// Storage2 ...
-type Storage2 struct {
+// Storage ...
+type Storage struct {
 	ref *C.pop_storage_t
 }
 
-func (v *Storage2) validate() {
+func (v *Storage) validate() {
 	if v.ref == nil {
 		panic("Storage does not initialized")
 	}
 }
 
-func NewStorage2(path string) (*Storage2, error) {
+func NewStorage(path string) (*Storage, error) {
 	state := NewValidationState2()
 	defer state.Free()
 
-	val := &Storage2{ref: C.pop_storage_new(createCString(path), state.ref)}
-	runtime.SetFinalizer(val, func(v *Storage2) {
+	val := &Storage{ref: C.pop_storage_new(createCString(path), state.ref)}
+	runtime.SetFinalizer(val, func(v *Storage) {
 		v.Free()
 	})
 	return val, state.Error()
 }
 
-func (v *Storage2) Free() {
+func (v *Storage) Free() {
 	if v.ref != nil {
 		C.pop_storage_free(v.ref)
 		v.ref = nil

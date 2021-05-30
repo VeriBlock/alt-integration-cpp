@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "storage2.hpp"
+#include "Storage.hpp"
 #ifdef WITH_ROCKSDB
 #include "veriblock/pop/storage/adaptors/rocksdb_impl.hpp"
 #endif

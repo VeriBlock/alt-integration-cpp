@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMockMiner2Free(t *testing.T) {
+func TestMockMinerFree(t *testing.T) {
 	t.Parallel()
 
-	mockMiner := NewMockMiner2()
+	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
 	mockMiner.Free()
 	mockMiner.Free()
@@ -25,7 +25,7 @@ func TestMineBtcBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	mockMiner := NewMockMiner2()
+	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
 	defer mockMiner.Free()
 
@@ -56,7 +56,7 @@ func TestMineVbkBlock(t *testing.T) {
 
 	assert := assert.New(t)
 
-	mockMiner := NewMockMiner2()
+	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
 	defer mockMiner.Free()
 
@@ -87,7 +87,7 @@ func TestMineVtb(t *testing.T) {
 
 	assert := assert.New(t)
 
-	mockMiner := NewMockMiner2()
+	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
 	defer mockMiner.Free()
 

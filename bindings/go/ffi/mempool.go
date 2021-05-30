@@ -9,7 +9,7 @@ package ffi
 // #include <veriblock/pop/c/mempool.h>
 import "C"
 
-func (v *PopContext2) MemPoolSubmitVbk(vbkBlock *VbkBlock) (int, error) {
+func (v *PopContext) MemPoolSubmitVbk(vbkBlock *VbkBlock) (int, error) {
 	v.validate()
 	vbkBlock.validate()
 
@@ -21,7 +21,7 @@ func (v *PopContext2) MemPoolSubmitVbk(vbkBlock *VbkBlock) (int, error) {
 	return int(res), state.Error()
 }
 
-func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
+func (v *PopContext) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 	v.validate()
 	vtb.validate()
 
@@ -33,7 +33,7 @@ func (v *PopContext2) MemPoolSubmitVtb(vtb *Vtb) (int, error) {
 	return int(res), state.Error()
 }
 
-func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
+func (v *PopContext) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	v.validate()
 	atv.validate()
 
@@ -45,12 +45,12 @@ func (v *PopContext2) MemPoolSubmitAtv(atv *Atv) (int, error) {
 	return int(res), state.Error()
 }
 
-func (v *PopContext2) MemPoolGeneratePopData() *PopData {
+func (v *PopContext) MemPoolGeneratePopData() *PopData {
 	v.validate()
 	return createPopData(C.pop_pop_context_function_mempool_generate_pop_data(v.ref))
 }
 
-func (v *PopContext2) MemPoolGetAtv(id []byte) *Atv {
+func (v *PopContext) MemPoolGetAtv(id []byte) *Atv {
 	v.validate()
 	atv_c := C.pop_pop_context_function_mempool_get_atv(v.ref, createCBytes(id))
 	if atv_c == nil {
@@ -60,7 +60,7 @@ func (v *PopContext2) MemPoolGetAtv(id []byte) *Atv {
 	return atv
 }
 
-func (v *PopContext2) MemPoolGetVtb(id []byte) *Vtb {
+func (v *PopContext) MemPoolGetVtb(id []byte) *Vtb {
 	v.validate()
 	vtb_c := C.pop_pop_context_function_mempool_get_vtb(v.ref, createCBytes(id))
 	if vtb_c == nil {
@@ -70,7 +70,7 @@ func (v *PopContext2) MemPoolGetVtb(id []byte) *Vtb {
 	return vtb
 }
 
-func (v *PopContext2) MemPoolGetVbkBlock(id []byte) *VbkBlock {
+func (v *PopContext) MemPoolGetVbkBlock(id []byte) *VbkBlock {
 	v.validate()
 	vbk_c := C.pop_pop_context_function_mempool_get_vbk_block(v.ref, createCBytes(id))
 	if vbk_c == nil {
@@ -80,56 +80,56 @@ func (v *PopContext2) MemPoolGetVbkBlock(id []byte) *VbkBlock {
 	return vbk
 }
 
-func (v *PopContext2) MemPoolGetAtvs() []*Atv {
+func (v *PopContext) MemPoolGetAtvs() []*Atv {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_atvs(v.ref)
 	defer freeArrayAtv(&array)
 	return createArrayAtv(&array)
 }
 
-func (v *PopContext2) MemPoolGetVtbs() []*Vtb {
+func (v *PopContext) MemPoolGetVtbs() []*Vtb {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_vtbs(v.ref)
 	defer freeArrayVtb(&array)
 	return createArrayVtb(&array)
 }
 
-func (v *PopContext2) MemPoolGetVbkBlocks() []*VbkBlock {
+func (v *PopContext) MemPoolGetVbkBlocks() []*VbkBlock {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_vbk_blocks(v.ref)
 	defer freeArrayVbkBlock(&array)
 	return createArrayVbkBlock(&array)
 }
 
-func (v *PopContext2) MemPoolGetAtvsInFlight() []*Atv {
+func (v *PopContext) MemPoolGetAtvsInFlight() []*Atv {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_in_flight_atvs(v.ref)
 	defer freeArrayAtv(&array)
 	return createArrayAtv(&array)
 }
 
-func (v *PopContext2) MemPoolGetVtbsInFlight() []*Vtb {
+func (v *PopContext) MemPoolGetVtbsInFlight() []*Vtb {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_in_flight_vtbs(v.ref)
 	defer freeArrayVtb(&array)
 	return createArrayVtb(&array)
 }
 
-func (v *PopContext2) MemPoolGetVbkBlocksInFlight() []*VbkBlock {
+func (v *PopContext) MemPoolGetVbkBlocksInFlight() []*VbkBlock {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_in_flight_vbk_blocks(v.ref)
 	defer freeArrayVbkBlock(&array)
 	return createArrayVbkBlock(&array)
 }
 
-func (v *PopContext2) MemPoolGetMissingBtcBlocks() [][]byte {
+func (v *PopContext) MemPoolGetMissingBtcBlocks() [][]byte {
 	v.validate()
 	array := C.pop_pop_context_function_mempool_get_missing_btc_blocks(v.ref)
 	defer freeArrayArrayU8(&array)
 	return createArrayOfArraysU8(&array)
 }
 
-func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
+func (v *PopContext) MemPoolRemoveAll(popData *PopData) {
 	v.validate()
 	if popData != nil {
 		popData.validate()
@@ -137,12 +137,12 @@ func (v *PopContext2) MemPoolRemoveAll(popData *PopData) {
 	}
 }
 
-func (v *PopContext2) MemPoolCleanUp() {
+func (v *PopContext) MemPoolCleanUp() {
 	v.validate()
 	C.pop_pop_context_function_mempool_clean_up(v.ref)
 }
 
-func (v *PopContext2) MemPoolClear() {
+func (v *PopContext) MemPoolClear() {
 	v.validate()
 	C.pop_pop_context_function_mempool_clear(v.ref)
 }

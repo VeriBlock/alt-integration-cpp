@@ -10,7 +10,7 @@ package ffi
 import "C"
 import "errors"
 
-func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash []byte, payoutInfo []byte, popData *PopData) (*PublicationData, error) {
+func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash []byte, payoutInfo []byte, popData *PopData) (*PublicationData, error) {
 	v.validate()
 	if popData == nil {
 		popData = CreatePopData()
@@ -24,7 +24,7 @@ func (v *PopContext2) GeneratePublicationData(endorsedBlockHeader []byte, txRoot
 	return createPublicationData(res), nil
 }
 
-func (v *PopContext2) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash []byte, popData *PopData) []byte {
+func (v *PopContext) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash []byte, popData *PopData) []byte {
 	v.validate()
 	popData.validate()
 	res := C.pop_pop_context_function_calculate_top_level_merkle_root(v.ref, createCBytes(txRoot), createCBytes(prevBlockHash), popData.ref)
@@ -32,7 +32,7 @@ func (v *PopContext2) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash [
 	return createBytes(&res)
 }
 
-func (v *PopContext2) SaveAllTrees() error {
+func (v *PopContext) SaveAllTrees() error {
 	v.validate()
 	state := NewValidationState2()
 	defer state.Free()
@@ -41,7 +41,7 @@ func (v *PopContext2) SaveAllTrees() error {
 	return state.Error()
 }
 
-func (v *PopContext2) LoadAllTrees() error {
+func (v *PopContext) LoadAllTrees() error {
 	v.validate()
 	state := NewValidationState2()
 	defer state.Free()
@@ -50,7 +50,7 @@ func (v *PopContext2) LoadAllTrees() error {
 	return state.Error()
 }
 
-func (v *PopContext2) CheckAtv(atv *Atv) error {
+func (v *PopContext) CheckAtv(atv *Atv) error {
 	v.validate()
 	if atv == nil {
 		return nil
@@ -63,7 +63,7 @@ func (v *PopContext2) CheckAtv(atv *Atv) error {
 	return state.Error()
 }
 
-func (v *PopContext2) CheckVtb(vtb *Vtb) error {
+func (v *PopContext) CheckVtb(vtb *Vtb) error {
 	v.validate()
 	if vtb == nil {
 		return nil
@@ -76,7 +76,7 @@ func (v *PopContext2) CheckVtb(vtb *Vtb) error {
 	return state.Error()
 }
 
-func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
+func (v *PopContext) CheckVbkBlock(vbkBlock *VbkBlock) error {
 	v.validate()
 	if vbkBlock == nil {
 		return nil
@@ -89,7 +89,7 @@ func (v *PopContext2) CheckVbkBlock(vbkBlock *VbkBlock) error {
 	return state.Error()
 }
 
-func (v *PopContext2) CheckPopData(popData *PopData) error {
+func (v *PopContext) CheckPopData(popData *PopData) error {
 	v.validate()
 	if popData == nil {
 		return nil

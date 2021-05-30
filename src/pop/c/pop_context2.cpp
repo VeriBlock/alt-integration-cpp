@@ -4,13 +4,13 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "adaptors/logger.hpp"
-#include "config2.hpp"
+#include "Config.hpp"
 #include "entities/altblock.hpp"
 #include "entities/block_index.hpp"
 #include "entities/pop_payouts.hpp"
 #include "entities/popdata.hpp"
 #include "pop_context2.hpp"
-#include "storage2.hpp"
+#include "Storage.hpp"
 #include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"

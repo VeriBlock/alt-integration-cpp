@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPopContext2MemPoolSubmitAll(t *testing.T) {
+func TestPopContextMemPoolSubmitAll(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -28,7 +28,7 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVtbs()), 0)
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
 
-	miner := NewMockMiner2()
+	miner := NewMockMiner()
 	defer miner.Lock()()
 	defer miner.Free()
 
@@ -82,12 +82,12 @@ func TestPopContext2MemPoolSubmitAll(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVbkBlocks()), 0)
 }
 
-func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
+func TestPopContextMemPoolSubmitStatefullFailed(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -99,7 +99,7 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVtbsInFlight()), 0)
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 0)
 
-	miner := NewMockMiner2()
+	miner := NewMockMiner()
 	defer miner.Lock()()
 	defer miner.Free()
 
@@ -151,10 +151,10 @@ func TestPopContext2MemPoolSubmitStatefullFailed(t *testing.T) {
 	assert.Equal(len(context.MemPoolGetVbkBlocksInFlight()), 0)
 }
 
-func TestPopContext2MempoolGeneratePopData(t *testing.T) {
+func TestPopContextMempoolGeneratePopData(t *testing.T) {
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
@@ -162,7 +162,7 @@ func TestPopContext2MempoolGeneratePopData(t *testing.T) {
 	defer context.Lock()()
 	defer context.Free()
 
-	miner := NewMockMiner2()
+	miner := NewMockMiner()
 	defer miner.Lock()()
 	defer miner.Free()
 

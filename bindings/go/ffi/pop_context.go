@@ -10,33 +10,33 @@ package ffi
 import "C"
 import "runtime"
 
-type PopContext2 struct {
+type PopContext struct {
 	ref   *C.pop_pop_context_t
 	mutex *SafeMutex
 }
 
-func (v *PopContext2) validate() {
+func (v *PopContext) validate() {
 	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref == nil {
 		panic("PopContext does not initialized")
 	}
 }
 
-func NewPopContext2(config *Config2, storage *Storage2, log_lvl string) *PopContext2 {
+func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext {
 	config.validate()
 	storage.validate()
-	context := &PopContext2{
+	context := &PopContext{
 		ref:   C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
 		mutex: NewSafeMutex(),
 	}
-	runtime.SetFinalizer(context, func(v *PopContext2) {
+	runtime.SetFinalizer(context, func(v *PopContext) {
 		defer v.Lock()()
 		v.Free()
 	})
 	return context
 }
 
-func (v *PopContext2) Free() {
+func (v *PopContext) Free() {
 	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref != nil {
 		C.pop_pop_context_free(v.ref)
@@ -44,7 +44,7 @@ func (v *PopContext2) Free() {
 	}
 }
 
-func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
+func (v *PopContext) AcceptBlockHeader(block *AltBlock) error {
 	v.validate()
 	block.validate()
 	state := NewValidationState2()
@@ -53,7 +53,7 @@ func (v *PopContext2) AcceptBlockHeader(block *AltBlock) error {
 	return state.Error()
 }
 
-func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
+func (v *PopContext) AcceptBlock(hash []byte, popData *PopData) {
 	v.validate()
 	if popData == nil {
 		popData = CreatePopData()
@@ -61,7 +61,7 @@ func (v *PopContext2) AcceptBlock(hash []byte, popData *PopData) {
 	C.pop_pop_context_function_accept_block(v.ref, createCBytes(hash), popData.ref)
 }
 
-func (v *PopContext2) SetState(hash []byte) error {
+func (v *PopContext) SetState(hash []byte) error {
 	v.validate()
 	state := NewValidationState2()
 	defer state.Free()
@@ -69,24 +69,24 @@ func (v *PopContext2) SetState(hash []byte) error {
 	return state.Error()
 }
 
-func (v *PopContext2) ComparePopScore(A_hash []byte, B_hash []byte) int {
+func (v *PopContext) ComparePopScore(A_hash []byte, B_hash []byte) int {
 	v.validate()
 	return int(C.pop_pop_context_function_compare_pop_score(v.ref, createCBytes(A_hash), createCBytes(B_hash)))
 }
 
-func (v *PopContext2) GetPopPayouts(hash []byte) []*PopPayout {
+func (v *PopContext) GetPopPayouts(hash []byte) []*PopPayout {
 	v.validate()
 	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash))
 	defer freeArrayPopPayout(&array)
 	return createArrayPopPayout(&array)
 }
 
-func (v *PopContext2) RemoveSubtree(hash []byte) {
+func (v *PopContext) RemoveSubtree(hash []byte) {
 	v.validate()
 	C.pop_pop_context_function_remove_subtree(v.ref, createCBytes(hash))
 }
 
-func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
+func (v *PopContext) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash)); res != nil {
 		return createAltBlockIndex(res)
@@ -94,7 +94,7 @@ func (v *PopContext2) AltGetBlockIndex(hash []byte) *AltBlockIndex {
 	return nil
 }
 
-func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
+func (v *PopContext) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash)); res != nil {
 		return createVbkBlockIndex(res)
@@ -102,7 +102,7 @@ func (v *PopContext2) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
 	return nil
 }
 
-func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
+func (v *PopContext) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash)); res != nil {
 		return createBtcBlockIndex(res)
@@ -110,37 +110,37 @@ func (v *PopContext2) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
 	return nil
 }
 
-func (v *PopContext2) AltGetBestBlock() *AltBlockIndex {
+func (v *PopContext) AltGetBestBlock() *AltBlockIndex {
 	v.validate()
 	return createAltBlockIndex(C.pop_pop_context_function_alt_get_best_block(v.ref))
 }
 
-func (v *PopContext2) VbkGetBestBlock() *VbkBlockIndex {
+func (v *PopContext) VbkGetBestBlock() *VbkBlockIndex {
 	v.validate()
 	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_best_block(v.ref))
 }
 
-func (v *PopContext2) BtcGetBestBlock() *BtcBlockIndex {
+func (v *PopContext) BtcGetBestBlock() *BtcBlockIndex {
 	v.validate()
 	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_best_block(v.ref))
 }
 
-func (v *PopContext2) AltGetBootstrapBlock() *AltBlockIndex {
+func (v *PopContext) AltGetBootstrapBlock() *AltBlockIndex {
 	v.validate()
 	return createAltBlockIndex(C.pop_pop_context_function_alt_get_bootstrap_block(v.ref))
 }
 
-func (v *PopContext2) VbkGetBootstrapBlock() *VbkBlockIndex {
+func (v *PopContext) VbkGetBootstrapBlock() *VbkBlockIndex {
 	v.validate()
 	return createVbkBlockIndex(C.pop_pop_context_function_vbk_get_bootstrap_block(v.ref))
 }
 
-func (v *PopContext2) BtcGetBootstrapBlock() *BtcBlockIndex {
+func (v *PopContext) BtcGetBootstrapBlock() *BtcBlockIndex {
 	v.validate()
 	return createBtcBlockIndex(C.pop_pop_context_function_btc_get_bootstrap_block(v.ref))
 }
 
-func (v *PopContext2) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockIndex {
+func (v *PopContext) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_alt_get_block_at_active_chain(v.ref, C.uint32_t(height)); res != nil {
 		createAltBlockIndex(res)
@@ -148,7 +148,7 @@ func (v *PopContext2) AltGetBlockAtActiveChainByHeight(height uint32) *AltBlockI
 	return nil
 }
 
-func (v *PopContext2) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockIndex {
+func (v *PopContext) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_vbk_get_block_at_active_chain(v.ref, C.uint32_t(height)); res != nil {
 		createVbkBlockIndex(res)
@@ -156,7 +156,7 @@ func (v *PopContext2) VbkGetBlockAtActiveChainByHeight(height uint32) *VbkBlockI
 	return nil
 }
 
-func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockIndex {
+func (v *PopContext) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockIndex {
 	v.validate()
 	if res := C.pop_pop_context_function_btc_get_block_at_active_chain(v.ref, C.uint32_t(height)); res != nil {
 		createBtcBlockIndex(res)
@@ -164,14 +164,14 @@ func (v *PopContext2) BtcGetBlockAtActiveChainByHeight(height uint32) *BtcBlockI
 	return nil
 }
 
-func (v *PopContext2) GetPayloadContainingBlocks(id []byte) [][]byte {
+func (v *PopContext) GetPayloadContainingBlocks(id []byte) [][]byte {
 	v.validate()
 	array := C.pop_pop_context_function_get_payload_containing_blocks(v.ref, createCBytes(id))
 	defer freeArrayArrayU8(&array)
 	return createArrayOfArraysU8(&array)
 }
 
-func (v *PopContext2) Lock() (unlock func()) {
+func (v *PopContext) Lock() (unlock func()) {
 	v.mutex.Lock()
 	return func() {
 		v.mutex.Unlock()

@@ -16,7 +16,7 @@ func TestStorageFree(t *testing.T) {
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage2(":inmem:")
+	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
 	storage.Free()
@@ -30,12 +30,12 @@ func TestCreateStorageFailure(t *testing.T) {
 
 	dir := t.TempDir()
 
-	storage, err := NewStorage2(dir)
+	storage, err := NewStorage(dir)
 	defer storage.Free()
 
 	assert.NoError(err)
 
-	storage, err = NewStorage2(dir)
+	storage, err = NewStorage(dir)
 	assert.Error(err)
 	assert.Empty(storage)
 }
