@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_C_VALIDATION_STATE2_HPP
 #define VERIBLOCK_POP_CPP_C_VALIDATION_STATE2_HPP
 
-#include "veriblock/pop/c/validation_state2.h"
+#include "veriblock/pop/c/validation_state.h"
 #include "veriblock/pop/validation_state.hpp"
 
 struct __pop_validation_state {

@@ -12,7 +12,7 @@
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/c/utils2.h"
+#include "veriblock/pop/c/utils.h"
 #include "veriblock/pop/exceptions/storage_io.hpp"
 #include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
 #include "veriblock/pop/storage/util.hpp"

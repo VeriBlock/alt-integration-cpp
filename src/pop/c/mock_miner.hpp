@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER_HPP
 #define VERIBLOCK_POP_CPP_C_MOCK_MINER_HPP
 
-#include "veriblock/pop/c/mock_miner2.h"
+#include "veriblock/pop/c/mock_miner.h"
 #include "veriblock/pop/mock_miner.hpp"
 
 struct __pop_mock_miner {

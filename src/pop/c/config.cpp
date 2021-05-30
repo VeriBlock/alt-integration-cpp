@@ -8,7 +8,7 @@
 #include "entities/btcblock.hpp"
 #include "entities/vbkblock.hpp"
 #include "veriblock/pop/bootstraps.hpp"
-#include "veriblock/pop/c/extern2.h"
+#include "veriblock/pop/c/extern.h"
 #include "veriblock/pop/config.hpp"
 
 struct AltChainParamsImpl2 : public altintegration::AltChainParams {
