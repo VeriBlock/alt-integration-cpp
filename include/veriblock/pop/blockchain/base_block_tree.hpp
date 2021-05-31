@@ -461,7 +461,7 @@ struct BaseBlockTree {
 
   //! the number of blocks that have BLOCK_APPLIED flag set
   //! @private
-  block_height_t appliedBlockCount = 0;
+  size_t appliedBlockCount = 0;
 
  protected:
   //! @private
@@ -670,7 +670,8 @@ struct BaseBlockTree {
     });
   }
 
-  void reduceAppliedBlockCount(int32_t erasedBlocks) {
+  void reduceAppliedBlockCount(size_t erasedBlocks) {
+    VBK_ASSERT(appliedBlockCount >= erasedBlocks);
     appliedBlockCount -= erasedBlocks;
   }
 
@@ -752,10 +753,9 @@ struct BaseBlockTree {
       }
     }
 
-    int32_t deallocatedBlocks = firstBlockHeight - bootstrapBlockHeight;
-    VBK_ASSERT(deallocatedBlocks >= 0);
+    VBK_ASSERT(firstBlockHeight >= bootstrapBlockHeight);
+    size_t deallocatedBlocks = firstBlockHeight - bootstrapBlockHeight;
     reduceAppliedBlockCount(deallocatedBlocks);
-    VBK_ASSERT(appliedBlockCount >= 0);
 
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
@@ -913,7 +913,7 @@ struct BaseBlockTree {
 };
 
 template <>
-void inline BaseBlockTree<BtcBlock>::reduceAppliedBlockCount(int32_t) {
+void inline BaseBlockTree<BtcBlock>::reduceAppliedBlockCount(size_t) {
   // do nothing
   // BTC tree is not protected
 }
