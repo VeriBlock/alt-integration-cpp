@@ -124,7 +124,7 @@ class MockMiner {
     VBK_ASSERT_MSG(ret, state.toString());
   }
 
-  PayloadsStorage& getPayloadsProvider() { return payloads_provider_; }
+  adaptors::InmemStorageImpl& getStorage() { return storage_; }
 
  private:
   template <typename BlockTree, typename Block>
