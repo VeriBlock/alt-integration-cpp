@@ -369,4 +369,6 @@ TEST_F(VbkBlockFinalization, FinalizeMaxBtcs) {
   assertTreeTips(alttree.btc(), {btctip});
 
   assertTreesHaveNoOrphans(alttree);
+
+  ASSERT_TRUE(alttree.setState(*tip, state));
 }

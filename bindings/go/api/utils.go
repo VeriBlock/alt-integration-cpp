@@ -5,161 +5,99 @@
 
 package api
 
-import (
-	"errors"
-	"io"
-	"math"
+// #cgo pkg-config: veriblock-pop-cpp
+// #include <veriblock/pop/c/utils.h>
+import "C"
+import "errors"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
-	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
-	ffi "github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
-)
-
-func (v *PopContext) AltBlockGetEndorsedBy(altblockHash []byte) ([]entities.AltEndorsement, error) {
-	stream := v.popContext.AltBlockGetEndorsedBy(altblockHash)
-	if stream == nil {
-		return nil, errors.New("cannot find alt block")
-	}
-	defer stream.Free()
-	endorsements, err := veriblock.ReadArrayOf(stream, 0, math.MaxInt64, func(stream io.Reader) (interface{}, error) {
-		endorsement := entities.AltEndorsement{}
-		err := endorsement.FromVbkEncoding(stream)
-		if err != nil {
-			return nil, err
-		}
-		return endorsement, nil
-	})
-	if err != nil {
-		return nil, errors.New("failed to deserialize alt endorsement")
-	}
-	ends := make([]entities.AltEndorsement, len(endorsements))
-	for i, endorsement := range endorsements {
-		ends[i] = endorsement.(entities.AltEndorsement)
-	}
-	return ends, nil
-}
-
-func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash [veriblock.Sha256HashSize]byte, popData *entities.PopData, payoutInfo []byte) (*entities.PublicationData, error) {
+func (v *PopContext) GeneratePublicationData(endorsedBlockHeader []byte, txRootHash []byte, payoutInfo []byte, popData *PopData) (*PublicationData, error) {
+	v.validate()
 	if popData == nil {
-		popData = entities.GetEmptyPopData()
+		popData = CreatePopData()
 	}
 
-	popDataBytes, err := popData.ToVbkEncodingBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	stream := v.popContext.AltBlockGeneratePublicationData(endorsedBlockHeader, txRootHash, popDataBytes, payoutInfo)
-	if stream == nil {
+	res := C.pop_pop_context_function_generate_publication_data(v.ref, createCBytes(endorsedBlockHeader), createCBytes(txRootHash), createCBytes(payoutInfo), popData.ref)
+	if res == nil {
 		return nil, errors.New("cannot generate PublicationData")
 	}
-	defer stream.Free()
 
-	publicationData := &entities.PublicationData{}
-	publicationData.FromVbkEncoding(stream)
-
-	return publicationData, nil
+	return createPublicationData(res), nil
 }
 
-func (v *PopContext) CalculateTopLevelMerkleRoot(txRootHash [veriblock.Sha256HashSize]byte, prevAltBlockHash entities.AltHash, popData *entities.PopData) (*entities.ContextInfoContainerHash, error) {
-	v.mutex.AssertMutexLocked("pop context is not locked")
-
-	if popData == nil {
-		return nil, errors.New("popData should be defined")
-	}
-
-	popDataBytes, err := popData.ToVbkEncodingBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	var hash entities.ContextInfoContainerHash
-	hash = v.popContext.AltBlockCalculateTopLevelMerkleRoot(txRootHash, prevAltBlockHash, popDataBytes)
-	return &hash, nil
-}
-
-func (v *PopContext) CheckATV(atv *entities.Atv) error {
-	bytes, err := atv.ToVbkEncodingBytes()
-	if err != nil {
-		return err
-	}
-	state := ffi.NewValidationState()
-	defer state.Free()
-	ok := v.popContext.CheckATV(bytes, state)
-	if !ok {
-		return state.Error()
-	}
-
-	return nil
-}
-
-func (v *PopContext) CheckVTB(vtb *entities.Vtb) error {
-	bytes, err := vtb.ToVbkEncodingBytes()
-	if err != nil {
-		return err
-	}
-	state := ffi.NewValidationState()
-	defer state.Free()
-	ok := v.popContext.CheckVTB(bytes, state)
-	if !ok {
-		return state.Error()
-	}
-	return nil
-}
-
-func (v *PopContext) CheckVbkBlock(blk *entities.VbkBlock) error {
-	bytes, err := blk.ToVbkEncodingBytes()
-	if err != nil {
-		return err
-	}
-	state := ffi.NewValidationState()
-	defer state.Free()
-	ok := v.popContext.CheckVbkBlock(bytes, state)
-	if !ok {
-		return state.Error()
-	}
-	return nil
-}
-
-func (v *PopContext) CheckPopData(popData *entities.PopData) error {
-	if popData == nil {
-		return nil
-	}
-	bytes, err := popData.ToVbkEncodingBytes()
-	if err != nil {
-		return err
-	}
-	state := ffi.NewValidationState()
-	defer state.Free()
-	ok := v.popContext.CheckPopData(bytes, state)
-	if !ok {
-		return state.Error()
-	}
-	return nil
+func (v *PopContext) CalculateTopLevelMerkleRoot(txRoot []byte, prevBlockHash []byte, popData *PopData) []byte {
+	v.validate()
+	popData.validate()
+	res := C.pop_pop_context_function_calculate_top_level_merkle_root(v.ref, createCBytes(txRoot), createCBytes(prevBlockHash), popData.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
 }
 
 func (v *PopContext) SaveAllTrees() error {
-	v.mutex.AssertMutexLocked("pop context is not locked")
-
-	state := ffi.NewValidationState()
+	v.validate()
+	state := NewValidationState()
 	defer state.Free()
 
-	ok := v.popContext.SaveAllTrees(state)
-	if !ok {
-		return state.Error()
-	}
-	return nil
+	C.pop_pop_context_function_save_all_trees(v.ref, state.ref)
+	return state.Error()
 }
 
 func (v *PopContext) LoadAllTrees() error {
-	v.mutex.AssertMutexLocked("pop context is not locked")
-
-	state := ffi.NewValidationState()
+	v.validate()
+	state := NewValidationState()
 	defer state.Free()
 
-	ok := v.popContext.LoadAllTrees(state)
-	if !ok {
-		return state.Error()
+	C.pop_pop_context_function_load_all_trees(v.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext) CheckAtv(atv *Atv) error {
+	v.validate()
+	if atv == nil {
+		return nil
 	}
-	return nil
+	atv.validate()
+	state := NewValidationState()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_atv(v.ref, atv.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext) CheckVtb(vtb *Vtb) error {
+	v.validate()
+	if vtb == nil {
+		return nil
+	}
+	vtb.validate()
+	state := NewValidationState()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_vtb(v.ref, vtb.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext) CheckVbkBlock(vbkBlock *VbkBlock) error {
+	v.validate()
+	if vbkBlock == nil {
+		return nil
+	}
+	vbkBlock.validate()
+	state := NewValidationState()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_vbk_block(v.ref, vbkBlock.ref, state.ref)
+	return state.Error()
+}
+
+func (v *PopContext) CheckPopData(popData *PopData) error {
+	v.validate()
+	if popData == nil {
+		return nil
+	}
+	popData.validate()
+	state := NewValidationState()
+	defer state.Free()
+
+	C.pop_pop_context_function_check_pop_data(v.ref, popData.ref, state.ref)
+	return state.Error()
 }
