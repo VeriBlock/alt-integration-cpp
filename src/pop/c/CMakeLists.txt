@@ -1,18 +1,11 @@
 set(C_SOURCES
-        config.cpp
-        pop_context.cpp
-        utils.cpp
-        bytestream.cpp
+        array.cpp
         mock_miner.cpp
         validation_state.cpp
         storage.cpp
-        array.cpp
-        mock_miner2.cpp
-        validation_state2.cpp
-        storage2.cpp
-        config2.cpp
-        pop_context2.cpp
-        utils2.cpp
+        config.cpp
+        pop_context.cpp
+        utils.cpp
         mempool.cpp
         # entities
         entities/publication_data.cpp
