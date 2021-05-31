@@ -26,6 +26,12 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
+    [ "Setup ABFI", "integration_13_setup_abfi.html", [
+      [ "Overview", "integration_13_setup_abfi.html#autotoc_md25", null ],
+      [ "1. Altchain BFI configuration.", "integration_13_setup_abfi.html#autotoc_md26", null ],
+      [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
+      [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -59,15 +65,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"files.html",
-"namespacealtintegration.html#a275f3b9dba773d582e80b108523e46f5",
-"namespacealtintegration.html#add8cd44ad74bdb13293f7d1225145828",
-"structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a",
-"structaltintegration_1_1BlockTree.html#a765d4df2a1e98b65cc0e4137119dda7d",
-"structaltintegration_1_1Endorsement.html#aaae94fb3c6df0fee18685fef458bd4c9",
-"structaltintegration_1_1VTB.html#a94c26224c74fb94092c832f7db21b41c",
-"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html"
+"addblock_8hpp_source.html",
+"functions.html",
+"namespacealtintegration.html#a2caa72fe1fec5c8370ed7c25df4aff33",
+"namespacealtintegration.html#ae1dc00cb23b82ec70ec5c683c5007f9e",
+"structaltintegration_1_1AltChainParams.html#a0caa05ae89b6ac4386bef645eaad1c24",
+"structaltintegration_1_1BlockTree.html#aae7d32d0860c91dd9ec31ec11632ca17",
+"structaltintegration_1_1Finalizer.html",
+"structaltintegration_1_1VTB.html#aee76e7560a56d8b3110856e46fe6ff36",
+"structaltintegration_1_1adaptors_1_1LevelDBStorage.html#a8828864c4192b5400f3942f427464409"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,83 +1,83 @@
 var integration =
 [
-    [ "Integrate POP into BTC fork", "integration.html#autotoc_md94", null ],
-    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md95", null ],
+    [ "Integrate POP into BTC fork", "integration.html#autotoc_md95", null ],
+    [ "Create new fork from existing BTC+POP chain", "integration.html#autotoc_md96", null ],
     [ "Modifying build setup", "integration_1_build.html", [
-      [ "Overview", "integration_1_build.html#autotoc_md25", null ],
-      [ "1. Build and install veriblock-pop-cpp library.", "integration_1_build.html#autotoc_md26", null ],
-      [ "2. Add veriblock-pop-cpp library dependency.", "integration_1_build.html#autotoc_md27", null ]
+      [ "Overview", "integration_1_build.html#autotoc_md29", null ],
+      [ "1. Build and install veriblock-pop-cpp library.", "integration_1_build.html#autotoc_md30", null ],
+      [ "2. Add veriblock-pop-cpp library dependency.", "integration_1_build.html#autotoc_md31", null ]
     ] ],
     [ "Adding PopData", "integration_2_popdata.html", [
-      [ "Overview", "integration_2_popdata.html#autotoc_md28", null ],
-      [ "1. Helper for the block hash serialization.", "integration_2_popdata.html#autotoc_md29", null ],
-      [ "2. Define POP_BLOCK_VERSION_BIT flag.", "integration_2_popdata.html#autotoc_md30", null ],
-      [ "3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.", "integration_2_popdata.html#autotoc_md31", null ],
-      [ "4. Update PartiallyDownloadedBlock initializing - set PopData field.", "integration_2_popdata.html#autotoc_md32", null ],
-      [ "5. Update setting up the PopData fields during the net processing.", "integration_2_popdata.html#autotoc_md33", null ],
-      [ "6. Update validation rules.", "integration_2_popdata.html#autotoc_md34", null ],
-      [ "7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.", "integration_2_popdata.html#autotoc_md35", null ],
-      [ "8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.", "integration_2_popdata.html#autotoc_md36", null ]
+      [ "Overview", "integration_2_popdata.html#autotoc_md32", null ],
+      [ "1. Helper for the block hash serialization.", "integration_2_popdata.html#autotoc_md33", null ],
+      [ "2. Define POP_BLOCK_VERSION_BIT flag.", "integration_2_popdata.html#autotoc_md34", null ],
+      [ "3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.", "integration_2_popdata.html#autotoc_md35", null ],
+      [ "4. Update PartiallyDownloadedBlock initializing - set PopData field.", "integration_2_popdata.html#autotoc_md36", null ],
+      [ "5. Update setting up the PopData fields during the net processing.", "integration_2_popdata.html#autotoc_md37", null ],
+      [ "6. Update validation rules.", "integration_2_popdata.html#autotoc_md38", null ],
+      [ "7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.", "integration_2_popdata.html#autotoc_md39", null ],
+      [ "8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.", "integration_2_popdata.html#autotoc_md40", null ]
     ] ],
     [ "Choosing fork point", "integration_3_forkpoint.html", [
-      [ "Overview", "integration_3_forkpoint.html#autotoc_md37", null ],
-      [ "1. Add block height for Pop Security activation.", "integration_3_forkpoint.html#autotoc_md38", null ],
-      [ "2. Create a function in the chainparams which detects if the Pop security is enabled.", "integration_3_forkpoint.html#autotoc_md39", null ],
-      [ "3. Update the block version validation.", "integration_3_forkpoint.html#autotoc_md40", null ]
+      [ "Overview", "integration_3_forkpoint.html#autotoc_md41", null ],
+      [ "1. Add block height for Pop Security activation.", "integration_3_forkpoint.html#autotoc_md42", null ],
+      [ "2. Create a function in the chainparams which detects if the Pop security is enabled.", "integration_3_forkpoint.html#autotoc_md43", null ],
+      [ "3. Update the block version validation.", "integration_3_forkpoint.html#autotoc_md44", null ]
     ] ],
     [ "Adding configuration", "integration_4_config.html", [
-      [ "Overview", "integration_4_config.html#autotoc_md41", null ],
-      [ "1. Create two new source files: pop_common.hpp, pop_common.cpp.", "integration_4_config.html#autotoc_md42", null ],
-      [ "2. Add bootstraps blocks.", "integration_4_config.html#autotoc_md43", null ],
-      [ "3. Create AltChainParamsBTC class with VeriBlock configuration of the ALT blockchain.", "integration_4_config.html#autotoc_md44", null ],
-      [ "4. Update the initialization of the bitcoind, bitcoin-wallet, etc to setup VeriBlock config.", "integration_4_config.html#autotoc_md45", null ],
-      [ "5. Update test chain setup to allow adding block to specific previous block.", "integration_4_config.html#autotoc_md46", null ],
-      [ "6. Update makefiles. Add new source files.", "integration_4_config.html#autotoc_md47", null ]
+      [ "Overview", "integration_4_config.html#autotoc_md45", null ],
+      [ "1. Create two new source files: pop_common.hpp, pop_common.cpp.", "integration_4_config.html#autotoc_md46", null ],
+      [ "2. Add bootstraps blocks.", "integration_4_config.html#autotoc_md47", null ],
+      [ "3. Create AltChainParamsBTC class with VeriBlock configuration of the ALT blockchain.", "integration_4_config.html#autotoc_md48", null ],
+      [ "4. Update the initialization of the bitcoind, bitcoin-wallet, etc to setup VeriBlock config.", "integration_4_config.html#autotoc_md49", null ],
+      [ "5. Update test chain setup to allow adding block to specific previous block.", "integration_4_config.html#autotoc_md50", null ],
+      [ "6. Update makefiles. Add new source files.", "integration_4_config.html#autotoc_md51", null ]
     ] ],
     [ "Adding persistence", "integration_5_persistence.html", [
-      [ "Overview", "integration_5_persistence.html#autotoc_md48", null ],
-      [ "1. Add PayloadsProvider.", "integration_5_persistence.html#autotoc_md49", null ],
-      [ "2. Create wrappers for the persistence API.", "integration_5_persistence.html#autotoc_md50", null ],
-      [ "3. Initialize VeriBlock storage during ALT blockchain initialization process.", "integration_5_persistence.html#autotoc_md51", null ],
-      [ "4. Update the constructor of the TestingSetup struct.", "integration_5_persistence.html#autotoc_md52", null ],
-      [ "5. Restore VeriBlock block hash from the storage - do not recalculate it if possible.", "integration_5_persistence.html#autotoc_md53", null ],
-      [ "6. Add pop_service.cpp to the makefile.", "integration_5_persistence.html#autotoc_md54", null ]
+      [ "Overview", "integration_5_persistence.html#autotoc_md52", null ],
+      [ "1. Add PayloadsProvider.", "integration_5_persistence.html#autotoc_md53", null ],
+      [ "2. Create wrappers for the persistence API.", "integration_5_persistence.html#autotoc_md54", null ],
+      [ "3. Initialize VeriBlock storage during ALT blockchain initialization process.", "integration_5_persistence.html#autotoc_md55", null ],
+      [ "4. Update the constructor of the TestingSetup struct.", "integration_5_persistence.html#autotoc_md56", null ],
+      [ "5. Restore VeriBlock block hash from the storage - do not recalculate it if possible.", "integration_5_persistence.html#autotoc_md57", null ],
+      [ "6. Add pop_service.cpp to the makefile.", "integration_5_persistence.html#autotoc_md58", null ]
     ] ],
     [ "Pop mempool support", "integration_6_mempool.html", [
-      [ "Overview", "integration_6_mempool.html#autotoc_md55", null ],
-      [ "1. Implement mempool related methods in the pop_service.hpp and pop_service.cpp source files.", "integration_6_mempool.html#autotoc_md56", null ],
-      [ "2. Add PopData during block mining.", "integration_6_mempool.html#autotoc_md57", null ],
-      [ "3. Remove PopData after successfully submitting to the blockchain.", "integration_6_mempool.html#autotoc_md58", null ]
+      [ "Overview", "integration_6_mempool.html#autotoc_md59", null ],
+      [ "1. Implement mempool related methods in the pop_service.hpp and pop_service.cpp source files.", "integration_6_mempool.html#autotoc_md60", null ],
+      [ "2. Add PopData during block mining.", "integration_6_mempool.html#autotoc_md61", null ],
+      [ "3. Remove PopData after successfully submitting to the blockchain.", "integration_6_mempool.html#autotoc_md62", null ]
     ] ],
     [ "AltTree management", "integration_7_alttree.html", [
-      [ "Overview", "integration_7_alttree.html#autotoc_md59", null ],
-      [ "1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.", "integration_7_alttree.html#autotoc_md60", null ],
-      [ "2. Update block processing in the ConnectBlock(), DisconnectBlock(), UpdateTip(), LoadGenesisBlock(), AcceptBlockHeader(), AcceptBlock(), TestBlockValidity().", "integration_7_alttree.html#autotoc_md61", null ],
-      [ "3. Show Pop related info when node starts.", "integration_7_alttree.html#autotoc_md62", null ],
-      [ "4. Update Pop logging support.", "integration_7_alttree.html#autotoc_md63", null ],
-      [ "5. Add unit tests to test the functionality we have added before.", "integration_7_alttree.html#autotoc_md64", null ],
-      [ "6. Add test case which tests the VeriBlock Pop behaviour: e2e_poptx_tests.cpp.", "integration_7_alttree.html#autotoc_md65", null ],
-      [ "7. Update makefile to enable new unit test.", "integration_7_alttree.html#autotoc_md66", null ]
+      [ "Overview", "integration_7_alttree.html#autotoc_md63", null ],
+      [ "1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.", "integration_7_alttree.html#autotoc_md64", null ],
+      [ "2. Update block processing in the ConnectBlock(), DisconnectBlock(), UpdateTip(), LoadGenesisBlock(), AcceptBlockHeader(), AcceptBlock(), TestBlockValidity().", "integration_7_alttree.html#autotoc_md65", null ],
+      [ "3. Show Pop related info when node starts.", "integration_7_alttree.html#autotoc_md66", null ],
+      [ "4. Update Pop logging support.", "integration_7_alttree.html#autotoc_md67", null ],
+      [ "5. Add unit tests to test the functionality we have added before.", "integration_7_alttree.html#autotoc_md68", null ],
+      [ "6. Add test case which tests the VeriBlock Pop behaviour: e2e_poptx_tests.cpp.", "integration_7_alttree.html#autotoc_md69", null ],
+      [ "7. Update makefile to enable new unit test.", "integration_7_alttree.html#autotoc_md70", null ]
     ] ],
     [ "Pop Merkle trees", "integration_8_merkle.html", [
-      [ "Overview", "integration_8_merkle.html#autotoc_md67", null ],
-      [ "1. VeriBlock Merkle root related functions are implemented in the merkle.hpp and merkle.cpp.", "integration_8_merkle.html#autotoc_md68", null ],
-      [ "2. Use extended block weight calculation method that appends Pop data size.", "integration_8_merkle.html#autotoc_md69", null ],
-      [ "3. Extend ValidationState class for better veriblock-pop-cpp error processing.", "integration_8_merkle.html#autotoc_md70", null ],
-      [ "4. Update the mining process with Pop Merkle root calculation.", "integration_8_merkle.html#autotoc_md71", null ],
-      [ "5. Since Pop Merkle root algorithm depends on the blockchain, we should move Merkle root validation from the CheckBlock() to the ContextualCheckBlock().", "integration_8_merkle.html#autotoc_md72", null ],
-      [ "6. Add helper genesis_common.cpp file that allows Genesis block generation.", "integration_8_merkle.html#autotoc_md73", null ],
-      [ "7. Add new tests: block_validation_tests.cpp, vbk_merkle_tests.cpp.", "integration_8_merkle.html#autotoc_md74", null ],
-      [ "8. Add Pop Merkle trees code to the makefile.", "integration_8_merkle.html#autotoc_md75", null ],
-      [ "9. Update makefile to run tests.", "integration_8_merkle.html#autotoc_md76", null ]
+      [ "Overview", "integration_8_merkle.html#autotoc_md71", null ],
+      [ "1. VeriBlock Merkle root related functions are implemented in the merkle.hpp and merkle.cpp.", "integration_8_merkle.html#autotoc_md72", null ],
+      [ "2. Use extended block weight calculation method that appends Pop data size.", "integration_8_merkle.html#autotoc_md73", null ],
+      [ "3. Extend ValidationState class for better veriblock-pop-cpp error processing.", "integration_8_merkle.html#autotoc_md74", null ],
+      [ "4. Update the mining process with Pop Merkle root calculation.", "integration_8_merkle.html#autotoc_md75", null ],
+      [ "5. Since Pop Merkle root algorithm depends on the blockchain, we should move Merkle root validation from the CheckBlock() to the ContextualCheckBlock().", "integration_8_merkle.html#autotoc_md76", null ],
+      [ "6. Add helper genesis_common.cpp file that allows Genesis block generation.", "integration_8_merkle.html#autotoc_md77", null ],
+      [ "7. Add new tests: block_validation_tests.cpp, vbk_merkle_tests.cpp.", "integration_8_merkle.html#autotoc_md78", null ],
+      [ "8. Add Pop Merkle trees code to the makefile.", "integration_8_merkle.html#autotoc_md79", null ],
+      [ "9. Update makefile to run tests.", "integration_8_merkle.html#autotoc_md80", null ]
     ] ],
     [ "Pop rewards", "integration_9_rewards.html", [
-      [ "Overview", "integration_9_rewards.html#autotoc_md77", null ],
-      [ "1. Modify ALT params (CChainParams). Add two new VeriBlock parameters for the Pop rewards.", "integration_9_rewards.html#autotoc_md78", null ],
-      [ "2. Implement Pop rewards related methods in the pop_service.hpp and pop_service.cpp source files.", "integration_9_rewards.html#autotoc_md79", null ],
-      [ "3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.", "integration_9_rewards.html#autotoc_md80", null ],
-      [ "4. Modify mining process in the CreateNewBlock function. Insert VeriBlock PoPRewards into the coinbase transaction, add some validation rules to the validation.cpp.", "integration_9_rewards.html#autotoc_md81", null ],
-      [ "5. Add tests for the Pop rewards.", "integration_9_rewards.html#autotoc_md82", null ],
-      [ "6. Update makefile to run tests.", "integration_9_rewards.html#autotoc_md83", null ]
+      [ "Overview", "integration_9_rewards.html#autotoc_md81", null ],
+      [ "1. Modify ALT params (CChainParams). Add two new VeriBlock parameters for the Pop rewards.", "integration_9_rewards.html#autotoc_md82", null ],
+      [ "2. Implement Pop rewards related methods in the pop_service.hpp and pop_service.cpp source files.", "integration_9_rewards.html#autotoc_md83", null ],
+      [ "3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.", "integration_9_rewards.html#autotoc_md84", null ],
+      [ "4. Modify mining process in the CreateNewBlock function. Insert VeriBlock PoPRewards into the coinbase transaction, add some validation rules to the validation.cpp.", "integration_9_rewards.html#autotoc_md85", null ],
+      [ "5. Add tests for the Pop rewards.", "integration_9_rewards.html#autotoc_md86", null ],
+      [ "6. Update makefile to run tests.", "integration_9_rewards.html#autotoc_md87", null ]
     ] ],
     [ "Pop fork resolution", "integration_10_fr.html", [
       [ "Overview", "integration_10_fr.html#autotoc_md4", null ],
@@ -107,24 +107,12 @@ var integration =
       [ "7. Add RPC service and test to the makefile.", "integration_12_rpc.html#autotoc_md24", null ]
     ] ],
     [ "Testing of POP-enabled BTC fork", "btctesting.html", [
-      [ "Summary", "btctesting.html#autotoc_md84", null ],
-      [ "Overview", "btctesting.html#autotoc_md85", null ],
-      [ "Unit tests", "btctesting.html#autotoc_md86", null ],
-      [ "BTC functional tests", "btctesting.html#autotoc_md87", null ],
-      [ "POP functional tests", "btctesting.html#autotoc_md88", null ],
-      [ "View APM get-operation", "btctesting.html#autotoc_md89", null ],
-      [ "Altchain BFI", "btctesting.html#autotoc_md90", [
-        [ "Guides:", "index.html#autotoc_md102", null ],
-        [ "1. Fork vBTC", "integration.html#autotoc_md96", null ],
-        [ "2. Change naming as needed.", "integration.html#autotoc_md97", null ],
-        [ "3. Change network ID", "integration.html#autotoc_md98", null ],
-        [ "4. Change POP Altchain ID", "integration.html#autotoc_md99", null ],
-        [ "5. Rebootstrap", "integration.html#autotoc_md100", null ],
-        [ "6. Make sure all unit and functional tests pass.", "integration.html#autotoc_md101", [
-          [ "Altchain BFI configuration", "btctesting.html#autotoc_md91", null ],
-          [ "Altchain BFI API", "btctesting.html#autotoc_md92", null ],
-          [ "Altchain BFI last-finalized-btc endpoint", "btctesting.html#autotoc_md93", null ]
-        ] ]
-      ] ]
+      [ "Summary", "btctesting.html#autotoc_md88", null ],
+      [ "Overview", "btctesting.html#autotoc_md89", null ],
+      [ "Unit tests", "btctesting.html#autotoc_md90", null ],
+      [ "BTC functional tests", "btctesting.html#autotoc_md91", null ],
+      [ "POP functional tests", "btctesting.html#autotoc_md92", null ],
+      [ "View APM get-operation", "btctesting.html#autotoc_md93", null ],
+      [ "Altchain BFI", "btctesting.html#autotoc_md94", null ]
     ] ]
 ];
