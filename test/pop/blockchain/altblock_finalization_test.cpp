@@ -253,9 +253,6 @@ TEST_F(VbkBlockFinalization, FinalizeMaxBtcs) {
 
   auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
 
-  // mine 10 blocks
-  //mineAltBlocks(1, chain);
-
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
 
@@ -305,4 +302,6 @@ TEST_F(VbkBlockFinalization, FinalizeMaxBtcs) {
   assertTreeTips(alttree.btc(), {btctip});
 
   assertTreesHaveNoOrphans(alttree);
+
+  ASSERT_TRUE(alttree.setState(*tip, state));
 }
