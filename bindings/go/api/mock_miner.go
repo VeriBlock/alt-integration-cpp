@@ -5,141 +5,77 @@
 
 package api
 
-import (
-	"bytes"
-
-	entities "github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
-	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
-)
+// #cgo pkg-config: veriblock-pop-cpp
+// #include <veriblock/pop/c/mock_miner.h>
+import "C"
+import "runtime"
 
 // MockMiner ...
 type MockMiner struct {
-	miner *ffi.MockMiner
+	ref   *C.pop_mock_miner_t
 	mutex *SafeMutex
 }
 
-// NewMockMiner ...
+func (v *MockMiner) validate() {
+	v.mutex.AssertMutexLocked("MockMiner is not locked")
+	if v.ref == nil {
+		panic("MockMiner does not initialized")
+	}
+}
+
 func NewMockMiner() *MockMiner {
-	return &MockMiner{
-		miner: ffi.NewMockMiner(),
+	val := &MockMiner{
+		ref:   C.pop_mock_miner_new(),
 		mutex: NewSafeMutex(),
 	}
+	runtime.SetFinalizer(val, func(v *MockMiner) {
+		defer v.Lock()()
+		v.Free()
+	})
+	return val
 }
 
-// MineBtcBlockTip - Mine new altintegration::BtcBlock on the top of the current btctree.
-func (v *MockMiner) MineBtcBlockTip() (*entities.BlockIndex, error) {
-	v.mutex.AssertMutexLocked("mock miner is not locked")
-
-	stream := v.miner.MineBtcBlockTip()
-	if stream == nil {
-		panic("MineBtcBlockTip returned nullptr")
+func (v *MockMiner) Free() {
+	v.mutex.AssertMutexLocked("MockMiner is not locked")
+	if v.ref != nil {
+		C.pop_mock_miner_free(v.ref)
+		v.ref = nil
 	}
-	defer stream.Free()
-	blockIndex := entities.NewBtcBlockIndex()
-	err := blockIndex.FromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &blockIndex, nil
 }
 
-// MineBtcBlock - Mine new altintegration::BtcBlock on the top of the provided block.
-func (v *MockMiner) MineBtcBlock(blockHash []byte) (*entities.BlockIndex, error) {
-	v.mutex.AssertMutexLocked("mock miner is not locked")
-
-	stream := v.miner.MineBtcBlock(blockHash)
-	if stream == nil {
-		return nil, nil
-	}
-	defer stream.Free()
-	blockIndex := entities.NewBtcBlockIndex()
-	err := blockIndex.FromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &blockIndex, nil
+func (v *MockMiner) MineBtcBlockTip() *BtcBlock {
+	v.validate()
+	return createBtcBlock(C.pop_mock_miner_function_mineBtcBlockTip(v.ref))
 }
 
-// MineVbkBlockTip - Mine new altintegration::VbkBlock on the top of the current vbktree.
-func (v *MockMiner) MineVbkBlockTip() (*entities.BlockIndex, error) {
-	v.mutex.AssertMutexLocked("mock miner is not locked")
-
-	stream := v.miner.MineVbkBlockTip()
-	if stream == nil {
-		return nil, nil
-	}
-	defer stream.Free()
-	blockIndex := entities.NewVbkBlockIndex()
-	err := blockIndex.FromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &blockIndex, nil
+func (v *MockMiner) MineBtcBlock(block *BtcBlock) *BtcBlock {
+	v.validate()
+	block.validate()
+	return createBtcBlock(C.pop_mock_miner_function_mineBtcBlock(v.ref, block.ref))
 }
 
-// MineVbkBlock - Mine new altintegration::VbkBlock on the top of the provided block.
-func (v *MockMiner) MineVbkBlock(blockHash []byte) (*entities.BlockIndex, error) {
-	v.mutex.AssertMutexLocked("mock miner is not locked")
-
-	stream := v.miner.MineVbkBlock(blockHash)
-	defer stream.Free()
-	if stream == nil {
-		return nil, nil
-	}
-	blockIndex := entities.NewVbkBlockIndex()
-	err := blockIndex.FromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &blockIndex, nil
+func (v *MockMiner) MineVbkBlockTip() *VbkBlock {
+	v.validate()
+	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlockTip(v.ref))
 }
 
-// MineAtv ...
-func (v *MockMiner) MineAtv(publicationData *entities.PublicationData) (*entities.Atv, error) {
-	v.mutex.AssertMutexLocked("mock miner is not locked")
-
-	var buffer bytes.Buffer
-	err := publicationData.ToVbkEncoding(&buffer)
-	if err != nil {
-		return nil, err
-	}
-	state := ffi.NewValidationState()
-	defer state.Free()
-	stream := v.miner.MineAtv(buffer.Bytes(), state)
-	if stream == nil {
-		return nil, state.Error()
-	}
-	defer stream.Free()
-	var atv entities.Atv
-	err = atv.FromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &atv, nil
+func (v *MockMiner) MineVbkBlock(block *VbkBlock) *VbkBlock {
+	v.validate()
+	block.validate()
+	return createVbkBlock(C.pop_mock_miner_function_mineVbkBlock(v.ref, block.ref))
 }
 
-// MineVtb ...
-func (v *MockMiner) MineVtb(endorsedBlock *entities.VbkBlock, hash []byte) (*entities.Vtb, error) {
-	v.mutex.AssertMutexLocked("mock miner is not locked")
+func (v *MockMiner) MineAtv(pub_data *PublicationData) *Atv {
+	v.validate()
+	pub_data.validate()
+	return createAtv(C.pop_mock_miner_function_mineATV(v.ref, pub_data.ref))
+}
 
-	var buffer bytes.Buffer
-	err := endorsedBlock.ToVbkEncoding(&buffer)
-	if err != nil {
-		return nil, err
-	}
-	state := ffi.NewValidationState()
-	defer state.Free()
-	stream := v.miner.MineVtb(buffer.Bytes(), hash, state)
-	if stream == nil {
-		return nil, state.Error()
-	}
-	defer stream.Free()
-	var vtb entities.Vtb
-	err = vtb.FromVbkEncoding(stream)
-	if err != nil {
-		return nil, err
-	}
-	return &vtb, nil
+func (v *MockMiner) MineVtb(endorsed_block *VbkBlock, last_known_btc_block *BtcBlock) *Vtb {
+	v.validate()
+	endorsed_block.validate()
+	last_known_btc_block.validate()
+	return createVtb(C.pop_mock_miner_function_mineVTB(v.ref, endorsed_block.ref, last_known_btc_block.ref))
 }
 
 func (v *MockMiner) Lock() (unlock func()) {

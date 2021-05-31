@@ -7,8 +7,8 @@
 #include "entities/popdata.hpp"
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
-#include "pop_context2.hpp"
-#include "validation_state2.hpp"
+#include "pop_context.hpp"
+#include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/c/mempool.h"
 

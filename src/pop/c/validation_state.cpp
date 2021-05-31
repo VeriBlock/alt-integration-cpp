@@ -3,52 +3,47 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <string.h>
+
+#include <memory>
+
 #include "validation_state.hpp"
-#include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/c/validation_state.h>
+#include "veriblock/pop/assert.hpp"
 
-VbkValidationState* VBK_NewValidationState() {
-  return new VbkValidationState();
-}
-
-void VBK_FreeValidationState(VbkValidationState* self) {
+POP_ENTITY_FREE_SIGNATURE(validation_state) {
   if (self != nullptr) {
     delete self;
     self = nullptr;
   }
 }
 
-const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self) {
-  VBK_ASSERT(self);
-
-  return self->GetErrorMessage();
+POP_ENTITY_NEW_FUNCTION(validation_state) {
+  return new POP_ENTITY_NAME(validation_state);
 }
 
-bool VBK_ValidationState_Invalid(VbkValidationState* self,
-                                 const char* reject_reason,
-                                 const char* debug_message) {
+POP_ENTITY_GETTER_FUNCTION(validation_state,
+                           POP_ARRAY_NAME(string),
+                           error_message) {
   VBK_ASSERT(self);
-  VBK_ASSERT(reject_reason);
-  VBK_ASSERT(debug_message);
 
-  return self->getState().Invalid(std::string(reject_reason),
-                                  std::string(debug_message));
+  std::string message = self->ref.GetDebugMessage();
+
+  POP_ARRAY_NAME(string) res;
+  res.size = message.size();
+  res.data = new char[res.size];
+  strncpy(res.data, message.c_str(), res.size);
+
+  return res;
 }
 
-bool VBK_ValidationState_isValid(VbkValidationState* self) {
+POP_ENTITY_GETTER_FUNCTION(validation_state, bool, is_valid) {
   VBK_ASSERT(self);
 
-  return self->IsValid();
+  return self->ref.IsValid();
 }
 
-bool VBK_ValidationState_isInvalid(VbkValidationState* self) {
+POP_ENTITY_GETTER_FUNCTION(validation_state, bool, is_invalid) {
   VBK_ASSERT(self);
 
-  return self->IsInvalid();
-}
-
-void VBK_ValidationState_Reset(VbkValidationState* self) {
-  VBK_ASSERT(self);
-
-  self->Reset();
+  return self->ref.IsInvalid();
 }

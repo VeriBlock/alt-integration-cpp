@@ -6,12 +6,19 @@
 package api
 
 import (
-	"bytes"
 	"testing"
 
-	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMockMinerFree(t *testing.T) {
+	t.Parallel()
+
+	mockMiner := NewMockMiner()
+	defer mockMiner.Lock()()
+	mockMiner.Free()
+	mockMiner.Free()
+}
 
 func TestMineBtcBlock(t *testing.T) {
 	t.Parallel()
@@ -20,18 +27,28 @@ func TestMineBtcBlock(t *testing.T) {
 
 	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
+	defer mockMiner.Free()
 
-	blockTip, err := mockMiner.MineBtcBlockTip()
-	assert.NoError(err)
-	assert.Equal(uint32(1), blockTip.Height)
+	block1 := mockMiner.MineBtcBlockTip()
+	block2 := mockMiner.MineBtcBlockTip()
+	block3 := mockMiner.MineBtcBlockTip()
+	block4 := mockMiner.MineBtcBlockTip()
 
-	blockTip, err = mockMiner.MineBtcBlock(blockTip.GetHash())
-	assert.NoError(err)
-	assert.Equal(uint32(2), blockTip.Height)
+	assert.Equal(block1.GetHash(), block2.GetPreviousBlock())
+	assert.Equal(block2.GetHash(), block3.GetPreviousBlock())
+	assert.Equal(block3.GetHash(), block4.GetPreviousBlock())
 
-	blockTip, err = mockMiner.MineBtcBlockTip()
-	assert.NoError(err)
-	assert.Equal(uint32(3), blockTip.Height)
+	block2_1 := mockMiner.MineBtcBlock(block1)
+	block3_1 := mockMiner.MineBtcBlock(block2_1)
+	block4_1 := mockMiner.MineBtcBlock(block3_1)
+
+	assert.Equal(block1.GetHash(), block2_1.GetPreviousBlock())
+	assert.Equal(block2_1.GetHash(), block3_1.GetPreviousBlock())
+	assert.Equal(block3_1.GetHash(), block4_1.GetPreviousBlock())
+
+	assert.NotEqual(block2_1.GetHash(), block2.GetHash())
+	assert.NotEqual(block3_1.GetHash(), block3.GetHash())
+	assert.NotEqual(block4_1.GetHash(), block4.GetHash())
 }
 
 func TestMineVbkBlock(t *testing.T) {
@@ -41,40 +58,28 @@ func TestMineVbkBlock(t *testing.T) {
 
 	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
+	defer mockMiner.Free()
 
-	blockTip, err := mockMiner.MineVbkBlockTip()
-	assert.NoError(err)
-	assert.Equal(uint32(1), blockTip.Height)
+	block1 := mockMiner.MineVbkBlockTip()
+	block2 := mockMiner.MineVbkBlockTip()
+	block3 := mockMiner.MineVbkBlockTip()
+	block4 := mockMiner.MineVbkBlockTip()
 
-	blockTip, err = mockMiner.MineVbkBlock(blockTip.GetHash())
-	assert.NoError(err)
-	assert.Equal(uint32(2), blockTip.Height)
+	assert.Equal(block1.GetHeight()+1, block2.GetHeight())
+	assert.Equal(block2.GetHeight()+1, block3.GetHeight())
+	assert.Equal(block3.GetHeight()+1, block4.GetHeight())
 
-	blockTip, err = mockMiner.MineVbkBlockTip()
-	assert.NoError(err)
-	assert.Equal(uint32(3), blockTip.Height)
-}
+	block2_1 := mockMiner.MineVbkBlock(block1)
+	block3_1 := mockMiner.MineVbkBlock(block2_1)
+	block4_1 := mockMiner.MineVbkBlock(block3_1)
 
-func TestMineAtv(t *testing.T) {
-	t.Parallel()
+	assert.Equal(block1.GetHeight()+1, block2_1.GetHeight())
+	assert.Equal(block2_1.GetHeight()+1, block3_1.GetHeight())
+	assert.Equal(block3_1.GetHeight()+1, block4_1.GetHeight())
 
-	assert := assert.New(t)
-
-	mockMiner := NewMockMiner()
-	defer mockMiner.Lock()()
-
-	var publicationData entities.PublicationData
-	publicationData.ContextInfo = []byte{1, 2, 3, 4}
-	publicationData.Header = []byte{1, 2, 3, 4, 5}
-	publicationData.Identifier = 10
-	publicationData.PayoutInfo = []byte{1, 2, 3, 4, 5, 6}
-
-	atv, err := mockMiner.MineAtv(&publicationData)
-	assert.NoError(err)
-	assert.True(bytes.Equal(atv.Transaction.PublicationData.ContextInfo, publicationData.ContextInfo))
-	assert.True(bytes.Equal(atv.Transaction.PublicationData.Header, publicationData.Header))
-	assert.True(bytes.Equal(atv.Transaction.PublicationData.PayoutInfo, publicationData.PayoutInfo))
-	assert.Equal(atv.Transaction.PublicationData.Identifier, publicationData.Identifier)
+	assert.NotEqual(block2_1.GetHash(), block2.GetHash())
+	assert.NotEqual(block3_1.GetHash(), block3.GetHash())
+	assert.NotEqual(block4_1.GetHash(), block4.GetHash())
 }
 
 func TestMineVtb(t *testing.T) {
@@ -82,37 +87,14 @@ func TestMineVtb(t *testing.T) {
 
 	assert := assert.New(t)
 
-	storage, err := NewStorage(":inmem:")
-	assert.NoError(err)
-
-	popContext := generateTestPopContext(t, storage)
-	defer popContext.popContext.Free()
-	defer popContext.Lock()()
-
-	popContext.BtcBestBlock()
-
 	mockMiner := NewMockMiner()
 	defer mockMiner.Lock()()
+	defer mockMiner.Free()
 
-	index, err := mockMiner.MineVbkBlockTip()
-	assert.NoError(err)
+	vbkBlock := mockMiner.MineVbkBlockTip()
+	btcBlock := mockMiner.MineBtcBlockTip()
 
-	vbkBlock, err := index.GetVbkBlockHeader()
-	assert.NoError(err)
+	vtb := mockMiner.MineVtb(vbkBlock, btcBlock)
 
-	btcTip, err := popContext.BtcBestBlock()
-	assert.NoError(err)
-
-	vtb, err := mockMiner.MineVtb(vbkBlock, btcTip.GetHash())
-	assert.NoError(err)
-	assert.Equal(vtb.ContainingBlock.Height, vbkBlock.Height+1)
-	assert.Equal(vtb.Transaction.PublishedBlock.Difficulty, vbkBlock.Difficulty)
-	assert.Equal(vtb.Transaction.PublishedBlock.Height, vbkBlock.Height)
-	assert.Equal(vtb.Transaction.PublishedBlock.Nonce, vbkBlock.Nonce)
-	assert.Equal(vtb.Transaction.PublishedBlock.Timestamp, vbkBlock.Timestamp)
-	assert.Equal(vtb.Transaction.PublishedBlock.Version, vbkBlock.Version)
-	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.MerkleRoot[:], vbkBlock.MerkleRoot[:]))
-	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousBlock[:], vbkBlock.PreviousBlock[:]))
-	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.PreviousKeystone[:], vbkBlock.PreviousKeystone[:]))
-	assert.True(bytes.Equal(vtb.Transaction.PublishedBlock.SecondPreviousKeystone[:], vbkBlock.SecondPreviousKeystone[:]))
+	assert.Equal(vtb.GetContainingBlock().GetHeight(), vbkBlock.GetHeight()+1)
 }

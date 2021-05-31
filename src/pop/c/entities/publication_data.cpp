@@ -14,7 +14,7 @@
 #include "publication_data.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/serde.hpp"
-#include "../validation_state2.hpp"
+#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(publication_data) {
   if (self != nullptr) {
@@ -61,7 +61,7 @@ POP_ENTITY_GETTER_FUNCTION(publication_data, POP_ARRAY_NAME(u8), header) {
   VBK_ASSERT(self);
 
   auto header = self->ref.header;
-  
+
   POP_ARRAY_NAME(u8) res;
   res.size = header.size();
   res.data = new uint8_t[res.size];
@@ -74,7 +74,7 @@ POP_ENTITY_GETTER_FUNCTION(publication_data, POP_ARRAY_NAME(u8), payout_info) {
   VBK_ASSERT(self);
 
   auto payout_info = self->ref.payoutInfo;
-  
+
   POP_ARRAY_NAME(u8) res;
   res.size = payout_info.size();
   res.data = new uint8_t[res.size];
@@ -87,7 +87,7 @@ POP_ENTITY_GETTER_FUNCTION(publication_data, POP_ARRAY_NAME(u8), context_info) {
   VBK_ASSERT(self);
 
   auto context_info = self->ref.contextInfo;
-  
+
   POP_ARRAY_NAME(u8) res;
   res.size = context_info.size();
   res.data = new uint8_t[res.size];
