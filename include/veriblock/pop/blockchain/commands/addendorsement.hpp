@@ -42,10 +42,9 @@ struct AddEndorsement : public Command {
             protected_block_t::name() + "-no-containing",
             fmt::sprintf("Can not find containing block in endorsement=%s",
                          e_->toPrettyString()));
-      } else {
-        containing = ed_->getBlockIndex(e_->containingHash);
-        VBK_ASSERT(containing);
       }
+      containing = ed_->getBlockIndex(e_->containingHash);
+      VBK_ASSERT(containing);
     }
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);

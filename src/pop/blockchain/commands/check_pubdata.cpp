@@ -21,10 +21,9 @@ bool CheckPublicationData::Execute(ValidationState& state) {
       return state.Invalid("bad-sf-endorsed",
                            fmt::format("Can not find endorsed header (hash={})",
                                        HexStr(endorsed_hash)));
-    } else {
-      endorsed = tree->getBlockIndex(endorsed_hash);
-      VBK_ASSERT(endorsed);
     }
+    endorsed = tree->getBlockIndex(endorsed_hash);
+    VBK_ASSERT(endorsed);
   }
 
   auto ctx = ContextInfoContainer::createFromPrevious(endorsed->pprev, params);
