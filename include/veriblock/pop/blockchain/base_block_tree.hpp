@@ -666,11 +666,12 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
-      if (activeChain_.contains(&next)) {
-        --appliedBlockCount;
-      }
       blocks_.erase(h);
     });
+  }
+
+  void reduceAppliedBlockCount(int32_t erasedBlocks) {
+    appliedBlockCount -= erasedBlocks;
   }
 
   //! Marks `block` as finalized.
@@ -750,6 +751,11 @@ struct BaseBlockTree {
         }
       }
     }
+
+    int32_t deallocatedBlocks = firstBlockHeight - bootstrapBlockHeight;
+    VBK_ASSERT(deallocatedBlocks >= 0);
+    reduceAppliedBlockCount(deallocatedBlocks);
+    VBK_ASSERT(appliedBlockCount >= 0);
 
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
@@ -905,6 +911,12 @@ struct BaseBlockTree {
   //! signals to the end user that block have been invalidated
   signals::Signal<on_invalidate_t> validity_sig_;
 };
+
+template <>
+void inline BaseBlockTree<BtcBlock>::reduceAppliedBlockCount(int32_t) {
+  // do nothing
+  // BTC tree is not protected
+}
 
 }  // namespace altintegration
 #endif  // ALTINTEGRATION_BASE_BLOCK_TREE_HPP

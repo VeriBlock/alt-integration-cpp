@@ -96,5 +96,5 @@ TEST_F(VbkBlockFinalization, NegativeBtcAppliedBlockCountTest) {
 
   ASSERT_EQ(btctip->getHash(), tree->btc().getBestChain().tip()->getHash());
   ASSERT_TRUE(tree->finalizeBlock(*vbktip, state));
-  ASSERT_LT(tree->btc().appliedBlockCount, 0);
+  ASSERT_GE(tree->btc().appliedBlockCount, 0);
 }
