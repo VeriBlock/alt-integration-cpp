@@ -265,7 +265,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
     /**
      * Add a payload to a leaf connected block, apply the payload if the block
-     *is applied
+     * is applied
      * @pre: the payload must be retrievable via getPayloadsProvider()
      * @invariant: does not change the validity of any block
      * @invariant atomic: either adds and applies the payload or returns false
