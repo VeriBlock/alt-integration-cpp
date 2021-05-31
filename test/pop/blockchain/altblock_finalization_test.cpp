@@ -280,7 +280,6 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   // finalize block
   ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
 
-  // ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
 
   // check the state after finalization
@@ -296,6 +295,64 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   popdata.atvs = {atv};
   ASSERT_EQ(popdata.vtbs.size(), 1);
   ASSERT_EQ(popdata.atvs.size(), 1);
+  ASSERT_EQ(popdata.context.size(), 0);
+
+  applyInNextBlock(popdata);
+}
+
+TEST_F(VbkBlockFinalization, FinalizedBtcBlocks) {
+  altparam.mEndorsementSettlementInterval = 0;
+  altparam.mPreserveBlocksBehindFinal = 0;
+  vbkparam.mEndorsementSettlementInterval = 1;
+  vbkparam.mPreserveBlocksBehindFinal = 1;
+  vbkparam.mOldBlocksWindow = 0;
+  btcparam.mOldBlocksWindow = 0;
+
+  // generate VTB which will contain finilized BTC context
+  popminer->mineBtcBlocks(1000);
+  auto *vbkTip = alttree.vbk().getBestChain().tip();
+  auto vbkPopTx = generatePopTx(vbkTip->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
+  auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  for (const auto &b : context) {
+    submitVBK(b);
+  }
+
+  auto popdata = checkedGetPop();
+  ASSERT_LE(popdata.context.size(), 1);
+
+  applyInNextBlock(popdata);
+
+  // mine one more block on top of the block full of VBK payloads
+  popdata = checkedGetPop();
+  applyInNextBlock(popdata);
+
+  save(alttree);
+
+  tip = alttree.getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
+
+  // finalize block
+  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
+
+  assertTreeTips(alttree, {tip});
+
+  // check the state after finalization
+  ASSERT_TRUE(alttree.setState(*tip->pprev, state));
+
+  assertTreeTips(alttree.vbk(), {vbktip});
+
+  assertTreesHaveNoOrphans(alttree);
+
+  ASSERT_EQ(alttree.btc().getBlocks().size(), 1);
+
+  // insert the old vtb into the popdata
+  popdata.vtbs = {vtb};
+  ASSERT_EQ(popdata.vtbs.size(), 1);
+  ASSERT_EQ(popdata.atvs.size(), 0);
   ASSERT_EQ(popdata.context.size(), 0);
 
   applyInNextBlock(popdata);
