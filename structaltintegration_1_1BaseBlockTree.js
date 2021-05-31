@@ -34,6 +34,8 @@ var structaltintegration_1_1BaseBlockTree =
     [ "operator=", "structaltintegration_1_1BaseBlockTree.html#a32a43a51eca6769ce432f2025db47ea2", null ],
     [ "operator=", "structaltintegration_1_1BaseBlockTree.html#a54355099ba23ea92a4b4aa4cbce5810f", null ],
     [ "overrideTip", "structaltintegration_1_1BaseBlockTree.html#a1c244540d5a6f7e6bbe2f2b4a1e0525c", null ],
+    [ "reduceAppliedBlockCount", "structaltintegration_1_1BaseBlockTree.html#a0393430a94d499e0964e584d2abd42df", null ],
+    [ "reduceAppliedBlockCount", "structaltintegration_1_1BaseBlockTree.html#aa5e3134bd34f00fb735f135fd05572e9", null ],
     [ "removeLeaf", "structaltintegration_1_1BaseBlockTree.html#a56b1f7eea3027fe06f480f9e8bf675c0", null ],
     [ "removeSubtree", "structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610", null ],
     [ "removeSubtree", "structaltintegration_1_1BaseBlockTree.html#a9feee17d9c4768461b195dec5b0d4ea0", null ],
