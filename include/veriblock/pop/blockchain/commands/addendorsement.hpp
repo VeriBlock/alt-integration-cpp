@@ -37,18 +37,28 @@ struct AddEndorsement : public Command {
   bool Execute(ValidationState& state) override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
     if (!containing) {
-      return state.Invalid(
-          protected_block_t::name() + "-no-containing",
-          fmt::sprintf("Can not find containing block in endorsement=%s",
-                       e_->toPrettyString()));
+      if (!ed_->restoreBlock(e_->containingHash, state)) {
+        return state.Invalid(
+            protected_block_t::name() + "-no-containing",
+            fmt::sprintf("Can not find containing block in endorsement=%s",
+                         e_->toPrettyString()));
+      } else {
+        containing = ed_->getBlockIndex(e_->containingHash);
+        VBK_ASSERT(containing);
+      }
     }
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
-      return state.Invalid(
-          protected_block_t::name() + "-no-endorsed-block",
-          fmt::sprintf("Endorsed block=%s not found in the tree",
-                       HexStr(e_->endorsedHash)));
+      if (!ed_->restoreBlock(e_->endorsedHash, state)) {
+        return state.Invalid(
+            protected_block_t::name() + "-no-endorsed-block",
+            fmt::sprintf("Endorsed block=%s not found in the tree",
+                         HexStr(e_->endorsedHash)));
+      } else {
+        endorsed = ed_->getBlockIndex(e_->endorsedHash);
+        VBK_ASSERT(endorsed);
+      }
     }
 
     auto actualEndorsed = containing->getAncestor(endorsed->getHeight());

@@ -251,12 +251,6 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
   auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
-  // trying to restore endorsedBlock
-  {
-    ValidationState state;
-    restoreBlock(payload.transaction.publishedBlock.getHash(), state);
-  }
-
   if (!cmdGroup || !cmdGroup->execute(state)) {
     VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
                   index.toPrettyString(),
