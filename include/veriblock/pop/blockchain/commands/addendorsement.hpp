@@ -54,10 +54,9 @@ struct AddEndorsement : public Command {
             protected_block_t::name() + "-no-endorsed-block",
             fmt::sprintf("Endorsed block=%s not found in the tree",
                          HexStr(e_->endorsedHash)));
-      } else {
-        endorsed = ed_->getBlockIndex(e_->endorsedHash);
-        VBK_ASSERT(endorsed);
       }
+      endorsed = ed_->getBlockIndex(e_->endorsedHash);
+      VBK_ASSERT(endorsed);
     }
 
     auto actualEndorsed = containing->getAncestor(endorsed->getHeight());
