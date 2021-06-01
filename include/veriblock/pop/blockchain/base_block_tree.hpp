@@ -254,6 +254,10 @@ struct BaseBlockTree {
 
     index_t* index = &this->getRoot();
     auto oldHeight = index->getHeight();
+    if (stored_index.height > index->getHeight()) {
+      return state.Invalid("cannot-restore-block-higher-than-current-root");
+    }
+
     while (index->getHeight() != stored_index.height) {
       stored_index_t tmp_stored;
       auto prev_hash = index->getHeader().getPreviousBlock();
