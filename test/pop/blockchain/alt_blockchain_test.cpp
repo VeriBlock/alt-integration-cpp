@@ -196,6 +196,30 @@ TEST_F(AltTreeFixture, invalidBlockIndex_test) {
   EXPECT_FALSE(alttree.acceptBlockHeader(index->getHeader(), state));
 }
 
+TEST_F(AltTreeFixture, duplicateVTBs_test) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  auto containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+  PopData popData = generateAltPayloads({}, GetRegTestVbkBlock().getHash(), 1);
+
+  ASSERT_EQ(popData.vtbs.size(), 1);
+
+  ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  ASSERT_TRUE(validatePayloads(containingBlock.getHash(), popData));
+  ASSERT_TRUE(state.IsValid());
+
+  popData.context.clear();
+
+  containingBlock = generateNextBlock(chain.back());
+  ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  ASSERT_TRUE(validatePayloads(containingBlock.getHash(), popData))
+      << state.toString();
+  ASSERT_TRUE(state.IsValid());
+}
+
 TEST_F(AltTreeFixture, assertBlockSanity_test) {
   auto block = generateNextBlock(altparam.getBootstrapBlock());
 
