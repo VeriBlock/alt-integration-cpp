@@ -125,7 +125,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   for (auto& el : payouts) {
     res.data[i] = new POP_ENTITY_NAME(pop_payout);
     res.data[i]->payout_info = el.first;
-    res.data[i]->amount = el.second;
+    res.data[i++]->amount = el.second;
   }
 
   return res;
