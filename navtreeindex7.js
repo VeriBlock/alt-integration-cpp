@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1VTB.html#a389493364912b3b7c9b5bbaa3ae42b03":[5,0,0,49,11],
+"structaltintegration_1_1VTB.html#a3d01efdef24e1705cfa0041cba456813":[5,0,0,49,7],
+"structaltintegration_1_1VTB.html#a6039844a160b788fb51bef24498e48af":[5,0,0,49,13],
+"structaltintegration_1_1VTB.html#a8983b35112c156b9fa6565eaa31b446b":[5,0,0,49,0],
+"structaltintegration_1_1VTB.html#a94c26224c74fb94092c832f7db21b41c":[5,0,0,49,2],
+"structaltintegration_1_1VTB.html#acae954054a38e2fe2f7de8fd618c1ade":[5,0,0,49,4],
+"structaltintegration_1_1VTB.html#aec0b8ff40d1d9763aa06b0bc23a89203":[5,0,0,49,6],
+"structaltintegration_1_1VTB.html#aec927283bb5ebb759c2ab22c98fd5e7e":[5,0,0,49,15],
 "structaltintegration_1_1VTB.html#aed8e8955b62f1b96397e1fb3b1e154e7":[5,0,0,49,3],
 "structaltintegration_1_1VTB.html#aedb5647cd46e5e2557589ef730c65033":[5,0,0,49,8],
 "structaltintegration_1_1VTB.html#aee76e7560a56d8b3110856e46fe6ff36":[5,0,0,49,14],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a13b6d644263af696b862af9a8385423f":[5,0,0,0,3,0],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3b0d6be950cb324ceae43af01e56d2df":[5,0,0,0,3,7],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3df1c96e45628b662b16a5f9083f8e8d":[5,0,0,0,3,6],
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a4be421e7e77a49279b15f01b63c03b69":[5,0,0,0,3,2],
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#aae176a1b057a95225193c09ddaac9258":[5,0,0,0,3,5],
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ab5824d97826eb193446320fc283c650d":[5,0,0,0,3,3],
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ac2d07a78f10dbfa03fdbef09d2c51122":[5,0,0,0,3,4],
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e":[5,0,0,0,3,1],
-"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html":[5,0,0,0,4],
-"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a8f39c95af8bcdfa166489f8467a56601":[5,0,0,0,4,2],
-"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a9d6aff9fb0723273a850a504a1857733":[5,0,0,0,4,0],
-"structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#aa2c78db81bde8431e92e82cc3baab0a2":[5,0,0,0,4,3]
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a4be421e7e77a49279b15f01b63c03b69":[5,0,0,0,3,2]
 };
