@@ -172,7 +172,7 @@ TEST_F(VbkBlockFinalization, FinalizeVbkTip) {
       << state.toString();
   ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();
-  EXPECT_TRUE(state.IsValid());
+  EXPECT_TRUE(state.IsValid()) << state.toString();
   vbktip = alttree.vbk().getBestChain().tip();
   ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
 
