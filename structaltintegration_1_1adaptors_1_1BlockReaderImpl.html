@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1adaptors_1_1Bl
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00099">99</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00096">96</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::adaptors::BlockReaderImpl:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -125,15 +125,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>getVbkTip</b> (<a cla
 <tr class="memitem:a3ee02f61ecff26ef42fafab481f7c865"><td class="memItemLeft" align="right" valign="top"><a id="a3ee02f61ecff26ef42fafab481f7c865"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBtcTip</b> (<a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;out) const override</td></tr>
 <tr class="separator:a3ee02f61ecff26ef42fafab481f7c865"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5fbf43ac4c7c38d1f59cdaa77e18998"><td class="memItemLeft" align="right" valign="top"><a id="aa5fbf43ac4c7c38d1f59cdaa77e18998"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>getAltBlock</b> (const AltBlock::hash_t &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;out) const override</td></tr>
-<tr class="separator:aa5fbf43ac4c7c38d1f59cdaa77e18998"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a965f80b0ffc103fd409f423ddf30edaf"><td class="memItemLeft" align="right" valign="top"><a id="a965f80b0ffc103fd409f423ddf30edaf"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>getVbkBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;out) const override</td></tr>
-<tr class="separator:a965f80b0ffc103fd409f423ddf30edaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3f2be64973ab8a371eaeba0d303089e"><td class="memItemLeft" align="right" valign="top"><a id="ac3f2be64973ab8a371eaeba0d303089e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBtcBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;out) const override</td></tr>
-<tr class="separator:ac3f2be64973ab8a371eaeba0d303089e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab25912dc7c94452b516692cc8da326eb"><td class="memItemLeft" align="right" valign="top"><a id="ab25912dc7c94452b516692cc8da326eb"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> (const AltBlock::prev_hash_t &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;out) const override</td></tr>
+<tr class="separator:ab25912dc7c94452b516692cc8da326eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a283736460019927cbc85a14d8196a2ac"><td class="memItemLeft" align="right" valign="top"><a id="a283736460019927cbc85a14d8196a2ac"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::prev_hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;out) const override</td></tr>
+<tr class="separator:a283736460019927cbc85a14d8196a2ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74ec1545ae40efb0c2661ae4c9d6bd1f"><td class="memItemLeft" align="right" valign="top"><a id="a74ec1545ae40efb0c2661ae4c9d6bd1f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::prev_hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;out) const override</td></tr>
+<tr class="separator:a74ec1545ae40efb0c2661ae4c9d6bd1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabb963b23c6040568c0bef02467c88b8"><td class="memItemLeft" align="right" valign="top"><a id="aabb963b23c6040568c0bef02467c88b8"></a>
 std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1BlockIterator.html">BlockIterator</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAltBlockIterator</b> () const override</td></tr>
 <tr class="separator:aabb963b23c6040568c0bef02467c88b8"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -42,7 +42,7 @@ var searchData=
   ['consts_2ehpp_127',['consts.hpp',['../consts_8hpp.html',1,'']]],
   ['contextinfo_128',['contextInfo',['../structaltintegration_1_1PublicationData.html#add06191a76226e51c6487a7af44ad46a',1,'altintegration::PublicationData']]],
   ['contextinfocontainer_129',['ContextInfoContainer',['../structaltintegration_1_1ContextInfoContainer.html',1,'altintegration']]],
-  ['create_130',['create',['../structaltintegration_1_1PopContext.html#a7eb004079aafa005b10f18cd6b1a5564',1,'altintegration::PopContext::create()'],['../structaltintegration_1_1Config_1_1Bootstrap.html#a3dda1b273cd4b9438a9e8b47c3afda47',1,'altintegration::Config::Bootstrap::create()']]],
+  ['create_130',['create',['../structaltintegration_1_1PopContext.html#a85ec86af4bb85babb5fc0ebe81ed8625',1,'altintegration::PopContext::create()'],['../structaltintegration_1_1Config_1_1Bootstrap.html#a3dda1b273cd4b9438a9e8b47c3afda47',1,'altintegration::Config::Bootstrap::create()']]],
   ['createfromprevious_131',['createFromPrevious',['../structaltintegration_1_1AuthenticatedContextInfoContainer.html#a63f24e44a05e9ebcd86a922aff86c2fd',1,'altintegration::AuthenticatedContextInfoContainer::createFromPrevious(const std::vector&lt; uint8_t &gt; &amp;txRoot, const uint256 &amp;popDataRoot, const BlockIndex&lt; AltBlock &gt; *prev, const AltChainParams &amp;p)'],['../structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2aca9efbe5de4f0916c14578ecbde454',1,'altintegration::AuthenticatedContextInfoContainer::createFromPrevious(const uint256 &amp;stateRoot, const BlockIndex&lt; AltBlock &gt; *prev, const AltChainParams &amp;p)']]],
   ['currenttimestamp4_132',['currentTimestamp4',['../namespacealtintegration.html#a3f56c41f86e4bd505dba41d53d11e586',1,'altintegration']]]
 ];

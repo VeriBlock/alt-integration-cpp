@@ -26,6 +26,7 @@ var structaltintegration_1_1Chain =
     [ "getStartHeight", "structaltintegration_1_1Chain.html#a39303228d32d655be18233793f6f8437", null ],
     [ "next", "structaltintegration_1_1Chain.html#afc9d77f6fecbd14ab731b763dad7a285", null ],
     [ "operator[]", "structaltintegration_1_1Chain.html#aa1101ef21e46daba85d0f0cecdaed52b", null ],
+    [ "prependRoot", "structaltintegration_1_1Chain.html#ac7acd26176582d319a3142b0cdd5201b", null ],
     [ "rbegin", "structaltintegration_1_1Chain.html#a867cd0a05d00d54b79e21c213092e056", null ],
     [ "rbegin", "structaltintegration_1_1Chain.html#acca34703be0d5dbd94061edc17aaed0d", null ],
     [ "rend", "structaltintegration_1_1Chain.html#a8860e7e0cfe9c245b0b23468e0879bae", null ],

@@ -123,9 +123,9 @@ struct altintegration::BlockIterator&lt; BlockT &gt;</h3>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ab26025ccfb92172552224b5a26e711ee"><td class="memItemLeft" align="right" valign="top"><a id="ab26025ccfb92172552224b5a26e711ee"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>hash_t</b> = typename BlockT::hash_t</td></tr>
-<tr class="separator:ab26025ccfb92172552224b5a26e711ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7db07f6cb619d04a55a9e213790e0a65"><td class="memItemLeft" align="right" valign="top"><a id="a7db07f6cb619d04a55a9e213790e0a65"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>prev_hash_t</b> = typename BlockT::prev_hash_t</td></tr>
+<tr class="separator:a7db07f6cb619d04a55a9e213790e0a65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -136,9 +136,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:adcb4cec77bb22dae6005cd732ecc5238"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238">value</a> (<a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; BlockT &gt; &amp;out) const =0</td></tr>
 <tr class="memdesc:adcb4cec77bb22dae6005cd732ecc5238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current block value.  <a href="structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238">More...</a><br /></td></tr>
 <tr class="separator:adcb4cec77bb22dae6005cd732ecc5238"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac144042f9c2e295d00a43b27255dd2e3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3">key</a> (hash_t &amp;out) const =0</td></tr>
-<tr class="memdesc:ac144042f9c2e295d00a43b27255dd2e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current block hash key.  <a href="structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3">More...</a><br /></td></tr>
-<tr class="separator:ac144042f9c2e295d00a43b27255dd2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa036df97ecb383d94ef7d95d4c2a0a58"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#aa036df97ecb383d94ef7d95d4c2a0a58">key</a> (prev_hash_t &amp;out) const =0</td></tr>
+<tr class="memdesc:aa036df97ecb383d94ef7d95d4c2a0a58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current block hash key.  <a href="structaltintegration_1_1BlockIterator.html#aa036df97ecb383d94ef7d95d4c2a0a58">More...</a><br /></td></tr>
+<tr class="separator:aa036df97ecb383d94ef7d95d4c2a0a58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a731e91f007dae78fd0ed20a5519600c9"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIterator.html#a731e91f007dae78fd0ed20a5519600c9">valid</a> () const =0</td></tr>
 <tr class="memdesc:a731e91f007dae78fd0ed20a5519600c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return if valid iterator or not.  <a href="structaltintegration_1_1BlockIterator.html#a731e91f007dae78fd0ed20a5519600c9">More...</a><br /></td></tr>
 <tr class="separator:a731e91f007dae78fd0ed20a5519600c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,8 +148,8 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="separator:a9f0eb8fde6e1dfe9d23cd237fa774393"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac144042f9c2e295d00a43b27255dd2e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac144042f9c2e295d00a43b27255dd2e3">&#9670;&nbsp;</a></span>key()</h2>
+<a id="aa036df97ecb383d94ef7d95d4c2a0a58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa036df97ecb383d94ef7d95d4c2a0a58">&#9670;&nbsp;</a></span>key()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -162,7 +162,7 @@ template&lt;typename BlockT &gt; </div>
         <tr>
           <td class="memname">virtual bool <a class="el" href="structaltintegration_1_1BlockIterator.html">altintegration::BlockIterator</a>&lt; BlockT &gt;::key </td>
           <td>(</td>
-          <td class="paramtype">hash_t &amp;&#160;</td>
+          <td class="paramtype">prev_hash_t &amp;&#160;</td>
           <td class="paramname"><em>out</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -181,7 +181,7 @@ template&lt;typename BlockT &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if we can successfully return key, false otherwise </dd></dl>
 
-<p>Implemented in <a class="el" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">altintegration::adaptors::BlockIteratorImpl&lt; BlockT &gt;</a>.</p>
+<p>Implemented in <a class="el" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a9cd8c4aea296ae3f7725e956cf54ec8e">altintegration::adaptors::BlockIteratorImpl&lt; BlockT &gt;</a>.</p>
 
 </div>
 </div>

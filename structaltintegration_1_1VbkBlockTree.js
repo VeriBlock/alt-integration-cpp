@@ -10,7 +10,7 @@ var structaltintegration_1_1VbkBlockTree =
     [ "stored_index_t", "structaltintegration_1_1VbkBlockTree.html#afdb889bfc30bdcc8e5d3d6413fedc647", null ],
     [ "VbkTree", "structaltintegration_1_1VbkBlockTree.html#a0f79fa75b36a7f879b47ce1e15122940", null ],
     [ "~VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html#aee6a78afe780898b2958ac3d733f1515", null ],
-    [ "VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html#a73d1a62045f6b1dc4716848b78d66b3b", null ],
+    [ "VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html#a17ee508b1b70187269f64ee70b2e2fbc", null ],
     [ "addPayloads", "structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411", null ],
     [ "btc", "structaltintegration_1_1VbkBlockTree.html#a8bd01148477ec5f462de35a85eedddbe", null ],
     [ "btc", "structaltintegration_1_1VbkBlockTree.html#a06180fdcb1566eede8a53ba4d03af282", null ],

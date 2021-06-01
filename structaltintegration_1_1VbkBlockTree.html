@@ -120,7 +120,7 @@ all payloads and blocks are valid as a consequence of the above.</dd></dl>
 </ul>
 <p>In this example, initially, the slice is [U9]. After we unapply U9, the slice becomes [U6, V7, V8]. If U6 is unapplied, the slice becomes [U5, V7, V8]. </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00093">93</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00106">106</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -222,9 +222,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>block_index_t</b> = 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a73d1a62045f6b1dc4716848b78d66b3b"><td class="memItemLeft" align="right" valign="top"><a id="a73d1a62045f6b1dc4716848b78d66b3b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>VbkBlockTree</b> (const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> &amp;vbkp, const <a class="el" href="structaltintegration_1_1BtcChainParams.html">BtcChainParams</a> &amp;btcp, <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &amp;payloadsProvider, PayloadsIndex &amp;payloadsIndex)</td></tr>
-<tr class="separator:a73d1a62045f6b1dc4716848b78d66b3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17ee508b1b70187269f64ee70b2e2fbc"><td class="memItemLeft" align="right" valign="top"><a id="a17ee508b1b70187269f64ee70b2e2fbc"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>VbkBlockTree</b> (const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> &amp;vbkp, const <a class="el" href="structaltintegration_1_1BtcChainParams.html">BtcChainParams</a> &amp;btcp, <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &amp;payloadsProvider, <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;blockProvider, PayloadsIndex &amp;payloadsIndex)</td></tr>
+<tr class="separator:a17ee508b1b70187269f64ee70b2e2fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2705f0b812488d1770a98e6e0f748df2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#a2705f0b812488d1770a98e6e0f748df2">loadBlock</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
 <tr class="memdesc:a2705f0b812488d1770a98e6e0f748df2"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently connect <code>index</code> to current tree, loaded from disk  <a href="structaltintegration_1_1VbkBlockTree.html#a2705f0b812488d1770a98e6e0f748df2">More...</a><br /></td></tr>
 <tr class="separator:a2705f0b812488d1770a98e6e0f748df2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,9 +286,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>removeInvalidVTB</b> 
 const std::unordered_map&lt; <a class="el" href="structaltintegration_1_1Blob.html">VTB::id_t</a>, <a class="el" href="namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo">VTBInvalidationInfo</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getInvalidVTBs</b> () const</td></tr>
 <tr class="separator:a19311caf1bd7104abd13dd18a3dac05e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structaltintegration_1_1BlockTree"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structaltintegration_1_1BlockTree')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree&lt; VbkBlock, VbkChainParams &gt;</a></td></tr>
-<tr class="memitem:a6a31085507dd4cf1bd97f74b02326ac5 inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a6a31085507dd4cf1bd97f74b02326ac5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BlockTree</b> (const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> &amp;param)</td></tr>
-<tr class="separator:a6a31085507dd4cf1bd97f74b02326ac5 inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3c77c5265d8129fe2979928d8b7789f inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ae3c77c5265d8129fe2979928d8b7789f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BlockTree</b> (const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> &amp;param, const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;blockProvider)</td></tr>
+<tr class="separator:ae3c77c5265d8129fe2979928d8b7789f inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0746be8a5c44e3b861b42a0ae2b32fbf inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a0746be8a5c44e3b861b42a0ae2b32fbf"></a>
 const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getParams</b> () const</td></tr>
 <tr class="separator:a0746be8a5c44e3b861b42a0ae2b32fbf inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -327,6 +327,9 @@ const std::unordered_set&lt; <a class="el" href="structaltintegration_1_1BlockIn
 <tr class="memitem:a722a4734ad1c00c25f59ab6686406f51 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a722a4734ad1c00c25f59ab6686406f51"></a>
 std::vector&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlocks</b> () const</td></tr>
 <tr class="separator:a722a4734ad1c00c25f59ab6686406f51 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbb771765dd11e312f21931b1f8789fe inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="afbb771765dd11e312f21931b1f8789fe"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BaseBlockTree</b> (const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;blockProvider)</td></tr>
+<tr class="separator:afbb771765dd11e312f21931b1f8789fe inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05d3ee700667bdd574f9f4372b56d468 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a05d3ee700667bdd574f9f4372b56d468"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BaseBlockTree</b> (const <a class="el" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree</a> &amp;)=delete</td></tr>
 <tr class="separator:a05d3ee700667bdd574f9f4372b56d468 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -364,6 +367,9 @@ template&lt;typename T , typename  = typename std::enable_if&lt;                
 <tr class="memitem:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a619da2aa9e768d96e844e78139d4e244">findBlockIndex</a> (const T &amp;hash) const</td></tr>
 <tr class="memdesc:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e98d9d72a61310c5d41f99a6f0aca42 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a6e98d9d72a61310c5d41f99a6f0aca42"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>restoreBlock</b> (const typename block_t::hash_t &amp;hash, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="separator:a6e98d9d72a61310c5d41f99a6f0aca42 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">removeSubtree</a> (const hash_t &amp;toRemove)</td></tr>
 <tr class="memdesc:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">More...</a><br /></td></tr>
 <tr class="separator:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -436,12 +442,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memitem:ac8a3d94836fcc712c6788d3e4a31234e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ac8a3d94836fcc712c6788d3e4a31234e"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> (size_t level=0) const</td></tr>
 <tr class="separator:ac8a3d94836fcc712c6788d3e4a31234e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85323553197c1ddff60acd1cdf1bfc80 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a85323553197c1ddff60acd1cdf1bfc80"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reduceAppliedBlockCount</b> (size_t erasedBlocks)</td></tr>
-<tr class="separator:a85323553197c1ddff60acd1cdf1bfc80 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04c074add4f6c0d1f51c7432d9c4dde8 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a04c074add4f6c0d1f51c7432d9c4dde8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reduceAppliedBlockCount</b> (size_t)</td></tr>
-<tr class="separator:a04c074add4f6c0d1f51c7432d9c4dde8 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a639b19e7d10bb96baa7e0375687c73c6 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a639b19e7d10bb96baa7e0375687c73c6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>decreaseAppliedBlockCount</b> (size_t erasedBlocks)</td></tr>
+<tr class="separator:a639b19e7d10bb96baa7e0375687c73c6 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5452e3aafe2b892bb12cf21705a1695 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ae5452e3aafe2b892bb12cf21705a1695"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>increaseAppliedBlockCount</b> (size_t appliedBlocks)</td></tr>
+<tr class="separator:ae5452e3aafe2b892bb12cf21705a1695 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe8da57b5a472a19499f808a0968f25a inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="afe8da57b5a472a19499f808a0968f25a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>decreaseAppliedBlockCount</b> (size_t)</td></tr>
+<tr class="separator:afe8da57b5a472a19499f808a0968f25a inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab15f5804337b0e92d5bbbe765556af17 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ab15f5804337b0e92d5bbbe765556af17"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>increaseAppliedBlockCount</b> (size_t)</td></tr>
+<tr class="separator:ab15f5804337b0e92d5bbbe765556af17 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_structaltintegration_1_1BlockTree"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_structaltintegration_1_1BlockTree')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree&lt; VbkBlock, VbkChainParams &gt;</a></td></tr>
 <tr class="memitem:af3d489ecf6bf8eb15ab0ce4805403927 inherit pro_attribs_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top"><a id="af3d489ecf6bf8eb15ab0ce4805403927"></a>
 const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>param_</b></td></tr>
@@ -463,6 +475,9 @@ std::unordered_set&lt; <a class="el" href="structaltintegration_1_1BlockIndex.ht
 signals::Signal&lt; on_invalidate_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b">validity_sig_</a></td></tr>
 <tr class="memdesc:a0896f49a17767e5496f2fe3d56a4ae2b inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals to the end user that block have been invalidated <br /></td></tr>
 <tr class="separator:a0896f49a17767e5496f2fe3d56a4ae2b inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e8b3a7980e6750687a053ff9acf0084 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a4e8b3a7980e6750687a053ff9acf0084"></a>
+const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>blockProvider_</b></td></tr>
+<tr class="separator:a4e8b3a7980e6750687a053ff9acf0084 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab64217bb562a06ad92963d005baca411"></a>

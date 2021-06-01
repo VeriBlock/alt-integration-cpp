@@ -1,8 +1,8 @@
 var structaltintegration_1_1BlockIterator =
 [
-    [ "hash_t", "structaltintegration_1_1BlockIterator.html#ab26025ccfb92172552224b5a26e711ee", null ],
+    [ "prev_hash_t", "structaltintegration_1_1BlockIterator.html#a7db07f6cb619d04a55a9e213790e0a65", null ],
     [ "~BlockIterator", "structaltintegration_1_1BlockIterator.html#aaf1b99dddae3f6c9eb721bac1c50cce3", null ],
-    [ "key", "structaltintegration_1_1BlockIterator.html#ac144042f9c2e295d00a43b27255dd2e3", null ],
+    [ "key", "structaltintegration_1_1BlockIterator.html#aa036df97ecb383d94ef7d95d4c2a0a58", null ],
     [ "next", "structaltintegration_1_1BlockIterator.html#ae489224d16febd52e4c5b8339cc9aa98", null ],
     [ "seek_start", "structaltintegration_1_1BlockIterator.html#a9f0eb8fde6e1dfe9d23cd237fa774393", null ],
     [ "valid", "structaltintegration_1_1BlockIterator.html#a731e91f007dae78fd0ed20a5519600c9", null ],

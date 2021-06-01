@@ -1,8 +1,8 @@
 <map id="altintegration::BaseBlockTree&lt; Block &gt;" name="altintegration::BaseBlockTree&lt; Block &gt;">
-<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="83,5,272,347"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="5,813,213,1155"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="88,409,267,751"/>
-<area shape="rect" id="node5" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="291,409,480,751"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="17,1204,201,1428"/>
-<area shape="rect" id="node6" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="295,828,475,1140"/>
+<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="73,5,276,391"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="5,901,213,1243"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="85,475,264,817"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="288,453,491,839"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="17,1292,201,1516"/>
+<area shape="rect" id="node6" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="299,916,479,1228"/>
 </map>

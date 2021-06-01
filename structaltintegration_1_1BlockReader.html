@@ -127,15 +127,15 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getVbkTip</b>
 <tr class="memitem:a66544f9eca6ac4565b551345167e2b89"><td class="memItemLeft" align="right" valign="top"><a id="a66544f9eca6ac4565b551345167e2b89"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBtcTip</b> (<a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;out) const =0</td></tr>
 <tr class="separator:a66544f9eca6ac4565b551345167e2b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3afb3d15fd54f8285aba9f0cd7460c4e"><td class="memItemLeft" align="right" valign="top"><a id="a3afb3d15fd54f8285aba9f0cd7460c4e"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getAltBlock</b> (const AltBlock::hash_t &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;out) const =0</td></tr>
-<tr class="separator:a3afb3d15fd54f8285aba9f0cd7460c4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a145bab4d5b5e5b715c81cb0f999de5e8"><td class="memItemLeft" align="right" valign="top"><a id="a145bab4d5b5e5b715c81cb0f999de5e8"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getVbkBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;out) const =0</td></tr>
-<tr class="separator:a145bab4d5b5e5b715c81cb0f999de5e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b092a17c430455d13615b5cd19d2f66"><td class="memItemLeft" align="right" valign="top"><a id="a3b092a17c430455d13615b5cd19d2f66"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBtcBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;out) const =0</td></tr>
-<tr class="separator:a3b092a17c430455d13615b5cd19d2f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1d1a3a582566e20f2871d58a5b149c5"><td class="memItemLeft" align="right" valign="top"><a id="ae1d1a3a582566e20f2871d58a5b149c5"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> (const AltBlock::prev_hash_t &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;out) const =0</td></tr>
+<tr class="separator:ae1d1a3a582566e20f2871d58a5b149c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf32c0d62ec8875609e1cf4e6d303ab0"><td class="memItemLeft" align="right" valign="top"><a id="abf32c0d62ec8875609e1cf4e6d303ab0"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::prev_hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;out) const =0</td></tr>
+<tr class="separator:abf32c0d62ec8875609e1cf4e6d303ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d4f61258ba2bc6708b69ec5162089fc"><td class="memItemLeft" align="right" valign="top"><a id="a2d4f61258ba2bc6708b69ec5162089fc"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> (const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::prev_hash_t</a> &amp;hash, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;out) const =0</td></tr>
+<tr class="separator:a2d4f61258ba2bc6708b69ec5162089fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d965565bdcff5f36c61298c9d1543a2"><td class="memItemLeft" align="right" valign="top"><a id="a9d965565bdcff5f36c61298c9d1543a2"></a>
 virtual std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1BlockIterator.html">BlockIterator</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAltBlockIterator</b> () const =0</td></tr>
 <tr class="separator:a9d965565bdcff5f36c61298c9d1543a2"><td class="memSeparator" colspan="2">&#160;</td></tr>

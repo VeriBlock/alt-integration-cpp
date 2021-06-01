@@ -9,7 +9,7 @@ var structaltintegration_1_1BlockTree =
     [ "prev_block_hash_t", "structaltintegration_1_1BlockTree.html#a862b32c3e6496c8b5d312fc6d2668709", null ],
     [ "stored_index_t", "structaltintegration_1_1BlockTree.html#af4761021ddc1f8dddad0392210105b2b", null ],
     [ "~BlockTree", "structaltintegration_1_1BlockTree.html#a06c83481b6968320a654c008255a4cf5", null ],
-    [ "BlockTree", "structaltintegration_1_1BlockTree.html#a6a31085507dd4cf1bd97f74b02326ac5", null ],
+    [ "BlockTree", "structaltintegration_1_1BlockTree.html#ae3c77c5265d8129fe2979928d8b7789f", null ],
     [ "acceptBlockHeader", "structaltintegration_1_1BlockTree.html#a110c51aef126b8fec98aa6950d56ff38", null ],
     [ "acceptBlockHeader", "structaltintegration_1_1BlockTree.html#a7c94d18cec972bc1a06fdcc6feafd97b", null ],
     [ "acceptBlockHeaderImpl", "structaltintegration_1_1BlockTree.html#a000f6815f1653cd050cc71402e02e27e", null ],
