@@ -228,7 +228,7 @@ struct BaseBlockTree {
     } else if (activeChain_.first() != current) {
       // set a new bootstrap block which is the prev block for the current
       // bootstrap block
-      activeChain_.appendRoot(current);
+      activeChain_.prependRoot(current);
     }
 
     VBK_ASSERT(!current->isDeleted());
@@ -261,8 +261,13 @@ struct BaseBlockTree {
     while (index->getHeight() != stored_index.height) {
       stored_index_t tmp_stored;
       auto prev_hash = index->getHeader().getPreviousBlock();
-      if (!this->blockProvider_.getBlock(prev_hash, tmp_stored) ||
-          !loadBlock(tmp_stored, state)) {
+      if (!this->blockProvider_.getBlock(prev_hash, tmp_stored)) {
+        VBK_ASSERT_MSG(false,
+                       "can not restore prev block for the block: %s",
+                       index->toPrettyString());
+      }
+
+      if (!loadBlock(tmp_stored, state)) {
         VBK_ASSERT_MSG(
             false, "can not load block, state: %s", state.toString());
       }
