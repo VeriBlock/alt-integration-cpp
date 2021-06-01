@@ -26,6 +26,18 @@ struct VTBInvalidationInfo {
   BtcBlock::hash_t missing_btc_block;
 };
 
+template <>
+inline void BaseBlockTree<BtcBlock>::decreaseAppliedBlockCount(size_t) {
+  // do nothing
+  // BTC tree is not protected
+}
+
+template <>
+inline void BaseBlockTree<BtcBlock>::increaseAppliedBlockCount(size_t) {
+  // do nothing
+  // BTC tree is not protected
+}
+
 // defined in vbk_block_tree.cpp
 extern template struct BlockIndex<BtcBlock>;
 extern template struct BlockTree<BtcBlock, BtcChainParams>;

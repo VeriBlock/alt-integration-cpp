@@ -253,6 +253,7 @@ struct BaseBlockTree {
     }
 
     index_t* index = &this->getRoot();
+    auto oldHeight = index->getHeight();
     while (index->getHeight() != stored_index.height) {
       stored_index_t tmp_stored;
       auto prev_hash = index->getHeader().getPreviousBlock();
@@ -262,9 +263,14 @@ struct BaseBlockTree {
             false, "can not load block, state: %s", state.toString());
       }
 
-      ++appliedBlockCount;
       index = this->getBlockIndex(prev_hash);
       VBK_ASSERT(index);
+    }
+
+    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
+
+    if (stored_index.header->getHash() != index->getHash()) {
+      return state.Invalid("restored-block-not-from-active-chain");
     }
 
     return true;
@@ -501,7 +507,7 @@ struct BaseBlockTree {
 
   //! the number of blocks that have BLOCK_APPLIED flag set
   //! @private
-  block_height_t appliedBlockCount = 0;
+  size_t appliedBlockCount = 0;
 
  protected:
   //! @private
@@ -706,11 +712,17 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
-      if (activeChain_.contains(&next)) {
-        --appliedBlockCount;
-      }
       blocks_.erase(h);
     });
+  }
+
+  inline void decreaseAppliedBlockCount(size_t erasedBlocks) {
+    VBK_ASSERT(appliedBlockCount >= erasedBlocks);
+    appliedBlockCount -= erasedBlocks;
+  }
+
+  inline void increaseAppliedBlockCount(size_t appliedBlocks) {
+    appliedBlockCount += appliedBlocks;
   }
 
   //! Marks `block` as finalized.
@@ -790,6 +802,10 @@ struct BaseBlockTree {
         }
       }
     }
+
+    VBK_ASSERT(firstBlockHeight >= bootstrapBlockHeight);
+    size_t deallocatedBlocks = firstBlockHeight - bootstrapBlockHeight;
+    decreaseAppliedBlockCount(deallocatedBlocks);
 
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
