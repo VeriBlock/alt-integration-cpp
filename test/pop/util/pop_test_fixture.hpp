@@ -54,7 +54,8 @@ struct PopTestFixture {
 
   ValidationState state;
 
-  PopTestFixture() : alttree(altparam, vbkparam, btcparam, payloadsProvider) {
+  PopTestFixture()
+      : alttree(altparam, vbkparam, btcparam, payloadsProvider, blockProvider) {
     auto BTCgenesis = GetRegTestBtcBlock();
     auto VBKgenesis = GetRegTestVbkBlock();
 
@@ -345,6 +346,17 @@ struct PopTestFixture {
       EXPECT_TRUE(SetState(alttree, next->getHash()));
       altTip = next;
     }
+  }
+
+  void save(AltBlockTree& tree) {
+    auto batch = storage.generateWriteBatch();
+    auto writer = adaptors::BlockBatchImpl(*batch);
+    saveTrees(tree, writer);
+    batch->writeBatch();
+  }
+
+  bool load(AltBlockTree& tree) {
+    return loadTrees(tree, blockProvider, state);
   }
 };
 

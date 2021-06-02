@@ -12,6 +12,8 @@
 #include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/bootstraps.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
 #include <veriblock/pop/time.hpp>
 
 #include "util/visualize.hpp"
@@ -43,6 +45,8 @@ struct BlockchainTest : public ::testing::Test {
   std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
   std::shared_ptr<params_base_t> chainparam;
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   height_t height = 0;
   ValidationState state;
@@ -54,8 +58,8 @@ struct BlockchainTest : public ::testing::Test {
     chainparam = std::make_shared<params_t>();
     miner = std::make_shared<Miner<block_t, params_base_t>>(*chainparam);
 
-    blockchain =
-        std::make_shared<BlockTree<block_t, params_base_t>>(*chainparam);
+    blockchain = std::make_shared<BlockTree<block_t, params_base_t>>(
+        *chainparam, blockProvider);
 
     // @when
     EXPECT_TRUE(blockchain->bootstrapWithGenesis(getGenesisBlock(), state))

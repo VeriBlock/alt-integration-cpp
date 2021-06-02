@@ -17,6 +17,7 @@
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/validation_state.hpp>
@@ -49,7 +50,9 @@ extern template struct BaseBlockTree<AltBlock>;
 //! BtcChainParamsMain btcp;
 //! // your implementation of PayloadsStorage
 //! PayloadsProviderImpl provider;
-//! AltBlockTree tree(altp, vbkp, btcp, provider);
+//! // your implementation of BlockReader
+//! BlockReaderImpl blockProvider
+//! AltBlockTree tree(altp, vbkp, btcp, provider, blockProvider);
 //! ```
 //!
 //! After initialization AltBlockTree does not contain any blocks.
@@ -194,7 +197,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   explicit AltBlockTree(const alt_config_t& alt_config,
                         const vbk_config_t& vbk_config,
                         const btc_config_t& btc_config,
-                        PayloadsStorage& storagePayloads);
+                        PayloadsStorage& payloadsProvider,
+                        BlockReader& blockProvider);
 
   /**
    * Set very first (bootstrap) altchain block with enabled POP.

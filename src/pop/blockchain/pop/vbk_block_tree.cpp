@@ -280,13 +280,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (index == nullptr) {
-    return state.Invalid(block_t::name() + "-bad-containing",
-                         "Can not find VTB containing block: " + hash.toHex());
-  }
-
-  if (index->pprev == nullptr) {
-    return state.Invalid(block_t::name() + "-bad-containing-prev",
-                         "It is forbidden to add payloads to bootstrap block");
+    if (!restoreBlock(hash, state)) {
+      return state.Invalid(
+          block_t::name() + "-bad-containing",
+          "Can not find VTB containing block: " + hash.toHex());
+    }
+    index = VbkTree::getBlockIndex(hash);
+    VBK_ASSERT(index);
   }
 
   // TODO: once we plug the validation hole, we want this to be an assert
@@ -417,9 +417,10 @@ bool VbkBlockTree::finalizeBlockImpl(index_t& index,
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
                            PayloadsStorage& payloadsProvider,
+                           BlockReader& blockProvider,
                            PayloadsIndex& payloadsIndex)
-    : VbkTree(vbkp),
-      cmp_(std::make_shared<BtcTree>(btcp),
+    : VbkTree(vbkp, blockProvider),
+      cmp_(std::make_shared<BtcTree>(btcp, blockProvider),
            vbkp,
            payloadsProvider,
            payloadsIndex),

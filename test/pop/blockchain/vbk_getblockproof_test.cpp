@@ -6,12 +6,14 @@
 #include <gtest/gtest.h>
 
 #include <memory>
-#include <veriblock/pop/bootstraps.hpp>
-
-#include "block_headers.hpp"
 #include <veriblock/pop/blockchain/blocktree.hpp>
 #include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
+#include <veriblock/pop/bootstraps.hpp>
 #include <veriblock/pop/literals.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+
+#include "block_headers.hpp"
 
 using namespace altintegration;
 
@@ -24,6 +26,8 @@ struct GetProofTest : public testing::Test {
 
   std::shared_ptr<param_t> params;
   ValidationState state;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   std::vector<VbkBlock> allBlocks{};
   std::vector<ArithUint256> cumulativeDifficulties{};
@@ -58,7 +62,7 @@ struct GetProofTest : public testing::Test {
 // blocks
 
 TEST_F(GetProofTest, DISABLED_Blocks100Test) {
-  BlockTree<VbkBlock, VbkChainParams> tree(*params);
+  BlockTree<VbkBlock, VbkChainParams> tree(*params, blockProvider);
   ASSERT_TRUE(tree.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
 
   for (size_t i = 1; i < 101; i++) {
@@ -73,7 +77,7 @@ TEST_F(GetProofTest, DISABLED_Blocks100Test) {
 }
 
 TEST_F(GetProofTest, DISABLED_Blocks30kTest) {
-  BlockTree<VbkBlock, VbkChainParams> tree(*params);
+  BlockTree<VbkBlock, VbkChainParams> tree(*params, blockProvider);
   ASSERT_TRUE(tree.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
 
   for (size_t i = 1; i < allBlocks.size(); i++) {

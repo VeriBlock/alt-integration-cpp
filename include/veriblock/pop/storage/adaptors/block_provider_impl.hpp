@@ -38,16 +38,16 @@ template <>
 std::vector<uint8_t> tip_key<BtcBlock>();
 
 template <typename block_t>
-std::vector<uint8_t> block_key(const typename block_t::hash_t& hash);
+std::vector<uint8_t> block_key(const typename block_t::prev_hash_t& hash);
 
 template <>
-std::vector<uint8_t> block_key<AltBlock>(const AltBlock::hash_t& hash);
+std::vector<uint8_t> block_key<AltBlock>(const AltBlock::prev_hash_t& hash);
 
 template <>
-std::vector<uint8_t> block_key<VbkBlock>(const VbkBlock::hash_t& hash);
+std::vector<uint8_t> block_key<VbkBlock>(const VbkBlock::prev_hash_t& hash);
 
 template <>
-std::vector<uint8_t> block_key<BtcBlock>(const BtcBlock::hash_t& hash);
+std::vector<uint8_t> block_key<BtcBlock>(const BtcBlock::prev_hash_t& hash);
 
 template <typename BlockT>
 struct BlockIteratorImpl : public BlockIterator<BlockT> {
@@ -62,14 +62,11 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
     if (!it_->value(bytes)) {
       return false;
     }
-    ValidationState tmp;
-    if (!DeserializeFromVbkEncoding(bytes, out, tmp)) {
-      return false;
-    }
+    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(bytes);
     return true;
   }
 
-  bool key(typename BlockT::hash_t& out) const override {
+  bool key(typename BlockT::prev_hash_t& out) const override {
     std::vector<uint8_t> bytes;
     if (!it_->key(bytes)) {
       return false;
@@ -126,18 +123,18 @@ struct BlockReaderImpl : public BlockReader {
     return true;
   }
 
-  bool getAltBlock(const AltBlock::hash_t& hash,
-                   StoredBlockIndex<AltBlock>& out) const override {
+  bool getBlock(const AltBlock::prev_hash_t& hash,
+                StoredBlockIndex<AltBlock>& out) const override {
     return getBlock<AltBlock>(hash, out);
   }
 
-  bool getVbkBlock(const VbkBlock::hash_t& hash,
-                   StoredBlockIndex<VbkBlock>& out) const override {
+  bool getBlock(const VbkBlock::prev_hash_t& hash,
+                StoredBlockIndex<VbkBlock>& out) const override {
     return getBlock<VbkBlock>(hash, out);
   }
 
-  bool getBtcBlock(const BtcBlock::hash_t& hash,
-                   StoredBlockIndex<BtcBlock>& out) const override {
+  bool getBlock(const BtcBlock::prev_hash_t& hash,
+                StoredBlockIndex<BtcBlock>& out) const override {
     return getBlock<BtcBlock>(hash, out);
   }
 
@@ -159,16 +156,14 @@ struct BlockReaderImpl : public BlockReader {
 
  private:
   template <typename block_t>
-  bool getBlock(const typename block_t::hash_t& hash,
+  bool getBlock(const typename block_t::prev_hash_t& hash,
                 StoredBlockIndex<block_t>& out) const {
     std::vector<uint8_t> bytes_out;
     if (!storage_.read(block_key<block_t>(hash), bytes_out)) {
       return false;
     }
-    ValidationState tmp;
-    if (!DeserializeFromVbkEncoding(bytes_out, out, tmp)) {
-      return false;
-    }
+    out =
+        AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out);
     return true;
   }
 
@@ -180,37 +175,31 @@ struct BlockBatchImpl : public BlockBatch {
 
   BlockBatchImpl(WriteBatch& batch) : batch_(batch) {}
 
-  void writeBlock(const StoredBlockIndex<AltBlock>& blk) override {
-    batch_.write(block_key<AltBlock>(blk.header->getHash()),
-                 SerializeToVbkEncoding(blk));
+  void writeBlock(const AltBlock::prev_hash_t& hash,
+                  const StoredBlockIndex<AltBlock>& blk) override {
+    batch_.write(block_key<AltBlock>(hash), SerializeToVbkEncoding(blk));
   }
 
-  void writeBlock(const StoredBlockIndex<VbkBlock>& blk) override {
-    batch_.write(block_key<VbkBlock>(blk.header->getHash()),
-                 SerializeToVbkEncoding(blk));
+  void writeBlock(const VbkBlock::prev_hash_t& hash,
+                  const StoredBlockIndex<VbkBlock>& blk) override {
+    batch_.write(block_key<VbkBlock>(hash), SerializeToVbkEncoding(blk));
   }
 
-  void writeBlock(const StoredBlockIndex<BtcBlock>& blk) override {
-    batch_.write(block_key<BtcBlock>(blk.header->getHash()),
-                 SerializeToVbkEncoding(blk));
+  void writeBlock(const BtcBlock::prev_hash_t& hash,
+                  const StoredBlockIndex<BtcBlock>& blk) override {
+    batch_.write(block_key<BtcBlock>(hash), SerializeToVbkEncoding(blk));
   }
 
-  void writeTip(const StoredBlockIndex<AltBlock>& blk) override {
-    batch_.write(tip_key<AltBlock>(), blk.header->getHash());
-    batch_.write(block_key<AltBlock>(blk.header->getHash()),
-                 SerializeToVbkEncoding(blk));
+  void writeTip(const AltBlock::hash_t& hash) override {
+    batch_.write(tip_key<AltBlock>(), hash);
   }
 
-  void writeTip(const StoredBlockIndex<VbkBlock>& blk) override {
-    batch_.write(tip_key<VbkBlock>(), blk.header->getHash().asVector());
-    batch_.write(block_key<VbkBlock>(blk.header->getHash()),
-                 SerializeToVbkEncoding(blk));
+  void writeTip(const VbkBlock::hash_t& hash) override {
+    batch_.write(tip_key<VbkBlock>(), hash.asVector());
   }
 
-  void writeTip(const StoredBlockIndex<BtcBlock>& blk) override {
-    batch_.write(tip_key<BtcBlock>(), blk.header->getHash().asVector());
-    batch_.write(block_key<BtcBlock>(blk.header->getHash()),
-                 SerializeToVbkEncoding(blk));
+  void writeTip(const BtcBlock::hash_t& hash) override {
+    batch_.write(tip_key<BtcBlock>(), hash.asVector());
   }
 
  private:

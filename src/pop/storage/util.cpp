@@ -18,28 +18,17 @@ using OnBlockCallback_t =
     std::function<void(typename Block::hash_t, const StoredBlockIndex<Block>&)>;
 
 template <typename Index>
-bool loadBlocksAndTip(
-    std::vector<Index>& out,
-    typename Index::block_t::hash_t& tipout,
-    BlockReader& storage,
-    ValidationState& state,
-    const OnBlockCallback_t<typename Index::block_t>& onBlock = {}) {
+bool loadBlocksAndTip(std::vector<Index>& out,
+                      typename Index::block_t::hash_t& tipout,
+                      BlockReader& storage,
+                      ValidationState& state) {
   using block_t = typename Index::block_t;
-  using hash_t = typename block_t::hash_t;
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
     Index val;
     if (!it->value(val)) {
       return state.Invalid("bad-value", "Can not read block data");
-    }
-    // if callback is supplied, execute it
-    if (onBlock) {
-      hash_t hash;
-      if (!it->key(hash)) {
-        return state.Invalid("bad-key", "Can not read block key");
-      }
-      onBlock(hash, val);
     }
     out.push_back(val);
   }
@@ -126,16 +115,7 @@ bool loadTrees(AltBlockTree& tree,
   }
   std::vector<typename VbkBlockTree::stored_index_t> vbkblocks;
   typename VbkBlock::hash_t vbktip;
-  if (!detail::loadBlocksAndTip(
-          vbkblocks,
-          vbktip,
-          storage,
-          state,  // on every block, take its hash and warmup progpow header
-                  // cache
-          [](VbkBlock::hash_t hash, const StoredBlockIndex<VbkBlock>& index) {
-            auto serializedHeader = SerializeToRaw(*index.header);
-            progpow::insertHeaderCacheEntry(serializedHeader, std::move(hash));
-          })) {
+  if (!detail::loadBlocksAndTip(vbkblocks, vbktip, storage, state)) {
     return state.Invalid("load-vbk-tree-blocks");
   }
   std::vector<typename AltBlockTree::stored_index_t> altblocks;
