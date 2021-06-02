@@ -97,6 +97,17 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
   ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),
             1);
 
+  // trying to comparePopScore with the unknown block
+  ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), {1, 2, 3, 4, 5, 6}),
+            1);
+  ASSERT_DEATH(
+      {
+        int r =
+            alttree.comparePopScore({1, 2, 3, 4, 5, 6}, chain[100].getHash());
+        (void)r;
+      },
+      "");
+
   ASSERT_TRUE(SetState(alttree, chain[100].getHash())) << state.toString();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].getHash());
   ASSERT_EQ(alttree.btc().getBestChain().tip()->getHeight(), VTBs);
