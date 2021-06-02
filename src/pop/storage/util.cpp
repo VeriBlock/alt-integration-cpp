@@ -23,7 +23,6 @@ bool loadBlocksAndTip(std::vector<Index>& out,
                       BlockReader& storage,
                       ValidationState& state) {
   using block_t = typename Index::block_t;
-  using hash_t = typename block_t::hash_t;
 
   auto it = storage.getBlockIterator<block_t>();
   for (it->seek_start(); it->valid(); it->next()) {
