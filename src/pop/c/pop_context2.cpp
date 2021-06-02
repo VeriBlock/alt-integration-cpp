@@ -4,14 +4,14 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "adaptors/logger.hpp"
-#include "config.hpp"
+#include "config2.hpp"
 #include "entities/altblock.hpp"
 #include "entities/block_index.hpp"
 #include "entities/pop_payouts.hpp"
 #include "entities/popdata.hpp"
-#include "pop_context.hpp"
-#include "storage.hpp"
-#include "validation_state.hpp"
+#include "pop_context2.hpp"
+#include "storage2.hpp"
+#include "validation_state2.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
 
@@ -34,17 +34,18 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
   VBK_ASSERT(config->ref->alt);
 
   // set logger
-  altintegration::SetLogger<adaptors::Logger>(altintegration::StringToLevel(
+  altintegration::SetLogger<adaptors::Logger2>(altintegration::StringToLevel(
       std::string(log_lvl.data, log_lvl.data + log_lvl.size)));
 
   auto* res = new POP_ENTITY_NAME(pop_context);
+
   res->storage = storage->ref;
   res->ref = altintegration::PopContext::create(
       config->ref,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
-          *storage->ref),
+          *res->storage),
       std::make_shared<altintegration::adaptors::BlockReaderImpl>(
-          *storage->ref));
+          *res->storage));
 
   return res;
 }
@@ -71,11 +72,10 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 
   if (pop_data == nullptr) {
     self->ref->getAltBlockTree().acceptBlock(
-        std::vector<uint8_t>(hash.data, hash.data + hash.size),
-        altintegration::PopData());
+      std::vector<uint8_t>(hash.data, hash.data + hash.size), altintegration::PopData());
   } else {
     self->ref->getAltBlockTree().acceptBlock(
-        std::vector<uint8_t>(hash.data, hash.data + hash.size), pop_data->ref);
+      std::vector<uint8_t>(hash.data, hash.data + hash.size), pop_data->ref);
   }
 }
 
@@ -125,7 +125,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   for (auto& el : payouts) {
     res.data[i] = new POP_ENTITY_NAME(pop_payout);
     res.data[i]->payout_info = el.first;
-    res.data[i++]->amount = el.second;
+    res.data[i]->amount = el.second;
   }
 
   return res;

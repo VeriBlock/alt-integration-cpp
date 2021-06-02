@@ -33,14 +33,14 @@ struct BlockReader {
   //! @pure
   virtual bool getBtcTip(BtcBlock::hash_t& out) const = 0;
 
-  virtual bool getAltBlock(const AltBlock::hash_t& hash,
-                           StoredBlockIndex<AltBlock>& out) const = 0;
+  virtual bool getBlock(const AltBlock::prev_hash_t& hash,
+                        StoredBlockIndex<AltBlock>& out) const = 0;
 
-  virtual bool getVbkBlock(const VbkBlock::hash_t& hash,
-                           StoredBlockIndex<VbkBlock>& out) const = 0;
+  virtual bool getBlock(const VbkBlock::prev_hash_t& hash,
+                        StoredBlockIndex<VbkBlock>& out) const = 0;
 
-  virtual bool getBtcBlock(const BtcBlock::hash_t& hash,
-                           StoredBlockIndex<BtcBlock>& out) const = 0;
+  virtual bool getBlock(const BtcBlock::prev_hash_t& hash,
+                        StoredBlockIndex<BtcBlock>& out) const = 0;
 
   // clang-format off
   //! @pure

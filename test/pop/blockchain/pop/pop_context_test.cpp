@@ -8,6 +8,7 @@
 #include <veriblock/pop/config.hpp>
 #include <veriblock/pop/mock_miner.hpp>
 #include <veriblock/pop/pop_context.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
 #include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
 #include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 
@@ -18,9 +19,10 @@ struct PopContextFixture : public ::testing::Test {
   BtcChainParamsRegTest btcp;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
-      VbkBlockTree(vbkp, btcp, payloadsProvider, payloadsIndex);
+      VbkBlockTree(vbkp, btcp, payloadsProvider, blockProvider, payloadsIndex);
   MockMiner remote;
 
   BlockIndex<BtcBlock>* forkPoint;

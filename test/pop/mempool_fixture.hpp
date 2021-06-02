@@ -24,7 +24,8 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
     ASSERT_TRUE(AddPayloads(containingBlock.getHash(), pop))
         << state.toString();
     ASSERT_TRUE(state.IsValid());
-    ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state));
+    ASSERT_TRUE(alttree.setState(containingBlock.getHash(), state))
+        << state.toString();
     ASSERT_TRUE(state.IsValid());
     validateAlttreeIndexState(alttree, containingBlock, pop);
   }

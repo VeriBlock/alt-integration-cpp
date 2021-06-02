@@ -24,7 +24,7 @@ namespace altintegration {
 
 template <typename BlockT>
 struct BlockIterator {
-  using hash_t = typename BlockT::hash_t;
+  using prev_hash_t = typename BlockT::prev_hash_t;
 
   virtual ~BlockIterator() = default;
 
@@ -45,7 +45,7 @@ struct BlockIterator {
    * @param[out] out block hash
    * @return true if we can successfully return key, false otherwise
    */
-  virtual bool key(hash_t& out) const = 0;
+  virtual bool key(prev_hash_t& out) const = 0;
 
   /**
    * Return if valid iterator or not

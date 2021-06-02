@@ -17,6 +17,7 @@
 #include "veriblock/pop/blockchain/vbk_chain_params.hpp"
 #include "veriblock/pop/entities/btcblock.hpp"
 #include "veriblock/pop/finalizer.hpp"
+#include "veriblock/pop/storage/block_reader.hpp"
 #include "veriblock/pop/storage/payloads_index.hpp"
 
 namespace altintegration {
@@ -24,6 +25,18 @@ namespace altintegration {
 struct VTBInvalidationInfo {
   BtcBlock::hash_t missing_btc_block;
 };
+
+template <>
+inline void BaseBlockTree<BtcBlock>::decreaseAppliedBlockCount(size_t) {
+  // do nothing
+  // BTC tree is not protected
+}
+
+template <>
+inline void BaseBlockTree<BtcBlock>::increaseAppliedBlockCount(size_t) {
+  // do nothing
+  // BTC tree is not protected
+}
 
 // defined in vbk_block_tree.cpp
 extern template struct BlockIndex<BtcBlock>;
@@ -109,6 +122,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
                PayloadsStorage& payloadsProvider,
+               BlockReader& blockProvider,
                PayloadsIndex& payloadsIndex);
 
   //! efficiently connect `index` to current tree, loaded from disk

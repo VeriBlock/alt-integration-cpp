@@ -75,14 +75,14 @@ TEST_F(Scenario10, scenario_10) {
             2);
 
   VBK_LOG_DEBUG("Step 3");
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
   VBK_LOG_DEBUG("Step 4");
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               payloadsProvider,
+                               blockProvider};
 
   ASSERT_TRUE(reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
                                                          this->state));

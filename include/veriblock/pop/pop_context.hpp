@@ -40,6 +40,7 @@ struct PopContext {
    *
    * @param[in] config
    * @param[in] payloadsProvider
+   * @param[in] blockProvider
    * @param[in] validatorWorkers
    *
    * @return
@@ -47,6 +48,7 @@ struct PopContext {
   static std::shared_ptr<PopContext> create(
       std::shared_ptr<Config> config,
       std::shared_ptr<PayloadsStorage> payloadsProvider,
+      std::shared_ptr<BlockReader> blockProvider,
       size_t validatorWorkers = 0);
 
   /**
@@ -167,6 +169,7 @@ struct PopContext {
   std::shared_ptr<PopValidator> popValidator_;
   std::shared_ptr<PopRewardsCalculator> popRewardsCalculator_;
   std::shared_ptr<PayloadsStorage> payloadsProvider_;
+  std::shared_ptr<BlockReader> blockProvider_;
 };
 
 }  // namespace altintegration

@@ -39,8 +39,7 @@ TEST_F(VbkBlockFinalization, BasicTest) {
   auto* vbktip = popminer->mineVbkBlocks(1, *vbkendorsed, {poptx0});
   ASSERT_TRUE(tree->setState(vbktip->getHash(), state));
 
-  ASSERT_EQ(btctip->getHash(),
-            tree->btc().getBestChain().tip()->getHash());
+  ASSERT_EQ(btctip->getHash(), tree->btc().getBestChain().tip()->getHash());
 
   size_t btcTotalBlocks = tree->btc().getBlocks().size();
   vbkTotalBlocks = tree->getBlocks().size();
@@ -72,10 +71,17 @@ TEST_F(VbkBlockFinalization, OverBtcLimitTest) {
 
   ASSERT_EQ(btctip->getHash(), tree->btc().getBestChain().tip()->getHash());
 
+  // save state
+  auto batch = popminer->getStorage().generateWriteBatch();
+  auto writer = adaptors::BlockBatchImpl(*batch);
+  saveTree(*tree, writer);
+  saveTree(tree->btc(), writer);
+  batch->writeBatch();
+
   ASSERT_TRUE(tree->setState(vbktip->pprev->getHash(), state));
 
-  ASSERT_TRUE(tree->finalizeBlock(*finalizedBlock, state));
-  ASSERT_DEATH(tree->setState(vbktip->getHash(), state), "");
+  ASSERT_TRUE(tree->finalizeBlock(*finalizedBlock, state)) << state.toString();
+  ASSERT_TRUE(tree->setState(vbktip->getHash(), state)) << state.toString();
 }
 
 TEST_F(VbkBlockFinalization, NegativeBtcAppliedBlockCountTest) {
