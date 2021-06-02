@@ -598,7 +598,7 @@ must not be executed on bootstrap block </dd>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">A</td><td>hash of current tip in <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a>. Fails on assert if current tip != A. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">B</td><td>block. Current tip will be compared against this block. Must exist on chain and be connected(have BLOCK_HAS_PAYLOADS and BLOCK_CONNECTED), but does not have to be fully validated(necessary validation will be performed during the fork resolution). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">B</td><td>block. Current tip will be compared against this block. Can not be exist on chain and does not have to be fully validated(necessary validation will be performed during the fork resolution). </td></tr>
   </table>
   </dd>
 </dl>
