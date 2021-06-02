@@ -106,7 +106,7 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
             alttree.comparePopScore({1, 2, 3, 4, 5, 6}, chain[100].getHash());
         (void)r;
       },
-      "");
+      "unknown 'A' block");
 
   ASSERT_TRUE(SetState(alttree, chain[100].getHash())) << state.toString();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].getHash());
