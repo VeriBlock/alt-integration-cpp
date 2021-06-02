@@ -762,11 +762,6 @@ struct BaseBlockTree {
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
-    // block is already final
-    // if (index.finalized) {
-    //   return true;
-    // }
-
     // prereq is not met - finalized block must be on active chain
     if (!activeChain_.contains(&index)) {
       return state.Invalid("block-not-on-active-chain");

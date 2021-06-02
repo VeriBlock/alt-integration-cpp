@@ -77,12 +77,11 @@ TEST_F(AltBlockFinalization, FinalizeTip0Window) {
 TEST_F(AltBlockFinalization, FinalizeUnsavedBlocks) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
-  size_t activeChainSize = alttree.getBestChain().size();
 
   auto *tip = alttree.getBestChain().tip();
   ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
-  ASSERT_EQ(alttree.getBlocks().size(), activeChainSize);
+  ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
 
   // save state
   save(alttree);
