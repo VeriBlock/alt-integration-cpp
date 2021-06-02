@@ -283,13 +283,16 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
+
   VBK_ASSERT_MSG(left, "unknown 'A' block %s", HexStr(A));
-  VBK_ASSERT_MSG(right, "unknown 'B' block %s", HexStr(B));
   VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
   VBK_ASSERT_MSG(activeChain_.tip() == left,
                  "left fork must be applied. Tip: %s, Left: %s",
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
+  if (right == nullptr) {
+    return 1;
+  }
 
   VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
   VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
