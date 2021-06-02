@@ -719,9 +719,16 @@ struct BaseBlockTree {
 
     // starting at oldest ancestor, remove all blocks during post-order tree
     // traversal
+    bool remove_from_active_chain = true;
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
-      blocks_.erase(h);
+      bool from_active_chain = activeChain_.contains(&next);
+      if (from_active_chain && remove_from_active_chain) {
+        remove_from_active_chain = !next.isDirty();
+      }
+      if (!from_active_chain || remove_from_active_chain) {
+        blocks_.erase(h);
+      }
     });
   }
 
@@ -756,9 +763,9 @@ struct BaseBlockTree {
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
     // block is already final
-    if (index.finalized) {
-      return true;
-    }
+    // if (index.finalized) {
+    //   return true;
+    // }
 
     // prereq is not met - finalized block must be on active chain
     if (!activeChain_.contains(&index)) {
