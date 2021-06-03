@@ -93,6 +93,32 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocks) {
   assertTreesHaveNoOrphans(alttree);
 }
 
+TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
+  altparam.mEndorsementSettlementInterval = 0;
+  altparam.mPreserveBlocksBehindFinal = 0;
+
+  auto *tip = alttree.getBestChain().tip();
+  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
+  ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
+
+  // save state
+  save(alttree);
+
+  // mark all forks as dirty
+  for (auto *tip : alttree.getTips()) {
+    if (!alttree.getBestChain().contains(tip)) {
+      tip->setDirty();
+    }
+  }
+
+  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
+  ASSERT_EQ(alttree.getBlocks().size(), 1);
+  assertTreeTips(alttree, {tip});
+  assertTreesHaveNoOrphans(alttree);
+}
+
 // finalize a block A251, which has one parallel block Z251 (tip).
 TEST_F(AltBlockFinalization, FinalizeA251) {
   // save state
