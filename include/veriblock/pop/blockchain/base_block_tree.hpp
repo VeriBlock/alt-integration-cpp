@@ -722,13 +722,7 @@ struct BaseBlockTree {
     bool remove_from_active_chain = true;
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
-      bool from_active_chain = activeChain_.contains(&next);
-      if (from_active_chain && remove_from_active_chain) {
-        remove_from_active_chain = !next.isDirty();
-      }
-      if (!from_active_chain || remove_from_active_chain) {
-        blocks_.erase(h);
-      }
+      blocks_.erase(h);
     });
   }
 
