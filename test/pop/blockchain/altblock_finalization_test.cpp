@@ -114,6 +114,15 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
 
   ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
+  // do not finilize the whole tree
+  ASSERT_LT(alttree.getBlocks().size(), totalBlocks);
+  ASSERT_NE(alttree.getBlocks().size(), 1);
+
+  // save state
+  save(alttree);
+
+  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
   assertTreesHaveNoOrphans(alttree);
