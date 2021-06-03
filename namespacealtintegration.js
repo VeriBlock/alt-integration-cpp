@@ -385,7 +385,7 @@ var namespacealtintegration =
     [ "HexStr", "namespacealtintegration.html#a8b332a0d662f714a005e16089931237f", null ],
     [ "highestBlockWhichConnectsKeystoneToPrevious", "namespacealtintegration.html#ac2b722a3cdc1cda335215cb443cfaeb5", null ],
     [ "highestKeystoneAtOrBefore", "namespacealtintegration.html#a6cad3f3d29d0d8f8f1406d03469b58b1", null ],
-    [ "isBlockOutdated", "namespacealtintegration.html#a1a12e777e52a4a4aa3d8b0b1275bf5d2", null ],
+    [ "isBlockOutdated", "namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685", null ],
     [ "isCrossedKeystoneBoundary", "namespacealtintegration.html#ac51f76dc6c5bb68b10e9fc62c776bec5", null ],
     [ "IsHex", "namespacealtintegration.html#a9b60b791d69bb45a82a8f3a02a257032", null ],
     [ "isKeystone", "namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba", null ],
