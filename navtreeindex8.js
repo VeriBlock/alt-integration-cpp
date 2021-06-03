@@ -1,5 +1,13 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html":[5,0,0,0,3],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a13b6d644263af696b862af9a8385423f":[5,0,0,0,3,0],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3b0d6be950cb324ceae43af01e56d2df":[5,0,0,0,3,7],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a3df1c96e45628b662b16a5f9083f8e8d":[5,0,0,0,3,6],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#a4be421e7e77a49279b15f01b63c03b69":[5,0,0,0,3,2],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#aae176a1b057a95225193c09ddaac9258":[5,0,0,0,3,5],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ab5824d97826eb193446320fc283c650d":[5,0,0,0,3,3],
+"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#ac2d07a78f10dbfa03fdbef09d2c51122":[5,0,0,0,3,4],
 "structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e":[5,0,0,0,3,1],
 "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html":[5,0,0,0,4],
 "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html#a8f39c95af8bcdfa166489f8467a56601":[5,0,0,0,4,2],
@@ -116,13 +124,5 @@ var NAVTREEINDEX8 =
 "vblake_8hpp_source.html":[6,0,1,0,0,4,4],
 "vtb_8h_source.html":[6,0,1,0,0,2,0,14],
 "vtb_8hpp_source.html":[6,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[6,0,1,0,0,48],
-"":[4,0,0,1],
-"":[4,0,0,2],
-"":[4,0,0,3],
-"":[4,0,0,7],
-"":[4,0,0,6],
-"":[4,0,0,0],
-"":[4,0,1],
-"":[4,0,0,5]
+"write__stream_8hpp_source.html":[6,0,1,0,0,48]
 };
