@@ -198,8 +198,8 @@ TEST_F(AltTreeFixture, invalidBlockIndex_test) {
 
 TEST_F(AltTreeFixture, duplicateVTBs_test) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  // mine 10 blocks
-  mineAltBlocks(10, chain);
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
 
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -211,13 +211,43 @@ TEST_F(AltTreeFixture, duplicateVTBs_test) {
   ASSERT_TRUE(validatePayloads(containingBlock.getHash(), popData));
   ASSERT_TRUE(state.IsValid());
 
-  popData.context.clear();
+  auto* containingVTB =
+      alttree.vbk().getBlockIndex(popData.vtbs[0].containingBlock.getHash());
+  ASSERT_NE(containingVTB, nullptr);
+  ASSERT_EQ(containingVTB->getPayloadIds<VTB>().size(), 1);
+  ASSERT_EQ(popData.vtbs[0].transaction.blockOfProof.getHash(),
+            alttree.btc().getBestChain().tip()->getHash());
 
-  containingBlock = generateNextBlock(chain.back());
-  ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
-  ASSERT_TRUE(validatePayloads(containingBlock.getHash(), popData))
+  // generate fork chain
+  auto forkContaining = generateNextBlock(chain[chain.size() - 10]);
+  ASSERT_TRUE(alttree.acceptBlockHeader(forkContaining, state));
+  auto* forkIndex = alttree.getBlockIndex(forkContaining.getHash());
+  ASSERT_NE(forkIndex, nullptr);
+  ASSERT_FALSE(alttree.getBestChain().contains(forkIndex));
+
+  // add the same payloads
+  alttree.acceptBlock(forkContaining.getHash(), popData);
+  ASSERT_TRUE(alttree.setState(forkContaining.getHash(), state))
       << state.toString();
-  ASSERT_TRUE(state.IsValid());
+
+  // compare different tips with the same payloads, forkresolution algorithm
+  // should apply both duplicated payloads
+  ASSERT_EQ(alttree.comparePopScore(forkContaining.getHash(),
+                                    containingBlock.getHash()),
+            -1);
+
+  containingVTB =
+      alttree.vbk().getBlockIndex(popData.vtbs[0].containingBlock.getHash());
+  ASSERT_NE(containingVTB, nullptr);
+  ASSERT_EQ(containingVTB->getPayloadIds<VTB>().size(), 1);
+  ASSERT_EQ(popData.vtbs[0].transaction.blockOfProof.getHash(),
+            alttree.btc().getBestChain().tip()->getHash());
+
+  // switch to the another fork without popData
+  auto forkBlock = generateNextBlock(chain[chain.size() - 10]);
+  ASSERT_TRUE(alttree.acceptBlockHeader(forkContaining, state));
+  ASSERT_TRUE(alttree.setState(forkContaining.getHash(), state))
+      << state.toString();
 }
 
 TEST_F(AltTreeFixture, assertBlockSanity_test) {

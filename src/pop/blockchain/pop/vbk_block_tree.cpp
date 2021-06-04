@@ -224,11 +224,6 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                 pid.toHex(),
                 index.toShortPrettyString());
 
-  if (index.getContainingEndorsements().find(pid) !=
-      index.getContainingEndorsements().end()) {
-    return true;
-  }
-
   // we compare with the previous amount of payloads because we have not add the
   // current payload into this vector
   if (index.getPayloadIds<payloads_t>().size() >= MAX_VBKPOPTX_PER_VBK_BLOCK) {
