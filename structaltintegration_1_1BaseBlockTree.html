@@ -902,7 +902,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keywordflow">if</span> (isOnMainChain) {</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;      ValidationState dummy;</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;      <span class="keywordtype">bool</span> success = this-&gt;setState(*prev, dummy);</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      VBK_ASSERT(success);</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      VBK_ASSERT_MSG(success, <span class="stringliteral">&quot;err: %s&quot;</span>, dummy.toString());</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    }</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="comment">// remove this block from &#39;pnext&#39; set of previous block</span></div>
