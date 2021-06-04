@@ -277,7 +277,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * and can not be used. Tip: ask user to run with '-reindex'.
    */
   VBK_CHECK_RETURN bool loadBlock(const stored_index_t& index,
-                                  ValidationState& state) override;
+                                  ValidationState& state);
 
   /**
    * After all blocks loaded, efficiently set current tip.

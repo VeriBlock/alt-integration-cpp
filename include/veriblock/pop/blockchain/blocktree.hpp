@@ -127,13 +127,13 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! @invariant NOT atomic.
-  bool loadBlock(const stored_index_t& index, ValidationState& state) override {
+  bool loadBlock(const stored_index_t& index, ValidationState& state) {
     if (!checkBlock(*index.header, state, *param_)) {
       return state.Invalid("bad-header");
     }
 
     const auto hash = index.header->getHash();
-    if (!base::loadBlock(index, state)) {
+    if (!base::loadBlockForward(index, state)) {
       return false;
     }
 
