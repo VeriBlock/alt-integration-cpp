@@ -367,6 +367,19 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {
     overrideTip(to);
+    // finalize blocks
+    {
+      uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
+      uint32_t finalHeight = std::max(
+          (int32_t)(getBestChain().tip()->getHeight() - max_reorg_distance),
+          (int32_t)getRoot().getHeight());
+
+      auto* finalizedBlock = getBestChain()[finalHeight];
+
+      if (!finalizeBlock(*finalizedBlock, state)) {
+        return state.Invalid("set-state-error");
+      }
+    }
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
