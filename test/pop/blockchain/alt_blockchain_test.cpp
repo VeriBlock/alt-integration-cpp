@@ -197,6 +197,17 @@ TEST_F(AltTreeFixture, invalidBlockIndex_test) {
 }
 
 TEST_F(AltTreeFixture, duplicateVTBs_test) {
+  // This scenario tests that we have the same PopData with the same VTB inside
+  // two different AltBlocks on the different chains
+  //
+  // o-o-o-o-o-o-o-o[containingBlock, has VTB]
+  //   \
+  //    o[forkContaining, has the same VTB]
+  //
+  // and during the comparePopScore() both of them will be applied, so it is
+  // important to allow add duplicates inside
+  // VbkBlockTree::addPayloadToAppliedBlock() method
+
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
   // mine 20 blocks
   mineAltBlocks(20, chain);

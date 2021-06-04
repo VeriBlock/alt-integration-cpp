@@ -217,6 +217,11 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                                             const payloads_t& payload,
                                             ValidationState& state) {
+  // in this method we allow to add duplicates because of the functionality of
+  // the forkresolution algorithms.
+  // look into the description alt_blockchain_test.cpp
+  // duplicateVTBs_test test case
+
   VBK_ASSERT(index.hasFlags(BLOCK_ACTIVE));
 
   auto pid = payload.getId();
