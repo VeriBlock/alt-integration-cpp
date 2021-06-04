@@ -443,15 +443,14 @@ const BlockIndex<Block>* getForkBlock(const BlockIndex<Block>& a,
 //! same height and not equal to `finalBlock`, or its fork block is outdated
 template <typename Block>
 bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
-                     const BlockIndex<Block>& candidate,
-                     int window = 0) {
+                     const BlockIndex<Block>& candidate) {
   // finalBlock is ancestor of candidate
   if (candidate.getAncestor(finalBlock.getHeight()) == &finalBlock) {
     return false;
   }
 
   // all candidates behind final block are outdated
-  if (candidate.getHeight() < finalBlock.getHeight() - window) {
+  if (candidate.getHeight() < finalBlock.getHeight()) {
     return true;
   }
 
