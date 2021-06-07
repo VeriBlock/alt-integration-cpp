@@ -89,18 +89,18 @@ $(document).ready(function(){initNavTree('integration_7_alttree.html',''); initR
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md64">Overview</a></li>
-<li class="level1"><a href="#autotoc_md65">1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.</a></li>
-<li class="level1"><a href="#autotoc_md66">2. Update block processing in the ConnectBlock(), DisconnectBlock(), UpdateTip(), LoadGenesisBlock(), AcceptBlockHeader(), AcceptBlock(), TestBlockValidity().</a></li>
-<li class="level1"><a href="#autotoc_md67">3. Show Pop related info when node starts.</a></li>
-<li class="level1"><a href="#autotoc_md68">4. Update Pop logging support.</a></li>
-<li class="level1"><a href="#autotoc_md69">5. Add unit tests to test the functionality we have added before.</a></li>
-<li class="level1"><a href="#autotoc_md70">6. Add test case which tests the VeriBlock Pop behaviour: e2e_poptx_tests.cpp.</a></li>
-<li class="level1"><a href="#autotoc_md71">7. Update makefile to enable new unit test.</a></li>
+<ul><li class="level1"><a href="#autotoc_md63">Overview</a></li>
+<li class="level1"><a href="#autotoc_md64">1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.</a></li>
+<li class="level1"><a href="#autotoc_md65">2. Update block processing in the ConnectBlock(), DisconnectBlock(), UpdateTip(), LoadGenesisBlock(), AcceptBlockHeader(), AcceptBlock(), TestBlockValidity().</a></li>
+<li class="level1"><a href="#autotoc_md66">3. Show Pop related info when node starts.</a></li>
+<li class="level1"><a href="#autotoc_md67">4. Update Pop logging support.</a></li>
+<li class="level1"><a href="#autotoc_md68">5. Add unit tests to test the functionality we have added before.</a></li>
+<li class="level1"><a href="#autotoc_md69">6. Add test case which tests the VeriBlock Pop behaviour: e2e_poptx_tests.cpp.</a></li>
+<li class="level1"><a href="#autotoc_md70">7. Update makefile to enable new unit test.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_7_alttree"></a></p>
-<h1><a class="anchor" id="autotoc_md64"></a>
+<h1><a class="anchor" id="autotoc_md63"></a>
 Overview</h1>
 <p>At this stage we should add functions for maintaining the VeriBlock AltTree: <code>setState()</code>, <code>acceptBlock()</code>, <code>addAllBlockPayloads()</code>. They provide API to change the state of the VeriBlock AltTree.</p>
 <ul>
@@ -108,7 +108,7 @@ Overview</h1>
 <li><code>addAllBlockPayloads()</code> - adds popData for the current ALT block into the library and should be invoked before <code>acceptBlock()</code> call.</li>
 <li><code>setState()</code> - changes the state of the VeriBlock AltTree as if the provided ALT block was the current tip of the blockchain.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md65"></a>
+<h1><a class="anchor" id="autotoc_md64"></a>
 1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp</a> </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;vbk/adaptors/payloads_provider.hpp&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;vbk/util.hpp&gt;</span></div>
@@ -198,7 +198,7 @@ Overview</h1>
 <div class="line">+    <span class="keywordflow">return</span> <a class="code" href="namespacealtintegration.html#aba330e6739b0bf790a4785ce97f4b08e">altintegration::getLastKnownBlocks</a>(GetPop().getBtcBlockTree(), blocks);</div>
 <div class="line">+}</div>
 <div class="ttc" id="anamespacealtintegration_html_aba330e6739b0bf790a4785ce97f4b08e"><div class="ttname"><a href="namespacealtintegration.html#aba330e6739b0bf790a4785ce97f4b08e">altintegration::getLastKnownBlocks</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; uint8_t &gt; &gt; getLastKnownBlocks(const BlockTree &amp;tree, size_t size)</div><div class="ttdoc">helper to get last N known block hashes</div><div class="ttdef"><b>Definition:</b> <a href="alt-util_8hpp_source.html#l00042">alt-util.hpp:42</a></div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md66"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md65"></a>
 2. Update block processing in the ConnectBlock(), DisconnectBlock(), UpdateTip(), LoadGenesisBlock(), AcceptBlockHeader(), AcceptBlock(), TestBlockValidity().</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L1661">method CChainState::DisconnectBlock</a> </p><div class="fragment"><div class="line">+    <span class="keyword">auto</span> prevHash = pindex-&gt;pprev-&gt;GetBlockHash();</div>
@@ -328,7 +328,7 @@ Overview</h1>
 <div class="line">+            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">+        }</div>
 <div class="line">         ReceivedBlockTransactions(block, pindex, blockPos, chainparams.GetConsensus());</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md67"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md66"></a>
 3. Show Pop related info when node starts.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/init.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/init.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/init.cpp#L1209">method AppInitMain</a> </p><div class="fragment"><div class="line">+    {</div>
@@ -347,7 +347,7 @@ Overview</h1>
 <div class="line">+    }</div>
 <div class="line">+</div>
 <div class="line">     <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md68"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md67"></a>
 4. Update Pop logging support.</h1>
 <p>Pop logger: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/log.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/log.hpp</a>. Copy this file to your project.</p>
 <dl class="section note"><dt>Note</dt><dd>Pop logger inherits from <a class="el" href="structaltintegration_1_1Logger.html" title="An interface for logger.">altintegration::Logger</a>. It should write to ALT log in the overriden virtual method <code>log()</code>.</dd></dl>
@@ -379,7 +379,7 @@ Overview</h1>
 <div class="line">+    <span class="comment">// VBK</span></div>
 <div class="line">+    gArgs.AddArg(<span class="stringliteral">&quot;-poplogverbosity&quot;</span>, <span class="stringliteral">&quot;Verbosity for alt-cpp lib: debug/info/(warn)/error/off&quot;</span>, ArgsManager::ALLOW_STRING, OptionsCategory::OPTIONS);</div>
 <div class="line">+    <span class="comment">// VBK</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md69"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md68"></a>
 5. Add unit tests to test the functionality we have added before.</h1>
 <p>VeriBlock precalculated data for the tests: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/util/consts.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/util/consts.hpp</a>. Copy this file to your project.</p>
 <p>Unit testing setup and helper methods: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/util/e2e_fixture.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/util/e2e_fixture.hpp</a>. Copy this file to your project.</p>
@@ -390,10 +390,10 @@ Overview</h1>
 <div class="line">+</div>
 <div class="line">+    <span class="keyword">auto</span>&amp; tree = *VeriBlock::GetPop().altTree;</div>
 <div class="line">+    assert(tree.getBestChain().tip()-&gt;getHeight() == ChainActive().Tip()-&gt;nHeight);</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md70"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md69"></a>
 6. Add test case which tests the VeriBlock Pop behaviour: e2e_poptx_tests.cpp.</h1>
 <p>E2E Pop basic functionality test: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/e2e_poptx_tests.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/e2e_poptx_tests.cpp</a>. Copy this file to your project.</p>
-<h1><a class="anchor" id="autotoc_md71"></a>
+<h1><a class="anchor" id="autotoc_md70"></a>
 7. Update makefile to enable new unit test.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include</a> </p><div class="fragment"><div class="line">+### VeriBlock section start</div>
 <div class="line">+# path is relative to src</div>

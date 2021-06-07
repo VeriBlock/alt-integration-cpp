@@ -89,20 +89,20 @@ $(document).ready(function(){initNavTree('integration_9_rewards.html',''); initR
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md82">Overview</a></li>
-<li class="level1"><a href="#autotoc_md83">1. Modify ALT params (CChainParams). Add two new VeriBlock parameters for the Pop rewards.</a></li>
-<li class="level1"><a href="#autotoc_md84">2. Implement Pop rewards related methods in the pop_service.hpp and pop_service.cpp source files.</a></li>
-<li class="level1"><a href="#autotoc_md85">3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.</a></li>
-<li class="level1"><a href="#autotoc_md86">4. Modify mining process in the CreateNewBlock function. Insert VeriBlock PoPRewards into the coinbase transaction, add some validation rules to the validation.cpp.</a></li>
-<li class="level1"><a href="#autotoc_md87">5. Add tests for the Pop rewards.</a></li>
-<li class="level1"><a href="#autotoc_md88">6. Update makefile to run tests.</a></li>
+<ul><li class="level1"><a href="#autotoc_md81">Overview</a></li>
+<li class="level1"><a href="#autotoc_md82">1. Modify ALT params (CChainParams). Add two new VeriBlock parameters for the Pop rewards.</a></li>
+<li class="level1"><a href="#autotoc_md83">2. Implement Pop rewards related methods in the pop_service.hpp and pop_service.cpp source files.</a></li>
+<li class="level1"><a href="#autotoc_md84">3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.</a></li>
+<li class="level1"><a href="#autotoc_md85">4. Modify mining process in the CreateNewBlock function. Insert VeriBlock PoPRewards into the coinbase transaction, add some validation rules to the validation.cpp.</a></li>
+<li class="level1"><a href="#autotoc_md86">5. Add tests for the Pop rewards.</a></li>
+<li class="level1"><a href="#autotoc_md87">6. Update makefile to run tests.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_9_rewards"></a></p>
-<h1><a class="anchor" id="autotoc_md82"></a>
+<h1><a class="anchor" id="autotoc_md81"></a>
 Overview</h1>
 <p>Modify rewarding algorithm. Basic PoW rewards are extended with Pop rewards for the Pop miners.</p>
-<h1><a class="anchor" id="autotoc_md83"></a>
+<h1><a class="anchor" id="autotoc_md82"></a>
 1. Modify ALT params (CChainParams). Add two new VeriBlock parameters for the Pop rewards.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h#L50">class CChainParams</a> </p><div class="fragment"><div class="line">     <span class="keywordtype">bool</span> isPopActive(uint64_t height)<span class="keyword"> const </span>{</div>
@@ -118,7 +118,7 @@ Overview</h1>
 <div class="line">+    uint32_t mPopRewardPercentage = 40; <span class="comment">// %</span></div>
 <div class="line">+    <span class="comment">// every pop reward will be multiplied by this coefficient</span></div>
 <div class="line">+    int32_t mPopRewardCoefficient = 20;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md84"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md83"></a>
 2. Implement Pop rewards related methods in the pop_service.hpp and pop_service.cpp source files.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp</a> </p><div class="fragment"><div class="line">+PoPRewards getPopRewards(<span class="keyword">const</span> CBlockIndex&amp; pindexPrev, <span class="keyword">const</span> CChainParams&amp; params);</div>
 <div class="line">+<span class="keywordtype">void</span> addPopPayoutsIntoCoinbaseTx(CMutableTransaction&amp; coinbaseTx, <span class="keyword">const</span> CBlockIndex&amp; pindexPrev, <span class="keyword">const</span> CChainParams&amp; params);</div>
@@ -255,7 +255,7 @@ Overview</h1>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Rewarding algorithm should fall back to the original ALT rewarding if Pop security is not activated. </dd>
 <dd>
 It is recommended to apply native halving rules to Pop rewards.</dd></dl>
-<h1><a class="anchor" id="autotoc_md85"></a>
+<h1><a class="anchor" id="autotoc_md84"></a>
 3. Modify GetBlockSubsidy() to accept CChainParams instead of consensus params.</h1>
 <p>We have to check the Pop activation height when calculating Pop rewards. Therefore some methods should be modified to accept chain parameters instead of consensus parameters.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.h</a> </p><div class="fragment"><div class="line"> <span class="keywordtype">bool</span> ActivateBestChain(BlockValidationState&amp; state, <span class="keyword">const</span> CChainParams&amp; chainparams, std::shared_ptr&lt;const CBlock&gt; pblock = std::shared_ptr&lt;const CBlock&gt;());</div>
@@ -297,7 +297,7 @@ It is recommended to apply native halving rules to Pop rewards.</dd></dl>
 <div class="line">     <span class="keywordflow">for</span> (<span class="keywordtype">int</span> nHeight = 0; nHeight &lt; 14000000; nHeight += 1000) {</div>
 <div class="line">-        CAmount nSubsidy = GetBlockSubsidy(nHeight, chainParams-&gt;GetConsensus());</div>
 <div class="line">+        CAmount nSubsidy = GetBlockSubsidy(nHeight, *chainParams);</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md86"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md85"></a>
 4. Modify mining process in the CreateNewBlock function. Insert VeriBlock PoPRewards into the coinbase transaction, add some validation rules to the validation.cpp.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L1207">method GetBlockSubsidy</a> </p><div class="fragment"><div class="line">     CAmount nSubsidy = 50 * COIN;</div>
@@ -330,11 +330,11 @@ It is recommended to apply native halving rules to Pop rewards.</dd></dl>
 <div class="line">-    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> nHeight = 0; nHeight &lt; 14000000; nHeight += 1000) {</div>
 <div class="line">+    <span class="comment">// skip first 1000 blocks to make sure POP security is ON</span></div>
 <div class="line">+    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> nHeight = 1000; nHeight &lt; 14000000; nHeight += 1000) {</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md87"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md86"></a>
 5. Add tests for the Pop rewards.</h1>
 <p>Pop rewards test: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/test/unit/pop_reward_tests.cpp</a>. Copy this file to your project.</p>
 <dl class="section note"><dt>Note</dt><dd>Test expects Pop reward in the second coinbase transaction. Update the test according to the ALT rewarding scheme.</dd></dl>
-<h1><a class="anchor" id="autotoc_md88"></a>
+<h1><a class="anchor" id="autotoc_md87"></a>
 6. Update makefile to run tests.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/Makefile.test.include</a> </p><div class="fragment"><div class="line"><span class="preprocessor"> ### VeriBlock section start</span></div>
 <div class="line"><span class="preprocessor"> # path is relative to src</span></div>

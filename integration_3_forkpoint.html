@@ -89,17 +89,17 @@ $(document).ready(function(){initNavTree('integration_3_forkpoint.html',''); ini
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md42">Overview</a></li>
-<li class="level1"><a href="#autotoc_md43">1. Add block height for Pop Security activation.</a></li>
-<li class="level1"><a href="#autotoc_md44">2. Create a function in the chainparams which detects if the Pop security is enabled.</a></li>
-<li class="level1"><a href="#autotoc_md45">3. Update the block version validation.</a></li>
+<ul><li class="level1"><a href="#autotoc_md41">Overview</a></li>
+<li class="level1"><a href="#autotoc_md42">1. Add block height for Pop Security activation.</a></li>
+<li class="level1"><a href="#autotoc_md43">2. Create a function in the chainparams which detects if the Pop security is enabled.</a></li>
+<li class="level1"><a href="#autotoc_md44">3. Update the block version validation.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_3_forkpoint"></a></p>
-<h1><a class="anchor" id="autotoc_md42"></a>
+<h1><a class="anchor" id="autotoc_md41"></a>
 Overview</h1>
 <p>The only way to enable VeriBlock security for already running blockchains is to make a hard fork. For this reason we will provide a height of the fork point.</p>
-<h1><a class="anchor" id="autotoc_md43"></a>
+<h1><a class="anchor" id="autotoc_md42"></a>
 1. Add block height for Pop Security activation.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/consensus/params.h#L45">struct Params</a> </p><div class="fragment"><div class="line">     <a class="code" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> nMinimumChainWork;</div>
@@ -110,7 +110,7 @@ Overview</h1>
 <div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00017">uint.hpp:17</a></div></div>
 </div><!-- fragment --><dl class="section warning"><dt>Warning</dt><dd>The value must be selected carefully. If current height is <code>X</code>, never set height less or equal to <code>X</code>.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Set <code>VeriBlockPopSecurityHeight</code> equal to 200 in regtest, so that existing tests can be re-used.</dd></dl>
-<h1><a class="anchor" id="autotoc_md44"></a>
+<h1><a class="anchor" id="autotoc_md43"></a>
 2. Create a function in the chainparams which detects if the Pop security is enabled.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/chainparams.h#L50">class CChainParams</a> </p><div class="fragment"><div class="line">     <span class="keyword">const</span> CCheckpointData&amp; Checkpoints()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> checkpointData; }</div>
@@ -121,7 +121,7 @@ Overview</h1>
 <div class="line">+        <span class="keywordflow">return</span> height &gt;= consensus.VeriBlockPopSecurityHeight;</div>
 <div class="line">+    }</div>
 <div class="line">+</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md45"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md44"></a>
 3. Update the block version validation.</h1>
 <p><code>POP_BLOCK_VERSION_BIT</code> should not be set before PoP Activation Height:</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp</a></p>
