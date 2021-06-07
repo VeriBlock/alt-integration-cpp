@@ -27,6 +27,9 @@ POP_ENTITY_GETTER_FUNCTION(pop_data, POP_ARRAY_NAME(vbk_block), context);
 
 POP_ENTITY_TO_JSON(pop_data, bool verbose);
 
+POP_ENTITY_SERIALIZE_TO_VBK(pop_data);
+POP_ENTITY_DESERIALIZE_FROM_VBK(pop_data);
+
 POP_GENERATE_DEFAULT_VALUE(pop_data);
 
 #ifdef __cplusplus

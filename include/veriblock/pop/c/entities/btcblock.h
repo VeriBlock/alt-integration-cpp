@@ -26,6 +26,9 @@ POP_ENTITY_GETTER_FUNCTION(btc_block, uint32_t, nonce);
 
 POP_ENTITY_TO_JSON(btc_block);
 
+POP_ENTITY_SERIALIZE_TO_VBK(btc_block);
+POP_ENTITY_DESERIALIZE_FROM_VBK(btc_block);
+
 POP_DECLARE_ARRAY(POP_ENTITY_NAME(btc_block) *, btc_block);
 
 POP_GENERATE_DEFAULT_VALUE(btc_block);

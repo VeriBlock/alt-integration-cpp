@@ -8,6 +8,7 @@
 
 #include "stdint.h"
 #include "veriblock/pop/c/array.h"
+#include "veriblock/pop/c/entities/serde.h"
 #include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus

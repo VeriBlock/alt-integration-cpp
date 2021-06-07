@@ -130,8 +130,8 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 }
 
 TEST_F(AltTreeFixture, compareTrees) {
-  AltBlockTree alttree2 =
-      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree2(
+      altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   EXPECT_TRUE(alttree2.bootstrap(state));
   EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
   EXPECT_TRUE(alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
@@ -194,6 +194,75 @@ TEST_F(AltTreeFixture, invalidBlockIndex_test) {
   EXPECT_FALSE(index->isValid());
 
   EXPECT_FALSE(alttree.acceptBlockHeader(index->getHeader(), state));
+}
+
+TEST_F(AltTreeFixture, duplicateVTBs_test) {
+  /**
+   *
+   * This scenario tests that we have the same PopData with the same VTB
+   * inside
+   * two different AltBlocks on the different chains
+   *
+   * o-o-o-o-o-o-o-o[containingBlock, has VTB]
+   *     \
+   *      o[forkContaining, has the same VTB]
+   *
+   * and during the comparePopScore() both of them will be applied, so it is
+   * important to allow add duplicates inside
+   * VbkBlockTree::addPayloadToAppliedBlock() method
+   */
+
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+
+  auto containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+  PopData popData = generateAltPayloads({}, GetRegTestVbkBlock().getHash(), 1);
+
+  ASSERT_EQ(popData.vtbs.size(), 1);
+
+  ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  ASSERT_TRUE(validatePayloads(containingBlock.getHash(), popData));
+  ASSERT_TRUE(state.IsValid());
+
+  auto* containingVTB =
+      alttree.vbk().getBlockIndex(popData.vtbs[0].containingBlock.getHash());
+  ASSERT_NE(containingVTB, nullptr);
+  ASSERT_EQ(containingVTB->getPayloadIds<VTB>().size(), 1);
+  ASSERT_EQ(popData.vtbs[0].transaction.blockOfProof.getHash(),
+            alttree.btc().getBestChain().tip()->getHash());
+
+  // generate fork chain
+  auto forkContaining = generateNextBlock(chain[chain.size() - 10]);
+  ASSERT_TRUE(alttree.acceptBlockHeader(forkContaining, state));
+  auto* forkIndex = alttree.getBlockIndex(forkContaining.getHash());
+  ASSERT_NE(forkIndex, nullptr);
+  ASSERT_FALSE(alttree.getBestChain().contains(forkIndex));
+
+  // add the same payloads
+  alttree.acceptBlock(forkContaining.getHash(), popData);
+  ASSERT_TRUE(alttree.setState(forkContaining.getHash(), state))
+      << state.toString();
+
+  // compare different tips with the same payloads, forkresolution algorithm
+  // should apply both duplicated payloads
+  ASSERT_EQ(alttree.comparePopScore(forkContaining.getHash(),
+                                    containingBlock.getHash()),
+            -1);
+
+  containingVTB =
+      alttree.vbk().getBlockIndex(popData.vtbs[0].containingBlock.getHash());
+  ASSERT_NE(containingVTB, nullptr);
+  ASSERT_EQ(containingVTB->getPayloadIds<VTB>().size(), 1);
+  ASSERT_EQ(popData.vtbs[0].transaction.blockOfProof.getHash(),
+            alttree.btc().getBestChain().tip()->getHash());
+
+  // switch to the another fork without popData
+  auto forkBlock = generateNextBlock(chain[chain.size() - 10]);
+  ASSERT_TRUE(alttree.acceptBlockHeader(forkContaining, state));
+  ASSERT_TRUE(alttree.setState(forkContaining.getHash(), state))
+      << state.toString();
 }
 
 TEST_F(AltTreeFixture, assertBlockSanity_test) {

@@ -10,7 +10,7 @@ Or if you build the whole library from source
 ```bash
 # clone this repo and cd inside
 mkdir build && cd build
-cmake .. -DWITH_PYPOPMINER=TRUE
+cmake .. -DWITH_PYPOPTOOLS=TRUE
 make -j
 sudo make install
 

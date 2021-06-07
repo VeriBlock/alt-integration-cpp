@@ -9,7 +9,9 @@
 #include <veriblock/pop/blockchain/blocktree.hpp>
 #include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
 #include <veriblock/pop/literals.hpp>
-#include <veriblock/pop/storage/inmem_payloads_provider.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+#include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 
 #include "block_headers.hpp"
 
@@ -26,7 +28,9 @@ struct BtcInvalidationTest {
 
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
-  InmemPayloadsProvider storage;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloadsProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
 };
 
@@ -309,7 +313,9 @@ TEST(VbkBlocksTest, basic_test1) {
 
   VbkChainParamsTest vbkparam;
   BtcChainParamsRegTest btcparam;
-  InmemPayloadsProvider storage;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloadsProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
   ValidationState state;
 
@@ -327,7 +333,8 @@ TEST(VbkBlocksTest, basic_test1) {
   auto bootstrap_chain = blocks;
   bootstrap_chain.resize(100);
 
-  VbkBlockTree tree(vbkparam, btcparam, storage, payloadsIndex);
+  VbkBlockTree tree(
+      vbkparam, btcparam, payloadsProvider, blockProvider, payloadsIndex);
 
   ASSERT_EQ(bootstrap_chain.size(), 100);
 
@@ -580,7 +587,9 @@ TEST(VbkBlocksTest, basic_test2) {
 
   VbkChainParamsTest vbkparam;
   BtcChainParamsRegTest btcparam;
-  InmemPayloadsProvider storage;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloadsProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
   ValidationState state;
 
@@ -598,7 +607,8 @@ TEST(VbkBlocksTest, basic_test2) {
   auto bootstrap_chain = blocks;
   bootstrap_chain.resize(100);
 
-  VbkBlockTree tree(vbkparam, btcparam, storage, payloadsIndex);
+  VbkBlockTree tree(
+      vbkparam, btcparam, payloadsProvider, blockProvider, payloadsIndex);
 
   ASSERT_EQ(bootstrap_chain.size(), 100);
 
@@ -681,7 +691,8 @@ TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  VbkBlockTree tree(*value.params, btcparam, storage, payloadsIndex);
+  VbkBlockTree tree(
+      *value.params, btcparam, payloadsProvider, blockProvider, payloadsIndex);
 
   ASSERT_TRUE(tree.bootstrapWithChain(
       bootstrapChain[0].getHeight(), bootstrapChain, state))

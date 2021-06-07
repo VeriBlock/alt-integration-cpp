@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <gtest/gtest.h>
-#include <veriblock/pop/c/merkle_root_util.h>
 
 #include <util/alt_chain_params_regtest.hpp>
 #include <util/pop_test_fixture.hpp>
@@ -95,14 +94,6 @@ TEST(TopLevelMerkleRoot, Sanity) {
   auto tlmr = CalculateTopLevelMerkleRoot(txRoot, popDataRoot, ctx);
   ASSERT_EQ(HexStr(tlmr),
             "700c1abb69dd1899796b4cafa81c0eefa7b7d0c5aaa4b2bcb67713b2918edb52");
-}
-
-extern "C" {
-void pop_sha256d(pop_uint256 output, const void* input, int size) {
-  // double sha256
-  auto h = sha256twice({(const uint8_t*)input, static_cast<size_t>(size)});
-  memcpy(output, h.data(), 32);
-}
 }
 
 // ~ » vbitcoin-cli getblocktemplate "{\"rules\": [\"segwit\"]}"
@@ -196,24 +187,7 @@ TEST(TopLevelMerkleRoot, Case1) {
   actx.stateRoot = stateRoot;
   ASSERT_EQ(SerializeToHex(actx), HexStr(pop_context_serialized));
 
-  std::string expected = "756ecf78c55aa5b82bf475d5573fce78197e2312232a28241d3a2b2068331f02";
+  std::string expected =
+      "756ecf78c55aa5b82bf475d5573fce78197e2312232a28241d3a2b2068331f02";
   ASSERT_EQ(actx.getTopLevelMerkleRoot().toHex(), expected);
-
-
-  {
-    // test C helper
-
-    // clang-format off
-    pop_context_info cctx = pop_create_context_info(height, firstPreviousKeystone.data(), secondPreviousKeystone.data());
-
-    pop_uint256 context_hash;
-    pop_context_info_hash(context_hash, &cctx);
-    ASSERT_EQ(HexStr(context_hash, context_hash + 32), ctx.getHash().toHex());
-
-    pop_uint256 tlmr;
-    pop_calculate_top_level_merkle_root(tlmr, tx_root.data(), pop_data_root.data(), cctx);
-    // clang-format on
-
-    ASSERT_EQ(HexStr(tlmr, tlmr + 32), expected);
-  }
 }

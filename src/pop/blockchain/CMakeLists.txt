@@ -9,5 +9,7 @@ add_library(blockchain OBJECT
         btc_block_addon.cpp
         commands.cpp
         mempool_block_tree.cpp
+        commands/alt_command_group_store.cpp
         commands/check_pubdata.cpp
+        commands/vbk_command_group_store.cpp
         )

@@ -6,6 +6,7 @@
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
+#include <veriblock/pop/blockchain/alt_block_tree_util.hpp>
 #include <veriblock/pop/command_group_cache.hpp>
 #include <veriblock/pop/entities/context_info_container.hpp>
 #include <veriblock/pop/reversed_range.hpp>
@@ -84,49 +85,6 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
   for (const auto& pid : pids) {
     storage.addAltPayloadIndex(containing, pid.asVector());
   }
-}
-
-/** Find stateless and stateful duplicates
- * Reorder the container items, moving all found duplicates to the back
- * @return an iterator to the first duplicate
- */
-template <typename Element, typename Container>
-/*iterator*/ auto findDuplicates(BlockIndex<AltBlock>& index,
-                                 Container& payloads,
-                                 AltBlockTree& tree)
-    -> decltype(payloads.end()) {
-  const auto startHeight = tree.getParams().getBootstrapBlock().height;
-  // don't look for duplicates in index itself
-  Chain<BlockIndex<AltBlock>> chain(startHeight, index.pprev);
-  std::unordered_set<std::vector<uint8_t>> ids;
-
-  const auto& storage = tree.getPayloadsIndex();
-  auto duplicates =
-      std::remove_if(payloads.begin(), payloads.end(), [&](const Element& p) {
-        const auto id = getIdVector(p);
-        // ensure existing blocks do not contain this id
-        for (const auto& hash : storage.getContainingAltBlocks(id)) {
-          const auto* candidate = tree.getBlockIndex(hash);
-          if (chain.contains(candidate)) {
-            // duplicate in 'candidate'
-            return true;
-          }
-        }
-
-        // ensure ids are unique within `pop`
-        bool inserted = ids.insert(id).second;
-        return !inserted;
-      });
-
-  return duplicates;
-}
-
-template <typename P>
-void removeDuplicates(BlockIndex<AltBlock>& index,
-                      std::vector<P>& payloads,
-                      AltBlockTree& tree) {
-  auto duplicates = findDuplicates<P>(index, payloads, tree);
-  payloads.erase(duplicates, payloads.end());
 }
 
 template <typename P, typename T>
@@ -296,7 +254,7 @@ std::string AltBlockTree::toPrettyString(size_t level) const {
   std::string pad(level, ' ');
   return fmt::sprintf("%sAltTree{blocks=%llu\n%s\n%s\n%s}",
                       pad,
-                      base::blocks_.size(),
+                      base::getBlocks().size(),
                       base::toPrettyString(level + 2),
                       cmp_.toPrettyString(level + 2),
                       pad);
@@ -325,13 +283,16 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
+
   VBK_ASSERT_MSG(left, "unknown 'A' block %s", HexStr(A));
-  VBK_ASSERT_MSG(right, "unknown 'B' block %s", HexStr(B));
   VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
   VBK_ASSERT_MSG(activeChain_.tip() == left,
                  "left fork must be applied. Tip: %s, Left: %s",
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
+  if (right == nullptr) {
+    return 1;
+  }
 
   VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
   VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
@@ -399,86 +360,6 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
   tryAddTip(index.pprev);
 }
 
-template <typename Payload, typename BlockIndex>
-void removePayloadsIfNotInBlock(std::vector<Payload>& payloads,
-                                BlockIndex& index) {
-  auto payloadIds = index.template getPayloadIds<Payload>();
-  std::set<typename Payload::id_t> ids(payloadIds.begin(), payloadIds.end());
-
-  auto it = std::remove_if(
-      payloads.begin(), payloads.end(), [&](const Payload& payload) {
-        auto pid = payload.getId();
-        return ids.count(pid) == 0;
-      });
-  payloads.erase(it, payloads.end());
-}
-
-static void assertPopDataFits(PopData& pop, const AltChainParams& params) {
-  const auto& maxSize = params.getMaxPopDataSize();
-  const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
-  const auto& maxVTBs = params.getMaxVTBsInAltBlock();
-  const auto& maxATVs = params.getMaxATVsInAltBlock();
-  VBK_ASSERT(pop.context.size() <= maxVbkBlocks);
-  VBK_ASSERT(pop.vtbs.size() <= maxVTBs);
-  VBK_ASSERT(pop.atvs.size() <= maxATVs);
-  const auto estimate = pop.estimateSize();
-  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
-}
-
-void AltBlockTree::filterInvalidPayloads(PopData& pop) {
-  // return early
-  if (pop.empty()) {
-    return;
-  }
-
-  VBK_LOG_INFO("Trying to add %s to next block...", pop.toPrettyString());
-
-  // suppress the VBK fork resolution as we don't care about the best chain
-  auto guard = vbk().deferForkResolutionGuard();
-  auto originalTip = vbk().getBestChain().tip();
-
-  // first, create tmp alt block
-  AltBlock tmp;
-  ValidationState state;
-  {
-    auto& tip = *getBestChain().tip();
-    tmp.hash = std::vector<uint8_t>(32, 2);
-    tmp.previousBlock = tip.getHash();
-    tmp.timestamp = tip.getTimestamp() + 1;
-    tmp.height = tip.getHeight() + 1;
-    bool ret = acceptBlockHeader(tmp, state);
-    VBK_ASSERT(ret);
-  }
-
-  auto* tmpindex = getBlockIndex(tmp.getHash());
-  VBK_ASSERT(tmpindex != nullptr);
-
-  // filter out statefully duplicate payloads
-  removeDuplicates<VbkBlock>(*tmpindex, pop.context, *this);
-  removeDuplicates<VTB>(*tmpindex, pop.vtbs, *this);
-  removeDuplicates<ATV>(*tmpindex, pop.atvs, *this);
-
-  // add payloads to a block
-  acceptBlock(*tmpindex, pop);
-
-  // setState in 'continueOnInvalid' mode
-  setTipContinueOnInvalid(*tmpindex);
-
-  removePayloadsIfNotInBlock(pop.atvs, *tmpindex);
-  removePayloadsIfNotInBlock(pop.vtbs, *tmpindex);
-  removePayloadsIfNotInBlock(pop.context, *tmpindex);
-
-  // assert PopData does not surpass limits
-  assertPopDataFits(pop, getParams());
-
-  VBK_LOG_INFO("Filtered valid: %s", pop.toPrettyString());
-
-  // at this point `pop` contains only valid payloads
-  this->removeSubtree(*tmpindex);
-
-  guard.overrideDeferredForkResolution(originalTip);
-}
-
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
@@ -486,6 +367,19 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {
     overrideTip(to);
+    // finalize blocks
+    {
+      uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
+      uint32_t finalHeight = std::max(
+          (int32_t)(getBestChain().tip()->getHeight() - max_reorg_distance),
+          (int32_t)getRoot().getHeight());
+
+      auto* finalizedBlock = getBestChain()[finalHeight];
+
+      if (!finalizeBlock(*finalizedBlock, state)) {
+        return state.Invalid("set-state-error");
+      }
+    }
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
@@ -509,14 +403,6 @@ void AltBlockTree::overrideTip(index_t& to) {
 
   onBeforeOverrideTip.emit(to);
   activeChain_.setTip(&to);
-}
-
-void AltBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
-  ContinueOnInvalidContext c(getParams());
-  ValidationState dummy;
-  bool success = cmp_.setState(*this, to, dummy, /*continueOnInvalid=*/&c);
-  VBK_ASSERT(success);
-  overrideTip(to);
 }
 
 bool AltBlockTree::loadBlock(const stored_index_t& index,
@@ -561,14 +447,20 @@ bool AltBlockTree::loadBlock(const stored_index_t& index,
 AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            const AltBlockTree::vbk_config_t& vbk_config,
                            const AltBlockTree::btc_config_t& btc_config,
-                           PayloadsStorage& payloadsProvider)
-    : alt_config_(&alt_config),
-      cmp_(std::make_shared<VbkBlockTree>(
-               vbk_config, btc_config, payloadsProvider, payloadsIndex_),
+                           PayloadsStorage& payloadsProvider,
+                           BlockReader& blockProvider)
+    : base(blockProvider),
+      alt_config_(&alt_config),
+      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
+                                          btc_config,
+                                          payloadsProvider,
+                                          blockProvider,
+                                          payloadsIndex_),
            alt_config,
            payloadsProvider,
            payloadsIndex_),
-      payloadsProvider_(payloadsProvider) {}
+      payloadsProvider_(payloadsProvider),
+      commandGroupStore_(*this, payloadsProvider_) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
   payloadsIndex_.removePayloadsIndex(toRemove);
@@ -619,9 +511,24 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(const AltBlockTree::hash_t& block) {
-  return base::finalizeBlockImpl(block,
-                                 getParams().preserveBlocksBehindFinal());
+bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
+  return this->finalizeBlockImpl(
+      index, getParams().preserveBlocksBehindFinal(), state);
+}
+
+bool AltBlockTree::finalizeBlockImpl(index_t& index,
+                                     int32_t preserveBlocksBehindFinal,
+                                     ValidationState& state) {
+  int32_t firstBlockHeight = vbk().getBestChain().tip()->getHeight() -
+                             vbk().getParams().getOldBlocksWindow();
+  int32_t bootstrapBlockHeight = vbk().getRoot().getHeight();
+  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+  auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
+  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
+  if (!vbk().finalizeBlock(*finalizedIndex, state)) {
+    return state.Invalid("vbktree-finalize-error");
+  }
+  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
 }
 
 template <typename Payloads>

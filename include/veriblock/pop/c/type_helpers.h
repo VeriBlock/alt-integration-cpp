@@ -36,7 +36,7 @@ extern "C" {
 // signature of the setter method of the pop entity. used for the declaration
 // and intialization.
 #define POP_ENTITY_SETTER_FUNCTION(entity, fieldtype, fieldname)    \
-  void pop_##entity##_get_##fieldname(const pop_##entity##_t* self, \
+  void pop_##entity##_set_##fieldname(const pop_##entity##_t* self, \
                                       fieldtype val)
 
 // signature of the toJson method of the pop entity. used for the declaration

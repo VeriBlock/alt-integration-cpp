@@ -11,6 +11,7 @@
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <veriblock/pop/storage/stored_block_index.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 #include "block_iterator.hpp"
@@ -31,6 +32,15 @@ struct BlockReader {
   virtual bool getVbkTip(VbkBlock::hash_t& out) const = 0;
   //! @pure
   virtual bool getBtcTip(BtcBlock::hash_t& out) const = 0;
+
+  virtual bool getBlock(const AltBlock::prev_hash_t& hash,
+                        StoredBlockIndex<AltBlock>& out) const = 0;
+
+  virtual bool getBlock(const VbkBlock::prev_hash_t& hash,
+                        StoredBlockIndex<VbkBlock>& out) const = 0;
+
+  virtual bool getBlock(const BtcBlock::prev_hash_t& hash,
+                        StoredBlockIndex<BtcBlock>& out) const = 0;
 
   // clang-format off
   //! @pure

@@ -61,7 +61,10 @@ void Config::SelectVbkParams(std::string net,
                              int startHeight,
                              const std::vector<std::string>& blocks) {
   auto param = ParseVbkNetwork(std::move(net));
-  VBK_ASSERT_MSG(param, "VBK network can be either main/test/regtest/alpha");
+  VBK_ASSERT_MSG(
+      param,
+      "VBK network can be either main/test/regtest/alpha, current: %s",
+      net);
   setVBK(startHeight, blocks, param);
 }
 

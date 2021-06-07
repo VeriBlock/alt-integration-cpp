@@ -3,15 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_MOCK_MINER_HPP_BINDINGS
-#define VERIBLOCK_POP_CPP_MOCK_MINER_HPP_BINDINGS
+#ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER_HPP
+#define VERIBLOCK_POP_CPP_C_MOCK_MINER_HPP
 
-#include <memory>
+#include "veriblock/pop/c/mock_miner.h"
+#include "veriblock/pop/mock_miner.hpp"
 
-#include <veriblock/pop/mock_miner.hpp>
-
-struct MockMiner {
-  std::shared_ptr<altintegration::MockMiner> miner;
+struct __pop_mock_miner {
+  altintegration::MockMiner ref;
 };
 
-#endif  // VERIBLOCK_POP_CPP_CONFIG_HPP_BINDINGS
+#endif

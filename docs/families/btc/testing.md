@@ -11,11 +11,16 @@ To show that the pop-enabled altchain most likely works, once could screenshots 
 2. A single get-opereration from an APM.
 ![apm_getoperation_screenshot](./img/apmgetoperationscreenshot.png)
 ​
-3. A running network with multiple APM instances. For example, multiple pop tx with different reward addresses on the VBK explorer.
-@todo add a screenshot
+3. A running network with multiple APM instances. For example, multiple pop tx with different reward addresses on the VBK explorer. If you run this API (with your unique altchain id), then it will return at least 2 rows:
+https://testnet.explore.veriblock.org/api/altchain/{altchain id}/validation/apm?withinNHours=4  
+![apm_instances](./img/apm_instances.png)
 
 4. Altchain explorer screenshot showing recent ATV and VTB.
 ![vbtc_explorer_screenshot](./img/vbtcexplorerscreenshot.png)
+
+5. Run ABFI and view successful health ping
+   ![apm_instances](./img/abfi_successful_result.png)
+   Please see here for more details: [Setup ABFI](integration_13_setup_abfi.md)
 
 ​
 # Overview
@@ -112,3 +117,7 @@ Runtime: 1273 s
 # View APM get-operation
 Run getoperation and view an e2e pop transaction.
 @todo add a screenshot
+
+​
+# Altchain BFI
+The latest [ABFI build](https://hub.docker.com/r/veriblock/altchain-bfi/tags?page=1&ordering=last_updated) can be downloaded through docker

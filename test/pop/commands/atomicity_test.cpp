@@ -211,10 +211,11 @@ TEST_F(AtomicityTestFixture, AddVTB) {
   ASSERT_EQ(vtbids3.at(0), vtb1.getId());
   ASSERT_EQ(vtbids3.at(1), vtb1.getId());
 
-  {  // roll back the duplicate
+  {  // roll back the VTB
     ASSERT_NO_FATAL_FAILURE(cmd1->UnExecute());
     auto vtbids = altvbkcontaining->template getPayloadIds<VTB>();
     ASSERT_EQ(vtbids.size(), 1);
+    ASSERT_EQ(vtbids3.at(0), vtb1.getId());
   }
 
   // add vtb2

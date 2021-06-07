@@ -14,6 +14,8 @@
 #include "vbkblock.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "vtb.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(vtb) {
   if (self != nullptr) {
@@ -27,6 +29,19 @@ POP_ARRAY_FREE_SIGNATURE(vtb) {
     delete[] self->data;
     self = nullptr;
   }
+}
+
+POP_ENTITY_GETTER_FUNCTION(vtb, POP_ARRAY_NAME(u8), id) {
+  VBK_ASSERT(self);
+
+  auto id = self->ref.getId();
+
+  POP_ARRAY_NAME(u8) res;
+  res.size = id.size();
+  res.data = new uint8_t[res.size];
+  std::copy(id.begin(), id.end(), res.data);
+
+  return res;
 }
 
 POP_ENTITY_GETTER_FUNCTION(vtb,
@@ -51,6 +66,35 @@ POP_ENTITY_TO_JSON(vtb) {
   res.data = new char[res.size];
   strncpy(res.data, json.c_str(), res.size);
 
+  return res;
+}
+
+POP_ENTITY_SERIALIZE_TO_VBK(vtb) {
+  VBK_ASSERT(self);
+
+  auto bytes = altintegration::SerializeToVbkEncoding(self->ref);
+
+  POP_ARRAY_NAME(u8) res;
+  res.data = new uint8_t[bytes.size()];
+  std::copy(bytes.begin(), bytes.end(), res.data);
+  res.size = bytes.size();
+
+  return res;
+}
+
+POP_ENTITY_DESERIALIZE_FROM_VBK(vtb) {
+  VBK_ASSERT(state);
+  VBK_ASSERT(bytes.data);
+
+  std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
+
+  altintegration::VTB out;
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
+    return nullptr;
+  }
+
+  auto* res = new POP_ENTITY_NAME(vtb);
+  res->ref = std::move(out);
   return res;
 }
 

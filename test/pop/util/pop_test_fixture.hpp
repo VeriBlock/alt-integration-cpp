@@ -19,7 +19,9 @@
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/mock_miner.hpp>
-#include <veriblock/pop/storage/inmem_block_storage.hpp>
+#include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
+#include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
+#include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
 #include "util/comparator_test.hpp"
@@ -40,8 +42,9 @@ struct PopTestFixture {
   BtcChainParamsRegTest btcparam{};
   VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
-  InmemPayloadsProvider payloadsProvider;
-  InmemBlockProvider blockStorage;
+  adaptors::InmemStorageImpl storage{};
+  adaptors::PayloadsStorageImpl payloadsProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   // miners
   std::shared_ptr<MockMiner> popminer;
@@ -51,7 +54,8 @@ struct PopTestFixture {
 
   ValidationState state;
 
-  PopTestFixture() : alttree(altparam, vbkparam, btcparam, payloadsProvider) {
+  PopTestFixture()
+      : alttree(altparam, vbkparam, btcparam, payloadsProvider, blockProvider) {
     auto BTCgenesis = GetRegTestBtcBlock();
     auto VBKgenesis = GetRegTestVbkBlock();
 
@@ -344,24 +348,14 @@ struct PopTestFixture {
     }
   }
 
-  template <typename stored_index_t>
-  std::vector<stored_index_t> LoadBlocksFromDisk() {
-    return blockStorage.load<typename stored_index_t::block_t>();
+  void save(AltBlockTree& tree) {
+    auto batch = storage.generateWriteBatch();
+    auto writer = adaptors::BlockBatchImpl(*batch);
+    saveTrees(tree, writer);
+    batch->writeBatch();
   }
 
-  template <typename index_t>
-  typename index_t::hash_t LoadTipFromDisk() {
-    return blockStorage.getTip<typename index_t::block_t>();
-  }
-
-  template <typename Tree>
-  bool LoadTreeWrapper(Tree& tree) {
-    using index_t = typename Tree::index_t;
-    using stored_index_t = typename Tree::stored_index_t;
-    auto blocks = LoadBlocksFromDisk<stored_index_t>();
-    auto tip = LoadTipFromDisk<index_t>();
-    return loadTree<Tree>(tree, tip, blocks, state);
-  }
+  bool load(AltBlockTree& tree) { return loadTrees(tree, state); }
 };
 
 template <typename pop_t>
@@ -394,8 +388,7 @@ template <typename Tree>
 void assertBlockTreeHasNoOrphans(const Tree& tree) {
   // orphan = block whose pprev == nullptr, and this block is not `genesis`
   // (root/bootstrap) block
-  for (auto& p : tree.getBlocks()) {
-    auto* index = p.second.get();
+  for (auto& index : tree.getBlocks()) {
     ASSERT_TRUE(index);
 
     if (index->pprev == nullptr &&
@@ -426,7 +419,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       bool payloads_validation = true,
                                       bool payloads_existance = true) {
   auto& payloadsIndex = tree.getPayloadsIndex();
-  auto& payloadsProvider = tree.getPayloadsProvider();
+  auto& commandGroupStore = tree.getCommandGroupStore();
   auto containingHash = containing.getHash();
 
   validatePayloadsIndexState(
@@ -436,14 +429,15 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
   validatePayloadsIndexState(
       payloadsIndex, containingHash, popData.vtbs, payloads_existance);
 
-  std::vector<CommandGroup> commands;
+  std::unique_ptr<AltCommandGroupStore::command_groups_t> commands;
   ValidationState state;
-  EXPECT_NO_THROW(payloadsProvider.getCommands(
-      tree, *tree.getBlockIndex(containingHash), commands, state))
+  EXPECT_NO_THROW(commands = commandGroupStore.getCommands(
+                      *tree.getBlockIndex(containingHash), state))
       << state.toString();
 
-  EXPECT_EQ(commands.size() == popData.context.size() + popData.atvs.size() +
-                                   popData.vtbs.size(),
+  ASSERT_NE(commands, nullptr);
+  EXPECT_EQ(commands->size() == popData.context.size() + popData.atvs.size() +
+                                    popData.vtbs.size(),
             payloads_existance);
 
   EXPECT_EQ(

@@ -195,8 +195,8 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  AltBlockTree alttree2 =
-      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree2(
+      altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
@@ -213,9 +213,10 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
       alttree2, altparam.getPayoutParams().getPopPayoutDelay() - 1 - 1, chain2);
 
   auto payout2 = calculator2.getPopPayout(chain2.back().getHash());
-  auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
-                         ->getAncestorBlocksBehind(
-                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
+  auto secondBlock =
+      alttree2.getBlockIndex(chain2.back().getHash())
+          ->getAncestorBlocksBehind(
+              altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   // make sure this endorsed block is at the same height as previous
   // endorsed block
@@ -256,8 +257,8 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   state = ValidationState();
   popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
-  AltBlockTree alttree2 =
-      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree alttree2(
+      altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
@@ -271,9 +272,10 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
       alttree2, altparam.getPayoutParams().getPopPayoutDelay() - 1 - 1, chain2);
 
   auto payout2 = calculator2.getPopPayout(chain2.back().getHash());
-  auto secondBlock = alttree2.getBlockIndex(chain2.back().getHash())
-                         ->getAncestorBlocksBehind(
-                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
+  auto secondBlock =
+      alttree2.getBlockIndex(chain2.back().getHash())
+          ->getAncestorBlocksBehind(
+              altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   // make sure this endorsed block is at the same height as previous
   // endorsed block

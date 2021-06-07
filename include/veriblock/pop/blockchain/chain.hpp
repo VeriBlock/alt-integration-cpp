@@ -91,6 +91,14 @@ struct Chain {
   iterator_t end() { return chain.end(); }
   const_iterator_t end() const { return chain.end(); }
 
+  void prependRoot(index_t* index) {
+    // set a new bootstrap block which should be connected to the current one
+    VBK_ASSERT_MSG(!chain.empty() && index == chain[0]->pprev,
+                   "new bootstrap block does not connect to the current one");
+    startHeight_ = index->getHeight();
+    chain.insert(chain.begin(), index);
+  }
+
   void setTip(index_t* index) {
     if (index == nullptr || index->getHeight() < startHeight_) {
       chain.clear();

@@ -30,6 +30,7 @@ if(NOT rocksdb_POPULATED)
     target_include_directories(rocksdb PUBLIC
             $<BUILD_INTERFACE:${rocksdb_SOURCE_DIR}/include>
             )
+    include_directories($<BUILD_INTERFACE:${rocksdb_SOURCE_DIR}/include>)
     disable_from_all(ldb)
     disable_clang_tidy(ldb)
 

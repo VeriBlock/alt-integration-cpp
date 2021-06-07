@@ -1,10 +1,48 @@
-#include <veriblock/pop/blockchain/mempool_block_tree.hpp>
-
-#include <veriblock/pop/blockchain/blockchain_util.hpp>
-#include <veriblock/pop/fmt.hpp>
-#include <veriblock/pop/keystone_util.hpp>
+#include "veriblock/pop/blockchain/alt_block_tree_util.hpp"
+#include "veriblock/pop/blockchain/blockchain_util.hpp"
+#include "veriblock/pop/blockchain/mempool_block_tree.hpp"
+#include "veriblock/pop/fmt.hpp"
+#include "veriblock/pop/keystone_util.hpp"
 
 namespace altintegration {
+
+namespace {
+
+static void assertPopDataFits(PopData& pop, const AltChainParams& params) {
+  const auto& maxSize = params.getMaxPopDataSize();
+  const auto& maxVbkBlocks = params.getMaxVbkBlocksInAltBlock();
+  const auto& maxVTBs = params.getMaxVTBsInAltBlock();
+  const auto& maxATVs = params.getMaxATVsInAltBlock();
+  VBK_ASSERT(pop.context.size() <= maxVbkBlocks);
+  VBK_ASSERT(pop.vtbs.size() <= maxVTBs);
+  VBK_ASSERT(pop.atvs.size() <= maxATVs);
+  const auto estimate = pop.estimateSize();
+  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
+}
+
+template <typename Payload, typename BlockIndex>
+void removePayloadsIfNotInBlock(std::vector<Payload>& payloads,
+                                BlockIndex& index) {
+  auto payloadIds = index.template getPayloadIds<Payload>();
+  std::set<typename Payload::id_t> ids(payloadIds.begin(), payloadIds.end());
+
+  auto it = std::remove_if(
+      payloads.begin(), payloads.end(), [&](const Payload& payload) {
+        auto pid = payload.getId();
+        return ids.count(pid) == 0;
+      });
+  payloads.erase(it, payloads.end());
+}
+
+template <typename P>
+void removeDuplicates(BlockIndex<AltBlock>& index,
+                      std::vector<P>& payloads,
+                      AltBlockTree& tree) {
+  auto duplicates = findDuplicates<P>(index, payloads, tree);
+  payloads.erase(duplicates, payloads.end());
+}
+
+}  // namespace
 
 bool MemPoolBlockTree::acceptVbkBlock(const std::shared_ptr<VbkBlock>& blk,
                                       ValidationState& state) {
@@ -231,6 +269,70 @@ int MemPoolBlockTree::weaklyCompare(const VTB& vtb1, const VTB& vtb2) {
 
 bool MemPoolBlockTree::isBlockOld(const VbkBlock& block) const {
   return tree_->vbk().isBlockOld(block.getHeight());
+}
+
+void MemPoolBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
+  ContinueOnInvalidContext c(tree_->getParams());
+  ValidationState dummy;
+  bool success =
+      tree_->cmp_.setState(*tree_, to, dummy, /*continueOnInvalid=*/&c);
+  VBK_ASSERT(success);
+  tree_->overrideTip(to);
+}
+
+void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
+  // return early
+  if (pop.empty()) {
+    return;
+  }
+
+  VBK_LOG_INFO("Trying to add %s to next block...", pop.toPrettyString());
+
+  // suppress the VBK fork resolution as we don't care about the best chain
+  auto guard = tree_->vbk().deferForkResolutionGuard();
+  auto originalTip = tree_->vbk().getBestChain().tip();
+
+  // first, create tmp alt block
+  AltBlock tmp;
+  ValidationState state;
+  {
+    auto& tip = *tree_->getBestChain().tip();
+    tmp.hash = std::vector<uint8_t>(32, 2);
+    tmp.previousBlock = tip.getHash();
+    tmp.timestamp = tip.getTimestamp() + 1;
+    tmp.height = tip.getHeight() + 1;
+    bool ret = tree_->acceptBlockHeader(tmp, state);
+    VBK_ASSERT(ret);
+  }
+
+  auto* tmpindex = tree_->getBlockIndex(tmp.getHash());
+  VBK_ASSERT(tmpindex != nullptr);
+
+  // filter out statefully duplicate payloads
+  removeDuplicates<VbkBlock>(*tmpindex, pop.context, *tree_);
+  removeDuplicates<VTB>(*tmpindex, pop.vtbs, *tree_);
+  removeDuplicates<ATV>(*tmpindex, pop.atvs, *tree_);
+
+  // add payloads to a block
+  tree_->acceptBlock(*tmpindex, pop);
+
+  // setState in 'continueOnInvalid' mode
+  setTipContinueOnInvalid(*tmpindex);
+
+  removePayloadsIfNotInBlock(pop.atvs, *tmpindex);
+  removePayloadsIfNotInBlock(pop.vtbs, *tmpindex);
+  removePayloadsIfNotInBlock(pop.context, *tmpindex);
+
+  // assert PopData does not surpass limits
+  assertPopDataFits(pop, tree_->getParams());
+
+  VBK_LOG_INFO("Filtered valid: %s", pop.toPrettyString());
+
+  // at this point `pop` contains only valid payloads
+  tree_->removeSubtree(*tmpindex);
+  tree_->eraseBlock(*tmpindex);
+
+  guard.overrideDeferredForkResolution(originalTip);
 }
 
 }  // namespace altintegration

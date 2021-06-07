@@ -5,6 +5,7 @@ namespace altintegration {
 std::shared_ptr<PopContext> PopContext::create(
     std::shared_ptr<Config> config,
     std::shared_ptr<PayloadsStorage> payloadsProvider,
+    std::shared_ptr<BlockReader> blockProvider_,
     size_t validatorWorkers) {
   config->validate();
 
@@ -12,10 +13,12 @@ std::shared_ptr<PopContext> PopContext::create(
   auto ctx = std::shared_ptr<PopContext>(new PopContext());
   ctx->config_ = std::move(config);
   ctx->payloadsProvider_ = std::move(payloadsProvider);
+  ctx->blockProvider_ = std::move(blockProvider_);
   ctx->altTree_ = std::make_shared<AltBlockTree>(*ctx->config_->alt,
                                                  *ctx->config_->vbk.params,
                                                  *ctx->config_->btc.params,
-                                                 *ctx->payloadsProvider_);
+                                                 *ctx->payloadsProvider_,
+                                                 *ctx->blockProvider_);
   ctx->popRewardsCalculator_ =
       std::make_shared<DefaultPopRewardsCalculator>(*ctx->altTree_);
   ctx->mempool_ = std::make_shared<MemPool>(*ctx->altTree_);
@@ -137,8 +140,8 @@ void PopContext::saveAllTrees(BlockBatch& batch) const {
   saveTrees(getAltBlockTree(), batch);
 }
 
-bool PopContext::loadAllTrees(BlockReader& reader, ValidationState& state) {
-  return loadTrees(*this, reader, state);
+bool PopContext::loadAllTrees(ValidationState& state) {
+  return loadTrees(getAltBlockTree(), state);
 }
 
 bool PopContext::check(const PopData& pd, ValidationState& state) {

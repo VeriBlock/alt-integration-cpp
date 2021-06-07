@@ -21,10 +21,11 @@
 #include "entities/vbkblock.hpp"
 #include "entities/vbktx.hpp"
 #include "entities/vtb.hpp"
-#include "storage/inmem_payloads_provider.hpp"
+#include "storage/adaptors/block_provider_impl.hpp"
+#include "storage/adaptors/inmem_storage_impl.hpp"
+#include "storage/adaptors/payloads_provider_impl.hpp"
 
 namespace altintegration {
-
 
 //! @private
 template <typename T>
@@ -123,7 +124,7 @@ class MockMiner {
     VBK_ASSERT_MSG(ret, state.toString());
   }
 
-  InmemPayloadsProvider& getPayloadsProvider() { return payloads_provider_; }
+  adaptors::InmemStorageImpl& getStorage() { return storage_; }
 
  private:
   template <typename BlockTree, typename Block>
@@ -158,7 +159,9 @@ class MockMiner {
 
   BtcChainParamsRegTest btc_params_{};
   VbkChainParamsRegTest vbk_params_{};
-  InmemPayloadsProvider payloads_provider_;
+  adaptors::InmemStorageImpl storage_{};
+  adaptors::PayloadsStorageImpl payloads_provider_{storage_};
+  adaptors::BlockReaderImpl block_provider_{storage_};
   PayloadsIndex payloads_index_;
 
   Miner<BtcBlock, BtcChainParams> btc_miner_ =
@@ -166,8 +169,11 @@ class MockMiner {
   Miner<VbkBlock, VbkChainParams> vbk_miner_ =
       Miner<VbkBlock, VbkChainParams>(vbk_params_);
 
-  vbk_block_tree vbk_tree_{
-      vbk_params_, btc_params_, payloads_provider_, payloads_index_};
+  vbk_block_tree vbk_tree_{vbk_params_,
+                           btc_params_,
+                           payloads_provider_,
+                           block_provider_,
+                           payloads_index_};
   btc_block_tree& btc_tree_ = vbk_tree_.btc();
 
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vtbs_;

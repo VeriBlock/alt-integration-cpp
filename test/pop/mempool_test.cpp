@@ -637,6 +637,8 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   // At this moment, VTB1 is not expected to be connected, because BTC block 8
   // can not be connected to previous block 6.
   // add to mempool
+  ASSERT_TRUE(mempool->getMissingBtcBlocks().empty());
+
   ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
   // mine VTB1 in ALT3
   mineAltBlocks(1, chain, false, false);
@@ -644,6 +646,8 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   ASSERT_EQ(pop1.vtbs.size(), 0);
   ASSERT_EQ(pop1.atvs.size(), 0);
   ASSERT_EQ(pop1.context.size(), 0);
+
+  ASSERT_FALSE(mempool->getMissingBtcBlocks().empty());
 
   ///// If VTB1 is expected to be connected, uncomment this code
   // {
@@ -756,7 +760,8 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   // mine one VBK block
   auto* block_index = popminer->mineVbkBlocks(1);
 
-  altparam.mMaxPopDataSize = (uint32_t)(block_index->getHeader().estimateSize() + 1);
+  altparam.mMaxPopDataSize =
+      (uint32_t)(block_index->getHeader().estimateSize() + 1);
   ASSERT_TRUE(mempool->submit(block_index->getHeader(), state));
   auto pop_data = mempool->generatePopData();
   ASSERT_EQ(pop_data.context.size(), 0);
@@ -769,7 +774,8 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
     ASSERT_NO_FATAL_FAILURE(mempool->generatePopData());
   }
 
-  altparam.mMaxPopDataSize = (uint32_t)(block_index->getHeader().estimateSize() + 50);
+  altparam.mMaxPopDataSize =
+      (uint32_t)(block_index->getHeader().estimateSize() + 50);
   ASSERT_TRUE(mempool->submit(block_index->getHeader(), state));
   pop_data = mempool->generatePopData();
   ASSERT_EQ(pop_data.context.size(), 1);

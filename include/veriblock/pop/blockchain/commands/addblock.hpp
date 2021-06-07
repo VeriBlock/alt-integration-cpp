@@ -31,10 +31,14 @@ struct AddBlock : public Command {
         referencedAtHeight_(referencedAtHeight) {}
 
   bool Execute(ValidationState& state) override {
-    auto* index = tree_->getBlockIndex(block_->getHash());
+    auto& hash = block_->getHash();
+    auto* index = tree_->getBlockIndex(hash);
 
     if (index == nullptr) {
-      if (!tree_->acceptBlockHeader(block_, state)) {
+      // trying to restore block
+      ValidationState tmp_state;
+      if (!tree_->restoreBlock(hash, tmp_state) &&
+          !tree_->acceptBlockHeader(block_, state)) {
         return false;
       }
 

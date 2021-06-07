@@ -3,106 +3,102 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_MOCK_MINER_H
-#define VERIBLOCK_POP_CPP_MOCK_MINER_H
+#ifndef VERIBLOCK_POP_CPP_C_MOCK_MINER_H
+#define VERIBLOCK_POP_CPP_C_MOCK_MINER_H
 
-#include "bytestream.h"
-#include "entities/btcblock.h"
-#include "entities/vbkblock.h"
-#include "validation_state.h"
+#include "veriblock/pop/c/entities/atv.h"
+#include "veriblock/pop/c/entities/btcblock.h"
+#include "veriblock/pop/c/entities/publication_data.h"
+#include "veriblock/pop/c/entities/vbkblock.h"
+#include "veriblock/pop/c/entities/vtb.h"
+#include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct MockMiner MockMiner_t;
+POP_DECLARE_ENTITY(mock_miner);
 
-//! allocate new mock miner
-MockMiner_t* VBK_NewMockMiner();
-//! deallocate mock miner
-void VBK_FreeMockMiner(MockMiner_t* miner);
-
-/**
- * Mine new altintegration::BtcBlock on the top of the current btctree.
- *
- * @param[in] self MockMiner.
- * @return VBK_ByteStream* stream that stores.
- * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes.
- */
-VBK_ByteStream* VBK_MockMiner_mineBtcBlockTip(MockMiner_t* self);
+POP_ENTITY_NEW_FUNCTION(mock_miner);
 
 /**
  * Mine new altintegration::BtcBlock on the top of the provided block.
  *
  * @param[in] self MockMiner.
- * @param[in] block_hash hash of the previous altintegration::BtcBlock.
- * @param[in] block_hash_size size of the input block hash.
- * @return VBK_ByteStream* stream that stores
- * altintegration::BlockIndex<altintegration::BtcBlock> raw bytes.
+ * @param[in] POP_ENTITY_NAME(btc_block) pointer to to the provided block.
+ * @return POP_ENTITY_NAME(btc_block) pointer to the mined
+ * altintegration::BtcBlock.
  */
-VBK_ByteStream* VBK_MockMiner_mineBtcBlock(MockMiner_t* self,
-                                           const uint8_t* block_hash,
-                                           int block_hash_size);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(btc_block) *,
+                           mineBtcBlock,
+                           const POP_ENTITY_NAME(btc_block) * tip);
 
 /**
- * Mine new altintegration::VbkBlock on the top of the current vbktree.
+ * Mine new altintegration::BtcBlock on the top of the current btctree.
  *
  * @param[in] self MockMiner.
- * @return VBK_ByteStream* stream that stores.
- * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes.
+ * @return POP_ENTITY_NAME(btc_block) pointer to the mined
+ * altintegration::BtcBlock.
  */
-VBK_ByteStream* VBK_MockMiner_mineVbkBlockTip(MockMiner_t* self);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(btc_block) *,
+                           mineBtcBlockTip);
 
 /**
  * Mine new altintegration::VbkBlock on the top of the provided block.
  *
  * @param[in] self MockMiner.
- * @param[in] block_hash hash of the altintegration::VbkBlock.
- * @param[in] block_hash_size size of the input block hash.
- * @return VBK_ByteStream* stream that stores.
- * altintegration::BlockIndex<altintegration::VbkBlock> raw bytes.
+ * @param[in] POP_ENTITY_NAME(vbk_block) pointer to to the provided block.
+ * @return POP_ENTITY_NAME(vbk_block) pointer to the mined
+ * altintegration::VbkBlock.
  */
-VBK_ByteStream* VBK_MockMiner_mineVbkBlock(MockMiner_t* self,
-                                           const uint8_t* block_hash,
-                                           int block_hash_size);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mineVbkBlock,
+                           const POP_ENTITY_NAME(vbk_block) * tip);
+
+/**
+ * Mine new altintegration::VbkBlock on the top of the current btctree.
+ *
+ * @param[in] self MockMiner.
+ * @return POP_ENTITY_NAME(vbk_block) pointer to the mined
+ * altintegration::VbkBlock.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vbk_block) *,
+                           mineVbkBlockTip);
 
 /**
  * Mine new altintegration::ATV.
  *
  * @param[in] self MockMiner.
- * @param[in] publication_data altintegration::PublicationData of the
- * altintegration::AltBlock.
- * @param[in] publication_data_size size of the publication data.
- * @param[out] state VbkValidationState.
- * @return VBK_ByteStream* stream that stores altintgration::ATV in the
- * VbkEncoding format.
+ * @param[in] pub_data POP_ENTITY_NAME(publication_data) pointer to the
+ * altintegration::PublicationData
+ * @return POP_ENTITY_NAME(atv) pointer to the mined
+ * altintegration::ATV.
  */
-VBK_ByteStream* VBK_MockMiner_mineATV(MockMiner_t* self,
-                                      const uint8_t* publication_data,
-                                      int publication_data_size,
-                                      VbkValidationState* state);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(atv) *,
+                           mineATV,
+                           const POP_ENTITY_NAME(publication_data) * pub_data);
 
 /**
  * Mine new altintegration::VTB.
  *
  * @param[in] self MockMiner.
- * @param[in] endorsed_vbk_block endorsed altintegration::VbkBlock in the
- * VbkEncoding format.
- * @param[in] endorsed_vbk_block_size size of endorsed block.
- * @param[in] last_known_btc_block_hash altintegration::BtcBlock hash of the
- * last known block.
- * @param[in] last_known_btc_block_hash_size size of the last known
- * altintegration::BtcBlock hash.
- * @param[out] state VbkValidationState.
- * @return VBK_ByteStream* stream that stores altintgration::VTB in the
- * VbkEncoding format.
+ * @param[in] endorsed_block POP_ENTITY_NAME(vbk_block) pointer to the
+ * altintegration::VbkBlock.
+ * @param[in] last_known_btc_block POP_ENTITY_NAME(btc_block) pointer to the
+ * altintegration::BtcBlock.
+ * @return POP_ENTITY_NAME(vtb) pointer to the mined altintegration::VTB.
  */
-VBK_ByteStream* VBK_MockMiner_mineVTB(MockMiner_t* self,
-                                      const uint8_t* endorsed_vbk_block,
-                                      int endorsed_vbk_block_size,
-                                      const uint8_t* last_known_btc_block_hash,
-                                      int last_known_btc_block_hash_size,
-                                      VbkValidationState* state);
+POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
+                           POP_ENTITY_NAME(vtb) *,
+                           mineVTB,
+                           const POP_ENTITY_NAME(vbk_block) * endorsed_block,
+                           const POP_ENTITY_NAME(btc_block) *
+                               last_known_btc_block);
 
 #ifdef __cplusplus
 }  // end of extern "C"

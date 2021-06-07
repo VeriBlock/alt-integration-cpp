@@ -16,6 +16,8 @@
 #include "vbkblock.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "vtb.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_data) {
   if (self != nullptr) {
@@ -80,6 +82,35 @@ POP_ENTITY_TO_JSON(pop_data, bool verbose = false) {
   res.data = new char[res.size];
   strncpy(res.data, json.c_str(), res.size);
 
+  return res;
+}
+
+POP_ENTITY_SERIALIZE_TO_VBK(pop_data) {
+  VBK_ASSERT(self);
+
+  auto bytes = altintegration::SerializeToVbkEncoding(self->ref);
+
+  POP_ARRAY_NAME(u8) res;
+  res.data = new uint8_t[bytes.size()];
+  std::copy(bytes.begin(), bytes.end(), res.data);
+  res.size = bytes.size();
+
+  return res;
+}
+
+POP_ENTITY_DESERIALIZE_FROM_VBK(pop_data) {
+  VBK_ASSERT(state);
+  VBK_ASSERT(bytes.data);
+
+  std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
+
+  altintegration::PopData out;
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
+    return nullptr;
+  }
+
+  auto* res = new POP_ENTITY_NAME(pop_data);
+  res->ref = std::move(out);
   return res;
 }
 

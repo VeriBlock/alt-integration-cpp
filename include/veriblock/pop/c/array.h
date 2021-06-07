@@ -28,6 +28,7 @@ extern "C" {
     }                                                               \
     return self->data[i];                                           \
   }                                                                 \
+  pop_array_##suffix##_t pop_array_##suffix##_new(size_t size);     \
   void pop_array_##suffix##_free(pop_array_##suffix##_t* self);
 
 #define POP_ARRAY_NAME(suffix) pop_array_##suffix##_t
@@ -35,9 +36,14 @@ extern "C" {
 #define POP_ARRAY_FREE_SIGNATURE(suffix) \
   void pop_array_##suffix##_free(pop_array_##suffix##_t* self)
 
+#define POP_ARRAY_NEW_SIGNATURE(suffix) \
+  pop_array_##suffix##_t pop_array_##suffix##_new(size_t size)
+
 // declare arrays of simple types here
 POP_DECLARE_ARRAY(uint8_t, u8);
 POP_DECLARE_ARRAY(uint32_t, u32);
+POP_DECLARE_ARRAY(double, double);
+POP_DECLARE_ARRAY(POP_ARRAY_NAME(u8), array_u8);
 POP_DECLARE_ARRAY(char, string);
 
 #ifdef __cplusplus

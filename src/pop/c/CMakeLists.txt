@@ -1,17 +1,12 @@
 set(C_SOURCES
-        config.cpp
-        pop_context.cpp
-        utils.cpp
-        bytestream.cpp
+        array.cpp
         mock_miner.cpp
         validation_state.cpp
         storage.cpp
-        array.cpp
-        mock_miner2.cpp
-        validation_state2.cpp
-        storage2.cpp
-        config2.cpp
-        pop_context2.cpp
+        config.cpp
+        pop_context.cpp
+        utils.cpp
+        mempool.cpp
         # entities
         entities/publication_data.cpp
         entities/btcblock.cpp
@@ -24,28 +19,13 @@ set(C_SOURCES
         entities/address.cpp
         entities/btctx.cpp
         entities/coin.cpp
-        # adaptors
-        adaptors/block_provider_impl.cpp
+        entities/merkle_path.cpp
+        entities/block_index.cpp
+        entities/pop_payouts.cpp
         )
 
 if(NOT WITH_ROCKSDB AND NOT WITH_LEVELDB)
         message(FATAL_ERROR "For the c wrapper you should specify the storage which you will build, -DWITH_ROCKSDB=ON or -DWITH_LEVELDB=ON ")
 endif()
-        
-if(WITH_ROCKSDB)
-        list(APPEND C_SOURCES adaptors/rocksdb_impl.cpp)
-endif()
-
-if(WITH_LEVELDB)
-        list(APPEND C_SOURCES adaptors/leveldb_impl.cpp)
-endif()
 
 add_library(veriblock-pop-c OBJECT ${C_SOURCES})
-
-if(WITH_ROCKSDB)
-        target_link_libraries(veriblock-pop-c rocksdb)
-endif()
-
-if(WITH_LEVELDB)
-        target_link_libraries(veriblock-pop-c leveldb)
-endif()
