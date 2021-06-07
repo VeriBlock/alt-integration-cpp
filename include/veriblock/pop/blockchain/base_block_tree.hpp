@@ -52,6 +52,8 @@ struct BaseBlockTree {
     return blocks;
   }
 
+  const BlockReader& getBlockProvider() const { return blockProvider_; }
+
   virtual ~BaseBlockTree() {
     if (!isBootstrapped()) {
       return;

@@ -20,7 +20,7 @@ using OnBlockCallback_t =
 template <typename Index>
 bool loadBlocksAndTip(std::vector<Index>& out,
                       typename Index::block_t::hash_t& tipout,
-                      BlockReader& storage,
+                      const BlockReader& storage,
                       ValidationState& state) {
   using block_t = typename Index::block_t;
 
@@ -105,22 +105,23 @@ bool validateLoadBlock(const BtcBlockTree& tree,
 
 }  // namespace detail
 
-bool loadTrees(AltBlockTree& tree,
-               BlockReader& storage,
-               ValidationState& state) {
+bool loadTrees(AltBlockTree& tree, ValidationState& state) {
   std::vector<typename BtcBlockTree::stored_index_t> btcblocks;
   typename BtcBlock::hash_t btctip;
-  if (!detail::loadBlocksAndTip(btcblocks, btctip, storage, state)) {
+  if (!detail::loadBlocksAndTip(
+          btcblocks, btctip, tree.getBlockProvider(), state)) {
     return state.Invalid("load-btc-tree-blocks");
   }
   std::vector<typename VbkBlockTree::stored_index_t> vbkblocks;
   typename VbkBlock::hash_t vbktip;
-  if (!detail::loadBlocksAndTip(vbkblocks, vbktip, storage, state)) {
+  if (!detail::loadBlocksAndTip(
+          vbkblocks, vbktip, tree.getBlockProvider(), state)) {
     return state.Invalid("load-vbk-tree-blocks");
   }
   std::vector<typename AltBlockTree::stored_index_t> altblocks;
   typename AltBlock::hash_t alttip;
-  if (!detail::loadBlocksAndTip(altblocks, alttip, storage, state)) {
+  if (!detail::loadBlocksAndTip(
+          altblocks, alttip, tree.getBlockProvider(), state)) {
     return state.Invalid("load-alt-tree-blocks");
   }
 

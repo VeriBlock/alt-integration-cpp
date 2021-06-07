@@ -59,7 +59,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   bool bootstrapped = reloadedAltTree.bootstrap(this->state);
   ASSERT_TRUE(bootstrapped);
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk().btc(), this->alttree.btc()))
       << "initial : \n"
       << alttree.toPrettyString() << "\n\n"
@@ -124,7 +124,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -201,7 +201,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));

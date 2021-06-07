@@ -152,7 +152,7 @@ struct AltBlockTree;
 void saveTrees(const AltBlockTree& tree, BlockBatch& batch);
 
 //! Load all (ALT/VBK/BTC) trees from disk into memory.
-bool loadTrees(AltBlockTree& tree, BlockReader& reader, ValidationState& state);
+bool loadTrees(AltBlockTree& tree, ValidationState& state);
 
 }  // namespace altintegration
 
