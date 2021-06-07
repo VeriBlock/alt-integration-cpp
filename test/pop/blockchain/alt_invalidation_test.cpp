@@ -28,7 +28,7 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock>*earlier, *earlierChild, *latter, *latterChild;
 
   AltInvalidationTest() {
-    tip = mineAltBlocks(*alttree.getBlocks().begin()->second,
+    tip = mineAltBlocks(*alttree.getBestChain().tip(),
                         10,
                         /*connectBlocks=*/true,
                         /*setState=*/false);

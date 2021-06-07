@@ -24,23 +24,27 @@ struct BlockBatch {
 
   /**
    * Save BlockIndex on disk.
+   * @param hash
    * @param value
    */
-  virtual void writeBlock(const StoredBlockIndex<AltBlock>& value) = 0;
+  virtual void writeBlock(const AltBlock::prev_hash_t& hash,
+                          const StoredBlockIndex<AltBlock>& value) = 0;
   //! @overload
-  virtual void writeBlock(const StoredBlockIndex<VbkBlock>& value) = 0;
+  virtual void writeBlock(const VbkBlock::prev_hash_t& hash,
+                          const StoredBlockIndex<VbkBlock>& value) = 0;
   //! @overload
-  virtual void writeBlock(const StoredBlockIndex<BtcBlock>& value) = 0;
+  virtual void writeBlock(const BtcBlock::prev_hash_t& hash,
+                          const StoredBlockIndex<BtcBlock>& value) = 0;
 
   /**
    * Save Tree tip on disk.
    * @param value
    */
-  virtual void writeTip(const StoredBlockIndex<AltBlock>& value) = 0;
+  virtual void writeTip(const AltBlock::hash_t& value) = 0;
   //! @overload
-  virtual void writeTip(const StoredBlockIndex<VbkBlock>& value) = 0;
+  virtual void writeTip(const VbkBlock::hash_t& value) = 0;
   //! @overload
-  virtual void writeTip(const StoredBlockIndex<BtcBlock>& value) = 0;
+  virtual void writeTip(const BtcBlock::hash_t& value) = 0;
 };
 
 }  // namespace altintegration

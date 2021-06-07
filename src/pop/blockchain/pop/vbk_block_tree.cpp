@@ -153,24 +153,19 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 
   bool isApplied = activeChain_.contains(&index);
   if (isApplied) {
-    ValidationState dummy;
-    std::vector<CommandGroup> cmdGroups;
-    payloadsProvider_.getCommands(*this, index, cmdGroups, dummy);
+    ValidationState state;
+    auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
-    auto group_it = std::find_if(
-        cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
-          return group.id == pid;
-        });
-
-    VBK_ASSERT(group_it != cmdGroups.end() &&
-               "state corruption: could not find the supposedly applied "
-               "command group");
+    VBK_ASSERT_MSG(cmdGroup,
+                   "state corruption: could not pre-validate a supposedly "
+                   "applied command group: %s",
+                   state.toString());
 
     VBK_LOG_DEBUG("Unapplying payload %s in block %s",
                   HexStr(pid),
                   index.toShortPrettyString());
 
-    group_it->unExecute();
+    cmdGroup->unExecute();
   }
 
   index.removePayloadId<VTB>(pid);
@@ -192,12 +187,14 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                          : tx.blockOfProof;
 
   // if 'firstBlock' is not genesis block, use 'previousBlock' as connectingHash
-  auto connectingHash = firstBlock.getPreviousBlock() != ArithUint256()
+  auto connectingHash = firstBlock.getPreviousBlock() != uint256()
                             ? firstBlock.getPreviousBlock()
                             : firstBlock.getHash();
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (connectingIndex == nullptr) {
+    invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash;
+
     VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
                   vtb.toPrettyString());
     return state.Invalid("bad-prev-block",
@@ -211,18 +208,34 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  return isValid ? true : state.Invalid("block-referenced-too-early");
+  return isValid
+             ? (invalid_vtbs.erase(vtb.getId()), true)
+             : (invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash,
+                state.Invalid("block-referenced-too-early"));
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                                             const payloads_t& payload,
                                             ValidationState& state) {
+  // in this method we allow to add duplicates because of the functionality of
+  // the forkresolution algorithms.
+  // look into the description alt_blockchain_test.cpp
+  // duplicateVTBs_test test case
+
   VBK_ASSERT(index.hasFlags(BLOCK_ACTIVE));
 
   auto pid = payload.getId();
   VBK_LOG_DEBUG("Adding and applying payload %s in block %s",
                 pid.toHex(),
                 index.toShortPrettyString());
+
+  // we compare with the previous amount of payloads because we have not add the
+  // current payload into this vector
+  if (index.getPayloadIds<payloads_t>().size() >= MAX_VBKPOPTX_PER_VBK_BLOCK) {
+    return state.Invalid(block_t::name() + "-invalid-poptxs-amount",
+                         "The amount of the pop txs which we try to add into "
+                         "the block more than maximum");
+  }
 
   if (!validateBTCContext(payload, state)) {
     return state.Invalid(
@@ -236,20 +249,9 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   index.insertPayloadId<payloads_t>(pid);
   payloadsIndex_.addVbkPayloadIndex(index.getHash(), pid.asVector());
 
-  // load commands from block
-  std::vector<CommandGroup> cmdGroups;
-  payloadsProvider_.getCommands(*this, index, cmdGroups, state);
+  auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
-  auto group_it = std::find_if(
-      cmdGroups.begin(), cmdGroups.end(), [&](CommandGroup& group) {
-        return group.id == pid;
-      });
-
-  VBK_ASSERT(group_it != cmdGroups.end() &&
-             "state corruption: could not find the command group that "
-             "corresponds to the payload we have just added");
-
-  if (!group_it->execute(state)) {
+  if (!cmdGroup || !cmdGroup->execute(state)) {
     VBK_LOG_DEBUG("Failed to apply payload %s to block %s: %s",
                   index.toPrettyString(),
                   pid.toHex(),
@@ -278,13 +280,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (index == nullptr) {
-    return state.Invalid(block_t::name() + "-bad-containing",
-                         "Can not find VTB containing block: " + hash.toHex());
-  }
-
-  if (index->pprev == nullptr) {
-    return state.Invalid(block_t::name() + "-bad-containing-prev",
-                         "It is forbidden to add payloads to bootstrap block");
+    if (!restoreBlock(hash, state)) {
+      return state.Invalid(
+          block_t::name() + "-bad-containing",
+          "Can not find VTB containing block: " + hash.toHex());
+    }
+    index = VbkTree::getBlockIndex(hash);
+    VBK_ASSERT(index);
   }
 
   // TODO: once we plug the validation hole, we want this to be an assert
@@ -397,17 +399,34 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   BaseBlockTree::removeSubtree(toRemove);
 }
 
+bool VbkBlockTree::finalizeBlockImpl(index_t& index,
+                                     int32_t preserveBlocksBehindFinal,
+                                     ValidationState& state) {
+  int32_t firstBlockHeight = btc().getBestChain().tip()->getHeight() -
+                             btc().getParams().getOldBlocksWindow();
+  int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
+  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+  auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
+  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
+  if (!btc().finalizeBlock(*finalizedIndex, state)) {
+    return state.Invalid("btctree-finalize-error");
+  }
+  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
+}
+
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
                            PayloadsStorage& payloadsProvider,
+                           BlockReader& blockProvider,
                            PayloadsIndex& payloadsIndex)
-    : VbkTree(vbkp),
-      cmp_(std::make_shared<BtcTree>(btcp),
+    : VbkTree(vbkp, blockProvider),
+      cmp_(std::make_shared<BtcTree>(btcp, blockProvider),
            vbkp,
            payloadsProvider,
            payloadsIndex),
       payloadsProvider_(payloadsProvider),
-      payloadsIndex_(payloadsIndex) {}
+      payloadsIndex_(payloadsIndex),
+      commandGroupStore_(*this, payloadsProvider_) {}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   if (!base::loadTip(hash, state)) {

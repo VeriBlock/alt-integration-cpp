@@ -75,12 +75,14 @@ TEST_F(Scenario10, scenario_10) {
             2);
 
   VBK_LOG_DEBUG("Step 3");
-  auto writer = InmemBlockBatch(blockStorage);
-  saveTrees(alttree, writer);
+  save(alttree);
 
   VBK_LOG_DEBUG("Step 4");
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               payloadsProvider,
+                               blockProvider};
 
   ASSERT_TRUE(reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
                                                          this->state));
@@ -88,9 +90,7 @@ TEST_F(Scenario10, scenario_10) {
                                                          this->state));
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.btc()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree.vbk()));
-  ASSERT_TRUE(LoadTreeWrapper(reloadedAltTree));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
   ASSERT_TRUE(reloadedAltTree.getBlockIndex(chainA.back().getHash()) !=
               nullptr);

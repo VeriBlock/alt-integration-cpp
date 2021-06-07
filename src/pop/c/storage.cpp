@@ -3,56 +3,57 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/c/storage.h>
-
-#include <veriblock/pop/assert.hpp>
-
 #include "storage.hpp"
 #ifdef WITH_ROCKSDB
-#include "adaptors/rocksdb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/rocksdb_impl.hpp"
 #endif
 #ifdef WITH_LEVELDB
-#include "adaptors/leveldb_impl.hpp"
+#include "veriblock/pop/storage/adaptors/leveldb_impl.hpp"
 #endif
-#include <veriblock/pop/exceptions/storage_io.hpp>
-
-#include "adaptors/inmem_storage_impl.hpp"
 #include "validation_state.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/storage/adaptors/inmem_storage_impl.hpp"
 
-Storage_t* VBK_NewStorage(const char* path, VbkValidationState* state) {
-  VBK_ASSERT(path);
+POP_ENTITY_FREE_SIGNATURE(storage) {
+  if (self != nullptr) {
+    delete self;
+    self = nullptr;
+  }
+}
+
+POP_ENTITY_NEW_FUNCTION(storage,
+                        POP_ARRAY_NAME(string) path,
+                        POP_ENTITY_NAME(validation_state) * state) {
   VBK_ASSERT(state);
+  VBK_ASSERT(path.data);
 
-  auto* v = new Storage();
+  std::string str_path(path.data, path.data + path.size);
+  std::shared_ptr<altintegration::adaptors::Storage> storage{nullptr};
 
   try {
-    if (std::string(path) == std::string(":inmem:")) {
-      v->storage = std::make_shared<adaptors::InmemStorageImpl>();
+    if (str_path == std::string(":inmem:")) {
+      storage = std::make_shared<altintegration::adaptors::InmemStorageImpl>();
     } else {
 #ifdef WITH_ROCKSDB
-      v->storage = std::make_shared<adaptors::RocksDBStorage>(path);
+      storage =
+          std::make_shared<altintegration::adaptors::RocksDBStorage>(str_path);
 #endif
 #ifdef WITH_LEVELDB
-      v->storage = std::make_shared<adaptors::LevelDBStorage>(path);
+      storage =
+          std::make_shared<altintegration::adaptors::LevelDBStorage>(str_path);
 #endif
     }
   } catch (const altintegration::StorageIOException& e) {
-    state->getState().Invalid("failed-create-storage", e.what());
+    state->ref.Invalid("failed-create-storage", e.what());
     return nullptr;
   } catch (...) {
     VBK_ASSERT_MSG(false, "catched unexpected exception");
   }
 
   VBK_ASSERT_MSG(
-      v->storage,
-      "Storage is not initialized, you should initialize the storage");
+      storage, "Storage is not initialized, you should initialize the storage");
 
-  return v;
-}
-
-void VBK_FreeStorage(Storage_t* storage) {
-  if (storage != nullptr) {
-    delete storage;
-    storage = nullptr;
-  }
+  auto* res = new POP_ENTITY_NAME(storage);
+  res->ref = std::move(storage);
+  return res;
 }

@@ -23,7 +23,7 @@ TEST_F(PopVbkForkResolution, DISABLED_TooLateToAddPayloads) {
   auto vbkpoptx = popminer->createVbkPopTxEndorsingVbkBlock(
       popminer->vbk().getBestChain()[1]->getHeader(), getLastKnownBtcBlock());
 
-  auto limit = popminer->vbkParams().getHistoryOverwriteLimit();
+  auto limit = popminer->vbkParams().getOldBlocksWindow();
   auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
 
   // save the generated VTB and remove it from its containing block

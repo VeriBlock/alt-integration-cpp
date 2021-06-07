@@ -42,17 +42,9 @@ struct VbkChainParams {
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
 
-  /// addPayloads in VBK tree will reject all payloads that are added this
-  /// number of blocks behind of current tip in active chain
-  virtual int32_t getHistoryOverwriteLimit() const noexcept {
-    /* roughly 100h worth of VBK block production */
-    // equal to 1.5*8000 (1.5 progpow epochs)
-    return 12000;
-  }
-
   //! all blocks further than this number of blocks are considered "old"
   virtual int32_t getOldBlocksWindow() const noexcept {
-    return getHistoryOverwriteLimit();
+    return mOldBlocksWindow;
   }
 
   virtual const std::vector<uint32_t>& getForkResolutionLookUpTable()
@@ -61,15 +53,24 @@ struct VbkChainParams {
   }
 
   virtual int32_t getEndorsementSettlementInterval() const noexcept {
-    return 400;
+    return mEndorsementSettlementInterval;
   }
 
-  //! when finalizeBlockImpl is called, this many blocks behind final block will be
-  //! preserved in RAM.
-  //! In VBK this number depends on endorsement settlement interval.
+  //! when finalizeBlockImpl is called, this many blocks behind final block will
+  //! be preserved in RAM. In VBK we should preserve at least last
+  //! `endorsementSettlementInterval` blocks before finalized (not including
+  //! finalized).
   uint32_t preserveBlocksBehindFinal() const noexcept {
-    return getEndorsementSettlementInterval();
+    VBK_ASSERT(mPreserveBlocksBehindFinal >= mEndorsementSettlementInterval);
+    return mPreserveBlocksBehindFinal;
   }
+
+  /* roughly 100h worth of VBK block production */
+  // equal to 1.5*8000 (1.5 progpow epochs)
+  uint32_t mOldBlocksWindow = 12000;
+
+  uint32_t mEndorsementSettlementInterval = 400;
+  uint32_t mPreserveBlocksBehindFinal = mEndorsementSettlementInterval;
 
  protected:
   uint32_t mMaxFutureBlockTime = 5 * 60;  // 5 min

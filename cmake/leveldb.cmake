@@ -17,6 +17,7 @@ if(NOT leveldb_POPULATED)
     target_include_directories(leveldb PUBLIC
             $<BUILD_INTERFACE:${leveldb_SOURCE_DIR}/include>
             )
+    include_directories($<BUILD_INTERFACE:${leveldb_SOURCE_DIR}/include>)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")

@@ -74,15 +74,15 @@ struct PopStateMachine {
   using block_t = typename index_t::block_t;
   using endorsement_t = typename index_t::endorsement_t;
   using height_t = typename ProtectedIndex::height_t;
+  using command_group_store_t = typename ProtectedTree::command_group_store_t;
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
-                  PayloadsStorage& payloadsProvider,
                   PayloadsIndex& payloadsIndex,
                   ContinueOnInvalidContext* continueOnInvalid = nullptr)
       : ed_(ed),
         ing_(ing),
-        payloadsProvider_(payloadsProvider),
+        commandGroupStore_(ed_.getCommandGroupStore()),
         payloadsIndex_(payloadsIndex),
         continueOnInvalid_(continueOnInvalid) {}
 
@@ -102,28 +102,31 @@ struct PopStateMachine {
                    index.toPrettyString());
 
     if (index.hasPayloads()) {
-      std::vector<CommandGroup> cgroups;
-      payloadsProvider_.getCommands(ed_, index, cgroups, state);
+      auto cgroups = commandGroupStore_.getCommands(index, state);
+      // TODO:
+      VBK_ASSERT_MSG(
+          cgroups, "support for payload pre-validation is not implemented yet");
 
-      for (auto cgroup = cgroups.cbegin(); cgroup != cgroups.cend(); ++cgroup) {
+      for (auto cgroup = cgroups->cbegin(); cgroup != cgroups->cend();
+           ++cgroup) {
         VBK_LOG_DEBUG("Applying payload %s from block %s",
-                      HexStr(cgroup->id),
+                      HexStr((*cgroup)->id),
                       index.toShortPrettyString());
 
         bool thisPayloadDoesNotFit = false;
         if ((continueOnInvalid_ != nullptr) &&
-            !continueOnInvalid_->canFit(*cgroup)) {
+            !continueOnInvalid_->canFit(**cgroup)) {
           // this payload does not fit current block
           thisPayloadDoesNotFit = true;
         }
 
         // if payloads does not fit, it will be removed from a block
-        if (thisPayloadDoesNotFit || !cgroup->execute(state)) {
+        if (thisPayloadDoesNotFit || !(*cgroup)->execute(state)) {
           if (continueOnInvalid_ != nullptr) {
-            removePayloadsFromIndex<block_t>(payloadsIndex_, index, *cgroup);
+            removePayloadsFromIndex<block_t>(payloadsIndex_, index, **cgroup);
             VBK_LOG_INFO("%s=%s can't be connected: %s",
-                         *cgroup->payload_type_name,
-                         HexStr(cgroup->id),
+                         *(*cgroup)->payload_type_name,
+                         HexStr((*cgroup)->id),
                          state.toString());
             state.reset();
             continue;
@@ -136,9 +139,9 @@ struct PopStateMachine {
 
           // unexecute executed command groups in the reverse order
           for (auto r_group = std::reverse_iterator<decltype(cgroup)>(cgroup);
-               r_group != cgroups.rend();
+               r_group != cgroups->rend();
                ++r_group) {
-            r_group->unExecute();
+            (*r_group)->unExecute();
           }
 
           ed_.invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
@@ -154,7 +157,8 @@ struct PopStateMachine {
     // so it is fully valid
     if (index.pprev->isValid(BLOCK_CAN_BE_APPLIED) &&
         index.getHeight() ==
-            ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
+            ed_.getRoot().getHeight() +
+                (typename block_t::height_t)ed_.appliedBlockCount) {
       index.raiseValidity(BLOCK_CAN_BE_APPLIED);
     } else {
       // this block is applied together with the other chain during POP FR
@@ -175,15 +179,17 @@ struct PopStateMachine {
     assertBlockCanBeUnapplied(index);
 
     if (index.hasPayloads()) {
-      std::vector<CommandGroup> cgroups;
       ValidationState state;
-      payloadsProvider_.getCommands(ed_, index, cgroups, state);
+      auto cgroups = commandGroupStore_.getCommands(index, state);
+      // TODO:
+      VBK_ASSERT_MSG(
+          cgroups, "support for payload pre-validation is not implemented yet");
 
-      for (const auto& cgroup : reverse_iterate(cgroups)) {
+      for (const auto& cgroup : reverse_iterate(*cgroups)) {
         VBK_LOG_DEBUG("Unapplying payload %s from block %s",
-                      HexStr(cgroup.id),
+                      HexStr(cgroup->id),
                       index.toShortPrettyString());
-        cgroup.unExecute();
+        cgroup->unExecute();
       }
     }
 
@@ -341,7 +347,7 @@ struct PopStateMachine {
  private:
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
-  PayloadsStorage& payloadsProvider_;
+  command_group_store_t& commandGroupStore_;
   PayloadsIndex& payloadsIndex_;
   ContinueOnInvalidContext* continueOnInvalid_ = nullptr;
 };

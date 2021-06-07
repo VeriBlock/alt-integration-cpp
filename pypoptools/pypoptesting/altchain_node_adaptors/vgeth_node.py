@@ -131,8 +131,8 @@ class VGethNode(Node):
             blockOfProofEndorsements=[],
             containingATVs=[atv['id'] for atv in s['pop']['data']['atvs']],
             containingVTBs=[vtb['id'] for vtb in s['pop']['data']['vtbs']],
-            containingVBKs=[vbk['id'] for vbk in s['pop']['data']['context']],
-            endorsedBy=s['pop']['endorsedBy']
+            containingVBKs=[vbk['id'] for vbk in s['pop']['data']['vbkblocks']],
+            endorsedBy=s['pop']['state']['endorsedBy']
         )
 
     def getblockcount(self) -> int:

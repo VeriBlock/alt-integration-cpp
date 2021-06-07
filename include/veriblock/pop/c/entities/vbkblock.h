@@ -16,6 +16,7 @@ extern "C" {
 
 POP_DECLARE_ENTITY(vbk_block);
 
+POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), id);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), hash);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), previous_block);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, POP_ARRAY_NAME(u8), merkle_root);
@@ -30,6 +31,9 @@ POP_ENTITY_GETTER_FUNCTION(vbk_block, uint64_t, nonce);
 POP_ENTITY_GETTER_FUNCTION(vbk_block, int32_t, height);
 
 POP_ENTITY_TO_JSON(vbk_block);
+
+POP_ENTITY_SERIALIZE_TO_VBK(vbk_block);
+POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block);
 
 POP_DECLARE_ARRAY(POP_ENTITY_NAME(vbk_block) *, vbk_block);
 

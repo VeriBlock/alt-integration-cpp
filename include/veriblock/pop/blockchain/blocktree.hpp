@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 #include "base_block_tree.hpp"
@@ -38,7 +39,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   ~BlockTree() override = default;
 
-  BlockTree(const ChainParams& param) : param_(&param) {}
+  BlockTree(const ChainParams& param, const BlockReader& blockProvider)
+      : base(blockProvider), param_(&param) {}
 
   const ChainParams& getParams() const { return *param_; }
 
@@ -119,7 +121,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
                         pad,
                         Block::name(),
-                        base::blocks_.size(),
+                        base::getBlocks().size(),
                         base::toPrettyString(level + 2),
                         pad);
   }
@@ -179,8 +181,9 @@ struct BlockTree : public BaseBlockTree<Block> {
     return isBlockOld(index->getHeight());
   }
 
-  bool finalizeBlock(const hash_t& block) {
-    return base::finalizeBlockImpl(block, param_->preserveBlocksBehindFinal());
+  bool finalizeBlock(index_t& index, ValidationState& state) {
+    return this->finalizeBlockImpl(
+        index, param_->preserveBlocksBehindFinal(), state);
   }
 
  protected:

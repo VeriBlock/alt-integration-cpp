@@ -10,51 +10,120 @@ import (
 	"os"
 	"testing"
 
-	veriblock "github.com/VeriBlock/alt-integration-cpp/bindings/go"
-	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCalculateTopLevelMerkleRoot(t *testing.T) {
+func TestGeneratePublicationData(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
-	defer popContext.popContext.Free()
-	defer popContext.Lock()()
+	context := GenerateTestPopContext(t, storage)
+	defer context.Lock()()
+	defer context.Free()
 
-	// generate new block
-	newBlock := generateNextAltBlock(&boostrapBlock)
+	popData := GenerateDefaultPopData()
+	defer popData.Free()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := []byte{1, 2, 3, 4, 5, 6}
+	altBlock := GenerateDefaultAltBlock()
+	defer altBlock.Free()
+	endorsedBytes := altBlock.SerializeToVbk()
 
-	err = popContext.AcceptBlockHeader(newBlock)
+	publicationData, err := context.GeneratePublicationData(endorsedBytes, txRoot, payoutInfo, popData)
+	defer publicationData.Free()
+
 	assert.NoError(err)
-
-	var popData entities.PopData
-	popData.Version = 1
-
-	txRootHash := [veriblock.Sha256HashSize]byte{}
-
-	hash, err := popContext.CalculateTopLevelMerkleRoot(txRootHash, newBlock.PreviousBlock, &popData)
-	assert.NoError(err)
-
-	assert.False(bytes.Equal(hash[:], []byte{}))
+	assert.NotNil(publicationData)
+	assert.Equal(payoutInfo, publicationData.GetPayoutInfo())
+	assert.Equal(int64(1), publicationData.GetIdentifier())
+	assert.NotNil(publicationData.GetHeader())
+	assert.NotNil(publicationData.GetContextInfo())
 }
 
-func TestCreateStorageFailure(t *testing.T) {
+func TestCalculateTopLevelMerkleRoot(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 
-	defer os.RemoveAll("/tmp/alt-integration")
-
-	storage, err := NewStorage("/tmp/alt-integration")
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
 	defer storage.Free()
 
+	context := GenerateTestPopContext(t, storage)
+	defer context.Lock()()
+	defer context.Free()
+
+	// generate new block
+	newBlock := generateNextAltBlock(context.AltGetBootstrapBlock().GetHeader())
+
+	err = context.AcceptBlockHeader(newBlock)
 	assert.NoError(err)
 
-	storage, err = NewStorage("/tmp/alt-integration")
+	popData := GenerateDefaultPopData()
+
+	txRootHash := []byte{1, 2, 3, 4}
+
+	hash := context.CalculateTopLevelMerkleRoot(txRootHash, newBlock.GetPreviousBlock(), popData)
+	assert.False(bytes.Equal(hash, []byte{}))
+}
+
+func TestCheckAll(t *testing.T) {
+	assert := assert.New(t)
+
+	storage, err := NewStorage(":inmem:")
+	assert.NoError(err)
+	defer storage.Free()
+
+	context := GenerateTestPopContext(t, storage)
+	defer context.Lock()()
+	defer context.Free()
+
+	miner := NewMockMiner()
+	defer miner.Lock()()
+	defer miner.Free()
+
+	vbkBlock := miner.MineVbkBlockTip()
+
+	// Check VbkBlock
+	err = context.CheckVbkBlock(vbkBlock)
+	assert.NoError(err)
+
+	vtb := miner.MineVtb(vbkBlock, context.BtcGetBestBlock().GetHeader())
+
+	// Check VTB
+	err = context.CheckVtb(vtb)
+	assert.NoError(err)
+
+	alt := GenerateDefaultAltBlock()
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := GenerateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(alt.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	err = context.CheckAtv(atv)
+	assert.NoError(err)
+
+	// Failing checks
+	err = context.CheckVbkBlock(GenerateDefaultVbkBlock())
 	assert.Error(err)
-	assert.Empty(storage)
+
+	err = context.CheckVtb(GenerateDefaultVtb())
+	assert.Error(err)
+
+	err = context.CheckAtv(GenerateDefaultAtv())
+	assert.Error(err)
+
+	err = context.CheckPopData(GenerateDefaultPopData())
+	assert.Error(err)
 }
 
 func TestSaveLoadAllTrees(t *testing.T) {
@@ -63,92 +132,78 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	defer os.RemoveAll("/tmp/alt-integration")
 
 	storage, err := NewStorage("/tmp/alt-integration")
+	defer storage.Free()
+
 	assert.NoError(err)
 
-	popContext := generateTestPopContext(t, storage)
-	defer popContext.Lock()()
+	context := GenerateTestPopContext(t, storage)
+	unlock := context.Lock()
+
+	// generate new block
+	newBlock := generateNextAltBlock(context.AltGetBootstrapBlock().GetHeader())
+
+	err = context.AcceptBlockHeader(newBlock)
+	assert.NoError(err)
 
 	miner := NewMockMiner()
 	defer miner.Lock()()
+	defer miner.Free()
 
-	index, err := miner.MineVbkBlockTip()
+	vbk := miner.MineVbkBlockTip()
+
+	res, err := context.MemPoolSubmitVbk(vbk)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	vtb := miner.MineVtb(vbk, context.BtcGetBestBlock().GetHeader())
+
+	res, err = context.MemPoolSubmitVtb(vtb)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	payoutInfo := []byte{1, 2, 3, 4, 5, 6}
+	txRoot := make([]byte, 32)
+	popData := GenerateDefaultPopData()
+
+	pubData, err := context.GeneratePublicationData(newBlock.SerializeToVbk(), txRoot, payoutInfo, popData)
+	assert.NoError(err)
+	assert.NotNil(pubData)
+
+	atv := miner.MineAtv(pubData)
+
+	res, err = context.MemPoolSubmitAtv(atv)
+	assert.NoError(err)
+	assert.Equal(res, 0)
+
+	popData = context.MemPoolGeneratePopData()
+	assert.NotNil(popData)
+
+	context.AcceptBlock(newBlock.GetHash(), popData)
+
+	err = context.SetState(newBlock.GetHash())
 	assert.NoError(err)
 
-	vbkBlock, err := index.GetVbkBlockHeader()
+	alt_saved_height := context.AltGetBestBlock().GetHeight()
+	vbk_saved_height := context.VbkGetBestBlock().GetHeight()
+	btc_saved_height := context.BtcGetBestBlock().GetHeight()
+
+	err = context.SaveAllTrees()
 	assert.NoError(err)
 
-	state, err := popContext.SubmitVbk(vbkBlock)
-	// state == 0, valid vbkBlock
-	assert.Equal(0, state)
+	context.Free()
+	unlock()
+	context = GenerateTestPopContext(t, storage)
+	defer context.Lock()()
+	defer context.Free()
+
+	assert.NotEqual(alt_saved_height, context.AltGetBestBlock().GetHeight())
+	assert.NotEqual(vbk_saved_height, context.VbkGetBestBlock().GetHeight())
+	assert.NotEqual(btc_saved_height, context.BtcGetBestBlock().GetHeight())
+
+	err = context.LoadAllTrees()
 	assert.NoError(err)
 
-	// generate new block
-	newBlock := generateNextAltBlock(&boostrapBlock)
-
-	err = popContext.AcceptBlockHeader(newBlock)
-	assert.NoError(err)
-
-	popData, err := popContext.GetPopData()
-	assert.NotEqual(popData, nil)
-	assert.NoError(err)
-
-	err = popContext.AcceptBlock(newBlock.Hash, popData)
-	assert.NoError(err)
-
-	err = popContext.SetState(newBlock.Hash)
-	assert.NoError(err)
-
-	err = popContext.SaveAllTrees()
-	assert.NoError(err)
-
-	index, err = popContext.AltBestBlock()
-	assert.NoError(err)
-	assert.NotEqual(index, nil)
-
-	block, err := index.GetAltBlockHeader()
-	assert.NoError(err)
-	assert.NotEqual(block, nil)
-
-	assert.Equal(block.Hash, newBlock.Hash)
-	assert.Equal(block.Height, newBlock.Height)
-	assert.Equal(block.PreviousBlock, newBlock.PreviousBlock)
-	assert.Equal(block.Timestamp, newBlock.Timestamp)
-
-	// reset state of the popContext
-	popContext.popContext.Free()
-	popContext = generateTestPopContext(t, storage)
-	defer popContext.popContext.Free()
-	defer storage.Free()
-	defer popContext.Lock()()
-
-	index, err = popContext.AltBestBlock()
-	assert.NoError(err)
-	assert.NotEqual(index, nil)
-
-	block, err = index.GetAltBlockHeader()
-	assert.NoError(err)
-	assert.NotEqual(block, nil)
-
-	assert.NotEqual(block.Hash, newBlock.Hash)
-	assert.NotEqual(block.Height, newBlock.Height)
-	assert.NotEqual(block.PreviousBlock, newBlock.PreviousBlock)
-	assert.NotEqual(block.Timestamp, newBlock.Timestamp)
-	assert.Equal(block.Hash, newBlock.PreviousBlock)
-	assert.Equal(block.Height, newBlock.Height-1)
-
-	err = popContext.LoadAllTrees()
-	assert.NoError(err)
-
-	index, err = popContext.AltBestBlock()
-	assert.NoError(err)
-	assert.NotEqual(index, nil)
-
-	block, err = index.GetAltBlockHeader()
-	assert.NoError(err)
-	assert.NotEqual(block, nil)
-
-	assert.Equal(block.Hash, newBlock.Hash)
-	assert.Equal(block.Height, newBlock.Height)
-	assert.Equal(block.PreviousBlock, newBlock.PreviousBlock)
-	assert.Equal(block.Timestamp, newBlock.Timestamp)
+	assert.Equal(alt_saved_height, context.AltGetBestBlock().GetHeight())
+	assert.Equal(vbk_saved_height, context.VbkGetBestBlock().GetHeight())
+	assert.Equal(btc_saved_height, context.BtcGetBestBlock().GetHeight())
 }

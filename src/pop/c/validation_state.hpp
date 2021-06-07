@@ -3,34 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_VALIDATION_STATE_HPP_BINDINGS
-#define VERIBLOCK_POP_CPP_VALIDATION_STATE_HPP_BINDINGS
+#ifndef VERIBLOCK_POP_CPP_C_VALIDATION_STATE2_HPP
+#define VERIBLOCK_POP_CPP_C_VALIDATION_STATE2_HPP
 
-#include <memory>
-#include <string>
+#include "veriblock/pop/c/validation_state.h"
+#include "veriblock/pop/validation_state.hpp"
 
-#include <veriblock/pop/validation_state.hpp>
-
-struct VbkValidationState {
-  altintegration::ValidationState& getState() { return validation_state; }
-
-  bool IsValid() const { return validation_state.IsValid(); }
-
-  bool IsInvalid() const { return validation_state.IsInvalid(); }
-
-  const char* GetErrorMessage() {
-    error = validation_state.toString();
-    return error.c_str();
-  }
-
-  void Reset() {
-    error = "";
-    validation_state.reset();
-  }
-
- private:
-  altintegration::ValidationState validation_state{};
-  std::string error{};
+struct __pop_validation_state {
+  altintegration::ValidationState ref;
 };
 
 #endif
