@@ -138,9 +138,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af4a75ce0d9b92146523799a102d5a12b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#af4a75ce0d9b92146523799a102d5a12b">saveAllTrees</a> (<a class="el" href="structaltintegration_1_1BlockBatch.html">BlockBatch</a> &amp;batch) const</td></tr>
 <tr class="memdesc:af4a75ce0d9b92146523799a102d5a12b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save ALT/VBK/BTC trees on disk via adapter <a class="el" href="structaltintegration_1_1BlockBatch.html" title="An interface which represents single write batch of a group of blocks.">BlockBatch</a>.  <a href="structaltintegration_1_1PopContext.html#af4a75ce0d9b92146523799a102d5a12b">More...</a><br /></td></tr>
 <tr class="separator:af4a75ce0d9b92146523799a102d5a12b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3cda669c177e678485c354d7bb4e639"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#ab3cda669c177e678485c354d7bb4e639">loadAllTrees</a> (<a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;reader, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="memdesc:ab3cda669c177e678485c354d7bb4e639"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load ALT/VBK/BTC trees from disk via adapter <a class="el" href="structaltintegration_1_1BlockReader.html" title="An abstraction over on-disk storage iterator.">BlockReader</a>.  <a href="structaltintegration_1_1PopContext.html#ab3cda669c177e678485c354d7bb4e639">More...</a><br /></td></tr>
-<tr class="separator:ab3cda669c177e678485c354d7bb4e639"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32fbb782d855137d2564fc1cc0dd524e"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#a32fbb782d855137d2564fc1cc0dd524e">loadAllTrees</a> (<a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a32fbb782d855137d2564fc1cc0dd524e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load ALT/VBK/BTC trees from disk via adapter <a class="el" href="structaltintegration_1_1BlockReader.html" title="An abstraction over on-disk storage iterator.">BlockReader</a>.  <a href="structaltintegration_1_1PopContext.html#a32fbb782d855137d2564fc1cc0dd524e">More...</a><br /></td></tr>
+<tr class="separator:a32fbb782d855137d2564fc1cc0dd524e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42f8f58fd6d02519bc413eea2b86bdae"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN <a class="el" href="structaltintegration_1_1PopPayouts.html">PopPayouts</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#a42f8f58fd6d02519bc413eea2b86bdae">getPopPayout</a> (const AltBlockTree::hash_t &amp;prev)</td></tr>
 <tr class="memdesc:a42f8f58fd6d02519bc413eea2b86bdae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates POP rewards that should be paid in the next block after <code>prev</code>.  <a href="structaltintegration_1_1PopContext.html#a42f8f58fd6d02519bc413eea2b86bdae">More...</a><br /></td></tr>
 <tr class="separator:a42f8f58fd6d02519bc413eea2b86bdae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -489,8 +489,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab3cda669c177e678485c354d7bb4e639"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3cda669c177e678485c354d7bb4e639">&#9670;&nbsp;</a></span>loadAllTrees()</h2>
+<a id="a32fbb782d855137d2564fc1cc0dd524e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32fbb782d855137d2564fc1cc0dd524e">&#9670;&nbsp;</a></span>loadAllTrees()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -498,25 +498,14 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">VBK_CHECK_RETURN bool altintegration::PopContext::loadAllTrees </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;&#160;</td>
-          <td class="paramname"><em>reader</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
+          <td class="paramname"><em>state</em></td><td>)</td>
           <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">reader</td><td>adaptor to read blocks from disk. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">state</td><td>validation state </td></tr>
   </table>
   </dd>

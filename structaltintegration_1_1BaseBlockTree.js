@@ -23,6 +23,7 @@ var structaltintegration_1_1BaseBlockTree =
     [ "getBestChain", "structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc", null ],
     [ "getBlockIndex", "structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e", null ],
     [ "getBlockIndex", "structaltintegration_1_1BaseBlockTree.html#abb498b97671f5b9e2681e54eaeec63b6", null ],
+    [ "getBlockProvider", "structaltintegration_1_1BaseBlockTree.html#a1f94c05d258afdd3530666d915e7aa52", null ],
     [ "getBlocks", "structaltintegration_1_1BaseBlockTree.html#a722a4734ad1c00c25f59ab6686406f51", null ],
     [ "getRoot", "structaltintegration_1_1BaseBlockTree.html#aedac45c4fc46a40bf10029203d1da9b1", null ],
     [ "getTips", "structaltintegration_1_1BaseBlockTree.html#acdeede24636e84dff4a34cea27adf82f", null ],

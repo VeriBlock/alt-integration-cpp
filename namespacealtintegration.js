@@ -395,7 +395,7 @@ var namespacealtintegration =
     [ "LevelToString", "namespacealtintegration.html#a0718136595cbbce16f499166a2b91dc8", null ],
     [ "loadBlockTree", "namespacealtintegration.html#a8462452cd186b7d502f88aac848507ec", null ],
     [ "loadTree", "namespacealtintegration.html#a15cd64f2153057af08909462364b756c", null ],
-    [ "loadTrees", "namespacealtintegration.html#a8e64d692c7a3d75b1cb687fa76b4715f", null ],
+    [ "loadTrees", "namespacealtintegration.html#a190a292eda6248cf2cceb20ee1501a1c", null ],
     [ "make_idset", "namespacealtintegration.html#a35e7706bc7c877b469024e396547a313", null ],
     [ "make_unique", "namespacealtintegration.html#a5439dcdae2d308c827e1fca03deb55d3", null ],
     [ "map_get_id", "namespacealtintegration.html#a3f71132d4333f0dd6885563edbbde3f9", null ],
