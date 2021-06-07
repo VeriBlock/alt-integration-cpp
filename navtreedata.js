@@ -32,6 +32,9 @@ var NAVTREE =
       [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
       [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
     ] ],
+    [ "Change Blockchain Explorer Params", "integration_14_explorer.html", [
+      [ "Overview", "integration_14_explorer.html#autotoc_md29", null ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -65,15 +68,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"functions.html",
-"namespacealtintegration.html#a2e3562e80b6619d356b9b69d118cefda",
-"namespacealtintegration.html#ae1dc00cb23b82ec70ec5c683c5007f9e",
-"structaltintegration_1_1AltChainParams.html#a0caa05ae89b6ac4386bef645eaad1c24",
-"structaltintegration_1_1BlockTree.html#a7c94d18cec972bc1a06fdcc6feafd97b",
-"structaltintegration_1_1Endorsement.html#a968f9d0ef9707ff14ab90c9f1b5a807b",
-"structaltintegration_1_1VTB.html#a8983b35112c156b9fa6565eaa31b446b",
-"structaltintegration_1_1adaptors_1_1InmemStorageIterator.html#adb937fa7411619081a6d1e5505987e8e"
+"",
+"fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
+"namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40",
+"namespacealtintegration.html#ad8d099d8e8dede9f297b34627bb65049",
+"structaltintegration_1_1AltBlockTree.html#ac31836a34ff44f707091c4ea2c5cd4d1",
+"structaltintegration_1_1BlockTree.html#a110c51aef126b8fec98aa6950d56ff38",
+"structaltintegration_1_1Endorsement.html#a3e4b04934a3d49b1597f1ef408322501",
+"structaltintegration_1_1StoredBlockIndex.html#ae1baf71b2003d0ec0ae7fe816e721c1e",
+"structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#ad34b27e3177a245b48d322a547c9f103"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

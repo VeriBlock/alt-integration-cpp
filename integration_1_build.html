@@ -89,16 +89,16 @@ $(document).ready(function(){initNavTree('integration_1_build.html',''); initRes
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md29">Overview</a></li>
-<li class="level1"><a href="#autotoc_md30">1. Build and install veriblock-pop-cpp library.</a></li>
-<li class="level1"><a href="#autotoc_md31">2. Add veriblock-pop-cpp library dependency.</a></li>
+<ul><li class="level1"><a href="#autotoc_md30">Overview</a></li>
+<li class="level1"><a href="#autotoc_md31">1. Build and install veriblock-pop-cpp library.</a></li>
+<li class="level1"><a href="#autotoc_md32">2. Add veriblock-pop-cpp library dependency.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_1_build"></a></p>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 Overview</h1>
 <p>This section contains information about adding veriblock-pop C++ library to your fork of Bitcoin.</p>
-<h1><a class="anchor" id="autotoc_md30"></a>
+<h1><a class="anchor" id="autotoc_md31"></a>
 1. Build and install veriblock-pop-cpp library.</h1>
 <div class="fragment"><div class="line">git clone https://github.com/VeriBlock/alt-integration-cpp.git</div>
 <div class="line">cd alt-integration-cpp</div>
@@ -108,7 +108,7 @@ Overview</h1>
 <div class="line">make -j4</div>
 <div class="line">sudo make install</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Building veriblock-pop-cpp library requires CMake 3.12 or newer</dd></dl>
-<h1><a class="anchor" id="autotoc_md31"></a>
+<h1><a class="anchor" id="autotoc_md32"></a>
 2. Add veriblock-pop-cpp library dependency.</h1>
 <dl class="section note"><dt>Note</dt><dd>We use Bitcoin source code as reference. Other integrations should adhere to another project structure, build system, programming language, etc.</dd></dl>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/configure.ac">https://github.com/VeriBlock/vbk-ri-btc/blob/master/configure.ac</a> </p><div class="fragment"><div class="line">PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto not found.)])</div>

@@ -89,19 +89,19 @@ $(document).ready(function(){initNavTree('integration_2_popdata.html',''); initR
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md32">Overview</a></li>
-<li class="level1"><a href="#autotoc_md33">1. Helper for the block hash serialization.</a></li>
-<li class="level1"><a href="#autotoc_md34">2. Define POP_BLOCK_VERSION_BIT flag.</a></li>
-<li class="level1"><a href="#autotoc_md35">3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.</a></li>
-<li class="level1"><a href="#autotoc_md36">4. Update PartiallyDownloadedBlock initializing - set PopData field.</a></li>
-<li class="level1"><a href="#autotoc_md37">5. Update setting up the PopData fields during the net processing.</a></li>
-<li class="level1"><a href="#autotoc_md38">6. Update validation rules.</a></li>
-<li class="level1"><a href="#autotoc_md39">7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.</a></li>
-<li class="level1"><a href="#autotoc_md40">8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.</a></li>
+<ul><li class="level1"><a href="#autotoc_md33">Overview</a></li>
+<li class="level1"><a href="#autotoc_md34">1. Helper for the block hash serialization.</a></li>
+<li class="level1"><a href="#autotoc_md35">2. Define POP_BLOCK_VERSION_BIT flag.</a></li>
+<li class="level1"><a href="#autotoc_md36">3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.</a></li>
+<li class="level1"><a href="#autotoc_md37">4. Update PartiallyDownloadedBlock initializing - set PopData field.</a></li>
+<li class="level1"><a href="#autotoc_md38">5. Update setting up the PopData fields during the net processing.</a></li>
+<li class="level1"><a href="#autotoc_md39">6. Update validation rules.</a></li>
+<li class="level1"><a href="#autotoc_md40">7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.</a></li>
+<li class="level1"><a href="#autotoc_md41">8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_2_popdata"></a></p>
-<h1><a class="anchor" id="autotoc_md32"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 Overview</h1>
 <p>We will add:</p><ol type="1">
 <li><a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> entity into the <code>CBlock</code> class in <code>primitives/block.h</code> file. This is needed to store POP-related consensus information, such as ATVs, VTBs, and VBk blocks.</li>
@@ -109,7 +109,7 @@ Overview</h1>
 <li>Update serialization for <code>CBlock</code> to include <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a>.</li>
 <li>Add serialization/deserialization code for <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> entity.</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md33"></a>
+<h1><a class="anchor" id="autotoc_md34"></a>
 1. Helper for the block hash serialization.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/uint256.h#L20">class base_blob</a> </p><div class="fragment"><div class="line">     {</div>
@@ -121,7 +121,7 @@ Overview</h1>
 <div class="line">+        <span class="keywordflow">return</span> std::vector&lt;uint8_t&gt;{begin(), end()};</div>
 <div class="line">+    }</div>
 <div class="line"> };</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md34"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md35"></a>
 2. Define POP_BLOCK_VERSION_BIT flag.</h1>
 <p>This flag is set in a block header version and will tell users if given block header contains PopData or not.</p>
 <p>In file <code>src/version.h</code> define this flag:</p>
@@ -158,7 +158,7 @@ Overview</h1>
 <div class="line">+        popData.clear();</div>
 <div class="line">         fChecked = <span class="keyword">false</span>;</div>
 <div class="line">     }</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md35"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md36"></a>
 3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.</h1>
 <p>Bitcoin uses these classes during sync protocol. We must ensure that <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> is propagated alongside transactions during sync.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h</a></p>
@@ -202,7 +202,7 @@ Overview</h1>
 <div class="line">+        <span class="keywordflow">return</span> FillBlock(block, vtx_missing);</div>
 <div class="line">+    }</div>
 <div class="line"> };</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md36"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md37"></a>
 4. Update PartiallyDownloadedBlock initializing - set PopData field.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.cpp#L21">method CBlockHeaderAndShortTxIDs::CBlockHeaderAndShortTxIDs</a> </p><div class="fragment"><div class="line">         <span class="keyword">const</span> CTransaction&amp; tx = *block.vtx[i];</div>
@@ -225,7 +225,7 @@ Overview</h1>
 <div class="line">+    block.popData = this-&gt;popData;</div>
 <div class="line">+</div>
 <div class="line">     BlockValidationState state;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md37"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md38"></a>
 5. Update setting up the PopData fields during the net processing.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L1655">method SendBlockTransactions</a> </p><div class="fragment"><div class="line">     <span class="keyword">const</span> CNetMsgMaker msgMaker(pfrom-&gt;GetSendVersion());</div>
@@ -258,7 +258,7 @@ Overview</h1>
 <div class="line">+                vRecv &gt;&gt; tmp;</div>
 <div class="line">+            }</div>
 <div class="line">          }</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md38"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md39"></a>
 6. Update validation rules.</h1>
 <p>Add check that if block contains VeriBlock PopData then <code>block.nVersion</code> must contain <code>POP_BLOCK_VERSION_BIT</code>. Otherwise <code>block.nVersion</code> should not contain <code>POP_BLOCK_VERSION_BIT</code>.</p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp</a></p>
@@ -301,7 +301,7 @@ Overview</h1>
 <div class="line">+    }</div>
 <div class="line"> </div>
 <div class="line">     <span class="comment">// All potential-corruption validation must be done before we do any</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md39"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md40"></a>
 7. Update the mining code to setup POP_BLOCK_VERSION_BIT if VeriBlock PopData is contained in the block.</h1>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp">https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp</a></p>
 <p><a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/miner.cpp#L96">method BlockAssembler::CreateNewBlock</a> </p><div class="fragment"><div class="line">   addPackageTxs&lt;ancestor_score&gt;(nPackagesSelected, nDescendantsUpdated);</div>
@@ -320,7 +320,7 @@ Overview</h1>
 <div class="line"> </div>
 <div class="line">   m_last_block_num_txs = nBlockTx;</div>
 <div class="line">   m_last_block_weight = nBlockWeight;</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md40"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md41"></a>
 8. Overload serialization operations for the VeriBlock PopData and other VeriBlock entities.</h1>
 <dl class="section warning"><dt>Warning</dt><dd>In our example we use VeriBlock-native serialization (function <code>toVbkEncoding</code>). It essentially couples Altchain CBlock serialization to VBK encoding. If VBK encoding ever change, Altchain will get hard fork. To mitigate this, it is stongly suggested to implement your own serialization.</dd></dl>
 <p>During deserialization, if any of internal entities can not be deserialized, throw an exception.</p>
