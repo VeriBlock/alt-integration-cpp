@@ -125,8 +125,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
 
-  altintegration::adaptors::BlockReaderImpl block_reader(*self->storage);
-  return loadTrees(self->ref->getAltBlockTree(), block_reader, state->ref);
+  return loadTrees(self->ref->getAltBlockTree(), state->ref);
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,

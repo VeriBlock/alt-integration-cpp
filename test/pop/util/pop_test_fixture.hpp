@@ -355,9 +355,7 @@ struct PopTestFixture {
     batch->writeBatch();
   }
 
-  bool load(AltBlockTree& tree) {
-    return loadTrees(tree, blockProvider, state);
-  }
+  bool load(AltBlockTree& tree) { return loadTrees(tree, state); }
 };
 
 template <typename pop_t>

@@ -90,7 +90,7 @@ TEST_F(Scenario10, scenario_10) {
                                                          this->state));
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
   ASSERT_TRUE(reloadedAltTree.getBlockIndex(chainA.back().getHash()) !=
               nullptr);
