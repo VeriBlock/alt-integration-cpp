@@ -300,7 +300,7 @@ struct BaseBlockTree {
     if (isOnMainChain) {
       ValidationState dummy;
       bool success = this->setState(*prev, dummy);
-      VBK_ASSERT(success);
+      VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
     }
 
     // remove this block from 'pnext' set of previous block
