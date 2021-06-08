@@ -131,7 +131,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   //! - does validation of endorsements
   //! - recovers tips array
   //! @invariant NOT atomic.
-  bool loadBlock(const stored_index_t& index, ValidationState& state);
+  bool loadBlock(const stored_index_t& index, ValidationState& state) override;
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }

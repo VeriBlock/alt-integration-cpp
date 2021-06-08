@@ -407,7 +407,7 @@ void AltBlockTree::overrideTip(index_t& to) {
 
 bool AltBlockTree::loadBlock(const stored_index_t& index,
                              ValidationState& state) {
-  if (!base::loadBlockForward(index, state)) {
+  if (!base::loadBlock(index, state)) {
     return false;  // already set
   }
 

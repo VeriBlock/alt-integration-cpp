@@ -369,7 +369,7 @@ bool VbkBlockTree::loadBlock(const stored_index_t& index,
                              ValidationState& state) {
   auto hash = index.header->getHash();
   auto height = index.height;
-  if (!VbkTree::loadBlockForward(index, state)) {
+  if (!VbkTree::loadBlock(index, state)) {
     return false;  // already set
   }
 
