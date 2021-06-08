@@ -61,10 +61,8 @@ LogLevel StringToLevel(const std::string& str) {
   if (str == "off") {
     return LogLevel::off;
   }
-  throw std::invalid_argument(
-      fmt::format("{} is not valid log level. Expected one of "
-                  "debug/info/warn/error/critical/off",
-                  str));
+  //default
+  return LogLevel::warn;
 }
 
 }  // namespace altintegration
