@@ -148,6 +148,14 @@ struct BaseBlockTree {
     return true;
   }
 
+  /**
+   * Efficiently connects BlockIndex to this tree, when it is loaded from disk.
+   * @param[in] index block to be connected
+   * @param[out] state validation state
+   * @return true if block is valid and successfully loaded, false otherwise.
+   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
+   * state.
+   */
   virtual bool loadBlock(const stored_index_t& index, ValidationState& state) {
     return loadBlockForward(index, state);
   }
@@ -551,22 +559,18 @@ struct BaseBlockTree {
     return current;
   }
 
+  //! @private
   bool loadBlockForward(const stored_index_t& index, ValidationState& state) {
     return loadBlockInner(index, true, state);
   }
 
+  // connect block as previous for the root
+  //! @private
   bool loadBlockBackward(const stored_index_t& index, ValidationState& state) {
     return loadBlockInner(index, false, state);
   }
 
-  /**
-   * Efficiently connects BlockIndex to this tree, when it is loaded from disk.
-   * @param[in] index block to be connected
-   * @param[out] state validation state
-   * @return true if block is valid and successfully loaded, false otherwise.
-   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
-   * state.
-   */
+  //! @private
   bool loadBlockInner(const stored_index_t& index,
                       bool connectForward,
                       ValidationState& state) {
