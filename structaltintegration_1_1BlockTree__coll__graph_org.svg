@@ -27,7 +27,7 @@
 <text text-anchor="start" x="240" y="-139.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
 <text text-anchor="start" x="240" y="-128.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
 <text text-anchor="start" x="240" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
-<text text-anchor="start" x="240" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlock()</text>
+<text text-anchor="start" x="240" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="240" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="240" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="240" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>

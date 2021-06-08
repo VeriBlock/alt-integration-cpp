@@ -107,7 +107,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="8" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
 <text text-anchor="start" x="8" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
 <text text-anchor="start" x="8" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
-<text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlock()</text>
+<text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="8" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="8" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
@@ -144,7 +144,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="68" y="-664" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
 <text text-anchor="start" x="68" y="-653" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
 <text text-anchor="start" x="68" y="-642" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
-<text text-anchor="start" x="68" y="-631" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlock()</text>
+<text text-anchor="start" x="68" y="-631" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="68" y="-620" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="68" y="-609" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="68" y="-598" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
