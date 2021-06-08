@@ -396,7 +396,7 @@ template&lt;typename Block &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00080">80</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;{ <span class="keywordflow">return</span> this-&gt;<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>; }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01034">base_block_tree.hpp:1034</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01027">base_block_tree.hpp:1027</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -648,7 +648,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;        <span class="stringliteral">&quot;state corruption: the blockchain is neither bootstrapped nor empty&quot;</span>);</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01030">base_block_tree.hpp:1030</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01023">base_block_tree.hpp:1023</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -696,8 +696,6 @@ template&lt;typename Block &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if block is valid and successfully loaded, false otherwise. </dd></dl>
 <dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. If returned false, leaves <a class="el" href="structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">BaseBlockTree</a> in undefined state. </dd></dl>
-
-<p>Reimplemented in <a class="el" href="structaltintegration_1_1BlockTree.html#a24779f15d0d6b38e5d99d68e351bcbad">altintegration::BlockTree&lt; Block, ChainParams &gt;</a>, and <a class="el" href="structaltintegration_1_1BlockTree.html#a24779f15d0d6b38e5d99d68e351bcbad">altintegration::BlockTree&lt; VbkBlock, VbkChainParams &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00159">159</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                                                                                     {</div>

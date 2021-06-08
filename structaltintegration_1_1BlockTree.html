@@ -203,8 +203,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>acceptBlockHeader</b>
 <tr class="memitem:abb46e4499aa53ccde9f870f160c6ee91"><td class="memItemLeft" align="right" valign="top"><a id="abb46e4499aa53ccde9f870f160c6ee91"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> (size_t level=0) const</td></tr>
 <tr class="separator:abb46e4499aa53ccde9f870f160c6ee91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24779f15d0d6b38e5d99d68e351bcbad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#a24779f15d0d6b38e5d99d68e351bcbad">loadBlockForward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="separator:a24779f15d0d6b38e5d99d68e351bcbad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeca1274b31b9ef4fbcd0925fe705683b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#aeca1274b31b9ef4fbcd0925fe705683b">loadBlock</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="separator:aeca1274b31b9ef4fbcd0925fe705683b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7de7a66d6867ddbf077f1c20d16d8fc"><td class="memItemLeft" align="right" valign="top"><a id="ae7de7a66d6867ddbf077f1c20d16d8fc"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a> (height_t height) const</td></tr>
 <tr class="memdesc:ae7de7a66d6867ddbf077f1c20d16d8fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">block is considered old if it is behind current tip further than 'old blocks window' blocks <br /></td></tr>
@@ -269,6 +269,9 @@ template&lt;typename T , typename  = typename std::enable_if&lt;                
 <tr class="memitem:a78f4ab76e6419449175a99f7b66d7ad4 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a78f4ab76e6419449175a99f7b66d7ad4"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>loadTip</b> (const hash_t &amp;hash, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a78f4ab76e6419449175a99f7b66d7ad4 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48c1ac8d9b8139e000c439898b2c587e inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a48c1ac8d9b8139e000c439898b2c587e">loadBlockForward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a48c1ac8d9b8139e000c439898b2c587e inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">Efficiently connects <a class="el" href="structaltintegration_1_1BlockIndex.html" title="A node in a block tree.">BlockIndex</a> to this tree, when it is loaded from disk.  <a href="structaltintegration_1_1BaseBlockTree.html#a48c1ac8d9b8139e000c439898b2c587e">More...</a><br /></td></tr>
+<tr class="separator:a48c1ac8d9b8139e000c439898b2c587e inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9c8e5e91a8bf0c67a41db06ff61f48c inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ab9c8e5e91a8bf0c67a41db06ff61f48c"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>loadBlockBackward</b> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:ab9c8e5e91a8bf0c67a41db06ff61f48c inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -600,8 +603,8 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a24779f15d0d6b38e5d99d68e351bcbad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24779f15d0d6b38e5d99d68e351bcbad">&#9670;&nbsp;</a></span>loadBlockForward()</h2>
+<a id="aeca1274b31b9ef4fbcd0925fe705683b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeca1274b31b9ef4fbcd0925fe705683b">&#9670;&nbsp;</a></span>loadBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -612,7 +615,7 @@ template&lt;typename Block , typename ChainParams &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree</a>&lt; Block, ChainParams &gt;::loadBlockForward </td>
+          <td class="memname">bool <a class="el" href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree</a>&lt; Block, ChainParams &gt;::loadBlock </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;&#160;</td>
           <td class="paramname"><em>index</em>, </td>
@@ -631,16 +634,14 @@ template&lt;typename Block , typename ChainParams &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="structaltintegration_1_1BaseBlockTree.html#a48c1ac8d9b8139e000c439898b2c587e">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
-
 <p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00130">130</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                                                                                      {</div>
+<div class="fragment"><div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                                                                      {</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*index.header, state, *param_)) {</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;bad-header&quot;</span>);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div>

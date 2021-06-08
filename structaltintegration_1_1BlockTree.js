@@ -22,7 +22,7 @@ var structaltintegration_1_1BlockTree =
     [ "getParams", "structaltintegration_1_1BlockTree.html#a0746be8a5c44e3b861b42a0ae2b32fbf", null ],
     [ "isBlockOld", "structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7", null ],
     [ "isBlockOld", "structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc", null ],
-    [ "loadBlockForward", "structaltintegration_1_1BlockTree.html#a24779f15d0d6b38e5d99d68e351bcbad", null ],
+    [ "loadBlock", "structaltintegration_1_1BlockTree.html#aeca1274b31b9ef4fbcd0925fe705683b", null ],
     [ "onBlockInserted", "structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e", null ],
     [ "toPrettyString", "structaltintegration_1_1BlockTree.html#abb46e4499aa53ccde9f870f160c6ee91", null ],
     [ "validateAndAddBlock", "structaltintegration_1_1BlockTree.html#aae7d32d0860c91dd9ec31ec11632ca17", null ],
