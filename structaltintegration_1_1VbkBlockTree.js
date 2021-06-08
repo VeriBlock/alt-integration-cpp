@@ -18,7 +18,7 @@ var structaltintegration_1_1VbkBlockTree =
     [ "getComparator", "structaltintegration_1_1VbkBlockTree.html#adaa3d7518fbb08989f64359ed69c68d3", null ],
     [ "getInvalidVTBs", "structaltintegration_1_1VbkBlockTree.html#a19311caf1bd7104abd13dd18a3dac05e", null ],
     [ "getPayloadsIndex", "structaltintegration_1_1VbkBlockTree.html#a3c926c33efb7e59cfe01c44fc48898f5", null ],
-    [ "loadBlock", "structaltintegration_1_1VbkBlockTree.html#a6dd3c7476bc5d6d2b87c98006f3c5406", null ],
+    [ "loadBlock", "structaltintegration_1_1VbkBlockTree.html#a2705f0b812488d1770a98e6e0f748df2", null ],
     [ "loadTip", "structaltintegration_1_1VbkBlockTree.html#aba7f9010e94294a5d6eb523c3f1ed04c", null ],
     [ "overrideTip", "structaltintegration_1_1VbkBlockTree.html#a1213330b1a05be755a1ca5311e7e079c", null ],
     [ "removeInvalidVTB", "structaltintegration_1_1VbkBlockTree.html#a10dddc77e6474c137515b12e9ca4ace1", null ],
