@@ -1,5 +1,13 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27":[5,0,0,5,9],
+"structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856":[5,0,0,5,17],
+"structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a":[5,0,0,5,27],
+"structaltintegration_1_1AltBlockTree.html#ae7940d71bf588458cd482b542a8f000e":[5,0,0,5,11],
+"structaltintegration_1_1AltBlockTree.html#aff544139ceb38b4bccf018b9b111d4f8":[5,0,0,5,2],
+"structaltintegration_1_1AltChainParams.html":[5,0,0,7],
+"structaltintegration_1_1AltChainParams.html#a00d8084e4d4358d60d79546d5e58501e":[5,0,0,7,28],
+"structaltintegration_1_1AltChainParams.html#a069a34235dccecfd459f70366d016dfc":[5,0,0,7,26],
 "structaltintegration_1_1AltChainParams.html#a0caa05ae89b6ac4386bef645eaad1c24":[5,0,0,7,20],
 "structaltintegration_1_1AltChainParams.html#a0d153f5cdaa0e9448f7ea0cc6a1aaeae":[5,0,0,7,8],
 "structaltintegration_1_1AltChainParams.html#a1a13ff9ad72512351f4aeb58c2fa93ea":[5,0,0,7,24],
@@ -241,13 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BlockTree.html#a000f6815f1653cd050cc71402e02e27e":[5,0,0,10,12],
 "structaltintegration_1_1BlockTree.html#a06c83481b6968320a654c008255a4cf5":[5,0,0,10,8],
 "structaltintegration_1_1BlockTree.html#a0746be8a5c44e3b861b42a0ae2b32fbf":[5,0,0,10,19],
-"structaltintegration_1_1BlockTree.html#a110c51aef126b8fec98aa6950d56ff38":[5,0,0,10,10],
-"structaltintegration_1_1BlockTree.html#a378e5bc6b86e1f273a31071a27a4ec78":[5,0,0,10,15],
-"structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e":[5,0,0,10,23],
-"structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905":[5,0,0,10,17],
-"structaltintegration_1_1BlockTree.html#a50d00023be34392d74d03d9ab5f67b14":[5,0,0,10,1],
-"structaltintegration_1_1BlockTree.html#a51fce8c4ef10fd35e75de77c40ec9e0e":[5,0,0,10,22],
-"structaltintegration_1_1BlockTree.html#a562bf09293e69cb1df2da7a6b43227dd":[5,0,0,10,0],
-"structaltintegration_1_1BlockTree.html#a5a7939bc0e983e603b6336b1030cf31c":[5,0,0,10,13],
-"structaltintegration_1_1BlockTree.html#a61152955290884e219db8ee39b2ca2a8":[5,0,0,10,4]
+"structaltintegration_1_1BlockTree.html#a110c51aef126b8fec98aa6950d56ff38":[5,0,0,10,10]
 };
