@@ -85,7 +85,7 @@ bool loadTree(BlockTreeT& tree,
 
   for (const auto& block : blocks) {
     // load blocks one by one
-    if (!tree.loadBlock(block, state)) {
+    if (!tree.loadBlockForward(block, state)) {
       return state.Invalid("load-tree");
     }
   }
