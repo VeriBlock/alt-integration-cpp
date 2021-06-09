@@ -527,12 +527,24 @@ void AltBlockTree::overrideTip(index_t& to) {
   activeChain_.setTip(&to);
 }
 
-bool AltBlockTree::loadBlock(const stored_index_t& index,
-                             ValidationState& state) {
-  if (!base::loadBlock(index, state)) {
+bool AltBlockTree::loadBlockForward(const stored_index_t& index,
+                                    ValidationState& state) {
+  if (!base::loadBlockForward(index, state)) {
     return false;  // already set
   }
+  return loadBlockInner(index, state);
+}
 
+bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
+                                     ValidationState& state) {
+  if (!base::loadBlockBackward(index, state)) {
+    return false;
+  }
+  return loadBlockInner(index, state);
+}
+
+bool AltBlockTree::loadBlockInner(const stored_index_t& index,
+                                  ValidationState& state) {
   // load endorsements
   const auto& containingHash = index.header->getHash();
   auto* current = getBlockIndex(containingHash);
