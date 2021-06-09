@@ -88,9 +88,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_NoUnconnectedBlockCheck) {
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   alttree.acceptBlock(containingBlock.getHash(), popData);
 
-  save();
+  save(alttree);
 
-  EXPECT_TRUE(load());
+  EXPECT_TRUE(load(alttree2));
   EXPECT_TRUE(state.IsValid());
 }
 
