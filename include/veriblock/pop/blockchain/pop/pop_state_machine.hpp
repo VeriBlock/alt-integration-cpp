@@ -13,8 +13,6 @@
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
 
-#include "continue_on_invalid_context.hpp"
-
 namespace altintegration {
 
 namespace {
@@ -78,13 +76,11 @@ struct PopStateMachine {
 
   PopStateMachine(ProtectedTree& ed,
                   ProtectingBlockTree& ing,
-                  PayloadsIndex& payloadsIndex,
-                  ContinueOnInvalidContext* continueOnInvalid = nullptr)
+                  PayloadsIndex& payloadsIndex)
       : ed_(ed),
         ing_(ing),
         commandGroupStore_(ed_.getCommandGroupStore()),
-        payloadsIndex_(payloadsIndex),
-        continueOnInvalid_(continueOnInvalid) {}
+        payloadsIndex_(payloadsIndex) {}
 
   // atomic: applies either all or none of the block's commands
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
@@ -113,25 +109,7 @@ struct PopStateMachine {
                       HexStr((*cgroup)->id),
                       index.toShortPrettyString());
 
-        bool thisPayloadDoesNotFit = false;
-        if ((continueOnInvalid_ != nullptr) &&
-            !continueOnInvalid_->canFit(**cgroup)) {
-          // this payload does not fit current block
-          thisPayloadDoesNotFit = true;
-        }
-
-        // if payloads does not fit, it will be removed from a block
-        if (thisPayloadDoesNotFit || !(*cgroup)->execute(state)) {
-          if (continueOnInvalid_ != nullptr) {
-            removePayloadsFromIndex<block_t>(payloadsIndex_, index, **cgroup);
-            VBK_LOG_INFO("%s=%s can't be connected: %s",
-                         *(*cgroup)->payload_type_name,
-                         HexStr((*cgroup)->id),
-                         state.toString());
-            state.reset();
-            continue;
-          }
-
+        if (!(*cgroup)->execute(state)) {
           VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
                         index.toPrettyString(),
@@ -349,7 +327,6 @@ struct PopStateMachine {
   ProtectingBlockTree& ing_;
   command_group_store_t& commandGroupStore_;
   PayloadsIndex& payloadsIndex_;
-  ContinueOnInvalidContext* continueOnInvalid_ = nullptr;
 };
 
 }  // namespace altintegration

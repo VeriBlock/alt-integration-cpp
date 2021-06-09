@@ -247,6 +247,52 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
 
+  // an incremental block builder
+  // the tree must not be modified during the lifetime of the object
+  struct BlockPayloadMutator {
+    using tree_t = AltBlockTree;
+    using payload_index_t = PayloadsIndex;
+    using block_index_t = typename tree_t::index_t;
+    using id_vector_t = std::vector<uint8_t>;
+
+    BlockPayloadMutator(tree_t& tree, block_index_t& block);
+
+    //! stateful duplicate payload check as performed by connectBlock()
+    bool isStatefulDuplicate(const id_vector_t& payload_id);
+    //! stateless payload duplicate check functionally equivalent to
+    //! checkPopDataForDuplicates
+    bool isStatelessDuplicate(const id_vector_t& payload_id);
+
+    /**
+     * Add a payload to a leaf connected block, apply the payload if the block
+     *is applied
+     * @pre: the payload must be retrievable via getPayloadsProvider()
+     * @invariant: does not change the validity of any block
+     * @invariant atomic: either adds and applies the payload or returns false
+     * and leaves the tree unchanged
+     **/
+    template <typename Payload>
+    bool add(const Payload& payload, ValidationState& state);
+
+    block_index_t& getBlock() { return block_; }
+
+   private:
+    tree_t& tree_;
+    block_index_t& block_;
+    payload_index_t& payload_index_;
+    std::unordered_set<std::vector<uint8_t>> ids_;
+    Chain<block_index_t> chain_;
+  };
+
+  /**
+   * Create a session object that allows incremental payload list modification
+   * in the given block
+   *
+   * @pre the block must be a connected leaf
+   * @param[in] block the block index of the block to modify
+   */
+  BlockPayloadMutator makeConnectedLeafPayloadMutator(index_t& block);
+
   /**
    * Get all connected tips after given block.
    * @param[in] index input block
