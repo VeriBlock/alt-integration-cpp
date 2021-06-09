@@ -1,8 +1,8 @@
 <map id="altintegration::VbkBlockTree" name="altintegration::VbkBlockTree">
-<area shape="rect" id="node1" title="Veriblock block tree." alt="" coords="317,2383,501,2607"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="305,1992,513,2333"/>
+<area shape="rect" id="node1" title="Veriblock block tree." alt="" coords="317,2412,501,2636"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="305,2007,513,2363"/>
 <area shape="rect" id="node3" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="303,1212,505,1539"/>
-<area shape="rect" id="node21" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="425,1588,604,1929"/>
+<area shape="rect" id="node21" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="425,1588,604,1944"/>
 <area shape="rect" id="node4" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="5,918,181,1142"/>
 <area shape="rect" id="node5" href="$structaltintegration_1_1Chain.html" title=" " alt="" coords="206,911,394,1149"/>
 <area shape="rect" id="node6" href="$structaltintegration_1_1Chain.html" title="Fully in&#45;memory chain representation." alt="" coords="231,573,366,811"/>
