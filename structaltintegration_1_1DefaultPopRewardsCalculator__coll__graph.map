@@ -1,7 +1,7 @@
 <map id="altintegration::DefaultPopRewardsCalculator" name="altintegration::DefaultPopRewardsCalculator">
-<area shape="rect" id="node1" title=" " alt="" coords="254,2424,475,2736"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1PopRewardsCalculator.html" title=" " alt="" coords="5,2152,185,2259"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="732,2049,912,2361"/>
+<area shape="rect" id="node1" title=" " alt="" coords="254,2395,475,2707"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1PopRewardsCalculator.html" title=" " alt="" coords="5,2137,185,2244"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="732,2064,912,2317"/>
 <area shape="rect" id="node4" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="870,1660,1073,1987"/>
 <area shape="rect" id="node5" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="871,947,1047,1171"/>
 <area shape="rect" id="node22" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="1009,1271,1211,1597"/>
@@ -14,7 +14,7 @@
 <area shape="rect" id="node12" title=" " alt="" coords="828,646,963,738"/>
 <area shape="rect" id="node18" title=" " alt="" coords="653,145,791,223"/>
 <area shape="rect" id="node31" title=" " alt="" coords="399,145,503,223"/>
-<area shape="rect" id="node25" title=" " alt="" coords="400,2152,599,2259"/>
+<area shape="rect" id="node25" title=" " alt="" coords="400,2137,599,2244"/>
 <area shape="rect" id="node13" title=" " alt="" coords="705,348,744,425"/>
 <area shape="rect" id="node20" title=" " alt="" coords="527,653,621,731"/>
 <area shape="rect" id="node21" title=" " alt="" coords="645,653,804,731"/>
@@ -23,7 +23,7 @@
 <area shape="rect" id="node19" title=" " alt="" coords="277,1013,426,1105"/>
 <area shape="rect" id="node16" title=" " alt="" coords="298,348,405,425"/>
 <area shape="rect" id="node17" title=" " alt="" coords="470,348,641,425"/>
-<area shape="rect" id="node23" title=" " alt="" coords="209,2064,376,2347"/>
+<area shape="rect" id="node23" title=" " alt="" coords="209,2049,376,2332"/>
 <area shape="rect" id="node24" title=" " alt="" coords="219,1682,342,1965"/>
 <area shape="rect" id="node26" title=" " alt="" coords="367,1697,560,1950"/>
 <area shape="rect" id="node27" href="$classaltintegration_1_1ArithUint256.html" title="256&#45;bit unsigned big integer." alt="" coords="300,1293,475,1575"/>
