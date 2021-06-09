@@ -49,7 +49,8 @@ LogLevel StringToLevel(const std::string& str) {
   if (str == "info") {
     return LogLevel::info;
   }
-  if (str == "warn") {
+  // default
+  if ((str == "warn") || (str == "") ) {
     return LogLevel::warn;
   }
   if (str == "error") {

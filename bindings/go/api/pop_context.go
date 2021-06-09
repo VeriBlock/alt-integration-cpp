@@ -25,9 +25,6 @@ func (v *PopContext) validate() {
 func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext {
 	config.validate()
 	storage.validate()
-	if log_lvl == "" {
-		log_lvl = "warn"
-	}
 	context := &PopContext{
 		ref:   C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
 		mutex: NewSafeMutex(),
