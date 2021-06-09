@@ -1,5 +1,5 @@
 <map id="altintegration::BlockTree&lt; Block, ChainParams &gt;" name="altintegration::BlockTree&lt; Block, ChainParams &gt;">
-<area shape="rect" id="node1" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="315,1588,493,1944"/>
+<area shape="rect" id="node1" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="315,1588,493,1929"/>
 <area shape="rect" id="node2" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="303,1212,505,1539"/>
 <area shape="rect" id="node3" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="5,918,181,1142"/>
 <area shape="rect" id="node4" href="$structaltintegration_1_1Chain.html" title=" " alt="" coords="206,911,394,1149"/>

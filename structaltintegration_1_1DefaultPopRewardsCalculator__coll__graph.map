@@ -1,8 +1,8 @@
 <map id="altintegration::DefaultPopRewardsCalculator" name="altintegration::DefaultPopRewardsCalculator">
 <area shape="rect" id="node1" title=" " alt="" coords="254,2395,475,2707"/>
 <area shape="rect" id="node2" href="$structaltintegration_1_1PopRewardsCalculator.html" title=" " alt="" coords="5,2137,185,2244"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="732,2064,912,2317"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="870,1660,1073,1987"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="727,2057,925,2325"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="871,1660,1074,1987"/>
 <area shape="rect" id="node5" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="871,947,1047,1171"/>
 <area shape="rect" id="node22" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="1009,1271,1211,1597"/>
 <area shape="rect" id="node6" href="$structaltintegration_1_1Chain.html" title=" " alt="" coords="1297,940,1485,1179"/>

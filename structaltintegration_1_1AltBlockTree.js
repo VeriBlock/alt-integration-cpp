@@ -1,5 +1,6 @@
 var structaltintegration_1_1AltBlockTree =
 [
+    [ "BlockPayloadMutator", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator" ],
     [ "alt_config_t", "structaltintegration_1_1AltBlockTree.html#a5bb50da4e66bd36151daf777c500cc04", null ],
     [ "base", "structaltintegration_1_1AltBlockTree.html#a62347a05a325388bc52f9bcbed5e0be0", null ],
     [ "btc_config_t", "structaltintegration_1_1AltBlockTree.html#aff544139ceb38b4bccf018b9b111d4f8", null ],
@@ -21,9 +22,9 @@ var structaltintegration_1_1AltBlockTree =
     [ "comparePopScore", "structaltintegration_1_1AltBlockTree.html#a29da03ce1981be457281181a5ad23e24", null ],
     [ "getConnectedTipsAfter", "structaltintegration_1_1AltBlockTree.html#a58902c73ffc07bdf8ec6bbb9210428fd", null ],
     [ "getParams", "structaltintegration_1_1AltBlockTree.html#a458080d2b38c73b007bf1993d1d96aa3", null ],
-    [ "loadBlockBackward", "structaltintegration_1_1AltBlockTree.html#a17896cdaf0bec53948b9b045a18cd007", null ],
-    [ "loadBlockForward", "structaltintegration_1_1AltBlockTree.html#a13c644bfd3db9003611b3dc2bed75de7", null ],
+    [ "loadBlock", "structaltintegration_1_1AltBlockTree.html#aa5cbd6cc18f89f065cde90403ea31db6", null ],
     [ "loadTip", "structaltintegration_1_1AltBlockTree.html#a5d85d2745dd3f3be6fee04a4deb8360f", null ],
+    [ "makeConnectedLeafPayloadMutator", "structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d", null ],
     [ "removeSubtree", "structaltintegration_1_1AltBlockTree.html#a99ca69840eb2e8cfe725fa521381750e", null ],
     [ "setState", "structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd", null ],
     [ "vbk", "structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919", null ],

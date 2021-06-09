@@ -31,6 +31,7 @@ var hierarchy =
     [ "altintegration::BlockIterator< BlockT >", "structaltintegration_1_1BlockIterator.html", [
       [ "altintegration::adaptors::BlockIteratorImpl< BlockT >", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", null ]
     ] ],
+    [ "altintegration::AltBlockTree::BlockPayloadMutator", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html", null ],
     [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", [
       [ "altintegration::adaptors::BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", null ]
     ] ],
@@ -46,6 +47,7 @@ var hierarchy =
     [ "altintegration::BtcTx", "structaltintegration_1_1BtcTx.html", null ],
     [ "altintegration::Chain< BlockIndexT >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::Chain< altintegration::BlockIndex >", "structaltintegration_1_1Chain.html", null ],
+    [ "altintegration::Chain< block_index_t >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::ChainSlice< BlockIndexT >", "structaltintegration_1_1ChainSlice.html", null ],
     [ "altintegration::CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", null ],
     [ "altintegration::Coin", "structaltintegration_1_1Coin.html", null ],
