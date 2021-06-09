@@ -49,8 +49,7 @@ LogLevel StringToLevel(const std::string& str) {
   if (str == "info") {
     return LogLevel::info;
   }
-  // default
-  if ((str == "warn") || (str == "") ) {
+  if (str == "warn") {
     return LogLevel::warn;
   }
   if (str == "error") {
@@ -61,6 +60,10 @@ LogLevel StringToLevel(const std::string& str) {
   }
   if (str == "off") {
     return LogLevel::off;
+  }
+  // default
+  if (str == "") {
+    return LogLevel::warn;
   }
   throw std::invalid_argument(
       fmt::format("{} is not valid log level. Expected one of "
