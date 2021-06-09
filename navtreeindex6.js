@@ -1,5 +1,16 @@
 var NAVTREEINDEX6 =
 {
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036":[5,0,0,59,15],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#ab7178c0b459a20d516ae3be44541965e":[5,0,0,59,9],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454":[5,0,0,59,3],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#ad3fd4625194133ae94eac0fde98fe2b0":[5,0,0,59,4],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#ad7350db0af292d89ea78dbd25393cb4e":[5,0,0,59,14],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#af39539bcb281499d6162a2c79eeba932":[5,0,0,59,11],
+"structaltintegration_1_1Endorsement.html":[5,0,0,36],
+"structaltintegration_1_1Endorsement.html#a0277ad933e9327604fda6f3783a89d34":[5,0,0,36,1],
+"structaltintegration_1_1Endorsement.html#a12a6b3d7fd19e10f847b2887c188c663":[5,0,0,36,10],
+"structaltintegration_1_1Endorsement.html#a1a5100caca31ae5b4b85c5c070c94e31":[5,0,0,36,9],
+"structaltintegration_1_1Endorsement.html#a20a13ed6cfe73dd47a48b014d6158206":[5,0,0,36,6],
 "structaltintegration_1_1Endorsement.html#a2f54f858ee33303f43b7c7c2eba90fa7":[5,0,0,36,4],
 "structaltintegration_1_1Endorsement.html#a3e4b04934a3d49b1597f1ef408322501":[5,0,0,36,20],
 "structaltintegration_1_1Endorsement.html#a5387603b58461589e9f62f2cedd61124":[5,0,0,36,17],
@@ -238,16 +249,5 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[5,0,0,57,10],
 "structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[5,0,0,57,11],
 "structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[5,0,0,57,16],
-"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50],
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[5,0,0,50,0],
-"structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42":[5,0,0,50,1],
-"structaltintegration_1_1StorageIOException.html":[5,0,0,51],
-"structaltintegration_1_1StorageIOException.html#ac5895f9e5a3d6570477cd8e9f055d33d":[5,0,0,51,0],
-"structaltintegration_1_1StoredBlockIndex.html":[5,0,0,67],
-"structaltintegration_1_1StoredBlockIndex.html#a195e2a0a0420afe91ebdd8fca279a048":[5,0,0,67,2],
-"structaltintegration_1_1StoredBlockIndex.html#a5fa7c9f32b23d2d97bf2a9c264999222":[5,0,0,67,3],
-"structaltintegration_1_1StoredBlockIndex.html#a6d2b89c805559262191299659e55f0ec":[5,0,0,67,7],
-"structaltintegration_1_1StoredBlockIndex.html#a79f49e553226aa37168b6cd566435db3":[5,0,0,67,0],
-"structaltintegration_1_1StoredBlockIndex.html#aac75c9c08d4d081ea250cf055f82e33a":[5,0,0,67,10],
-"structaltintegration_1_1StoredBlockIndex.html#ac580cc57c310ee3bc346cd9d7fb2b7fa":[5,0,0,67,5]
+"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50]
 };

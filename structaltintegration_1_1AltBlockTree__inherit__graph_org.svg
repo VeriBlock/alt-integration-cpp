@@ -29,9 +29,9 @@
 <text text-anchor="start" x="9.5" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ makeConnectedLeafPayload</text>
 <text text-anchor="start" x="9.5" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">Mutator()</text>
 <text text-anchor="start" x="9.5" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getConnectedTipsAfter()</text>
-<text text-anchor="start" x="9.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlock()</text>
-<text text-anchor="start" x="9.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
-<text text-anchor="start" x="9.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 6 more...</text>
+<text text-anchor="start" x="9.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="9.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockBackward()</text>
+<text text-anchor="start" x="9.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 7 more...</text>
 </a>
 </g>
 </g>
@@ -59,7 +59,7 @@
 <text text-anchor="start" x="8" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="8" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="8" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
 <text text-anchor="start" x="8" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="8" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
@@ -99,7 +99,7 @@
 <text text-anchor="start" x="8" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="8" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="8" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="8" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="8" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
 <text text-anchor="start" x="8" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="8" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="8" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>

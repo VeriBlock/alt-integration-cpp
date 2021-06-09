@@ -125,9 +125,9 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="549" y="-349" font-family="Helvetica,sans-Serif" font-size="10.00">+ makeConnectedLeafPayload</text>
 <text text-anchor="start" x="549" y="-338" font-family="Helvetica,sans-Serif" font-size="10.00">Mutator()</text>
 <text text-anchor="start" x="549" y="-327" font-family="Helvetica,sans-Serif" font-size="10.00">+ getConnectedTipsAfter()</text>
-<text text-anchor="start" x="549" y="-316" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlock()</text>
-<text text-anchor="start" x="549" y="-305" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
-<text text-anchor="start" x="549" y="-294" font-family="Helvetica,sans-Serif" font-size="10.00">and 6 more...</text>
+<text text-anchor="start" x="549" y="-316" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="549" y="-305" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockBackward()</text>
+<text text-anchor="start" x="549" y="-294" font-family="Helvetica,sans-Serif" font-size="10.00">and 7 more...</text>
 </a>
 </g>
 </g>
@@ -158,7 +158,7 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="657.5" y="-646.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="657.5" y="-635.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="657.5" y="-624.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="657.5" y="-613.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="657.5" y="-613.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
 <text text-anchor="start" x="657.5" y="-602.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="657.5" y="-591.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="657.5" y="-580.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
@@ -224,7 +224,7 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="760.5" y="-938.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="760.5" y="-927.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="760.5" y="-916.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
-<text text-anchor="start" x="760.5" y="-905.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="760.5" y="-905.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
 <text text-anchor="start" x="760.5" y="-894.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="760.5" y="-883.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="760.5" y="-872.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
