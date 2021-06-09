@@ -135,7 +135,8 @@ struct PopStateMachine {
     // so it is fully valid
     if (index.pprev->isValid(BLOCK_CAN_BE_APPLIED) &&
         index.getHeight() ==
-            ed_.getRoot().getHeight() + ed_.appliedBlockCount) {
+            ed_.getRoot().getHeight() +
+                (typename block_t::height_t)ed_.appliedBlockCount) {
       index.raiseValidity(BLOCK_CAN_BE_APPLIED);
     } else {
       // this block is applied together with the other chain during POP FR

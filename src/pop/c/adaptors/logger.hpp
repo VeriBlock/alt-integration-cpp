@@ -7,21 +7,12 @@
 #define VERIBLOCK_POP_CPP_C_ADAPTORS_LOGGER_HPP
 
 #include "veriblock/pop/c/extern.h"
-#include "veriblock/pop/c/extern2.h"
 #include "veriblock/pop/logger.hpp"
 
 namespace adaptors {
 
 struct Logger : altintegration::Logger {
   ~Logger() override = default;
-
-  void log(altintegration::LogLevel lvl, const std::string& msg) override {
-    VBK_Logger_log(altintegration::LevelToString(lvl).c_str(), msg.c_str());
-  }
-};
-
-struct Logger2 : altintegration::Logger {
-  ~Logger2() override = default;
 
   void log(altintegration::LogLevel lvl, const std::string& msg) override {
     std::string str_lvl = altintegration::LevelToString(lvl);

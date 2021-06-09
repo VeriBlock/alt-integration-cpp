@@ -14,7 +14,7 @@
 #include "altblock.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/serde.hpp"
-#include "../validation_state2.hpp"
+#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(alt_block) {
   if (self != nullptr) {

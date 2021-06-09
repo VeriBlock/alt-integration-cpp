@@ -3,495 +3,284 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_POP_CONTEXT_H
-#define VERIBLOCK_POP_CPP_POP_CONTEXT_H
+#ifndef VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
+#define VERIBLOCK_POP_CPP_C_POP_CONTEXT_H
 
-#include <stdbool.h>
+#include <stdint.h>
 
-#include "bytestream.h"
-#include "config.h"
-#include "storage.h"
-#include "validation_state.h"
+#include "veriblock/pop/c/config.h"
+#include "veriblock/pop/c/entities/altblock.h"
+#include "veriblock/pop/c/entities/block_index.h"
+#include "veriblock/pop/c/entities/pop_payouts.h"
+#include "veriblock/pop/c/entities/popdata.h"
+#include "veriblock/pop/c/storage.h"
+#include "veriblock/pop/c/type_helpers.h"
+#include "veriblock/pop/c/validation_state.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct PopContext PopContext;
+POP_DECLARE_ENTITY(pop_context);
 
-PopContext* VBK_NewPopContext(Config_t* config,
-                              Storage_t* storage,
-                              const char* log_lvl);
-void VBK_FreePopContext(PopContext* app);
+POP_ENTITY_NEW_FUNCTION(pop_context,
+                        const POP_ENTITY_NAME(config) * config,
+                        const POP_ENTITY_NAME(storage) * storage,
+                        POP_ARRAY_NAME(string) log_lvl);
 
 /**
  * @copybrief altintegration::AltBlockTree::acceptBlockHeader
  * @see altintegration::AltBlockTree::acceptBlockHeader
  * @param[in] self PopContext
- * @param[in] block_bytes altintegration::AltBlock raw represantation
- * @param[in] bytes_size block bytes size
- * @param[out] state VbkValidationState
+ * @param[in] block POP_ENTITY_NAME(alt_block) pointer to the
+ * altintegration::AltBlock
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
  * @return true if block is valid, and added; false otherwise.
  */
-bool VBK_AltBlockTree_acceptBlockHeader(PopContext* self,
-                                        const uint8_t* block_bytes,
-                                        int bytes_size,
-                                        VbkValidationState* state);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           accept_block_header,
+                           const POP_ENTITY_NAME(alt_block) * block,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 /**
- * @copybrief altintegration::AltBlockTree::acceptBlockHeader
- * @see altintegration::AltBlockTree::acceptBlockHeader
+ * @copybrief altintegration::AltBlockTree::acceptBlock
+ * @see altintegration::AltBlockTree::acceptBlock
  * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::AltBlock hash raw represantation
- * @param[in] hash_bytes_size hash bytes size
- * @param[in] payloads_bytes altintegration::PopData raw represantation of all
- * POP payloads stored in this block
- * @param[in] payloads_bytes_size payloads bytes size
- * @param[out] state VbkValidationState
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @param[in] pop_data POP_ENTITY_NAME(pop_data) pointer to the
+ * altintegration::PopData
  *
  */
-void VBK_AltBlockTree_acceptBlock(PopContext* self,
-                                  const uint8_t* hash_bytes,
-                                  int hash_bytes_size,
-                                  const uint8_t* payloads_bytes,
-                                  int payloads_bytes_size,
-                                  VbkValidationState* state);
-
-/**
- * @copybrief altintegration::AltBlockTree::comparePopScore
- * @see altintegration::AltBlockTree::comparePopScore
- * @param[in] self PopContext
- * @param[in] A_hash_bytes A altintegration::AltBlock hash bytes of current tip
- * in AltBlockTree. Fails on assert if current tip != A.
- * @param[in] A_hash_bytes_size A block hash bytes size
- * @param[in] B_hash_bytes B altintegration::AltBlock hash bytes. Current tip
- * will be compared against this block. Must exist on chain and have
- * BLOCK_HAS_PAYLOADS.
- * @param[in] B_hash_bytes_size B block hash bytes size
- * @see altintegration::AltBlockTree::comparePopScore
- */
-int VBK_AltBlockTree_comparePopScore(PopContext* self,
-                                     const uint8_t* A_hash_bytes,
-                                     int A_hash_bytes_size,
-                                     const uint8_t* B_hash_bytes,
-                                     int B_hash_bytes_size);
-
-/**
- * @copybrief altintegration::AltBlockTree::removeSubtree
- * @see altintegration::AltBlockTree::removeSubtree
- * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::AltBlock hash bytes of the block to be
- * removed
- * @param[in] hash_bytes_size hash bytes size
- * @warning fails on assert if block can not be found in this tree.
- */
-void VBK_AltBlockTree_removeSubtree(PopContext* self,
-                                    const uint8_t* hash_bytes,
-                                    int hash_bytes_size);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           accept_block,
+                           POP_ARRAY_NAME(u8) hash,
+                           const POP_ENTITY_NAME(pop_data) * pop_data);
 
 /**
  * @copybrief altintegration::AltBlockTree::setState
  * @see altintegration::AltBlockTree::setState
  * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::AltBlock hash bytes of the block to
- * tree will be switched to this block
- * @param[in] hash_bytes_size size of input hash
- * @param[out] state VbkValidationState
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
  * @return `false` if intermediate or target block is invalid. In this case
  * tree will rollback into original state. `true` if state change is
  * successful.
  * @invariant atomic - either switches to new state, or does nothing.
  * @warning Expensive operation.
  */
-bool VBK_AltBlockTree_setState(PopContext* self,
-                               const uint8_t* hash_bytes,
-                               int hash_bytes_size,
-                               VbkValidationState* state);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           bool,
+                           set_state,
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state);
+
+/**
+ * @copybrief altintegration::AltBlockTree::comparePopScore
+ * @see altintegration::AltBlockTree::comparePopScore
+ * @param[in] self PopContext
+ * @param[in] A_block_hash POP_ARRAY_NAME(u8) array altintegration::AltBlock
+ * hash bytes of current tip in AltBlockTree. Fails on assert if current tip !=
+ * A_block.
+ * @param[in] B_block_hash POP_ARRAY_NAME(u8) array altintegration::AltBlock
+ * hash bytes. Current tip will be compared against this block. Must exist on
+ * chain and have BLOCK_HAS_PAYLOADS.
+ * @return Returns positive if chain A is better. Returns negative if chain B is
+ * better. Returns 0 if blocks are equal in terms of POP. Users should fallback
+ * to chain-native Fork Resolution algorithm.
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           int,
+                           compare_pop_score,
+                           POP_ARRAY_NAME(u8) A_block_hash,
+                           POP_ARRAY_NAME(u8) B_block_hash);
 
 /**
  * @copybrief altintegration::AltBlockTree::getPopPayout
  * @see altintegration::AltBlockTree::getPopPayout
  *
  * Before executing this method the state should be switched to the provided
- * block, should execute VBK_AltBlockTree_setState() for the provided block
+ * block, should execute set_state for the provided block
  * before executing this function.
  *
  * @param[in] self PopContext
- * @param[in] tip_hash_bytes altintegration::AltBlock hash bytes of the tip
- * @param[in] tip_hash_bytes_size size of input hash
- * @return VbkByteStream with the serialized altintegration::PopPayouts
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @return POP_ARRAY_NAME(pop_payout) array of the POP_ENTITY_NAME(pop_payout)
  */
-VBK_ByteStream* VBK_AltBlockTree_getPopPayout(PopContext* self,
-                                              const uint8_t* tip_hash_bytes,
-                                              int tip_hash_bytes_size);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(pop_payout),
+                           get_pop_payouts,
+                           POP_ARRAY_NAME(u8) hash);
 
 /**
- * Find a BtcBlock index from the BtcTree
- *
+ * @copybrief altintegration::AltBlockTree::removeSubtree
+ * @see altintegration::AltBlockTree::removeSubtree
  * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::BtcBlock hash bytes
- * @param[in] hash_bytes_size size of input hash
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized
- * block to the stream
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @warning fails on assert if block can not be found in this tree.
  */
-VBK_ByteStream* VBK_btc_getBlockIndex(PopContext* self,
-                                      const uint8_t* hash_bytes,
-                                      int hash_bytes_size);
-
-/**
- * Find a VbkBlock index from the VbkTree
- *
- * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::VbkBlock hash bytes
- * @param[in] hash_bytes_size size of input hash
- * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
- * to the stream
- */
-VBK_ByteStream* VBK_vbk_getBlockIndex(PopContext* self,
-                                      const uint8_t* hash_bytes,
-                                      int hash_bytes_size);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           void,
+                           remove_subtree,
+                           POP_ARRAY_NAME(u8) hash);
 
 /**
  * Find a AltBlock index from the AltTree
  *
  * @param[in] self PopContext
- * @param[in] hash_bytes altintegration::AltBlock hash bytes
- * @param[in] hash_bytes_size size of input hash
- * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
- * to the stream
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>, if cannot find return
+ * nullptr
  */
-VBK_ByteStream* VBK_alt_getBlockIndex(PopContext* self,
-                                      const uint8_t* hash_bytes,
-                                      int hash_bytes_size);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_block_index,
+                           POP_ARRAY_NAME(u8) hash);
 
 /**
- * Return best block (tip) of the  AltTree
+ * Find a VbkBlock index from the VbkTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
- * to the stream
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::VbkBlock hash bytes
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>, if cannot find return
+ * nullptr
  */
-VBK_ByteStream* VBK_alt_BestBlock(PopContext* self);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_block_index,
+                           POP_ARRAY_NAME(u8) hash);
 
 /**
- * Return best block (tip) of the  VbkBlockTree
+ * Find a BtcBlock index from the BtcTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
- * to the stream
+ * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::BtcBlock hash bytes
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>, if cannot find return
+ * nullptr
  */
-VBK_ByteStream* VBK_vbk_BestBlock(PopContext* self);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_block_index,
+                           POP_ARRAY_NAME(u8) hash);
 
 /**
- * Return best block (tip) of the  BtcBlockTree
+ * Return best block (tip) of the AltTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
- * to the stream
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>
  */
-VBK_ByteStream* VBK_btc_BestBlock(PopContext* self);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_best_block);
 
 /**
- * Return bootsrap block (first) of the VbkBlockTree
+ * Return best block (tip) of the VbkTree
+ *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
- * to the stream
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>
  */
-VBK_ByteStream* VBK_vbk_BootstrapBlock(PopContext* self);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_best_block);
 
 /**
- * Return bootsrap block (first) of the BtcBlockTree
+ * Return best block (tip) of the BtcTree
+ *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
- * to the stream
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>
  */
-VBK_ByteStream* VBK_btc_BootstrapBlock(PopContext* self);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_best_block);
+
+/**
+ * Return bootsrap block (first) of the AltTree
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_bootstrap_block);
+
+/**
+ * Return bootsrap block (first) of the VbkTree
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_bootstrap_block);
+
+/**
+ * Return bootsrap block (first) of the BtcTree
+ * @param[in] self PopContext
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_bootstrap_block);
 
 /**
  * Return block on the curent height from the active chain of the AltTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::AltBlock> serialized block
- * to the stream, if cannot find return nullptr
+ * @param[in] height uint32_t
+ * @return POP_ENTITY_NAME(alt_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::AltBlock>, if cannot find return
+ * nullptr
  */
-VBK_ByteStream* VBK_alt_BlockAtActiveChainByHeight(PopContext* self,
-                                                   int height);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(alt_block_index) *,
+                           alt_get_block_at_active_chain,
+                           uint32_t height);
 
 /**
- * Return block on the curent height from the active chain of the VbkBlockTree
+ * Return block on the curent height from the active chain of the VbkTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::VbkBlock> serialized block
- * to the stream, if cannot find return nullptr
+ * @param[in] height uint32_t
+ * @return POP_ENTITY_NAME(vbk_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::VbkBlock>, if cannot find return
+ * nullptr
  */
-VBK_ByteStream* VBK_vbk_BlockAtActiveChainByHeight(PopContext* self,
-                                                   int height);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(vbk_block_index) *,
+                           vbk_get_block_at_active_chain,
+                           uint32_t height);
 
 /**
- * Return block on the curent height from the active chain of the BtcBlockTree
+ * Return block on the curent height from the active chain of the BtcTree
  *
  * @param[in] self PopContext
- * @return altintegration::BlockIndex<altintegration::BtcBlock> serialized block
- * to the stream, if cannot find return nullptr
+ * @param[in] height uint32_t
+ * @return POP_ENTITY_NAME(btc_block_index) pointer to the
+ * altintegration::BlockIndex<altintegration::BtcBlock>, if cannot find return
+ * nullptr
  */
-VBK_ByteStream* VBK_btc_BlockAtActiveChainByHeight(PopContext* self,
-                                                   int height);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(btc_block_index) *,
+                           btc_get_block_at_active_chain,
+                           uint32_t height);
 
-/**
- * Return an array that stores all altintegration::AltBlock hashes which contain
- * the provided altintegration::ATV
- *
- * @param[in] self PopContext
- * @param[in] p_id the altintegration::ATV::id_t
- * @param[in] p_id_size size of the altintegration::ATV::id_t
- * @return  VbkByteStream with the serialized vector of the
- * altintegration::AltBlock hashes, if vector will empty return nullptr
- */
-VBK_ByteStream* VBK_alt_getATVContainingBlock(PopContext* self,
-                                              const uint8_t* p_id,
-                                              int p_id_size);
-
-/**
- * Return an array that stores all altintegration::AltBlock hashes which contain
- * the provided altintegration::VTB
- *
- * @param[in] self PopContext
- * @param[in] p_id the altintegration::VTB::id_t
- * @param[in] p_id_size size of the altintegration::VTB::id_t
- * @return  VbkByteStream with the serialized vector of the
- * altintegration::AltBlock hashes, if vector will empty return nullptr
- */
-VBK_ByteStream* VBK_alt_getVTBContainingBlock(PopContext* self,
-                                              const uint8_t* p_id,
-                                              int p_id_size);
-
-/**
- * Return an array that stores all altintegration::AltBlock hashes which contain
- * the provided altintegration::VbkBlock
- *
- * @param[in] self PopContext
- * @param[in] p_id the altintegration::VbkBlock::id_t
- * @param[in] p_id_size size of the altintegration::VbkBlock::id_t
- * @return  VbkByteStream with the serialized vector of the
- * altintegration::AltBlock hashes, if vector will empty return nullptr
- */
-VBK_ByteStream* VBK_alt_getVbkBlockContainingBlock(PopContext* self,
-                                                   const uint8_t* p_id,
-                                                   int p_id_size);
-
-/**
- * Return an array that stores all altintegration::VbkBlock hashes which contain
- * the provided altintegration::VTB
- *
- * @param[in] self PopContext
- * @param[in] p_id the altintegration::VTB::id_t
- * @param[in] p_id_size size of the altintegration::VTB::id_t
- * @return  VbkByteStream with the serialized vector of the
- * altintegration::VbkBlock hashes, if vector will empty return nullptr
- */
-VBK_ByteStream* VBK_vbk_getVTBContainingBlock(PopContext* self,
-                                              const uint8_t* p_id,
-                                              int p_id_size);
-
-/**
- * @copybrief altintegration::MemPool::submit
- * @see altintegration::MemPool::submit
- * @param[in] self PopContext
- * @param[in] bytes altintegration::ATV raw representation
- * @param[in] bytes_size bytes size
- * @param[out] state VbkValidationState
- * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
- * invalid
- */
-int VBK_MemPool_submit_atv(PopContext* self,
-                           const uint8_t* bytes,
-                           int bytes_size,
-                           VbkValidationState* state);
-
-/**
- * @copybrief altintegration::MemPool::submit
- * @see altintegration::MemPool::submit
- * @param[in] self PopContext
- * @param[in] bytes altintegration::VTB raw representation
- * @param[in] bytes_size bytes size
- * @param[out] state VbkValidationState
- * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
- * invalid
- */
-int VBK_MemPool_submit_vtb(PopContext* self,
-                           const uint8_t* bytes,
-                           int bytes_size,
-                           VbkValidationState* state);
-
-/**
- * @copybrief altintegration::MemPool::submit
- * @see altintegration::MemPool::submit
- * @param[in] self PopContext
- * @param[in] bytes altintegration::VbkBlock raw representation
- * @param[in] bytes_size bytes size
- * @param[out] state VbkValidationState
- * @return 0 if payload is valid, 1 if statefully invalid, 2 if statelessly
- * invalid
- */
-int VBK_MemPool_submit_vbk(PopContext* self,
-                           const uint8_t* bytes,
-                           int bytes_size,
-                           VbkValidationState* state);
-
-/**
- * @copybrief altintegration::MemPool::generatePopData
- * @see altintegration::MemPool::generatePopData
- * @param[in] self PopContext
- * @param[out] out_bytes output byte array of the altintegration::PopData (must
- * be pre-allocated). Statefully valid altintegration::PopData in the raw
- * representation that can be connected to current tip.
- * @param[out] bytes_size bytes size
- */
-void VBK_MemPool_getPop(PopContext* self, uint8_t* out_bytes, int* bytes_size);
-
-/**
- * @copybrief altintegration::MemPool::removeAll
- * @see altintegration::MemPool::removeAll
- * @param[in] self PopContext
- * @param[in] bytes altintegration::PopData raw representation
- * @param[in] bytes_size bytes size
- * @param[out] state VbkValidationState
- */
-void VBK_MemPool_removeAll(PopContext* self,
-                           const uint8_t* bytes,
-                           int bytes_size,
-                           VbkValidationState* state);
-
-/**
- * @copybrief return altintegration::MemPool known altintegration::ATV by its id
- *
- * @see altintegration::MemPool::get
- * @param[in] self PopContext
- * @param[in] id_bytes altintegration::ATV::id_t
- * @param[in] id_bytes_size size of the altintegration::ATV::id_t
- * @return return altintegration::ATV in the toVbkEncoding format, if
- * cannot find payloads return nullptr
- */
-VBK_ByteStream* VBK_MemPool_GetATV(PopContext* self,
-                                   const uint8_t* id_bytes,
-                                   int id_bytes_size);
-
-/**
- * @copybrief return altintegration::MemPool known altintegration::VTB by its id
- *
- * @see altintegration::MemPool::get
- * @param[in] self PopContext
- * @param[in] id_bytes altintegration::VTB::id_t
- * @param[in] id_bytes_size size of the altintegration::VTB::id_t
- * @return return altintegration::VTB in the toVbkEncoding format, if
- * cannot find payloads return nullptr
- */
-VBK_ByteStream* VBK_MemPool_GetVTB(PopContext* self,
-                                   const uint8_t* id_bytes,
-                                   int id_bytes_size);
-
-/**
- * @copybrief return altintegration::MemPool known altintegration::VbkBlock by
- * its id
- *
- * @see altintegration::MemPool::get
- * @param[in] self PopContext
- * @param[in] id_bytes altintegration::VbkBlock::id_t
- * @param[in] id_bytes_size size of the altintegration::VbkBlock::id_t
- * @return return altintegration::VbkBlock in the toVbkEncoding format, if
- * cannot find payloads return nullptr
- */
-VBK_ByteStream* VBK_MemPool_GetVbkBlock(PopContext* self,
-                                        const uint8_t* id_bytes,
-                                        int id_bytes_size);
-
-/**
- * @copybrief return altintegration::MemPool known ATV`s ids
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getMap
- * @param[in] self PopContext
- * @return VbkByteStream with the serialized vector of the ATV`s ids
- */
-VBK_ByteStream* VBK_MemPool_GetATVs(PopContext* self);
-
-/**
- * @copybrief return altintegration::MemPool known VTB`s ids
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getMap
- * @param[in] self PopContext
- * @return VbkByteStream with the serialized vector of the VTB`s ids
- */
-VBK_ByteStream* VBK_MemPool_GetVTBs(PopContext* self);
-
-/**
- * @copybrief return altintegration::MemPool known VbkBlock`s ids
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getMap
- * @param[in] self PopContext
- * @return VbkByteStream with the serialized vector of the VbkBlock`s ids
- */
-VBK_ByteStream* VBK_MemPool_GetVbkBlocks(PopContext* self);
-
-/**
- * @copybrief return altintegration::MemPool known ATV`s inFlight ids
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getInFlightMap
- * @param[in] self PopContext
- * @return VbkByteStream with the serialized vector of the ATV`s ids
- */
-VBK_ByteStream* VBK_MemPool_GetATVsInFlight(PopContext* self);
-
-/**
- * @copybrief return altintegration::MemPool known VTB`s inFlight ids
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getInFlightMap
- * @param[in] self PopContext
- * @return VbkByteStream with the serialized vector of the VTB`s ids
- */
-VBK_ByteStream* VBK_MemPool_GetVTBsInFlight(PopContext* self);
-
-/**
- * @copybrief return altintegration::MemPool known VbkBlock`s inFlight ids
- *
- * This method returns a vector of the payload`s ids serialized to the stream.
- * Each id has been serialized using the function
- * altintegration::writeSingleByteLenValue().
- *
- * @see altintegration::MemPool::getInFlightMap
- * @param[in] self PopContext
- * @return VbkByteStream with the serialized vector of the VbkBlock`s ids
- */
-VBK_ByteStream* VBK_MemPool_GetVbkBlocksInFlight(PopContext* self);
-
-/**
- * @copybrief altintegration::MemPool::clear
- * @see altintegration::MemPool::clear
- * @param[in] self PopContext
- */
-void VBK_MemPool_clear(PopContext* self);
+POP_ENTITY_CUSTOM_FUNCTION(pop_context,
+                           POP_ARRAY_NAME(array_u8),
+                           get_payload_containing_blocks,
+                           POP_ARRAY_NAME(u8) id);
 
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif
 
-#endif  // VERIBLOCK_POP_CPP_POP_CONTEXT_H
+#endif

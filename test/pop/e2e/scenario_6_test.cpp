@@ -31,7 +31,8 @@ struct Scenario6 : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  AltBlockTree test_alttree(altparam, vbkparam, btcparam, payloadsProvider);
+  AltBlockTree test_alttree(
+      altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
 
   // do not bootstrap VBK
   ASSERT_TRUE(test_alttree.bootstrap(state));

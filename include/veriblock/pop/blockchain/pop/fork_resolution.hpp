@@ -467,9 +467,11 @@ struct PopAwareForkResolutionComparator {
     auto* currentActive = ed.getBestChain().tip();
     VBK_ASSERT(currentActive != nullptr && "should be bootstrapped");
 
-    VBK_ASSERT_MSG(currentActive->getHeight() + 1 ==
-                       ed.getRoot().getHeight() + ed.appliedBlockCount,
-                   "the tree must have the best chain applied");
+    VBK_ASSERT_MSG(
+        currentActive->getHeight() + 1 ==
+            ed.getRoot().getHeight() +
+                (typename protected_block_t::height_t)ed.appliedBlockCount,
+        "the tree must have the best chain applied");
 
     if (currentActive == &to) {
       // already at this state

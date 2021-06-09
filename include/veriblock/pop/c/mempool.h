@@ -12,7 +12,7 @@
 #include "veriblock/pop/c/entities/publication_data.h"
 #include "veriblock/pop/c/entities/vbkblock.h"
 #include "veriblock/pop/c/entities/vtb.h"
-#include "veriblock/pop/c/pop_context2.h"
+#include "veriblock/pop/c/pop_context.h"
 
 #ifdef __cplusplus
 extern "C" {

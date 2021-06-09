@@ -22,17 +22,8 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
 
   std::vector<AltBlock> chain;
 
-  AltBlockTree alttree2 =
-      AltBlockTree(altparam, vbkparam, btcparam, payloadsProvider);
-
-  void save() {
-    auto batch = storage.generateWriteBatch();
-    auto writer = adaptors::BlockBatchImpl(*batch);
-    saveTrees(alttree, writer);
-    batch->writeBatch();
-  }
-
-  bool load() { return loadTrees(alttree2, blockProvider, state); }
+  AltBlockTree alttree2 = AltBlockTree(
+      altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
 
   auto assertTreesEqual() {
     assertTreesHaveNoOrphans(alttree);
@@ -52,8 +43,8 @@ struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
 
 // alttree does not contain any invalid blocks
 TEST_F(SaveLoadTreeTest, ValidTree) {
-  save();
-  ASSERT_TRUE(load()) << state.toString();
+  save(alttree);
+  ASSERT_TRUE(load(alttree2)) << state.toString();
   assertTreesEqual();
 }
 
@@ -139,9 +130,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
                                                   b.getId().asVector());
   }
 
-  save();
+  save(alttree);
 
-  EXPECT_FALSE(load());
+  EXPECT_FALSE(load(alttree2));
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+VBK-duplicate");
 }
@@ -177,9 +168,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
                                                   b.getId().asVector());
   }
 
-  save();
+  save(alttree);
 
-  EXPECT_FALSE(load());
+  EXPECT_FALSE(load(alttree2));
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+VBK-duplicate");
 }
@@ -219,9 +210,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   alttree.getPayloadsIndex().addAltPayloadIndex(
       containingBlock.getHash(), popData.atvs[0].getId().asVector());
 
-  save();
+  save(alttree);
 
-  EXPECT_FALSE(load());
+  EXPECT_FALSE(load(alttree2));
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+ATV-duplicate");
 }
@@ -261,7 +252,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
   alttree.getPayloadsIndex().addVbkPayloadIndex(
       containingVbkBlock_index->getHash(), vtb1.getId().asVector());
 
-  ASSERT_DEATH(save(), "");
+  ASSERT_DEATH(save(alttree), "");
 }
 
 void emptyValidator(const BlockIndex<VbkBlock>&) {}
@@ -308,7 +299,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   saveTree(alttree, writer);
   batch->writeBatch();
 
-  EXPECT_FALSE(load());
+  EXPECT_FALSE(load(alttree2));
   EXPECT_FALSE(state.IsValid());
   EXPECT_EQ(state.GetPath(), "failed-to-load-vbk-tree+load-tree+VTB-duplicate");
 }
@@ -321,7 +312,7 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
   auto* endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   ASSERT_TRUE(endorsedIndex->isDirty());
 
-  save();
+  save(alttree);
 
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   ASSERT_FALSE(endorsedIndex->isDirty());
@@ -345,5 +336,5 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   ASSERT_TRUE(endorsedIndex->isDirty());
 
-  ASSERT_TRUE(load()) << state.toString();
+  ASSERT_TRUE(load(alttree2)) << state.toString();
 }

@@ -17,7 +17,7 @@
 #include "veriblock/pop/assert.hpp"
 #include "vtb.hpp"
 #include "veriblock/pop/serde.hpp"
-#include "../validation_state2.hpp"
+#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_data) {
   if (self != nullptr) {

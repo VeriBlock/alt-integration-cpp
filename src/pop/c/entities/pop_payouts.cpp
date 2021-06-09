@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "../validation_state2.hpp"
+#include "../validation_state.hpp"
 #include "pop_payouts.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/serde.hpp"

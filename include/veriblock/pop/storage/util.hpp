@@ -133,10 +133,11 @@ void saveTree(
   // write indices
   for (const index_t* index : dirty_indices) {
     validator(*index);
-    batch.writeBlock(index->toStoredBlockIndex());
+    batch.writeBlock(tree.makePrevHash(index->getHash()),
+                     index->toStoredBlockIndex());
   }
 
-  batch.writeTip(tree.getBestChain().tip()->toStoredBlockIndex());
+  batch.writeTip(tree.getBestChain().tip()->getHash());
 }
 
 //! @private
@@ -151,7 +152,7 @@ struct AltBlockTree;
 void saveTrees(const AltBlockTree& tree, BlockBatch& batch);
 
 //! Load all (ALT/VBK/BTC) trees from disk into memory.
-bool loadTrees(AltBlockTree& tree, BlockReader& reader, ValidationState& state);
+bool loadTrees(AltBlockTree& tree, ValidationState& state);
 
 }  // namespace altintegration
 

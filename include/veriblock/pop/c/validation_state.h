@@ -3,77 +3,48 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef VERIBLOCK_POP_CPP_VALIDATION_STATE_H
-#define VERIBLOCK_POP_CPP_VALIDATION_STATE_H
+#ifndef VERIBLOCK_POP_CPP_VALIDATION_STATE2_H
+#define VERIBLOCK_POP_CPP_VALIDATION_STATE2_H
 
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+
+#include "veriblock/pop/c/array.h"
+#include "veriblock/pop/c/entities/serde.h"
+#include "veriblock/pop/c/type_helpers.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct VbkValidationState VbkValidationState;
+POP_DECLARE_ENTITY(validation_state);
+
+POP_ENTITY_NEW_FUNCTION(validation_state);
 
 /**
- * Allocates instance of the VbkValidationState.
+ * Get a debug message.
  *
- * @return pointer of the VbkValidationState.
+ * @param[in] self ValidationState.
+ * @return debug string debug message.
  */
-VbkValidationState* VBK_NewValidationState();
+POP_ENTITY_GETTER_FUNCTION(validation_state,
+                           POP_ARRAY_NAME(string),
+                           error_message);
 
 /**
- * Deallocates resources of the VbkValidationState.
+ * Returns that ValidationState has an errors or not.
  *
- * @param[out] self VbkValidationState.
+ * @param[in] self ValidationState.
+ * @return true if ValidationState HASN`T ERRORS, false otherwise.
  */
-void VBK_FreeValidationState(VbkValidationState* self);
+POP_ENTITY_GETTER_FUNCTION(validation_state, bool, is_valid);
 
 /**
- * Get a debug message as a 'C' string.
+ * Returns that ValidationState has an errors or not.
  *
- * @param[in] self VbkValidationState.
- * @return debug 'C' string debug message.
+ * @param[in] self ValidationState.
+ * @return true if ValidationState HAS ERRORS, false otherwise.
  */
-const char* VBK_ValidationState_getErrorMessage(VbkValidationState* self);
-
-/**
- * Changes this ValidationState into "INVALID" mode.
- *
- * @param[in] self VbkValidationState.
- * @param[in] reject_reason - supply a short, unique message that identifies
- * this class of validation. Example: mandatory-script-verify-flag-failed
- * @param[in] debug_message - supply arbitrary message that will help to debug
- * the error.
- * @return always returns false.
- */
-bool VBK_ValidationState_Invalid(VbkValidationState* self,
-                                 const char* reject_reason,
-                                 const char* debug_message);
-
-/**
- * Returns that VbkValidationState has an errors or not.
- *
- * @param[in] self VbkValidationState.
- * @return true if VbkValidationState HASN`T ERRORS, false otherwise.
- */
-bool VBK_ValidationState_isValid(VbkValidationState* self);
-
-/**
- * Returns that VbkValidationState has an errors or not.
- *
- * @param[in] self VbkValidationState.
- * @return true if VbkValidationState HAS ERRORS, false otherwise.
- */
-bool VBK_ValidationState_isInvalid(VbkValidationState* self);
-
-/**
- * Reset VbkValidationState
- *
- * @param[in] self VbkValidationState.
- */
-void VBK_ValidationState_Reset(VbkValidationState* self);
+POP_ENTITY_GETTER_FUNCTION(validation_state, bool, is_invalid);
 
 #ifdef __cplusplus
 }  // end of extern "C"

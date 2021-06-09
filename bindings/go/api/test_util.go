@@ -6,42 +6,32 @@
 package api
 
 import (
-	"encoding/hex"
+	"crypto/rand"
 	"fmt"
-	"math/rand"
 	"testing"
-
-	"github.com/VeriBlock/alt-integration-cpp/bindings/go/entities"
-	"github.com/VeriBlock/alt-integration-cpp/bindings/go/ffi"
 )
 
-var boostrapBlock = entities.AltBlock{
-	Height:        1,
-	Hash:          []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
-	PreviousBlock: []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	Timestamp:     100,
-}
-
-func generateTestPopContext(t *testing.T, storage *Storage) *PopContext {
+func GenerateTestPopContext(t *testing.T, storage *Storage) *PopContext {
 	config := NewConfig()
-	if !config.SelectVbkParams("regtest", 0, nil) {
-		t.Error("Failed to select btc params")
-	}
-	if !config.SelectBtcParams("regtest", 0, nil) {
-		t.Error("Failed to select btc params")
-	}
+	defer config.Free()
+
+	config.SelectVbkParams("regtest", 0, "")
+	config.SelectBtcParams("regtest", 0, "")
+
 	SetOnGetAltchainID(func() int64 { return 1 })
-	SetOnGetBootstrapBlock(func() string {
-		blockBytes, _ := boostrapBlock.ToVbkEncodingBytes()
-		return hex.EncodeToString(blockBytes)
+	SetOnGetBootstrapBlock(func() AltBlock {
+		return *GenerateDefaultAltBlock()
 	})
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
-		var altblock entities.AltBlock
-		altblock.FromVbkEncodingBytes(header)
-		return altblock.Hash
+		altblock := NewAltBlock([]byte{}, []byte{}, 0, 0)
+		err := altblock.DeserializeFromVbkAltBlock(header)
+		if err != nil {
+			panic(err)
+		}
+		return altblock.GetHash()
 	})
 
-	SetOnCheckBlockHeader(func(header []byte, root []byte, state *ffi.ValidationState) bool {
+	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {
 		return true
 	})
 
@@ -52,12 +42,11 @@ func generateTestPopContext(t *testing.T, storage *Storage) *PopContext {
 	return NewPopContext(config, storage, "debug")
 }
 
-func generateNextAltBlock(current *entities.AltBlock) *entities.AltBlock {
-	var next entities.AltBlock
-	next.Hash = make([]byte, len(current.Hash))
-	rand.Read(next.Hash)
-	next.PreviousBlock = current.Hash
-	next.Height = current.Height + 1
-	next.Timestamp = current.Timestamp + 1
-	return &next
+func generateNextAltBlock(current *AltBlock) *AltBlock {
+	currentHash := current.GetHash()
+
+	nextHash := make([]byte, len(currentHash))
+	rand.Read(nextHash)
+
+	return NewAltBlock(nextHash, currentHash, current.GetTimestamp()+1, current.GetHeight()+1)
 }

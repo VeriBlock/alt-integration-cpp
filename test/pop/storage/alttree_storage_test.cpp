@@ -46,20 +46,20 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(this->alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               this->payloadsProvider,
+                               this->blockProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   bool bootstrapped = reloadedAltTree.bootstrap(this->state);
   ASSERT_TRUE(bootstrapped);
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk().btc(), this->alttree.btc()))
       << "initial : \n"
       << alttree.toPrettyString() << "\n\n"
@@ -112,19 +112,19 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
   EXPECT_TRUE(this->state.IsValid());
 
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(this->alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               this->payloadsProvider,
+                               this->blockProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -189,19 +189,19 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   validateAlttreeIndexState(
       this->alttree, containingBlock, popData, /*payloads_validation =*/true);
 
-  auto batch = storage.generateWriteBatch();
-  auto writer = adaptors::BlockBatchImpl(*batch);
-  saveTrees(this->alttree, writer);
-  batch->writeBatch();
+  save(alttree);
 
-  AltBlockTree reloadedAltTree{
-      this->altparam, this->vbkparam, this->btcparam, payloadsProvider};
+  AltBlockTree reloadedAltTree{this->altparam,
+                               this->vbkparam,
+                               this->btcparam,
+                               this->payloadsProvider,
+                               this->blockProvider};
 
   reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
   ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, blockProvider, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));

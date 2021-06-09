@@ -17,6 +17,7 @@
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/validation_state.hpp>
@@ -49,7 +50,9 @@ extern template struct BaseBlockTree<AltBlock>;
 //! BtcChainParamsMain btcp;
 //! // your implementation of PayloadsStorage
 //! PayloadsProviderImpl provider;
-//! AltBlockTree tree(altp, vbkp, btcp, provider);
+//! // your implementation of BlockReader
+//! BlockReaderImpl blockProvider
+//! AltBlockTree tree(altp, vbkp, btcp, provider, blockProvider);
 //! ```
 //!
 //! After initialization AltBlockTree does not contain any blocks.
@@ -194,7 +197,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   explicit AltBlockTree(const alt_config_t& alt_config,
                         const vbk_config_t& vbk_config,
                         const btc_config_t& btc_config,
-                        PayloadsStorage& storagePayloads);
+                        PayloadsStorage& payloadsProvider,
+                        BlockReader& blockProvider);
 
   /**
    * Set very first (bootstrap) altchain block with enabled POP.
@@ -335,9 +339,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    *
    * @param[in] A hash of current tip in AltBlockTree. Fails on assert if
    * current tip != A.
-   * @param[in] B block. Current tip will be compared against this block. Must
-   * exist on chain and be connected(have BLOCK_HAS_PAYLOADS and
-   * BLOCK_CONNECTED), but does not have to be fully validated(necessary
+   * @param[in] B block. Current tip will be compared against this block. Can not be
+   * exist on chain and does not have to be fully validated(necessary
    * validation will be performed during the fork resolution).
    * @warning POP Fork Resolution is NOT transitive, it can not be used to
    * search for an "absolute" best chain. If A is better than B, and B is better

@@ -13,6 +13,7 @@
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/signals.hpp>
+#include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/stored_block_index.hpp>
 
 #include "block_index.hpp"
@@ -51,6 +52,8 @@ struct BaseBlockTree {
     return blocks;
   }
 
+  const BlockReader& getBlockProvider() const { return blockProvider_; }
+
   virtual ~BaseBlockTree() {
     if (!isBootstrapped()) {
       return;
@@ -59,7 +62,8 @@ struct BaseBlockTree {
     deallocateTree(getRoot());
   }
 
-  BaseBlockTree() = default;
+  BaseBlockTree(const BlockReader& blockProvider)
+      : blockProvider_(blockProvider) {}
 
   // non-copyable
   BaseBlockTree(const BaseBlockTree&) = delete;
@@ -156,11 +160,7 @@ struct BaseBlockTree {
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
-    const auto& root = getRoot();
-    if (index.height < root.getHeight()) {
-      return state.Invalid("cant-connect", "Loaded block is too far");
-    }
-
+    auto& root = getRoot();
     if (index.height == root.getHeight() &&
         index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
@@ -174,7 +174,8 @@ struct BaseBlockTree {
     auto currentHash = header.getHash();
     auto* current = findBlockIndex(currentHash);
     // we can not load a block, which already exists on chain and is not a
-    // bootstrap block
+    // bootstrap block or we can not load block which is not connected to the
+    // bootstrapblock
     if (current) {
       if (current->isDeleted()) {
         current->restore();
@@ -188,13 +189,20 @@ struct BaseBlockTree {
     } else {
       auto* prev = getBlockIndex(header.getPreviousBlock());
       // if neither the current, nor the previous block are known
-      if (prev == nullptr) {
+      if (prev != nullptr) {
+        current = createBlockIndex(currentHash, *prev);
+        current->restore();
+      } else if (root.getHeader().getPreviousBlock() ==
+                 makePrevHash(currentHash)) {
+        current = createBootstrapBlockIndex(currentHash, index.height);
+        current->restore();
+        current->pnext.insert(&root);
+        VBK_ASSERT(root.pprev == nullptr);
+        root.pprev = current;
+      } else {
         return state.Invalid("bad-prev",
                              "Block does not connect to current tree");
       }
-
-      current = createBlockIndex(currentHash, *prev);
-      current->restore();
     }
 
     VBK_ASSERT(current);
@@ -219,6 +227,10 @@ struct BaseBlockTree {
       if (current->getHeight() != expectedHeight) {
         return state.Invalid("bad-height");
       }
+    } else if (activeChain_.first() != current) {
+      // set a new bootstrap block which is the prev block for the current
+      // bootstrap block
+      activeChain_.prependRoot(current);
     }
 
     VBK_ASSERT(!current->isDeleted());
@@ -226,6 +238,51 @@ struct BaseBlockTree {
     current->unsetDirty();
 
     tryAddTip(current);
+
+    return true;
+  }
+
+  bool restoreBlock(const typename block_t::hash_t& hash,
+                    ValidationState& state) {
+    if (this->getBlockIndex(hash) != nullptr) {
+      return true;
+    }
+
+    stored_index_t stored_index;
+    if (!this->blockProvider_.getBlock(this->makePrevHash(hash),
+                                       stored_index)) {
+      return state.Invalid("can-not-find-block-in-storage");
+    }
+
+    index_t* index = &this->getRoot();
+    auto oldHeight = index->getHeight();
+    if (stored_index.height > index->getHeight()) {
+      return state.Invalid("cannot-restore-block-higher-than-current-root");
+    }
+
+    while (index->getHeight() != stored_index.height) {
+      stored_index_t tmp_stored;
+      auto prev_hash = index->getHeader().getPreviousBlock();
+      if (!this->blockProvider_.getBlock(prev_hash, tmp_stored)) {
+        VBK_ASSERT_MSG(false,
+                       "can not restore prev block for the block: %s",
+                       index->toPrettyString());
+      }
+
+      if (!loadBlock(tmp_stored, state)) {
+        VBK_ASSERT_MSG(
+            false, "can not load block, state: %s", state.toString());
+      }
+
+      index = this->getBlockIndex(prev_hash);
+      VBK_ASSERT(index);
+    }
+
+    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
+
+    if (stored_index.header->getHash() != index->getHash()) {
+      return state.Invalid("restored-block-not-from-active-chain");
+    }
 
     return true;
   }
@@ -245,7 +302,7 @@ struct BaseBlockTree {
     if (isOnMainChain) {
       ValidationState dummy;
       bool success = this->setState(*prev, dummy);
-      VBK_ASSERT(success);
+      VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
     }
 
     // remove this block from 'pnext' set of previous block
@@ -461,7 +518,7 @@ struct BaseBlockTree {
 
   //! the number of blocks that have BLOCK_APPLIED flag set
   //! @private
-  block_height_t appliedBlockCount = 0;
+  size_t appliedBlockCount = 0;
 
  protected:
   //! @private
@@ -517,7 +574,7 @@ struct BaseBlockTree {
     return inserted.first->second.get();
   }
 
-  //! create a new root block index
+  //! create a new block index with the empty prev field
   //! @private
   index_t* createBootstrapBlockIndex(const hash_t& hash,
                                      block_height_t height) {
@@ -666,11 +723,17 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
-      if (activeChain_.contains(&next)) {
-        --appliedBlockCount;
-      }
       blocks_.erase(h);
     });
+  }
+
+  inline void decreaseAppliedBlockCount(size_t erasedBlocks) {
+    VBK_ASSERT(appliedBlockCount >= erasedBlocks);
+    appliedBlockCount -= erasedBlocks;
+  }
+
+  inline void increaseAppliedBlockCount(size_t appliedBlocks) {
+    appliedBlockCount += appliedBlocks;
   }
 
   //! Marks `block` as finalized.
@@ -694,35 +757,60 @@ struct BaseBlockTree {
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
-    // block is already final
-    if (index.finalized) {
-      return true;
-    }
+    index_t* finalizedBlock = &index;
 
     // prereq is not met - finalized block must be on active chain
-    if (!activeChain_.contains(&index)) {
+    if (!activeChain_.contains(finalizedBlock)) {
       return state.Invalid("block-not-on-active-chain");
     }
 
-    // first, update active chain (it should start with
-    // 'index' but we also need to preserve `preserveBlocksBehindFinal` blocks
-    // before it). all outdated blocks behind `index` block will be deallocated
-    int32_t firstBlockHeight = index.getHeight() - preserveBlocksBehindFinal;
-    int32_t bootstrapBlockHeight = getRoot().getHeight();
-    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+    // we need to clarify which block will be final. we can not remove blocks
+    // which has not been saved into the storage
+    for (auto* walkBlock = finalizedBlock; walkBlock != nullptr;
+         walkBlock = walkBlock->pprev) {
+      if (walkBlock->isDirty()) {
+        finalizedBlock = walkBlock;
+      }
+    }
 
-    // second, erase candidates from tips_ that will never be activated
+    // first, erase candidates from tips_ that will never be activated
     erase_if<decltype(tips_), index_t*>(
-        tips_, [this, &index](const index_t* const& tip) -> bool {
+        tips_, [this, &finalizedBlock](index_t* tip) -> bool {
           VBK_ASSERT(tip);
 
           // tip from active chain can not be outdated
-          if (activeChain_.contains(tip)) {
-            return false;
+          if (!activeChain_.contains(tip) &&
+              isBlockOutdated(*finalizedBlock, *tip)) {
+            // we need to clarify which block will be final. we can not remove
+            // blocks
+            // which has not been saved into the storage
+            bool newFinalized = false;
+            auto* walkBlock = tip;
+            for (; tip != nullptr && !activeChain_.contains(walkBlock);
+                 walkBlock = walkBlock->pprev) {
+              if (walkBlock->isDirty()) {
+                newFinalized = true;
+              }
+            }
+
+            if (newFinalized) {
+              finalizedBlock = walkBlock;
+            }
+
+            return true;
           }
 
-          return isBlockOutdated(index, *tip);
+          return false;
         });
+
+    // second, update active chain (it should start with
+    // 'finalizedBlock' but we also need to preserve `preserveBlocksBehindFinal`
+    // blocks before it). all outdated blocks behind `finalizedBlock` block will
+    // be deallocated
+    int32_t firstBlockHeight =
+        finalizedBlock->getHeight() - preserveBlocksBehindFinal;
+    int32_t bootstrapBlockHeight = getRoot().getHeight();
+    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
 
     // before we deallocate subtree, disconnect "new root block" from previous
     // tree
@@ -737,9 +825,9 @@ struct BaseBlockTree {
 
       // erase "parallel" blocks - blocks that are on same height as `index`,
       // but since `index` is final, will never be active.
-      if (index.pprev != nullptr) {
-        auto parallelBlocks = index.pprev->pnext;
-        parallelBlocks.erase(&index);
+      if (finalizedBlock->pprev != nullptr) {
+        auto parallelBlocks = finalizedBlock->pprev->pnext;
+        parallelBlocks.erase(finalizedBlock);
         for (auto* par : parallelBlocks) {
           // disconnect `par` from prev block
           if (par->pprev != nullptr) {
@@ -751,10 +839,14 @@ struct BaseBlockTree {
       }
     }
 
+    // update active chain
+    VBK_ASSERT(firstBlockHeight >= bootstrapBlockHeight);
+    size_t deallocatedBlocks = firstBlockHeight - bootstrapBlockHeight;
+    decreaseAppliedBlockCount(deallocatedBlocks);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
     // fourth, mark `index` and all predecessors as finalized
-    index_t* ptr = &index;
+    index_t* ptr = finalizedBlock;
     while (ptr != nullptr && !ptr->finalized) {
       ptr->finalized = true;
       ptr = ptr->pprev;
@@ -904,6 +996,8 @@ struct BaseBlockTree {
   Chain<index_t> activeChain_;
   //! signals to the end user that block have been invalidated
   signals::Signal<on_invalidate_t> validity_sig_;
+
+  const BlockReader& blockProvider_;
 };
 
 }  // namespace altintegration

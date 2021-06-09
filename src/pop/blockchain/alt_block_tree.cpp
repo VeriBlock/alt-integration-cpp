@@ -286,13 +286,16 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
+
   VBK_ASSERT_MSG(left, "unknown 'A' block %s", HexStr(A));
-  VBK_ASSERT_MSG(right, "unknown 'B' block %s", HexStr(B));
   VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
   VBK_ASSERT_MSG(activeChain_.tip() == left,
                  "left fork must be applied. Tip: %s, Left: %s",
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
+  if (right == nullptr) {
+    return 1;
+  }
 
   VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
   VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
@@ -485,6 +488,19 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(*this, to, state);
   if (success) {
     overrideTip(to);
+    // finalize blocks
+    {
+      uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
+      uint32_t finalHeight = std::max(
+          (int32_t)(getBestChain().tip()->getHeight() - max_reorg_distance),
+          (int32_t)getRoot().getHeight());
+
+      auto* finalizedBlock = getBestChain()[finalHeight];
+
+      if (!finalizeBlock(*finalizedBlock, state)) {
+        return state.Invalid("set-state-error");
+      }
+    }
   } else {
     VBK_ASSERT_MSG(!to.isValid(),
                    "if setState failed, then '%s must be invalid",
@@ -563,10 +579,15 @@ bool AltBlockTree::loadBlock(const stored_index_t& index,
 AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            const AltBlockTree::vbk_config_t& vbk_config,
                            const AltBlockTree::btc_config_t& btc_config,
-                           PayloadsStorage& payloadsProvider)
-    : alt_config_(&alt_config),
-      cmp_(std::make_shared<VbkBlockTree>(
-               vbk_config, btc_config, payloadsProvider, payloadsIndex_),
+                           PayloadsStorage& payloadsProvider,
+                           BlockReader& blockProvider)
+    : base(blockProvider),
+      alt_config_(&alt_config),
+      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
+                                          btc_config,
+                                          payloadsProvider,
+                                          blockProvider,
+                                          payloadsIndex_),
            alt_config,
            payloadsProvider,
            payloadsIndex_),
