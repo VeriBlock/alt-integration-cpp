@@ -149,15 +149,31 @@ struct BaseBlockTree {
   }
 
   /**
-   * Efficiently connects BlockIndex to this tree, when it is loaded from disk.
+   * Efficiently connects BlockIndex to this tree as a leaf, when it is loaded
+   * from disk.
    * @param[in] index block to be connected
    * @param[out] state validation state
    * @return true if block is valid and successfully loaded, false otherwise.
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(const stored_index_t& index, ValidationState& state) {
-    return loadBlockForward(index, state);
+  virtual bool loadBlockForward(const stored_index_t& index,
+                                ValidationState& state) {
+    return loadBlockInner(index, true, state);
+  }
+
+  /**
+   * Efficiently connects BlockIndex to this tree as a new root, when it is
+   * loaded from disk.
+   * @param[in] index block to be connected
+   * @param[out] state validation state
+   * @return true if block is valid and successfully loaded, false otherwise.
+   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
+   * state.
+   */
+  virtual bool loadBlockBackward(const stored_index_t& index,
+                                 ValidationState& state) {
+    return loadBlockInner(index, false, state);
   }
 
   bool restoreBlock(const typename block_t::hash_t& hash,
@@ -560,17 +576,6 @@ struct BaseBlockTree {
   }
 
   //! @private
-  bool loadBlockForward(const stored_index_t& index, ValidationState& state) {
-    return loadBlockInner(index, true, state);
-  }
-
-  // connect block as previous for the root
-  //! @private
-  bool loadBlockBackward(const stored_index_t& index, ValidationState& state) {
-    return loadBlockInner(index, false, state);
-  }
-
-  //! @private
   bool loadBlockInner(const stored_index_t& index,
                       bool connectForward,
                       ValidationState& state) {
@@ -666,7 +671,7 @@ struct BaseBlockTree {
         return state.Invalid("bad-height");
       }
     }
-    
+
     // set a new bootstrap block which is the prev block for the current
     // bootstrap block
     if ((current->pprev == nullptr) && (activeChain_.first() != current) &&

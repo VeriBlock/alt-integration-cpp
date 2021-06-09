@@ -365,13 +365,26 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::loadBlock(const stored_index_t& index,
-                             ValidationState& state) {
-  auto hash = index.header->getHash();
-  auto height = index.height;
-  if (!VbkTree::loadBlock(index, state)) {
+bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
+                                    ValidationState& state) {
+  if (!VbkTree::loadBlockForward(index, state)) {
     return false;  // already set
   }
+  return loadBlockInner(index, state);
+}
+
+bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
+                                     ValidationState& state) {
+  if (!VbkTree::loadBlockBackward(index, state)) {
+    return false;
+  }
+  return loadBlockInner(index, state);
+}
+
+bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
+                                  ValidationState& state) {
+  auto hash = index.header->getHash();
+  auto height = index.height;
 
   auto* current = getBlockIndex(hash);
   VBK_ASSERT(current);
