@@ -89,3 +89,20 @@ TEST_F(AltBlockRestoration, RestoreFromActiveChainWithForks) {
   // 50 first blocks and Z251 have not been restored
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks - 50 - 1);
 }
+
+TEST_F(AltBlockRestoration, RestoreFromForks) {
+  // save state
+  save(alttree);
+
+  auto *tip = alttree.getBestChain().tip();
+  auto *A400 = tip->getAncestor(400);
+  const auto Z251hash = Z251->getHash();
+  ASSERT_TRUE(alttree.finalizeBlock(*A400, state));
+  // Z251 was erased as well
+  ASSERT_EQ(alttree.getBlocks().size(),
+            totalBlocks - (400 - altparam.mPreserveBlocksBehindFinal + 1));
+
+  save(alttree);
+  ASSERT_EQ(alttree.getBlockIndex(Z251hash), nullptr);
+  ASSERT_FALSE(alttree.restoreBlock(Z251hash, state));
+}
