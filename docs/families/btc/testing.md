@@ -15,8 +15,9 @@ To show that the pop-enabled altchain most likely works, once could screenshots 
 https://testnet.explore.veriblock.org/api/altchain/{altchain id}/validation/apm?withinNHours=4  
 ![apm_instances](./img/apm_instances.png)
 
-4. Altchain explorer screenshot showing recent ATV and VTB.
-![vbtc_explorer_screenshot](./img/vbtcexplorerscreenshot.png)
+4. Altchain explorer screenshot showing (1) recent ATV and VTB, and (2) ABFI on a transaction.
+![vbtc_explorer_screenshot_1](./img/vbtcexplorerscreenshot_1.png)
+![vbtc_explorer_screenshot_2](./img/vbtcexplorerscreenshot_2.png)
 
 5. Run ABFI and view successful health ping
    ![apm_instances](./img/abfi_successful_result.png)
