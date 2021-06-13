@@ -489,18 +489,20 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   if (success) {
     overrideTip(to);
     // finalize blocks
-    // {
-    //   uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
-    //   uint32_t finalHeight = std::max(
-    //       (int32_t)(getBestChain().tip()->getHeight() - max_reorg_distance),
-    //       (int32_t)getRoot().getHeight());
+    {
+      uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
+      uint32_t finalHeight = std::max(
+          (int32_t)(getBestChain().tip()->getHeight() - max_reorg_distance),
+          (int32_t)getRoot().getHeight());
 
-    //   auto* finalizedBlock = getBestChain()[finalHeight];
+      auto* finalizedBlock = getBestChain()[finalHeight];
 
-    //   if (!finalizeBlock(*finalizedBlock, state)) {
-    //     return state.Invalid("set-state-error");
-    //   }
-    // }
+      VBK_LOG_INFO("finalizedBlock: %s", finalizedBlock->toPrettyString());
+
+      if (!finalizeBlock(*finalizedBlock, state)) {
+        return state.Invalid("set-state-error");
+      }
+    }
   } else {
     VBK_ASSERT_MSG(!to.isValid(),
                    "if setState failed, then '%s must be invalid",
