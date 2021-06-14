@@ -379,8 +379,58 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
 }
 
 TEST_F(AltBlockFinalization2, FinalizeForkedBtcBlocks) {
+  altparam.mEndorsementSettlementInterval = 10;
+  altparam.mPreserveBlocksBehindFinal = 10;
+  vbkparam.mEndorsementSettlementInterval = 10;
+  vbkparam.mPreserveBlocksBehindFinal = 10;
+  vbkparam.mOldBlocksWindow = 0;
+  btcparam.mOldBlocksWindow = 0;
 
-  
+  // mine 10 altblocks
+  mineAltBlocks(*alttree.getBestChain().tip(), 10);
+
+  // mine btc blocks
+  auto *forkBlock =
+      popminer->mineBtcBlocks(btcparam.getDifficultyAdjustmentInterval() + 1);
+
+  auto *endorsedBlock = alttree.vbk().getBestChain().tip();
+
+  auto *chainA = popminer->mineBtcBlocks(10, *forkBlock);
+  // generate vbk pop tx which will contain chainA
+  auto vbkPopTx1 = generatePopTx(endorsedBlock->getHeader());
+  ASSERT_EQ(vbkPopTx1.blockOfProofContext.back().getHash(), chainA->getHash());
+
+  auto *chainB = popminer->mineBtcBlocks(12, *forkBlock);
+  // generate vbk pop tx which will contain chainA
+  auto vbkPopTx2 = generatePopTx(endorsedBlock->getHeader());
+  ASSERT_EQ(vbkPopTx2.blockOfProofContext.back().getHash(), chainB->getHash());
+
+  auto *vbkContaining = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
+  auto vtb1 = popminer->createVTB(vbkContaining->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(vbkContaining->getHeader(), vbkPopTx2);
+
+  submitVBK(vbkContaining->getHeader());
+  submitVTB(vtb1);
+  submitVTB(vtb2);
+
+  auto popdata = checkedGetPop();
+  ASSERT_EQ(popdata.vtbs.size(), 2);
+
+  applyInNextBlock(popdata);
+
+  // mine one more block on top of the block
+  popdata = checkedGetPop();
+  applyInNextBlock(popdata);
+
+  save(alttree);
+
+  tip = alttree.getBestChain().tip();
+  // finalize block
+  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev->pprev, state))
+      << state.toString();
+
+  // check the state after finalization
+  ASSERT_TRUE(alttree.setState(*tip->pprev->pprev, state)) << state.toString();
 }
 
 TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
@@ -400,9 +450,6 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
 
   auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
-
-  // mine 10 blocks
-  // mineAltBlocks(1, chain);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
