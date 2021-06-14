@@ -206,7 +206,7 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
   assertTreesHaveNoOrphans(alttree);
 }
 
-struct VbkBlockFinalization : public MemPoolFixture {
+struct AltBlockFinalization2 : public MemPoolFixture {
   BlockIndex<AltBlock> *tip = nullptr;
   size_t totalBlocks = 0;
 
@@ -221,7 +221,7 @@ struct VbkBlockFinalization : public MemPoolFixture {
   }
 };
 
-TEST_F(VbkBlockFinalization, FinalizeVbkTip) {
+TEST_F(AltBlockFinalization2, FinalizeVbkTip) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
   vbkparam.mEndorsementSettlementInterval = 0;
@@ -265,7 +265,7 @@ TEST_F(VbkBlockFinalization, FinalizeVbkTip) {
   assertTreesHaveNoOrphans(alttree);
 }
 
-TEST_F(VbkBlockFinalization, FinalizeMaxVbks) {
+TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
   vbkparam.mEndorsementSettlementInterval = 0;
@@ -312,7 +312,7 @@ TEST_F(VbkBlockFinalization, FinalizeMaxVbks) {
   assertTreesHaveNoOrphans(alttree);
 }
 
-TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
+TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   altparam.mEndorsementSettlementInterval = 10;
   altparam.mPreserveBlocksBehindFinal = 10;
   vbkparam.mEndorsementSettlementInterval = 10;
@@ -378,7 +378,12 @@ TEST_F(VbkBlockFinalization, FinalizedVbkBlock) {
   applyInNextBlock(popdata);
 }
 
-TEST_F(VbkBlockFinalization, FinalizeMaxBtcs) {
+TEST_F(AltBlockFinalization2, FinalizeForkedBtcBlocks) {
+
+  
+}
+
+TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
   vbkparam.mEndorsementSettlementInterval = 15;

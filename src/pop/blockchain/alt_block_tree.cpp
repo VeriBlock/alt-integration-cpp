@@ -497,8 +497,6 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 
       auto* finalizedBlock = getBestChain()[finalHeight];
 
-      VBK_LOG_INFO("finalizedBlock: %s", finalizedBlock->toPrettyString());
-
       if (!finalizeBlock(*finalizedBlock, state)) {
         return state.Invalid("set-state-error");
       }
