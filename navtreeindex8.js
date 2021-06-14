@@ -1,5 +1,13 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13":[5,0,0,0,1,10],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a62323718c05fdd3a4d15868af7358dae":[5,0,0,0,1,0],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a73dce581892b3e566e4ede126ef9141c":[5,0,0,0,1,3],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a74ec1545ae40efb0c2661ae4c9d6bd1f":[5,0,0,0,1,5],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a9c776ecc128adf30636049fdee108478":[5,0,0,0,1,7],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#aabb963b23c6040568c0bef02467c88b8":[5,0,0,0,1,2],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#ab25912dc7c94452b516692cc8da326eb":[5,0,0,0,1,4],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#abb5d53286ee4be4a72d9195561cb282e":[5,0,0,0,1,9],
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#ad448494dc3233114860f220d7d4d41da":[5,0,0,0,1,1],
 "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html":[5,0,0,0,5],
 "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html#a41807a298e185c3778f5a0af51467caa":[5,0,0,0,5,3],
@@ -131,13 +139,5 @@ var NAVTREEINDEX8 =
 "vblake_8hpp_source.html":[6,0,1,0,0,4,4],
 "vtb_8h_source.html":[6,0,1,0,0,2,0,14],
 "vtb_8hpp_source.html":[6,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[6,0,1,0,0,48],
-"":[4,0,1],
-"":[4,0,0,2],
-"":[4,0,0,7],
-"":[4,0,0,5],
-"":[4,0,0,6],
-"":[4,0,0,3],
-"":[4,0,0,1],
-"":[4,0,0,0]
+"write__stream_8hpp_source.html":[6,0,1,0,0,48]
 };
