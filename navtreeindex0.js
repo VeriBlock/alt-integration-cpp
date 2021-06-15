@@ -211,6 +211,7 @@ var NAVTREEINDEX0 =
 "consts_8hpp.html#afcc5258725c8e410a9d6d9afd9bc239a":[6,0,1,0,0,19,29],
 "consts_8hpp.html#afd19924cf68f9b9367c1b39815b94941":[6,0,1,0,0,19,27],
 "consts_8hpp_source.html":[6,0,1,0,0,19],
+"context__info__container_8h_source.html":[6,0,1,0,0,2,0,7],
 "context__info__container_8hpp_source.html":[6,0,1,0,0,5,6],
 "continue__on__invalid__context_8hpp_source.html":[6,0,1,0,0,1,1,0],
 "default__poprewards__calculator_8hpp_source.html":[6,0,1,0,0,7,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "ethash_8hpp_source.html":[6,0,1,0,0,4,0,0],
 "extern_8h_source.html":[6,0,1,0,0,2,3],
 "files.html":[6,0],
-"finalizer_8hpp_source.html":[6,0,1,0,0,20],
-"fmt_8hpp_source.html":[6,0,1,0,0,21]
+"finalizer_8hpp_source.html":[6,0,1,0,0,20]
 };

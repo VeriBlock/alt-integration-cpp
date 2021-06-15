@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1AltBlockTree.html#ac31836a34ff44f707091c4ea2c5cd4d1":[5,0,0,5,6],
 "structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c":[5,0,0,5,17],
 "structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27":[5,0,0,5,10],
 "structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856":[5,0,0,5,18],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BlockReader.html#a66544f9eca6ac4565b551345167e2b89":[5,0,0,65,9],
 "structaltintegration_1_1BlockReader.html#a7b9aed603975c0b58a6e6b953d3a3069":[5,0,0,65,2],
 "structaltintegration_1_1BlockReader.html#a7fd1e1c938d680ce32c406e5a317b5a7":[5,0,0,65,8],
-"structaltintegration_1_1BlockReader.html#a86ce2992facd21a99526e61bc1e5bbbd":[5,0,0,65,14],
-"structaltintegration_1_1BlockReader.html#a98a19a0e4d0d1a9d69adf215def5001f":[5,0,0,65,6]
+"structaltintegration_1_1BlockReader.html#a86ce2992facd21a99526e61bc1e5bbbd":[5,0,0,65,14]
 };

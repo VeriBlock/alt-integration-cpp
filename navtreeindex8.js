@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a3ee02f61ecff26ef42fafab481f7c865":[5,0,0,0,1,8],
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13":[5,0,0,0,1,10],
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a62323718c05fdd3a4d15868af7358dae":[5,0,0,0,1,0],
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a73dce581892b3e566e4ede126ef9141c":[5,0,0,0,1,3],
@@ -132,12 +133,12 @@ var NAVTREEINDEX8 =
 "vbk__chain__params_8hpp_source.html":[6,0,1,0,0,1,24],
 "vbk__command__group__store_8hpp_source.html":[6,0,1,0,0,1,0,6],
 "vbk__merkle__path_8hpp_source.html":[6,0,1,0,0,5,17],
-"vbkblock_8h_source.html":[6,0,1,0,0,2,0,13],
+"vbkblock_8h_source.html":[6,0,1,0,0,2,0,14],
 "vbkblock_8hpp_source.html":[6,0,1,0,0,5,18],
 "vbkpoptx_8hpp_source.html":[6,0,1,0,0,5,19],
 "vbktx_8hpp_source.html":[6,0,1,0,0,5,20],
 "vblake_8hpp_source.html":[6,0,1,0,0,4,4],
-"vtb_8h_source.html":[6,0,1,0,0,2,0,14],
+"vtb_8h_source.html":[6,0,1,0,0,2,0,15],
 "vtb_8hpp_source.html":[6,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[6,0,1,0,0,48]
 };

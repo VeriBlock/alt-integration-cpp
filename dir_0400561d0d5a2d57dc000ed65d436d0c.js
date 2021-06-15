@@ -7,6 +7,7 @@ var dir_0400561d0d5a2d57dc000ed65d436d0c =
     [ "btcblock.h", "btcblock_8h_source.html", null ],
     [ "btctx.h", "btctx_8h_source.html", null ],
     [ "coin.h", "coin_8h_source.html", null ],
+    [ "context_info_container.h", "context__info__container_8h_source.html", null ],
     [ "merkle_path.h", "merkle__path_8h_source.html", null ],
     [ "network_byte_pair.h", "network__byte__pair_8h_source.html", null ],
     [ "pop_payouts.h", "pop__payouts_8h_source.html", null ],
