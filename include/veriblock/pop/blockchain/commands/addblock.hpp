@@ -37,8 +37,8 @@ struct AddBlock : public Command {
     if (index == nullptr) {
       // trying to restore block
       ValidationState tmp_state;
-      if (!tree_->restoreBlock(hash, tmp_state) &&
-          !tree_->acceptBlockHeader(block_, state)) {
+      if (!tree_->acceptBlockHeader(block_, state) &&
+          !tree_->restoreBlock(hash, tmp_state)) {
         return false;
       }
 
