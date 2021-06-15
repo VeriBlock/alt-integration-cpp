@@ -179,6 +179,7 @@ struct BaseBlockTree {
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
     index_t* root = &this->getRoot();
+    auto oldHeight = root->getHeight();
     std::vector<stored_index_t> tempChain;
     auto restoringHash = this->makePrevHash(hash);
     index_t* restoringIndex = this->getBlockIndex(restoringHash); 
@@ -188,6 +189,10 @@ struct BaseBlockTree {
       stored_index_t restoringBlock;
       if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
         return state.Invalid("can-not-find-block-in-storage");
+      }
+
+      if (restoringBlock.height > root->getHeight()) {
+        return state.Invalid("cannot-restore-block-higher-than-current-root");
       }
 
       // restore previous root blocks
@@ -208,7 +213,6 @@ struct BaseBlockTree {
 
         root = this->getBlockIndex(rootPrevHash);
         VBK_ASSERT(root);
-        increaseAppliedBlockCount(1);
       }
 
       restoringIndex = getBlockIndex(restoringHash);
@@ -230,8 +234,9 @@ struct BaseBlockTree {
       if (!loadBlockForward(b, state)) {
         return state.Invalid("load-block-forward-failed");
       }
-      increaseAppliedBlockCount(1);
     }
+
+    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
 
     return true;
   }
