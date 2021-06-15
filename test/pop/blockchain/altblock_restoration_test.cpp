@@ -104,5 +104,8 @@ TEST_F(AltBlockRestoration, RestoreFromForks) {
 
   save(alttree);
   ASSERT_EQ(alttree.getBlockIndex(Z251hash), nullptr);
-  ASSERT_FALSE(alttree.restoreBlock(Z251hash, state));
+  ASSERT_TRUE(alttree.restoreBlock(Z251hash, state));
+  // 250 first blocks have not been restored. Z251 connects to A250 hence
+  // A250 was restored and 250 blocks before stay erased
+  ASSERT_EQ(alttree.getBlocks().size(), totalBlocks - 250);
 }

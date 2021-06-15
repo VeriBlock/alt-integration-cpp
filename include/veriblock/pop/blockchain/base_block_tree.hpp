@@ -178,44 +178,59 @@ struct BaseBlockTree {
 
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
-    if (this->getBlockIndex(hash) != nullptr) {
-      return true;
-    }
+    index_t* root = &this->getRoot();
+    std::vector<stored_index_t> tempChain;
+    auto restoringHash = this->makePrevHash(hash);
+    index_t* restoringIndex = this->getBlockIndex(restoringHash); 
 
-    stored_index_t stored_index;
-    if (!this->blockProvider_.getBlock(this->makePrevHash(hash),
-                                       stored_index)) {
-      return state.Invalid("can-not-find-block-in-storage");
-    }
-
-    index_t* index = &this->getRoot();
-    auto oldHeight = index->getHeight();
-    if (stored_index.height > index->getHeight()) {
-      return state.Invalid("cannot-restore-block-higher-than-current-root");
-    }
-
-    while (index->getHeight() != stored_index.height) {
-      stored_index_t tmp_stored;
-      auto prev_hash = index->getHeader().getPreviousBlock();
-      if (!this->blockProvider_.getBlock(prev_hash, tmp_stored)) {
-        VBK_ASSERT_MSG(false,
-                       "can not restore prev block for the block: %s",
-                       index->toPrettyString());
+    while (restoringIndex == nullptr) {
+      // load current block from storage
+      stored_index_t restoringBlock;
+      if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
+        return state.Invalid("can-not-find-block-in-storage");
       }
 
-      if (!loadBlockBackward(tmp_stored, state)) {
-        VBK_ASSERT_MSG(
-            false, "can not load block, state: %s", state.toString());
+      // restore previous root blocks
+      while ((restoringBlock.height < root->getHeight()) &&
+             (root->getHeight() > 0)) {
+        stored_index_t tmpRoot;
+        auto rootPrevHash = root->getHeader().getPreviousBlock();
+        if (!this->blockProvider_.getBlock(rootPrevHash, tmpRoot)) {
+          VBK_ASSERT_MSG(false,
+                         "can not restore prev block for the block: %s",
+                         root->toPrettyString());
+        }
+
+        if (!loadBlockBackward(tmpRoot, state)) {
+          VBK_ASSERT_MSG(
+              false, "can not load block, state: %s", state.toString());
+        }
+
+        root = this->getBlockIndex(rootPrevHash);
+        VBK_ASSERT(root);
+        increaseAppliedBlockCount(1);
       }
 
-      index = this->getBlockIndex(prev_hash);
-      VBK_ASSERT(index);
+      restoringIndex = getBlockIndex(restoringHash);
+      // add unconnected blocks to the temporary chain
+      if (restoringIndex == nullptr) {
+        // could not find the common block
+        if (restoringBlock.height == 0) {
+          return state.Invalid("restored-block-does-not-connect");
+        }
+
+        tempChain.push_back(restoringBlock);
+      }
+
+      // get the previous block hash
+      restoringHash = restoringBlock.header->getPreviousBlock();
     }
 
-    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
-
-    if (stored_index.header->getHash() != index->getHash()) {
-      return state.Invalid("restored-block-not-from-active-chain");
+    for (const auto& b : reverse_iterate(tempChain)) {
+      if (!loadBlockForward(b, state)) {
+        return state.Invalid("load-block-forward-failed");
+      }
+      increaseAppliedBlockCount(1);
     }
 
     return true;
