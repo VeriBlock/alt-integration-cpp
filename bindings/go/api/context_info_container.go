@@ -57,3 +57,24 @@ func (v *ContextInfoContainer) GetSecondPreviousKeystone() []byte {
 	defer freeArrayU8(&array)
 	return createBytes(&array)
 }
+
+func (v *ContextInfoContainer) SerializeToVbk() []byte {
+	v.validate()
+	res := C.pop_context_info_container_serialize_to_vbk(v.ref)
+	defer freeArrayU8(&res)
+	return createBytes(&res)
+}
+
+func (v *ContextInfoContainer) DeserializeFromVbk(bytes []byte) error {
+	state := NewValidationState()
+	defer state.Free()
+
+	res := C.pop_context_info_container_deserialize_from_vbk(createCBytes(bytes), state.ref)
+	if res == nil {
+		return state.Error()
+	}
+
+	v.Free()
+	v.ref = res
+	return nil
+}
