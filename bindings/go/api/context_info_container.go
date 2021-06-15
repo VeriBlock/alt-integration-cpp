@@ -39,6 +39,11 @@ func (v *ContextInfoContainer) Free() {
 	}
 }
 
+func (v *ContextInfoContainer) GetHeight() int32 {
+	v.validate()
+	return int32(C.pop_context_info_container_get_height(v.ref))
+}
+
 func (v *ContextInfoContainer) GetFirstPreviousKeystone() []byte {
 	v.validate()
 	array := C.pop_context_info_container_get_first_previous_keystone(v.ref)

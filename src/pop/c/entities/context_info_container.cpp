@@ -20,6 +20,13 @@ POP_GENERATE_DEFAULT_VALUE(context_info_container) {
 }
 
 POP_ENTITY_GETTER_FUNCTION(context_info_container,
+                           int,
+                           height) {
+  VBK_ASSERT(self);
+  return self->ref.height;
+}
+
+POP_ENTITY_GETTER_FUNCTION(context_info_container,
                            POP_ARRAY_NAME(u8),
                            first_previous_keystone) {
   VBK_ASSERT(self);
@@ -59,6 +66,7 @@ altintegration::ContextInfoContainer generateDefaultValue<altintegration::Contex
   keystones.secondPreviousKeystone = std::vector<uint8_t>{2};
 
   res.keystones = keystones;
+  res.height = 1;
 
   return res;
 }

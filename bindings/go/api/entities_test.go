@@ -250,6 +250,7 @@ func TestContextInfoContainer(t *testing.T) {
 
 	container := GenerateDefaultContextInfoContainer()
 
+	assert.Equal(container.GetHeight(), int32(1))
 	assert.Equal(container.GetFirstPreviousKeystone(), []byte{1})
 	assert.Equal(container.GetSecondPreviousKeystone(), []byte{2})
 
