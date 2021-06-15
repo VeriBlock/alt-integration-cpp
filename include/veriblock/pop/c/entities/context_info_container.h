@@ -22,6 +22,8 @@ POP_ENTITY_GETTER_FUNCTION(context_info_container,
                            POP_ARRAY_NAME(u8),
                            second_previous_keystone);
 
+POP_GENERATE_DEFAULT_VALUE(context_info_container);
+
 #ifdef __cplusplus
 }
 #endif

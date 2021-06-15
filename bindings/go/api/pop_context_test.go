@@ -6,7 +6,6 @@
 package api
 
 import (
-	"encoding/hex"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -70,8 +69,6 @@ func TestPopContextBlockPrecessing(t *testing.T) {
 	pubData, err := context.GeneratePublicationData(newBlock.SerializeToVbk(), txRoot, payoutInfo, popData)
 	assert.NoError(err)
 	assert.NotNil(pubData)
-	pubData.SerializeToVbk()
-	hex.EncodeToString(pubData)
 
 	atv := miner.MineAtv(pubData)
 

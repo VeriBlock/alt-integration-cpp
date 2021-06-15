@@ -39,7 +39,7 @@ func GenerateTestPopContext(t *testing.T, storage *Storage) *PopContext {
 		fmt.Printf("[POP] [%s]\t%s \n", log_lvl, msg)
 	})
 
-	return NewPopContext(config, storage, "debug")
+	return NewPopContext(config, storage, "error")
 }
 
 func generateNextAltBlock(current *AltBlock) *AltBlock {
