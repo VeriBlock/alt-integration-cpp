@@ -65,15 +65,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"functions.html",
-"namespacealtintegration.html#a2c149a6b531cbe07691abd2d36c6ebde",
-"namespacealtintegration.html#ae121eeaf87b05f90f2b92bc4b5b2b8ae",
-"structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a117d0792b35ac17ffc403dfe62d09603",
-"structaltintegration_1_1BlockTree.html",
-"structaltintegration_1_1Endorsement.html#a0277ad933e9327604fda6f3783a89d34",
-"structaltintegration_1_1StoredBlockIndex.html#a6d2b89c805559262191299659e55f0ec",
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#abb5d53286ee4be4a72d9195561cb282e"
+"",
+"fmt_8hpp_source.html",
+"namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40",
+"namespacealtintegration.html#ad91958491058f9f3fdb2c04a2bb824af",
+"structaltintegration_1_1AltBlockTree.html#ac31836a34ff44f707091c4ea2c5cd4d1",
+"structaltintegration_1_1BlockReader.html#a98a19a0e4d0d1a9d69adf215def5001f",
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a912d652b9922d5629c6c9c179d386c01",
+"structaltintegration_1_1StateCorruptedException.html",
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a3ee02f61ecff26ef42fafab481f7c865"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
