@@ -5,6 +5,8 @@
 
 #include "context_info_container.hpp"
 #include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(context_info_container) {
   if (self != nullptr) {
@@ -53,6 +55,35 @@ POP_ENTITY_GETTER_FUNCTION(context_info_container,
   res.data = new uint8_t[res.size];
   std::copy(keystone.begin(), keystone.end(), res.data);
 
+  return res;
+}
+
+POP_ENTITY_SERIALIZE_TO_VBK(context_info_container) {
+  VBK_ASSERT(self);
+
+  auto bytes = altintegration::SerializeToVbkEncoding(self->ref);
+
+  POP_ARRAY_NAME(u8) res;
+  res.data = new uint8_t[bytes.size()];
+  std::copy(bytes.begin(), bytes.end(), res.data);
+  res.size = bytes.size();
+
+  return res;
+}
+
+POP_ENTITY_DESERIALIZE_FROM_VBK(context_info_container) {
+  VBK_ASSERT(state);
+  VBK_ASSERT(bytes.data);
+
+  std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
+
+  altintegration::ContextInfoContainer out;
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
+    return nullptr;
+  }
+
+  auto* res = new POP_ENTITY_NAME(context_info_container);
+  res->ref = std::move(out);
   return res;
 }
 

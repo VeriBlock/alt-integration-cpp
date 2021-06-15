@@ -254,6 +254,10 @@ func TestContextInfoContainer(t *testing.T) {
 	assert.Equal(container.GetFirstPreviousKeystone(), []byte{1})
 	assert.Equal(container.GetSecondPreviousKeystone(), []byte{2})
 
+	bytes := container.SerializeToVbk()
+	err := container.DeserializeFromVbk(bytes)
+	assert.NoError(err)
+
 	container.Free()
 	container.Free()
 }
