@@ -182,17 +182,13 @@ struct BaseBlockTree {
     auto oldHeight = root->getHeight();
     std::vector<stored_index_t> tempChain;
     auto restoringHash = this->makePrevHash(hash);
-    index_t* restoringIndex = this->getBlockIndex(restoringHash); 
+    index_t* restoringIndex = this->getBlockIndex(restoringHash);
 
     while (restoringIndex == nullptr) {
       // load current block from storage
       stored_index_t restoringBlock;
       if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
         return state.Invalid("can-not-find-block-in-storage");
-      }
-
-      if (restoringBlock.height > root->getHeight()) {
-        return state.Invalid("cannot-restore-block-higher-than-current-root");
       }
 
       // restore previous root blocks
