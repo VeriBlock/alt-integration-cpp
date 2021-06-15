@@ -242,3 +242,18 @@ func TestPopPayout(t *testing.T) {
 	popPayout.Free()
 	popPayout.Free()
 }
+
+func TestContextInfoContainer(t *testing.T) {
+	t.Parallel()
+
+	assert := assert.New(t)
+
+	container := GenerateDefaultContextInfoContainer()
+
+	assert.Equal(container.GetHeight(), int32(1))
+	assert.Equal(container.GetFirstPreviousKeystone(), []byte{1})
+	assert.Equal(container.GetSecondPreviousKeystone(), []byte{2})
+
+	container.Free()
+	container.Free()
+}
