@@ -280,13 +280,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (index == nullptr) {
-    if (!restoreBlock(hash, state)) {
-      return state.Invalid(
-          block_t::name() + "-bad-containing",
-          "Can not find VTB containing block: " + hash.toHex());
-    }
-    index = VbkTree::getBlockIndex(hash);
-    VBK_ASSERT(index);
+    return state.Invalid(block_t::name() + "-bad-containing",
+                         "Can not find VTB containing block: " + hash.toHex());
   }
 
   // TODO: once we plug the validation hole, we want this to be an assert
