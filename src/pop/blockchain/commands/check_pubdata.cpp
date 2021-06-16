@@ -17,13 +17,9 @@ bool CheckPublicationData::Execute(ValidationState& state) {
   auto& params = tree->getParams();
   const auto* endorsed = tree->getBlockIndex(endorsed_hash);
   if (endorsed == nullptr) {
-    if (!tree->restoreBlock(endorsed_hash, state)) {
-      return state.Invalid("bad-sf-endorsed",
-                           fmt::format("Can not find endorsed header (hash={})",
-                                       HexStr(endorsed_hash)));
-    }
-    endorsed = tree->getBlockIndex(endorsed_hash);
-    VBK_ASSERT(endorsed);
+    return state.Invalid("bad-sf-endorsed",
+                         fmt::format("Can not find endorsed header (hash={})",
+                                     HexStr(endorsed_hash)));
   }
 
   auto ctx = ContextInfoContainer::createFromPrevious(endorsed->pprev, params);
