@@ -212,8 +212,14 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   bool finalizeBlock(index_t& index, ValidationState& state) {
-    return this->finalizeBlockImpl(
-        index, param_->preserveBlocksBehindFinal(), state);
+    (void)index;
+    (void)state;
+    // TODO: currently can not procced finalization for the vbk and btc trees,
+    // need more investigation
+
+    // return this->finalizeBlockImpl(
+    //     index, param_->preserveBlocksBehindFinal(), state);
+    return true;
   }
 
  protected:
