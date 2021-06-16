@@ -48,6 +48,52 @@ TEST_F(SaveLoadTreeTest, ValidTree) {
   assertTreesEqual();
 }
 
+TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_NoUnconnectedBlockCheck) {
+  VBK_LOG_DEBUG("mine 20 alt blocks");
+
+  mineAltBlocks(20, chain);
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  AltBlock containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  VBK_LOG_DEBUG("add alt payloads");
+
+  PopData popData = generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
+  ASSERT_EQ(popData.atvs.size(), 1);
+  ASSERT_EQ(popData.vtbs.size(), 0);
+
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+  validateAlttreeIndexState(alttree, containingBlock, popData);
+
+  VBK_LOG_DEBUG(
+      "mine a buffer block that will prevent the next block from being "
+      "connected on setPayloads()");
+
+  containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+
+  VBK_LOG_DEBUG("mine a block that contains statefully duplicate payloads");
+
+  containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  alttree.acceptBlock(containingBlock.getHash(), popData);
+
+  save(alttree);
+
+  EXPECT_TRUE(load(alttree2));
+  EXPECT_TRUE(state.IsValid());
+}
+
 TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   // mine 20 blocks
   mineAltBlocks(20, chain);
@@ -73,6 +119,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  alttree.acceptBlock(containingBlock.getHash(), {});
 
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   containingIndex->template insertPayloadIds<VbkBlock>(
@@ -153,6 +200,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   chain.push_back(containingBlock);
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  alttree.acceptBlock(containingBlock.getHash(), {});
 
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   containingIndex->template insertPayloadIds<ATV>(map_get_id(popData.atvs));

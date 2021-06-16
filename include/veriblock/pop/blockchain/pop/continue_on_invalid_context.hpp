@@ -19,38 +19,31 @@ struct ContinueOnInvalidContext {
   ContinueOnInvalidContext(const AltChainParams& params) : params_(params) {}
 
   //! returns true if given command group can fit into a block
-  bool canFit(const CommandGroup& g) noexcept {
-    if (g.payload_type_name == &ATV::name()) {
-      if (atvs >= params_.getMaxATVsInAltBlock()) {
-        return false;
-      }
-
-      atvs++;
-      return true;
+  bool canFit(const ATV&) {
+    if (atvs >= params_.getMaxATVsInAltBlock()) {
+      return false;
     }
 
-    if (g.payload_type_name == &VTB::name()) {
-      if (vtbs >= params_.getMaxVTBsInAltBlock()) {
-        return false;
-      }
+    atvs++;
+    return true;
+  }
 
-      vtbs++;
-      return true;
+  bool canFit(const VTB&) {
+    if (vtbs >= params_.getMaxVTBsInAltBlock()) {
+      return false;
     }
 
-    if (g.payload_type_name == &VbkBlock::name()) {
-      if (vbks >= params_.getMaxVbkBlocksInAltBlock()) {
-        return false;
-      }
+    vtbs++;
+    return true;
+  }
 
-      vbks++;
-      return true;
+  bool canFit(const VbkBlock&) {
+    if (vbks >= params_.getMaxVbkBlocksInAltBlock()) {
+      return false;
     }
 
-    VBK_ASSERT_MSG(false,
-                   "command group contains bad typename: %s",
-                   (g.payload_type_name ? *g.payload_type_name : "nullptr"));
-    return false;
+    vbks++;
+    return true;
   }
 
  private:

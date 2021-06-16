@@ -280,13 +280,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
   auto* index = VbkTree::getBlockIndex(hash);
   if (index == nullptr) {
-    if (!restoreBlock(hash, state)) {
-      return state.Invalid(
-          block_t::name() + "-bad-containing",
-          "Can not find VTB containing block: " + hash.toHex());
-    }
-    index = VbkTree::getBlockIndex(hash);
-    VBK_ASSERT(index);
+    return state.Invalid(block_t::name() + "-bad-containing",
+                         "Can not find VTB containing block: " + hash.toHex());
   }
 
   // TODO: once we plug the validation hole, we want this to be an assert
@@ -365,13 +360,26 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
       "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
-bool VbkBlockTree::loadBlock(const stored_index_t& index,
-                             ValidationState& state) {
-  auto hash = index.header->getHash();
-  auto height = index.height;
-  if (!VbkTree::loadBlock(index, state)) {
+bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
+                                    ValidationState& state) {
+  if (!VbkTree::loadBlockForward(index, state)) {
     return false;  // already set
   }
+  return loadBlockInner(index, state);
+}
+
+bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
+                                     ValidationState& state) {
+  if (!VbkTree::loadBlockBackward(index, state)) {
+    return false;
+  }
+  return loadBlockInner(index, state);
+}
+
+bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
+                                  ValidationState& state) {
+  auto hash = index.header->getHash();
+  auto height = index.height;
 
   auto* current = getBlockIndex(hash);
   VBK_ASSERT(current);

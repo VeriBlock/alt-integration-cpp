@@ -106,9 +106,6 @@ struct MemPoolBlockTree {
   }
 
  private:
-  //! @private
-  void setTipContinueOnInvalid(AltBlockTree::index_t& to);
-
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
   AltBlockTree* tree_;
