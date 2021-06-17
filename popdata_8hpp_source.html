@@ -164,57 +164,48 @@ $(document).ready(function(){initNavTree('popdata_8hpp_source.html',''); initRes
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  json::putKV(obj, key, arr);</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue, <span class="keyword">typename</span> Pop&gt;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;JsonValue putPopPayload(<span class="keyword">const</span> Pop&amp; thing) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;id&quot;</span>, ToJSON&lt;JsonValue&gt;(thing.getId()));</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;data&quot;</span>, ToJSON&lt;JsonValue&gt;(<a class="code" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(thing)));</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value, <span class="keyword">typename</span> Item&gt;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keywordtype">void</span> putArrayKV(Value&amp; <span class="keywordtype">object</span>,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                <span class="keyword">const</span> std::string&amp; key,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                <span class="keyword">const</span> std::vector&lt;Item&gt;&amp; val) {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">auto</span> arr = json::makeEmptyArray&lt;Value&gt;();</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; it : val) {</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    json::arrayPushBack(arr, putPopPayload&lt;Value, Item&gt;(it));</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  json::putKV(<span class="keywordtype">object</span>, key, arr);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;}</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}  <span class="comment">// namespace detail</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a9351ada073661ce723ef0123fad73253">  115</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1PopData.html">PopData</a>&amp; p, <span class="keywordtype">bool</span> verbose = <span class="keyword">false</span>) {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, p.version);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordflow">if</span> (verbose) {</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    detail::putArrayKV(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    detail::putArrayKV(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    detail::putArrayKV(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value, <span class="keyword">typename</span> Item&gt;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="keywordtype">void</span> putArrayKV(Value&amp; <span class="keywordtype">object</span>,</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <span class="keyword">const</span> std::string&amp; key,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                <span class="keyword">const</span> std::vector&lt;Item&gt;&amp; val) {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">auto</span> arr = json::makeEmptyArray&lt;Value&gt;();</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; it : val) {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    json::arrayPushBack(arr, ToJSON&lt;Value&gt;(it));</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  json::putKV(<span class="keywordtype">object</span>, key, arr);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}  <span class="comment">// namespace detail</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
+<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a9351ada073661ce723ef0123fad73253">  107</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1PopData.html">PopData</a>&amp; p, <span class="keywordtype">bool</span> verbose = <span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, p.version);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keywordflow">if</span> (verbose) {</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    detail::putArrayKV(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    detail::putArrayKV(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    detail::putArrayKV(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;}</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a35a4d4fa7e87b4cb4114d24836d7c76a">  124</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(<a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                                <a class="code" href="structaltintegration_1_1PopData.html">PopData</a>&amp; out,</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                                <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;}</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a35a4d4fa7e87b4cb4114d24836d7c76a">  132</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(<a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                                <a class="code" href="structaltintegration_1_1PopData.html">PopData</a>&amp; out,</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                                <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 <div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00017">uint.hpp:17</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_ae8cac3ccae3038ddf8a54c5da8409e05"><div class="ttname"><a href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">altintegration::SerializeToHex</a></div><div class="ttdeci">std::string SerializeToHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00396">serde.hpp:396</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob&lt; SHA256_HASH_SIZE &gt;</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1PopData_html"><div class="ttname"><a href="structaltintegration_1_1PopData.html">altintegration::PopData</a></div><div class="ttdoc">Represents ALT block body of POP-related info.</div><div class="ttdef"><b>Definition:</b> <a href="popdata_8hpp_source.html#l00027">popdata.hpp:27</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1PopData_html_a261845c9bd353abd9c70a6208e08c57b"><div class="ttname"><a href="structaltintegration_1_1PopData.html#a261845c9bd353abd9c70a6208e08c57b">altintegration::PopData::toVbkEncoding</a></div><div class="ttdeci">void toVbkEncoding(WriteStream &amp;stream) const</div><div class="ttdoc">Convert PopData to data stream using Vbk byte format.</div></div>

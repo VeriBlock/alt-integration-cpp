@@ -58,7 +58,6 @@ var namespacealtintegration =
       [ "putArrayKV", "popdata_8hpp.html#ac7912c32ae7c66733c3b72aa98aa850a", null ],
       [ "putArrayOfIds", "popdata_8hpp.html#a60bcd50d1ae6c9a992681d556062b90a", null ],
       [ "putArrayOfPairs", "mempool__result_8hpp.html#ae378d56e1040bd702aec888f96a8f2d8", null ],
-      [ "putPopPayload", "popdata_8hpp.html#aaeac1a6f8d0a69d913ba8b45b4f7c22d", null ],
       [ "validateLoadBlock", "util_8hpp.html#ab1aacb10ab20eff95a81a0c911ad06dc", null ],
       [ "validateLoadBlock", "util_8hpp.html#a81ea80706a3fcf2f6f1be29c33f2dc8b", null ],
       [ "validateLoadBlock", "util_8hpp.html#ac65139475c1db006dd0d8b5af8f0ae33", null ],
