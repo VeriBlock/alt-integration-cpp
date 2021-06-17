@@ -89,21 +89,13 @@ inline void putArrayOfIds(JsonValue& obj,
   json::putKV(obj, key, arr);
 }
 
-template <typename JsonValue, typename Pop>
-JsonValue putPopPayload(const Pop& thing) {
-  auto obj = json::makeEmptyObject<JsonValue>();
-  json::putKV(obj, "id", ToJSON<JsonValue>(thing.getId()));
-  json::putKV(obj, "data", ToJSON<JsonValue>(SerializeToHex(thing)));
-  return obj;
-}
-
 template <typename Value, typename Item>
 void putArrayKV(Value& object,
                 const std::string& key,
                 const std::vector<Item>& val) {
   auto arr = json::makeEmptyArray<Value>();
   for (const auto& it : val) {
-    json::arrayPushBack(arr, putPopPayload<Value, Item>(it));
+    json::arrayPushBack(arr, ToJSON<Value>(it));
   }
   json::putKV(object, key, arr);
 }
