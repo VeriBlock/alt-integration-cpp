@@ -11,7 +11,7 @@ namespace adaptors {
 
 template <>
 std::vector<uint8_t> block_key<altintegration::AltBlock>(
-    const altintegration::AltBlock::prev_hash_t& hash) {
+    const altintegration::AltBlock::hash_t& hash) {
   auto res = hash;
   res.insert(res.begin(), DB_ALT_BLOCK);
   return res;
@@ -19,7 +19,7 @@ std::vector<uint8_t> block_key<altintegration::AltBlock>(
 
 template <>
 std::vector<uint8_t> block_key<altintegration::VbkBlock>(
-    const altintegration::VbkBlock::prev_hash_t& hash) {
+    const altintegration::VbkBlock::hash_t& hash) {
   auto res = hash.asVector();
   res.insert(res.begin(), DB_VBK_BLOCK);
   return res;
@@ -27,9 +27,33 @@ std::vector<uint8_t> block_key<altintegration::VbkBlock>(
 
 template <>
 std::vector<uint8_t> block_key<altintegration::BtcBlock>(
-    const altintegration::BtcBlock::prev_hash_t& hash) {
+    const altintegration::BtcBlock::hash_t& hash) {
   auto res = hash.asVector();
   res.insert(res.begin(), DB_BTC_BLOCK);
+  return res;
+}
+
+template <>
+std::vector<uint8_t> block_prev_key<altintegration::AltBlock>(
+    const altintegration::AltBlock::prev_hash_t& hash) {
+  auto res = hash;
+  res.insert(res.begin(), DB_ALT_PREV_BLOCK);
+  return res;
+}
+
+template <>
+std::vector<uint8_t> block_prev_key<altintegration::VbkBlock>(
+    const altintegration::VbkBlock::prev_hash_t& hash) {
+  auto res = hash.asVector();
+  res.insert(res.begin(), DB_VBK_PREV_BLOCK);
+  return res;
+}
+
+template <>
+std::vector<uint8_t> block_prev_key<altintegration::BtcBlock>(
+    const altintegration::BtcBlock::prev_hash_t& hash) {
+  auto res = hash.asVector();
+  res.insert(res.begin(), DB_BTC_PREV_BLOCK);
   return res;
 }
 
