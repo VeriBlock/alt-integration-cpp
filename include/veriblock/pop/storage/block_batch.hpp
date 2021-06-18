@@ -25,6 +25,7 @@ struct BlockBatch {
   /**
    * Save BlockIndex on disk.
    * @param hash
+   * @param prev_hash
    * @param value
    */
   virtual void writeBlock(const AltBlock::hash_t& hash,
