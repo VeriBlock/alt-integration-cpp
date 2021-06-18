@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1adaptors_1_1Bl
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00173">173</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00198">198</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::adaptors::BlockBatchImpl:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -116,17 +116,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7d9fc0b3c5e429187c5ea6e441dd7aaa"><td class="memItemLeft" align="right" valign="top"><a id="a7d9fc0b3c5e429187c5ea6e441dd7aaa"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BlockBatchImpl</b> (<a class="el" href="structaltintegration_1_1adaptors_1_1WriteBatch.html">WriteBatch</a> &amp;batch)</td></tr>
 <tr class="separator:a7d9fc0b3c5e429187c5ea6e441dd7aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a170ccf2d81a697d74eb14c79b4426a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a3a170ccf2d81a697d74eb14c79b4426a">writeBlock</a> (const AltBlock::prev_hash_t &amp;hash, const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;blk) override</td></tr>
-<tr class="memdesc:a3a170ccf2d81a697d74eb14c79b4426a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save <a class="el" href="structaltintegration_1_1BlockIndex.html" title="A node in a block tree.">BlockIndex</a> on disk.  <a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a3a170ccf2d81a697d74eb14c79b4426a">More...</a><br /></td></tr>
-<tr class="separator:a3a170ccf2d81a697d74eb14c79b4426a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e7b0688059d3c6867c24eba70db0131"><td class="memItemLeft" align="right" valign="top"><a id="a3e7b0688059d3c6867c24eba70db0131"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a3e7b0688059d3c6867c24eba70db0131">writeBlock</a> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::prev_hash_t</a> &amp;hash, const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;blk) override</td></tr>
-<tr class="memdesc:a3e7b0688059d3c6867c24eba70db0131"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
-<tr class="separator:a3e7b0688059d3c6867c24eba70db0131"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6511a249dc913b18b12b80932d546a07"><td class="memItemLeft" align="right" valign="top"><a id="a6511a249dc913b18b12b80932d546a07"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a6511a249dc913b18b12b80932d546a07">writeBlock</a> (const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::prev_hash_t</a> &amp;hash, const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;blk) override</td></tr>
-<tr class="memdesc:a6511a249dc913b18b12b80932d546a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
-<tr class="separator:a6511a249dc913b18b12b80932d546a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34f34f615b867dc0c941d188998b10b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2">writeBlock</a> (const AltBlock::hash_t &amp;hash, const AltBlock::prev_hash_t &amp;prev_hash, const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;blk) override</td></tr>
+<tr class="memdesc:a34f34f615b867dc0c941d188998b10b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save <a class="el" href="structaltintegration_1_1BlockIndex.html" title="A node in a block tree.">BlockIndex</a> on disk.  <a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2">More...</a><br /></td></tr>
+<tr class="separator:a34f34f615b867dc0c941d188998b10b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab93f7726736c13d03630c8abbc9ffd70"><td class="memItemLeft" align="right" valign="top"><a id="ab93f7726736c13d03630c8abbc9ffd70"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70">writeBlock</a> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash, const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::prev_hash_t</a> &amp;prev_hash, const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;blk) override</td></tr>
+<tr class="memdesc:ab93f7726736c13d03630c8abbc9ffd70"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:ab93f7726736c13d03630c8abbc9ffd70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38dc8b7abb579f8b9616b25a1e5f8fd6"><td class="memItemLeft" align="right" valign="top"><a id="a38dc8b7abb579f8b9616b25a1e5f8fd6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a38dc8b7abb579f8b9616b25a1e5f8fd6">writeBlock</a> (const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;hash, const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::prev_hash_t</a> &amp;prev_hash, const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;blk) override</td></tr>
+<tr class="memdesc:a38dc8b7abb579f8b9616b25a1e5f8fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a38dc8b7abb579f8b9616b25a1e5f8fd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae97a03ff540402b978da8c91a1210186"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186">writeTip</a> (const AltBlock::hash_t &amp;hash) override</td></tr>
 <tr class="memdesc:ae97a03ff540402b978da8c91a1210186"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save Tree tip on disk.  <a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186">More...</a><br /></td></tr>
 <tr class="separator:ae97a03ff540402b978da8c91a1210186"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,8 +140,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="separator:a7f65c921af0541e8bf164ac79aa94e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3a170ccf2d81a697d74eb14c79b4426a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a170ccf2d81a697d74eb14c79b4426a">&#9670;&nbsp;</a></span>writeBlock()</h2>
+<a id="a34f34f615b867dc0c941d188998b10b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34f34f615b867dc0c941d188998b10b2">&#9670;&nbsp;</a></span>writeBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,8 +152,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
         <tr>
           <td class="memname">void altintegration::adaptors::BlockBatchImpl::writeBlock </td>
           <td>(</td>
-          <td class="paramtype">const AltBlock::prev_hash_t &amp;&#160;</td>
+          <td class="paramtype">const AltBlock::hash_t &amp;&#160;</td>
           <td class="paramname"><em>hash</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const AltBlock::prev_hash_t &amp;&#160;</td>
+          <td class="paramname"><em>prev_hash</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -176,17 +182,19 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hash</td><td></td></tr>
+    <tr><td class="paramname">prev_hash</td><td></td></tr>
     <tr><td class="paramname">value</td><td></td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="structaltintegration_1_1BlockBatch.html#a22878de4932d62ee0c73f335cd754349">altintegration::BlockBatch</a>.</p>
+<p>Implements <a class="el" href="structaltintegration_1_1BlockBatch.html#af279231e6954603d1013950e4e94bace">altintegration::BlockBatch</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00178">178</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                                                                  {</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    batch_.write(block_key&lt;AltBlock&gt;(hash), <a class="code" href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">SerializeToVbkEncoding</a>(blk));</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00203">203</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                                                                  {</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    batch_.write(block_prev_key&lt;AltBlock&gt;(prev_hash), hash);</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    batch_.write(block_key&lt;AltBlock&gt;(hash), <a class="code" href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">SerializeToVbkEncoding</a>(blk));</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a70596b439aa8324197a36b9e35940847"><div class="ttname"><a href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">altintegration::SerializeToVbkEncoding</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; SerializeToVbkEncoding(const T &amp;obj)</div><div class="ttdoc">Serialize to VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00380">serde.hpp:380</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -223,10 +231,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 
 <p>Implements <a class="el" href="structaltintegration_1_1BlockBatch.html#a8e70a46dd771b1ad12edc2d981a8ca43">altintegration::BlockBatch</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00193">193</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                                                     {</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    batch_.write(tip_key&lt;AltBlock&gt;(), hash);</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00224">224</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                                                     {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    batch_.write(tip_key&lt;AltBlock&gt;(), hash);</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>

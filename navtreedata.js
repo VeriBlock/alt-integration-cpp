@@ -26,6 +26,12 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
+    [ "Setup ABFI", "integration_13_setup_abfi.html", [
+      [ "Overview", "integration_13_setup_abfi.html#autotoc_md25", null ],
+      [ "1. Altchain BFI configuration.", "integration_13_setup_abfi.html#autotoc_md26", null ],
+      [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
+      [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -60,14 +66,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "",
-"fmt_8hpp_source.html",
-"namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40",
-"namespacealtintegration.html#ad91958491058f9f3fdb2c04a2bb824af",
-"structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c",
-"structaltintegration_1_1BlockReader.html#a9d965565bdcff5f36c61298c9d1543a2",
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036",
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57",
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13"
+"ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
+"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61dacaf9b6b99962bf5c2264824231d7a40c",
+"namespacealtintegration.html#ad744e5977f0a0a3bb56233052bd86cfd",
+"structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919",
+"structaltintegration_1_1BlockReader.html#a377c177ac69da70ac6104a79bc0e2925",
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a4b85926ec6035e74dd4baacbeaa63c0f",
+"structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab",
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

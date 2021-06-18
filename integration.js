@@ -106,12 +106,6 @@ var integration =
       [ "6. Add RPC unit test.", "integration_12_rpc.html#autotoc_md23", null ],
       [ "7. Add RPC service and test to the makefile.", "integration_12_rpc.html#autotoc_md24", null ]
     ] ],
-    [ "Setup ABFI", "integration_13_setup_abfi.html", [
-      [ "Overview", "integration_13_setup_abfi.html#autotoc_md25", null ],
-      [ "1. Altchain BFI configuration.", "integration_13_setup_abfi.html#autotoc_md26", null ],
-      [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
-      [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
-    ] ],
     [ "Testing of POP-enabled BTC fork", "btctesting.html", [
       [ "Summary", "btctesting.html#autotoc_md88", null ],
       [ "Overview", "btctesting.html#autotoc_md89", null ],
