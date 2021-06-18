@@ -133,7 +133,8 @@ void saveTree(
   // write indices
   for (const index_t* index : dirty_indices) {
     validator(*index);
-    batch.writeBlock(tree.makePrevHash(index->getHash()),
+    batch.writeBlock(index->getHash(),
+                     tree.makePrevHash(index->getHash()),
                      index->toStoredBlockIndex());
   }
 
