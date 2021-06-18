@@ -134,8 +134,8 @@ jobs:
       - name: debug crash
         if: always()
         run: |
-        cat /tmp/data_sizes-*.cpp;
-        cat /tmp/data_sizes-*.sh;
+          cat /tmp/data_sizes-*.cpp;
+          cat /tmp/data_sizes-*.sh;
       - name: Upload crash files
         if: always()
         uses: actions/upload-artifact@v1
