@@ -26,12 +26,6 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
-    [ "Setup ABFI", "integration_13_setup_abfi.html", [
-      [ "Overview", "integration_13_setup_abfi.html#autotoc_md25", null ],
-      [ "1. Altchain BFI configuration.", "integration_13_setup_abfi.html#autotoc_md26", null ],
-      [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
-      [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
-    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -65,15 +59,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"fmt_8hpp_source.html",
-"namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40",
-"namespacealtintegration.html#ad91958491058f9f3fdb2c04a2bb824af",
-"structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c",
-"structaltintegration_1_1BlockReader.html#a9d965565bdcff5f36c61298c9d1543a2",
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036",
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57",
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13"
+"addblock_8hpp_source.html",
+"functions.html",
+"namespacealtintegration.html#a2c149a6b531cbe07691abd2d36c6ebde",
+"namespacealtintegration.html#ae121eeaf87b05f90f2b92bc4b5b2b8ae",
+"structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a1b93191f1489c599cc65d0dcb4a100ce",
+"structaltintegration_1_1BlockTree.html#a000f6815f1653cd050cc71402e02e27e",
+"structaltintegration_1_1Endorsement.html#a12a6b3d7fd19e10f847b2887c188c663",
+"structaltintegration_1_1StoredBlockIndex.html#a79f49e553226aa37168b6cd566435db3",
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#ad448494dc3233114860f220d7d4d41da"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
