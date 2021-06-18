@@ -123,10 +123,10 @@ jobs:
         run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
-      - name: build
-        run: cmake --build build --
-      - name: check architectures
-        run: |
-          OSX_ARCH=$(${GITHUB_WORKSPACE}/cctools/toolchain/bin/x86_64-apple-darwin16-lipo -info ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a) && \
-          echo $OSX_ARCH && \
-          [[ $OSX_ARCH == "Non-fat file: ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a is architecture: x86_64" ]] && exit 0
+#      - name: build
+#        run: cmake -v --build build --
+#      - name: check architectures
+#        run: |
+#          OSX_ARCH=$(${GITHUB_WORKSPACE}/cctools/toolchain/bin/x86_64-apple-darwin16-lipo -info ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a) && \
+#          echo $OSX_ARCH && \
+#          [[ $OSX_ARCH == "Non-fat file: ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a is architecture: x86_64" ]] && exit 0
