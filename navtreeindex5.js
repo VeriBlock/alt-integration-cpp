@@ -1,5 +1,13 @@
 var NAVTREEINDEX5 =
 {
+"structaltintegration_1_1BlockReader.html#a9d965565bdcff5f36c61298c9d1543a2":[4,0,0,65,1],
+"structaltintegration_1_1BlockReader.html#aa1b4980a6a4f4499fb0aa11e1eb91ce6":[4,0,0,65,7],
+"structaltintegration_1_1BlockReader.html#abf32c0d62ec8875609e1cf4e6d303ab0":[4,0,0,65,5],
+"structaltintegration_1_1BlockReader.html#ae070247d95e2c2d2750ea164c83d6a89":[4,0,0,65,0],
+"structaltintegration_1_1BlockReader.html#ae1d1a3a582566e20f2871d58a5b149c5":[4,0,0,65,3],
+"structaltintegration_1_1BlockReader.html#af2c045ce84a2174e3fcd8d56a67d625b":[4,0,0,65,13],
+"structaltintegration_1_1BlockReader.html#af3d5c357b0185cdc9fc93945bfc6ea7e":[4,0,0,65,12],
+"structaltintegration_1_1BlockTree.html":[4,0,0,10],
 "structaltintegration_1_1BlockTree.html#a000f6815f1653cd050cc71402e02e27e":[4,0,0,10,12],
 "structaltintegration_1_1BlockTree.html#a06c83481b6968320a654c008255a4cf5":[4,0,0,10,8],
 "structaltintegration_1_1BlockTree.html#a0746be8a5c44e3b861b42a0ae2b32fbf":[4,0,0,10,19],
@@ -241,13 +249,5 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#a622954a704de30a6ba67df28358ee253":[4,0,0,59,10],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#a69039454d736779646d501fce294d675":[4,0,0,59,17],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#a79f8686dc1fecfd783748e13cb335812":[4,0,0,59,6],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a912d652b9922d5629c6c9c179d386c01":[4,0,0,59,16],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036":[4,0,0,59,15],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#ab7178c0b459a20d516ae3be44541965e":[4,0,0,59,9],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454":[4,0,0,59,3],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#ad3fd4625194133ae94eac0fde98fe2b0":[4,0,0,59,4],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#ad7350db0af292d89ea78dbd25393cb4e":[4,0,0,59,14],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#af39539bcb281499d6162a2c79eeba932":[4,0,0,59,11],
-"structaltintegration_1_1Endorsement.html":[4,0,0,36],
-"structaltintegration_1_1Endorsement.html#a0277ad933e9327604fda6f3783a89d34":[4,0,0,36,1]
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a912d652b9922d5629c6c9c179d386c01":[4,0,0,59,16]
 };
