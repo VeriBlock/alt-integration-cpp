@@ -19,10 +19,13 @@ namespace altintegration {
 namespace adaptors {
 
 const char DB_BTC_BLOCK = 'Q';
+const char DB_BTC_PREV_BLOCK = 'R';
 const char DB_BTC_TIP = 'q';
 const char DB_VBK_BLOCK = 'W';
+const char DB_VBK_PREV_BLOCK = 'T';
 const char DB_VBK_TIP = 'w';
 const char DB_ALT_BLOCK = 'E';
+const char DB_ALT_PREV_BLOCK = 'Y';
 const char DB_ALT_TIP = 'e';
 
 template <typename block_t>
@@ -38,16 +41,31 @@ template <>
 std::vector<uint8_t> tip_key<BtcBlock>();
 
 template <typename block_t>
-std::vector<uint8_t> block_key(const typename block_t::prev_hash_t& hash);
+std::vector<uint8_t> block_key(const typename block_t::hash_t& hash);
 
 template <>
-std::vector<uint8_t> block_key<AltBlock>(const AltBlock::prev_hash_t& hash);
+std::vector<uint8_t> block_key<AltBlock>(const AltBlock::hash_t& hash);
 
 template <>
-std::vector<uint8_t> block_key<VbkBlock>(const VbkBlock::prev_hash_t& hash);
+std::vector<uint8_t> block_key<VbkBlock>(const VbkBlock::hash_t& hash);
 
 template <>
-std::vector<uint8_t> block_key<BtcBlock>(const BtcBlock::prev_hash_t& hash);
+std::vector<uint8_t> block_key<BtcBlock>(const BtcBlock::hash_t& hash);
+
+template <typename block_t>
+std::vector<uint8_t> block_prev_key(const typename block_t::prev_hash_t& hash);
+
+template <>
+std::vector<uint8_t> block_prev_key<AltBlock>(
+    const AltBlock::prev_hash_t& hash);
+
+template <>
+std::vector<uint8_t> block_prev_key<VbkBlock>(
+    const VbkBlock::prev_hash_t& hash);
+
+template <>
+std::vector<uint8_t> block_prev_key<BtcBlock>(
+    const BtcBlock::prev_hash_t& hash);
 
 template <typename BlockT>
 struct BlockIteratorImpl : public BlockIterator<BlockT> {
@@ -66,7 +84,7 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
     return true;
   }
 
-  bool key(typename BlockT::prev_hash_t& out) const override {
+  bool key(typename BlockT::hash_t& out) const override {
     std::vector<uint8_t> bytes;
     if (!it_->key(bytes)) {
       return false;
@@ -156,12 +174,19 @@ struct BlockReaderImpl : public BlockReader {
 
  private:
   template <typename block_t>
-  bool getBlock(const typename block_t::prev_hash_t& hash,
+  bool getBlock(const typename block_t::prev_hash_t& prev_hash,
                 StoredBlockIndex<block_t>& out) const {
+    std::vector<uint8_t> hash_out;
+    if (!storage_.read(block_prev_key<block_t>(prev_hash), hash_out)) {
+      return false;
+    }
+
+    typename block_t::hash_t hash = hash_out;
     std::vector<uint8_t> bytes_out;
     if (!storage_.read(block_key<block_t>(hash), bytes_out)) {
       return false;
     }
+
     out =
         AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out);
     return true;
@@ -175,18 +200,24 @@ struct BlockBatchImpl : public BlockBatch {
 
   BlockBatchImpl(WriteBatch& batch) : batch_(batch) {}
 
-  void writeBlock(const AltBlock::prev_hash_t& hash,
+  void writeBlock(const AltBlock::hash_t& hash,
+                  const AltBlock::prev_hash_t& prev_hash,
                   const StoredBlockIndex<AltBlock>& blk) override {
+    batch_.write(block_prev_key<AltBlock>(prev_hash), hash);
     batch_.write(block_key<AltBlock>(hash), SerializeToVbkEncoding(blk));
   }
 
-  void writeBlock(const VbkBlock::prev_hash_t& hash,
+  void writeBlock(const VbkBlock::hash_t& hash,
+                  const VbkBlock::prev_hash_t& prev_hash,
                   const StoredBlockIndex<VbkBlock>& blk) override {
+    batch_.write(block_prev_key<VbkBlock>(prev_hash), hash.asVector());
     batch_.write(block_key<VbkBlock>(hash), SerializeToVbkEncoding(blk));
   }
 
-  void writeBlock(const BtcBlock::prev_hash_t& hash,
+  void writeBlock(const BtcBlock::hash_t& hash,
+                  const BtcBlock::prev_hash_t& prev_hash,
                   const StoredBlockIndex<BtcBlock>& blk) override {
+    batch_.write(block_prev_key<BtcBlock>(prev_hash), hash.asVector());
     batch_.write(block_key<BtcBlock>(hash), SerializeToVbkEncoding(blk));
   }
 
