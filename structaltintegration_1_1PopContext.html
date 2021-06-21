@@ -144,9 +144,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a42f8f58fd6d02519bc413eea2b86bdae"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN <a class="el" href="structaltintegration_1_1PopPayouts.html">PopPayouts</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#a42f8f58fd6d02519bc413eea2b86bdae">getPopPayout</a> (const AltBlockTree::hash_t &amp;prev)</td></tr>
 <tr class="memdesc:a42f8f58fd6d02519bc413eea2b86bdae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates POP rewards that should be paid in the next block after <code>prev</code>.  <a href="structaltintegration_1_1PopContext.html#a42f8f58fd6d02519bc413eea2b86bdae">More...</a><br /></td></tr>
 <tr class="separator:a42f8f58fd6d02519bc413eea2b86bdae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbbcb5ff2423c30f7ff464904f5f5049"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN <a class="el" href="structaltintegration_1_1PopData.html">PopData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#abbbcb5ff2423c30f7ff464904f5f5049">generatePopData</a> (const AltBlockTree::hash_t &amp;prev)</td></tr>
-<tr class="memdesc:abbbcb5ff2423c30f7ff464904f5f5049"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">PopData</a> for a block next to <code>prev</code>.  <a href="structaltintegration_1_1PopContext.html#abbbcb5ff2423c30f7ff464904f5f5049">More...</a><br /></td></tr>
-<tr class="separator:abbbcb5ff2423c30f7ff464904f5f5049"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac53e8cc9c438020db9219e899b5a8bde"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN <a class="el" href="structaltintegration_1_1PopData.html">PopData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#ac53e8cc9c438020db9219e899b5a8bde">generatePopData</a> ()</td></tr>
+<tr class="memdesc:ac53e8cc9c438020db9219e899b5a8bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">PopData</a> for the block next to the current tip.  <a href="structaltintegration_1_1PopContext.html#ac53e8cc9c438020db9219e899b5a8bde">More...</a><br /></td></tr>
+<tr class="separator:ac53e8cc9c438020db9219e899b5a8bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af531975fd6efdf16f6a26097f07377fd"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#af531975fd6efdf16f6a26097f07377fd">generatePublicationData</a> (<a class="el" href="structaltintegration_1_1PublicationData.html">PublicationData</a> &amp;output, const std::vector&lt; uint8_t &gt; &amp;endorsedBlockHeader, const std::vector&lt; uint8_t &gt; &amp;txMerkleRoot, const <a class="el" href="structaltintegration_1_1PopData.html">PopData</a> &amp;popData, const std::vector&lt; uint8_t &gt; &amp;payoutInfo)</td></tr>
 <tr class="memdesc:af531975fd6efdf16f6a26097f07377fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create <a class="el" href="structaltintegration_1_1PublicationData.html" title="Publication data about ALT block inside VBK blockchain.">PublicationData</a> given required input parameters.  <a href="structaltintegration_1_1PopContext.html#af531975fd6efdf16f6a26097f07377fd">More...</a><br /></td></tr>
 <tr class="separator:af531975fd6efdf16f6a26097f07377fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -382,8 +382,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="abbbcb5ff2423c30f7ff464904f5f5049"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbbcb5ff2423c30f7ff464904f5f5049">&#9670;&nbsp;</a></span>generatePopData()</h2>
+<a id="ac53e8cc9c438020db9219e899b5a8bde"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac53e8cc9c438020db9219e899b5a8bde">&#9670;&nbsp;</a></span>generatePopData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -391,18 +391,11 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">VBK_CHECK_RETURN <a class="el" href="structaltintegration_1_1PopData.html">PopData</a> altintegration::PopContext::generatePopData </td>
           <td>(</td>
-          <td class="paramtype">const AltBlockTree::hash_t &amp;&#160;</td>
-          <td class="paramname"><em>prev</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">prev</td><td>should match <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> tip.</td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>empty or non-empty <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">PopData</a> instance that must be inserted into next block body. </dd></dl>
 
 </div>
