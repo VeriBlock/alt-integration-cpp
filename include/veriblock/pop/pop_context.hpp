@@ -117,14 +117,12 @@ struct PopContext {
   VBK_CHECK_RETURN PopPayouts getPopPayout(const AltBlockTree::hash_t& prev);
 
   /**
-   * Generate PopData for a block next to `prev`.
-   *
-   * @param prev should match AltBlockTree tip.
+   * Generate PopData for the block next to the current tip.
    *
    * @return empty or non-empty PopData instance that must be inserted into next
    * block body.
    */
-  VBK_CHECK_RETURN PopData generatePopData(const AltBlockTree::hash_t& prev);
+  VBK_CHECK_RETURN PopData generatePopData();
 
   /**
    * Create PublicationData given required input parameters.
