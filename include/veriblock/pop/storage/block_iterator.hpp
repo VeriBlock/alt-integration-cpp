@@ -24,7 +24,7 @@ namespace altintegration {
 
 template <typename BlockT>
 struct BlockIterator {
-  using prev_hash_t = typename BlockT::prev_hash_t;
+  using prev_hash_t = typename BlockT::hash_t;
 
   virtual ~BlockIterator() = default;
 

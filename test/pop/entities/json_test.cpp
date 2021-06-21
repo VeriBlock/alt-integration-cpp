@@ -46,21 +46,122 @@ TEST(ToJson, PopData) {
   std::string expected_1 = R"({
   "atvs": [
     {
-      "data": "000000010128000116672a21458e7bcadc1b2b8c92bf4e77e40a2d8a251dd40100000100010801000100010001000000040000000004000000002000000000000000000000000000000000000000000000000000000000000000000400000000410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-      "id": "d1221f94e6a867306484dcc6d3bfbb69f41aa648f71a9e70da4a7d6750c96662"
+      "blockOfProof": {
+        "difficulty": 0,
+        "hash": "afba108546bc1d7d173449155534785fbe064bdebe45c01c",
+        "height": 0,
+        "id": "5534785fbe064bdebe45c01c",
+        "merkleRoot": "00000000000000000000000000000000",
+        "nonce": 0,
+        "previousBlock": "000000000000000000000000",
+        "previousKeystone": "000000000000000000",
+        "secondPreviousKeystone": "000000000000000000",
+        "timestamp": 0,
+        "version": 0
+      },
+      "id": "d1221f94e6a867306484dcc6d3bfbb69f41aa648f71a9e70da4a7d6750c96662",
+      "merklePath": {
+        "index": 0,
+        "layers": [],
+        "subject": "0000000000000000000000000000000000000000000000000000000000000000",
+        "treeIndex": 0
+      },
+      "transaction": {
+        "hash": "ff97657531892c9fa0541c61359eed115bb4ba0d1679b4e0a17046011c1acd14",
+        "networkByte": null,
+        "outputs": [],
+        "publicKey": "",
+        "publicationData": {
+          "contextInfo": "",
+          "header": "",
+          "identifier": 0,
+          "payoutInfo": ""
+        },
+        "signature": "",
+        "signatureIndex": 0,
+        "sourceAddress": "V111111111111111111111111G3LuZ",
+        "sourceAmount": 0,
+        "type": 0
+      },
+      "version": 1
     }
   ],
   "vbkblocks": [
     {
-      "data": "410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-      "id": "5534785fbe064bdebe45c01c"
+      "difficulty": 0,
+      "hash": "afba108546bc1d7d173449155534785fbe064bdebe45c01c",
+      "height": 0,
+      "id": "5534785fbe064bdebe45c01c",
+      "merkleRoot": "00000000000000000000000000000000",
+      "nonce": 0,
+      "previousBlock": "000000000000000000000000",
+      "previousKeystone": "000000000000000000",
+      "secondPreviousKeystone": "000000000000000000",
+      "timestamp": 0,
+      "version": 0
     }
   ],
   "version": 1,
   "vtbs": [
     {
-      "data": "0000000101c5000116672a21458e7bcadc1b2b8c92bf4e77e40a2d8a251dd4410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010001130400000000040000000004000000040000002050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000040000000004000000002000000000000000000000000000000000000000000000000000000000000000000400000000410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-      "id": "70fc5ecb12e2e31c39a888ff2eddf8a68ed4b9c5b623302fd584adaae842c22d"
+      "containingBlock": {
+        "difficulty": 0,
+        "hash": "afba108546bc1d7d173449155534785fbe064bdebe45c01c",
+        "height": 0,
+        "id": "5534785fbe064bdebe45c01c",
+        "merkleRoot": "00000000000000000000000000000000",
+        "nonce": 0,
+        "previousBlock": "000000000000000000000000",
+        "previousKeystone": "000000000000000000",
+        "secondPreviousKeystone": "000000000000000000",
+        "timestamp": 0,
+        "version": 0
+      },
+      "id": "70fc5ecb12e2e31c39a888ff2eddf8a68ed4b9c5b623302fd584adaae842c22d",
+      "merklePath": {
+        "index": 0,
+        "layers": [],
+        "subject": "0000000000000000000000000000000000000000000000000000000000000000",
+        "treeIndex": 0
+      },
+      "transaction": {
+        "address": "V111111111111111111111111G3LuZ",
+        "bitcoinTransaction": "",
+        "blockOfProof": {
+          "bits": 0,
+          "hash": "14508459b221041eab257d2baaa7459775ba748246c8403609eb708f0e57e74b",
+          "merkleRoot": "0000000000000000000000000000000000000000000000000000000000000000",
+          "nonce": 0,
+          "previousBlock": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp": 0,
+          "version": 0
+        },
+        "blockOfProofContext": [],
+        "hash": "9bfbefe12c9717b7f0ed1bee57b4e1100114a0e6836a2114dd7a7069a2fb0d85",
+        "merklePath": {
+          "index": 0,
+          "layers": [],
+          "subject": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "networkByte": null,
+        "publicKey": "",
+        "publishedBlock": {
+          "difficulty": 0,
+          "hash": "afba108546bc1d7d173449155534785fbe064bdebe45c01c",
+          "height": 0,
+          "id": "5534785fbe064bdebe45c01c",
+          "merkleRoot": "00000000000000000000000000000000",
+          "nonce": 0,
+          "previousBlock": "000000000000000000000000",
+          "previousKeystone": "000000000000000000",
+          "secondPreviousKeystone": "000000000000000000",
+          "timestamp": 0,
+          "version": 0
+        },
+        "signature": "",
+        "type": 0
+      },
+      "version": 1
     }
   ]
 }
