@@ -26,12 +26,6 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
-    [ "Setup ABFI", "integration_13_setup_abfi.html", [
-      [ "Overview", "integration_13_setup_abfi.html#autotoc_md25", null ],
-      [ "1. Altchain BFI configuration.", "integration_13_setup_abfi.html#autotoc_md26", null ],
-      [ "2. Altchain BFI API", "integration_13_setup_abfi.html#autotoc_md27", null ],
-      [ "6. Altchain BFI last-finalized-btc endpoint", "integration_13_setup_abfi.html#autotoc_md28", null ]
-    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -65,15 +59,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
-"namespacealtintegration.html#a25a27ef7d9a529ef3319249059a4a4e6",
-"namespacealtintegration.html#ada8ffc7bff1b5b13b6600a5905abaa32",
-"structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27",
-"structaltintegration_1_1BlockReader.html#aa1b4980a6a4f4499fb0aa11e1eb91ce6",
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#ab7178c0b459a20d516ae3be44541965e",
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57",
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13"
+"",
+"ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
+"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61dacaf9b6b99962bf5c2264824231d7a40c",
+"namespacealtintegration.html#ad744e5977f0a0a3bb56233052bd86cfd",
+"structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919",
+"structaltintegration_1_1BlockReader.html#a377c177ac69da70ac6104a79bc0e2925",
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a4b85926ec6035e74dd4baacbeaa63c0f",
+"structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68",
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

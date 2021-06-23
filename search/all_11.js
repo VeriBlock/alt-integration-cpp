@@ -12,7 +12,7 @@ var searchData=
   ['setlogger_360',['SetLogger',['../namespacealtintegration.html#ada8ffc7bff1b5b13b6600a5905abaa32',1,'altintegration::SetLogger(std::unique_ptr&lt; Logger &gt; lgr, LogLevel log_lvl=LogLevel::info)'],['../namespacealtintegration.html#a0cacfa7b162d842639af877743c2e123',1,'altintegration::SetLogger(LogLevel log_lvl=LogLevel::info)']]],
   ['setmocktime_361',['setMockTime',['../namespacealtintegration.html#a6fa0fd58ffe1d2cebbb19b36aa3a7182',1,'altintegration']]],
   ['setstate_362',['setState',['../structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd',1,'altintegration::AltBlockTree']]],
-  ['setup_20abfi_363',['Setup ABFI',['../integration_13_setup_abfi.html',1,'']]],
+  ['setup_20abfi_363',['Setup ABFI',['../integration_13_setup_abfi.html',1,'integration']]],
   ['setvbk_364',['setVBK',['../structaltintegration_1_1Config.html#a37c65b03dc521c49196aeb251a4b114f',1,'altintegration::Config']]],
   ['sha256_365',['sha256',['../namespacealtintegration.html#a82a1110544bc1d024f62df15f022b94b',1,'altintegration::sha256(Slice&lt; const uint8_t &gt; a, Slice&lt; const uint8_t &gt; b)'],['../namespacealtintegration.html#ab5bdd8cb04087c393c4ffd4db9f625df',1,'altintegration::sha256(Slice&lt; const uint8_t &gt; data)']]],
   ['sha256_5fhash_5fsize_366',['SHA256_HASH_SIZE',['../namespacealtintegration.html#a313d0d3306fa209414149266c6e87876',1,'altintegration']]],
