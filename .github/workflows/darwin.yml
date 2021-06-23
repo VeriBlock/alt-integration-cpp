@@ -144,7 +144,7 @@ jobs:
           cat /tmp/data_sizes-*.sh;
       - name: Upload crash files
         if: always()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: crash-dump
           path: /tmp/data_sizes-*
