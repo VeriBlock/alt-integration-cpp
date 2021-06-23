@@ -144,8 +144,7 @@ struct MemPool {
    * @param[in] bytes payload`s bytes
    * @param[out] state validation state
    * validation
-   * @param[in] old_block_check, default - true, enables or disables
-   * isBlockOld() validation
+   * @param[in] old_block_check enables or disables isBlockOld() validation
    * @return true if payload is accepted to mempool, false otherwise
    */
   template <typename T,
@@ -178,8 +177,7 @@ struct MemPool {
    * @param[in] pl payload
    * @param[out] state validation state
    * validation
-   * @param[in] old_block_check, default - true, enables or disables
-   * isBlockOld() validation
+   * @param[in] old_block_check enables or disables isBlockOld() validation
    * @return true if payload is accepted to mempool, false otherwise
    */
   template <typename T,
@@ -204,8 +202,7 @@ struct MemPool {
    * @tparam shared_ptr<T> one of VTB, ATV, VbkBlock
    * @param[in] pl payload
    * @param[out] state validation state
-   * @param[in] old_block_check, default - true, enables or disables
-   * isBlockOld() validation
+   * @param[in] old_block_check enables or disables isBlockOld() validation
    * @return true if payload is accepted to mempool, false otherwise
    */
   template <typename T,
