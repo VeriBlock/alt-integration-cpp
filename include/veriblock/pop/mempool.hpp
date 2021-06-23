@@ -148,7 +148,9 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
+  SubmitResult submit(Slice<const uint8_t> bytes,
+                      ValidationState& state,
+                      bool old_block_check = true) {
     ReadStream stream(bytes);
     T payload;
     if (!DeserializeFromVbkEncoding(stream, payload, state)) {
@@ -156,7 +158,7 @@ struct MemPool {
               state.Invalid("pop-mempool-submit-deserialize")};
     }
 
-    return submit<T>(payload, state);
+    return submit<T>(payload, state, old_block_check);
   }
 
   /**
@@ -178,8 +180,10 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(const T& pl, ValidationState& state) {
-    return submit<T>(std::make_shared<T>(pl), state);
+  SubmitResult submit(const T& pl,
+                      ValidationState& state,
+                      bool old_block_check = true) {
+    return submit<T>(std::make_shared<T>(pl), state, old_block_check);
   }
 
   /**
@@ -202,7 +206,7 @@ struct MemPool {
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   SubmitResult submit(const std::shared_ptr<T>& pl,
                       ValidationState& state,
-                      bool old_block_check = false) {
+                      bool old_block_check = true) {
     (void)pl;
     (void)state;
     (void)old_block_check;
