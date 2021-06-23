@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[5,0,0,50,0],
 "structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42":[5,0,0,50,1],
 "structaltintegration_1_1StorageIOException.html":[5,0,0,51],
 "structaltintegration_1_1StorageIOException.html#ac5895f9e5a3d6570477cd8e9f055d33d":[5,0,0,51,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#ad35dbe27e07dc10fd8dafb5252f2cbf0":[5,0,0,0,0,5],
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html":[5,0,0,0,1],
 "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a283736460019927cbc85a14d8196a2ac":[5,0,0,0,1,6],
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a3ee02f61ecff26ef42fafab481f7c865":[5,0,0,0,1,8],
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13":[5,0,0,0,1,10]
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a3ee02f61ecff26ef42fafab481f7c865":[5,0,0,0,1,8]
 };

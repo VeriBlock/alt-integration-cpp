@@ -72,8 +72,8 @@ var NAVTREEINDEX =
 "structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27",
 "structaltintegration_1_1BlockReader.html#aa1b4980a6a4f4499fb0aa11e1eb91ce6",
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#ab7178c0b459a20d516ae3be44541965e",
-"structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42",
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a62323718c05fdd3a4d15868af7358dae"
+"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57",
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a4a6f9d6b320dd460092a6ed94dbf8b13"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
