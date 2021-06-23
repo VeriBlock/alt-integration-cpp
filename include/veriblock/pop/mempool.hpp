@@ -200,9 +200,12 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(const std::shared_ptr<T>& pl, ValidationState& state) {
+  SubmitResult submit(const std::shared_ptr<T>& pl,
+                      ValidationState& state,
+                      bool old_block_check = false) {
     (void)pl;
     (void)state;
+    (void)old_block_check;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return {};
   }
@@ -221,6 +224,8 @@ struct MemPool {
     static_assert(sizeof(T) == 0,
                   "Undefined type used in MemPool::getInFlightMap");
   }
+
+  void setDoStalledCheck(bool do_check) { this->do_stalled_check_ = do_check; }
 
   std::vector<BtcBlock::hash_t> getMissingBtcBlocks() const;
 
@@ -286,6 +291,8 @@ struct MemPool {
   vbk_map_t vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
+
+  bool do_stalled_check_{true};
 
   atv_value_sorted_map_t atvs_in_flight_{
       [](const std::shared_ptr<ATV>& v1,
@@ -366,11 +373,11 @@ struct MemPool {
 
 // clang-format off
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state);
+template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state,  bool old_block_check);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state);
+template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state,  bool old_block_check);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state);
+template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state,  bool old_block_check);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
