@@ -7,7 +7,6 @@ from ..framework.sync_util import (
     wait_for_block_height
 )
 
-
 class NodeBasicSyncBenchmark(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
@@ -19,18 +18,18 @@ class NodeBasicSyncBenchmark(PopIntegrationTestFramework):
         # disconnect all nodes
         disconnect_all(self.nodes)
 
-        start = time.time()
-        self.log.info("node[0] mine 1000 blocks")
-        self.nodes[0].generate(nblocks=1000)
-        wait_for_block_height(self.nodes[0], 1000)
+        self.log.info("node[0] mine 5000 blocks")
+        for i in range(5000):
+            self.log.info("node[0] mine block #{}".format(i + 1))
+            self.nodes[0].generate(nblocks=1)
+            tip_hash = self.nodes[0].getbestblockhash()
+            tip = self.nodes[0].rpc.getblock(tip_hash)
+            tip_time = tip['time']
+            current_time = int(time.time())
+            if current_time < tip_time:
+                time.sleep(tip_time - current_time)
 
-        self.log.info("node[0] mine 2000 blocks")
-        self.nodes[0].generate(nblocks=1000)
-        wait_for_block_height(self.nodes[0], 2000)
-
-        self.log.info("node[0] mine 3000 blocks")
-        self.nodes[0].generate(nblocks=1000)
-        wait_for_block_height(self.nodes[0], 3000)
+        assert self.nodes[0].getblockcount() == 5000
 
         node_0_tip = self.nodes[0].getbestblock()
         node_1_tip = self.nodes[1].getbestblock()
@@ -49,7 +48,3 @@ class NodeBasicSyncBenchmark(PopIntegrationTestFramework):
         sync_all(self.nodes, timeout=300)
 
         assert self.nodes[0].getbestblock() == self.nodes[1].getbestblock()
-
-        elapsed = time.time() - start
-
-        print('Basic node sync benchmark finished in {:.3f} sec'.format(elapsed))
