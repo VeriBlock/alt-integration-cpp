@@ -54,10 +54,11 @@ void assertBlockCanBeUnapplied(index_t& index) {
                  "unapplied block %s",
                  index.pprev->toPrettyString());
   // an expensive check; might want to  disable it eventually
-  VBK_ASSERT_MSG(index.allDescendantsUnapplied(),
-                 "state corruption: tried to unapply a block before unapplying "
-                 "its applied descendants %s",
-                 index.toPrettyString());
+  VBK_ASSERT_MSG_DEBUG(
+      index.allDescendantsUnapplied(),
+      "state corruption: tried to unapply a block before unapplying "
+      "its applied descendants %s",
+      index.toPrettyString());
 }
 
 }  // namespace
