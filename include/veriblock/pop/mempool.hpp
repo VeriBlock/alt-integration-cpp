@@ -234,6 +234,8 @@ struct MemPool {
 
   void setDoStalledCheck(bool do_check) { this->do_stalled_check_ = do_check; }
 
+  bool getDoStalledCheck() const { return this->do_stalled_check_; }
+
   std::vector<BtcBlock::hash_t> getMissingBtcBlocks() const;
 
   /**
