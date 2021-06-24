@@ -1,8 +1,18 @@
+import time
 from typing import List
 
 from .node import Node
 from .sync_util import wait_for_block_height
 
+def mine_alt_block(node: Node, nblocks: int):
+    for i in range(nblocks):
+        node.generate(1)
+        tip_hash = node.getbestblockhash()
+        tip = node.rpc.getblock(tip_hash)
+        tip_time = tip['time']
+        current_time = int(time.time())
+        if current_time < tip_time:
+            time.sleep(tip_time - current_time)
 
 # size = size of chain to be created
 def create_endorsed_chain(node: Node, apm, size: int, addr: str = None) -> None:
@@ -11,7 +21,7 @@ def create_endorsed_chain(node: Node, apm, size: int, addr: str = None) -> None:
 
     for height in range(initial_height, initial_height + size):
         atv_id = endorse_block(node, apm, height, addr)
-        node.generate(nblocks=1)
+        mine_alt_block(node, nblocks=1)
         # endorsing prev tip
         wait_for_block_height(node, height + 1)
         containing_block = node.getbestblock()
@@ -61,5 +71,5 @@ def mine_until_pop_enabled(node: Node):
     if existing < activate:
         assert activate - existing < 1000, \
             "POP security activates on height {}. Will take too long to activate".format(activate)
-        node.generate(nblocks=(activate - existing))
+        mine_alt_block(node, nblocks=(activate - existing))
         wait_for_block_height(node, activate)

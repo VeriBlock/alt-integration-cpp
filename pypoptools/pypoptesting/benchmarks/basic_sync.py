@@ -1,7 +1,7 @@
 import time
 
 from ..framework.test_framework import PopIntegrationTestFramework
-from ..framework.pop_util import endorse_block, mine_until_pop_enabled
+from ..framework.pop_util import endorse_block, mine_until_pop_enabled, mine_alt_block
 from ..framework.sync_util import (
     start_all, connect_all,
     sync_all, disconnect_all,
@@ -32,15 +32,9 @@ class NodeBasicSyncBenchmark(PopIntegrationTestFramework):
         self.log.info("node[0] mine {} blocks".format(self.to_mine))
         for i in range(self.to_mine):
             self.log.info("node[0] mine block #{}".format(i + 1))
-            self.nodes[0].generate(nblocks=1)
-            tip_hash = self.nodes[0].getbestblockhash()
-            tip = self.nodes[0].rpc.getblock(tip_hash)
-            tip_time = tip["time"]
-            current_time = int(time.time())
-            #if current_time < tip_time:
-            #    time.sleep(tip_time - current_time)
+            mine_alt_block(self.nodes[0], nblocks=1)
 
-        #assert self.nodes[0].getblockcount() == self.to_mine
+        assert self.nodes[0].getblockcount() >= self.to_mine
 
         elapsed = time.time() - start
         print("{} blocks mined in {:.3f} sec".format(self.to_mine, elapsed))
@@ -56,7 +50,6 @@ class NodeBasicSyncBenchmark(PopIntegrationTestFramework):
             for i in range(self.vtbs_in_payload):
                 apm.endorseVbkBlock(apm.vbkTip, apm.btcTip.getHash())
 
-            #self.nodes[0].generate(nblocks=1)
             last_block = self.nodes[0].getblockcount()
             assert last_block >= 5
 
