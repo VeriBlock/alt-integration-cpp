@@ -115,6 +115,7 @@ void MemPool::cleanUp() {
 
         // remove VTBs
         for (const auto& vtb : rel.vtbs) {
+          mempool_tree_.removeInvalidVTB(vtb->getId());
           mempool_tree_.alt().vbk().removeInvalidVTB(vtb->getId());
           stored_vtbs_.erase(vtb->getId());
         }
@@ -129,6 +130,7 @@ void MemPool::cleanUp() {
       // cleanup stale VTBs
       cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
         auto id = v.getId();
+        mempool_tree_.removeInvalidVTB(id);
         mempool_tree_.alt().vbk().removeInvalidVTB(id);
         stored_vtbs_.erase(id);
       });
@@ -363,6 +365,9 @@ MemPool::MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
 
 std::vector<BtcBlock::hash_t> MemPool::getMissingBtcBlocks() const {
   std::vector<BtcBlock::hash_t> res;
+  for (const auto& el : mempool_tree_.getInvalidVTBs()) {
+    res.push_back(el.second.missing_btc_block);
+  }
   for (const auto& el : mempool_tree_.alt().vbk().getInvalidVTBs()) {
     res.push_back(el.second.missing_btc_block);
   }
