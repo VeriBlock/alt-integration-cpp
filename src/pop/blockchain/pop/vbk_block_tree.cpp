@@ -33,7 +33,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
     return;
   }
 
-  int result = cmp_.comparePopScore(*this, candidate, state);
+  int result = cmp_.comparePopScore(candidate, state);
   // the pop state is already set to the best of the two chains
   if (result == 0) {
     VBK_LOG_DEBUG("Pop scores are equal");
@@ -51,7 +51,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 }
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
-  bool success = cmp_.setState(*this, to, state);
+  bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
   } else {
@@ -428,7 +428,8 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            BlockReader& blockProvider,
                            PayloadsIndex& payloadsIndex)
     : VbkTree(vbkp, blockProvider),
-      cmp_(std::make_shared<BtcTree>(btcp, blockProvider),
+      cmp_(*this,
+           std::make_shared<BtcTree>(btcp, blockProvider),
            vbkp,
            payloadsProvider,
            payloadsIndex),

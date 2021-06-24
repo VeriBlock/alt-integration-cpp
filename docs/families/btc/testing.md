@@ -19,7 +19,10 @@ https://testnet.explore.veriblock.org/api/altchain/{altchain id}/validation/apm?
 ![vbtc_explorer_screenshot_1](./img/vbtcexplorerscreenshot_1.png)
 ![vbtc_explorer_screenshot_2](./img/vbtcexplorerscreenshot_2.png)
 
-5. Run ABFI and view successful health ping
+5. Run ABFI and view successful health ping 
+```
+http://[ip_to_altchain_abfi]:4568/api/chains/blocks/last-finalized-btc
+```
    ![apm_instances](./img/abfi_successful_result.png)
    Please see here for more details: [Setup ABFI](integration_13_setup_abfi.md)
 
