@@ -238,8 +238,8 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
 
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));
 
-  VBK_ASSERT(index != nullptr &&
-             "insertBlockHeader should have never returned nullptr");
+  VBK_ASSERT_MSG(index != nullptr,
+                 "insertBlockHeader should have never returned nullptr");
 
   if (!index->isValid()) {
     return state.Invalid(
@@ -302,7 +302,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
   ValidationState state;
   // compare current active chain to other chain
-  int result = cmp_.comparePopScore(*this, *right, state);
+  int result = cmp_.comparePopScore(*right, state);
   if (result < 0) {
     // other chain is better, and we already changed 'cmp' state to winner, so
     // just update active chain tip
@@ -485,7 +485,7 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
 
-  bool success = cmp_.setState(*this, to, state);
+  bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
     // finalize blocks
@@ -595,7 +595,8 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            BlockReader& blockProvider)
     : base(blockProvider),
       alt_config_(&alt_config),
-      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
+      cmp_(*this,
+           std::make_shared<VbkBlockTree>(vbk_config,
                                           btc_config,
                                           payloadsProvider,
                                           blockProvider,

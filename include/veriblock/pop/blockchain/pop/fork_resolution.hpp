@@ -444,33 +444,35 @@ struct PopAwareForkResolutionComparator {
                                        protecting_params_t,
                                        protected_params_t>;
 
-  PopAwareForkResolutionComparator(std::shared_ptr<ProtectingBlockTree> tree,
+  PopAwareForkResolutionComparator(ProtectedBlockTree& ed,
+                                   std::shared_ptr<ProtectingBlockTree> ing,
                                    const protected_params_t& protectedParams,
                                    PayloadsStorage& payloadsProvider,
                                    PayloadsIndex& payloadsIndex)
-      : ing_(std::move(tree)),
-        protectedParams_(&protectedParams),
+      : ed_(ed),
+        ing_(std::move(ing)),
+        protectedParams_(protectedParams),
         payloadsProvider_(payloadsProvider),
-        payloadsIndex_(payloadsIndex) {
+        payloadsIndex_(payloadsIndex),
+        sm_(ed_, *ing_, payloadsIndex_) {
     VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
 
   ProtectingBlockTree& getProtectingBlockTree() { return *ing_; }
   const ProtectingBlockTree& getProtectingBlockTree() const { return *ing_; }
 
-  //! finds a path between current ed's best chain and 'to', and applies all
+  //! finds a path between ed_'s best chain and 'to', and applies all
   //! commands in between
-  // atomic: either changes the state to 'to' or leaves it unchanged
-  bool setState(ProtectedBlockTree& ed,
-                protected_index_t& to,
-                ValidationState& state) {
-    auto* currentActive = ed.getBestChain().tip();
+  //! @invariant atomic: either changes the state to 'to' or leaves it unchanged
+  //! @return true if the state change was successful, false otherwise
+  bool setState(protected_index_t& to, ValidationState& state) {
+    auto* currentActive = ed_.getBestChain().tip();
     VBK_ASSERT(currentActive != nullptr && "should be bootstrapped");
 
     VBK_ASSERT_MSG(
         currentActive->getHeight() + 1 ==
-            ed.getRoot().getHeight() +
-                (typename protected_block_t::height_t)ed.appliedBlockCount,
+            ed_.getRoot().getHeight() +
+                (typename protected_block_t::height_t)ed_.appliedBlockCount,
         "the tree must have the best chain applied");
 
     if (currentActive == &to) {
@@ -481,8 +483,7 @@ struct PopAwareForkResolutionComparator {
     auto guard = ing_->deferForkResolutionGuard();
     auto originalTip = ing_->getBestChain().tip();
 
-    sm_t sm(ed, *ing_, payloadsIndex_);
-    if (sm.setState(*currentActive, to, state)) {
+    if (sm_.setState(*currentActive, to, state)) {
       return true;
     }
 
@@ -496,16 +497,14 @@ struct PopAwareForkResolutionComparator {
    *         positive if the current chain is better
    *         negative if the candidate chain is better
    */
-  int comparePopScore(ProtectedBlockTree& ed,
-                      protected_index_t& candidate,
-                      ValidationState& state) {
+  int comparePopScore(protected_index_t& candidate, ValidationState& state) {
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
       VBK_LOG_INFO("Candidate %s is invalid, the current chain wins",
                    candidate.toShortPrettyString());
       return 1;
     }
-    auto currentBest = ed.getBestChain();
+    auto currentBest = ed_.getBestChain();
     auto bestTip = currentBest.tip();
     VBK_ASSERT(bestTip && "must be bootstrapped");
 
@@ -535,8 +534,7 @@ struct PopAwareForkResolutionComparator {
 
       auto guard = ing_->deferForkResolutionGuard();
 
-      sm_t sm(ed, *ing_, payloadsIndex_);
-      if (!sm.apply(*bestTip, candidate, state)) {
+      if (!sm_.apply(*bestTip, candidate, state)) {
         // new chain is invalid. our current chain is definitely better.
         VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
                      state.toString());
@@ -553,7 +551,7 @@ struct PopAwareForkResolutionComparator {
                  bestTip->toShortPrettyString(),
                  candidate.toShortPrettyString());
 
-    auto ki = ed.getParams().getKeystoneInterval();
+    auto ki = ed_.getParams().getKeystoneInterval();
     const auto* fork = findFork(currentBest, &candidate);
     VBK_ASSERT_MSG(
         fork != nullptr,
@@ -572,7 +570,7 @@ struct PopAwareForkResolutionComparator {
       return 1;
     }
 
-    // multi-keystone POP FR starts
+    // perform multi-keystone PoP fork resolution
     bool AcrossedKeystoneBoundary =
         isCrossedKeystoneBoundary(fork->getHeight(), bestTip->getHeight(), ki);
     bool BcrossedKeystoneBoundary =
@@ -596,15 +594,13 @@ struct PopAwareForkResolutionComparator {
     // (chainB)
     VBK_ASSERT(chainA.tip() == bestTip);
 
-    sm_t sm(ed, *ing_, payloadsIndex_);
-
     // we are at chainA.
     // apply all payloads from chain B (both chains have same first block - the
     // fork point, so exclude it during 'apply')
     {
       auto guard = ing_->deferForkResolutionGuard();
 
-      if (!sm.apply(chainB, state)) {
+      if (!sm_.apply(chainB, state)) {
         // chain B has been unapplied and invalidated already
         VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
                      state.toString());
@@ -616,16 +612,16 @@ struct PopAwareForkResolutionComparator {
     // now the tree contains payloads from both chains
 
     auto reducedPublicationViewA =
-        reduced_publication_view_t(chainA, *protectedParams_, *ing_);
+        reduced_publication_view_t(chainA, protectedParams_, *ing_);
     auto reducedPublicationViewB =
-        reduced_publication_view_t(chainB, *protectedParams_, *ing_);
+        reduced_publication_view_t(chainB, protectedParams_, *ing_);
 
     int result = internal::comparePopScoreImpl(reducedPublicationViewA,
                                                reducedPublicationViewB);
     if (result >= 0) {
       // chain A remains the best one. unapply B and leave A applied
       auto guard = ing_->deferForkResolutionGuard();
-      sm.unapply(chainB);
+      sm_.unapply(chainB);
       guard.overrideDeferredForkResolution(originalProtectingTip);
       VBK_LOG_INFO("Chain A remains the best chain");
     } else {
@@ -637,17 +633,17 @@ struct PopAwareForkResolutionComparator {
       // try to apply the unvalidated part of chainB without any payloads from
       // chainA to make sure it is fully valid
       auto& chainBValidFrom =
-          sm.unapplyWhile(chainB, [](protected_index_t& index) -> bool {
+          sm_.unapplyWhile(chainB, [](protected_index_t& index) -> bool {
             return !index.isValid(BLOCK_CAN_BE_APPLIED);
           });
 
       // unapply losing chain
-      sm.unapply(chainA);
+      sm_.unapply(chainA);
 
       // validate the unvalidated part of chainB
-      if (!sm.apply(chainBValidFrom, *chainB.tip(), state)) {
-        sm.unapply(chainBValidFrom, *chainB.first());
-        bool success = sm.apply(*chainA.first(), *chainA.tip(), state);
+      if (!sm_.apply(chainBValidFrom, *chainB.tip(), state)) {
+        sm_.unapply(chainBValidFrom, *chainB.first());
+        bool success = sm_.apply(*chainA.first(), *chainA.tip(), state);
         VBK_ASSERT_MSG(
             success,
             "state corruption: chainA as a former best chain should be valid");
@@ -671,11 +667,13 @@ struct PopAwareForkResolutionComparator {
   }
 
  private:
+  ProtectedBlockTree& ed_;
   std::shared_ptr<ProtectingBlockTree> ing_;
 
-  const protected_params_t* protectedParams_;
+  const protected_params_t& protectedParams_;
   PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
+  sm_t sm_;
 };
 
 }  // namespace altintegration
