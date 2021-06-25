@@ -98,6 +98,8 @@ $(document).ready(function(){initNavTree('integration_13_setup_abfi.html',''); i
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_13_setup_abfi"></a></p>
 <h1><a class="anchor" id="autotoc_md25"></a>
 Overview</h1>
+<p>The Altchain Bitcoin Finality Indicator (ABFI) service provides an API that returns a number indicating the security of a transaction. This number is called bitcoinFinality and starts at -11 the moment a transaction is protected by a single bitcoin block. Each additional bitcoin block after that will increase the finality by one. The transaction is considered secure once bitcoinFinality reaches zero. Note that zero actually means there are a total of 12 bitcoin blocks protecting the altchain transaction.</p>
+<p>You can install this service and configure it for your altchain. To get ABFI, you can download this docker image: <a href="https://hub.docker.com/r/veriblock/altchain-bfi">https://hub.docker.com/r/veriblock/altchain-bfi</a></p>
 <h1><a class="anchor" id="autotoc_md26"></a>
 1. Altchain BFI configuration.</h1>
 <p>The altchain BFI can be configured through the <b>application.conf</b> file which is inside the <b>bin</b> folder.</p>
