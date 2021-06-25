@@ -208,6 +208,9 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
+  VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
+                vtb.toPrettyString());
+
   return isValid
              ? (invalid_vtbs.erase(vtb.getId()), true)
              : (invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash,
