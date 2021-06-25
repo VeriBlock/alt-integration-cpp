@@ -1,5 +1,5 @@
 from random import Random
-
+from .pop_util import mine_alt_block as pop_mine_alt_block
 
 class RandomPopMiner:
     def __init__(self, node, mock_miner, seed):
@@ -83,4 +83,4 @@ class RandomPopMiner:
             self.node.submitpopatv(atv.toVbkEncodingHex())
 
     def mine_alt_block(self):
-        self.node.generate(1)
+        pop_mine_alt_block(self.node, nblocks=1)
