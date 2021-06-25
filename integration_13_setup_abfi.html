@@ -90,91 +90,21 @@ $(document).ready(function(){initNavTree('integration_13_setup_abfi.html',''); i
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
 <ul><li class="level1"><a href="#autotoc_md25">Overview</a></li>
-<li class="level1"><a href="#autotoc_md26">1. Altchain BFI configuration.</a></li>
-<li class="level1"><a href="#autotoc_md27">2. Altchain BFI API</a></li>
-<li class="level1"><a href="#autotoc_md28">6. Altchain BFI last-finalized-btc endpoint</a></li>
+<li class="level1"><a href="#autotoc_md26">Altchain BFI API</a></li>
+<li class="level1"><a href="#autotoc_md27">Altchain BFI last-finalized-btc endpoint</a></li>
+<li class="level1"><a href="#autotoc_md28">Configuring and Building Altchain BFI From Source.</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_integration_13_setup_abfi"></a></p>
 <h1><a class="anchor" id="autotoc_md25"></a>
 Overview</h1>
-<h1><a class="anchor" id="autotoc_md26"></a>
-1. Altchain BFI configuration.</h1>
-<p>The altchain BFI can be configured through the <b>application.conf</b> file which is inside the <b>bin</b> folder.</p>
-<p>Configuration example: </p><div class="fragment"><div class="line">bfi {</div>
-<div class="line">  altchainId = vbtc</div>
-<div class="line"> </div>
-<div class="line">  blockChainNetwork = testnet</div>
-<div class="line"> </div>
-<div class="line">  nodeCoreRpcHost = &quot;127.0.0.1:10500&quot;</div>
-<div class="line"> </div>
-<div class="line">  api {</div>
-<div class="line">    port = 4568</div>
-<div class="line">    notificationsTest = false</div>
-<div class="line">  }</div>
-<div class="line"> </div>
-<div class="line">  forkThreatThreshold = 2</div>
-<div class="line">  forkThreatRatioThreshold = 0.8</div>
-<div class="line"> </div>
-<div class="line">  debugOutput = false</div>
-<div class="line">}</div>
-<div class="line"> </div>
-<div class="line">securityInheriting {</div>
-<div class="line">  vbtc: {</div>
-<div class="line">    payoutAddress: &quot;0x&quot;</div>
-<div class="line">    pluginKey: btc</div>
-<div class="line">    id: 3860170</div>
-<div class="line">    name: &quot;vBitcoin&quot;</div>
-<div class="line">    host: &quot;http://localhost:18332&quot;</div>
-<div class="line">    auth: {</div>
-<div class="line">      username: &quot;test&quot;</div>
-<div class="line">      password: &quot;test&quot;</div>
-<div class="line">    }</div>
-<div class="line">  }</div>
-<div class="line">}</div>
-</div><!-- fragment --><p>Alternatively you can use the next environment variables to configure the ABFI:</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Configuration name   </th><th class="markdownTableHeadNone">Environment variable   </th><th class="markdownTableHeadNone">Default   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">altchainId   </td><td class="markdownTableBodyNone">ALTCHAIN_ID   </td><td class="markdownTableBodyNone">undefined   </td><td class="markdownTableBodyNone">The altchain id, it must be configured    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">blockChainNetwork   </td><td class="markdownTableBodyNone">NETWORK   </td><td class="markdownTableBodyNone">testnet   </td><td class="markdownTableBodyNone">The altchain network, there are three options: mainnet, testnet and regtest    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">blockChainRegtestHost   </td><td class="markdownTableBodyNone">REGTEST_HOST   </td><td class="markdownTableBodyNone">undefined   </td><td class="markdownTableBodyNone">The altchain regtest host (the network should be specified as regtest)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">nodeCoreRpcHost   </td><td class="markdownTableBodyNone">NODECORE_HOST   </td><td class="markdownTableBodyNone">127.0.0.1:10500   </td><td class="markdownTableBodyNone">The NodeCore ip where the ABFI will connects to    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">notificationsTest   </td><td class="markdownTableBodyNone">HTTP_API_NOTIFICATIONS_TEST   </td><td class="markdownTableBodyNone">false   </td><td class="markdownTableBodyNone">Enables the /notifications-test endpoint to trigger test notifications    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">forkThreatThreshold   </td><td class="markdownTableBodyNone">FORK_THREAT_THRESHOLD   </td><td class="markdownTableBodyNone">2   </td><td class="markdownTableBodyNone"></td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">forkThreatRatioThreshold   </td><td class="markdownTableBodyNone">FORK_THREAT_RATIO_THRESHOLD   </td><td class="markdownTableBodyNone">0.8   </td><td class="markdownTableBodyNone"></td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">debugOutput   </td><td class="markdownTableBodyNone">DEBUG_OUTPUT   </td><td class="markdownTableBodyNone">false   </td><td class="markdownTableBodyNone">Generate debug log files   </td></tr>
-</table>
-<p>You can add chains to the securityInheriting block, for example:</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Configuration name   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">payoutAddress   </td><td class="markdownTableBodyNone">This configuration should be set in order to make the ABFI work but it will be removed, set it to "0x"    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">pluginKey   </td><td class="markdownTableBodyNone">The plugin to load    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">id   </td><td class="markdownTableBodyNone">The chain id    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">name   </td><td class="markdownTableBodyNone">The chain name    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">host   </td><td class="markdownTableBodyNone">API url from the coin daemon    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">auth: username   </td><td class="markdownTableBodyNone">The username used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">auth: password   </td><td class="markdownTableBodyNone">The password used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.   </td></tr>
-</table>
-<h1><a class="anchor" id="autotoc_md27"></a>
-2. Altchain BFI API</h1>
-<p>The next endpoints are accessible at the ABFI API (<a href="http://localhost:8080/api/">http://localhost:8080/api/</a> by default):</p>
+<p>The Altchain Bitcoin Finality Indicator (ABFI) service provides an API that returns a number indicating the security of a transaction. This number is called bitcoinFinality and is found in the returned json data.</p>
+<p>You can install this service and configure it for your altchain. To get ABFI, you can download this docker image: <a href="https://hub.docker.com/r/veriblock/altchain-bfi">https://hub.docker.com/r/veriblock/altchain-bfi</a></p>
+<p>Additional setup instructions are available at the docker link. If you are building ABFI from source instead of using the prebuilt docker image, then follow the instructions at the bottom of this page.</p>
+<p>Once the ABFI service is running, make HTTP requests to the service through its IP address. For example, use the following URL in your browser to make a request. </p><div class="fragment"><div class="line">http://[ip_to_altchain_bfi]:4568/api/chains/blocks/last-finalized-btc</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md26"></a>
+Altchain BFI API</h1>
+<p>The following endpoints are accessible at the ABFI API. Modify the URL just shown to make these requests.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Endpoint   </th><th class="markdownTableHeadNone">Description    </th></tr>
@@ -191,8 +121,8 @@ Overview</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">/api/chains/blocks/last-finalized-btc   </td><td class="markdownTableBodyNone">Get the last block finalized by btc   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md28"></a>
-6. Altchain BFI last-finalized-btc endpoint</h1>
+<h1><a class="anchor" id="autotoc_md27"></a>
+Altchain BFI last-finalized-btc endpoint</h1>
 <p>In order to get responses there should be at least one APM mining at the altchain network also it could take a while (hours), here is a response example for that endpoint:</p>
 <div class="fragment"><div class="line">{</div>
 <div class="line">  &quot;id&quot; : &quot;B6D1B863FD54FA855B&quot;,</div>
@@ -257,7 +187,81 @@ Overview</h1>
 <div class="line">  &quot;bitcoinFinality&quot; : 19,</div>
 <div class="line">  &quot;isAttackInProgress&quot; : false</div>
 <div class="line">}</div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md28"></a>
+Configuring and Building Altchain BFI From Source.</h1>
+<p>The altchain BFI can be configured through the <b>application.conf</b> file which is inside the <b>bin</b> folder.</p>
+<p>Configuration example: </p><div class="fragment"><div class="line">bfi {</div>
+<div class="line">  altchainId = vbtc</div>
+<div class="line"> </div>
+<div class="line">  blockChainNetwork = testnet</div>
+<div class="line"> </div>
+<div class="line">  nodeCoreRpcHost = &quot;127.0.0.1:10500&quot;</div>
+<div class="line"> </div>
+<div class="line">  api {</div>
+<div class="line">    port = 4568</div>
+<div class="line">    notificationsTest = false</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  forkThreatThreshold = 2</div>
+<div class="line">  forkThreatRatioThreshold = 0.8</div>
+<div class="line"> </div>
+<div class="line">  debugOutput = false</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">securityInheriting {</div>
+<div class="line">  vbtc: {</div>
+<div class="line">    payoutAddress: &quot;0x&quot;</div>
+<div class="line">    pluginKey: btc</div>
+<div class="line">    id: 3860170</div>
+<div class="line">    name: &quot;vBitcoin&quot;</div>
+<div class="line">    host: &quot;http://localhost:18332&quot;</div>
+<div class="line">    auth: {</div>
+<div class="line">      username: &quot;test&quot;</div>
+<div class="line">      password: &quot;test&quot;</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Alternatively you can use the following environment variables to configure the ABFI:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Configuration name   </th><th class="markdownTableHeadNone">Environment variable   </th><th class="markdownTableHeadNone">Default   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">altchainId   </td><td class="markdownTableBodyNone">ALTCHAIN_ID   </td><td class="markdownTableBodyNone">undefined   </td><td class="markdownTableBodyNone">The altchain id, it must be configured    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">blockChainNetwork   </td><td class="markdownTableBodyNone">NETWORK   </td><td class="markdownTableBodyNone">testnet   </td><td class="markdownTableBodyNone">The altchain network, there are three options: mainnet, testnet and regtest    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">blockChainRegtestHost   </td><td class="markdownTableBodyNone">REGTEST_HOST   </td><td class="markdownTableBodyNone">undefined   </td><td class="markdownTableBodyNone">The altchain regtest host (the network should be specified as regtest)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">nodeCoreRpcHost   </td><td class="markdownTableBodyNone">NODECORE_HOST   </td><td class="markdownTableBodyNone">127.0.0.1:10500   </td><td class="markdownTableBodyNone">The NodeCore ip where the ABFI will connects to    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">notificationsTest   </td><td class="markdownTableBodyNone">HTTP_API_NOTIFICATIONS_TEST   </td><td class="markdownTableBodyNone">false   </td><td class="markdownTableBodyNone">Enables the /notifications-test endpoint to trigger test notifications    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">forkThreatThreshold   </td><td class="markdownTableBodyNone">FORK_THREAT_THRESHOLD   </td><td class="markdownTableBodyNone">2   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">forkThreatRatioThreshold   </td><td class="markdownTableBodyNone">FORK_THREAT_RATIO_THRESHOLD   </td><td class="markdownTableBodyNone">0.8   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">debugOutput   </td><td class="markdownTableBodyNone">DEBUG_OUTPUT   </td><td class="markdownTableBodyNone">false   </td><td class="markdownTableBodyNone">Generate debug log files   </td></tr>
+</table>
+<p>You can add chains to the securityInheriting block, for example:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Configuration name   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">payoutAddress   </td><td class="markdownTableBodyNone">This configuration should be set in order to make the ABFI work but it will be removed, set it to "0x"    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">pluginKey   </td><td class="markdownTableBodyNone">The plugin to load    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">id   </td><td class="markdownTableBodyNone">The chain id    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">name   </td><td class="markdownTableBodyNone">The chain name    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">host   </td><td class="markdownTableBodyNone">API url from the coin daemon    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">auth: username   </td><td class="markdownTableBodyNone">The username used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">auth: password   </td><td class="markdownTableBodyNone">The password used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.   </td></tr>
+</table>
+</div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
 <script>
