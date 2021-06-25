@@ -133,7 +133,6 @@ bool MemPoolBlockTree::acceptVTB(
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
     if (!temp_btc_tree_.acceptBlockHeader(blk, state)) {
       invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
-      VBK_LOG_DEBUG("bad-block-of-proof-context index: %d", i);
       return state.Invalid("bad-block-of-proof-context", i);
     }
 
@@ -142,7 +141,6 @@ bool MemPoolBlockTree::acceptVTB(
 
   if (!temp_btc_tree_.acceptBlockHeader(vtb.transaction.blockOfProof, state)) {
     invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
-    VBK_LOG_DEBUG("bad-block-of-proof");
     return state.Invalid("bad-block-of-proof");
   }
 
