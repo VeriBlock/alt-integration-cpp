@@ -99,7 +99,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wunused-lambda-capture)  # error if lambda capture is unused
     add_flag(-Wreturn-type)      # warning: control reaches end of non-void function [-Wreturn-type]
     add_flag(-Wsign-compare)     # warn the user if they compare a signed and unsigned numbers
-    add_flag(-Wnull-dereference)     # warn if try to dereference potential null pointer
     add_flag(-Wnonnull-compare)     # warn if there is comparison of null pointer with never nullable variable
 
     # disable errors

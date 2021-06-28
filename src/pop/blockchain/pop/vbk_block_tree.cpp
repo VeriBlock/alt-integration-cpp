@@ -413,7 +413,10 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 bool VbkBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
-  int32_t firstBlockHeight = btc().getBestChain().tip()->getHeight() -
+  auto* bestBtcTip = btc().getBestChain().tip();
+  VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
+
+  int32_t firstBlockHeight = bestBtcTip->getHeight() -
                              btc().getParams().getOldBlocksWindow();
   int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
