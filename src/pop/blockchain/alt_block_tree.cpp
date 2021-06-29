@@ -491,7 +491,7 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
     // finalize blocks
     {
       auto* bestTip = getBestChain().tip();
-      VBK_ASSERT(bestTip && "must be bootstrapped");
+      // VBK_ASSERT(bestTip && "must be bootstrapped");
 
       uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
       uint32_t finalHeight = std::max(

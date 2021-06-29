@@ -19,3 +19,9 @@ if(NOT googletest_POPULATED)
     disable_clang_tidy(gmock)
     disable_clang_tidy(gmock_main)
 endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
+    target_add_flag(gtest -Wno-maybe-uninitialized)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+# 
+endif()

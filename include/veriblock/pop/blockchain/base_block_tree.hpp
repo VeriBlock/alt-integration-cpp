@@ -464,7 +464,7 @@ struct BaseBlockTree {
   index_t& getRoot() const {
     VBK_ASSERT_MSG(isBootstrapped(), "must be bootstrapped");
     auto* root = getBestChain().first();
-    // VBK_ASSERT_MSG(root, "must be bootstrapped");
+    VBK_ASSERT_MSG(root, "must be bootstrapped");
     return *root;
   }
 
