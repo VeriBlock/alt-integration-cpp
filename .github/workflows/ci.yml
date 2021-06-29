@@ -79,7 +79,7 @@ jobs:
         run: cd build && ctest
 
 jobs:
-  linux:
+  linux-gcc:
     runs-on: ubuntu-18.04
     container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
     strategy:
