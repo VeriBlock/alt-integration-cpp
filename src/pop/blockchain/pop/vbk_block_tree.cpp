@@ -33,7 +33,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
     return;
   }
 
-  int result = cmp_.comparePopScore(*this, candidate, state);
+  int result = cmp_.comparePopScore(candidate, state);
   // the pop state is already set to the best of the two chains
   if (result == 0) {
     VBK_LOG_DEBUG("Pop scores are equal");
@@ -51,7 +51,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 }
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
-  bool success = cmp_.setState(*this, to, state);
+  bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
   } else {
@@ -207,6 +207,9 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                              [&](BtcTree::index_t::ref_height_t height) {
                                return height <= vtb.containingBlock.getHeight();
                              });
+
+  VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
+                vtb.toPrettyString());
 
   return isValid
              ? (invalid_vtbs.erase(vtb.getId()), true)
@@ -410,7 +413,10 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 bool VbkBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
-  int32_t firstBlockHeight = btc().getBestChain().tip()->getHeight() -
+  auto* bestBtcTip = btc().getBestChain().tip();
+  VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
+
+  int32_t firstBlockHeight = bestBtcTip->getHeight() -
                              btc().getParams().getOldBlocksWindow();
   int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
@@ -428,7 +434,8 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            BlockReader& blockProvider,
                            PayloadsIndex& payloadsIndex)
     : VbkTree(vbkp, blockProvider),
-      cmp_(std::make_shared<BtcTree>(btcp, blockProvider),
+      cmp_(*this,
+           std::make_shared<BtcTree>(btcp, blockProvider),
            vbkp,
            payloadsProvider,
            payloadsIndex),

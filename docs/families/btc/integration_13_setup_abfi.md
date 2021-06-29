@@ -4,73 +4,20 @@
 
 # Overview
 
-# 1. Altchain BFI configuration.
+The Altchain Bitcoin Finality Indicator (ABFI) service provides an API that returns a number indicating the security of a transaction. This number is called bitcoinFinality and is found in the returned json data.
 
-The altchain BFI can be configured through the **application.conf** file which is inside the **bin** folder.
+You can install this service and configure it for your altchain. To get ABFI, you can download this docker image: https://hub.docker.com/r/veriblock/altchain-bfi
 
-Configuration example:
+Additional setup instructions are available at the docker link. If you are building ABFI from source instead of using the prebuilt docker image, then follow the instructions at the bottom of this page.
+
+Once the ABFI service is running, make HTTP requests to the service through its IP address. For example, use the following URL in your browser to make a request.
 ```
-bfi {
-  altchainId = vbtc
-
-  blockChainNetwork = testnet
-
-  nodeCoreRpcHost = "127.0.0.1:10500"
-
-  api {
-    port = 4568
-    notificationsTest = false
-  }
-
-  forkThreatThreshold = 2
-  forkThreatRatioThreshold = 0.8
-
-  debugOutput = false
-}
-
-securityInheriting {
-  vbtc: {
-    payoutAddress: "0x"
-    pluginKey: btc
-    id: 3860170
-    name: "vBitcoin"
-    host: "http://localhost:18332"
-    auth: {
-      username: "test"
-      password: "test"
-    }
-  }
-}
+http://[ip_to_altchain_bfi]:4568/api/chains/blocks/last-finalized-btc
 ```
 
-Alternatively you can use the next environment variables to configure the ABFI:
+# Altchain BFI API
 
-|Configuration name          | Environment variable           | Default           | Description                                                                   |
-|----------------------------|--------------------------------|-------------------|-------------------------------------------------------------------------------|
-| altchainId                 | ALTCHAIN_ID                    | undefined         | The altchain id, it must be configured                                        |   
-| blockChainNetwork          | NETWORK                        | testnet           | The altchain network, there are three options: mainnet, testnet and regtest   |
-| blockChainRegtestHost      | REGTEST_HOST                   | undefined         | The altchain regtest host (the network should be specified as regtest)        |
-| nodeCoreRpcHost            | NODECORE_HOST                  | 127.0.0.1:10500   | The NodeCore ip where the ABFI will connects to                               |
-| notificationsTest          | HTTP_API_NOTIFICATIONS_TEST    | false             | Enables the /notifications-test endpoint to trigger test notifications        |
-| forkThreatThreshold        | FORK_THREAT_THRESHOLD          | 2                 |                                                                               |
-| forkThreatRatioThreshold   | FORK_THREAT_RATIO_THRESHOLD    | 0.8               |                                                                               |
-| debugOutput                | DEBUG_OUTPUT                   | false             | Generate debug log files
-
-You can add chains to the securityInheriting block, for example:
-
-| Configuration name | Description                                                                                                              |
-|--------------------|--------------------------------------------------------------------------------------------------------------------------|
-| payoutAddress      | This configuration should be set in order to make the ABFI work but it will be removed, set it to "0x"                   |
-| pluginKey          | The plugin to load                                                                                                       |
-| id                 | The chain id                                                                                                             |
-| name               | The chain name                                                                                                           |
-| host               | API url from the coin daemon                                                                                             |
-| auth: username     | The username used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.   |
-| auth: password     | The password used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.   |
-
-# 2. Altchain BFI API
-
-The next endpoints are accessible at the ABFI API (http://localhost:8080/api/ by default):
+The following endpoints are accessible at the ABFI API. Modify the URL just shown to make these requests.
 
 | Endpoint                               | Description                                                                            |
 |----------------------------------------|----------------------------------------------------------------------------------------|
@@ -81,7 +28,7 @@ The next endpoints are accessible at the ABFI API (http://localhost:8080/api/ by
 | /api/chains/blocks/last-finalized      | Get the last finalized block                                                           |
 | /api/chains/blocks/last-finalized-btc  | Get the last block finalized by btc                                                    |
 
-# 6. Altchain BFI last-finalized-btc endpoint
+# Altchain BFI last-finalized-btc endpoint
 
 In order to get responses there should be at least one APM mining at the altchain network also it could take a while (hours), here is a response example for that endpoint:
 
@@ -150,3 +97,67 @@ In order to get responses there should be at least one APM mining at the altchai
   "isAttackInProgress" : false
 }
 ````
+
+# Configuring and Building Altchain BFI From Source.
+
+The altchain BFI can be configured through the **application.conf** file which is inside the **bin** folder.
+
+Configuration example:
+```
+bfi {
+  altchainId = vbtc
+
+  blockChainNetwork = testnet
+
+  nodeCoreRpcHost = "127.0.0.1:10500"
+
+  api {
+    port = 4568
+    notificationsTest = false
+  }
+
+  forkThreatThreshold = 2
+  forkThreatRatioThreshold = 0.8
+
+  debugOutput = false
+}
+
+securityInheriting {
+  vbtc: {
+    payoutAddress: "0x"
+    pluginKey: btc
+    id: 3860170
+    name: "vBitcoin"
+    host: "http://localhost:18332"
+    auth: {
+      username: "test"
+      password: "test"
+    }
+  }
+}
+```
+
+Alternatively you can use the following environment variables to configure the ABFI:
+
+|Configuration name          | Environment variable           | Default           | Description                                                                   |
+|----------------------------|--------------------------------|-------------------|-------------------------------------------------------------------------------|
+| altchainId                 | ALTCHAIN_ID                    | undefined         | The altchain id, it must be configured                                        |   
+| blockChainNetwork          | NETWORK                        | testnet           | The altchain network, there are three options: mainnet, testnet and regtest   |
+| blockChainRegtestHost      | REGTEST_HOST                   | undefined         | The altchain regtest host (the network should be specified as regtest)        |
+| nodeCoreRpcHost            | NODECORE_HOST                  | 127.0.0.1:10500   | The NodeCore ip where the ABFI will connects to                               |
+| notificationsTest          | HTTP_API_NOTIFICATIONS_TEST    | false             | Enables the /notifications-test endpoint to trigger test notifications        |
+| forkThreatThreshold        | FORK_THREAT_THRESHOLD          | 2                 |                                                                               |
+| forkThreatRatioThreshold   | FORK_THREAT_RATIO_THRESHOLD    | 0.8               |                                                                               |
+| debugOutput                | DEBUG_OUTPUT                   | false             | Generate debug log files
+
+You can add chains to the securityInheriting block, for example:
+
+| Configuration name | Description                                                                                                              |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------|
+| payoutAddress      | This configuration should be set in order to make the ABFI work but it will be removed, set it to "0x"                   |
+| pluginKey          | The plugin to load                                                                                                       |
+| id                 | The chain id                                                                                                             |
+| name               | The chain name                                                                                                           |
+| host               | API url from the coin daemon                                                                                             |
+| auth: username     | The username used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.   |
+| auth: password     | The password used on the daemon authentication (if any), it can be disabled by commenting the whole auth config block.   |

@@ -94,61 +94,65 @@ PopData MemPool::generatePopData() {
 }
 
 void MemPool::cleanUp() {
-  auto& vbk_tree = mempool_tree_.vbk().getStableTree();
+  if (do_stalled_check_) {
+    auto& vbk_tree = mempool_tree_.vbk().getStableTree();
+    for (auto it = relations_.begin(); it != relations_.end();) {
+      auto& rel = *it->second;
+      auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
 
-  for (auto it = relations_.begin(); it != relations_.end();) {
-    auto& rel = *it->second;
-    auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
+      auto* tip = vbk_tree.getBestChain().tip();
+      VBK_ASSERT(tip);
+      bool tooOld =
+          tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
+          rel.header->getHeight();
 
-    auto* tip = vbk_tree.getBestChain().tip();
-    VBK_ASSERT(tip);
-    bool tooOld = tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
-                  rel.header->getHeight();
+      // cleanup stale relations
+      if (tooOld) {
+        // remove ATVs
+        for (const auto& atv : rel.atvs) {
+          stored_atvs_.erase(atv->getId());
+        }
 
-    // cleanup stale relations
-    if (tooOld) {
-      // remove ATVs
-      for (const auto& atv : rel.atvs) {
-        stored_atvs_.erase(atv->getId());
+        // remove VTBs
+        for (const auto& vtb : rel.vtbs) {
+          mempool_tree_.removeInvalidVTB(vtb->getId());
+          mempool_tree_.alt().vbk().removeInvalidVTB(vtb->getId());
+          stored_vtbs_.erase(vtb->getId());
+        }
+
+        // remove vbk block
+        vbkblocks_.erase(rel.header->getId());
+        it = relations_.erase(it);
+
+        continue;
       }
 
-      // remove VTBs
-      for (const auto& vtb : rel.vtbs) {
-        mempool_tree_.alt().vbk().removeInvalidVTB(vtb->getId());
-        stored_vtbs_.erase(vtb->getId());
+      // cleanup stale VTBs
+      cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
+        auto id = v.getId();
+        mempool_tree_.removeInvalidVTB(id);
+        mempool_tree_.alt().vbk().removeInvalidVTB(id);
+        stored_vtbs_.erase(id);
+      });
+
+      // cleanup stale ATVs
+      cleanupStale<ATV>(
+          rel.atvs, [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
+
+      if (index != nullptr && rel.empty()) {
+        vbkblocks_.erase(rel.header->getId());
+        it = relations_.erase(it);
+        continue;
       }
 
-      // remove vbk block
-      vbkblocks_.erase(rel.header->getId());
-      it = relations_.erase(it);
-
-      continue;
+      ++it;
     }
 
-    // cleanup stale VTBs
-    cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
-      auto id = v.getId();
-      mempool_tree_.alt().vbk().removeInvalidVTB(id);
-      stored_vtbs_.erase(id);
-    });
-
-    // cleanup stale ATVs
-    cleanupStale<ATV>(rel.atvs,
-                      [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
-
-    if (index != nullptr && rel.empty()) {
-      vbkblocks_.erase(rel.header->getId());
-      it = relations_.erase(it);
-      continue;
-    }
-
-    ++it;
+    // remove payloads from inFlight storage
+    cleanupStale<VTB>(vtbs_in_flight_);
+    cleanupStale<ATV>(atvs_in_flight_);
+    cleanupStale<VbkBlock>(vbkblocks_in_flight_);
   }
-
-  // remove payloads from inFlight storage
-  cleanupStale<VTB>(vtbs_in_flight_);
-  cleanupStale<ATV>(atvs_in_flight_);
-  cleanupStale<VbkBlock>(vbkblocks_in_flight_);
 
   mempool_tree_.cleanUp();
 
@@ -226,11 +230,12 @@ void MemPool::clear() {
 
 template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
-                                           ValidationState& state) {
+                                           ValidationState& state,
+                                           bool old_block_check) {
   VBK_ASSERT(atv);
 
   // before any checks and validations, check if payload is old or not
-  if (mempool_tree_.isBlockOld(atv->blockOfProof)) {
+  if (old_block_check && mempool_tree_.isBlockOld(atv->blockOfProof)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 
@@ -260,11 +265,12 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
 template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
-                                           ValidationState& state) {
+                                           ValidationState& state,
+                                           bool old_block_check) {
   VBK_ASSERT(vtb);
 
   // before any checks and validations, check if payload is old or not
-  if (mempool_tree_.isBlockOld(vtb->containingBlock)) {
+  if (old_block_check && mempool_tree_.isBlockOld(vtb->containingBlock)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 
@@ -296,11 +302,13 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 
 template <>
 MemPool::SubmitResult MemPool::submit<VbkBlock>(
-    const std::shared_ptr<VbkBlock>& blk, ValidationState& state) {
+    const std::shared_ptr<VbkBlock>& blk,
+    ValidationState& state,
+    bool old_block_check) {
   VBK_ASSERT(blk);
 
   // before any checks and validations, check if payload is old or not
-  if (mempool_tree_.isBlockOld(*blk)) {
+  if (old_block_check && mempool_tree_.isBlockOld(*blk)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 
@@ -357,6 +365,9 @@ MemPool::MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
 
 std::vector<BtcBlock::hash_t> MemPool::getMissingBtcBlocks() const {
   std::vector<BtcBlock::hash_t> res;
+  for (const auto& el : mempool_tree_.getInvalidVTBs()) {
+    res.push_back(el.second.missing_btc_block);
+  }
   for (const auto& el : mempool_tree_.alt().vbk().getInvalidVTBs()) {
     res.push_back(el.second.missing_btc_block);
   }
