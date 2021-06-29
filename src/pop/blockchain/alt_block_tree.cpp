@@ -491,12 +491,12 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
     // finalize blocks
     {
       auto* bestTip = getBestChain().tip();
-      // VBK_ASSERT(bestTip && "must be bootstrapped");
+      VBK_ASSERT(bestTip && "must be bootstrapped");
 
       uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
-      uint32_t finalHeight = std::max(
-          (int32_t)(bestTip->getHeight() - max_reorg_distance),
-          (int32_t)getRoot().getHeight());
+      uint32_t finalHeight =
+          std::max((int32_t)(bestTip->getHeight() - max_reorg_distance),
+                   (int32_t)getRoot().getHeight());
 
       auto* finalizedBlock = getBestChain()[finalHeight];
 
@@ -670,8 +670,8 @@ bool AltBlockTree::finalizeBlockImpl(index_t& index,
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
 
-  int32_t firstBlockHeight = bestVbkTip->getHeight() -
-                             vbk().getParams().getOldBlocksWindow();
+  int32_t firstBlockHeight =
+      bestVbkTip->getHeight() - vbk().getParams().getOldBlocksWindow();
   int32_t bootstrapBlockHeight = vbk().getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
