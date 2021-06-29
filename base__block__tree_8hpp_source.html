@@ -861,7 +861,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;    <span class="comment">// before we deallocate subtree, disconnect &quot;new root block&quot; from previous</span></div>
 <div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;    <span class="comment">// tree</span></div>
 <div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;    <span class="keyword">auto</span>* newRoot = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>[firstBlockHeight];</div>
-<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    VBK_ASSERT(newRoot);</div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    <span class="comment">// VBK_ASSERT(newRoot);</span></div>
 <div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;    <span class="keyword">auto</span>* rootPrev = newRoot-&gt;pprev;</div>
 <div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;    <span class="keywordflow">if</span> (newRoot-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;      newRoot-&gt;pprev-&gt;pnext.erase(newRoot);</div>
