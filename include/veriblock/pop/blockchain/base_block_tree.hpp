@@ -463,7 +463,9 @@ struct BaseBlockTree {
 
   index_t& getRoot() const {
     VBK_ASSERT_MSG(isBootstrapped(), "must be bootstrapped");
-    return *getBestChain().first();
+    auto* root = getBestChain().first();
+    VBK_ASSERT_MSG(root, "must be bootstrapped");
+    return *root;
   }
 
   //! the number of blocks that have BLOCK_APPLIED flag set
@@ -878,6 +880,7 @@ struct BaseBlockTree {
     // before we deallocate subtree, disconnect "new root block" from previous
     // tree
     auto* newRoot = activeChain_[firstBlockHeight];
+    VBK_ASSERT(newRoot);
     auto* rootPrev = newRoot->pprev;
     if (newRoot->pprev != nullptr) {
       newRoot->pprev->pnext.erase(newRoot);
