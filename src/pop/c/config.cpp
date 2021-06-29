@@ -410,8 +410,9 @@ POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(string), vbk_network_name) {
 
   POP_ARRAY_NAME(string) res;
   res.size = strlen(name);
-  res.data = new char[res.size];
-  strncpy(res.data, name, res.size);
+  // add some space for string null terminator. It is unused but keeps compiler happy.
+  res.data = new char[res.size + 1];
+  strncpy(res.data, name, res.size + 1);
 
   return res;
 }
@@ -425,8 +426,8 @@ POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(string), btc_network_name) {
 
   POP_ARRAY_NAME(string) res;
   res.size = strlen(name);
-  res.data = new char[res.size];
-  strncpy(res.data, name, res.size);
+  res.data = new char[res.size + 1];
+  strncpy(res.data, name, res.size + 1);
 
   return res;
 }

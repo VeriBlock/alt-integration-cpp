@@ -18,7 +18,8 @@
 10. @subpage integration_10_fr
 11. @subpage integration_11_p2p
 12. @subpage integration_12_rpc
-13. @subpage btctesting
+13. @subpage integration_13_setup_abfi
+14. @subpage btctesting
 
 ## Create new fork from existing BTC+POP chain
 

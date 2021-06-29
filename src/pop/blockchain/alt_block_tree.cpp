@@ -238,8 +238,8 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
 
   auto* index = insertBlockHeader(std::make_shared<AltBlock>(block));
 
-  VBK_ASSERT(index != nullptr &&
-             "insertBlockHeader should have never returned nullptr");
+  VBK_ASSERT_MSG(index != nullptr,
+                 "insertBlockHeader should have never returned nullptr");
 
   if (!index->isValid()) {
     return state.Invalid(
@@ -264,7 +264,7 @@ std::string AltBlockTree::toPrettyString(size_t level) const {
 }
 
 void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
-  auto bestTip = getBestChain().tip();
+  auto* bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip && "must be bootstrapped");
 
   if (bestTip == &candidate) {
@@ -302,7 +302,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
   ValidationState state;
   // compare current active chain to other chain
-  int result = cmp_.comparePopScore(*this, *right, state);
+  int result = cmp_.comparePopScore(*right, state);
   if (result < 0) {
     // other chain is better, and we already changed 'cmp' state to winner, so
     // just update active chain tip
@@ -485,15 +485,18 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
 
-  bool success = cmp_.setState(*this, to, state);
+  bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
     // finalize blocks
     {
+      auto* bestTip = getBestChain().tip();
+      VBK_ASSERT(bestTip && "must be bootstrapped");
+
       uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
-      uint32_t finalHeight = std::max(
-          (int32_t)(getBestChain().tip()->getHeight() - max_reorg_distance),
-          (int32_t)getRoot().getHeight());
+      uint32_t finalHeight =
+          std::max((int32_t)(bestTip->getHeight() - max_reorg_distance),
+                   (int32_t)getRoot().getHeight());
 
       auto* finalizedBlock = getBestChain()[finalHeight];
 
@@ -595,7 +598,8 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            BlockReader& blockProvider)
     : base(blockProvider),
       alt_config_(&alt_config),
-      cmp_(std::make_shared<VbkBlockTree>(vbk_config,
+      cmp_(*this,
+           std::make_shared<VbkBlockTree>(vbk_config,
                                           btc_config,
                                           payloadsProvider,
                                           blockProvider,
@@ -663,8 +667,11 @@ bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
-  int32_t firstBlockHeight = vbk().getBestChain().tip()->getHeight() -
-                             vbk().getParams().getOldBlocksWindow();
+  auto* bestVbkTip = vbk().getBestChain().tip();
+  VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
+
+  int32_t firstBlockHeight =
+      bestVbkTip->getHeight() - vbk().getParams().getOldBlocksWindow();
   int32_t bootstrapBlockHeight = vbk().getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
