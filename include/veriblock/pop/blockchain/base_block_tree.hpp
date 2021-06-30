@@ -880,7 +880,7 @@ struct BaseBlockTree {
     // before we deallocate subtree, disconnect "new root block" from previous
     // tree
     auto* newRoot = activeChain_[firstBlockHeight];
-    // VBK_ASSERT(newRoot);
+    VBK_ASSERT(newRoot);
     auto* rootPrev = newRoot->pprev;
     if (newRoot->pprev != nullptr) {
       newRoot->pprev->pnext.erase(newRoot);
