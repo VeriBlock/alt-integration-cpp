@@ -46,6 +46,5 @@ var structaltintegration_1_1VbkBlock =
     [ "DeserializeFromRaw", "structaltintegration_1_1VbkBlock.html#a1e135ce7d587b2004627f28be26ab74a", null ],
     [ "operator!=", "structaltintegration_1_1VbkBlock.html#ae5ff290afb7f397a8d79d5ba4bb53b0f", null ],
     [ "operator<", "structaltintegration_1_1VbkBlock.html#a8b28a048cee7d1df30f79411c2036787", null ],
-    [ "operator==", "structaltintegration_1_1VbkBlock.html#afdd22f36754b6015915722dd93dedb3f", null ],
-    [ "setPrecalculatedHash", "structaltintegration_1_1VbkBlock.html#a630a7aa0b8c2400bce3848b496749727", null ]
+    [ "operator==", "structaltintegration_1_1VbkBlock.html#afdd22f36754b6015915722dd93dedb3f", null ]
 ];
