@@ -1,4 +1,5 @@
 import os
+import time
 
 from pathlib import Path
 
@@ -136,7 +137,13 @@ class VBitcoindNode(Node):
 
     def generate(self, nblocks: int, address: str = None) -> None:
         address = address or self.getnewaddress()
-        self.rpc.generatetoaddress(nblocks, address)
+        for i in range(nblocks):
+            self.rpc.generatetoaddress(1, address)
+            tip = self.getbestblock()
+            tip_time = tip.time
+            current_time = int(time.time())
+            if current_time < tip_time:
+                time.sleep(tip_time - current_time)
 
     def getbestblockhash(self) -> Hexstr:
         return self.rpc.getbestblockhash()

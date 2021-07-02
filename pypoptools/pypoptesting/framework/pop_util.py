@@ -5,13 +5,7 @@ from .node import Node
 from .sync_util import wait_for_block_height
 
 def mine_alt_block(node: Node, nblocks: int):
-    for i in range(nblocks):
-        node.generate(1)
-        tip = node.getbestblock()
-        tip_time = tip.time
-        current_time = int(time.time())
-        if current_time < tip_time:
-            time.sleep(tip_time - current_time)
+    node.generate(nblocks)
 
 # size = size of chain to be created
 def create_endorsed_chain(node: Node, apm, size: int, addr: str = None) -> None:
