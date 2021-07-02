@@ -8,7 +8,7 @@ def mine_alt_block(node: Node, nblocks: int):
     for i in range(nblocks):
         node.generate(1)
         tip_hash = node.getbestblockhash()
-        tip = node.rpc.getblock(tip_hash)
+        tip = node.getblock(tip_hash)
         tip_time = tip['time']
         current_time = int(time.time())
         if current_time < tip_time:

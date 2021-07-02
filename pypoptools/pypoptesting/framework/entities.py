@@ -33,6 +33,7 @@ class GenericBlock:
     hash: Hexstr
     prevhash: Hexstr
     height: int
+    time: int
 
     def short_str(self):
         return "{}:{}".format(self.height, self.hash)
