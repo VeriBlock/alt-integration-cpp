@@ -19,3 +19,7 @@ if(NOT googletest_POPULATED)
     disable_clang_tidy(gmock)
     disable_clang_tidy(gmock_main)
 endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    target_add_flag(gtest /wd4389)     # disable warning: 'operator' : signed/unsigned mismatch
+endif()
