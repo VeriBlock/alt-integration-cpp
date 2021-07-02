@@ -139,8 +139,9 @@ class VBitcoindNode(Node):
         address = address or self.getnewaddress()
         for i in range(nblocks):
             self.rpc.generatetoaddress(1, address)
-            tip = self.getbestblock()
-            tip_time = tip.time
+            tip_hash = self.getbestblockhash()
+            tip = self.rpc.getblock(tip_hash)
+            tip_time = tip['time']
             current_time = int(time.time())
             if current_time < tip_time:
                 time.sleep(tip_time - current_time)
@@ -151,7 +152,6 @@ class VBitcoindNode(Node):
     def getblock(self, hash: Hexstr) -> BlockWithPopData:
         s = self.rpc.getblock(hash)
         return BlockWithPopData(
-            time=s['time'],
             hash=s['hash'],
             height=s['height'],
             prevhash=s.get('previousblockhash', ''),
