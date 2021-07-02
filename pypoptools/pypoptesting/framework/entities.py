@@ -33,7 +33,6 @@ class GenericBlock:
     hash: Hexstr
     prevhash: Hexstr
     height: int
-    time: int
 
     def short_str(self):
         return "{}:{}".format(self.height, self.hash)
@@ -61,6 +60,7 @@ class BtcBlock:
 
 @dataclass
 class BlockWithPopData(GenericBlock):
+    time: int
     confirmations: int
     endorsedBy: List[Hexstr]
     blockOfProofEndorsements: List[Hexstr]
