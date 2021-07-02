@@ -21,5 +21,5 @@ if(NOT googletest_POPULATED)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    target_add_flag(gtest /wd4389)     # disable warning: 'operator' : signed/unsigned mismatch
+    #target_add_flag(gtest /wd4389)     # disable warning: 'operator' : signed/unsigned mismatch
 endif()

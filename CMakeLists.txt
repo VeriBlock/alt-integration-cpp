@@ -108,10 +108,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
         add_flag(-g)
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    # TODO: enable and fix warnings
-#    if(WERROR)
-#        add_compile_options(/WX)                      # treats all compiler warnings as errors.
-#    endif()
+    if(WERROR)
+        add_compile_options(/WX)                      # treats all compiler warnings as errors.
+    endif()
 
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
@@ -122,13 +121,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/w14296)                  # 'operator': expression is always 'boolean_value'
     add_flag(/w14826)                  # Conversion from 'type1' to 'type_2' is sign-extended. This may cause unexpected runtime behavior.
     add_flag(/w14640)                  # Enable warning on thread un-safe static member initialization
-
-    # disable these warnings:
-    # appears in the gtest library
-    #add_flag(/wd4389)                  # disable warning: 'operator' : signed/unsigned mismatch
-    #add_flag(/wd4455)                  # disable warning: 'operator ""s': literal suffix identifiers that do not start with an underscore are reserved
-    #add_flag(/wd4127)                  # disable warning: conditional expression is constant
-    #add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
 
     # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
     add_flag(/DNOMINMAX)
