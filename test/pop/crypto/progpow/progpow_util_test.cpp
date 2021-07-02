@@ -48,8 +48,8 @@ TEST(ProgPowUtil, Kiss99) {
 }
 
 TEST(ProgPowUtil, Merge) {
-  auto expected = 1026036;
-  auto actual = progpow::merge(31233, 885, 12836127);
+  uint32_t expected = 1026036;
+  uint32_t actual = progpow::merge(31233, 885, 12836127);
   ASSERT_EQ(expected, actual);
 }
 

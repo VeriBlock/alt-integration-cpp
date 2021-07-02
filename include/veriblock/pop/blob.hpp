@@ -187,7 +187,9 @@ struct Blob {
 
   template <size_t M>
   Blob<M> trim() const {
-    VBK_ASSERT_MSG(N >= M, "invalid data size %d >= %d", N, M);
+    // fix MSVC 4127 warning
+    bool valid = (N >= M);
+    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data(), data() + M, m.begin());
     return m;
@@ -195,7 +197,9 @@ struct Blob {
 
   template <size_t M>
   Blob<M> trimLE() const {
-    VBK_ASSERT_MSG(N >= M, "invalid data size %d >= %d", N, M);
+    // fix MSVC 4127 warning
+    bool valid = (N >= M);
+    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data() + size() - M, data() + size(), m.begin());
     return m;
