@@ -326,8 +326,6 @@ jobs:
 
   x86_64-apple-darwin16:
     runs-on: ubuntu-latest
-    # TODO: Fix this job. See https://github.com/VeriBlock/alt-integration-cpp/runs/1173195891 for error details
-    if: ${{ false }}
     strategy:
       fail-fast: false
       matrix:
@@ -412,7 +410,6 @@ jobs:
           cd ${GITHUB_WORKSPACE}/cctools/libtapi
           CC=${GITHUB_WORKSPACE}/cctools/clang/bin/clang CXX=${GITHUB_WORKSPACE}/cctools/clang/bin/clang++ INSTALLPREFIX=${GITHUB_WORKSPACE}/cctools ./build.sh && \
           CC=${GITHUB_WORKSPACE}/cctools/clang/bin/clang CXX=${GITHUB_WORKSPACE}/cctools/clang/bin/clang++ INSTALLPREFIX=${GITHUB_WORKSPACE}/cctools ./install.sh && \
-          sed -i.old "/define HAVE_PTHREADS/d" ${GITHUB_WORKSPACE}/cctools/toolchain/cctools/ld64/src/ld/InputFiles.h
           mkdir -p ${GITHUB_WORKSPACE}/cctools/clang/lib/ && \
           cp ${GITHUB_WORKSPACE}/cctools/lib/libtapi.so.6 ${GITHUB_WORKSPACE}/cctools/clang/lib/
           cd ${GITHUB_WORKSPACE}/cctools/toolchain/cctools
