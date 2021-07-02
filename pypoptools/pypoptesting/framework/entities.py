@@ -60,6 +60,7 @@ class BtcBlock:
 
 @dataclass
 class BlockWithPopData(GenericBlock):
+    time: int
     confirmations: int
     endorsedBy: List[Hexstr]
     blockOfProofEndorsements: List[Hexstr]

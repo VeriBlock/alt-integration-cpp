@@ -144,6 +144,7 @@ class VBitcoindNode(Node):
     def getblock(self, hash: Hexstr) -> BlockWithPopData:
         s = self.rpc.getblock(hash)
         return BlockWithPopData(
+            time=s['time'],
             hash=s['hash'],
             height=s['height'],
             prevhash=s.get('previousblockhash', ''),
@@ -331,6 +332,3 @@ class VBitcoindNode(Node):
             code=s.get('code', ''),
             message=s.get('message', '')
         )
-
-    def altchainfamilyname(self):
-        return AltchainFamily.BITCOIN

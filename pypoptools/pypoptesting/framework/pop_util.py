@@ -7,9 +7,8 @@ from .sync_util import wait_for_block_height
 def mine_alt_block(node: Node, nblocks: int):
     for i in range(nblocks):
         node.generate(1)
-        tip_hash = node.getbestblockhash()
-        tip = node.rpc.getblock(tip_hash)
-        tip_time = tip['time']
+        tip = node.getbestblock()
+        tip_time = tip.time
         current_time = int(time.time())
         if current_time < tip_time:
             time.sleep(tip_time - current_time)
