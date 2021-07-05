@@ -120,7 +120,3 @@ class Node(ABC):
     @abstractmethod
     def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
         pass
-
-    @abstractmethod
-    def altchainfamilyname(self):
-        pass
