@@ -148,8 +148,12 @@ struct Blob {
     return std::string{data_.begin(), data_.end()};
   }
 
-  const value_type& operator[](size_t index) noexcept { return data_[index]; }
+  const value_type& operator[](size_t index) noexcept {
+    VBK_ASSERT(index < N);
+    return data_[index];
+  }
   const value_type& operator[](size_t index) const noexcept {
+    VBK_ASSERT(index < N);
     return data_[index];
   }
 
