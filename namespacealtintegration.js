@@ -90,14 +90,13 @@ var namespacealtintegration =
       [ "putStringKV", "namespacealtintegration_1_1json.html#a48e7904b2d715d4693ce7e0a4af8d611", null ]
     ] ],
     [ "progpow", null, [
-      [ "dagseed_t", "ethash_8hpp.html#a221cb0894c3014c955dc42c3e97b6c36", null ],
       [ "ethash_dag_node_t", "ethash_8hpp.html#a15fe79aa34493a1812681f135d59c4b9", null ],
       [ "clearEthashCache", "progpow_8hpp.html#af250aa87e1328e7db48b756cb19bb5d3", null ],
       [ "clearHeaderCache", "progpow_8hpp.html#aadf66814fec6d47026f5fdee4027dd21", null ],
       [ "clz", "math_8hpp.html#ad0bf6b06bcf4c6cef705d28ef7ac27a0", null ],
       [ "ethash_calculate_dag_node", "ethash_8hpp.html#a99b3093994c73330b281129e4b97dbcf", null ],
-      [ "ethash_calculate_seedhash", "ethash_8hpp.html#a2016e6f98629640d96eace214adfefeb", null ],
-      [ "ethash_get_seedhash", "ethash_8hpp.html#a829c8bf8081fc440dc4db730fffabd18", null ],
+      [ "ethash_calculate_seedhash", "ethash_8hpp.html#ac12873556e808a669f6165b4bcbce4b8", null ],
+      [ "ethash_get_seedhash", "ethash_8hpp.html#ae688371dcd78c6c3b45eb1915ea8317a", null ],
       [ "ethash_light_delete", "ethash_8hpp.html#a492ddd1e7548d35fc6245921dd3bf2e6", null ],
       [ "ethash_light_new", "ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947", null ],
       [ "ethash_make_cache", "ethash_8hpp.html#a63c303213fbc106e29bbbcf3cd696717", null ],

@@ -1,14 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a49a7715ca2b1fcdc072e1af9ef4cc80a":[4,0,0,59,8],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a4b85926ec6035e74dd4baacbeaa63c0f":[4,0,0,59,1],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a52f2976bbd5d5db64ab8e293c9e36c4c":[4,0,0,59,7],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a579ffdc6087f187c7a31dc8c76b03cee":[4,0,0,59,2],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a622954a704de30a6ba67df28358ee253":[4,0,0,59,10],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a69039454d736779646d501fce294d675":[4,0,0,59,17],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a79f8686dc1fecfd783748e13cb335812":[4,0,0,59,6],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a912d652b9922d5629c6c9c179d386c01":[4,0,0,59,16],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036":[4,0,0,59,15],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#ab7178c0b459a20d516ae3be44541965e":[4,0,0,59,9],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#acd4c678060a5f2e3085e57f1ce0fc454":[4,0,0,59,3],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#ad3fd4625194133ae94eac0fde98fe2b0":[4,0,0,59,4],
@@ -249,5 +240,14 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6":[4,0,0,57,20],
 "structaltintegration_1_1ReadStream.html#a7f5c83d2f9edc7d6567a7e8c053b58a3":[4,0,0,57,9],
 "structaltintegration_1_1ReadStream.html#a8d096f16d0f52ff05c4624c398e7cd15":[4,0,0,57,7],
-"structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2":[4,0,0,57,12]
+"structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2":[4,0,0,57,12],
+"structaltintegration_1_1ReadStream.html#aa149b1a7ac12659733883445ee8be071":[4,0,0,57,14],
+"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907":[4,0,0,57,3],
+"structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68":[4,0,0,57,5],
+"structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab":[4,0,0,57,1],
+"structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[4,0,0,57,0],
+"structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3":[4,0,0,57,6],
+"structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[4,0,0,57,10],
+"structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[4,0,0,57,11],
+"structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[4,0,0,57,16]
 };
