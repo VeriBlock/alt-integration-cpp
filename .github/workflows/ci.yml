@@ -440,7 +440,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build -- -j1
       - name: check architectures
         run: |
           OSX_ARCH=$(${GITHUB_WORKSPACE}/cctools/toolchain/bin/x86_64-apple-darwin16-lipo -info ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a) && \
