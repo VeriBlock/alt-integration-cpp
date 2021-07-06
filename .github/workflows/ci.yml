@@ -117,10 +117,10 @@ jobs:
           repository: VeriBlock/fuzz-corpus
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
-        run: sudo apt-get update
+        run: apt-get update
       - name: install new cmake
         run: |
-          sudo apt-get install -y python3 python3-pip
+          apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -139,7 +139,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: sudo cmake --build build -- -j2 install
+        run: cmake --build build -- -j2 install
       - name: test
         run: cd build && ctest
 
