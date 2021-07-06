@@ -137,23 +137,25 @@ $(document).ready(function(){initNavTree('ethash_8hpp_source.html',''); initResi
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  uint32_t words[VBK_ETHASH_DAG_NODE_SIZE];</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;} ethash_dag_node_t;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">void</span> ethash_calculate_dag_node(ethash_dag_node_t* out,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                               uint32_t node_index,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                               ethash_cache* <span class="keyword">const</span> light);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;ethash_cache* ethash_light_new(uint64_t block_number);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keywordtype">void</span> ethash_light_delete(ethash_cache* light);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<a class="code" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> ethash_calculate_seedhash(uint64_t block_number);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<a class="code" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> ethash_get_seedhash(uint64_t block_number);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;std::shared_ptr&lt;ethash_cache&gt; ethash_make_cache(uint64_t block_number);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}  <span class="comment">// namespace progpow</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">typedef</span> uint8_t dagseed_t[<a class="code" href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">SHA256_HASH_SIZE</a>];</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keywordtype">void</span> ethash_calculate_dag_node(ethash_dag_node_t* out,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                               uint32_t node_index,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                               ethash_cache* <span class="keyword">const</span> light);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;ethash_cache* ethash_light_new(uint64_t block_number);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keywordtype">void</span> ethash_light_delete(ethash_cache* light);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keywordtype">void</span> ethash_calculate_seedhash(uint64_t block_number, dagseed_t &amp;seed);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keywordtype">void</span> ethash_get_seedhash(uint64_t block_number, dagseed_t&amp; seed);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;std::shared_ptr&lt;ethash_cache&gt; ethash_make_cache(uint64_t block_number);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}  <span class="comment">// namespace progpow</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00017">uint.hpp:17</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a313d0d3306fa209414149266c6e87876"><div class="ttname"><a href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">altintegration::SHA256_HASH_SIZE</a></div><div class="ttdeci">constexpr const auto SHA256_HASH_SIZE</div><div class="ttdoc">sha256 hash size</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00039">consts.hpp:39</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>
