@@ -13,7 +13,7 @@ on:
       - release/*
 
 jobs:
-  linux:
+  linux-clang:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -51,12 +51,12 @@ jobs:
           repository: VeriBlock/fuzz-corpus
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
-        run: sudo apt-get update
+        run: apt-get update
       - name: install build requirements
-        run: sudo apt-get install clang-tidy libboost-python-dev
+        run: apt-get install clang-tidy libboost-python-dev
       - name: install new cmake
         run: |
-          sudo apt-get install -y python3 python3-pip
+          apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -170,8 +170,8 @@ jobs:
             linux-ccache-coverage-
       - name: install new cmake
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pip gcovr
+          apt-get update
+          apt-get install -y python3 python3-pip gcovr
           pip3 install cmake
       - name: versions
         run: |
