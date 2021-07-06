@@ -125,7 +125,7 @@ $(document).ready(function(){initNavTree('blob_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <a class="code" href="structaltintegration_1_1Blob.html">Blob</a>() { data_.fill(0); };</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <a class="code" href="structaltintegration_1_1Blob.html">Blob</a>(std::initializer_list&lt;uint8_t&gt; list) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <a class="code" href="structaltintegration_1_1Blob.html">Blob</a>(<span class="keyword">const</span> std::initializer_list&lt;uint8_t&gt;&amp; list) {</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    data_.fill(0);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    assign(list);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  }</div>
@@ -309,7 +309,7 @@ $(document).ready(function(){initNavTree('blob_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  }</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> assign(std::initializer_list&lt;uint8_t&gt; list) {</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> assign(<span class="keyword">const</span> std::initializer_list&lt;uint8_t&gt;&amp; list) {</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    VBK_ASSERT_MSG(list.size() &lt;= N,</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                   <span class="stringliteral">&quot;Blob(): invalid data size: &quot;</span> + std::to_string(list.size()) +</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                       <span class="stringliteral">&quot; &gt; &quot;</span> + std::to_string(N));</div>
