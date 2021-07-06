@@ -51,12 +51,12 @@ jobs:
           repository: VeriBlock/fuzz-corpus
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
-        run: apt-get update
+        run: sudo apt-get update
       - name: install build requirements
-        run: apt-get install clang-tidy libboost-python-dev
+        run: sudo apt-get install clang-tidy libboost-python-dev
       - name: install new cmake
         run: |
-          apt-get install -y python3 python3-pip
+          sudo apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -75,12 +75,12 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --build build -- -j2 install
+        run: sudo cmake --build build -- -j2 install
       - name: test
         run: cd build && ctest
 
   linux-gcc:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
     strategy:
       fail-fast: false
@@ -117,10 +117,10 @@ jobs:
           repository: VeriBlock/fuzz-corpus
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
-        run: apt-get update
+        run: sudo apt-get update
       - name: install new cmake
         run: |
-          apt-get install -y python3 python3-pip
+          sudo apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -139,7 +139,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --build build -- -j2 install
+        run: sudo cmake --build build -- -j2 install
       - name: test
         run: cd build && ctest
 
@@ -170,8 +170,8 @@ jobs:
             linux-ccache-coverage-
       - name: install new cmake
         run: |
-          apt-get update
-          apt-get install -y python3 python3-pip gcovr
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip gcovr
           pip3 install cmake
       - name: versions
         run: |
