@@ -220,7 +220,7 @@ struct Blob {
   }
 
  protected:
-  inline void assing(std::initializer_list<uint8_t> list) {
+  inline void assign(std::initializer_list<uint8_t> list) {
     VBK_ASSERT_MSG(list.size() <= N,
                    "Blob(): invalid data size: " + std::to_string(list.size()) +
                        " > " + std::to_string(N));
