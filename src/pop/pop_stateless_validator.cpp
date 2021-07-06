@@ -8,6 +8,7 @@
 
 namespace altintegration {
 
+#ifndef VBK_NO_THREADS
 static unsigned long upper_power_of_two(uint32_t v) {
   v--;
   v |= v >> 1;
@@ -18,6 +19,7 @@ static unsigned long upper_power_of_two(uint32_t v) {
   v++;
   return v;
 }
+#endif //VBK_NO_THREADS
 
 // hack to build std::future if VBK_NO_THREADS is defined
 template <typename T>
