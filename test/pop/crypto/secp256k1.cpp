@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/crypto/secp256k1.hpp>
-
 #include <gtest/gtest.h>
 
+#include <veriblock/pop/crypto/secp256k1.hpp>
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;
@@ -50,8 +49,8 @@ TEST(SIGN_UTIL, Verify) {
 TEST(SIGN_UTIL, Invalid) {
   std::vector<uint8_t> dummy(100, 1);
   EXPECT_THROW(privateKeyFromVbk(dummy), std::invalid_argument);
-  EXPECT_THROW(derivePublicKey(dummy), std::invalid_argument);
-  EXPECT_THROW(publicKeyToVbk(dummy), std::invalid_argument);
-  EXPECT_THROW(sign(dummy, dummy), std::invalid_argument);
-  EXPECT_THROW(verify(dummy, dummy, dummy), std::invalid_argument);
+  ASSERT_DEATH(derivePublicKey(dummy), "");
+  ASSERT_DEATH(publicKeyToVbk(dummy), "");
+  ASSERT_DEATH(sign(dummy, dummy), "");
+  ASSERT_DEATH(verify(dummy, dummy, dummy), "");
 }
