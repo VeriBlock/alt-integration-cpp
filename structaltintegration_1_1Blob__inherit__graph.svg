@@ -77,7 +77,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="192.5" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
 <text text-anchor="start" x="192.5" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
 <text text-anchor="start" x="192.5" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="192.5" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assing()</text>
+<text text-anchor="start" x="192.5" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 <text text-anchor="start" x="192.5" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 </a>
 </g>
@@ -106,7 +106,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="8" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
 <text text-anchor="start" x="8" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
 <text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="8" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assing()</text>
+<text text-anchor="start" x="8" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 <text text-anchor="start" x="8" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 </a>
 </g>
@@ -142,7 +142,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="185" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
 <text text-anchor="start" x="185" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
 <text text-anchor="start" x="185" y="-284" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="185" y="-273" font-family="Helvetica,sans-Serif" font-size="10.00"># assing()</text>
+<text text-anchor="start" x="185" y="-273" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 <text text-anchor="start" x="185" y="-262" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 </a>
 </g>
@@ -178,7 +178,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="334.5" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
 <text text-anchor="start" x="334.5" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
 <text text-anchor="start" x="334.5" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="334.5" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assing()</text>
+<text text-anchor="start" x="334.5" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 <text text-anchor="start" x="334.5" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
 </a>
 </g>
