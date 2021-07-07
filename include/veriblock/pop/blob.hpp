@@ -39,7 +39,7 @@ struct Blob {
 
   Blob() { data_.fill(0); };
 
-  Blob(std::initializer_list<uint8_t> list) {
+  Blob(const std::initializer_list<uint8_t>& list) {
     data_.fill(0);
     assign(list);
   }
@@ -224,7 +224,7 @@ struct Blob {
   }
 
  protected:
-  inline void assign(std::initializer_list<uint8_t> list) {
+  inline void assign(const std::initializer_list<uint8_t>& list) {
     VBK_ASSERT_MSG(list.size() <= N,
                    "Blob(): invalid data size: " + std::to_string(list.size()) +
                        " > " + std::to_string(N));
