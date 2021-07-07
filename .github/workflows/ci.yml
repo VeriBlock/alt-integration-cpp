@@ -14,8 +14,7 @@ on:
 
 jobs:
   linux-clang:
-    runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -52,10 +51,12 @@ jobs:
           repository: VeriBlock/fuzz-corpus
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
-        run: apt-get update
+        run: sudo apt-get update
+      - name: install build requirements
+        run: sudo apt-get install clang-tidy libboost-python-dev
       - name: install new cmake
         run: |
-          apt-get install -y python3 python3-pip
+          sudo apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -74,12 +75,12 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --build build -- -j2 install
+        run: sudo cmake --build build -- -j2 install
       - name: test
         run: cd build && ctest
 
   linux-gcc:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
     strategy:
       fail-fast: false
@@ -143,8 +144,7 @@ jobs:
         run: cd build && ctest
 
   coverage:
-    runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev
+    runs-on: ubuntu-latest
     env:
       CC: gcc
       CXX: g++
@@ -170,8 +170,8 @@ jobs:
             linux-ccache-coverage-
       - name: install new cmake
         run: |
-          apt-get update
-          apt-get install -y python3 python3-pip
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip gcovr
           pip3 install cmake
       - name: versions
         run: |
@@ -249,7 +249,7 @@ jobs:
 #        run: cmake --build build --target RUN_TESTS
 
   x86_64-w64-mingw32:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -325,9 +325,7 @@ jobs:
         run: cd build && ctest
 
   x86_64-apple-darwin16:
-    runs-on: ubuntu-18.04
-    # TODO: Fix this job. See https://github.com/VeriBlock/alt-integration-cpp/runs/1173195891 for error details
-    if: ${{ false }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -412,7 +410,6 @@ jobs:
           cd ${GITHUB_WORKSPACE}/cctools/libtapi
           CC=${GITHUB_WORKSPACE}/cctools/clang/bin/clang CXX=${GITHUB_WORKSPACE}/cctools/clang/bin/clang++ INSTALLPREFIX=${GITHUB_WORKSPACE}/cctools ./build.sh && \
           CC=${GITHUB_WORKSPACE}/cctools/clang/bin/clang CXX=${GITHUB_WORKSPACE}/cctools/clang/bin/clang++ INSTALLPREFIX=${GITHUB_WORKSPACE}/cctools ./install.sh && \
-          sed -i.old "/define HAVE_PTHREADS/d" ${GITHUB_WORKSPACE}/cctools/toolchain/cctools/ld64/src/ld/InputFiles.h
           mkdir -p ${GITHUB_WORKSPACE}/cctools/clang/lib/ && \
           cp ${GITHUB_WORKSPACE}/cctools/lib/libtapi.so.6 ${GITHUB_WORKSPACE}/cctools/clang/lib/
           cd ${GITHUB_WORKSPACE}/cctools/toolchain/cctools
@@ -443,7 +440,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build -- -j1
       - name: check architectures
         run: |
           OSX_ARCH=$(${GITHUB_WORKSPACE}/cctools/toolchain/bin/x86_64-apple-darwin16-lipo -info ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a) && \
