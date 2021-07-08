@@ -19,6 +19,10 @@ from .pop import (
     PopSyncTest
 )
 
+from .rpc import (
+    RpcFunctionsSignatureTest,
+)
+
 node_tests = [
     NodeStartTest(),
     NodeStopTest(),
@@ -27,10 +31,10 @@ node_tests = [
     NodeConnectTest(), 
     NodeGenerateTest(),
     NodePreflightTest()
-
 ]
 
 rpc_tests = [
+    RpcFunctionsSignatureTest(),
 ]
 
 pop_tests = [
