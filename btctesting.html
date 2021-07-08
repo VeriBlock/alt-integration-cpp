@@ -89,18 +89,18 @@ $(document).ready(function(){initNavTree('btctesting.html',''); initResizable();
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#autotoc_md88">Summary</a></li>
-<li class="level1"><a href="#autotoc_md89">Overview</a></li>
-<li class="level1"><a href="#autotoc_md90">Unit tests</a></li>
-<li class="level1"><a href="#autotoc_md91">BTC functional tests</a></li>
-<li class="level1"><a href="#autotoc_md92">POP functional tests</a></li>
-<li class="level1"><a href="#autotoc_md93">View APM get-operation</a></li>
-<li class="level1"><a href="#autotoc_md94">Altchain BFI</a></li>
+<ul><li class="level1"><a href="#autotoc_md89">Summary</a></li>
+<li class="level1"><a href="#autotoc_md90">Overview</a></li>
+<li class="level1"><a href="#autotoc_md91">Unit tests</a></li>
+<li class="level1"><a href="#autotoc_md92">BTC functional tests</a></li>
+<li class="level1"><a href="#autotoc_md93">POP functional tests</a></li>
+<li class="level1"><a href="#autotoc_md94">View APM get-operation</a></li>
+<li class="level1"><a href="#autotoc_md95">Altchain BFI</a></li>
 </ul>
 </div>
 <div class="textblock"><p><a class="anchor" id="md_docs_families_btc_testing"></a>​</p>
 <p>​ </p>
-<h1><a class="anchor" id="autotoc_md88"></a>
+<h1><a class="anchor" id="autotoc_md89"></a>
 Summary</h1>
 <p>To show that the pop-enabled altchain most likely works, once could screenshots (with supporting links) of: ​</p><ol type="1">
 <li>All certification tests passing. <img src="certificationtests.png" alt="" class="inline" title="certification_tests"/></li>
@@ -112,7 +112,7 @@ Summary</h1>
 </div><!-- fragment --> <img src="abfi_successful_result.png" alt="" class="inline" title="apm_instances"/> Please see here for more details: <a class="el" href="integration_13_setup_abfi.html#md_docs_families_btc_integration_13_setup_abfi">Setup ABFI</a></li>
 </ol>
 <p>​ </p>
-<h1><a class="anchor" id="autotoc_md89"></a>
+<h1><a class="anchor" id="autotoc_md90"></a>
 Overview</h1>
 <p>​ Here we describe which POP related tests should be added and should pass to be confident that POP security works fine. All tests can be separated to the following categories:</p><ul>
 <li><code>unit tests</code></li>
@@ -120,7 +120,7 @@ Overview</h1>
 <li><code>POP functional tests</code></li>
 <li><code>View APM get-operation</code> ​ </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md90"></a>
+<h1><a class="anchor" id="autotoc_md91"></a>
 Unit tests</h1>
 <p>​ First thing is to make sure that all original BTC tests pass and work well. ​ On the Unix sytem you can do it with the following command: </p><div class="fragment"><div class="line">make check</div>
 </div><!-- fragment --><p> ​ Before starting the POP integration it is recommended to fix tests if some of them do not work properly. ​ Here is the full list of the POP unit tests:</p><ul>
@@ -133,12 +133,12 @@ Unit tests</h1>
 <li><code>forkresolution_tests.cpp</code> ​</li>
 </ul>
 <p>You can see the corresponding changes in the Makefile: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/src/Makefile.test.include#L117">https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/src/Makefile.test.include#L117</a> ​ These tests are available in the <code>vbk/tests/unit</code> directory. ​ </p><dl class="section note"><dt>Note</dt><dd>Unit tests should pass prior to running BTC and POP functional tests. ​ </dd></dl>
-<h1><a class="anchor" id="autotoc_md91"></a>
+<h1><a class="anchor" id="autotoc_md92"></a>
 BTC functional tests</h1>
 <p>​ Original Bitcoin code has functional tests that reside in the <code>test/functional</code> directory. ​ <code>bitcoind</code> should be built prior to running functional tests. <code>VBITCOIND_PATH</code> environment variable should be set to the path to the <code>bitcoind</code> daemon: </p><div class="fragment"><div class="line">export VBITCOIND_PATH=&lt;path to the daemon (bitcoind)&gt;</div>
 </div><!-- fragment --><p> ​ Tests are started with the following command: </p><div class="fragment"><div class="line">python test/functional/test_runner.py</div>
 </div><!-- fragment --><p> ​ </p>
-<h1><a class="anchor" id="autotoc_md92"></a>
+<h1><a class="anchor" id="autotoc_md93"></a>
 POP functional tests</h1>
 <p>​ These tests validate that all POP functionality works fine. All important parts of the POP security are covered by these tests. Therefore it is important to make sure that all tests pass before starting Mainnet or even Testnet. ​ VeriBlock Python framework should be installed to make these tests run. Follow the VeriBlock Python testing guide <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/README.md">here</a>. ​ Now the following POP test runner can be copied to the source code: <a href="https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py">https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/integration/test_runner.py</a> ​ A <code>node</code> which acts as an adaptor for <code>bitcoind</code> has been implemented. This adaptor able to <code>run</code>, <code>stop</code>, <code>restart</code> <code>bitcoind</code> and execute RPC functions: <a href="https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/altchain_node_adaptors/vbitcoind_node.py">https://github.com/VeriBlock/alt-integration-cpp/blob/master/pypoptools/pypoptesting/altchain_node_adaptors/vbitcoind_node.py</a> ​ For debugging purposes it is possible to run a single test from the test set: </p><div class="fragment"><div class="line">python test_runner.py NodeBasicSyncTest</div>
 <div class="line">​</div>
@@ -164,11 +164,11 @@ POP functional tests</h1>
 <div class="line">ALL                   | ✓ Passed  | 1269 s (accumulated) </div>
 <div class="line">Runtime: 1273 s</div>
 </div><!-- fragment --><p> ​ </p>
-<h1><a class="anchor" id="autotoc_md93"></a>
+<h1><a class="anchor" id="autotoc_md94"></a>
 View APM get-operation</h1>
 <p>Run getoperation and view an e2e pop transaction. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>add a screenshot</dd></dl>
 <p>​ </p>
-<h1><a class="anchor" id="autotoc_md94"></a>
+<h1><a class="anchor" id="autotoc_md95"></a>
 Altchain BFI</h1>
 <p>The latest <a href="https://hub.docker.com/r/veriblock/altchain-bfi/tags?page=1&amp;ordering=last_updated">ABFI build</a> can be downloaded through docker </p>
 </div></div><!-- contents -->

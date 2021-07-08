@@ -26,6 +26,9 @@ var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
     [ "Getting Started", "index.html", "index" ],
+    [ "Change Blockchain Explorer Params", "integration_14_explorer.html", [
+      [ "Overview", "integration_14_explorer.html#autotoc_md29", null ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -61,13 +64,13 @@ var NAVTREEINDEX =
 [
 "",
 "ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
-"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61dacaf9b6b99962bf5c2264824231d7a40c",
-"namespacealtintegration.html#ad744e5977f0a0a3bb56233052bd86cfd",
-"structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919",
-"structaltintegration_1_1BlockReader.html#a377c177ac69da70ac6104a79bc0e2925",
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a4b85926ec6035e74dd4baacbeaa63c0f",
-"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907",
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4"
+"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da7e85bcb66fb9a809d5ab4f62a8b8bea8",
+"namespacealtintegration.html#ad2dbac4feaa76dbcad6bafdc784dbdde",
+"structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d",
+"structaltintegration_1_1BlockReader.html#a1d51882198629dc2bfe95a8d24e49be6",
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a489e9fd5a7d7be83dba3e14cac92f62e",
+"structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2",
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
