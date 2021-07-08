@@ -103,15 +103,22 @@ struct MemPoolBlockTree {
   void clear() {
     temp_btc_tree_.clear();
     temp_vbk_tree_.clear();
+    invalid_vtbs_.clear();
+  }
+
+  void removeInvalidVTB(const VTB::id_t& id) { invalid_vtbs_.erase(id); }
+
+  const std::unordered_map<VTB::id_t, VTBInvalidationInfo>& getInvalidVTBs()
+      const {
+    return invalid_vtbs_;
   }
 
  private:
-  //! @private
-  void setTipContinueOnInvalid(AltBlockTree::index_t& to);
-
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
   AltBlockTree* tree_;
+
+  std::unordered_map<VTB::id_t, VTBInvalidationInfo> invalid_vtbs_;
 };
 
 }  // namespace altintegration

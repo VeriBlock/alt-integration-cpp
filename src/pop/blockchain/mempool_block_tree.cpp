@@ -1,6 +1,7 @@
 #include "veriblock/pop/blockchain/alt_block_tree_util.hpp"
 #include "veriblock/pop/blockchain/blockchain_util.hpp"
 #include "veriblock/pop/blockchain/mempool_block_tree.hpp"
+#include "veriblock/pop/blockchain/pop/continue_on_invalid_context.hpp"
 #include "veriblock/pop/fmt.hpp"
 #include "veriblock/pop/keystone_util.hpp"
 
@@ -18,28 +19,6 @@ static void assertPopDataFits(PopData& pop, const AltChainParams& params) {
   VBK_ASSERT(pop.atvs.size() <= maxATVs);
   const auto estimate = pop.estimateSize();
   VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
-}
-
-template <typename Payload, typename BlockIndex>
-void removePayloadsIfNotInBlock(std::vector<Payload>& payloads,
-                                BlockIndex& index) {
-  auto payloadIds = index.template getPayloadIds<Payload>();
-  std::set<typename Payload::id_t> ids(payloadIds.begin(), payloadIds.end());
-
-  auto it = std::remove_if(
-      payloads.begin(), payloads.end(), [&](const Payload& payload) {
-        auto pid = payload.getId();
-        return ids.count(pid) == 0;
-      });
-  payloads.erase(it, payloads.end());
-}
-
-template <typename P>
-void removeDuplicates(BlockIndex<AltBlock>& index,
-                      std::vector<P>& payloads,
-                      AltBlockTree& tree) {
-  auto duplicates = findDuplicates<P>(index, payloads, tree);
-  payloads.erase(duplicates, payloads.end());
 }
 
 }  // namespace
@@ -153,6 +132,7 @@ bool MemPoolBlockTree::acceptVTB(
   size_t i = 0;
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
     if (!temp_btc_tree_.acceptBlockHeader(blk, state)) {
+      invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
       return state.Invalid("bad-block-of-proof-context", i);
     }
 
@@ -160,6 +140,7 @@ bool MemPoolBlockTree::acceptVTB(
   }
 
   if (!temp_btc_tree_.acceptBlockHeader(vtb.transaction.blockOfProof, state)) {
+    invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
     return state.Invalid("bad-block-of-proof");
   }
 
@@ -271,13 +252,19 @@ bool MemPoolBlockTree::isBlockOld(const VbkBlock& block) const {
   return tree_->vbk().isBlockOld(block.getHeight());
 }
 
-void MemPoolBlockTree::setTipContinueOnInvalid(AltBlockTree::index_t& to) {
-  ContinueOnInvalidContext c(tree_->getParams());
-  ValidationState dummy;
-  bool success =
-      tree_->cmp_.setState(*tree_, to, dummy, /*continueOnInvalid=*/&c);
-  VBK_ASSERT(success);
-  tree_->overrideTip(to);
+template <typename Payload>
+void applyPayloadsOrRemoveIfInvalid(
+    AltBlockTree::BlockPayloadMutator& mutator,
+    std::vector<Payload>& payloads,
+    ContinueOnInvalidContext& continueOnInvalidContext) {
+  auto it = std::remove_if(
+      payloads.begin(), payloads.end(), [&](const Payload& payload) {
+        ValidationState dummy;
+        return !continueOnInvalidContext.canFit(payload) ||
+               mutator.isStatelessDuplicate(getIdVector(payload)) ||
+               !mutator.add(payload, dummy);
+      });
+  payloads.erase(it, payloads.end());
 }
 
 void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
@@ -308,20 +295,21 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   auto* tmpindex = tree_->getBlockIndex(tmp.getHash());
   VBK_ASSERT(tmpindex != nullptr);
 
-  // filter out statefully duplicate payloads
-  removeDuplicates<VbkBlock>(*tmpindex, pop.context, *tree_);
-  removeDuplicates<VTB>(*tmpindex, pop.vtbs, *tree_);
-  removeDuplicates<ATV>(*tmpindex, pop.atvs, *tree_);
+  tree_->getPayloadsProvider().writePayloads(pop);
 
-  // add payloads to a block
-  tree_->acceptBlock(*tmpindex, pop);
+  // create and activate the mempool block
+  tree_->acceptBlock(*tmpindex, {});
+  ValidationState dummy;
+  bool success = tree_->setState(*tmpindex, dummy);
+  VBK_ASSERT(success);
 
-  // setState in 'continueOnInvalid' mode
-  setTipContinueOnInvalid(*tmpindex);
+  ContinueOnInvalidContext continueOnInvalidContext(tree_->getParams());
+  auto mutator = tree_->makeConnectedLeafPayloadMutator(*tmpindex);
 
-  removePayloadsIfNotInBlock(pop.atvs, *tmpindex);
-  removePayloadsIfNotInBlock(pop.vtbs, *tmpindex);
-  removePayloadsIfNotInBlock(pop.context, *tmpindex);
+  applyPayloadsOrRemoveIfInvalid(
+      mutator, pop.context, continueOnInvalidContext);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, continueOnInvalidContext);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, continueOnInvalidContext);
 
   // assert PopData does not surpass limits
   assertPopDataFits(pop, tree_->getParams());
@@ -333,6 +321,10 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   tree_->eraseBlock(*tmpindex);
 
   guard.overrideDeferredForkResolution(originalTip);
+
+  for (const auto& vtb : pop.vtbs) {
+    invalid_vtbs_.erase(vtb.getId());
+  }
 }
 
 }  // namespace altintegration

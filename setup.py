@@ -94,7 +94,7 @@ packages = [
     'pypoptools.pypoptesting.tests.node',
     'pypoptools.pypoptesting.tests.rpc',
     'pypoptools.pypoptesting.tests.pop',
-    'pypoptools.pypoptesting.altchain_node_adaptors',
+    'pypoptools.pypoptesting.benchmarks',
     'pypoptools.pypopminer',
 ]
 

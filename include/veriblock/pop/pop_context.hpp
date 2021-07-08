@@ -101,11 +101,9 @@ struct PopContext {
   /**
    * Load ALT/VBK/BTC trees from disk via adapter BlockReader.
    *
-   * @param[out] reader adaptor to read blocks from disk.
    * @param[out] state validation state
    */
-  VBK_CHECK_RETURN bool loadAllTrees(BlockReader& reader,
-                                     ValidationState& state);
+  VBK_CHECK_RETURN bool loadAllTrees(ValidationState& state);
 
   /**
    * Calculates POP rewards that should be paid in the next block after `prev`.
@@ -119,14 +117,12 @@ struct PopContext {
   VBK_CHECK_RETURN PopPayouts getPopPayout(const AltBlockTree::hash_t& prev);
 
   /**
-   * Generate PopData for a block next to `prev`.
-   *
-   * @param prev should match AltBlockTree tip.
+   * Generate PopData for the block next to the current tip.
    *
    * @return empty or non-empty PopData instance that must be inserted into next
    * block body.
    */
-  VBK_CHECK_RETURN PopData generatePopData(const AltBlockTree::hash_t& prev);
+  VBK_CHECK_RETURN PopData generatePopData();
 
   /**
    * Create PublicationData given required input parameters.

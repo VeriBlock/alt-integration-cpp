@@ -108,9 +108,8 @@ uint32_t getNextWorkRequired(const BlockIndex<BtcBlock>& prevBlock,
   uint32_t nHeightFirst =
       prevBlock.getHeight() - (params.getDifficultyAdjustmentInterval() - 1);
   const auto* pindexFirst = prevBlock.getAncestor(nHeightFirst);
-  if (pindexFirst == nullptr) {
-    throw std::logic_error("unable to find block ancestor at given height");
-  }
+
+  VBK_ASSERT_MSG(pindexFirst, "unable to find block ancestor at given height");
 
   return calculateNextWorkRequired(
       prevBlock, pindexFirst->getTimestamp(), params);

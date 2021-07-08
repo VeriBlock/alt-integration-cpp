@@ -39,10 +39,9 @@ struct Blob {
 
   Blob() { data_.fill(0); };
 
-  Blob(std::initializer_list<uint8_t> list) {
-    VBK_ASSERT(list.size() <= N);
+  Blob(const std::initializer_list<uint8_t>& list) {
     data_.fill(0);
-    assign({list.begin(), list.size()});
+    assign(list);
   }
 
   Blob(Slice<const uint8_t> slice) {
@@ -149,8 +148,12 @@ struct Blob {
     return std::string{data_.begin(), data_.end()};
   }
 
-  const value_type& operator[](size_t index) noexcept { return data_[index]; }
+  const value_type& operator[](size_t index) noexcept {
+    VBK_ASSERT(index < N);
+    return data_[index];
+  }
   const value_type& operator[](size_t index) const noexcept {
+    VBK_ASSERT(index < N);
     return data_[index];
   }
 
@@ -187,7 +190,9 @@ struct Blob {
 
   template <size_t M>
   Blob<M> trim() const {
-    VBK_ASSERT_MSG(N >= M, "invalid data size %d >= %d", N, M);
+    // fix MSVC 4127 warning
+    bool valid = (N >= M);
+    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data(), data() + M, m.begin());
     return m;
@@ -195,7 +200,9 @@ struct Blob {
 
   template <size_t M>
   Blob<M> trimLE() const {
-    VBK_ASSERT_MSG(N >= M, "invalid data size %d >= %d", N, M);
+    // fix MSVC 4127 warning
+    bool valid = (N >= M);
+    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data() + size() - M, data() + size(), m.begin());
     return m;
@@ -217,22 +224,21 @@ struct Blob {
   }
 
  protected:
-  inline void assign(Slice<const uint8_t> slice) {
-    if (slice.size() > N) {
-      throw std::invalid_argument(
-          "Blob(): invalid data size: " + std::to_string(slice.size()) + " > " +
-          std::to_string(N));
-    }
-    std::copy(slice.begin(), slice.end(), data_.begin());
+  inline void assign(const std::initializer_list<uint8_t>& list) {
+    VBK_ASSERT_MSG(list.size() <= N,
+                   "Blob(): invalid data size: " + std::to_string(list.size()) +
+                       " > " + std::to_string(N));
+
+    std::copy(list.begin(), list.end(), data_.begin());
   }
 
-  inline void assign(const std::string& str) {
-    if (str.size() > N) {
-      throw std::invalid_argument(
-          "Blob(): invalid data size: " + std::to_string(str.size()) + " > " +
-          std::to_string(N));
-    }
-    std::copy(str.begin(), str.end(), data_.begin());
+  inline void assign(Slice<const uint8_t> slice) {
+    VBK_ASSERT_MSG(
+        slice.size() <= N,
+        "Blob(): invalid data size: " + std::to_string(slice.size()) + " > " +
+            std::to_string(N));
+
+    std::copy(slice.begin(), slice.end(), data_.begin());
   }
 
   storage_t data_;

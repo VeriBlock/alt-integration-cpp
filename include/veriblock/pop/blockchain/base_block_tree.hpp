@@ -52,6 +52,8 @@ struct BaseBlockTree {
     return blocks;
   }
 
+  const BlockReader& getBlockProvider() const { return blockProvider_; }
+
   virtual ~BaseBlockTree() {
     if (!isBootstrapped()) {
       return;
@@ -147,140 +149,90 @@ struct BaseBlockTree {
   }
 
   /**
-   * Efficiently connects BlockIndex to this tree, when it is loaded from disk.
+   * Efficiently connects BlockIndex to this tree as a leaf, when it is loaded
+   * from disk.
    * @param[in] index block to be connected
    * @param[out] state validation state
    * @return true if block is valid and successfully loaded, false otherwise.
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
-  virtual bool loadBlock(const stored_index_t& index, ValidationState& state) {
-    VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
+  virtual bool loadBlockForward(const stored_index_t& index,
+                                ValidationState& state) {
+    return loadBlockInner(index, true, state);
+  }
 
-    // quick check if given block is sane
-    auto& root = getRoot();
-    if (index.height == root.getHeight() &&
-        index.header->getHash() != root.getHash()) {
-      // root is finalized, we can't load a block on same height
-      return state.Invalid(
-          "bad-root",
-          fmt::format("Can't overwrite root block with block {}",
-                      index.toPrettyString()));
-    }
-
-    auto& header = *index.header;
-    auto currentHash = header.getHash();
-    auto* current = findBlockIndex(currentHash);
-    // we can not load a block, which already exists on chain and is not a
-    // bootstrap block or we can not load block which is not connected to the
-    // bootstrapblock
-    if (current) {
-      if (current->isDeleted()) {
-        current->restore();
-      } else {
-        if (!current->hasFlags(BLOCK_BOOTSTRAP)) {
-          return state.Invalid(
-              "block-exists",
-              "Found duplicate block, which is not bootstrap block");
-        }
-      }
-    } else {
-      auto* prev = getBlockIndex(header.getPreviousBlock());
-      // if neither the current, nor the previous block are known
-      if (prev != nullptr) {
-        current = createBlockIndex(currentHash, *prev);
-        current->restore();
-      } else if (root.getHeader().getPreviousBlock() ==
-                 makePrevHash(currentHash)) {
-        current = createBootstrapBlockIndex(currentHash, index.height);
-        current->restore();
-        current->pnext.insert(&root);
-        VBK_ASSERT(root.pprev == nullptr);
-        root.pprev = current;
-      } else {
-        return state.Invalid("bad-prev",
-                             "Block does not connect to current tree");
-      }
-    }
-
-    VBK_ASSERT(current);
-    VBK_ASSERT(!current->isDeleted());
-
-    // touchBlockIndex may return an existing block (one of bootstrap blocks),
-    // so backup its 'pnext'
-    auto next = current->pnext;
-    auto prev = current->pprev;
-    // copy all fields
-    current->mergeFrom(index);
-    // FIXME: this is an ugly HACK
-    // clear inmem fields
-    current->setNullInmemFields();
-    // recover pnext
-    current->pnext = next;
-    // recover pprev
-    current->pprev = prev;
-    if (current->pprev != nullptr) {
-      // prev block found
-      auto expectedHeight = current->pprev->getHeight() + 1;
-      if (current->getHeight() != expectedHeight) {
-        return state.Invalid("bad-height");
-      }
-    } else if (activeChain_.first() != current) {
-      // set a new bootstrap block which is the prev block for the current
-      // bootstrap block
-      activeChain_.prependRoot(current);
-    }
-
-    VBK_ASSERT(!current->isDeleted());
-    current->raiseValidity(BLOCK_VALID_TREE);
-    current->unsetDirty();
-
-    tryAddTip(current);
-
-    return true;
+  /**
+   * Efficiently connects BlockIndex to this tree as a new root, when it is
+   * loaded from disk.
+   * @param[in] index block to be connected
+   * @param[out] state validation state
+   * @return true if block is valid and successfully loaded, false otherwise.
+   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
+   * state.
+   */
+  virtual bool loadBlockBackward(const stored_index_t& index,
+                                 ValidationState& state) {
+    return loadBlockInner(index, false, state);
   }
 
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
-    if (this->getBlockIndex(hash) != nullptr) {
-      return true;
-    }
+    index_t* root = &this->getRoot();
+    auto oldHeight = root->getHeight();
+    std::vector<stored_index_t> tempChain;
+    auto restoringHash = this->makePrevHash(hash);
+    index_t* restoringIndex = this->getBlockIndex(restoringHash);
 
-    stored_index_t stored_index;
-    if (!this->blockProvider_.getBlock(this->makePrevHash(hash),
-                                       stored_index)) {
-      return state.Invalid("can-not-find-block-in-storage");
-    }
-
-    index_t* index = &this->getRoot();
-    auto oldHeight = index->getHeight();
-    if (stored_index.height > index->getHeight()) {
-      return state.Invalid("cannot-restore-block-higher-than-current-root");
-    }
-
-    while (index->getHeight() != stored_index.height) {
-      stored_index_t tmp_stored;
-      auto prev_hash = index->getHeader().getPreviousBlock();
-      if (!this->blockProvider_.getBlock(prev_hash, tmp_stored)) {
-        VBK_ASSERT_MSG(false,
-                       "can not restore prev block for the block: %s",
-                       index->toPrettyString());
+    while (restoringIndex == nullptr) {
+      // load current block from storage
+      stored_index_t restoringBlock;
+      if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
+        return state.Invalid("can-not-find-block-in-storage");
       }
 
-      if (!loadBlock(tmp_stored, state)) {
-        VBK_ASSERT_MSG(
-            false, "can not load block, state: %s", state.toString());
+      // restore previous root blocks
+      while ((restoringBlock.height < root->getHeight()) &&
+             (root->getHeight() > 0)) {
+        stored_index_t tmpRoot;
+        auto rootPrevHash = root->getHeader().getPreviousBlock();
+        if (!this->blockProvider_.getBlock(rootPrevHash, tmpRoot)) {
+          VBK_ASSERT_MSG(false,
+                         "can not restore prev block for the block: %s",
+                         root->toPrettyString());
+        }
+
+        if (!loadBlockBackward(tmpRoot, state)) {
+          VBK_ASSERT_MSG(
+              false, "can not load block, state: %s", state.toString());
+        }
+
+        root = this->getBlockIndex(rootPrevHash);
+        VBK_ASSERT(root);
       }
 
-      index = this->getBlockIndex(prev_hash);
-      VBK_ASSERT(index);
+      restoringIndex = getBlockIndex(restoringHash);
+      // add unconnected blocks to the temporary chain
+      if (restoringIndex == nullptr) {
+        // could not find the common block
+        if (restoringBlock.height == 0) {
+          return state.Invalid("restored-block-does-not-connect");
+        }
+
+        tempChain.push_back(restoringBlock);
+      }
+
+      // get the previous block hash
+      restoringHash = restoringBlock.header->getPreviousBlock();
+    }
+
+    for (const auto& b : reverse_iterate(tempChain)) {
+      if (!loadBlockForward(b, state)) {
+        return state.Invalid("load-block-forward-failed");
+      }
     }
 
     increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
-
-    if (stored_index.header->getHash() != index->getHash()) {
-      return state.Invalid("restored-block-not-from-active-chain");
-    }
 
     return true;
   }
@@ -300,7 +252,7 @@ struct BaseBlockTree {
     if (isOnMainChain) {
       ValidationState dummy;
       bool success = this->setState(*prev, dummy);
-      VBK_ASSERT(success);
+      VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
     }
 
     // remove this block from 'pnext' set of previous block
@@ -511,7 +463,9 @@ struct BaseBlockTree {
 
   index_t& getRoot() const {
     VBK_ASSERT_MSG(isBootstrapped(), "must be bootstrapped");
-    return *getBestChain().first();
+    auto* root = getBestChain().first();
+    VBK_ASSERT_MSG(root, "must be bootstrapped");
+    return *root;
   }
 
   //! the number of blocks that have BLOCK_APPLIED flag set
@@ -637,6 +591,119 @@ struct BaseBlockTree {
     // raise validity may return false if block is invalid
     current->raiseValidity(BLOCK_VALID_TREE);
     return current;
+  }
+
+  //! @private
+  bool loadBlockInner(const stored_index_t& index,
+                      bool connectForward,
+                      ValidationState& state) {
+    VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
+
+    // quick check if given block is sane
+    auto& root = getRoot();
+    if (connectForward) {
+      VBK_ASSERT_MSG(index.height >= root.getHeight(),
+                     "Blocks can be forward connected after root only");
+    } else {
+      VBK_ASSERT_MSG(index.height + 1 == root.getHeight(),
+                     "Blocks can be backwards connected only to the root");
+    }
+
+    if (index.height == root.getHeight() &&
+        index.header->getHash() != root.getHash()) {
+      // root is finalized, we can't load a block on same height
+      return state.Invalid(
+          "bad-root",
+          fmt::format("Can't overwrite root block with block {}",
+                      index.toPrettyString()));
+    }
+
+    auto& header = *index.header;
+    auto currentHash = header.getHash();
+    auto* current = findBlockIndex(currentHash);
+
+    // we can not load a block, which already exists on chain and is not a
+    // bootstrap block
+    if (current && !current->isDeleted() &&
+        !current->hasFlags(BLOCK_BOOTSTRAP)) {
+      return state.Invalid(
+          "block-exists",
+          "Found duplicate block, which is not bootstrap block");
+    }
+
+    if (current) {
+      if (current->isDeleted()) {
+        current->restore();
+      }
+    } else {
+      auto* prev = getBlockIndex(header.getPreviousBlock());
+      // we can not load block which is not connected to the
+      // bootstrap block
+      if (prev == nullptr) {
+        if (connectForward) {
+          return state.Invalid("bad-prev",
+                               "Block does not connect to current tree");
+        } else {
+          if (root.getHeader().getPreviousBlock() !=
+              makePrevHash(currentHash)) {
+            return state.Invalid(
+                "bad-block-hash",
+                fmt::format("Can't replace root block with block {}",
+                            index.toPrettyString()));
+          }
+
+          current = createBootstrapBlockIndex(currentHash, index.height);
+          current->restore();
+          current->pnext.insert(&root);
+          VBK_ASSERT(root.pprev == nullptr);
+          root.pprev = current;
+        }
+      } else {
+        current = createBlockIndex(currentHash, *prev);
+        current->restore();
+      }
+    }
+
+    VBK_ASSERT(current);
+    VBK_ASSERT(!current->isDeleted());
+
+    // touchBlockIndex may return an existing block (one of bootstrap blocks),
+    // so backup its 'pnext'
+    auto next = current->pnext;
+    auto prev = current->pprev;
+    // copy all fields
+    current->mergeFrom(index);
+    // FIXME: this is an ugly HACK
+    // clear inmem fields
+    current->setNullInmemFields();
+    // recover pnext
+    current->pnext = next;
+    // recover pprev
+    current->pprev = prev;
+
+    // check for valid previous block
+    if (current->pprev != nullptr) {
+      // prev block found
+      auto expectedHeight = current->pprev->getHeight() + 1;
+      if (current->getHeight() != expectedHeight) {
+        return state.Invalid("bad-height");
+      }
+    }
+
+    // set a new bootstrap block which is the prev block for the current
+    // bootstrap block
+    if ((current->pprev == nullptr) && (activeChain_.first() != current) &&
+        !connectForward) {
+      activeChain_.prependRoot(current);
+    }
+
+    VBK_ASSERT(!current->isDeleted());
+    current->raiseValidity(BLOCK_VALID_TREE);
+    current->unsetDirty();
+
+    tryAddTip(current);
+
+    return true;
   }
 
   std::string toPrettyString(size_t level = 0) const {
@@ -813,6 +880,7 @@ struct BaseBlockTree {
     // before we deallocate subtree, disconnect "new root block" from previous
     // tree
     auto* newRoot = activeChain_[firstBlockHeight];
+    VBK_ASSERT(newRoot);
     auto* rootPrev = newRoot->pprev;
     if (newRoot->pprev != nullptr) {
       newRoot->pprev->pnext.erase(newRoot);

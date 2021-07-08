@@ -25,15 +25,19 @@ struct BlockBatch {
   /**
    * Save BlockIndex on disk.
    * @param hash
+   * @param prev_hash
    * @param value
    */
-  virtual void writeBlock(const AltBlock::prev_hash_t& hash,
+  virtual void writeBlock(const AltBlock::hash_t& hash,
+                          const AltBlock::prev_hash_t& prev_hash,
                           const StoredBlockIndex<AltBlock>& value) = 0;
   //! @overload
-  virtual void writeBlock(const VbkBlock::prev_hash_t& hash,
+  virtual void writeBlock(const VbkBlock::hash_t& hash,
+                          const VbkBlock::prev_hash_t& prev_hash,
                           const StoredBlockIndex<VbkBlock>& value) = 0;
   //! @overload
-  virtual void writeBlock(const BtcBlock::prev_hash_t& hash,
+  virtual void writeBlock(const BtcBlock::hash_t& hash,
+                          const BtcBlock::prev_hash_t& prev_hash,
                           const StoredBlockIndex<BtcBlock>& value) = 0;
 
   /**

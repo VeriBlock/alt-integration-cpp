@@ -125,13 +125,23 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                BlockReader& blockProvider,
                PayloadsIndex& payloadsIndex);
 
-  //! efficiently connect `index` to current tree, loaded from disk
+  //! efficiently connect `index` to current tree as a leaf, loaded from disk
   //! - recovers all pointers (pprev, pnext, endorsedBy)
   //! - recalculates chainWork
   //! - does validation of endorsements
   //! - recovers tips array
   //! @invariant NOT atomic.
-  bool loadBlock(const stored_index_t& index, ValidationState& state) override;
+  bool loadBlockForward(const stored_index_t& index,
+                        ValidationState& state) override;
+
+  //! efficiently connect `index` to current tree as a root, loaded from disk
+  //! - recovers all pointers (pprev, pnext, endorsedBy)
+  //! - recalculates chainWork
+  //! - does validation of endorsements
+  //! - recovers tips array
+  //! @invariant NOT atomic.
+  bool loadBlockBackward(const stored_index_t& index,
+                         ValidationState& state) override;
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
@@ -197,6 +207,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   }
 
  private:
+  bool loadBlockInner(const stored_index_t& index, ValidationState& state);
+
   bool finalizeBlockImpl(index_t& index,
                          int32_t preserveBlocksBehindFinal,
                          ValidationState& state) override;

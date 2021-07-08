@@ -247,6 +247,52 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
 
+  // an incremental block builder
+  // the tree must not be modified during the lifetime of the object
+  struct BlockPayloadMutator {
+    using tree_t = AltBlockTree;
+    using payload_index_t = PayloadsIndex;
+    using block_index_t = typename tree_t::index_t;
+    using id_vector_t = std::vector<uint8_t>;
+
+    BlockPayloadMutator(tree_t& tree, block_index_t& block);
+
+    //! stateful duplicate payload check as performed by connectBlock()
+    bool isStatefulDuplicate(const id_vector_t& payload_id);
+    //! stateless payload duplicate check functionally equivalent to
+    //! checkPopDataForDuplicates
+    bool isStatelessDuplicate(const id_vector_t& payload_id);
+
+    /**
+     * Add a payload to a leaf connected block, apply the payload if the block
+     * is applied
+     * @pre: the payload must be retrievable via getPayloadsProvider()
+     * @invariant: does not change the validity of any block
+     * @invariant atomic: either adds and applies the payload or returns false
+     * and leaves the tree unchanged
+     **/
+    template <typename Payload>
+    bool add(const Payload& payload, ValidationState& state);
+
+    block_index_t& getBlock() { return block_; }
+
+   private:
+    tree_t& tree_;
+    block_index_t& block_;
+    payload_index_t& payload_index_;
+    std::unordered_set<std::vector<uint8_t>> ids_;
+    Chain<block_index_t> chain_;
+  };
+
+  /**
+   * Create a session object that allows incremental payload list modification
+   * in the given block
+   *
+   * @pre the block must be a connected leaf
+   * @param[in] block the block index of the block to modify
+   */
+  BlockPayloadMutator makeConnectedLeafPayloadMutator(index_t& block);
+
   /**
    * Get all connected tips after given block.
    * @param[in] index input block
@@ -265,7 +311,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
 
   /**
-   * Efficiently connect block loaded from disk.
+   * Efficiently connect block loaded from disk as a leaf.
    *
    * It recovers all pointers (pprev, pnext, endorsedBy,
    * blockOfProofEndorsements), validates block and endorsements, recovers
@@ -276,8 +322,24 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is undefined
    * and can not be used. Tip: ask user to run with '-reindex'.
    */
-  VBK_CHECK_RETURN bool loadBlock(const stored_index_t& index,
-                                  ValidationState& state) override;
+  VBK_CHECK_RETURN bool loadBlockForward(const stored_index_t& index,
+                                         ValidationState& state) override;
+
+  /**
+   * Efficiently connect block loaded from disk as a root.
+   *
+   * It recovers all pointers (pprev, pnext, endorsedBy,
+   * blockOfProofEndorsements), validates block and endorsements, recovers
+   * validity index.
+   * @param[in] index block
+   * @param[out] state validation state
+   * @return true if block is valid
+   * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is
+   undefined
+   * and can not be used. Tip: ask user to run with '-reindex'.
+   */
+  VBK_CHECK_RETURN bool loadBlockBackward(const stored_index_t& index,
+                                          ValidationState& state) override;
 
   /**
    * After all blocks loaded, efficiently set current tip.
@@ -293,8 +355,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    *
    * @param[in] A hash of current tip in AltBlockTree. Fails on assert if
    * current tip != A.
-   * @param[in] B block. Current tip will be compared against this block. Can not be
-   * exist on chain and does not have to be fully validated(necessary
+   * @param[in] B block. Current tip will be compared against this block. Can
+   * not be exist on chain and does not have to be fully validated(necessary
    * validation will be performed during the fork resolution).
    * @warning POP Fork Resolution is NOT transitive, it can not be used to
    * search for an "absolute" best chain. If A is better than B, and B is better
@@ -421,6 +483,9 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
   command_group_store_t commandGroupStore_;
+
+  //! @private
+  bool loadBlockInner(const stored_index_t& index, ValidationState& state);
 
   //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;

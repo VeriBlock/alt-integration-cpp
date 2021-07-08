@@ -66,13 +66,12 @@ bool loadTree(BlockTreeT& tree,
               std::vector<typename BlockTreeT::stored_index_t>& blocks,
               ValidationState& state) {
   using stored_index_t = typename BlockTreeT::stored_index_t;
-  using block_t = typename BlockTreeT::block_t;
 
   if (blocks.size() == 0) return true;
 
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
                blocks.size(),
-               block_t::name(),
+               BlockTreeT::block_t::name(),
                HexStr(tiphash));
   VBK_ASSERT(tree.isBootstrapped() && "tree must be bootstrapped");
 
@@ -85,7 +84,7 @@ bool loadTree(BlockTreeT& tree,
 
   for (const auto& block : blocks) {
     // load blocks one by one
-    if (!tree.loadBlock(block, state)) {
+    if (!tree.loadBlockForward(block, state)) {
       return state.Invalid("load-tree");
     }
   }
@@ -133,7 +132,8 @@ void saveTree(
   // write indices
   for (const index_t* index : dirty_indices) {
     validator(*index);
-    batch.writeBlock(tree.makePrevHash(index->getHash()),
+    batch.writeBlock(index->getHash(),
+                     tree.makePrevHash(index->getHash()),
                      index->toStoredBlockIndex());
   }
 
@@ -152,7 +152,7 @@ struct AltBlockTree;
 void saveTrees(const AltBlockTree& tree, BlockBatch& batch);
 
 //! Load all (ALT/VBK/BTC) trees from disk into memory.
-bool loadTrees(AltBlockTree& tree, BlockReader& reader, ValidationState& state);
+bool loadTrees(AltBlockTree& tree, ValidationState& state);
 
 }  // namespace altintegration
 

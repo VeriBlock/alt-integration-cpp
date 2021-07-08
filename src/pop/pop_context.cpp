@@ -140,8 +140,8 @@ void PopContext::saveAllTrees(BlockBatch& batch) const {
   saveTrees(getAltBlockTree(), batch);
 }
 
-bool PopContext::loadAllTrees(BlockReader& reader, ValidationState& state) {
-  return loadTrees(getAltBlockTree(), reader, state);
+bool PopContext::loadAllTrees(ValidationState& state) {
+  return loadTrees(getAltBlockTree(), state);
 }
 
 bool PopContext::check(const PopData& pd, ValidationState& state) {
@@ -159,15 +159,6 @@ PopPayouts PopContext::getPopPayout(const AltBlockTree::hash_t& tip) {
   return popRewardsCalculator_->getPopPayout(tip);
 }
 
-PopData PopContext::generatePopData(const AltBlockTree::hash_t& prev) {
-  auto* tip = getAltBlockTree().getBestChain().tip();
-  VBK_ASSERT(tip);
-  VBK_ASSERT_MSG(prev == tip->getHash(),
-                 "Unexpected AltBlockTree state: Tip=%s. Expected=%s.",
-                 tip->toShortPrettyString(),
-                 HexStr(prev));
-
-  return getMemPool().generatePopData();
-}
+PopData PopContext::generatePopData() { return getMemPool().generatePopData(); }
 
 }  // namespace altintegration

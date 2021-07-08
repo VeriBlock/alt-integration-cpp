@@ -22,6 +22,7 @@ set(C_SOURCES
         entities/merkle_path.cpp
         entities/block_index.cpp
         entities/pop_payouts.cpp
+        entities/context_info_container.cpp
         )
 
 if(NOT WITH_ROCKSDB AND NOT WITH_LEVELDB)
