@@ -29,25 +29,38 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         functions = self.nodes[0].getrpcfunctions()
         self.log.info("Validating that getrpcfunctions() returns the full list of needed rpc functions")
 
-        assert functions.get("get_popdata_by_height") != None
-        assert functions.get("get_popdata_by_hash") != None
-        assert functions.get("submit_atv") != None
-        assert functions.get("submit_vtb") != None
-        assert functions.get("submit_vbk") != None
-        assert functions.get("get_missing_btc_blockhashes") != None
-        assert functions.get("extract_block_info") != None
-        assert functions.get("get_popdata_byheight") != None
-        assert functions.get("get_vbk_block") != None
-        assert functions.get("get_btc_block") != None
-        assert functions.get("get_vbk_best_block_hash") != None
-        assert functions.get("get_btc_best_block_hash") != None
-        assert functions.get("get_raw_atv") != None
-        assert functions.get("get_raw_vtb") != None
-
-
+        assert functions["get_popdata_by_height"] != None
+        assert functions["get_popdata_by_hash"] != None
+        assert functions["submit_atv"] != None
+        assert functions["submit_vtb"] != None
+        assert functions["submit_vbk"] != None
+        assert functions["get_missing_btc_blockhashes"] != None
+        assert functions["extract_block_info"] != None
+        assert functions["get_vbk_block"] != None
+        assert functions["get_btc_block"] != None
+        assert functions["get_vbk_best_block_hash"] != None
+        assert functions["get_btc_best_block_hash"] != None
+        assert functions["get_raw_atv"] != None
+        assert functions["get_raw_vtb"] != None
 
     def _get_popdata_by_height(self):
         self.log.info("starting _get_popdata_by_height()")
+
+        block = self.nodes[0].getbestblock()
+
+        func = self.nodes[0].getrpcfunctions()['get_popdata_by_height']
+        res = self.nodes[0].rpc.__getattr__(func)(block.hash)
+
+        assert res["block_header"] != None
+        assert res["authenticated_context"] != None
+        # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>() 
+        assert res["authenticated_context"]["serialized"] != None
+        assert res["authenticated_context"]["stateRoot"] != None
+        assert res["authenticated_context"]["context"] != None
+        # JSON represantation of the altintegration::ContextInfoContainer, altintegration::ToJSON<ContextInfoContainer>() 
+        assert res["authenticated_context"]["context"]["height"] != None
+        assert res["authenticated_context"]["context"]["firstPreviousKeystone"] != None
+        assert res["authenticated_context"]["context"]["secondPreviousKeystone"] != None
 
     def _get_popdata_by_hash(self):
         self.log.info("starting _get_popdata_by_hash()")
