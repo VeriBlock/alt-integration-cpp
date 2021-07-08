@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['defaultpoprewardscalculator_497',['DefaultPopRewardsCalculator',['../structaltintegration_1_1DefaultPopRewardsCalculator.html',1,'altintegration']]]
+  ['defaultpoprewardscalculator_496',['DefaultPopRewardsCalculator',['../structaltintegration_1_1DefaultPopRewardsCalculator.html',1,'altintegration']]]
 ];
