@@ -36,7 +36,6 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         assert functions.get("submit_vbk") != None
         assert functions.get("get_missing_btc_blockhashes") != None
         assert functions.get("extract_block_info") != None
-        assert functions.get("get_popdata_byheight") != None
         assert functions.get("get_vbk_block") != None
         assert functions.get("get_btc_block") != None
         assert functions.get("get_vbk_best_block_hash") != None
