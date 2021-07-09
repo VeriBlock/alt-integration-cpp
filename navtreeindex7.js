@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907":[4,0,0,57,3],
+"structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68":[4,0,0,57,5],
+"structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab":[4,0,0,57,1],
+"structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[4,0,0,57,0],
+"structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3":[4,0,0,57,6],
+"structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[4,0,0,57,10],
+"structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[4,0,0,57,11],
+"structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[4,0,0,57,16],
 "structaltintegration_1_1StateCorruptedException.html":[4,0,0,50],
 "structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[4,0,0,50,0],
 "structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42":[4,0,0,50,1],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a93e7af4b98826fd912b75b81fa0329f3":[4,0,0,0,2,0],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70":[4,0,0,0,2,4],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[4,0,0,0,2,5],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[4,0,0,0,0],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4":[4,0,0,0,0,4],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a2d066dd40d688dabeb62e90880e272fa":[4,0,0,0,0,1],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b":[4,0,0,0,0,3],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712":[4,0,0,0,0,6],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f":[4,0,0,0,0,2],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a6f43473699faa75b7e4b024c99ddd06b":[4,0,0,0,0,0],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#ad35dbe27e07dc10fd8dafb5252f2cbf0":[4,0,0,0,0,5],
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html":[4,0,0,0,1]
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[4,0,0,0,0]
 };
