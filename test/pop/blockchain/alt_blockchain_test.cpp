@@ -213,8 +213,9 @@ TEST_F(AltTreeFixture, duplicateVTBs_test) {
    */
 
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
-  // mine 20 blocks
-  mineAltBlocks(20, chain);
+  auto keystoneInterval = altparam.getKeystoneInterval();
+  // mine keystone interval + 20 of blocks
+  mineAltBlocks(keystoneInterval + 20, chain);
 
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -234,7 +235,7 @@ TEST_F(AltTreeFixture, duplicateVTBs_test) {
             alttree.btc().getBestChain().tip()->getHash());
 
   // generate fork chain
-  auto forkContaining = generateNextBlock(chain[chain.size() - 10]);
+  auto forkContaining = generateNextBlock(chain[chain.size() - keystoneInterval - 10]);
   ASSERT_TRUE(alttree.acceptBlockHeader(forkContaining, state));
   auto* forkIndex = alttree.getBlockIndex(forkContaining.getHash());
   ASSERT_NE(forkIndex, nullptr);
