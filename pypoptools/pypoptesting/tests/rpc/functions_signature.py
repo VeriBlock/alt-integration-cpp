@@ -29,24 +29,26 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         functions = self.nodes[0].getrpcfunctions()
         self.log.info("Validating that getrpcfunctions() returns the full list of needed rpc functions")
 
-        assert functions["get_popdata_by_height"] != None
-        assert functions["get_popdata_by_hash"] != None
-        assert functions["submit_atv"] != None
-        assert functions["submit_vtb"] != None
-        assert functions["submit_vbk"] != None
-        assert functions["get_missing_btc_blockhashes"] != None
-        assert functions["extract_block_info"] != None
-        assert functions["get_vbk_block"] != None
-        assert functions["get_btc_block"] != None
-        assert functions["get_vbk_best_block_hash"] != None
-        assert functions["get_btc_best_block_hash"] != None
-        assert functions["get_raw_atv"] != None
-        assert functions["get_raw_vtb"] != None
+        assert type(functions.get_popdata_by_height) is str and functions.get_popdata_by_height != ""
+        assert type(functions.get_popdata_by_hash) is str and functions.get_popdata_by_hash != ""
+        assert type(functions.submit_atv) is str and functions.submit_atv != ""
+        assert type(functions.submit_vtb) is str and functions.submit_vtb != ""
+        assert type(functions.submit_vbk) is str and functions.submit_vbk != ""
+        assert type(functions.get_missing_btc_block_hashes) is str and functions.get_missing_btc_block_hashes != ""
+        assert type(functions.extract_block_info) is str and functions.extract_block_info != ""
+        assert type(functions.get_vbk_block) is str and functions.get_vbk_block != ""
+        assert type(functions.get_btc_block) is str and functions.get_btc_block != ""
+        assert type(functions.get_vbk_best_block_hash) is str and functions.get_vbk_best_block_hash != ""
+        assert type(functions.get_btc_best_block_hash) is str and functions.get_btc_best_block_hash != ""
+        assert type(functions.get_raw_atv) is str and functions.get_raw_atv != ""
+        assert type(functions.get_raw_vtb) is str and functions.get_raw_vtb != ""
+
+        self.log.info("done _get_rpc_functions()")
 
     def _get_popdata_by_height(self):
         self.log.info("starting _get_popdata_by_height()")
 
-        func = self.nodes[0].getrpcfunctions()['get_popdata_by_height']
+        func = self.nodes[0].getrpcfunctions().get_popdata_by_height
         res = self.nodes[0].rpc.__getattr__(name=func)(0)
 
         assert res["block_header"] != None
@@ -60,12 +62,14 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         assert res["authenticated_context"]["context"]["firstPreviousKeystone"] != None
         assert res["authenticated_context"]["context"]["secondPreviousKeystone"] != None
 
+        self.log.info("done _get_popdata_by_height()")
+
     def _get_popdata_by_hash(self):
         self.log.info("starting _get_popdata_by_hash()")
 
         block = self.nodes[0].getbestblock()
 
-        func = self.nodes[0].getrpcfunctions()['get_popdata_by_height']
+        func = self.nodes[0].getrpcfunctions().get_popdata_by_hash
         res = self.nodes[0].rpc.__getattr__(name=func)(block.hash)
 
         assert res["block_header"] != None
@@ -79,6 +83,7 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         assert res["authenticated_context"]["context"]["firstPreviousKeystone"] != None
         assert res["authenticated_context"]["context"]["secondPreviousKeystone"] != None
 
+        self.log.info("done _get_popdata_by_hash()")
 
     def _submit_atv(self):
         self.log.info("starting _submit_atv()")
