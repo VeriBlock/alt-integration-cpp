@@ -46,10 +46,8 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
     def _get_popdata_by_height(self):
         self.log.info("starting _get_popdata_by_height()")
 
-        block = self.nodes[0].getbestblock()
-
         func = self.nodes[0].getrpcfunctions()['get_popdata_by_height']
-        res = self.nodes[0].rpc.__getattr__(func)(block.hash)
+        res = self.nodes[0].rpc.__getattr__(name=func)(0)
 
         assert res["block_header"] != None
         assert res["authenticated_context"] != None
@@ -64,6 +62,23 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
 
     def _get_popdata_by_hash(self):
         self.log.info("starting _get_popdata_by_hash()")
+
+        block = self.nodes[0].getbestblock()
+
+        func = self.nodes[0].getrpcfunctions()['get_popdata_by_height']
+        res = self.nodes[0].rpc.__getattr__(name=func)(block.hash)
+
+        assert res["block_header"] != None
+        assert res["authenticated_context"] != None
+        # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>() 
+        assert res["authenticated_context"]["serialized"] != None
+        assert res["authenticated_context"]["stateRoot"] != None
+        assert res["authenticated_context"]["context"] != None
+        # JSON represantation of the altintegration::ContextInfoContainer, altintegration::ToJSON<ContextInfoContainer>() 
+        assert res["authenticated_context"]["context"]["height"] != None
+        assert res["authenticated_context"]["context"]["firstPreviousKeystone"] != None
+        assert res["authenticated_context"]["context"]["secondPreviousKeystone"] != None
+
 
     def _submit_atv(self):
         self.log.info("starting _submit_atv()")
