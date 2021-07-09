@@ -1,5 +1,3 @@
-from typing import Dict
-
 from abc import ABC, abstractmethod
 
 from .entities import *
@@ -126,5 +124,5 @@ class Node(ABC):
     # RPC
     
     @abstractmethod
-    def getrpcfunctions(self) -> Dict[str, str]:
+    def getrpcfunctions(self) -> RpcFunctions:
         pass
