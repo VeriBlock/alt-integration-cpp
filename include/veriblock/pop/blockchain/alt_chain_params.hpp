@@ -261,7 +261,7 @@ struct AltChainParams {
 
   uint32_t mMaxReorgDistance = 50000;              // blocks
   uint32_t mMaxAltchainFutureBlockTime = 10 * 60;  // 10 min
-  uint32_t mKeystoneInterval = 40;
+  uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   uint32_t mEndorsementSettlementInterval = 50;
   uint32_t mPreserveBlocksBehindFinal = mEndorsementSettlementInterval;
