@@ -88,11 +88,17 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
     def _submit_atv(self):
         self.log.info("starting _submit_atv()")
 
+        self.log.info("done _submit_atv()")
+
     def _submit_vtb(self):
         self.log.info("starting _submit_vtb()")
 
+        self.log.info("done _submit_vtb()")
+
     def _submit_vbk(self):
         self.log.info("starting _submit_vbk()")
+
+        self.log.info("done _submit_vbk()")
 
     def _get_missing_btc_blockhashes(self):
         self.log.info("starting _get_missing_btc_blockhashes()")
