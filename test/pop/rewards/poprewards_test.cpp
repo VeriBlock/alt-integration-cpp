@@ -23,7 +23,8 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
   PopRewardsBigDecimal defaultDifficulty = 1.0;
 
   RewardsTestFixture() {
-    // hardcode keystone interval since reward algorithm is 
+    // hardcode keystone interval since reward algorithm is dependent
+    // on it and is hard to recalculate for test
     altparam.mKeystoneInterval = 5;
     btctip = popminer->mineBtcBlocks(10);
     vbktip = popminer->mineVbkBlocks(10);
