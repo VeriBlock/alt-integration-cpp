@@ -273,7 +273,7 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
     return;
   }
 
-  VBK_LOG_INFO("Trying to add %s to next block...", pop.toPrettyString());
+  VBK_LOG_DEBUG("Trying to add %s to next block...", pop.toPrettyString());
 
   // suppress the VBK fork resolution as we don't care about the best chain
   auto guard = tree_->vbk().deferForkResolutionGuard();

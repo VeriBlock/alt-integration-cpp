@@ -452,7 +452,7 @@ bool AltBlockTree::BlockPayloadMutator::add(const Payload& payload,
       tree_.getCommandGroupStore().getCommand<Payload>(block_, pid, state);
 
   if (!cgroup || !cgroup->execute(state)) {
-    VBK_LOG_INFO("%s cannot be added to block %s: %s",
+    VBK_LOG_DEBUG("%s cannot be added to block %s: %s",
                  payload.toPrettyString(),
                  block_.toShortPrettyString(),
                  state.toString());
