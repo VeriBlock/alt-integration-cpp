@@ -170,3 +170,19 @@ class RawPopMempoolResponse:
 class Peer:
     id: int
     banscore: int
+
+@dataclass
+class RpcFunctions:
+    get_popdata_by_height: str
+    get_popdata_by_hash: str
+    submit_atv: str
+    submit_vtb: str
+    submit_vbk: str
+    get_missing_btc_block_hashes: str
+    extract_block_info: str
+    get_vbk_block: str
+    get_btc_block: str
+    get_vbk_best_block_hash: str
+    get_btc_best_block_hash: str
+    get_raw_atv: str
+    get_raw_vtb: str
