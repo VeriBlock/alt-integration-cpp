@@ -32,6 +32,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         connect_all(self.nodes)
         mine_until_pop_enabled(self.nodes[0])
         sync_all(self.nodes)
+        self.keystoneInterval = self.nodes[0].getpopparams().keystoneInterval
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -77,19 +78,21 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         assert best_blocks[0] == best_blocks[1], "node[0,1] have different best hashes: {} vs {}".format(best_blocks[0],
                                                                                                          best_blocks[1])
 
-        # mine 10 more blocks to fork A
-        self.nodes[0].generate(nblocks=10)
+        # mine a keystone interval of blocks to fork A
+        self.nodes[0].generate(nblocks=self.keystoneInterval)
         sync_all([self.nodes[0], self.nodes[1]])
-        self.log.info("nodes[0,1] are in sync and are at fork A (%d...%d blocks)", last_block + 103, last_block + 113)
+        self.log.info("nodes[0,1] are in sync and are at fork A (%d...%d blocks)", last_block + 103, last_block + 103 + self.keystoneInterval)
 
         # fork B is at 400
         assert best_blocks[2].height == last_block + 200, "unexpected tip: {}".format(best_blocks[2])
         self.log.info("node2 is at fork B (%d...%d blocks)", last_block + 103, last_block + 200)
 
-        # endorse block 313 (fork A tip)
+        assert 200 > 103 + self.keystoneInterval + 10, "keystone interval is set too high"
+
+        # endorse block 303 + keystone interval (fork A tip)
         addr0 = self.nodes[0].getnewaddress()
-        atv_id = endorse_block(self.nodes[0], apm, last_block + 113, addr0)
-        self.log.info("node0 endorsed block %d (fork A tip)", last_block + 113)
+        atv_id = endorse_block(self.nodes[0], apm, last_block + 103 + self.keystoneInterval, addr0)
+        self.log.info("node0 endorsed block %d (fork A tip)", last_block + 103 + self.keystoneInterval)
         # mine pop tx on node0
         self.nodes[0].generate(nblocks=1)
         containing_block = self.nodes[0].getbestblock()
@@ -147,7 +150,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
             addr = node.getnewaddress()
             create_endorsed_chain(node, apm, to_mine, addr)
 
-        # all nodes have different tips at height 323
+        # all nodes have different tips at height 303 + keystone interval
         best_blocks = [node.getbestblock() for node in self.nodes]
         for b in best_blocks:
             assert b.height == last_block + to_mine
