@@ -1,9 +1,15 @@
 from ...framework.test_framework import PopIntegrationTestFramework
+from ...framework.pop_util import mine_until_pop_enabled
+from ...framework.sync_util import start_all
 
 
 class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
     def set_test_params(self):
         self.num_nodes = 1
+
+    def setup_nodes(self):
+        start_all(self.nodes)
+        mine_until_pop_enabled(self.nodes[0])
 
     def run_test(self):
         self._get_rpc_functions()
@@ -48,8 +54,10 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
     def _get_popdata_by_height(self):
         self.log.info("starting _get_popdata_by_height()")
 
+        self.nodes[0].generate(nblocks=1)
+
         func = self.nodes[0].getrpcfunctions().get_popdata_by_height
-        res = self.nodes[0].rpc.__getattr__(name=func)(0)
+        res = self.nodes[0].rpc.__getattr__(name=func)(1)
 
         assert res["block_header"] != None
         assert res["authenticated_context"] != None
@@ -66,6 +74,8 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
 
     def _get_popdata_by_hash(self):
         self.log.info("starting _get_popdata_by_hash()")
+
+        self.nodes[0].generate(nblocks=1)
 
         block = self.nodes[0].getbestblock()
 

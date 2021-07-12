@@ -174,7 +174,10 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     )
     test_results = []
     test_count = len(test_list)
-    max_len_name = len(max(test_list, key=lambda x: len(x.name())).name())
+    if test_count != 0:
+        max_len_name = len(max(test_list, key=lambda x: len(x.name())).name())
+    else:
+        max_len_name = 0
     start_time = time.time()
 
     for i in range(test_count):
