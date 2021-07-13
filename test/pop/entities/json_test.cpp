@@ -702,6 +702,7 @@ TEST(ToJson, AltParams) {
   "keystoneInterval": 5,
   "maxATVsInAltBlock": 1000,
   "maxAltchainFutureBlockTime": 600,
+  "maxReorgDistance\": 50000,
   "maxVTBsInAltBlock": 200,
   "maxVbkBlocksInAltBlock": 200,
   "networkId": 0,

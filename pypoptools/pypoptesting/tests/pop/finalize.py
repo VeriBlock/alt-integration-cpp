@@ -19,8 +19,17 @@ class PopFinalizationTest(PopIntegrationTestFramework):
 
     def setup_nodes(self):
         start_all(self.nodes)
-        connect_all(self.nodes)
-        sync_all(self.nodes)
+        mine_until_pop_enabled(self.nodes[0])
+
+        popparams = self.nodes[0].getpopparams()
+
+        self.log.info(popparams)
+        self.max_reorg = popparams.maxReorgDistance
+        self.endorsement_settlement = popparams.endorsementSettlementInterval
+
+        self.log.info(self.max_reorg)
+        self.log.info(self.endorsement_settlement)
+
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -31,14 +40,23 @@ class PopFinalizationTest(PopIntegrationTestFramework):
     def _basic_finalization_test(self, apm):
         self.log.info("starting _basic_finalization_test()")
         last_block = self.nodes[0].getblockcount()
-        popparams = self.nodes[0].getpopparams()
 
-        self.log.info(popparams)
+        to_mine = self.max_reorg + self.endorsement_settlement + 5
+        self.nodes[0].generate(nblocks=to_mine)
+        self.log.info("node0 mined {} blocks".format(to_mine))
+        assert self.nodes[0].getbestblock().height == last_block + to_mine
 
-        self.nodes[1].disconnect(self.nodes[0])
+        # connect all nodes to each other
+        connect_all(self.nodes)
 
-        self.nodes[0].generate(nblocks=103)
-        self.log.info("node0 mined 103 blocks")
-        assert self.nodes[0].getbestblock().height == last_block + 103
+        self.log.info("all nodes connected")
+        sync_blocks(self.nodes, timeout=60)
+        sync_pop_tips(self.nodes, timeout=60)
+        self.log.info("all nodes have common tip")
+
+        expected_best = self.nodes[0].getbestblock()
+        best_blocks = [node.getbestblock() for node in self.nodes]
+        for best in best_blocks:
+            assert best == expected_best
 
         self.log.info("_basic_finalization_test() succeeded!")
