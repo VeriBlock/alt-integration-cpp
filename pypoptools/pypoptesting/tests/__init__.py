@@ -10,6 +10,7 @@ from .node import (
 from .pop import (
     PopActivateTest,
     PopE2ETest,
+    PopFinalizationTest,
     PopForkResolutionTest,
     PopInitTest,
     PopMempoolGetpopTest,
@@ -38,19 +39,20 @@ rpc_tests = [
 ]
 
 pop_tests = [
-    PopForkResolutionTest(),
-    PopMempoolGetpopTest(),
-    PopInitTest(),
-    PopActivateTest(),
-    PopE2ETest(),
-    PopMempoolSyncTest(),
-    PopSyncTest(),
-    PopMempoolReorgTest(),
-    PopParamsTest()
+    PopFinalizationTest(),
+    #PopForkResolutionTest(),
+    #PopMempoolGetpopTest(),
+    #PopInitTest(),
+    #PopActivateTest(),
+    #PopE2ETest(),
+    #PopMempoolSyncTest(),
+    #PopSyncTest(),
+    #PopMempoolReorgTest(),
+    #PopParamsTest()
 ]
 
 all_tests = [
-    *node_tests,
-    *rpc_tests,
+    #*node_tests,
+    #*rpc_tests,
     *pop_tests
 ]
