@@ -147,10 +147,6 @@ if(ASAN)
         set(SANITIZERS_CFLAGS "-fsanitize=address -DWITH_ASAN")
 endif()
 
-message(STATUS "CMAKE_INSTALL_FULL_LIBDIR=${CMAKE_INSTALL_FULL_LIBDIR}")
-message(STATUS "CMAKE_INSTALL_FULL_INCLUDEDIR=${CMAKE_INSTALL_FULL_INCLUDEDIR}")
-message(STATUS "CMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}")
-
 set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"

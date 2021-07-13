@@ -1,5 +1,5 @@
-libdir=@CMAKE_INSTALL_FULL_LIBDIR@
-includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+libdir=@CMAKE_INSTALL_PREFIX@/lib
+includedir=@CMAKE_INSTALL_PREFIX@/include
 
 Name: @LIB_NAME@
 Description: Libraries for leveraging VeriBlock Proof-Of-Proof blockchain technology.
