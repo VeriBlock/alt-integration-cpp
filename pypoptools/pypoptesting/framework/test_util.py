@@ -154,7 +154,7 @@ class TestHandler:
             proc.close()
 
 
-def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
+def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')) -> bool:
     try:
         import pypoptools.pypopminer
     except ImportError:
@@ -174,7 +174,10 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     )
     test_results = []
     test_count = len(test_list)
-    max_len_name = len(max(test_list, key=lambda x: len(x.name())).name())
+    if test_count != 0:
+        max_len_name = len(max(test_list, key=lambda x: len(x.name())).name())
+    else:
+        max_len_name = 0
     start_time = time.time()
 
     for i in range(test_count):
@@ -195,8 +198,7 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')):
     if not os.listdir(tmpdir):
         os.rmdir(tmpdir)
 
-    all_passed = all(map(lambda test_result: test_result.was_successful, test_results))
-    sys.exit(not all_passed)
+    return all(map(lambda test_result: test_result.was_successful, test_results))
 
 
 def print_results(test_results, max_len_name, runtime):
