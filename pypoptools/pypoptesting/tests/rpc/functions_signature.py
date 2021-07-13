@@ -61,6 +61,8 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
 
         assert res["block_header"] != None
         assert res["authenticated_context"] != None
+        assert res["last_known_veriblock_blocks"] != None
+        assert res["last_known_bitcoin_blocks"] != None
         # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>() 
         assert res["authenticated_context"]["serialized"] != None
         assert res["authenticated_context"]["stateRoot"] != None
@@ -84,6 +86,8 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
 
         assert res["block_header"] != None
         assert res["authenticated_context"] != None
+        assert res["last_known_veriblock_blocks"] != None
+        assert res["last_known_bitcoin_blocks"] != None
         # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>() 
         assert res["authenticated_context"]["serialized"] != None
         assert res["authenticated_context"]["stateRoot"] != None
