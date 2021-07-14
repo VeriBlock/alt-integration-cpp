@@ -831,12 +831,12 @@ struct BaseBlockTree {
 
     // we need to clarify which block will be final. we can not remove blocks
     // which has not been saved into the storage
-    /*for (auto* walkBlock = finalizedBlock; walkBlock != nullptr;
+    for (auto* walkBlock = finalizedBlock; walkBlock != nullptr;
          walkBlock = walkBlock->pprev) {
       if (walkBlock->isDirty()) {
         finalizedBlock = walkBlock;
       }
-    }*/
+    }
 
     // first, erase candidates from tips_ that will never be activated
     erase_if<decltype(tips_), index_t*>(
