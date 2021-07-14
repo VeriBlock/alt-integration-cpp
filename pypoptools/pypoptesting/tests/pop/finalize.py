@@ -41,10 +41,24 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         self.log.info("starting _basic_finalization_test()")
         last_block = self.nodes[0].getblockcount()
 
+        addr0 = self.nodes[0].getnewaddress()
+        atv_id = endorse_block(self.nodes[0], apm, last_block, addr0)
+        self.log.info("node0 endorsed block %d", last_block)
+        # mine pop tx on node0
+        self.nodes[0].generate(nblocks=1)
+
+        erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
+        erased_block = self.nodes[0].getblock(erased_block_hash)
+        self.log.info(erased_block)
+
         to_mine = self.max_reorg + self.endorsement_settlement + 5
         self.nodes[0].generate(nblocks=to_mine)
         self.log.info("node0 mined {} blocks".format(to_mine))
-        assert self.nodes[0].getbestblock().height == last_block + to_mine
+        assert self.nodes[0].getbestblock().height == last_block + 1 + to_mine
+
+        erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
+        erased_block = self.nodes[0].getblock(erased_block_hash)
+        self.log.info(erased_block)
 
         # connect all nodes to each other
         connect_all(self.nodes)
@@ -58,5 +72,18 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         best_blocks = [node.getbestblock() for node in self.nodes]
         for best in best_blocks:
             assert best == expected_best
+
+        addr0 = self.nodes[0].getnewaddress()
+        atv_id = endorse_block(self.nodes[0], apm, last_block + 1, addr0)
+        self.log.info("node0 endorsed block %d (should be deleted after finalization)", last_block + 1)
+        # mine pop tx on node0
+        self.nodes[0].generate(nblocks=1)
+
+        containing_block = self.nodes[0].getbestblock()
+        self.nodes[0].generate(nblocks=9)
+        self.log.info("node0 mines 10 more blocks")
+        sync_all([self.nodes[0], self.nodes[1]])
+
+        assert self.nodes[1].getblock(containing_block.hash).hash == containing_block.hash
 
         self.log.info("_basic_finalization_test() succeeded!")
