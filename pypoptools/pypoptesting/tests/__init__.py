@@ -40,19 +40,19 @@ rpc_tests = [
 
 pop_tests = [
     PopFinalizationTest(),
-    #PopForkResolutionTest(),
-    #PopMempoolGetpopTest(),
-    #PopInitTest(),
-    #PopActivateTest(),
-    #PopE2ETest(),
-    #PopMempoolSyncTest(),
-    #PopSyncTest(),
-    #PopMempoolReorgTest(),
-    #PopParamsTest()
+    PopForkResolutionTest(),
+    PopMempoolGetpopTest(),
+    PopInitTest(),
+    PopActivateTest(),
+    PopE2ETest(),
+    PopMempoolSyncTest(),
+    PopSyncTest(),
+    PopMempoolReorgTest(),
+    PopParamsTest()
 ]
 
 all_tests = [
-    #*node_tests,
-    #*rpc_tests,
+    *node_tests,
+    *rpc_tests,
     *pop_tests
 ]
