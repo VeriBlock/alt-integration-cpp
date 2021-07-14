@@ -25,30 +25,30 @@ from .rpc import (
 )
 
 node_tests = [
-    #NodeStartTest(),
-    #NodeStopTest(),
-    #NodeRestartTest(),
-    #NodeBasicSyncTest(),
-    #NodeConnectTest(), 
-    #NodeGenerateTest(),
-    #NodePreflightTest()
+    NodeStartTest(),
+    NodeStopTest(),
+    NodeRestartTest(),
+    NodeBasicSyncTest(),
+    NodeConnectTest(), 
+    NodeGenerateTest(),
+    NodePreflightTest()
 ]
 
 rpc_tests = [
-    #RpcFunctionsSignatureTest(),
+    RpcFunctionsSignatureTest(),
 ]
 
 pop_tests = [
     PopFinalizationTest(),
-    #PopForkResolutionTest(),
-    #PopMempoolGetpopTest(),
-    #PopInitTest(),
-    #PopActivateTest(),
-    #PopE2ETest(),
-    #PopMempoolSyncTest(),
-    #PopSyncTest(),
-    #PopMempoolReorgTest(),
-    #PopParamsTest()
+    PopForkResolutionTest(),
+    PopMempoolGetpopTest(),
+    PopInitTest(),
+    PopActivateTest(),
+    PopE2ETest(),
+    PopMempoolSyncTest(),
+    PopSyncTest(),
+    PopMempoolReorgTest(),
+    PopParamsTest()
 ]
 
 all_tests = [

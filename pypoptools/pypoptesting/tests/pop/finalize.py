@@ -47,6 +47,7 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         assert self.nodes[0].getbestblock().height == last_block + to_mine
 
         # make sure blocks are saved on disk before finalizing
+        self.log.info("restarting node0")
         self.nodes[0].restart()
 
         erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
