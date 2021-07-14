@@ -812,12 +812,12 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160; </div>
 <div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;    <span class="comment">// we need to clarify which block will be final. we can not remove blocks</span></div>
 <div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;    <span class="comment">// which has not been saved into the storage</span></div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* walkBlock = finalizedBlock; walkBlock != <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;         walkBlock = walkBlock-&gt;pprev) {</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;      <span class="keywordflow">if</span> (walkBlock-&gt;isDirty()) {</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;        finalizedBlock = walkBlock;</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;      }</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;    }</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;    <span class="comment">/*for (auto* walkBlock = finalizedBlock; walkBlock != nullptr;</span></div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;<span class="comment">         walkBlock = walkBlock-&gt;pprev) {</span></div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;<span class="comment">      if (walkBlock-&gt;isDirty()) {</span></div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;<span class="comment">        finalizedBlock = walkBlock;</span></div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;<span class="comment">      }</span></div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;<span class="comment">    }*/</span></div>
 <div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160; </div>
 <div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;    <span class="comment">// first, erase candidates from tips_ that will never be activated</span></div>
 <div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;    erase_if&lt;decltype(tips_), index_t*&gt;(</div>
