@@ -302,6 +302,10 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
   if (right == nullptr) {
+    VBK_LOG_WARN(
+        "Unknown 'B block: %s. Maybe you have forgotten to execute "
+        "acceptBlockHeader and acceptBlock on such block.",
+        HexStr(B));
     return 1;
   }
 
