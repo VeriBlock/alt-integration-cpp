@@ -83,30 +83,20 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
         add_compile_options(-Werror)
     endif()
     # enable those flags
-    add_cxx_flag(-Woverloaded-virtual) # warn if you overload (not override) a virtual function
-    add_cxx_flag(-Wnon-virtual-dtor) # warn the user if a class with virtual functions has a non-virtual destructor. This helps catch hard to track down memory errors
-    add_cxx_flag(-Wreorder)          # field '$1' will be initialized after field '$2'
     add_flag(-Wall)
     add_flag(-Wextra)
-    add_flag(-Wformat=2)               # warn on security issues around functions that format output (ie printf)
-    add_flag(-Wmisleading-indentation) # (only in GCC >= 6.0) warn if indentation implies blocks where blocks do not exist
+    add_cxx_flag(-Woverloaded-virtual) # warn if you overload (not override) a virtual function
+    add_cxx_flag(-Wnon-virtual-dtor)   # warn the user if a class with virtual functions has a non-virtual destructor. This helps catch hard to track down memory errors
+    add_flag(-Wdouble-promotion)       # (GCC >= 4.6, Clang >= 3.8) warn if float is implicit promoted to double
     add_flag(-Wduplicated-cond)        # (only in GCC >= 6.0) warn if if / else chain has duplicated conditions
     add_flag(-Wduplicated-branches)    # (only in GCC >= 7.0) warn if if / else branches have duplicated code
+    add_flag(-Wformat=2)               # warn on security issues around functions that format output (ie printf)
     add_flag(-Wnull-dereference)       # (only in GCC >= 6.0) warn if a null dereference is detected
-    add_flag(-Wdouble-promotion)       # (GCC >= 4.6, Clang >= 3.8) warn if float is implicit promoted to double
     add_flag(-Wsign-compare)
-    add_flag(-Wtype-limits)            # size_t - size_t >= 0 -> always true
     add_flag(-Wunused-lambda-capture)  # error if lambda capture is unused
-    add_flag(-Wreturn-type)      # warning: control reaches end of non-void function [-Wreturn-type]
-    add_flag(-Wsign-compare)     # warn the user if they compare a signed and unsigned numbers
-    add_flag(-Wnonnull-compare)     # warn if there is comparison of null pointer with never nullable variable
+    add_flag(-Wunused-local-typedef)
 
     # disable errors
-    add_flag(-Wno-error=unknown-pragmas)
-    add_flag(-Wno-error=strict-overflow)
-    add_flag(-Wno-unused-local-typedef)
-    add_flag(-Wno-unused-function)
-
     add_cxx_flag(-Wno-error=literal-suffix)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -118,10 +108,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
         add_flag(-g)
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    # TODO: enable and fix warnings
-#    if(WERROR)
-#        add_compile_options(/WX)                      # treats all compiler warnings as errors.
-#    endif()
+    if(WERROR)
+        add_compile_options(/WX)                      # treats all compiler warnings as errors.
+    endif()
 
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
@@ -132,13 +121,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_flag(/w14296)                  # 'operator': expression is always 'boolean_value'
     add_flag(/w14826)                  # Conversion from 'type1' to 'type_2' is sign-extended. This may cause unexpected runtime behavior.
     add_flag(/w14640)                  # Enable warning on thread un-safe static member initialization
-
-    # disable these warnings:
-    # appears in the gtest library
-    add_flag(/wd4389)                  # disable warning: 'operator' : signed/unsigned mismatch
-    add_flag(/wd4455)                  # disable warning: 'operator ""s': literal suffix identifiers that do not start with an underscore are reserved
-    add_flag(/wd4127)                  # disable warning: conditional expression is constant
-    add_flag(/wd4505)                  # disable warning: warning C4505: 'dummy': unreferenced local function has been removed
 
     # https://stackoverflow.com/questions/5004858/why-is-stdmin-failing-when-windows-h-is-included
     add_flag(/DNOMINMAX)

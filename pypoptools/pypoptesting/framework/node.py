@@ -121,6 +121,8 @@ class Node(ABC):
     def submitpopvtb(self, vtb: Hexstr) -> SubmitPopResponse:
         pass
 
+    # RPC
+    
     @abstractmethod
-    def altchainfamilyname(self):
+    def getrpcfunctions(self) -> RpcFunctions:
         pass

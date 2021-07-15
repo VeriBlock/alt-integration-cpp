@@ -163,6 +163,11 @@ void VbkBlock::setDifficulty(int32_t diff) {
   invalidateHash();
 }
 
+void setPrecalculatedHash(VbkBlock& block,
+                          const VbkBlock::hash_t& precalculatedHash) {
+  block.hash_ = precalculatedHash;
+}
+
 bool DeserializeFromRaw(ReadStream& stream,
                         VbkBlock& block,
                         ValidationState& state,
