@@ -42,9 +42,7 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         last_block = self.nodes[0].getblockcount()
 
         to_mine = self.max_reorg + self.endorsement_settlement + 5
-        #self.nodes[0].generate(nblocks=to_mine)
-        address = self.nodes[0].getnewaddress()
-        self.nodes[0].rpc.generatetoaddress(to_mine, address)
+        self.nodes[0].generate(nblocks=to_mine)
         self.log.info("node0 mined {} blocks".format(to_mine))
         assert self.nodes[0].getbestblock().height == last_block + to_mine
 
