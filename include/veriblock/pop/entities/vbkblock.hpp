@@ -153,6 +153,9 @@ struct VbkBlock {
                                  VbkBlock& out,
                                  ValidationState& state,
                                  const VbkBlock::hash_t& precalculatedHash);
+
+  friend void setPrecalculatedHash(VbkBlock& block,
+                                   const VbkBlock::hash_t& precalculatedHash);
 };
 
 //! @private

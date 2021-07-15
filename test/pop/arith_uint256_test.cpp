@@ -548,6 +548,6 @@ TEST(DecodeBitsTest, Methods) {
   std::string hex =
       "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
   TmpL.setHex(hex);
-  EXPECT_EQ(TmpL.toBits(false), 0x207fffff);
-  EXPECT_EQ(ArithUint256::fromHex(hex).toBits(false), 0x207fffff);
+  EXPECT_EQ(TmpL.toBits(false), 0x207fffffUL);
+  EXPECT_EQ(ArithUint256::fromHex(hex).toBits(false), 0x207fffffUL);
 }

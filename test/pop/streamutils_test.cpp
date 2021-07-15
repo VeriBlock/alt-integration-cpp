@@ -66,7 +66,7 @@ TEST(ReadStream, BE) {
   stream.reset();
   EXPECT_EQ(stream.assertReadBE<int32_t>(), 117115645);
   stream.reset();
-  EXPECT_EQ(stream.assertReadBE<uint32_t>(), 117115645);
+  EXPECT_EQ(stream.assertReadBE<uint32_t>(), 117115645UL);
 }
 
 TEST(ReadStream, LE) {

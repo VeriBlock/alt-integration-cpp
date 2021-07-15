@@ -713,7 +713,9 @@ void removePayloadsFromIndex(PayloadsIndex& storage,
     return;
   }
 
-  VBK_ASSERT(false && "should not reach here");
+  // fix MSVC 4127 warning
+  bool valid = false;
+  VBK_ASSERT(valid && "should not reach here");
 }
 
 }  // namespace altintegration

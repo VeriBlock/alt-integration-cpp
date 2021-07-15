@@ -49,7 +49,9 @@ void BtcBlockAddon::setIsBootstrap(bool isBootstrap) {
     // pretend this block is referenced by the genesis block of the SI chain
     addRef(0);
   } else {
-    VBK_ASSERT(false && "not supported");
+    // fix MSVC 4127 warning
+    bool valid = false;
+    VBK_ASSERT(valid && "not supported");
   }
 }
 

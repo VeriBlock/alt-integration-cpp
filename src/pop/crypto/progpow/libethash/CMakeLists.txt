@@ -1,5 +1,7 @@
 add_library(ethash OBJECT
         internal.cpp
         sha3.cpp
-        data_sizes.cpp
+        cache_sizes.cpp
+        dag_sizes.cpp
+        dag_seeds.cpp
         )

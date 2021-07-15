@@ -18,7 +18,7 @@ class PopMempoolReorgTest(PopIntegrationTestFramework):
         apm = MockMiner()
 
         self.nodes[0].generate(nblocks=10)
-        sync_all(self.nodes)
+        sync_all(self.nodes, timeout=60)
 
         self.log.info("disconnect nodes 0 and 1")
         self.nodes[0].disconnect(self.nodes[1])

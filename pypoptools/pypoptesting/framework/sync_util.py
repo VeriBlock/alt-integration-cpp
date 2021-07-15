@@ -11,8 +11,12 @@ def start_all(nodes: List[Node]):
 
 
 def connect_all(nodes: List[Node]):
-    for i in range(len(nodes) - 1):
-        nodes[i + 1].connect(nodes[i])
+    # connect each node with each others 
+    for i in range(len(nodes)):
+        for j in range(i, len(nodes)):
+            if i == j:
+                continue
+            nodes[i].connect(nodes[j])
 
     def check_nodes_have_peers():
         p = [x.getpeers() for x in nodes]
@@ -23,9 +27,11 @@ def connect_all(nodes: List[Node]):
 
 
 def disconnect_all(nodes: List[Node]):
-    for i in range(len(nodes) - 1):
-        for node in nodes:
-            node.disconnect(nodes[i])
+    for i in range(len(nodes)):
+        for j in range(i, len(nodes)):
+            if i == j:
+                continue
+            nodes[i].disconnect(nodes[j])
 
     def check_nodes_disconnected():
         p = [x.getpeers() for x in nodes]

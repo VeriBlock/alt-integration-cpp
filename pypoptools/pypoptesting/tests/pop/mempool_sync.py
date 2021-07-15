@@ -35,7 +35,7 @@ class PopMempoolSyncTest(PopIntegrationTestFramework):
         self.log.info("node1 does not contain atv1 in its pop mempool after restart")
 
         self.nodes[0].connect(self.nodes[1])
-        sync_pop_mempools(self.nodes, timeout=20)
+        sync_pop_mempools(self.nodes, timeout=60)
         self.log.info("nodes[0,1] have synced pop mempools")
 
         rawpopmempool1 = self.nodes[1].getrawpopmempool()
@@ -51,7 +51,7 @@ class PopMempoolSyncTest(PopIntegrationTestFramework):
         self.nodes[0].connect(self.nodes[1])
         self.log.info("node1 connect to node0")
 
-        sync_pop_mempools(self.nodes, timeout=20)
+        sync_pop_mempools(self.nodes, timeout=60)
         self.log.info("nodes[0,1] have synced pop mempools")
 
         rawpopmempool1 = self.nodes[1].getrawpopmempool()

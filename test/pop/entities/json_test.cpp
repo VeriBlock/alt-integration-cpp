@@ -675,6 +675,7 @@ TEST(ToJson, BtcBlockIndex) {
 TEST(ToJson, AltParams) {
   std::shared_ptr<AltChainParams> rt =
       std::make_shared<AltChainParamsRegTest>();
+  rt->mKeystoneInterval = 5;
   auto json = ToJSON<picojson::value>(*rt);
   std::string actual = json.serialize(true);
 

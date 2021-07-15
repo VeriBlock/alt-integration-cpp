@@ -13,9 +13,8 @@ on:
       - release/*
 
 jobs:
-  linux:
-    runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
+  linux-clang:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -35,6 +34,72 @@ jobs:
     env:
       CC: clang
       CXX: clang++
+      CTEST_OUTPUT_ON_FAILURE: 1
+      VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
+      ASAN_OPTIONS: detect_container_overflow=1:verbosity=1:debug=1:detect_leaks=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true
+      UBSAN_OPTIONS: print_stacktrace=1
+      PKG_CONFIG_PATH: /usr/lib/pkgconfig
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: recursive
+          clean: true
+      - name: checkout fuzz-corpus
+        uses: actions/checkout@v2
+        with:
+          repository: VeriBlock/fuzz-corpus
+          path: ${{ github.workspace }}/fuzz-corpus
+      - name: update apt-get
+        run: sudo apt-get update
+      - name: install build requirements
+        run: sudo apt-get install clang-tidy libboost-python-dev
+      - name: install new cmake
+        run: |
+          sudo apt-get install -y python3 python3-pip
+          pip3 install cmake
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        run: |
+          echo "::set-output name=timestamp::`date +%s`}"
+      - name: ccache cache files
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: linux-ccache-matrix-${{ matrix.flags }}-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            linux-ccache-matrix-${{ matrix.flags }}-
+            linux-ccache-matrix-
+      - name: cmake
+        run: cmake . -Bbuild ${{ matrix.flags }}
+      - name: build
+        run: sudo cmake --build build -- -j2 install
+      - name: test
+        run: cd build && ctest
+
+  linux-gcc:
+    runs-on: ubuntu-latest
+    container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
+    strategy:
+      fail-fast: false
+      matrix:
+        flags: [
+          # build fuzzers and run 1 iteration (with fixed corpus) during ctest
+          "-DASAN=ON",
+          "-DUBSAN=ON",
+          "-DVBK_NO_THREADS=ON",
+          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          # release build with all dependencies with rocksdb
+          "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
+          # release build with all dependencies with leveldb
+          "-DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
+        ]
+    env:
+      CC: gcc
+      CXX: g++
       CTEST_OUTPUT_ON_FAILURE: 1
       VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
       ASAN_OPTIONS: detect_container_overflow=1:verbosity=1:debug=1:detect_leaks=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true
@@ -79,8 +144,7 @@ jobs:
         run: cd build && ctest
 
   coverage:
-    runs-on: ubuntu-18.04
-    container: veriblock/alt-integration-cpp-dev
+    runs-on: ubuntu-latest
     env:
       CC: gcc
       CXX: g++
@@ -106,8 +170,8 @@ jobs:
             linux-ccache-coverage-
       - name: install new cmake
         run: |
-          apt-get update
-          apt-get install -y python3 python3-pip
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip gcovr
           pip3 install cmake
       - name: versions
         run: |
@@ -185,7 +249,7 @@ jobs:
 #        run: cmake --build build --target RUN_TESTS
 
   x86_64-w64-mingw32:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -261,9 +325,7 @@ jobs:
         run: cd build && ctest
 
   x86_64-apple-darwin16:
-    runs-on: ubuntu-18.04
-    # TODO: Fix this job. See https://github.com/VeriBlock/alt-integration-cpp/runs/1173195891 for error details
-    if: ${{ false }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -348,7 +410,6 @@ jobs:
           cd ${GITHUB_WORKSPACE}/cctools/libtapi
           CC=${GITHUB_WORKSPACE}/cctools/clang/bin/clang CXX=${GITHUB_WORKSPACE}/cctools/clang/bin/clang++ INSTALLPREFIX=${GITHUB_WORKSPACE}/cctools ./build.sh && \
           CC=${GITHUB_WORKSPACE}/cctools/clang/bin/clang CXX=${GITHUB_WORKSPACE}/cctools/clang/bin/clang++ INSTALLPREFIX=${GITHUB_WORKSPACE}/cctools ./install.sh && \
-          sed -i.old "/define HAVE_PTHREADS/d" ${GITHUB_WORKSPACE}/cctools/toolchain/cctools/ld64/src/ld/InputFiles.h
           mkdir -p ${GITHUB_WORKSPACE}/cctools/clang/lib/ && \
           cp ${GITHUB_WORKSPACE}/cctools/lib/libtapi.so.6 ${GITHUB_WORKSPACE}/cctools/clang/lib/
           cd ${GITHUB_WORKSPACE}/cctools/toolchain/cctools
@@ -379,7 +440,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build -- -j1
       - name: check architectures
         run: |
           OSX_ARCH=$(${GITHUB_WORKSPACE}/cctools/toolchain/bin/x86_64-apple-darwin16-lipo -info ${GITHUB_WORKSPACE}/build/lib/libveriblock-pop-cpp.a) && \

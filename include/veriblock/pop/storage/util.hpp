@@ -66,13 +66,12 @@ bool loadTree(BlockTreeT& tree,
               std::vector<typename BlockTreeT::stored_index_t>& blocks,
               ValidationState& state) {
   using stored_index_t = typename BlockTreeT::stored_index_t;
-  using block_t = typename BlockTreeT::block_t;
 
   if (blocks.size() == 0) return true;
 
   VBK_LOG_WARN("Loading %d %s blocks with tip %s",
                blocks.size(),
-               block_t::name(),
+               BlockTreeT::block_t::name(),
                HexStr(tiphash));
   VBK_ASSERT(tree.isBootstrapped() && "tree must be bootstrapped");
 

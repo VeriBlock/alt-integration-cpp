@@ -22,7 +22,8 @@ class PopE2ETest(PopIntegrationTestFramework):
         from pypoptools.pypopminer import MockMiner
         apm = MockMiner()
 
-        self._assert_nodes_peer_info()
+        assert self.nodes[0].getpeers()[0].banscore == 0
+        assert self.nodes[1].getpeers()[0].banscore == 0
 
         vbk_blocks_amount = 100
         self.log.info("generate vbk blocks on node0, amount {}".format(vbk_blocks_amount))
@@ -43,7 +44,8 @@ class PopE2ETest(PopIntegrationTestFramework):
         self.log.info("endorse {} alt block".format(last_block - 5))
         endorse_block(self.nodes[0], apm, last_block - 5)
 
-        self._assert_nodes_peer_info()
+        assert self.nodes[0].getpeers()[0].banscore == 0
+        assert self.nodes[1].getpeers()[0].banscore == 0
 
         self.nodes[0].generate(nblocks=1)
         containing_block = self.nodes[0].getbestblock()
@@ -55,7 +57,8 @@ class PopE2ETest(PopIntegrationTestFramework):
         self.log.info("endorse {} alt block".format(last_block - 6))
         endorse_block(self.nodes[0], apm, last_block - 6)
 
-        self._assert_nodes_peer_info()
+        assert self.nodes[0].getpeers()[0].banscore == 0
+        assert self.nodes[1].getpeers()[0].banscore == 0
 
         self.nodes[0].generate(nblocks=1)
         time.sleep(5)
@@ -63,13 +66,5 @@ class PopE2ETest(PopIntegrationTestFramework):
         self.log.info("sync all nodes")
         sync_all(self.nodes)
 
-        self._assert_nodes_peer_info()
-
-    def _assert_nodes_peer_info(self):
-        self._assert_node_peer_info(self.nodes[0])
-        self._assert_node_peer_info(self.nodes[1])
-
-    def _assert_node_peer_info(self, node):
-        peer_info = node.getpeers()
-        assert len(peer_info) == 1
-        assert peer_info[0].banscore == 0
+        assert self.nodes[0].getpeers()[0].banscore == 0
+        assert self.nodes[1].getpeers()[0].banscore == 0

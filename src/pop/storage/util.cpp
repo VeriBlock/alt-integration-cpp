@@ -133,6 +133,7 @@ bool loadTrees(AltBlockTree& tree, ValidationState& state) {
                   // cache
           [](VbkBlock::hash_t hash, const StoredBlockIndex<VbkBlock>& index) {
             auto serializedHeader = SerializeToRaw(*index.header);
+            setPrecalculatedHash(*index.header, hash);
             progpow::insertHeaderCacheEntry(serializedHeader, std::move(hash));
           })) {
     return state.Invalid("load-vbk-tree-blocks");

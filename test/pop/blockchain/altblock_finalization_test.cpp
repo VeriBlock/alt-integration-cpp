@@ -106,9 +106,9 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
   save(alttree);
 
   // mark all forks as dirty
-  for (auto *tip : alttree.getTips()) {
-    if (!alttree.getBestChain().contains(tip)) {
-      tip->setDirty();
+  for (auto *currentTip : alttree.getTips()) {
+    if (!alttree.getBestChain().contains(currentTip)) {
+      currentTip->setDirty();
     }
   }
 
