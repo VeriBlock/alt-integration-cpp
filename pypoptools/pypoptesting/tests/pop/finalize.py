@@ -42,7 +42,9 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         last_block = self.nodes[0].getblockcount()
 
         to_mine = self.max_reorg + self.endorsement_settlement + 5
-        self.nodes[0].generate(nblocks=to_mine)
+        #self.nodes[0].generate(nblocks=to_mine)
+        address = self.nodes[0].getnewaddress()
+        self.nodes[0].rpc.generatetoaddress(to_mine, address)
         self.log.info("node0 mined {} blocks".format(to_mine))
         assert self.nodes[0].getbestblock().height == last_block + to_mine
 
@@ -50,12 +52,28 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         self.log.info("restarting node0")
         self.nodes[0].restart()
 
+        # connect all nodes to each other
+        connect_all(self.nodes)
+
+        self.log.info("all nodes connected")
+        sync_blocks(self.nodes, timeout=60)
+        sync_pop_tips(self.nodes, timeout=60)
+        self.log.info("all nodes have common tip")
+
+        expected_best = self.nodes[0].getbestblock()
+        best_blocks = [node.getbestblock() for node in self.nodes]
+        for best in best_blocks:
+            assert best == expected_best
+
+        self.log.info("nodes successfully synced")
+        self.log.info("trying getblock {}".format(last_block + 1))
+
         erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
 
+        # TODO: rewrite when node crash is fixed
         try:
             erased_block = self.nodes[0].getblock(erased_block_hash)
-        except Exception:
+            assert false, "expected node crash"
+        except:
             self.log.info("_basic_finalization_test() succeeded!")
-            return 0
-
-        assert false, "expected node crash"
+            self.nodes = [self.nodes[1]]
