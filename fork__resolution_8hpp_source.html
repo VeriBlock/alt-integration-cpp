@@ -501,7 +501,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    }</div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;  }</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160; </div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;  VBK_LOG_INFO(<span class="stringliteral">&quot;ChainA score=%d, ChainB score=%d&quot;</span>, chainAscore, chainBscore);</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;  VBK_LOG_DEBUG(<span class="stringliteral">&quot;ChainA score=%d, ChainB score=%d&quot;</span>, chainAscore, chainBscore);</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  <span class="keywordflow">return</span> chainAscore - chainBscore;</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;}</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160; </div>
@@ -576,8 +576,8 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;  <span class="keywordtype">int</span> comparePopScore(protected_index_t&amp; candidate, ValidationState&amp; state) {</div>
 <div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
 <div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;      <span class="comment">// if the new block is known to be invalid, we always return &quot;A is better&quot;</span></div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;      VBK_LOG_INFO(<span class="stringliteral">&quot;Candidate %s is invalid, the current chain wins&quot;</span>,</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;                   candidate.toShortPrettyString());</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Candidate %s is invalid, the current chain wins&quot;</span>,</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;                    candidate.toShortPrettyString());</div>
 <div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;      <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    }</div>
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    <span class="keyword">auto</span> currentBest = ed_.getBestChain();</div>
@@ -595,7 +595,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;    }</div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
 <div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    <span class="keywordflow">if</span> (currentBest.contains(&amp;candidate)) {</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;      VBK_LOG_INFO(</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;      VBK_LOG_DEBUG(</div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;          <span class="stringliteral">&quot;Candidate %s is part of the active chain, the current chain wins&quot;</span>,</div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;          candidate.toShortPrettyString());</div>
 <div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;      <span class="keywordflow">return</span> 1;</div>
@@ -612,8 +612,8 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160; </div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;      <span class="keywordflow">if</span> (!sm_.apply(*bestTip, candidate, state)) {</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;        <span class="comment">// new chain is invalid. our current chain is definitely better.</span></div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;        VBK_LOG_INFO(<span class="stringliteral">&quot;Candidate contains INVALID command(s): %s&quot;</span>,</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;                     state.toString());</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Candidate contains INVALID command(s): %s&quot;</span>,</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;                      state.toString());</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;      }</div>
@@ -622,10 +622,10 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;      <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    }</div>
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160; </div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    VBK_LOG_INFO(<span class="stringliteral">&quot;Doing %s POP fork resolution. Best=%s, Candidate=%s&quot;</span>,</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;                 protected_block_t::name(),</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;                 bestTip-&gt;toShortPrettyString(),</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;                 candidate.toShortPrettyString());</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Doing %s POP fork resolution. Best=%s, Candidate=%s&quot;</span>,</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;                  protected_block_t::name(),</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;                  bestTip-&gt;toShortPrettyString(),</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;                  candidate.toShortPrettyString());</div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160; </div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;    <span class="keyword">auto</span> ki = ed_.getParams().getKeystoneInterval();</div>
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span>* fork = <a class="code" href="namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef">findFork</a>(currentBest, &amp;candidate);</div>
@@ -653,7 +653,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;        isCrossedKeystoneBoundary(fork-&gt;getHeight(), candidate.getHeight(), ki);</div>
 <div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;    <span class="keywordflow">if</span> (!AcrossedKeystoneBoundary &amp;&amp; !BcrossedKeystoneBoundary) {</div>
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;      <span class="comment">// chains are equal in terms of POP</span></div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;      VBK_LOG_INFO(</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;      VBK_LOG_DEBUG(</div>
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;          <span class="stringliteral">&quot;Neither chain crossed a keystone boundary: chains are equal&quot;</span>);</div>
 <div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;      <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;    }</div>
@@ -678,8 +678,8 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160; </div>
 <div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;      <span class="keywordflow">if</span> (!sm_.apply(chainB, state)) {</div>
 <div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;        <span class="comment">// chain B has been unapplied and invalidated already</span></div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;        VBK_LOG_INFO(<span class="stringliteral">&quot;Chain B contains INVALID payloads, Chain A wins (%s)&quot;</span>,</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;                     state.toString());</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B contains INVALID payloads, Chain A wins (%s)&quot;</span>,</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;                      state.toString());</div>
 <div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
 <div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;      }</div>
@@ -699,7 +699,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
 <div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;      sm_.unapply(chainB);</div>
 <div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;      guard.overrideDeferredForkResolution(originalProtectingTip);</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;      VBK_LOG_INFO(<span class="stringliteral">&quot;Chain A remains the best chain&quot;</span>);</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain A remains the best chain&quot;</span>);</div>
 <div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;      <span class="comment">// chain B is better. unapply A and leave B applied</span></div>
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
@@ -723,12 +723,12 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;        VBK_ASSERT_MSG(</div>
 <div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            success,</div>
 <div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="stringliteral">&quot;state corruption: chainA as a former best chain should be valid&quot;</span>);</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;        VBK_LOG_INFO(<span class="stringliteral">&quot;Chain B is invalid when applied alone. Chain A wins&quot;</span>);</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B is invalid when applied alone. Chain A wins&quot;</span>);</div>
 <div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
 <div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;        <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;      }</div>
 <div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160; </div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;      VBK_LOG_INFO(<span class="stringliteral">&quot;Chain B wins&quot;</span>);</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B wins&quot;</span>);</div>
 <div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;    }</div>
 <div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160; </div>
 <div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;    <span class="keywordflow">return</span> result;</div>
