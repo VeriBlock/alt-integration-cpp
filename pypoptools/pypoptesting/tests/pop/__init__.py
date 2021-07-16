@@ -1,6 +1,7 @@
 from .activate import PopActivateTest
 from .e2e import PopE2ETest
 from .fork_resolution import PopForkResolutionTest
+from .finalize import PopFinalizationTest
 from .init import PopInitTest
 from .mempool_getpop import PopMempoolGetpopTest
 from .mempool_reorg import PopMempoolReorgTest
