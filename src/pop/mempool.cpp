@@ -78,6 +78,8 @@ PopData generatePopDataImpl(
 }  // namespace
 
 PopData MemPool::generatePopData() {
+  VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
+
   // attempt to connect payloads
   tryConnectPayloads();
 
