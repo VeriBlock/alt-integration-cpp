@@ -94,6 +94,9 @@ void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
 }
 
 void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
+  VBK_LOG_INFO("Accept pop data: %s, for the block: %s ",
+               payloads.toPrettyString(),
+               index.toPrettyString());
   ValidationState dummy;
   acceptBlock(index, payloads, dummy);
 }
@@ -216,6 +219,8 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
+  VBK_LOG_INFO("Accept new block: %s ", block.toPrettyString());
+
   // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
   // with AltBlock, where hash == previousHash. If so, fail loudly.
   assertBlockSanity(block);
@@ -284,6 +289,9 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
 
 int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
+  VBK_LOG_INFO(
+      "Compare two chains. chain A: %s, chain B: %s", HexStr(A), HexStr(B));
+
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
 
@@ -294,6 +302,10 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
   if (right == nullptr) {
+    VBK_LOG_WARN(
+        "Unknown 'B block: %s. Maybe you have forgotten to execute "
+        "acceptBlockHeader and acceptBlock on such block.",
+        HexStr(B));
     return 1;
   }
 
@@ -452,10 +464,10 @@ bool AltBlockTree::BlockPayloadMutator::add(const Payload& payload,
       tree_.getCommandGroupStore().getCommand<Payload>(block_, pid, state);
 
   if (!cgroup || !cgroup->execute(state)) {
-    VBK_LOG_INFO("%s cannot be added to block %s: %s",
-                 payload.toPrettyString(),
-                 block_.toShortPrettyString(),
-                 state.toString());
+    VBK_LOG_DEBUG("%s cannot be added to block %s: %s",
+                  payload.toPrettyString(),
+                  block_.toShortPrettyString(),
+                  state.toString());
 
     // remove the failed payload
     block_.removePayloadId<Payload>(pid);

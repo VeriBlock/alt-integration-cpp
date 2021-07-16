@@ -414,7 +414,7 @@ int comparePopScoreImpl(PublicationView& a, PublicationView& b) {
     }
   }
 
-  VBK_LOG_INFO("ChainA score=%d, ChainB score=%d", chainAscore, chainBscore);
+  VBK_LOG_DEBUG("ChainA score=%d, ChainB score=%d", chainAscore, chainBscore);
   return chainAscore - chainBscore;
 }
 
@@ -500,8 +500,8 @@ struct PopAwareForkResolutionComparator {
   int comparePopScore(protected_index_t& candidate, ValidationState& state) {
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
-      VBK_LOG_INFO("Candidate %s is invalid, the current chain wins",
-                   candidate.toShortPrettyString());
+      VBK_LOG_DEBUG("Candidate %s is invalid, the current chain wins",
+                    candidate.toShortPrettyString());
       return 1;
     }
     auto currentBest = ed_.getBestChain();
@@ -519,7 +519,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     if (currentBest.contains(&candidate)) {
-      VBK_LOG_INFO(
+      VBK_LOG_DEBUG(
           "Candidate %s is part of the active chain, the current chain wins",
           candidate.toShortPrettyString());
       return 1;
@@ -536,8 +536,8 @@ struct PopAwareForkResolutionComparator {
 
       if (!sm_.apply(*bestTip, candidate, state)) {
         // new chain is invalid. our current chain is definitely better.
-        VBK_LOG_INFO("Candidate contains INVALID command(s): %s",
-                     state.toString());
+        VBK_LOG_DEBUG("Candidate contains INVALID command(s): %s",
+                      state.toString());
         guard.overrideDeferredForkResolution(originalProtectingTip);
         return 1;
       }
@@ -546,10 +546,10 @@ struct PopAwareForkResolutionComparator {
       return -1;
     }
 
-    VBK_LOG_INFO("Doing %s POP fork resolution. Best=%s, Candidate=%s",
-                 protected_block_t::name(),
-                 bestTip->toShortPrettyString(),
-                 candidate.toShortPrettyString());
+    VBK_LOG_DEBUG("Doing %s POP fork resolution. Best=%s, Candidate=%s",
+                  protected_block_t::name(),
+                  bestTip->toShortPrettyString(),
+                  candidate.toShortPrettyString());
 
     auto ki = ed_.getParams().getKeystoneInterval();
     const auto* fork = findFork(currentBest, &candidate);
@@ -577,7 +577,7 @@ struct PopAwareForkResolutionComparator {
         isCrossedKeystoneBoundary(fork->getHeight(), candidate.getHeight(), ki);
     if (!AcrossedKeystoneBoundary && !BcrossedKeystoneBoundary) {
       // chains are equal in terms of POP
-      VBK_LOG_INFO(
+      VBK_LOG_DEBUG(
           "Neither chain crossed a keystone boundary: chains are equal");
       return 0;
     }
@@ -602,8 +602,8 @@ struct PopAwareForkResolutionComparator {
 
       if (!sm_.apply(chainB, state)) {
         // chain B has been unapplied and invalidated already
-        VBK_LOG_INFO("Chain B contains INVALID payloads, Chain A wins (%s)",
-                     state.toString());
+        VBK_LOG_DEBUG("Chain B contains INVALID payloads, Chain A wins (%s)",
+                      state.toString());
         guard.overrideDeferredForkResolution(originalProtectingTip);
         return 1;
       }
@@ -623,7 +623,7 @@ struct PopAwareForkResolutionComparator {
       auto guard = ing_->deferForkResolutionGuard();
       sm_.unapply(chainB);
       guard.overrideDeferredForkResolution(originalProtectingTip);
-      VBK_LOG_INFO("Chain A remains the best chain");
+      VBK_LOG_DEBUG("Chain A remains the best chain");
     } else {
       // chain B is better. unapply A and leave B applied
       auto guard = ing_->deferForkResolutionGuard();
@@ -647,12 +647,12 @@ struct PopAwareForkResolutionComparator {
         VBK_ASSERT_MSG(
             success,
             "state corruption: chainA as a former best chain should be valid");
-        VBK_LOG_INFO("Chain B is invalid when applied alone. Chain A wins");
+        VBK_LOG_DEBUG("Chain B is invalid when applied alone. Chain A wins");
         guard.overrideDeferredForkResolution(originalProtectingTip);
         return 1;
       }
 
-      VBK_LOG_INFO("Chain B wins");
+      VBK_LOG_DEBUG("Chain B wins");
     }
 
     return result;
