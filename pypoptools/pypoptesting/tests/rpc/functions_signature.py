@@ -117,26 +117,44 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
     def _get_missing_btc_blockhashes(self):
         self.log.info("starting _get_missing_btc_blockhashes()")
 
+        self.log.info("done _get_missing_btc_blockhashes()")
+
     def _extract_block_info(self):
         self.log.info("starting _extract_block_info()")
+
+        self.log.info("done _extract_block_info()")
 
     def _get_popdata_byheight(self):
         self.log.info("starting _get_popdata_byheight()")
 
+        self.log.info("done _get_popdata_byheight()")
+
     def _get_vbk_block(self):
         self.log.info("starting _get_vbk_block()")
+
+        self.log.info("done _get_vbk_block()")
 
     def _get_btc_block(self):
         self.log.info("starting _get_btc_block()")
 
+        self.log.info("done _get_btc_block()")
+
     def _get_vbk_best_block_hash(self):
         self.log.info("starting _get_vbk_best_block_hash()")
+
+        self.log.info("done _get_vbk_best_block_hash()")
 
     def _get_btc_best_block_hash(self):
         self.log.info("starting _get_btc_best_block_hash()")
 
+        self.log.info("done _get_btc_best_block_hash()")
+
     def _get_raw_atv(self):
         self.log.info("starting _get_raw_atv()")
 
+        self.log.info("done _get_raw_atv()")
+
     def _get_raw_vtb(self):
         self.log.info("starting _get_raw_vtb()")
+
+        self.log.info("done _get_raw_vtb()")
