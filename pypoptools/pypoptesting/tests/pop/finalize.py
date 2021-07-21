@@ -23,13 +23,8 @@ class PopFinalizationTest(PopIntegrationTestFramework):
 
         popparams = self.nodes[0].getpopparams()
 
-        self.log.info(popparams)
         self.max_reorg = popparams.maxReorgDistance
         self.endorsement_settlement = popparams.endorsementSettlementInterval
-
-        self.log.info(self.max_reorg)
-        self.log.info(self.endorsement_settlement)
-
 
     def run_test(self):
         from pypoptools.pypopminer import MockMiner
@@ -67,11 +62,6 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         self.log.info("trying getblock {}".format(last_block + 1))
 
         erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
+        erased_block = self.nodes[0].rpc.getblock(erased_block_hash)
 
-        # TODO: rewrite when node crash is fixed
-        try:
-            erased_block = self.nodes[0].getblock(erased_block_hash)
-            assert false, "expected node crash"
-        except:
-            self.log.info("_basic_finalization_test() succeeded!")
-            self.nodes = [self.nodes[1]]
+        assert erased_block['pop']['state'] is None
