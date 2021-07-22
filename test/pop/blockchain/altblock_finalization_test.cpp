@@ -509,3 +509,36 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
 
   ASSERT_TRUE(alttree.setState(*tip, state));
 }
+
+TEST_F(AltBlockFinalization2, comparePopScore_test) {
+  // Test scenario:
+  // mine 50 alt blocks
+  // creating two chains: chainA (56 height), chainB(55 height)
+  // active chain should be on chainA
+  // saving trees to the storage
+  // finalizing the tip of the chainA, so chainB should be removed
+  // trying to compare chainA with the deleted chainB, chainA should win
+
+  altparam.mEndorsementSettlementInterval = 10;
+  altparam.mPreserveBlocksBehindFinal = 10;
+
+  // mine 50 altblocks
+  auto *forkPoint = mineAltBlocks(*alttree.getBestChain().tip(), 50);
+
+  ASSERT_EQ(forkPoint->getHash(), alttree.getBestChain().tip()->getHash());
+
+  auto *chainB = mineAltBlocks(*forkPoint, 5);
+  auto *chainA = mineAltBlocks(*forkPoint, 6);
+
+  assertTreeTips(alttree, {chainB, chainA});
+  ASSERT_EQ(chainA->getHash(), alttree.getBestChain().tip()->getHash());
+
+  save(alttree);
+
+  // finalize block
+  ASSERT_TRUE(alttree.finalizeBlock(*chainA, state)) << state.toString();
+
+  assertTreeTips(alttree, {chainA});
+
+  ASSERT_EQ(alttree.comparePopScore(chainA->getHash(), chainB->getHash()), 1);
+}
