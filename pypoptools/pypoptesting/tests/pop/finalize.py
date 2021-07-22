@@ -34,12 +34,24 @@ class PopFinalizationTest(PopIntegrationTestFramework):
 
     def _basic_finalization_test(self, apm):
         self.log.info("starting _basic_finalization_test()")
-        last_block = self.nodes[0].getblockcount()
+        from pypoptools.pypopminer import MockMiner
+        apm = MockMiner()
 
-        to_mine = self.max_reorg + self.endorsement_settlement + 5
+        last_block = self.nodes[0].getblockcount()
+        self.nodes[0].generate(nblocks=5)
+
+        self.log.info("endorse {} alt block".format(last_block + 1))
+        endorse_block(self.nodes[0], apm, last_block + 1)
+
+        to_mine = self.max_reorg + self.endorsement_settlement
         self.nodes[0].generate(nblocks=to_mine)
         self.log.info("node0 mined {} blocks".format(to_mine))
-        assert self.nodes[0].getbestblock().height == last_block + to_mine
+        assert self.nodes[0].getbestblock().height == last_block + to_mine + 5
+
+        before_erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
+        before_erased_block = self.nodes[0].getblock(before_erased_block_hash)
+
+        self.log.info(before_erased_block)
 
         # make sure blocks are saved on disk before finalizing
         self.log.info("restarting node0")
@@ -62,6 +74,6 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         self.log.info("trying getblock {}".format(last_block + 1))
 
         erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
-        erased_block = self.nodes[0].rpc.getblock(erased_block_hash)
+        erased_block = self.nodes[0].getblock(erased_block_hash)
 
-        assert erased_block['pop']['state'] is None
+        assert erased_block != before_erased_block
