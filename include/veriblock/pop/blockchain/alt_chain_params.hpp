@@ -285,6 +285,7 @@ JsonValue ToJSON(const AltChainParams& p, bool reverseAltHashes = true) {
   json::putIntKV(obj, "maxVbkBlocksInAltBlock", p.getMaxVbkBlocksInAltBlock());
   json::putIntKV(obj, "maxVTBsInAltBlock", p.getMaxVTBsInAltBlock());
   json::putIntKV(obj, "maxATVsInAltBlock", p.getMaxATVsInAltBlock());
+  json::putIntKV(obj, "maxReorgDistance", p.getMaxReorgDistance());
   json::putIntKV(obj,
                  "endorsementSettlementInterval",
                  p.getEndorsementSettlementInterval());
