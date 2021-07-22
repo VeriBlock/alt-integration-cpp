@@ -73,7 +73,6 @@ class PopFinalizationTest(PopIntegrationTestFramework):
         self.log.info("nodes successfully synced")
         self.log.info("trying getblock {}".format(last_block + 1))
 
-        erased_block_hash = self.nodes[0].getblockhash(last_block + 1)
-        erased_block = self.nodes[0].getblock(erased_block_hash)
+        erased_block = self.nodes[0].getblock(before_erased_block_hash)
 
         assert erased_block != before_erased_block
