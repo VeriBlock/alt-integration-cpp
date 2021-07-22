@@ -513,11 +513,11 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
 TEST_F(AltBlockFinalization2, comparePopScore_test) {
   // Test scenario:
   // mine 50 alt blocks
-  // creating to chains: chainA (56 height), chainB(55 height)
+  // creating two chains: chainA (56 height), chainB(55 height)
   // active chain should be on chainA
-  // saving trees in the storage
-  // finalizing the tip of the chainA, so should be removed chainB
-  // trying to compare chainA with the deleted chainB, chainA should wins
+  // saving trees to the storage
+  // finalizing the tip of the chainA, so chainB should be removed
+  // trying to compare chainA with the deleted chainB, chainA should win
 
   altparam.mEndorsementSettlementInterval = 10;
   altparam.mPreserveBlocksBehindFinal = 10;
