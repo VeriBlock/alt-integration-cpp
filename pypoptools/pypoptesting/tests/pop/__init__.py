@@ -7,3 +7,4 @@ from .mempool_reorg import PopMempoolReorgTest
 from .mempool_sync import PopMempoolSyncTest
 from .params import PopParamsTest
 from .sync import PopSyncTest
+from .stress import PopStressTest

@@ -16,7 +16,8 @@ from .pop import (
     PopMempoolReorgTest,
     PopMempoolSyncTest,
     PopParamsTest,
-    PopSyncTest
+    PopSyncTest,
+    PopStressTest
 )
 
 node_tests = [
@@ -42,7 +43,8 @@ pop_tests = [
     PopMempoolSyncTest(),
     PopSyncTest(),
     PopMempoolReorgTest(),
-    PopParamsTest()
+    PopParamsTest(),
+    PopStressTest()
 ]
 
 all_tests = [
