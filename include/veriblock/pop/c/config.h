@@ -91,6 +91,7 @@ POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_vtbs_in_alt_block);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_atvs_in_alt_block);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, finality_delay);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_altchain_future_block_time);
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_altchain_reorg_distance);
 POP_ENTITY_GETTER_FUNCTION(config,
                            POP_ENTITY_NAME(alt_block) *,
                            alt_bootstrap_block);

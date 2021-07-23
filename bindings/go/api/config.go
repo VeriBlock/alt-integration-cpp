@@ -306,6 +306,12 @@ func (v *Config) GetMaxAltchainFutureBlockTime() uint32 {
 	return uint32(C.pop_config_get_max_altchain_future_block_time(v.ref))
 }
 
+// GetMaxReorgDistance ...
+func (v *Config) GetMaxAltchainReorgDistance() uint32 {
+	v.validate()
+	return uint32(C.pop_config_get_max_altchain_reorg_distance(v.ref))
+}
+
 // AltGetBootstrapBlock ...
 func (v *Config) AltGetBootstrapBlock() *AltBlock {
 	v.validate()

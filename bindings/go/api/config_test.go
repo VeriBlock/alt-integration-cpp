@@ -100,6 +100,9 @@ func TestConfig(t *testing.T) {
 	res = config.GetMaxAltchainFutureBlockTime()
 	assert.NotEqual(uint32(0), res)
 
+	res = config.GetMaxAltchainReorgDistance()
+	assert.NotEqual(uint32(0), res)
+
 	alt := config.AltGetBootstrapBlock()
 	assert.NotEqual(nil, alt)
 
