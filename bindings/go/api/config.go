@@ -163,9 +163,9 @@ func (v *Config) SetPopPayoutDelay(val uint32) {
 }
 
 // SetMaxReorgDistance ...
-func SetMaxReorgDistance(val uint32) {
+func (v *Config) SetMaxReorgDistance(val uint32) {
 	v.validate()
-	C.pop_config_set_max_reorg_distance(v.ref, C.uint32(val))
+	C.pop_config_set_max_reorg_distance(v.ref, C.uint32_t(val))
 }
 
 // GetStartOfSlope ...
