@@ -162,6 +162,12 @@ func (v *Config) SetPopPayoutDelay(val uint32) {
 	C.pop_config_set_pop_payout_delay(v.ref, C.uint32_t(val))
 }
 
+// SetMaxReorgDistance ...
+func (v *Config) SetMaxReorgDistance(val uint32) {
+	v.validate()
+	C.pop_config_set_max_reorg_distance(v.ref, C.uint32_t(val))
+}
+
 // GetStartOfSlope ...
 func (v *Config) GetStartOfSlope() float64 {
 	v.validate()
@@ -304,6 +310,12 @@ func (v *Config) GetFinalityDelay() uint32 {
 func (v *Config) GetMaxAltchainFutureBlockTime() uint32 {
 	v.validate()
 	return uint32(C.pop_config_get_max_altchain_future_block_time(v.ref))
+}
+
+// GetMaxReorgDistance ...
+func (v *Config) GetMaxReorgDistance() uint32 {
+	v.validate()
+	return uint32(C.pop_config_get_max_reorg_distance(v.ref))
 }
 
 // AltGetBootstrapBlock ...
