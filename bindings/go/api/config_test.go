@@ -85,6 +85,9 @@ func TestConfig(t *testing.T) {
 	config.SetPopPayoutDelay(1000)
 	assert.Equal(uint32(1000), config.GetPopPayoutDelay())
 
+	config.SetMaxReorgDistance(1000)
+	assert.Equal(uint32(1000), config.GetMaxReorgDistance())
+
 	res := config.GetMaxVbkBlocksInAltBlock()
 	assert.NotEqual(uint32(0), res)
 
