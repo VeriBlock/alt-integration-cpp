@@ -161,8 +161,6 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')) 
         logging.error("pypopminer module not available.")
         sys.exit(1)
 
-    mp.set_start_method('fork')
-
     timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
     tmpdir = tempfile.mkdtemp(prefix="pop_{}_".format(timestamp))
     job_queue = TestHandler(
