@@ -7,6 +7,7 @@ import sys
 import tempfile
 import time
 from typing import Callable
+import platform
 
 from .node import Node
 
@@ -114,7 +115,7 @@ class TestHandler:
             # Add tests
             self.num_running += 1
             test = self.test_list.pop(0)
-            p = mp.Process(target=lambda: test.main(self.create_node, self.parent))
+            p = mp.Process(target = test.main, args=(self.create_node, self.parent))
             p.start()
             self.jobs.append((test,
                               time.time(),
@@ -162,7 +163,7 @@ def run_tests(test_list, create_node: CreateNodeFunction, timeout=float('inf')) 
         sys.exit(1)
 
     timestamp = datetime.datetime.now().strftime("%y%m%d%H%M%S")
-    tmpdir = tempfile.mkdtemp(prefix="pop_{}_".format(timestamp))
+    tmpdir = tempfile.mkdtemp(prefix="pop_{}_".format(timestamp), dir= "/tmp" if platform.system() == "Darwin" else None)
     job_queue = TestHandler(
         create_node=create_node,
         tmpdir=tmpdir,
