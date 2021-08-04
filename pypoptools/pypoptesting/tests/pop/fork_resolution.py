@@ -137,6 +137,9 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
     def _4_chains_converge(self, apm):
         self.log.info("_4_chains_converge() started!")
 
+        sync_blocks(self.nodes, timeout=5)
+        self.log.info("nodes[0,1,2,3] are in sync")
+
         # disconnect all nodes
         disconnect_all(self.nodes)
 
