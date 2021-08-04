@@ -164,7 +164,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         connect_all(self.nodes)
 
         self.log.info("all nodes connected")
-        sync_blocks(self.nodes, timeout=60)
+        sync_blocks(self.nodes, timeout=120)
         sync_pop_tips(self.nodes, timeout=60)
         self.log.info("all nodes have common tip")
 
