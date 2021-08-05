@@ -108,12 +108,15 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
  *
  * @param[in] self PopContext
  * @param[in] hash POP_ARRAY_NAME(u8) array altintegration::AltBlock hash bytes
+ * @param[out] state POP_ENTITY_NAME(validation_state) pointer to the
+ * altintegration::ValidationState
  * @return POP_ARRAY_NAME(pop_payout) array of the POP_ENTITY_NAME(pop_payout)
  */
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(pop_payout),
                            get_pop_payouts,
-                           POP_ARRAY_NAME(u8) hash);
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 /**
  * @copybrief altintegration::AltBlockTree::removeSubtree

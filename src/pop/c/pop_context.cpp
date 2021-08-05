@@ -111,14 +111,24 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(pop_payout),
                            get_pop_payouts,
-                           POP_ARRAY_NAME(u8) hash) {
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash.data);
+  VBK_ASSERT(state);
 
-  auto payouts = self->ref->getPopPayout(
-      std::vector<uint8_t>(hash.data, hash.data + hash.size));
+  PopPayouts payouts = {};
+  bool ret = self->ref->getPopPayout(
+      std::vector<uint8_t>(hash.data, hash.data + hash.size),
+      payouts,
+      state->ref);
 
   POP_ARRAY_NAME(pop_payout) res;
+
+  if (!state->IsValid()) {
+    return res; 
+  }
+
   res.size = payouts.size();
   res.data = new POP_ENTITY_NAME(pop_payout)*[payouts.size()];
   size_t i = 0;
