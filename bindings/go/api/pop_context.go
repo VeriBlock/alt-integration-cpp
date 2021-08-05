@@ -76,7 +76,9 @@ func (v *PopContext) ComparePopScore(A_hash []byte, B_hash []byte) int {
 
 func (v *PopContext) GetPopPayouts(hash []byte) []*PopPayout {
 	v.validate()
-	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash))
+	state := NewValidationState()
+	defer state.Free()
+	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash), state.ref)
 	defer freeArrayPopPayout(&array)
 	return createArrayPopPayout(&array)
 }
