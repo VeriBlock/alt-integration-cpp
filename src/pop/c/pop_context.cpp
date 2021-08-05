@@ -117,16 +117,17 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(hash.data);
   VBK_ASSERT(state);
 
-  PopPayouts payouts = {};
+  altintegration::PopPayouts payouts{};
   bool ret = self->ref->getPopPayout(
       std::vector<uint8_t>(hash.data, hash.data + hash.size),
       payouts,
       state->ref);
 
   POP_ARRAY_NAME(pop_payout) res;
+  res.size = 0;
 
-  if (!state->IsValid()) {
-    return res; 
+  if (!ret) {
+    return res;
   }
 
   res.size = payouts.size();
