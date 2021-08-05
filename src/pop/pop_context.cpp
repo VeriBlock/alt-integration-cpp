@@ -154,11 +154,11 @@ const AltBlockTree& PopContext::getAltBlockTree() const {
   return *altTree_;
 }
 
-bool PopContext::getPopPayout(const AltBlockTree::hash_t& tip,
+bool PopContext::getPopPayout(const AltBlockTree::hash_t& prev,
                                     PopPayouts& rewards,
                                     ValidationState& state) {
   VBK_ASSERT(popRewardsCalculator_);
-  return popRewardsCalculator_->getPopPayout(tip, rewards, state);
+  return popRewardsCalculator_->getPopPayout(prev, rewards, state);
 }
 
 PopData PopContext::generatePopData() { return getMemPool().generatePopData(); }
