@@ -74,11 +74,16 @@ func (v *PopContext) ComparePopScore(A_hash []byte, B_hash []byte) int {
 	return int(C.pop_pop_context_function_compare_pop_score(v.ref, createCBytes(A_hash), createCBytes(B_hash)))
 }
 
-func (v *PopContext) GetPopPayouts(hash []byte) []*PopPayout {
+func (v *PopContext) GetPopPayouts(hash []byte) ([]*PopPayout, error) {
 	v.validate()
-	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash))
+
+	state := NewValidationState()
+	defer state.Free()
+
+	array := C.pop_pop_context_function_get_pop_payouts(v.ref, createCBytes(hash), state.ref)
 	defer freeArrayPopPayout(&array)
-	return createArrayPopPayout(&array)
+
+	return createArrayPopPayout(&array), state.Error()
 }
 
 func (v *PopContext) RemoveSubtree(hash []byte) {

@@ -6,7 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_POPREWARDS_CALCULATOR_HPP_
 
-#include <veriblock/pop/entities/pop_payouts.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/rewards/poprewards_bigdecimal.hpp>
 
@@ -23,10 +22,14 @@ struct PopRewardsCalculator {
    * the endorsed block which is PopPayoutDelay blocks behind the tip.
    * @param tip last block of the active chain. Next block should contain
    * POP payout calculated with this getPopPayout() call.
-   * @return PopPayouts map with miner address as a key and reward
-   * amount as a value
+   * @param[out] rewards PopPayouts map with miner address as a key and reward
+   * amount as a value.
+   * @param[out] state validation state.
+   * @return true if rewards are calculated properly; false otherwise.
    */
-  virtual PopPayouts getPopPayout(const AltBlockTree::hash_t& tip) = 0;
+  virtual bool getPopPayout(const AltBlockTree::hash_t& tip,
+                            PopPayouts& rewards,
+                            ValidationState& state) = 0;
 };
 
 }  // namespace altintegration

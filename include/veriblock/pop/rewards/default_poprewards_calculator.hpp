@@ -7,10 +7,10 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_DEFAULT_POPREWARDS_CALCULATOR_HPP_
 
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
+#include <veriblock/pop/entities/pop_payouts.hpp>
 
 #include "poprewards_bigdecimal.hpp"
 #include "poprewards_calculator.hpp"
-#include "ring_buffer.hpp"
 
 namespace altintegration {
 
@@ -21,32 +21,26 @@ struct DefaultPopRewardsCalculator : public PopRewardsCalculator {
   using index_t = AltBlockTree::index_t;
 
   DefaultPopRewardsCalculator(AltBlockTree& tree)
-      : tree_(tree),
-        history_(
-            tree.getParams().getPayoutParams().difficultyAveragingInterval() *
-            2) {
-    tree.onBeforeOverrideTip.connect(
-        [&](const index_t& i) -> void { this->onOverrideTip(i); });
-  }
+      : tree_(tree) {}
   ~DefaultPopRewardsCalculator() override = default;
 
-  PopPayouts getPopPayout(const AltBlockTree::hash_t& tip) override;
+  bool getPopPayout(const AltBlockTree::hash_t& tip,
+                    PopPayouts& rewards,
+                    ValidationState& state) override;
 
   /**
    * Calculate POP rewards for miners. Rewards are calculated for
    * the endorsed block. Score is calculated from the endorsements (slow).
    * @param endorsedBlock endorsed altchain block which we are paying reward
    * for.
-   * @return PopPayouts map with miner address as a
-   * key and reward amount as a value
+   * @param[out] rewards PopPayouts map with miner address as a key and reward
+   * amount as a value.
+   * @param[out] state validation state.
+   * @return true if rewards are calculated properly; false otherwise.
    */
-  PopPayouts calculatePayouts(const BlockIndex<AltBlock>& endorsedBlock);
-
-  /**
-   * Erase N blocks from the cache history.
-   * @param blocks amount of blocks to erase
-   */
-  void eraseCacheHistory(uint32_t blocks);
+  bool calculatePayouts(const BlockIndex<AltBlock>& endorsedBlock,
+                        PopPayouts& rewards,
+                        ValidationState& state);
 
   /**
    * Collect all endorsements for the endorsed block and calculate
@@ -93,20 +87,6 @@ struct DefaultPopRewardsCalculator : public PopRewardsCalculator {
  protected:
   AltBlockTree& tree_;
 
-  // implement cache
-  ring_buffer<const index_t*> history_;
-  std::unordered_map<const index_t*, PopRewardsBigDecimal> cache_;
-
-  /**
-   * Will process chain reorg. Invalidates cache if necessary.
-   */
-  void onOverrideTip(const index_t& index);
-
-  /**
-   * Erase cache completely.
-   */
-  void invalidateCache();
-
   /**
    * Applies penalty for distant endorsements in VBK chain.
    * @param relativeBlock height of the VBK block with endorsement
@@ -135,20 +115,16 @@ struct DefaultPopRewardsCalculator : public PopRewardsCalculator {
    * scoreFromEndorsements() for reference.
    * @param popDifficulty endorsed altchain block difficulty - see
    * calculateDifficulty() for reference.
-   * @return PopPayouts map with miner address as a key and reward
-   * amount as a value
+   * @param[out] rewards PopPayouts map with miner address as a key and reward
+   * amount as a value.
+   * @param[out] state validation state.
+   * @return true if rewards are calculated properly; false otherwise.
    */
-  PopPayouts calculatePayoutsInner(
-      const BlockIndex<AltBlock>& endorsedBlock,
-      const PopRewardsBigDecimal& endorsedBlockScore,
-      const PopRewardsBigDecimal& popDifficulty);
-
-  /**
-   * Calculate PoP score for the block and append to the cache.
-   * @param block calculate score for this block.
-   * @return PopRewardsBigDecimal score of the block
-   */
-  PopRewardsBigDecimal appendToCache(const index_t& block);
+  bool calculatePayoutsInner(const BlockIndex<AltBlock>& endorsedBlock,
+                             const PopRewardsBigDecimal& endorsedBlockScore,
+                             const PopRewardsBigDecimal& popDifficulty,
+                             PopPayouts& rewards,
+                             ValidationState& state);
 };
 
 }  // namespace altintegration
