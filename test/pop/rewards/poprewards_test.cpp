@@ -220,7 +220,8 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   AltBlock endorsedBlock = altchain[10];
   endorseForRewardLastBlock(1);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(altchain.back().getHash(), payouts, state));
   ASSERT_TRUE(payouts.size());
 
   auto payoutBlockRound =
@@ -240,7 +241,8 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   AltBlock endorsedBlock = altchain[10];
   endorseForRewardLastBlock(30);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -257,7 +259,9 @@ TEST_F(RewardsTestFixture, hugeKeystoneReward_test) {
   AltBlock endorsedBlock = altchain[10];
   endorseForRewardLastBlock(100);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -279,7 +283,9 @@ TEST_F(RewardsTestFixture, largeFlatReward_test) {
   AltBlock endorsedBlock = altchain[12];
   endorseForRewardLastBlock(30);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -301,7 +307,9 @@ TEST_F(RewardsTestFixture, hugeFlatReward_test) {
   AltBlock endorsedBlock = altchain[12];
   endorseForRewardLastBlock(100);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the flat score round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -327,10 +335,14 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
                 altchain,
                 true);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
 
-  auto payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
+  PopPayouts payoutsUncached = {};
+  ASSERT_TRUE(sampleCalculator->calculatePayouts(
+      *endorsedIndex, payoutsUncached, state));
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.payouts.begin()->second,
             payouts.payouts.begin()->second);
@@ -344,9 +356,10 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
   EXPECT_FALSE(sampleCalculator->scoreFromEndorsements(*endorsedIndex) == 1.0);
 
   mineAltBlocks(4, altchain, true);
-  payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
-  payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
+  ASSERT_TRUE(sampleCalculator->calculatePayouts(*endorsedIndex, payoutsUncached, state));
 
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.payouts.begin()->second,
@@ -381,10 +394,14 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
                 altchain,
                 true);
 
-  auto payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  PopPayouts payouts = {};
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
 
-  auto payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
+  PopPayouts payoutsUncached = {};
+  ASSERT_TRUE(sampleCalculator->calculatePayouts(
+      *endorsedIndex, payoutsUncached, state));
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.payouts.begin()->second,
             payouts.payouts.begin()->second);
@@ -428,9 +445,11 @@ TEST_P(RewardsTestFixture, continuousReorgsCacheReward_test) {
     ASSERT_EQ(endorsedPrevIndex->getEndorsedBy().size(), 100);
   }
 
-  payouts = sampleCalculator->getPopPayout(altchain.back().getHash());
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
-  payoutsUncached = sampleCalculator->calculatePayouts(*endorsedIndex);
+  ASSERT_TRUE(sampleCalculator->calculatePayouts(
+      *endorsedIndex, payoutsUncached, state));
 
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.payouts.begin()->second,

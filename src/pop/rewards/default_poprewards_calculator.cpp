@@ -6,7 +6,6 @@
 #include <cassert>
 #include <vector>
 #include <veriblock/pop/entities/atv.hpp>
-#include <veriblock/pop/exceptions/state_corrupted.hpp>
 #include <veriblock/pop/rewards/default_poprewards_calculator.hpp>
 
 namespace altintegration {
@@ -76,23 +75,6 @@ static PopRewardsBigDecimal calculateSlopeRatio(
     scoreDecrease = maxScoreDecrease;
   }
   return (maxScoreDecrease - scoreDecrease);
-}
-
-static std::vector<const DefaultPopRewardsCalculator::index_t*>
-fetchBlocksUntil(const DefaultPopRewardsCalculator::index_t* from,
-                 const DefaultPopRewardsCalculator::index_t* check,
-                 size_t count) {
-  std::vector<const DefaultPopRewardsCalculator::index_t*> blocks;
-  blocks.reserve(count);
-  const DefaultPopRewardsCalculator::index_t* curBlock = from;
-
-  for (size_t i = 0; i < count; i++) {
-    if (curBlock == nullptr) break;
-    if (curBlock == check) break;
-    blocks.push_back(curBlock);
-    curBlock = curBlock->pprev;
-  }
-  return blocks;
 }
 
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
@@ -182,11 +164,6 @@ PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateMinerReward(
 
 PopRewardsBigDecimal DefaultPopRewardsCalculator::scoreFromEndorsements(
     const BlockIndex<AltBlock>& endorsedBlock) {
-  const auto it = cache_.find(&endorsedBlock);
-  if (it != cache_.end()) {
-    return it->second;
-  }
-
   PopRewardsBigDecimal totalScore = 0.0;
   // we simply find the lowest VBK height in the endorsements
   int bestPublication = getBestPublicationHeight(endorsedBlock, tree_.vbk());
@@ -223,14 +200,16 @@ PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateDifficulty(
   return difficulty;
 }
 
-PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
+bool DefaultPopRewardsCalculator::calculatePayoutsInner(
     const BlockIndex<AltBlock>& endorsedBlock,
     const PopRewardsBigDecimal& endorsedBlockScore,
-    const PopRewardsBigDecimal& popDifficulty) {
-  PopPayouts rewards{};
+    const PopRewardsBigDecimal& popDifficulty,
+    PopPayouts& rewards,
+    ValidationState& state) {
   int bestPublication = getBestPublicationHeight(endorsedBlock, tree_.vbk());
   if (bestPublication < 0) {
-    return rewards;
+    rewards = {};
+    return true;
   }
 
   // precalculate block reward - it helps calculating each miner's reward
@@ -246,10 +225,8 @@ PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
     }
 
     ATV atv;
-    ValidationState state;
     if (!tree_.getPayloadsProvider().getATV(e->getId(), atv, state)) {
-      state.Invalid(fmt::format("cant-load-atv-{}", HexStr(e->getId())));
-      throw StateCorruptedException(endorsedBlock, state);
+      return state.Invalid(fmt::format("cant-load-atv-{}", HexStr(e->getId())));
     }
 
     int veriBlockHeight = b->getHeight();
@@ -260,130 +237,22 @@ PopPayouts DefaultPopRewardsCalculator::calculatePayoutsInner(
     auto payoutInfo = atv.transaction.publicationData.payoutInfo;
     rewards.payouts[payoutInfo] += minerReward.value.getLow64();
   }
-  return rewards;
+  return true;
 }
 
-PopRewardsBigDecimal DefaultPopRewardsCalculator::appendToCache(
-    const index_t& block) {
-  const index_t* frontBlock = nullptr;
-  const index_t* backBlock = nullptr;
-  if (!history_.empty()) {
-    frontBlock = history_.front();
-    backBlock = history_.back();
-    VBK_ASSERT((backBlock->getHeight() + 1) == block.getHeight() &&
-               "cache corruption: appended block should have height equal to "
-               "previous block height + 1");
-  }
-
-  const auto existing = cache_.find(&block);
-  if (existing != cache_.end()) {
-    return existing->second;
-  }
-
-  auto score = scoreFromEndorsements(block);
-
-  history_.push_back(&block);
-  cache_.insert({&block, score});
-
-  const index_t* newFrontBlock = history_.front();
-
-  // erase from the map if the ring buffer is full
-  if (frontBlock != nullptr && newFrontBlock != frontBlock) {
-    auto it = cache_.find(frontBlock);
-    VBK_ASSERT(it != cache_.end() &&
-               "cache corruption: expected to find block in cache");
-    cache_.erase(it);
-  }
-
-  return score;
-}
-
-PopPayouts DefaultPopRewardsCalculator::calculatePayouts(
-    const BlockIndex<AltBlock>& endorsedBlock) {
-  // make sure cache is in valid state, eg contains all necessary
-  // blocks to calculate POP difficulty for the endorsed block
-
-  size_t toFetch =
-      tree_.getParams().getPayoutParams().difficultyAveragingInterval();
-  if ((int)toFetch > endorsedBlock.getHeight()) {
-    toFetch = endorsedBlock.getHeight();
-  }
-  auto* historyLast = history_.empty() ? nullptr : history_.back();
-  size_t historySize = history_.size();
-  auto missingBlocks =
-      fetchBlocksUntil(endorsedBlock.pprev, historyLast, toFetch);
-
-  bool beginOk = true;
-  bool endOk = true;
-
-  if (history_.empty()) {
-    beginOk = false;
-  }
-
-  if (beginOk && endOk &&
-      (missingBlocks.size() > 0 &&
-       missingBlocks.back()->pprev != history_.back())) {
-    endOk = false;
-  }
-
-  if (beginOk && endOk) {
-    // now make a check that first difficulty block exists in the cache
-    const auto* beginBlock =
-        endorsedBlock.getAncestorBlocksBehind((int)toFetch);
-    size_t historyBeginOffset = toFetch - missingBlocks.size();
-    if (historySize < historyBeginOffset ||
-        history_[historySize - historyBeginOffset] != beginBlock) {
-      beginOk = false;
-    }
-  }
-
-  if (!beginOk || !endOk) {
-    invalidateCache();
-  }
-  historyLast = history_.empty() ? nullptr : history_.back();
-
-  auto difficultyBlocks =
-      fetchBlocksUntil(endorsedBlock.pprev, historyLast, toFetch);
-
-  for (const auto& b : reverse_iterate(difficultyBlocks)) {
-    appendToCache(*b);
-  }
-
-  auto blockScore = appendToCache(endorsedBlock);
+bool DefaultPopRewardsCalculator::calculatePayouts(
+    const BlockIndex<AltBlock>& endorsedBlock,
+    PopPayouts& rewards,
+    ValidationState& state) {
+  auto blockScore = scoreFromEndorsements(endorsedBlock);
   auto popDifficulty = calculateDifficulty(endorsedBlock);
-  return calculatePayoutsInner(endorsedBlock, blockScore, popDifficulty);
+  return calculatePayoutsInner(
+      endorsedBlock, blockScore, popDifficulty, rewards, state);
 }
 
-void DefaultPopRewardsCalculator::invalidateCache() {
-  cache_.clear();
-  history_.clear();
-}
-
-void DefaultPopRewardsCalculator::eraseCacheHistory(uint32_t blocks) {
-  for (uint32_t i = 0; i < blocks; i++) {
-    if (history_.empty()) break;
-    const auto* block = history_.pop_back();
-    auto it = cache_.find(block);
-    if (it == cache_.end()) continue;
-    cache_.erase(it);
-  }
-}
-
-void DefaultPopRewardsCalculator::onOverrideTip(const index_t& index) {
-  // invalidate rewards cache if necessary
-  uint32_t invalidBlocks = std::numeric_limits<uint32_t>::max();
-
-  const auto* fork = findFork(tree_.getBestChain(), &index);
-  if (fork != nullptr) {
-    auto* tip = tree_.getBestChain().tip();
-    VBK_ASSERT(tip);
-    invalidBlocks = tip->getHeight() - fork->getHeight();
-  }
-  eraseCacheHistory(invalidBlocks);
-}
-
-PopPayouts DefaultPopRewardsCalculator::getPopPayout(
-    const AltBlockTree::hash_t& tip) {
+bool DefaultPopRewardsCalculator::getPopPayout(const AltBlockTree::hash_t& tip,
+                                               PopPayouts& rewards,
+                                               ValidationState& state) {
   VBK_ASSERT(tree_.isBootstrapped() && "not bootstrapped");
 
   auto* index = tree_.getBlockIndex(tip);
@@ -403,7 +272,8 @@ PopPayouts DefaultPopRewardsCalculator::getPopPayout(
       tree_.getParams().getPayoutParams().getPopPayoutDelay() - 1);
   if (endorsedBlock == nullptr) {
     // not enough blocks for payout
-    return {};
+    rewards = {};
+    return true;
   }
 
   VBK_ASSERT_MSG((uint32_t)index->getHeight() >=
@@ -412,11 +282,12 @@ PopPayouts DefaultPopRewardsCalculator::getPopPayout(
                  "Block %s is not finalized for PoP payouts",
                  endorsedBlock->toPrettyString());
 
-  auto ret = calculatePayouts(*endorsedBlock);
+  if (!calculatePayouts(*endorsedBlock, rewards, state)) return false;
+
   VBK_LOG_DEBUG("Block %s, paying to %d addresses",
                 index->toShortPrettyString(),
-                ret.size());
-  return ret;
+                rewards.size());
+  return true;
 }
 
 }  // namespace altintegration
