@@ -301,10 +301,10 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
-    VBK_LOG_INFO("Invalidating %s subtree: reason=%d block=%s",
-                 block_t::name(),
-                 (int)reason,
-                 toBeInvalidated.toShortPrettyString());
+    VBK_LOG_DEBUG("Invalidating %s subtree: reason=%d block=%s",
+                  block_t::name(),
+                  (int)reason,
+                  toBeInvalidated.toShortPrettyString());
 
     VBK_ASSERT(toBeInvalidated.pprev && "cannot invalidate the genesis block");
 

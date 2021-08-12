@@ -110,11 +110,15 @@ struct PopContext {
    *
    * @param[in] prev Altchain has to supply prev block of a block that will
    * contain POP reward.
-   *
-   * @return a map where key=payoutInfo from PublicationData, value=amount to be
+   * @param[out] rewards a map where key=payoutInfo from PublicationData, value=amount to be
    * paid.
+   * @param[out] state validation state.
+   *
+   * @return true if rewards are obtained; false otherwise.
    */
-  VBK_CHECK_RETURN PopPayouts getPopPayout(const AltBlockTree::hash_t& prev);
+  VBK_CHECK_RETURN bool getPopPayout(const AltBlockTree::hash_t& prev,
+                    PopPayouts& rewards,
+                    ValidationState& state);
 
   /**
    * Generate PopData for the block next to the current tip.

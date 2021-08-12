@@ -243,6 +243,11 @@ POP_ENTITY_SETTER_FUNCTION(config, uint32_t, pop_payout_delay) {
   self->ref->alt->mPopPayoutsParams->mPopPayoutDelay = val;
 }
 
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, max_reorg_distance) {
+  VBK_ASSERT(self);
+  self->ref->alt->mMaxReorgDistance = val;
+}
+
 POP_ENTITY_GETTER_FUNCTION(config, double, start_of_slope) {
   VBK_ASSERT(self);
   return self->ref->alt->mPopPayoutsParams->mStartOfSlope;
@@ -392,6 +397,11 @@ POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_altchain_future_block_time) {
   return self->ref->alt->mMaxAltchainFutureBlockTime;
 }
 
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_reorg_distance) {
+  VBK_ASSERT(self);
+  return self->ref->alt->mMaxReorgDistance;
+}
+
 POP_ENTITY_GETTER_FUNCTION(config,
                            POP_ENTITY_NAME(alt_block) *,
                            alt_bootstrap_block) {
@@ -410,7 +420,8 @@ POP_ENTITY_GETTER_FUNCTION(config, POP_ARRAY_NAME(string), vbk_network_name) {
 
   POP_ARRAY_NAME(string) res;
   res.size = strlen(name);
-  // add some space for string null terminator. It is unused but keeps compiler happy.
+  // add some space for string null terminator. It is unused but keeps compiler
+  // happy.
   res.data = new char[res.size + 1];
   strncpy(res.data, name, res.size + 1);
 

@@ -28,7 +28,7 @@ def connect_all(nodes: List[Node]):
 
 def disconnect_all(nodes: List[Node]):
     for i in range(len(nodes)):
-        for j in range(i, len(nodes)):
+        for j in range(len(nodes)):
             if i == j:
                 continue
             nodes[i].disconnect(nodes[j])

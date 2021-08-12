@@ -62,6 +62,7 @@ POP_ENTITY_SETTER_FUNCTION(config,
                            POP_ARRAY_NAME(u32),
                            fork_resolution_lookup_table);
 POP_ENTITY_SETTER_FUNCTION(config, uint32_t, pop_payout_delay);
+POP_ENTITY_SETTER_FUNCTION(config, uint32_t, max_reorg_distance);
 
 POP_ENTITY_GETTER_FUNCTION(config, double, start_of_slope);
 POP_ENTITY_GETTER_FUNCTION(config, double, slope_normal);
@@ -85,7 +86,7 @@ POP_ENTITY_GETTER_FUNCTION(config,
                            POP_ARRAY_NAME(u32),
                            fork_resolution_lookup_table);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, pop_payout_delay);
-
+POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_reorg_distance);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_vbk_blocks_in_alt_block);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_vtbs_in_alt_block);
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_atvs_in_alt_block);
