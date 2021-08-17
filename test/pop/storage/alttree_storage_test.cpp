@@ -265,5 +265,5 @@ TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
 
   // does not allow us to load state when reorganised chain was saved
   //TODO: fix reorg save and load and change to ASSERT_TRUE
-  ASSERT_DEATH(loadTrees(reloadedAltTree, state), "");
+  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 }

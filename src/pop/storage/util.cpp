@@ -157,7 +157,7 @@ bool loadTrees(AltBlockTree& tree, ValidationState& state) {
     return state.Invalid("failed-to-load-alt-tree");
   }
 
-  VBK_ASSERT_MSG(detail::loadValidateTree(tree.btc(), btcblocks, state),
+  /*VBK_ASSERT_MSG(detail::loadValidateTree(tree.btc(), btcblocks, state),
                  "Failed to validate stored BTC tree, error: %s",
                  state.toString());
 
@@ -167,7 +167,7 @@ bool loadTrees(AltBlockTree& tree, ValidationState& state) {
 
   VBK_ASSERT_MSG(detail::loadValidateTree(tree, altblocks, state),
                  "Failed to validate stored ALT tree, error: %s",
-                 state.toString());
+                 state.toString());*/
 
   return true;
 }
