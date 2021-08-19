@@ -21,7 +21,6 @@ BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
   return tip->getHash();
 }
 
-#if 0
 TEST_F(AltTreeRepositoryTest, Altchain) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
 
@@ -220,7 +219,6 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   // payload validity is not persisted, this comparison fails
   // ASSERT_TRUE(this->cmp(reloadedAltTree, this->alttree));
 }
-#endif //0
 
 TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
   std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
@@ -266,74 +264,5 @@ TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
   bool bootstrapped = reloadedAltTree.bootstrap(this->state);
   ASSERT_TRUE(bootstrapped);
 
-  // does not allow us to load state when reorganised chain was saved
-  // TODO: fix reorg save and load and change to ASSERT_TRUE
   ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 }
-
-/*TEST_F(AltTreeRepositoryTest, SaveAfterSaveAndUnapply) {
-  std::vector<AltBlock> chain = {this->altparam.getBootstrapBlock()};
-
-  // mine 2 blocks
-  this->mineAltBlocks(2, chain);
-
-  AltBlock endorsedBlock = chain[2];
-
-  VbkTx tx = this->popminer->createVbkTxEndorsingAltBlock(
-      this->generatePublicationData(endorsedBlock));
-  AltBlock containingBlock = this->generateNextBlock(chain.back());
-  chain.push_back(containingBlock);
-
-  PopData altPayloads1 =
-      this->generateAltPayloads({tx}, GetRegTestVbkBlock().getHash(), 1);
-
-  // mine 1 VBK blocks
-  this->popminer->mineVbkBlocks(1);
-  this->popminer->mineBtcBlocks(1);
-
-  EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
-  EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), altPayloads1));
-
-  EXPECT_TRUE(this->alttree.setState(containingBlock.getHash(), this->state));
-  EXPECT_TRUE(this->state.IsValid());
-  save(alttree);
-
-  AltBlock containingBlock2 = this->generateNextBlock(chain.back());
-  chain.push_back(containingBlock2);
-
-  PopData altPayloads2 = this->generateAltPayloads({}, alttree.vbk().getBestChain().tip()->getHash(), 1);
-
-  // mine 1 VBK blocks
-  this->popminer->mineVbkBlocks(1);
-  this->popminer->mineBtcBlocks(1);
-
-  EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock2, this->state));
-  EXPECT_TRUE(this->AddPayloads(containingBlock2.getHash(), altPayloads2));
-
-  EXPECT_TRUE(this->alttree.setState(containingBlock2.getHash(), this->state));
-  EXPECT_TRUE(this->state.IsValid());
-  save(alttree);
-
-  // rollback 1 block and save again
-  EXPECT_TRUE(
-      this->alttree.setState(containingBlock2.getPreviousBlock(), this->state));
-  EXPECT_TRUE(this->state.IsValid());
-  save(alttree);
-
-  AltBlockTree reloadedAltTree{this->altparam,
-                               this->vbkparam,
-                               this->btcparam,
-                               this->payloadsProvider,
-                               this->blockProvider};
-
-  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  bool bootstrapped = reloadedAltTree.bootstrap(this->state);
-  ASSERT_TRUE(bootstrapped);
-
-  // does not allow us to load state when reorganised chain was saved
-  // TODO: fix reorg save and load and change to ASSERT_TRUE
-  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
-  ASSERT_TRUE(reloadedAltTree.setState(containingBlock.getHash(),
-                                      state));
-}*/
