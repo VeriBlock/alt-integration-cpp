@@ -113,7 +113,7 @@ void saveTree(
   std::vector<const index_t*> dirty_indices;
 
   // map pair<hash, shared_ptr<index_t>> to vector<index_t*>
-  for (auto& index : tree.getBlocks()) {
+  for (auto& index : tree.getAllBlocks()) {
     if (index->isDirty()) {
       index->unsetDirty();
       dirty_indices.push_back(index);

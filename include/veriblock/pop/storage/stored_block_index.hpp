@@ -16,6 +16,8 @@ struct StoredBlockIndex {
 
   ~StoredBlockIndex() = default;
 
+  bool isDeleted() const { return status & BLOCK_DELETED; };
+
   void toVbkEncoding(WriteStream& stream) const {
     using height_t = typename Block::height_t;
     stream.writeBE<height_t>(height);
