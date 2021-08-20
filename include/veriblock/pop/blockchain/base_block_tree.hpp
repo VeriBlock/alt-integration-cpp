@@ -52,6 +52,15 @@ struct BaseBlockTree {
     return blocks;
   }
 
+  std::vector<index_t*> getAllBlocks() const {
+    std::vector<index_t*> blocks;
+    blocks.reserve(blocks_.size());
+    for (const auto& el : blocks_) {
+      blocks.push_back(el.second.get());
+    }
+    return blocks;
+  }
+
   const BlockReader& getBlockProvider() const { return blockProvider_; }
 
   virtual ~BaseBlockTree() {

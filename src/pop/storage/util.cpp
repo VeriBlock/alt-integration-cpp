@@ -33,6 +33,7 @@ bool loadBlocksAndTip(
     if (!it->value(val)) {
       return state.Invalid("bad-value", "Can not read block data");
     }
+    if (val.isDeleted()) continue;
     // if callback is supplied, execute it
     if (onBlock) {
       hash_t hash;
