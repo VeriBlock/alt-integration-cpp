@@ -145,7 +145,6 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
 
         self.log.info("all nodes disconnected")
         last_block = self.nodes[3].getblockcount()
-        print("last_block: ", last_block)
 
         # node[i] creates endorsed chain
         to_mine = 15
