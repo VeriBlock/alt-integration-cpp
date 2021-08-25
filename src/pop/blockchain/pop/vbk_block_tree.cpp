@@ -42,11 +42,15 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
     // the other chain won!
-    VBK_ASSERT_MSG(setState(candidate, state), "setState failed with error %s", state.toString());
+    VBK_ASSERT_MSG(base::setState(candidate, state), "setState failed with error %s", state.toString());
   } else {
     // the current chain is better
     VBK_LOG_DEBUG("Active chain won");
   }
+}
+
+bool VbkBlockTree::setState(const hash_t& block, ValidationState& state) {
+  return base::setState(block, state);
 }
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {

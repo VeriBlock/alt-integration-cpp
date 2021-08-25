@@ -396,8 +396,9 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * not recover.
    */
   VBK_CHECK_RETURN bool setState(index_t& to, ValidationState& state) override;
-  //! @overload
-  using base::setState;
+
+  VBK_CHECK_RETURN bool setState(const hash_t& block,
+                                 ValidationState& state) override;
 
   //! @private
   bool finalizeBlock(index_t& index, ValidationState& state);

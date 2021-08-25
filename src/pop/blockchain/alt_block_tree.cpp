@@ -493,6 +493,10 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
   return {*this, block};
 }
 
+bool AltBlockTree::setState(const hash_t& block, ValidationState& state) {
+  return base::setState(block, state);
+}
+
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
