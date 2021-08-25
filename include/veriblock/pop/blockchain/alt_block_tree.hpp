@@ -20,6 +20,7 @@
 #include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
+#include <veriblock/pop/trace.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 #include "alt_chain_params.hpp"

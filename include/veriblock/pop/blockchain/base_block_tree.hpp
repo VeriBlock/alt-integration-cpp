@@ -15,6 +15,7 @@
 #include <veriblock/pop/signals.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/stored_block_index.hpp>
+#include <veriblock/pop/trace.hpp>
 
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
@@ -252,6 +253,7 @@ struct BaseBlockTree {
    * @warning fails on assert if unknown hash is provided
    */
   virtual void removeSubtree(index_t& toRemove) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
@@ -310,6 +312,7 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Invalidating %s subtree: reason=%d block=%s",
                   block_t::name(),
                   (int)reason,
@@ -383,6 +386,7 @@ struct BaseBlockTree {
   void revalidateSubtree(index_t& toBeValidated,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Revalidating %s subtree: reason=%d block=%s",
                   block_t::name(),
                   (int)reason,
