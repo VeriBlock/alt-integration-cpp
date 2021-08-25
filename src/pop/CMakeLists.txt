@@ -92,6 +92,10 @@ message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
 
+if(WITH_TRACER)
+    target_link_libraries(${LIB_NAME} tracy)
+endif()
+
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${MAJOR_VERSION}
@@ -104,7 +108,7 @@ set_property(
 )
 
 # make install is not defined with FUZZING=ON
-if(NOT FUZZING)
+if(NOT FUZZING AND NOT WITH_TRACER)
     install(TARGETS ${LIB_NAME}
             EXPORT ${LIB_NAME}Config
             COMPONENT devel
