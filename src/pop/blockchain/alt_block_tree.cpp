@@ -499,7 +499,21 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 
   bool success = cmp_.setState(to, state);
   if (success) {
-    overrideTip(to);
+    VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
+                  to.toShortPrettyString(),
+                  (vbk().getBestChain().tip()
+                       ? vbk().getBestChain().tip()->toShortPrettyString()
+                       : "<empty>"),
+                  (btc().getBestChain().tip()
+                       ? btc().getBestChain().tip()->toShortPrettyString()
+                       : "<empty>"));
+
+    VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
+                   "the active chain tip(%s) must be fully valid",
+                   to.toPrettyString());
+
+    activeChain_.setTip(&to);
+
     // finalize blocks
     {
       auto* bestTip = getBestChain().tip();
@@ -524,36 +538,10 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   return success;
 }
 
-void AltBlockTree::overrideTip(index_t& to) {
-  VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
-                to.toShortPrettyString(),
-                (vbk().getBestChain().tip()
-                     ? vbk().getBestChain().tip()->toShortPrettyString()
-                     : "<empty>"),
-                (btc().getBestChain().tip()
-                     ? btc().getBestChain().tip()->toShortPrettyString()
-                     : "<empty>"));
-
-  VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
-                 "the active chain tip(%s) must be fully valid",
-                 to.toPrettyString());
-
-  onBeforeOverrideTip.emit(to);
-  activeChain_.setTip(&to);
-}
-
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,
                                     ValidationState& state) {
   if (!base::loadBlockForward(index, state)) {
     return false;  // already set
-  }
-  return loadBlockInner(index, state);
-}
-
-bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
-                                     ValidationState& state) {
-  if (!base::loadBlockBackward(index, state)) {
-    return false;
   }
   return loadBlockInner(index, state);
 }

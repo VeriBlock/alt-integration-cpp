@@ -307,9 +307,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! a block has been successfully handed over to the underlying tree
   signals::Signal<void(index_t& index)> onBlockConnected;
 
-  //! chain reorg signal - the tip is being changed
-  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
-
   /**
    * Efficiently connect block loaded from disk as a leaf.
    *
@@ -324,22 +321,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    */
   VBK_CHECK_RETURN bool loadBlockForward(const stored_index_t& index,
                                          ValidationState& state) override;
-
-  /**
-   * Efficiently connect block loaded from disk as a root.
-   *
-   * It recovers all pointers (pprev, pnext, endorsedBy,
-   * blockOfProofEndorsements), validates block and endorsements, recovers
-   * validity index.
-   * @param[in] index block
-   * @param[out] state validation state
-   * @return true if block is valid
-   * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is
-   undefined
-   * and can not be used. Tip: ask user to run with '-reindex'.
-   */
-  VBK_CHECK_RETURN bool loadBlockBackward(const stored_index_t& index,
-                                          ValidationState& state) override;
 
   /**
    * After all blocks loaded, efficiently set current tip.
@@ -467,10 +448,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   std::string toPrettyString(size_t level = 0) const;
-
-  //! @private
-  //! @invariant the tip must be fully validated
-  void overrideTip(index_t& to) override;
 
   friend struct MemPoolBlockTree;
 

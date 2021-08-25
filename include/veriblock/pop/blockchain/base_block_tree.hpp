@@ -41,22 +41,14 @@ struct BaseBlockTree {
       std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
 
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
-  std::vector<index_t*> getBlocks() const {
+  
+  std::vector<index_t*> getBlocks(bool skipDeleted = true) const {
     std::vector<index_t*> blocks;
     blocks.reserve(blocks_.size());
     for (const auto& el : blocks_) {
-      if (!el.second->isDeleted()) {
+      if (!skipDeleted || !el.second->isDeleted()) {
         blocks.push_back(el.second.get());
       }
-    }
-    return blocks;
-  }
-
-  std::vector<index_t*> getAllBlocks() const {
-    std::vector<index_t*> blocks;
-    blocks.reserve(blocks_.size());
-    for (const auto& el : blocks_) {
-      blocks.push_back(el.second.get());
     }
     return blocks;
   }
@@ -148,13 +140,7 @@ struct BaseBlockTree {
   }
 
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
-    auto* tip = getBlockIndex(hash);
-    if (!tip) {
-      return state.Invalid(block_t::name() + "-no-tip");
-    }
-
-    this->overrideTip(*tip);
-    return true;
+    return setState(hash, state);
   }
 
   /**
@@ -169,81 +155,6 @@ struct BaseBlockTree {
   virtual bool loadBlockForward(const stored_index_t& index,
                                 ValidationState& state) {
     return loadBlockInner(index, true, state);
-  }
-
-  /**
-   * Efficiently connects BlockIndex to this tree as a new root, when it is
-   * loaded from disk.
-   * @param[in] index block to be connected
-   * @param[out] state validation state
-   * @return true if block is valid and successfully loaded, false otherwise.
-   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
-   * state.
-   */
-  virtual bool loadBlockBackward(const stored_index_t& index,
-                                 ValidationState& state) {
-    return loadBlockInner(index, false, state);
-  }
-
-  bool restoreBlock(const typename block_t::hash_t& hash,
-                    ValidationState& state) {
-    index_t* root = &this->getRoot();
-    auto oldHeight = root->getHeight();
-    std::vector<stored_index_t> tempChain;
-    auto restoringHash = this->makePrevHash(hash);
-    index_t* restoringIndex = this->getBlockIndex(restoringHash);
-
-    while (restoringIndex == nullptr) {
-      // load current block from storage
-      stored_index_t restoringBlock;
-      if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
-        return state.Invalid("can-not-find-block-in-storage");
-      }
-
-      // restore previous root blocks
-      while ((restoringBlock.height < root->getHeight()) &&
-             (root->getHeight() > 0)) {
-        stored_index_t tmpRoot;
-        auto rootPrevHash = root->getHeader().getPreviousBlock();
-        if (!this->blockProvider_.getBlock(rootPrevHash, tmpRoot)) {
-          VBK_ASSERT_MSG(false,
-                         "can not restore prev block for the block: %s",
-                         root->toPrettyString());
-        }
-
-        if (!loadBlockBackward(tmpRoot, state)) {
-          VBK_ASSERT_MSG(
-              false, "can not load block, state: %s", state.toString());
-        }
-
-        root = this->getBlockIndex(rootPrevHash);
-        VBK_ASSERT(root);
-      }
-
-      restoringIndex = getBlockIndex(restoringHash);
-      // add unconnected blocks to the temporary chain
-      if (restoringIndex == nullptr) {
-        // could not find the common block
-        if (restoringBlock.height == 0) {
-          return state.Invalid("restored-block-does-not-connect");
-        }
-
-        tempChain.push_back(restoringBlock);
-      }
-
-      // get the previous block hash
-      restoringHash = restoringBlock.header->getPreviousBlock();
-    }
-
-    for (const auto& b : reverse_iterate(tempChain)) {
-      if (!loadBlockForward(b, state)) {
-        return state.Invalid("load-block-forward-failed");
-      }
-    }
-
-    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
-
-    return true;
   }
 
   /**
@@ -449,14 +360,10 @@ struct BaseBlockTree {
   }
 
   virtual bool setState(index_t& index, ValidationState&) {
-    overrideTip(index);
+    VBK_LOG_DEBUG("SetTip=%s", index.toPrettyString());
+
+    activeChain_.setTip(&index);
     return true;
-  }
-
-  virtual void overrideTip(index_t& to) {
-    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
-
-    activeChain_.setTip(&to);
   }
 
   //! connects a handler to a signal 'On Invalidate Block'

@@ -42,8 +42,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
     // the other chain won!
-    // setState(candidate) has been already done, so only update the tip
-    this->overrideTip(candidate);
+    VBK_ASSERT_MSG(setState(candidate, state), "setState failed with error %s", state.toString());
   } else {
     // the current chain is better
     VBK_LOG_DEBUG("Active chain won");
@@ -53,19 +52,15 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(to, state);
   if (success) {
-    overrideTip(to);
+    success = base::setState(to, state);
+    VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
+                   "the active chain tip(%s) must be fully valid",
+                   to.toPrettyString());
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
   }
   return success;
-}
-
-void VbkBlockTree::overrideTip(index_t& to) {
-  base::overrideTip(to);
-  VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
-                 "the active chain tip(%s) must be fully valid",
-                 to.toPrettyString());
 }
 
 void VbkBlockTree::removePayloads(const block_t& block,
@@ -367,14 +362,6 @@ bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
                                     ValidationState& state) {
   if (!VbkTree::loadBlockForward(index, state)) {
     return false;  // already set
-  }
-  return loadBlockInner(index, state);
-}
-
-bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
-                                     ValidationState& state) {
-  if (!VbkTree::loadBlockBackward(index, state)) {
-    return false;
   }
   return loadBlockInner(index, state);
 }
