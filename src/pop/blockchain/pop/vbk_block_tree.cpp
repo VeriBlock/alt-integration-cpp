@@ -62,7 +62,7 @@ bool VbkBlockTree::setState(const hash_t& block, ValidationState& state) {
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(to, state);
   if (success) {
-    overrideTip(to);
+    success = base::setState(to, state);
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
