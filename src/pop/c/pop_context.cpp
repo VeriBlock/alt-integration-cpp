@@ -101,7 +101,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(A_block_hash.data);
   VBK_ASSERT(B_block_hash.data);
 
-  return self->ref->getAltBlockTree().comparePopScore(
+  return self->ref->getAltBlockTree().activateBestChain(
       std::vector<uint8_t>(A_block_hash.data,
                            A_block_hash.data + A_block_hash.size),
       std::vector<uint8_t>(B_block_hash.data,

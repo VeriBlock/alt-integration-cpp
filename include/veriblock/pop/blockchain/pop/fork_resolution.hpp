@@ -492,12 +492,12 @@ struct PopAwareForkResolutionComparator {
   }
 
   /**
-   * Compare the currently applied(best) and candidate chains
+   * Compare the currently applied(best) and candidate chains, activate the best of both
    * @return 0 if the chains are equal,
    *         positive if the current chain is better
    *         negative if the candidate chain is better
    */
-  int comparePopScore(protected_index_t& candidate, ValidationState& state) {
+  int activateBestChain(protected_index_t& candidate, ValidationState& state) {
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
       VBK_LOG_DEBUG("Candidate %s is invalid, the current chain wins",
@@ -543,6 +543,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       VBK_LOG_DEBUG("Candidate contains VALID commands, chain B wins");
+      ed_.overrideTip(candidate);
       return -1;
     }
 
@@ -653,6 +654,7 @@ struct PopAwareForkResolutionComparator {
       }
 
       VBK_LOG_DEBUG("Chain B wins");
+      ed_.overrideTip(candidate);
     }
 
     return result;

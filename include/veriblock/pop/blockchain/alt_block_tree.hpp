@@ -114,19 +114,16 @@ extern template struct BaseBlockTree<AltBlock>;
 //!         // here, we assume that candidate has all txes downloaded and block is fully available
 //!
 //!         // compare current tip to a candidate
-//!         int result = tree.comparePopScore(tip->getHash(), candidate->getHash());
+//!         int result = tree.activateBestChain(tip->getHash(), candidate->getHash());
 //! ```
 //!
-//! @note after AltBlockTree::comparePopScore AltBlockTree always corresponds to a state, as if winner chain have been applied.
+//! @note after AltBlockTree::activateBestChain AltBlockTree always corresponds to a state, as if winner chain have been applied.
 //!
 //!```cpp
 //!         if(result < 0) {
 //!             // candidate has better POP score.
 //!             // tree already switched to candidate chain.
 //!
-//!             UpdateTip(candidate->getHash());
-//!             // NOTE: update `tip`, otherwise old tip will be passed to first arg,
-//!             // and comparePopScore will die on assert
 //!             tip = candidate;
 //!             return true;
 //!         } else if (result == 0) {
@@ -149,9 +146,9 @@ extern template struct BaseBlockTree<AltBlock>;
 //! } //! end of OnNewFullBlock
 //! ```
 //!
-//! @invariant AltBlockTree::comparePopScore always compares current AltBlockTree tip to other block. To avoid confusion, you must specify tip explicitly as first arg. If incorrect tip is passed, function dies on assert.
+//! @invariant AltBlockTree::activateBestChain always compares current AltBlockTree tip to other block. To avoid confusion, you must specify tip explicitly as first arg. If incorrect tip is passed, function dies on assert.
 //!
-//! @invariant AltBlockTree::comparePopScore always leaves AltBlockTree switched to winner (by POP Score) chain.
+//! @invariant AltBlockTree::activateBestChain always leaves AltBlockTree switched to winner (by POP Score) chain.
 //!
 //! @invariant Current active chain of AltBlockTree always corresponds to an empty tree with all applied blocks from first bootstrap block to current tip, i.e. currently applied active chain and this state MUST be always valid.
 //!
@@ -373,7 +370,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    *
    * @warning Operation can be expensive for long forks.
    */
-  VBK_CHECK_RETURN int comparePopScore(const AltBlock::hash_t& A,
+  VBK_CHECK_RETURN int activateBestChain(const AltBlock::hash_t& A,
                                        const AltBlock::hash_t& B);
 
   //! @private

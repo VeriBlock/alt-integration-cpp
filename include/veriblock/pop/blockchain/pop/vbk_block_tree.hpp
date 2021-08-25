@@ -73,7 +73,7 @@ using BtcBlockTree = BlockTree<BtcBlock, BtcChainParams>;
  * Notes regarding the validation hole:
  * At this moment, the validation hole can be considered plugged as long as the
  * user never modifies the VBK tree directly, never uses PopStateMachine and
- * only calls AltBlockTree::setState() and AltBlockTree::comparePopScore() as
+ * only calls AltBlockTree::setState() and AltBlockTree::activateBestChain() as
  * currently implemented. However, a trivial code modification can
  * unintentionally re-introduce the issue.
  *

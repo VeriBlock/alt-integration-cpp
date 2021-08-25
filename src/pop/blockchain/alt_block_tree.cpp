@@ -287,7 +287,7 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
   // else - do nothing. AltTree does not (yet) do fork resolution
 }
 
-int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
+int AltBlockTree::activateBestChain(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   VBK_LOG_INFO(
       "Compare two chains. chain A: %s, chain B: %s", HexStr(A), HexStr(B));
@@ -313,15 +313,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
 
   ValidationState state;
-  // compare current active chain to other chain
-  int result = cmp_.comparePopScore(*right, state);
-  if (result < 0) {
-    // other chain is better, and we already changed 'cmp' state to winner, so
-    // just update active chain tip
-    activeChain_.setTip(right);
-  }
-
-  return result;
+  // compare current active chain to other chain and activate the winning chain
+  return cmp_.activateBestChain(*right, state);
 }
 
 template <typename Pop, typename Index>
@@ -520,10 +513,10 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 
   bool success = cmp_.setState(to, state);
   if (success) {
-    success = base::setState(to, state);
+    overrideTip(to);
 
     // finalize blocks
-    if (success) {
+    {
       auto* bestTip = getBestChain().tip();
       VBK_ASSERT(bestTip && "must be bootstrapped");
 

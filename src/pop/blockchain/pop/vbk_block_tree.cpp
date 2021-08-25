@@ -33,16 +33,15 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
     return;
   }
 
-  int result = cmp_.comparePopScore(candidate, state);
+  int result = cmp_.activateBestChain(candidate, state);
   // the pop state is already set to the best of the two chains
   if (result == 0) {
     VBK_LOG_DEBUG("Pop scores are equal");
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(candidate, state);
   } else if (result < 0) {
-    VBK_LOG_DEBUG("Candidate chain won");
     // the other chain won!
-    VBK_ASSERT_MSG(setState(candidate, state), "setState failed with error %s", state.toString());
+    VBK_LOG_DEBUG("Candidate chain won");
   } else {
     // the current chain is better
     VBK_LOG_DEBUG("Active chain won");
@@ -63,10 +62,7 @@ bool VbkBlockTree::setState(const hash_t& block, ValidationState& state) {
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(to, state);
   if (success) {
-    success = base::setState(to, state);
-    /*VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
-                   "the active chain tip(%s) must be fully valid",
-                   to.toPrettyString());*/
+    overrideTip(to);
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
