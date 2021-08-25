@@ -82,28 +82,28 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[60].getHash());
   ASSERT_EQ(alttree.btc().getBestChain().tip()->getHeight(), 0);
   ASSERT_EQ(alttree.vbk().getBestChain().tip()->getHeight(), 0);
-  ASSERT_EQ(alttree.comparePopScore(chain[60].getHash(), chain[100].getHash()),
+  ASSERT_EQ(alttree.activateBestChain(chain[60].getHash(), chain[100].getHash()),
             -1);
   ASSERT_TRUE(SetState(alttree, chain[60].getHash())) << state.toString();
   // we applied block 60, but pass 100 as left fork. expect logic_error
   ASSERT_DEATH(
       {
         int r =
-            alttree.comparePopScore(chain[100].getHash(), chain[60].getHash());
+            alttree.activateBestChain(chain[100].getHash(), chain[60].getHash());
         (void)r;
       },
       "left fork must be applied");
   ASSERT_TRUE(SetState(alttree, chain[100].getHash()));
-  ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),
+  ASSERT_EQ(alttree.activateBestChain(chain[100].getHash(), chain[60].getHash()),
             1);
 
-  // trying to comparePopScore with the unknown block
-  ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), {1, 2, 3, 4, 5, 6}),
+  // trying to activateBestChain with the unknown block
+  ASSERT_EQ(alttree.activateBestChain(chain[100].getHash(), {1, 2, 3, 4, 5, 6}),
             1);
   ASSERT_DEATH(
       {
         int r =
-            alttree.comparePopScore({1, 2, 3, 4, 5, 6}, chain[100].getHash());
+            alttree.activateBestChain({1, 2, 3, 4, 5, 6}, chain[100].getHash());
         (void)r;
       },
       "unknown 'A' block");

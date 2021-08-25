@@ -78,7 +78,7 @@ TEST_F(StandaloneValidation, standaloneValidation) {
   // chainB is invalid if applied without chainA so chainA wins the fork
   // resolution
   EXPECT_GT(
-      alttree.comparePopScore(chainA.back().getHash(), chainB.back().getHash()),
+      alttree.activateBestChain(chainA.back().getHash(), chainB.back().getHash()),
       0);
 
   EXPECT_EQ(vbkTip->getHeader(),
