@@ -52,7 +52,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithGenesis(const block_t& block,
                                     ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    return this->bootstrap(0, block, state) ||
+    return bootstrap(0, block, state) ||
            state.Invalid(block_t::name() + "-bootstrap-genesis");
   }
 
@@ -86,7 +86,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     // pick first block from the chain, bootstrap with a single block
     auto genesis = chain[0];
-    if (!this->bootstrap(startHeight, genesis, state)) {
+    if (!bootstrap(startHeight, genesis, state)) {
       return state.Invalid(block_t::name() + "-blocktree-bootstrap");
     }
 
@@ -95,7 +95,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // our store (yet) to check it correctly
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
-      if (!this->acceptBlockHeaderImpl(
+      if (!acceptBlockHeaderImpl(
               std::make_shared<block_t>(block), state, false)) {
         return state.Invalid(block_t::name() + "-blocktree-accept");
       }
@@ -188,7 +188,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // TODO: currently can not procced finalization for the vbk and btc trees,
     // need more investigation
 
-    // return this->finalizeBlockImpl(
+    // return finalizeBlockImpl(
     //     index, param_->preserveBlocksBehindFinal(), state);
     return true;
   }

@@ -493,6 +493,23 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
   return {*this, block};
 }
 
+void AltBlockTree::overrideTip(index_t& to) {
+  VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
+                to.toShortPrettyString(),
+                (vbk().getBestChain().tip()
+                     ? vbk().getBestChain().tip()->toShortPrettyString()
+                     : "<empty>"),
+                (btc().getBestChain().tip()
+                     ? btc().getBestChain().tip()->toShortPrettyString()
+                     : "<empty>"));
+
+  VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
+                 "the active chain tip(%s) must be fully valid",
+                 to.toPrettyString());
+
+  base::overrideTip(to);
+}
+
 bool AltBlockTree::setState(const hash_t& block, ValidationState& state) {
   return base::setState(block, state);
 }
@@ -503,23 +520,10 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 
   bool success = cmp_.setState(to, state);
   if (success) {
-    VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
-                  to.toShortPrettyString(),
-                  (vbk().getBestChain().tip()
-                       ? vbk().getBestChain().tip()->toShortPrettyString()
-                       : "<empty>"),
-                  (btc().getBestChain().tip()
-                       ? btc().getBestChain().tip()->toShortPrettyString()
-                       : "<empty>"));
-
-    VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
-                   "the active chain tip(%s) must be fully valid",
-                   to.toPrettyString());
-
-    activeChain_.setTip(&to);
+    success = base::setState(to, state);
 
     // finalize blocks
-    {
+    if (success) {
       auto* bestTip = getBestChain().tip();
       VBK_ASSERT(bestTip && "must be bootstrapped");
 
@@ -664,7 +668,7 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
 }
 
 bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
-  return this->finalizeBlockImpl(
+  return finalizeBlockImpl(
       index, getParams().preserveBlocksBehindFinal(), state);
 }
 

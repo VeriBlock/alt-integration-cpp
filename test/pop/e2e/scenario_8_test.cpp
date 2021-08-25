@@ -165,6 +165,8 @@ TEST_F(Scenario8, scenario_8) {
   ASSERT_TRUE(SetState(alttree, containingBlock.previousBlock));
   validityFlagCheck(*vbkBlock, true);
 
-  ASSERT_DEATH(alttree.setState(containingBlock.getHash(), state),
+  bool ret = false;
+  ASSERT_DEATH(ret = alttree.setState(containingBlock.getHash(), state),
                "must be connected");
+  (void)ret;
 }

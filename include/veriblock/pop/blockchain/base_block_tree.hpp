@@ -78,7 +78,7 @@ struct BaseBlockTree {
    * Getter for currently Active Chain.
    * @return reference for current chain.
    */
-  const Chain<index_t>& getBestChain() const { return this->activeChain_; }
+  const Chain<index_t>& getBestChain() const { return activeChain_; }
 
   // HACK: see big comment in VBK tree.
   template <typename T>
@@ -140,7 +140,15 @@ struct BaseBlockTree {
   }
 
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
-    return setState(hash, state);
+    auto* tip = getBlockIndex(hash);
+    if (!tip) {
+      return state.Invalid(block_t::name() + "-no-tip");
+    }
+
+    // cannot use setState here because blockchain state is loaded and only
+    // current tip should be modified
+    overrideTip(*tip);
+    return true;
   }
 
   /**
@@ -171,7 +179,7 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
       ValidationState dummy;
-      bool success = this->setState(*prev, dummy);
+      bool success = setState(*prev, dummy);
       VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
     }
 
@@ -194,7 +202,7 @@ struct BaseBlockTree {
     auto* index = getBlockIndex(toRemove);
     VBK_ASSERT_MSG(
         index, "cannot find the subtree to remove: %s", HexStr(toRemove));
-    return this->removeSubtree(*index);
+    return removeSubtree(*index);
   }
 
   //! @overload
@@ -203,7 +211,7 @@ struct BaseBlockTree {
                    "not a leaf block %s, pnext.size=%d",
                    toRemove.toPrettyString(),
                    toRemove.pnext.size());
-    return this->removeSubtree(toRemove);
+    return removeSubtree(toRemove);
   }
 
   /**
@@ -245,7 +253,7 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
-      bool success = this->setState(*toBeInvalidated.pprev, dummy);
+      bool success = setState(*toBeInvalidated.pprev, dummy);
       VBK_ASSERT(success);
     }
 
@@ -282,7 +290,7 @@ struct BaseBlockTree {
   void revalidateSubtree(const hash_t& hash,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
-    auto* index = this->getBlockIndex(hash);
+    auto* index = getBlockIndex(hash);
     VBK_ASSERT(index && "cannot find the subtree to revalidate");
     revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
@@ -360,10 +368,14 @@ struct BaseBlockTree {
   }
 
   virtual bool setState(index_t& index, ValidationState&) {
-    VBK_LOG_DEBUG("SetTip=%s", index.toPrettyString());
-
-    activeChain_.setTip(&index);
+    overrideTip(index);
     return true;
+  }
+
+  virtual void overrideTip(index_t& to) {
+    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
+
+    activeChain_.setTip(&to);
   }
 
   //! connects a handler to a signal 'On Invalidate Block'
@@ -502,7 +514,7 @@ struct BaseBlockTree {
     current->restore();
     tryAddTip(current);
 
-    this->onBlockInserted(current);
+    onBlockInserted(current);
 
     // raise validity may return false if block is invalid
     current->raiseValidity(BLOCK_VALID_TREE);
@@ -870,7 +882,7 @@ struct BaseBlockTree {
    * @private
    */
   void doUpdateAffectedTips(index_t& modifiedBlock, ValidationState& state) {
-    auto tips = findValidTips<block_t>(this->getTips(), modifiedBlock);
+    auto tips = findValidTips<block_t>(getTips(), modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
     for (auto* tip : tips) {

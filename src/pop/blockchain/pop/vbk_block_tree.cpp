@@ -42,11 +42,18 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   } else if (result < 0) {
     VBK_LOG_DEBUG("Candidate chain won");
     // the other chain won!
-    VBK_ASSERT_MSG(base::setState(candidate, state), "setState failed with error %s", state.toString());
+    VBK_ASSERT_MSG(setState(candidate, state), "setState failed with error %s", state.toString());
   } else {
     // the current chain is better
     VBK_LOG_DEBUG("Active chain won");
   }
+}
+
+void VbkBlockTree::overrideTip(index_t& to) {
+  base::overrideTip(to);
+  VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
+                 "the active chain tip(%s) must be fully valid",
+                 to.toPrettyString());
 }
 
 bool VbkBlockTree::setState(const hash_t& block, ValidationState& state) {
@@ -57,9 +64,9 @@ bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(to, state);
   if (success) {
     success = base::setState(to, state);
-    VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
+    /*VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
                    "the active chain tip(%s) must be fully valid",
-                   to.toPrettyString());
+                   to.toPrettyString());*/
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());

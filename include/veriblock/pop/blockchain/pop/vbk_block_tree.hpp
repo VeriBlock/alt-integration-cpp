@@ -183,6 +183,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::string toPrettyString(size_t level = 0) const;
 
+  void overrideTip(index_t& to) override;
+
   bool setState(index_t& to, ValidationState& state) override;
 
   bool setState(const hash_t& block, ValidationState& state) override;

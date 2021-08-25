@@ -376,6 +376,10 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   VBK_CHECK_RETURN int comparePopScore(const AltBlock::hash_t& A,
                                        const AltBlock::hash_t& B);
 
+  //! @private
+  //! @invariant the tip must be fully validated
+  void overrideTip(index_t& to) override;
+
   /**
    * Switch AltBlockTree from the current tip to different block, while doing
    * all validations of intermediate blocks.
