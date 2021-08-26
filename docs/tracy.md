@@ -13,7 +13,7 @@ See Tracy Documentation: https://github.com/wolfpld/tracy/releases/latest/downlo
 
 ## Usage in C++
 
-1. #include <veriblock/pop/trace.hpp>
+1. `#include <veriblock/pop/trace.hpp>`
 2. At the beginning of your function use VBK_TRACE_ZONE_SCOPED or VBK_TRACE_ZONE_SCOPED_N (named):
    ```C++
    void foo() {
