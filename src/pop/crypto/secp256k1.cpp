@@ -11,6 +11,7 @@
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/strutil.hpp>
 #include <veriblock/pop/third_party/secp256k1.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 namespace secp256k1 {
@@ -188,6 +189,7 @@ bool verify(Slice<const uint8_t> message,
 // real implementation
 
 Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
+  VBK_TRACE_ZONE_SCOPED;
   auto messageHash = sha256(message);
 
   secp256k1_ecdsa_signature signature;
@@ -204,6 +206,8 @@ Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
 bool verify(Slice<const uint8_t> message,
             Signature signature,
             PublicKey publicKey) {
+  VBK_TRACE_ZONE_SCOPED;
+
   secp256k1_pubkey pubkey;
   if (0 == secp256k1_ec_pubkey_parse(
                ctx, &pubkey, publicKey.data(), publicKey.size())) {

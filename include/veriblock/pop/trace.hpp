@@ -6,7 +6,6 @@
 #ifndef VERIBLOCK_POP_CPP_TRACE_HPP
 #define VERIBLOCK_POP_CPP_TRACE_HPP
 
-
 #ifdef TRACY_ENABLE
 #ifdef WIN32
 #pragma warning(push, 0)
@@ -17,9 +16,13 @@
 #endif
 #define VBK_TRACE_ZONE_SCOPED ZoneScoped
 #define VBK_TRACE_ZONE_SCOPED_N(name) ZoneScopedN(name)
+#define VBK_TRACE_FRAME_START(name) FrameMarkStart(name)
+#define VBK_TRACE_FRAME_END(name) FrameMarkEnd(name)
 #else
 #define VBK_TRACE_ZONE_SCOPED
 #define VBK_TRACE_ZONE_SCOPED_N(name)
+#define VBK_TRACE_FRAME_START(name)
+#define VBK_TRACE_FRAME_END(name)
 #endif
 
 #endif  // VERIBLOCK_POP_CPP_TRACE_HPP

@@ -374,6 +374,7 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
 
 bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
                                     ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (!VbkTree::loadBlockForward(index, state)) {
     return false;  // already set
   }
@@ -382,6 +383,7 @@ bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
 
 bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
                                      ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (!VbkTree::loadBlockBackward(index, state)) {
     return false;
   }
