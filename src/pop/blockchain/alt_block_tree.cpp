@@ -168,6 +168,7 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added",
                  index.toPrettyString());
@@ -329,6 +330,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
 template <typename Pop, typename Index>
 static void clearSideEffects(Index& index, PayloadsIndex& storage) {
+  VBK_TRACE_ZONE_SCOPED;
   const auto& containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
   for (const auto& pid : payloadIds) {
@@ -337,6 +339,7 @@ static void clearSideEffects(Index& index, PayloadsIndex& storage) {
 }
 
 void AltBlockTree::removeAllPayloads(index_t& index) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_INFO("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
                block_t::name(),
                index.getPayloadIds<VbkBlock>().size(),

@@ -96,6 +96,7 @@ if(WITH_TRACER)
     target_link_libraries(${LIB_NAME} tracy)
 endif()
 
+
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${MAJOR_VERSION}
@@ -108,8 +109,12 @@ set_property(
 )
 
 # make install is not defined with FUZZING=ON
-if(NOT FUZZING AND NOT WITH_TRACER)
-    install(TARGETS ${LIB_NAME}
+if(NOT FUZZING)
+    set(INSTALL_LIBS ${LIB_NAME})
+    if(WITH_TRACER)
+        set(INSTALL_LIBS ${INSTALL_LIBS} tracy)
+    endif()
+    install(TARGETS ${INSTALL_LIBS}
             EXPORT ${LIB_NAME}Config
             COMPONENT devel
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -128,7 +133,7 @@ if(NOT FUZZING AND NOT WITH_TRACER)
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
     )
     export(
-            TARGETS ${LIB_NAME}
+            TARGETS ${INSTALL_LIBS}
             FILE ${LIB_NAME}Config.cmake
     )
 endif()
