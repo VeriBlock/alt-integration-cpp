@@ -8,7 +8,13 @@
 
 
 #ifdef TRACY_ENABLE
-#include <Tracy.hpp>
+#ifdef WIN32
+#pragma warning(push, 0)
+#endif
+#include "third_party/Tracy.hpp"
+#ifdef WIN32
+#pragma warning(pop)
+#endif
 #define VBK_TRACE_ZONE_SCOPED ZoneScoped
 #define VBK_TRACE_ZONE_SCOPED_N(name) ZoneScopedN(name)
 #else
