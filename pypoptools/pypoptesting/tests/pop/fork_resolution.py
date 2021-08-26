@@ -147,7 +147,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         last_block = self.nodes[3].getblockcount()
 
         # node[i] creates endorsed chain
-        to_mine = 15
+        to_mine = self.keystoneInterval + 15
         for i, node in enumerate(self.nodes):
             self.log.info("node[{}] started to create endorsed chain of {} blocks".format(i, to_mine))
             addr = node.getnewaddress()
