@@ -22,7 +22,7 @@ def create_endorsed_chain(node: Node, apm, size: int, addr: str = None) -> None:
         wait_for_block_height(node, height + 1)
         containing_block = node.getbestblock()
 
-        while (len(containing_block.containingVBKs) == maxVbkBlocksInAltBlock or len(containing_block.containingVTBs) == maxVTBsInAltBlock) and containing_block.containingATVs == 0:
+        while (len(containing_block.containingVBKs) == maxVbkBlocksInAltBlock or len(containing_block.containingVTBs) == maxVTBsInAltBlock) and len(containing_block.containingATVs) == 0:
             mine_alt_block(node, nblocks=1)
             wait_for_block_height(node, height + 1)
             containing_block = node.getbestblock()

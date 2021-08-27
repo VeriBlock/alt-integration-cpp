@@ -156,7 +156,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         # all nodes have different tips at height 303 + keystone interval
         best_blocks = [node.getbestblock() for node in self.nodes]
         for b in best_blocks:
-            assert b.height == last_block + to_mine
+            assert b.height >= last_block + to_mine
         assert len(set([block.hash for block in best_blocks])) == len(best_blocks)
         self.log.info("all nodes have different tips")
 
