@@ -147,7 +147,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         last_block = self.nodes[3].getblockcount()
 
         # node[i] creates endorsed chain
-        to_mine = 15
+        to_mine = self.keystoneInterval + 15
         for i, node in enumerate(self.nodes):
             self.log.info("node[{}] started to create endorsed chain of {} blocks".format(i, to_mine))
             addr = node.getnewaddress()
@@ -156,7 +156,7 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         # all nodes have different tips at height 303 + keystone interval
         best_blocks = [node.getbestblock() for node in self.nodes]
         for b in best_blocks:
-            assert b.height == last_block + to_mine
+            assert b.height >= last_block + to_mine
         assert len(set([block.hash for block in best_blocks])) == len(best_blocks)
         self.log.info("all nodes have different tips")
 
