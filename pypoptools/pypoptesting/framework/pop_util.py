@@ -12,12 +12,21 @@ def create_endorsed_chain(node: Node, apm, size: int, addr: str = None) -> None:
     block = node.getbestblock()
     initial_height = block.height
 
+    maxVbkBlocksInAltBlock = node.getpopparams().maxVbkBlocksInAltBlock
+    maxVTBsInAltBlock = node.getpopparams().maxVTBsInAltBlock
+
     for height in range(initial_height, initial_height + size):
+        # endorsing prev tip
         atv_id = endorse_block(node, apm, height, addr)
         mine_alt_block(node, nblocks=1)
-        # endorsing prev tip
         wait_for_block_height(node, height + 1)
         containing_block = node.getbestblock()
+
+        while (len(containing_block.containingVBKs) == maxVbkBlocksInAltBlock or len(containing_block.containingVTBs) == maxVTBsInAltBlock) and containing_block.containingATVs == 0:
+            mine_alt_block(node, nblocks=1)
+            wait_for_block_height(node, height + 1)
+            containing_block = node.getbestblock()
+
         assert atv_id in containing_block.containingATVs, \
             "containing block at height {} does not contain pop tx {}".format(containing_block.height, atv_id)
 
