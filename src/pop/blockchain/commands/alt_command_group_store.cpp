@@ -6,6 +6,7 @@
 #include <veriblock/pop/blockchain/blockchain_util.hpp>
 #include <veriblock/pop/blockchain/commands/alt_command_group_store.hpp>
 #include <veriblock/pop/exceptions/state_corrupted.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 

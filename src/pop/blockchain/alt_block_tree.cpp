@@ -168,6 +168,7 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added",
                  index.toPrettyString());
@@ -219,6 +220,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_INFO("Accept new block: %s ", block.toPrettyString());
 
   // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
@@ -269,6 +271,7 @@ std::string AltBlockTree::toPrettyString(size_t level) const {
 }
 
 void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
+  VBK_TRACE_ZONE_SCOPED;
   auto* bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip && "must be bootstrapped");
 
@@ -289,6 +292,7 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
 
 int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_INFO(
       "Compare two chains. chain A: %s, chain B: %s", HexStr(A), HexStr(B));
 
@@ -326,6 +330,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
 template <typename Pop, typename Index>
 static void clearSideEffects(Index& index, PayloadsIndex& storage) {
+  VBK_TRACE_ZONE_SCOPED;
   const auto& containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
   for (const auto& pid : payloadIds) {
@@ -334,6 +339,7 @@ static void clearSideEffects(Index& index, PayloadsIndex& storage) {
 }
 
 void AltBlockTree::removeAllPayloads(index_t& index) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_INFO("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
                block_t::name(),
                index.getPayloadIds<VbkBlock>().size(),
@@ -494,6 +500,7 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
 }
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
 
@@ -525,6 +532,7 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 }
 
 void AltBlockTree::overrideTip(index_t& to) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
                 to.toShortPrettyString(),
                 (vbk().getBestChain().tip()
@@ -623,12 +631,14 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
       commandGroupStore_(*this, payloadsProvider_) {}
 
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
+  VBK_TRACE_ZONE_SCOPED;
   payloadsIndex_.removePayloadsIndex(toRemove);
   base::removeSubtree(toRemove);
 }
 
 bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
                            ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (!base::loadTip(hash, state)) {
     return false;
   }
@@ -654,6 +664,7 @@ void AltBlockTree::removePayloads(const AltBlockTree::hash_t& hash) {
 
 std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
     const AltBlockTree::index_t& index) const {
+  VBK_TRACE_ZONE_SCOPED;
   std::vector<const index_t*> candidates;
 
   if (!index.isConnected()) {
@@ -679,6 +690,7 @@ bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
 
