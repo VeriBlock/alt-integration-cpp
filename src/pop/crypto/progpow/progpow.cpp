@@ -18,6 +18,7 @@
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
+#include <veriblock/pop/trace.hpp>
 
 #include "libethash/internal.hpp"
 
@@ -698,6 +699,7 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
 }
 
 uint192 progPowHash(Slice<const uint8_t> header) {
+  VBK_TRACE_ZONE_SCOPED;
   // replace very slow progpow hash with very fast sha256 hash
 #if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
   auto hash = sha256(header);

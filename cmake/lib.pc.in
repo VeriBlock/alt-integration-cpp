@@ -6,4 +6,4 @@ Description: Libraries for leveraging VeriBlock Proof-Of-Proof blockchain techno
 Version: @PROJECT_VERSION@
 URL: https://github.com/VeriBlock/alt-integration-cpp
 Libs: -L${libdir} -l@LIB_NAME@ @VBK_DEPENDENCIES_LIBS@ -lstdc++ -lm @SANITIZERS_LIBS@
-Cflags: -I${includedir} @SANITIZERS_CFLAGS@
+Cflags: -I${includedir} @SANITIZERS_CFLAGS@ @ADDITIONAL_CFLAGS@

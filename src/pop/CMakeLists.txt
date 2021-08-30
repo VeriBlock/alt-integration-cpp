@@ -92,6 +92,17 @@ message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
 
+if(WITH_TRACER)
+    target_sources(${LIB_NAME} PRIVATE $<TARGET_OBJECTS:tracy>)
+    target_link_libraries(${LIB_NAME} PUBLIC dl)
+    set(ADDITIONAL_CFLAGS -DTRACY_ENABLE=1)
+    if(UNIX)
+        set(VBK_DEPENDENCIES_LIBS ${VBK_DEPENDENCIES_LIBS} -ldl)
+    else()
+        message(FATAL_ERROR "Tracy requires library dl. Come here and fix if possible.")
+    endif()
+endif()
+
 set_target_properties(${LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${MAJOR_VERSION}
@@ -135,11 +146,11 @@ target_include_directories(${LIB_NAME}
         )
 
 if(WITH_ROCKSDB)
-        set(VBK_DEPENDENCIES_LIBS -lrocksdb)
+        set(VBK_DEPENDENCIES_LIBS ${VBK_DEPENDENCIES_LIBS} -lrocksdb)
 endif()
 
 if(WITH_LEVELDB)
-        set(VBK_DEPENDENCIES_LIBS -lleveldb)
+        set(VBK_DEPENDENCIES_LIBS ${VBK_DEPENDENCIES_LIBS} -lleveldb)
 endif()
 
 if(ASAN)
