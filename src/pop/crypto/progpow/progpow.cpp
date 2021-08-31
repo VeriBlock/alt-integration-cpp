@@ -699,7 +699,7 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
 }
 
 uint192 progPowHash(Slice<const uint8_t> header) {
-  VBK_TRACE_ZONE_SCOPED;
+  VBK_TRACE_ZONE_SCOPED_S(40);
   // replace very slow progpow hash with very fast sha256 hash
 #if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
   auto hash = sha256(header);
