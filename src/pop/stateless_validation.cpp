@@ -3,23 +3,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/stateless_validation.hpp>
-
 #include <algorithm>
 #include <bitset>
-#include <string>
 #include <unordered_set>
 #include <vector>
 #include <veriblock/pop/algorithm.hpp>
-#include <veriblock/pop/blockchain/alt_chain_params.hpp>
-#include <veriblock/pop/crypto/progpow.hpp>
-
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blob.hpp>
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/consts.hpp>
-#include <veriblock/pop/pop_context.hpp>
-#include <veriblock/pop/strutil.hpp>
-
+#include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/stateless_validation.hpp>
+#include <veriblock/pop/trace.hpp>
 namespace {
 
 int getIntFromBits(const std::vector<bool>& bits,
@@ -54,6 +49,8 @@ namespace altintegration {
 bool containsSplit(const std::vector<uint8_t>& pop_data,
                    const std::vector<uint8_t>& btcTx_data,
                    ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
+
   static const std::array<uint8_t, 3> magic = {0x92, 0x7a, 0x59};
 
   ReadStream buffer(btcTx_data);
@@ -152,6 +149,8 @@ bool containsSplit(const std::vector<uint8_t>& pop_data,
 
 bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                        ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
+
   WriteStream stream;
   tx.publishedBlock.toRaw(stream);
   tx.address.getPopBytes(stream);
@@ -194,6 +193,8 @@ bool checkBtcBlocks(const std::vector<BtcBlock>& btcBlock,
     return true;
   }
 
+  VBK_TRACE_ZONE_SCOPED;
+
   if (!checkBlock(btcBlock[0], state, params)) {
     return state.Invalid("vbk-check-block");
   }
@@ -220,6 +221,8 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
     return true;
   }
 
+  VBK_TRACE_ZONE_SCOPED;
+
   if (!checkBlock(vbkBlocks[0], state, params)) {
     return state.Invalid("vbk-check-block");
   }
@@ -244,6 +247,8 @@ bool checkVbkBlocks(const std::vector<VbkBlock>& vbkBlocks,
 }
 
 bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
+  VBK_TRACE_ZONE_SCOPED;
+
   ArithUint256 blockHash = ArithUint256::fromLEBytes(block.getHash());
   auto powLimit = ArithUint256(param.getPowLimit());
   bool negative = false;
@@ -259,6 +264,8 @@ bool checkProofOfWork(const BtcBlock& block, const BtcChainParams& param) {
 }
 
 bool checkProofOfWork(const VbkBlock& block, const VbkChainParams& param) {
+  VBK_TRACE_ZONE_SCOPED;
+
   static const auto max = ArithUint256::fromHex(VBK_MAXIMUM_DIFFICULTY);
   auto blockHash = ArithUint256::fromLEBytes(block.getHash());
   auto minDiff = ArithUint256(param.getMinimumDifficulty());
@@ -280,6 +287,8 @@ bool checkVbkPopTx(const VbkPopTx& tx,
                    ValidationState& state,
                    const BtcChainParams& btc,
                    const VbkChainParams& vbk) {
+  VBK_TRACE_ZONE_SCOPED;
+
   // least expensive checks at start
   if (tx.blockOfProofContext.size() > MAX_BTC_BLOCKS_IN_VBKPOPTX) {
     return state.Invalid(
@@ -323,6 +332,8 @@ bool checkVbkPopTx(const VbkPopTx& tx,
 bool checkPublicationData(const PublicationData& pub,
                           const AltChainParams& params,
                           ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
+
   if (pub.identifier != params.getIdentifier()) {
     return state.Invalid(
         "bad-altchain-id",
@@ -349,6 +360,8 @@ bool checkVbkTx(const VbkTx& tx,
                 const AltChainParams& params,
                 const VbkChainParams& vbkparams,
                 ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
+
   if (tx.outputs.size() > MAX_OUTPUTS_COUNT) {
     return state.Invalid(
         "vbktx-too-many-outputs",
@@ -378,6 +391,8 @@ bool checkVbkTx(const VbkTx& tx,
 }
 
 bool checkSignature(const VbkTx& tx, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED_N("VbkTx");
+
   if (!tx.sourceAddress.isDerivedFromPublicKey(tx.publicKey)) {
     return state.Invalid("invalid-vbk-tx",
                          "Vbk transaction contains an invalid public key");
@@ -393,6 +408,7 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
 }
 
 bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED_N("VbkPopTx");
   if (!tx.address.isDerivedFromPublicKey(tx.publicKey)) {
     return state.Invalid("invalid-vbk-pop-tx",
                          "Vbk Pop transaction contains an invalid public key");
@@ -413,6 +429,8 @@ bool checkATV(const ATV& atv,
     // we've already checked that ATV
     return true;
   }
+
+  VBK_TRACE_ZONE_SCOPED;
 
   if (!checkVbkTx(atv.transaction, altp, vbkp, state)) {
     return state.Invalid("vbk-check-tx");
@@ -439,6 +457,8 @@ bool checkVTB(const VTB& vtb,
     return true;
   }
 
+  VBK_TRACE_ZONE_SCOPED;
+
   if (!checkVbkPopTx(vtb.transaction, state, btc, vbk)) {
     return state.Invalid("vbk-check-pop-tx");
   }
@@ -458,6 +478,8 @@ bool checkVTB(const VTB& vtb,
 bool checkVbkBlockPlausibility(const VbkBlock& block,
                                ValidationState& state,
                                const VbkChainParams& params) {
+  VBK_TRACE_ZONE_SCOPED_N("VBK");
+
   const auto progPowForkHeight = params.getProgPowForkHeight();
   if (block.getHeight() < progPowForkHeight) {
     return state.Invalid("height-too-low",
@@ -538,6 +560,7 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
 bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params) {
+  VBK_TRACE_ZONE_SCOPED_N("VBK");
   // before we calculate PoW, determine its plausibility
   if (!checkVbkBlockPlausibility(block, state, params)) {
     return state.Invalid("vbk-bad-block");
@@ -553,6 +576,7 @@ bool checkBlock(const VbkBlock& block,
 bool checkBlock(const BtcBlock& block,
                 ValidationState& state,
                 const BtcChainParams& params) {
+  VBK_TRACE_ZONE_SCOPED_N("BTC");
   if (!checkProofOfWork(block, params)) {
     return state.Invalid("btc-bad-pow", "Invalid Block proof of work");
   }
@@ -567,6 +591,7 @@ static bool hasDuplicatePayloads(const std::vector<P>& payloads) {
 }
 
 bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (hasDuplicatePayloads(popData.context)) {
     return state.Invalid("duplicate-vbk", "duplicate VBK blocks");
   }
@@ -586,6 +611,9 @@ bool checkPopData(PopValidator& validator,
   if (popData.checked) {
     return true;
   }
+
+  // trace after first check to improve tracing performance
+  VBK_TRACE_ZONE_SCOPED;
 
   auto& altparam = validator.getAltParams();
   size_t estimate_size = popData.estimateSize();
