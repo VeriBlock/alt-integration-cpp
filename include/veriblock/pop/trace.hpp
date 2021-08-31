@@ -20,12 +20,16 @@
 #define VBK_TRACE_ZONE_SCOPED_N(name) ZoneScopedN(name)
 #define VBK_TRACE_FRAME_START(name) FrameMarkStart(name)
 #define VBK_TRACE_FRAME_END(name) FrameMarkEnd(name)
+#define VBK_TRACE_LOCKABLE(type, var) TracyLockable(type, var)
+#define VBK_TRACE_LOCKABLE_BASE(type) LockableBase(type)
 #else
 #define VBK_TRACE_ZONE_SCOPED
 #define VBK_TRACE_ZONE_SCOPED_S(x)
 #define VBK_TRACE_ZONE_SCOPED_N(name)
 #define VBK_TRACE_FRAME_START(name)
 #define VBK_TRACE_FRAME_END(name)
+#define VBK_TRACE_LOCKABLE(type, var) type var
+#define VBK_TRACE_LOCKABLE_BASE(type) type
 #endif
 
 #endif  // VERIBLOCK_POP_CPP_TRACE_HPP
