@@ -157,10 +157,10 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
     if (mutator.isStatefulDuplicate(pid.asVector())) {
       return !state.Invalid(
           Payload ::name() + "-duplicate",
-          fmt::format("Payload {}:{} in block {} is a stateful duplicate",
-                      Payload::name(),
-                      pid.toHex(),
-                      mutator.getBlock().toPrettyString()));
+          format("Payload {}:{} in block {} is a stateful duplicate",
+                 Payload::name(),
+                 pid.toHex(),
+                 mutator.getBlock().toPrettyString()));
     }
   }
 
@@ -251,8 +251,8 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
   if (!index->isValid()) {
     return state.Invalid(
         block_t::name() + "-bad-chain",
-        fmt::format("One of previous blocks is invalid. Status=({})",
-                    index->getStatus()));
+        format("One of previous blocks is invalid. Status=({})",
+               index->getStatus()));
   }
 
   tryAddTip(index);
@@ -262,12 +262,12 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
 
 std::string AltBlockTree::toPrettyString(size_t level) const {
   std::string pad(level, ' ');
-  return fmt::sprintf("%sAltTree{blocks=%llu\n%s\n%s\n%s}",
-                      pad,
-                      base::getBlocks().size(),
-                      base::toPrettyString(level + 2),
-                      cmp_.toPrettyString(level + 2),
-                      pad);
+  return format("{}AltTree{blocks={}\n{}\n{}\n{}}",
+                pad,
+                base::getBlocks().size(),
+                base::toPrettyString(level + 2),
+                cmp_.toPrettyString(level + 2),
+                pad);
 }
 
 void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
@@ -452,10 +452,10 @@ bool AltBlockTree::BlockPayloadMutator::add(const Payload& payload,
   if (isStatefulDuplicate(pid.asVector())) {
     return state.Invalid(
         Payload ::name() + "-duplicate",
-        fmt::format("Payload {}:{} in block {} is a stateful duplicate",
-                    Payload::name(),
-                    pid.toHex(),
-                    block_.toShortPrettyString()));
+        format("Payload {}:{} in block {} is a stateful duplicate",
+               Payload::name(),
+               pid.toHex(),
+               block_.toShortPrettyString()));
   }
 
   block_.insertPayloadIds<Payload>({pid});

@@ -97,8 +97,8 @@ struct Endorsement {
   bool operator!=(const type& other) const { return !operator==(other); }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf(
-        "%s%sEndorsement{id=%s, containing=%s, endorsed=%s, blockOfProof=%s}",
+    return format(
+        "{}{}Endorsement{id={}, containing={}, endorsed={}, blockOfProof={}}",
         std::string(level, ' '),
         type::name(),
         HexStr(id),

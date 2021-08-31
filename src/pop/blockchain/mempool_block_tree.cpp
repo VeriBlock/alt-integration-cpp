@@ -58,9 +58,9 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
   if (duplicate != nullptr) {
     return state.Invalid(
         "atv-duplicate",
-        fmt::sprintf("ATV=%s already added to active chain in block %s",
-                     atv.getId().toHex(),
-                     duplicate->toShortPrettyString()));
+        format("ATV={} already added to active chain in block {}",
+               atv.getId().toHex(),
+               duplicate->toShortPrettyString()));
   }
 
   auto endorsed_hash =
@@ -72,9 +72,9 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
 
     if (tip->getHeight() + 1 > window + endorsed_index->getHeight()) {
       return state.Invalid("atv-expired",
-                           fmt::sprintf("ATV=%s expired %s",
-                                        atv.getId().toHex(),
-                                        endorsed_index->toShortPrettyString()));
+                           format("ATV={} expired {}",
+                                  atv.getId().toHex(),
+                                  endorsed_index->toShortPrettyString()));
     }
   }
 
@@ -96,18 +96,18 @@ bool MemPoolBlockTree::checkContextually(const VTB& vtb,
   if (duplicate != nullptr) {
     return state.Invalid(
         "vtb-duplicate",
-        fmt::sprintf("VTB=%s already added to active chain in block %s",
-                     vtb.getId().toHex(),
-                     duplicate->toShortPrettyString()));
+        format("VTB={} already added to active chain in block {}",
+               vtb.getId().toHex(),
+               duplicate->toShortPrettyString()));
   }
 
   if (vtb.containingBlock.getHeight() >
       window + vtb.transaction.publishedBlock.getHeight()) {
     return state.Invalid(
         "vtb-expired",
-        fmt::sprintf("VTB=%s expired %s",
-                     vtb.getId().toHex(),
-                     vtb.transaction.publishedBlock.toPrettyString()));
+        format("VTB={} expired {}",
+               vtb.getId().toHex(),
+               vtb.transaction.publishedBlock.toPrettyString()));
   }
 
   return true;

@@ -18,16 +18,16 @@ bool CheckPublicationData::Execute(ValidationState& state) {
   const auto* endorsed = tree->getBlockIndex(endorsed_hash);
   if (endorsed == nullptr) {
     return state.Invalid("bad-sf-endorsed",
-                         fmt::format("Can not find endorsed header (hash={})",
-                                     HexStr(endorsed_hash)));
+                         format("Can not find endorsed header (hash={})",
+                                HexStr(endorsed_hash)));
   }
 
   auto ctx = ContextInfoContainer::createFromPrevious(endorsed->pprev, params);
   if (c.ctx != ctx) {
     return state.Invalid("bad-sf-context",
-                         fmt::format("Expected context={}, got={}",
-                                     ctx.toPrettyString(),
-                                     c.ctx.toPrettyString()));
+                         format("Expected context={}, got={}",
+                                ctx.toPrettyString(),
+                                c.ctx.toPrettyString()));
   }
 
   return true;

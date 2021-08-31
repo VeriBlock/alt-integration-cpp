@@ -205,7 +205,7 @@ template <typename T>
 void PrintTo(const Chain<T>& c, std::ostream* os) {
   auto* tip = c.tip();
   if (!tip) {
-    *os << fmt::format("Chain(height={} tip=empty)", c.getStartHeight());
+    *os << format("Chain(height={} tip=empty)", c.getStartHeight());
     return;
   }
 

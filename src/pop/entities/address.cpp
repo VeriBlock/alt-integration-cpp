@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/address.hpp>
-
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/base58.hpp>
 #include <veriblock/pop/base59.hpp>
 #include <veriblock/pop/consts.hpp>
+#include <veriblock/pop/entities/address.hpp>
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
 
@@ -92,17 +91,15 @@ bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
 
 bool Address::fromString(const std::string& input, ValidationState& state) {
   if (input.size() != VBK_ADDRESS_SIZE) {
-    return state.Invalid(
-        "addr-bad-length",
-        fmt::format("Invalid address length. Expected={}, got={}.",
-                    VBK_ADDRESS_SIZE,
-                    input.size()));
+    return state.Invalid("addr-bad-length",
+                         format("Invalid address length. Expected={}, got={}.",
+                                VBK_ADDRESS_SIZE,
+                                input.size()));
   }
 
   if (input[0] != STARTING_CHAR) {
-    return state.Invalid(
-        "addr-bad-starting-char",
-        fmt::format("Address should start with {}", STARTING_CHAR));
+    return state.Invalid("addr-bad-starting-char",
+                         format("Address should start with {}", STARTING_CHAR));
   }
 
   std::string data = getDataPortionFromAddress(input);
@@ -166,11 +163,10 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
 
   auto expectedChecksum = calculateChecksum(data, multisig);
   if (expectedChecksum != checksum) {
-    return state.Invalid(
-        "addr-bad-checksum",
-        fmt::format("Checksum does not match. Expected={}, got={}.",
-                    expectedChecksum,
-                    checksum));
+    return state.Invalid("addr-bad-checksum",
+                         format("Checksum does not match. Expected={}, got={}.",
+                                expectedChecksum,
+                                checksum));
   }
 
   m_Type = multisig ? AddressType::MULTISIG : AddressType::STANDARD;
