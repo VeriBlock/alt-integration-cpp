@@ -391,7 +391,7 @@ bool checkVbkTx(const VbkTx& tx,
 }
 
 bool checkSignature(const VbkTx& tx, ValidationState& state) {
-  VBK_TRACE_ZONE_SCOPED_N("VbkTx");
+  VBK_TRACE_ZONE_SCOPED_N("CheckSignatureVbkTx");
 
   if (!tx.sourceAddress.isDerivedFromPublicKey(tx.publicKey)) {
     return state.Invalid("invalid-vbk-tx",
@@ -408,7 +408,7 @@ bool checkSignature(const VbkTx& tx, ValidationState& state) {
 }
 
 bool checkSignature(const VbkPopTx& tx, ValidationState& state) {
-  VBK_TRACE_ZONE_SCOPED_N("VbkPopTx");
+  VBK_TRACE_ZONE_SCOPED_N("CheckSignatureVbkPopTx");
   if (!tx.address.isDerivedFromPublicKey(tx.publicKey)) {
     return state.Invalid("invalid-vbk-pop-tx",
                          "Vbk Pop transaction contains an invalid public key");
@@ -478,7 +478,7 @@ bool checkVTB(const VTB& vtb,
 bool checkVbkBlockPlausibility(const VbkBlock& block,
                                ValidationState& state,
                                const VbkChainParams& params) {
-  VBK_TRACE_ZONE_SCOPED_N("VBK");
+  VBK_TRACE_ZONE_SCOPED;
 
   const auto progPowForkHeight = params.getProgPowForkHeight();
   if (block.getHeight() < progPowForkHeight) {
@@ -560,7 +560,7 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
 bool checkBlock(const VbkBlock& block,
                 ValidationState& state,
                 const VbkChainParams& params) {
-  VBK_TRACE_ZONE_SCOPED_N("VBK");
+  VBK_TRACE_ZONE_SCOPED_N("CheckVbkBlock");
   // before we calculate PoW, determine its plausibility
   if (!checkVbkBlockPlausibility(block, state, params)) {
     return state.Invalid("vbk-bad-block");
@@ -576,7 +576,7 @@ bool checkBlock(const VbkBlock& block,
 bool checkBlock(const BtcBlock& block,
                 ValidationState& state,
                 const BtcChainParams& params) {
-  VBK_TRACE_ZONE_SCOPED_N("BTC");
+  VBK_TRACE_ZONE_SCOPED_N("CheckBtcBlock");
   if (!checkProofOfWork(block, params)) {
     return state.Invalid("btc-bad-pow", "Invalid Block proof of work");
   }
