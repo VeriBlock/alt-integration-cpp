@@ -20,8 +20,8 @@ template <typename S, typename... Args>
 inline std::string format(const S& format_str, Args&&... args) {
   try {
     return fmt::format(format_str, args...);
-  } catch (const std::exception& e) {
-    VBK_LOG_INFO("invalid string formatting, str: %s", format_str);
+  } catch (const fmt::format_error&) {
+    VBK_LOG_WARN("invalid string formatting, str: %s", format_str);
   }
   return "";
 }
