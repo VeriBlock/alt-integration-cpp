@@ -284,7 +284,7 @@ struct formatter<altintegration::Blob<N>> {
   auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
     auto it = ctx.begin(), end = ctx.end();
     // Check if reached the end of the range:
-    VBK_ASSERT_MSG(it == end && *it == '}', "invalid format");
+    VBK_ASSERT_MSG(it == end || *it == '}', "invalid format");
 
     // Return an iterator past the end of the parsed range:
     return it;
