@@ -121,6 +121,16 @@ LogLevel StringToLevel(const std::string&);
 
 #endif  // VERIBLOCK_POP_LOGGER_DISABLED
 
+template <typename S, typename... Args>
+inline std::string format(const S& format_str, Args&&... args) {
+  try {
+    return fmt::format(format_str, args...);
+  } catch (const fmt::format_error&) {
+    VBK_LOG_WARN("invalid string formatting, str: %s", format_str);
+  }
+  return "";
+}
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_LOGGER_LOGGER_HPP

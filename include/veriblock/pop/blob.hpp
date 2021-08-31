@@ -215,7 +215,7 @@ struct Blob {
   }
 
   std::string toPrettyString() const {
-    return fmt::sprintf("Blob<%llu>(%s)", N, toHex());
+    return format("Blob<{}>({})", N, toHex());
   }
 
   //! helper for readSingleByteLenValue

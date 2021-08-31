@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/logger.hpp>
 
 TEST(Fmt, basic_test) {
   EXPECT_EQ(altintegration::format("{}, {}, {}", "hello", "world", 5),
