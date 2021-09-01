@@ -15,6 +15,7 @@
 #include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/trace.hpp>
+
 namespace {
 
 int getIntFromBits(const std::vector<bool>& bits,
@@ -156,9 +157,9 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
   tx.address.getPopBytes(stream);
   if (stream.data().size() != VBK_PUBLICATIONDATA_SIZE) {
     return state.Invalid("bad-pubdata",
-                         fmt::format("Expected size for pubdata is {}, got {}",
-                                     VBK_PUBLICATIONDATA_SIZE,
-                                     stream.data().size()));
+                         format("Expected size for pubdata is {}, got {}",
+                                VBK_PUBLICATIONDATA_SIZE,
+                                stream.data().size()));
   }
 
   // finding that stream data contains in the tx.bitcoinTransaction
@@ -293,17 +294,16 @@ bool checkVbkPopTx(const VbkPopTx& tx,
   if (tx.blockOfProofContext.size() > MAX_BTC_BLOCKS_IN_VBKPOPTX) {
     return state.Invalid(
         "vbk-btc-context-too-many",
-        fmt::format("Maximum allowed BTC context size is {}, got {}",
-                    MAX_BTC_BLOCKS_IN_VBKPOPTX,
-                    tx.blockOfProofContext.size()));
+        format("Maximum allowed BTC context size is {}, got {}",
+               MAX_BTC_BLOCKS_IN_VBKPOPTX,
+               tx.blockOfProofContext.size()));
   }
 
   if (tx.networkOrType.networkType != vbk.getTransactionMagicByte()) {
-    return state.Invalid(
-        "vbkpoptx-bad-tx-byte",
-        fmt::format("Bad magic byte. Expected {}, got {}",
-                    vbk.getTransactionMagicByte().toPrettyString(),
-                    tx.networkOrType.networkType.toPrettyString()));
+    return state.Invalid("vbkpoptx-bad-tx-byte",
+                         format("Bad magic byte. Expected {}, got {}",
+                                vbk.getTransactionMagicByte().toPrettyString(),
+                                tx.networkOrType.networkType.toPrettyString()));
   }
 
   if (!checkBitcoinTransactionForPoPData(tx, state)) {
@@ -337,7 +337,7 @@ bool checkPublicationData(const PublicationData& pub,
   if (pub.identifier != params.getIdentifier()) {
     return state.Invalid(
         "bad-altchain-id",
-        fmt::format(
+        format(
             "Expected id={}, got={}", params.getIdentifier(), pub.identifier));
   }
 
@@ -365,17 +365,17 @@ bool checkVbkTx(const VbkTx& tx,
   if (tx.outputs.size() > MAX_OUTPUTS_COUNT) {
     return state.Invalid(
         "vbktx-too-many-outputs",
-        fmt::format("Too many outputs. Expected less than {}, got {}",
-                    MAX_OUTPUTS_COUNT,
-                    tx.outputs.size()));
+        format("Too many outputs. Expected less than {}, got {}",
+               MAX_OUTPUTS_COUNT,
+               tx.outputs.size()));
   }
 
   if (tx.networkOrType.networkType != vbkparams.getTransactionMagicByte()) {
     return state.Invalid(
         "vbktx-bad-tx-byte",
-        fmt::format("Bad magic byte. Expected {}, got {}",
-                    vbkparams.getTransactionMagicByte().toPrettyString(),
-                    tx.networkOrType.networkType.toPrettyString()));
+        format("Bad magic byte. Expected {}, got {}",
+               vbkparams.getTransactionMagicByte().toPrettyString(),
+               tx.networkOrType.networkType.toPrettyString()));
   }
 
   if (!checkPublicationData(tx.publicationData, params, state)) {
@@ -483,10 +483,10 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
   const auto progPowForkHeight = params.getProgPowForkHeight();
   if (block.getHeight() < progPowForkHeight) {
     return state.Invalid("height-too-low",
-                         fmt::format("Too low height. Supporting blocks "
-                                     "starting with height={}, got height={}",
-                                     params.getProgPowForkHeight(),
-                                     block.getHeight()));
+                         format("Too low height. Supporting blocks "
+                                "starting with height={}, got height={}",
+                                params.getProgPowForkHeight(),
+                                block.getHeight()));
   }
 
   const auto epoch = progpow::ethashGetEpochWithoutOffset(block.getHeight());
@@ -494,10 +494,10 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
     const auto maxHeight =
         VBK_MAX_CALCULATED_EPOCHS_SIZE * VBK_ETHASH_EPOCH_LENGTH;
     return state.Invalid("height-too-high",
-                         fmt::format("Too high height. Supporting blocks "
-                                     "starting with height={}, got height={}",
-                                     maxHeight,
-                                     block.getHeight()));
+                         format("Too high height. Supporting blocks "
+                                "starting with height={}, got height={}",
+                                maxHeight,
+                                block.getHeight()));
   }
 
   // if this check id disabled, return early
@@ -516,10 +516,10 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
   if (timestamp < startTimeEpoch) {
     return state.Invalid(
         "timestamp-too-low",
-        fmt::format("Too low timestamp. Supporting blocks starting with "
-                    "timestamp={}, got timestamp={}",
-                    startTimeEpoch,
-                    timestamp));
+        format("Too low timestamp. Supporting blocks starting with "
+               "timestamp={}, got timestamp={}",
+               startTimeEpoch,
+               timestamp));
   }
 
   static const auto secondsInDay = 24 * 60 * 60;
@@ -540,18 +540,18 @@ bool checkVbkBlockPlausibility(const VbkBlock& block,
     // Timestamp is more than upper bound, invalid
     return state.Invalid(
         "timestamp-upper-bound",
-        fmt::format("Timestamp higher than upper bound={}, timestamp={}",
-                    upperBound,
-                    timestamp));
+        format("Timestamp higher than upper bound={}, timestamp={}",
+               upperBound,
+               timestamp));
   }
 
   if (timestamp < lowerBound) {
     // Timestamp is less than upper bound, invalid
     return state.Invalid(
         "timestamp-lower-bound",
-        fmt::format("Timestamp lower than lower bound={}, timestamp={}",
-                    lowerBound,
-                    timestamp));
+        format("Timestamp lower than lower bound={}, timestamp={}",
+               lowerBound,
+               timestamp));
   }
 
   return true;
@@ -619,34 +619,32 @@ bool checkPopData(PopValidator& validator,
   size_t estimate_size = popData.estimateSize();
   if (estimate_size > altparam.getMaxPopDataSize()) {
     return state.Invalid("pop-sl-oversize",
-                         fmt::format("popData raw size more than allowed, "
-                                     "current size: {}, allowed size: {}",
-                                     estimate_size,
-                                     altparam.getMaxPopDataSize()));
+                         format("popData raw size more than allowed, "
+                                "current size: {}, allowed size: {}",
+                                estimate_size,
+                                altparam.getMaxPopDataSize()));
   }
 
   if (popData.context.size() > altparam.getMaxVbkBlocksInAltBlock()) {
     return state.Invalid(
         "pop-sl-context-oversize",
-        fmt::format("Too many VBK blocks. Expected {} or less, got {}",
-                    altparam.getMaxVbkBlocksInAltBlock(),
-                    popData.context.size()));
+        format("Too many VBK blocks. Expected {} or less, got {}",
+               altparam.getMaxVbkBlocksInAltBlock(),
+               popData.context.size()));
   }
 
   if (popData.vtbs.size() > altparam.getMaxVTBsInAltBlock()) {
-    return state.Invalid(
-        "pop-sl-vtbs-oversize",
-        fmt::format("Too many VTBs. Expected {} or less, got {}",
-                    altparam.getMaxVTBsInAltBlock(),
-                    popData.vtbs.size()));
+    return state.Invalid("pop-sl-vtbs-oversize",
+                         format("Too many VTBs. Expected {} or less, got {}",
+                                altparam.getMaxVTBsInAltBlock(),
+                                popData.vtbs.size()));
   }
 
   if (popData.atvs.size() > altparam.getMaxATVsInAltBlock()) {
-    return state.Invalid(
-        "pop-sl-atvs-oversize",
-        fmt::format("Too many ATVs. Expected {} or less, got {}",
-                    altparam.getMaxVTBsInAltBlock(),
-                    popData.atvs.size()));
+    return state.Invalid("pop-sl-atvs-oversize",
+                         format("Too many ATVs. Expected {} or less, got {}",
+                                altparam.getMaxVTBsInAltBlock(),
+                                popData.atvs.size()));
   }
 
   std::vector<std::future<ValidationState>> results;

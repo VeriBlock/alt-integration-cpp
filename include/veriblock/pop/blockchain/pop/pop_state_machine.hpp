@@ -93,8 +93,8 @@ struct PopStateMachine {
     if (!index.isValid()) {
       return state.Invalid(
           index_t::block_t::name() + "-marked-invalid",
-          fmt::sprintf("block %s is marked as invalid and cannot be applied",
-                       index.toPrettyString()));
+          format("block {} is marked as invalid and cannot be applied",
+                 index.toPrettyString()));
     }
 
     VBK_ASSERT_MSG(index.isValid(BLOCK_CONNECTED),
@@ -266,8 +266,8 @@ struct PopStateMachine {
     if (!to.isValid()) {
       return state.Invalid(
           index_t::block_t::name() + "-marked-invalid",
-          fmt::sprintf("block %s is marked as invalid and cannot be applied",
-                       to.toPrettyString()));
+          format("block {} is marked as invalid and cannot be applied",
+                 to.toPrettyString()));
     }
 
     VBK_ASSERT(from.getHeight() < to.getHeight());

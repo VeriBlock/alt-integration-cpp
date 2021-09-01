@@ -8,7 +8,7 @@
 namespace altintegration {
 
 std::string ValidationState::GetPath() const {
-  return fmt::format("{}", fmt::join(GetPathParts(), "+"));
+  return format("{}", fmt::join(GetPathParts(), "+"));
 }
 
 std::vector<std::string> ValidationState::GetPathParts() const {

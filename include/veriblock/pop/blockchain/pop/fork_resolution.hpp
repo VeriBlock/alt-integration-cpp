@@ -17,8 +17,8 @@
 #include <veriblock/pop/finalizer.hpp>
 #include <veriblock/pop/keystone_util.hpp>
 #include <veriblock/pop/logger.hpp>
-#include <veriblock/pop/trace.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 
@@ -669,10 +669,10 @@ struct PopAwareForkResolutionComparator {
 
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
-    return fmt::sprintf("%sComparator{\n%s{tree=\n%s}}",
-                        pad,
-                        pad,
-                        ing_->toPrettyString(level + 2));
+    return format("{}Comparator{\n{}{tree=\n{}}}",
+                  pad,
+                  pad,
+                  ing_->toPrettyString(level + 2));
   }
 
  private:

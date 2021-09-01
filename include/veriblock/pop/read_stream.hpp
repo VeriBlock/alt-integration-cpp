@@ -69,9 +69,9 @@ struct ReadStream {
     if (!hasMore(bytes)) {
       return state.Invalid(
           "readbe-underflow",
-          fmt::format("Tried to read {} bytes from stream, but it has {} bytes",
-                      bytes,
-                      remaining()));
+          format("Tried to read {} bytes from stream, but it has {} bytes",
+                 bytes,
+                 remaining()));
     }
     t = 0;
     for (size_t i = 0, shift = (bytes - 1) * 8; i < bytes; i++, shift -= 8) {
@@ -99,9 +99,9 @@ struct ReadStream {
     if (!hasMore(sizeof(T))) {
       return state.Invalid(
           "readle-underflow",
-          fmt::format("Tried to read {} bytes from stream, but it has {} bytes",
-                      sizeof(T),
-                      remaining()));
+          format("Tried to read {} bytes from stream, but it has {} bytes",
+                 sizeof(T),
+                 remaining()));
     }
 
     t = 0;

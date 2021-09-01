@@ -348,8 +348,8 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf(
-        "%s%sBlockIndex(height=%d, hash=%s, next=%d, status=%d, header=%s, %s)",
+    return format(
+        "{}{}BlockIndex(height={}, hash={}, next={}, status={}, header={}, {})",
         std::string(level, ' '),
         Block::name(),
         height,
@@ -361,7 +361,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toShortPrettyString() const {
-    return fmt::sprintf("%s:%d:%s", Block::name(), height, HexStr(getHash()));
+    return format("{}:{}:{}", Block::name(), height, HexStr(getHash()));
   }
 
   void toVbkEncoding(WriteStream& stream) const {

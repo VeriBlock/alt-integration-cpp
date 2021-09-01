@@ -251,10 +251,10 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   if (!validateBTCContext(payload, state)) {
     return state.Invalid(
         block_t::name() + "-btc-context-does-not-connect",
-        fmt::sprintf("payload %s we attempted to add to block %s has "
-                     "the BTC context that does not connect to the BTC tree",
-                     payload.toPrettyString(),
-                     index.toPrettyString()));
+        format("payload {} we attempted to add to block {} has "
+               "the BTC context that does not connect to the BTC tree",
+               payload.toPrettyString(),
+               index.toPrettyString()));
   }
 
   index.insertPayloadId<payloads_t>(pid);
@@ -301,8 +301,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     // adding payloads to an invalid block will not result in a state change
     return state.Invalid(
         block_t::name() + "-bad-chain",
-        fmt::sprintf("Containing block=%s is added on top of invalid chain",
-                     index->toPrettyString()));
+        format("Containing block={} is added on top of invalid chain",
+               index->toPrettyString()));
   }
 
   auto tip = activeChain_.tip();
@@ -317,8 +317,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
       // TODO: once we plug the validation hole, we want this to be an assert
       return state.Invalid(
           block_t::name() + "-invalid-containing-block",
-          fmt::sprintf(
-              "Containing block=%s could not be applied due to being invalid",
+          format(
+              "Containing block={} could not be applied due to being invalid",
               index->toPrettyString()));
     }
   }
@@ -346,10 +346,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
       return state.Invalid(
           block_t::name() + "-invalid-payloads",
-          fmt::sprintf("Attempted to add invalid payload %s to block %s: %s",
-                       pid.toHex(),
-                       index->toPrettyString(),
-                       state.GetDebugMessage()));
+          format("Attempted to add invalid payload {} to block {}: {}",
+                 pid.toHex(),
+                 index->toPrettyString(),
+                 state.GetDebugMessage()));
     }
 
     appliedPayloads.push_back(pid);
@@ -368,8 +368,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
-  return fmt::sprintf(
-      "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
+  return format(
+      "{}\n{}", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
 bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
@@ -430,8 +430,8 @@ bool VbkBlockTree::finalizeBlockImpl(index_t& index,
   auto* bestBtcTip = btc().getBestChain().tip();
   VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
 
-  int32_t firstBlockHeight = bestBtcTip->getHeight() -
-                             btc().getParams().getOldBlocksWindow();
+  int32_t firstBlockHeight =
+      bestBtcTip->getHeight() - btc().getParams().getOldBlocksWindow();
   int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];

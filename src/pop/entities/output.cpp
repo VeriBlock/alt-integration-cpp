@@ -24,13 +24,12 @@ size_t Output::estimateSize() const {
 }
 
 std::string Output::toPrettyString() const {
-  return fmt::sprintf(
-      "Output{address=%s, coin=%lld}", address.toString(), coin.units);
+  return format("Output{address={}, coin={}}", address.toString(), coin.units);
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
-                                 Output& out,
-                                 ValidationState& state) {
+                                                Output& out,
+                                                ValidationState& state) {
   Address address;
   Coin amount;
   if (!DeserializeFromVbkEncoding(stream, address, state)) {

@@ -15,14 +15,14 @@ void RocksDBWriteBatch::write(const std::vector<uint8_t>& key,
   rocksdb::Slice value_slice((char*)value.data(), value.size());
   rocksdb::Status status = batch_.Put(key_slice, value_slice);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to write into the storage, err: {}", status.ToString()));
   }
 }
 void RocksDBWriteBatch::writeBatch() {
   rocksdb::Status status = db_.Write(write_options_, &batch_);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to write batch into the storage, err: {}", status.ToString()));
   }
 }
@@ -40,7 +40,7 @@ RocksDBStorage::RocksDBStorage(const std::string& path) {
   db_ = nullptr;
   rocksdb::Status status = rocksdb::DB::Open(options, path, &db_);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to open rocksdb storage, err: {}", status.ToString()));
   }
 }
@@ -51,7 +51,7 @@ void RocksDBStorage::write(const std::vector<uint8_t>& key,
 
   rocksdb::Status status = db_->Put(write_options_, key_slice, value_slice);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to write into the storage, err: {}", status.ToString()));
   }
 }

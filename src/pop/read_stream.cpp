@@ -54,9 +54,9 @@ bool ReadStream::read(size_t size, uint8_t *out, ValidationState &state) {
   if (!hasMore(size)) {
     return state.Invalid(
         "read-underflow",
-        fmt::format("Tried to read {} bytes, while stream has {} bytes",
-                    size,
-                    remaining()));
+        format("Tried to read {} bytes, while stream has {} bytes",
+               size,
+               remaining()));
   }
 
   std::copy(m_Buffer + m_Pos, m_Buffer + m_Pos + size, out);

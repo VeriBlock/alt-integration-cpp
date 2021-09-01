@@ -39,27 +39,25 @@ struct AddEndorsement : public Command {
     if (!containing) {
       return state.Invalid(
           protected_block_t::name() + "-no-containing",
-          fmt::sprintf("Can not find containing block in endorsement=%s",
-                       e_->toPrettyString()));
+          format("Can not find containing block in endorsement={}",
+                 e_->toPrettyString()));
     }
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
     if (!endorsed) {
-      return state.Invalid(
-          protected_block_t::name() + "-no-endorsed-block",
-          fmt::sprintf("Endorsed block=%s not found in the tree",
-                       HexStr(e_->endorsedHash)));
+      return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
+                           format("Endorsed block={} not found in the tree",
+                                  HexStr(e_->endorsedHash)));
     }
 
     auto actualEndorsed = containing->getAncestor(endorsed->getHeight());
     if (actualEndorsed == nullptr || endorsed != actualEndorsed) {
       return state.Invalid(
           protected_block_t::name() + "-block-differs",
-          fmt::sprintf(
-              "Endorsed block is on a different chain. Expected: %s, got %s",
-              endorsed->toShortPrettyString(),
-              (actualEndorsed ? actualEndorsed->toShortPrettyString()
-                              : "nullptr")));
+          format("Endorsed block is on a different chain. Expected: {}, got {}",
+                 endorsed->toShortPrettyString(),
+                 (actualEndorsed ? actualEndorsed->toShortPrettyString()
+                                 : "nullptr")));
     }
 
     if (containing->getHeight() - endorsed->getHeight() >
@@ -72,8 +70,8 @@ struct AddEndorsement : public Command {
     if (!blockOfProof) {
       return state.Invalid(
           protected_block_t::name() + "-block-of-proof-not-found",
-          fmt::sprintf("Can not find block of proof in SP Chain (%s)",
-                       HexStr(e_->blockOfProof)));
+          format("Can not find block of proof in SP Chain ({})",
+                 HexStr(e_->blockOfProof)));
     }
 
     containing->insertContainingEndorsement(e_);
