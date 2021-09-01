@@ -226,7 +226,7 @@ bool DefaultPopRewardsCalculator::calculatePayoutsInner(
 
     ATV atv;
     if (!tree_.getPayloadsProvider().getATV(e->getId(), atv, state)) {
-      return state.Invalid(fmt::format("cant-load-atv-{}", HexStr(e->getId())));
+      return state.Invalid(format("cant-load-atv-{}", HexStr(e->getId())));
     }
 
     int veriBlockHeight = b->getHeight();

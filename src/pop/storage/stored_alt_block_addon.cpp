@@ -38,13 +38,13 @@ void StoredAltBlockAddon::toInmem(StoredAltBlockAddon::addon_t& to) const {
 }
 
 std::string StoredAltBlockAddon::toPrettyString() const {
-  return fmt::format("ATVs={}[{}], VTBs={}[{}], VBKs={}[{}]",
-                     _atvids.size(),
-                     fmt::join(_atvids, ","),
-                     _vtbids.size(),
-                     fmt::join(_vtbids, ","),
-                     _vbkblockids.size(),
-                     fmt::join(_vbkblockids, ","));
+  return altintegration::format("ATVs={}[{}], VTBs={}[{}], VBKs={}[{}]",
+                                _atvids.size(),
+                                fmt::join(_atvids, ","),
+                                _vtbids.size(),
+                                fmt::join(_vtbids, ","),
+                                _vbkblockids.size(),
+                                fmt::join(_vbkblockids, ","));
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

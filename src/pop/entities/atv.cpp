@@ -50,9 +50,9 @@ ATV::id_t ATV::getId() const {
 }
 
 std::string ATV::toPrettyString() const {
-  return fmt::sprintf("ATV{containingTx=%s, containingBlock=%s}",
-                      transaction.getHash().toHex(),
-                      blockOfProof.getHash().toHex());
+  return format("ATV{containingTx={}, containingBlock={}}",
+                transaction.getHash().toHex(),
+                blockOfProof.getHash().toHex());
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
@@ -62,9 +62,8 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
     return state.Invalid("atv-version");
   }
   if (atv.version != 1) {
-    return state.Invalid(
-        "atv-bad-version",
-        fmt::format("Expected version=1, got={}", atv.version));
+    return state.Invalid("atv-bad-version",
+                         format("Expected version=1, got={}", atv.version));
   }
 
   if (!DeserializeFromVbkEncoding(stream, atv.transaction, state)) {

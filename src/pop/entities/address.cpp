@@ -135,11 +135,10 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
     }
 
     if (n < MULTISIG_ADDRESS_MIN_N_VALUE) {
-      return state.Invalid(
-          "addr-multisig-bad-n-too-small",
-          fmt::format("Expected N to be at least {}, but got {}",
-                      MULTISIG_ADDRESS_MIN_N_VALUE,
-                      n));
+      return state.Invalid("addr-multisig-bad-n-too-small",
+                           format("Expected N to be at least {}, but got {}",
+                                  MULTISIG_ADDRESS_MIN_N_VALUE,
+                                  n));
     }
     if (m > n) {
       return state.Invalid("addr-multisig-bad-mn",

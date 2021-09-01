@@ -81,10 +81,10 @@ std::vector<uint8_t> VbkBlock::toRaw() const {
 }
 
 std::string VbkBlock::toPrettyString() const {
-  return fmt::sprintf(
-      "VbkBlock{height=%ld, version=%d, prev=%s, ks1=%s, "
-      "ks2=%s, mroot=%s, timestamp=%ld, "
-      "diff=%ld, nonce=%ld}",
+  return format(
+      "VbkBlock{height={}, version={}, prev={}, ks1={}, "
+      "ks2={}, mroot={}, timestamp={}, "
+      "diff={}, nonce={}}",
       height,
       version,
       previousBlock.toHex(),

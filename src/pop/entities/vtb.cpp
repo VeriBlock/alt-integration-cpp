@@ -74,11 +74,10 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
 }
 
 std::string VTB::toPrettyString() const {
-  return fmt::sprintf(
-      "VTB(version=%d,containingTx=%s(%s), containingBlock=%s(%s))",
-      version,
-      transaction.getHash().toHex(),
-      transaction.toPrettyString(),
-      containingBlock.getHash().toHex(),
-      containingBlock.toPrettyString());
+  return format("VTB(version={},containingTx={}({}), containingBlock={}({}))",
+                version,
+                transaction.getHash().toHex(),
+                transaction.toPrettyString(),
+                containingBlock.getHash().toHex(),
+                containingBlock.toPrettyString());
 }
