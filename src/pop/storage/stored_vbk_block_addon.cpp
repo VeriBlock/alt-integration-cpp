@@ -39,7 +39,8 @@ void StoredVbkBlockAddon::toInmem(StoredVbkBlockAddon::addon_t& to) const {
 }
 
 std::string StoredVbkBlockAddon::toPrettyString() const {
-  return fmt::format("VTBs={}[{}]", _vtbids.size(), fmt::join(_vtbids, ","));
+  return altintegration::format(
+      "VTBs={}[{}]", _vtbids.size(), fmt::join(_vtbids, ","));
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

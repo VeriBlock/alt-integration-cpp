@@ -66,9 +66,9 @@ int main() {
 
   // do the action
 
-  const std::string format = fmt::format(
+  const std::string format = format(
       "{}\n", fmt::join(formatParts.begin(), formatParts.end(), delimiter));
-  const std::string header = fmt::format(
+  const std::string header = format(
       "{}", fmt::join(headerParts.begin(), headerParts.end(), delimiter));
 
   fmt::printf("%s\n", header);

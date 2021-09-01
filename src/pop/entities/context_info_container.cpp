@@ -51,10 +51,10 @@ uint256 ContextInfoContainer::getHash() const {
 }
 
 std::string ContextInfoContainer::toPrettyString() const {
-  return fmt::format("ContextInfo(height={} ks1={} ks2={})",
-                     height,
-                     HexStr(keystones.firstPreviousKeystone),
-                     HexStr(keystones.secondPreviousKeystone));
+  return format("ContextInfo(height={} ks1={} ks2={})",
+                height,
+                HexStr(keystones.firstPreviousKeystone),
+                HexStr(keystones.secondPreviousKeystone));
 }
 
 void AuthenticatedContextInfoContainer::toVbkEncoding(WriteStream& w) const {

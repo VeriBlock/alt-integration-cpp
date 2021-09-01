@@ -12,14 +12,13 @@ bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state) {
   if (num < min) {
     return state.Invalid(
         "range-below",
-        fmt::format(
-            "Expected num to be more or equal to {}, but got {}", min, num));
+        format("Expected num to be more or equal to {}, but got {}", min, num));
   }
 
   if (num > max) {
     return state.Invalid(
         "range-above",
-        fmt::format(
+        format(
             "Expected num to be less or equal than {}, but got {}", max, num));
   }
   return true;

@@ -18,6 +18,7 @@
 #include <veriblock/pop/keystone_util.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 
@@ -73,6 +74,7 @@ template <typename ProtectingBlockT, typename ProtectingChainParams>
 KeystoneContext getKeystoneContext(
     const ProtoKeystoneContext<ProtectingBlockT>& pkc,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
+  VBK_TRACE_ZONE_SCOPED;
   int earliestEndorsementIndex = NO_ENDORSEMENT;
   for (const auto* btcIndex : pkc.referencedByBlocks) {
     if (btcIndex == nullptr) {
@@ -130,6 +132,7 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
         allHashesInChain,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree,
     const ProtectedChainParams& config) {
+  VBK_TRACE_ZONE_SCOPED;
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
   VBK_ASSERT(tip != nullptr && "chain must not be empty");
@@ -266,6 +269,8 @@ struct ReducedPublicationView {
 
 template <typename PublicationView>
 int comparePopScoreImpl(PublicationView& a, PublicationView& b) {
+  VBK_TRACE_ZONE_SCOPED;
+
   if (a.empty() && b.empty()) {
     return 0;
   }
@@ -466,6 +471,8 @@ struct PopAwareForkResolutionComparator {
   //! @invariant atomic: either changes the state to 'to' or leaves it unchanged
   //! @return true if the state change was successful, false otherwise
   bool setState(protected_index_t& to, ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
+
     auto* currentActive = ed_.getBestChain().tip();
     VBK_ASSERT(currentActive != nullptr && "should be bootstrapped");
 
@@ -498,6 +505,8 @@ struct PopAwareForkResolutionComparator {
    *         negative if the candidate chain is better
    */
   int comparePopScore(protected_index_t& candidate, ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
+
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
       VBK_LOG_DEBUG("Candidate %s is invalid, the current chain wins",
@@ -660,10 +669,10 @@ struct PopAwareForkResolutionComparator {
 
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
-    return fmt::sprintf("%sComparator{\n%s{tree=\n%s}}",
-                        pad,
-                        pad,
-                        ing_->toPrettyString(level + 2));
+    return format("{}Comparator{\n{}{tree=\n{}}}",
+                  pad,
+                  pad,
+                  ing_->toPrettyString(level + 2));
   }
 
  private:

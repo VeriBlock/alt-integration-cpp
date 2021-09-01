@@ -19,7 +19,7 @@ void LevelDBWriteBatch::write(const std::vector<uint8_t>& key,
 void LevelDBWriteBatch::writeBatch() {
   leveldb::Status status = db_.Write(write_options_, &batch_);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to write batch into the storage, err: {}", status.ToString()));
   }
 }
@@ -37,7 +37,7 @@ LevelDBStorage::LevelDBStorage(const std::string& path) {
   db_ = nullptr;
   leveldb::Status status = leveldb::DB::Open(options, path, &db_);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to open leveldb storage, err: {}", status.ToString()));
   }
 }
@@ -49,7 +49,7 @@ void LevelDBStorage::write(const std::vector<uint8_t>& key,
 
   leveldb::Status status = db_->Put(write_options_, key_slice, value_slice);
   if (!status.ok()) {
-    throw altintegration::StorageIOException(fmt::format(
+    throw altintegration::StorageIOException(altintegration::format(
         "failed to write into the storage, err: {}", status.ToString()));
   }
 }

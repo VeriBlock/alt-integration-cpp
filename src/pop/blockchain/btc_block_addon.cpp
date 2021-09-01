@@ -105,7 +105,7 @@ BtcBlockAddon::getBlockOfProofEndorsement() const {
 }
 
 std::string BtcBlockAddon::toPrettyString() const {
-  return fmt::format("chainwork={}", chainWork.toHex());
+  return format("chainwork={}", chainWork.toHex());
 }
 
 void BtcBlockAddon::setNull() {

@@ -32,7 +32,8 @@ void StoredBtcBlockAddon::toInmem(StoredBtcBlockAddon::addon_t& to) const {
 }
 
 std::string StoredBtcBlockAddon::toPrettyString() const {
-  return fmt::format("refs={}[{}]", refs.size(), fmt::join(refs, ","));
+  return altintegration::format(
+      "refs={}[{}]", refs.size(), fmt::join(refs, ","));
 }
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,
