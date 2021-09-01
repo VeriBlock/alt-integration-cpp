@@ -12,6 +12,7 @@
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 
@@ -85,13 +86,15 @@ struct PopStateMachine {
 
   // atomic: applies either all or none of the block's commands
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
+
     assertBlockCanBeApplied(index);
 
     if (!index.isValid()) {
       return state.Invalid(
           index_t::block_t::name() + "-marked-invalid",
-          fmt::sprintf("block %s is marked as invalid and cannot be applied",
-                       index.toPrettyString()));
+          format("block {} is marked as invalid and cannot be applied",
+                 index.toPrettyString()));
     }
 
     VBK_ASSERT_MSG(index.isValid(BLOCK_CONNECTED),
@@ -155,6 +158,8 @@ struct PopStateMachine {
    * @param[in] index block to unapply
    */
   void unapplyBlock(index_t& index) {
+    VBK_TRACE_ZONE_SCOPED;
+
     assertBlockCanBeUnapplied(index);
 
     if (index.hasPayloads()) {
@@ -189,6 +194,8 @@ struct PopStateMachine {
       index_t& from,
       index_t& to,
       const std::function<bool(index_t& index)>& pred) {
+    VBK_TRACE_ZONE_SCOPED;
+
     if (&from == &to) {
       return to;
     }
@@ -223,6 +230,8 @@ struct PopStateMachine {
 
   //! unapplies all commands from blocks in the range of [from; to)
   void unapply(index_t& from, index_t& to) {
+    VBK_TRACE_ZONE_SCOPED;
+
     auto pred = [](index_t&) -> bool { return true; };
     auto& firstUnprocessed = unapplyWhile(from, to, pred);
     VBK_ASSERT(&firstUnprocessed == &to);
@@ -247,6 +256,8 @@ struct PopStateMachine {
   VBK_CHECK_RETURN bool apply(index_t& from,
                               index_t& to,
                               ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
+
     if (&from == &to) {
       // already applied this block
       return true;
@@ -255,8 +266,8 @@ struct PopStateMachine {
     if (!to.isValid()) {
       return state.Invalid(
           index_t::block_t::name() + "-marked-invalid",
-          fmt::sprintf("block %s is marked as invalid and cannot be applied",
-                       to.toPrettyString()));
+          format("block {} is marked as invalid and cannot be applied",
+                 to.toPrettyString()));
     }
 
     VBK_ASSERT(from.getHeight() < to.getHeight());
@@ -296,6 +307,8 @@ struct PopStateMachine {
   VBK_CHECK_RETURN bool setState(index_t& from,
                                  index_t& to,
                                  ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
+
     if (&from == &to) {
       // already at this state
       return true;

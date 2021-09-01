@@ -47,9 +47,9 @@ bool loadValidateTree(
   for (const auto& block : blocks) {
     if (!validateLoadBlock(tree, block, state)) {
       return state.Invalid("load-validate-tree",
-                           fmt::format("Invalid stored {} block {}",
-                                       block_t::name(),
-                                       block.toPrettyString()));
+                           format("Invalid stored {} block {}",
+                                  block_t::name(),
+                                  block.toPrettyString()));
     }
   }
   return true;

@@ -24,10 +24,10 @@ size_t PublicationData::estimateSize() const {
 }
 
 std::string PublicationData::toPrettyString() const {
-  return fmt::sprintf("PublicationData{id=%lld, header=%s, payoutInfo=%s}",
-                      identifier,
-                      HexStr(header),
-                      HexStr(payoutInfo));
+  return format("PublicationData{id={}, header={}, payoutInfo={}}",
+                identifier,
+                HexStr(header),
+                HexStr(payoutInfo));
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,

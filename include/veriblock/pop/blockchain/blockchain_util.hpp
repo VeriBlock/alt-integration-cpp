@@ -69,15 +69,15 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     auto& e = *p.second;
 
     if (id != e.id) {
-      return state.Invalid(
-          "bad-id", fmt::format("Key={}, Id={}", HexStr(id), HexStr(e.id)));
+      return state.Invalid("bad-id",
+                           format("Key={}, Id={}", HexStr(id), HexStr(e.id)));
     }
 
     auto* endorsed = ed_.getBlockIndex(e.endorsedHash);
     if (!endorsed) {
       return state.Invalid(
           "no-endorsed",
-          fmt::format("Can not find endorsed block in {}", e.toPrettyString()));
+          format("Can not find endorsed block in {}", e.toPrettyString()));
     }
 
     if (chain[endorsed->getHeight()] == nullptr ||
@@ -85,21 +85,21 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
         endorsed->getHash() != e.endorsedHash) {
       return state.Invalid(
           "bad-endorsed",
-          fmt::format("Endorsed block does not match {}", e.toPrettyString()));
+          format("Endorsed block does not match {}", e.toPrettyString()));
     }
 
     if (e.containingHash != toRecover.getHash()) {
-      return state.Invalid("bad-containing",
-                           fmt::format("Containing block does not match {}",
-                                       e.toPrettyString()));
+      return state.Invalid(
+          "bad-containing",
+          format("Containing block does not match {}", e.toPrettyString()));
     }
 
     auto* blockOfProof = as_mut(ing).getBlockIndex(e.blockOfProof);
     if (!blockOfProof) {
       return state.Invalid(
           "bad-blockofproof",
-          fmt::format("Block Of Proof %s does not exist in SP chain",
-                      HexStr(e.blockOfProof)));
+          format("Block Of Proof %s does not exist in SP chain",
+                 HexStr(e.blockOfProof)));
     }
 
     // make sure it is accessible in lambda

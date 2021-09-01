@@ -18,6 +18,7 @@
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
+#include <veriblock/pop/trace.hpp>
 
 #include "libethash/internal.hpp"
 
@@ -608,10 +609,12 @@ static EthashCache_t& GetEthashCache() {
 }
 
 // protects gEthashCache
-static std::mutex& GetEthashCacheMutex() {
-  static std::mutex csEthashCache;
+static VBK_TRACE_LOCKABLE_BASE(std::mutex)& GetEthashCacheMutex() {
+  static VBK_TRACE_LOCKABLE(std::mutex, csEthashCache);
   return csEthashCache;
 }
+
+using LockGuard = std::lock_guard<VBK_TRACE_LOCKABLE_BASE(std::mutex)>;
 
 // sha256d(vbkheader) -> progpow hash
 using ProgpowHeaderCache_T = lru11::Cache<uint256, uint192, std::mutex>;
@@ -631,7 +634,7 @@ void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
 
 void progpow::clearHeaderCache() { GetProgpowHeaderCache().clear(); }
 void progpow::clearEthashCache() {
-  std::lock_guard<std::mutex> lock(GetEthashCacheMutex());
+  LockGuard lock(GetEthashCacheMutex());
   GetEthashCache().clear();
 }
 
@@ -648,7 +651,7 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   std::shared_ptr<CacheEntry> cacheEntry;
   {
     // cache miss
-    std::lock_guard<std::mutex> lock(GetEthashCacheMutex());
+    LockGuard lock(GetEthashCacheMutex());
     cacheEntry = GetEthashCache().getOrDefault(epoch, [epoch, height] {
       VBK_LOG_WARN(
           "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
@@ -698,6 +701,7 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
 }
 
 uint192 progPowHash(Slice<const uint8_t> header) {
+  VBK_TRACE_ZONE_SCOPED_S(40);
   // replace very slow progpow hash with very fast sha256 hash
 #if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
   auto hash = sha256(header);

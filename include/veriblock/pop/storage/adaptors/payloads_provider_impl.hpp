@@ -58,14 +58,14 @@ struct PayloadsStorageImpl : public PayloadsStorage {
     if (!storage_.read(payloads_key<pop_t>(id), bytes_out)) {
       return state.Invalid(
           "bad-" + pop_t::name(),
-          fmt::format("can not read {} from storage", pop_t::name()));
+          format("can not read {} from storage", pop_t::name()));
     }
 
     ReadStream stream(bytes_out);
     if (!DeserializeFromVbkEncoding(stream, out, state)) {
       return state.Invalid(
           "bad-" + pop_t::name(),
-          fmt::format("can not deserialize {} from bytes", pop_t::name()));
+          format("can not deserialize {} from bytes", pop_t::name()));
     }
 
     return true;

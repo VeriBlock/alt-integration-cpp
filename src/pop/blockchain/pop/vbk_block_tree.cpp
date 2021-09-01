@@ -9,6 +9,7 @@
 #include <veriblock/pop/finalizer.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/reversed_range.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 
@@ -21,6 +22,7 @@ template struct BaseBlockTree<VbkBlock>;
 
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   auto bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
 
@@ -51,6 +53,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 }
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
@@ -62,6 +65,7 @@ bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
 }
 
 void VbkBlockTree::overrideTip(index_t& to) {
+  VBK_TRACE_ZONE_SCOPED;
   base::overrideTip(to);
   VBK_ASSERT_MSG(to.isValid(BLOCK_CAN_BE_APPLIED),
                  "the active chain tip(%s) must be fully valid",
@@ -82,6 +86,7 @@ void VbkBlockTree::removePayloads(const hash_t& hash,
 
 void VbkBlockTree::removePayloads(index_t& index,
                                   const std::vector<pid_t>& pids) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG(
       "remove %d payloads from %s", pids.size(), index.toPrettyString());
 
@@ -136,6 +141,7 @@ void VbkBlockTree::unsafelyRemovePayload(const Blob<24>& hash,
 void VbkBlockTree::unsafelyRemovePayload(index_t& index,
                                          const pid_t& pid,
                                          bool shouldDetermineBestChain) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("unsafely removing %s payload from %s",
                 pid.toPrettyString(),
                 index.toPrettyString());
@@ -180,6 +186,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 // or earlier blocks
 bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                       ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   auto& tx = vtb.transaction;
 
   auto& firstBlock = !tx.blockOfProofContext.empty()
@@ -220,6 +227,7 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                                             const payloads_t& payload,
                                             ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   // in this method we allow to add duplicates because of the functionality of
   // the forkresolution algorithms.
   // look into the description alt_blockchain_test.cpp
@@ -243,10 +251,10 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   if (!validateBTCContext(payload, state)) {
     return state.Invalid(
         block_t::name() + "-btc-context-does-not-connect",
-        fmt::sprintf("payload %s we attempted to add to block %s has "
-                     "the BTC context that does not connect to the BTC tree",
-                     payload.toPrettyString(),
-                     index.toPrettyString()));
+        format("payload {} we attempted to add to block {} has "
+               "the BTC context that does not connect to the BTC tree",
+               payload.toPrettyString(),
+               index.toPrettyString()));
   }
 
   index.insertPayloadId<payloads_t>(pid);
@@ -273,6 +281,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                                const std::vector<payloads_t>& payloads,
                                ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("%s add %d payloads to block %s",
                 block_t::name(),
                 payloads.size(),
@@ -292,8 +301,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
     // adding payloads to an invalid block will not result in a state change
     return state.Invalid(
         block_t::name() + "-bad-chain",
-        fmt::sprintf("Containing block=%s is added on top of invalid chain",
-                     index->toPrettyString()));
+        format("Containing block={} is added on top of invalid chain",
+               index->toPrettyString()));
   }
 
   auto tip = activeChain_.tip();
@@ -308,8 +317,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
       // TODO: once we plug the validation hole, we want this to be an assert
       return state.Invalid(
           block_t::name() + "-invalid-containing-block",
-          fmt::sprintf(
-              "Containing block=%s could not be applied due to being invalid",
+          format(
+              "Containing block={} could not be applied due to being invalid",
               index->toPrettyString()));
     }
   }
@@ -337,10 +346,10 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 
       return state.Invalid(
           block_t::name() + "-invalid-payloads",
-          fmt::sprintf("Attempted to add invalid payload %s to block %s: %s",
-                       pid.toHex(),
-                       index->toPrettyString(),
-                       state.GetDebugMessage()));
+          format("Attempted to add invalid payload {} to block {}: {}",
+                 pid.toHex(),
+                 index->toPrettyString(),
+                 state.GetDebugMessage()));
     }
 
     appliedPayloads.push_back(pid);
@@ -359,12 +368,13 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
 }
 
 std::string VbkBlockTree::toPrettyString(size_t level) const {
-  return fmt::sprintf(
-      "%s\n%s", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
+  return format(
+      "{}\n{}", VbkTree::toPrettyString(level), cmp_.toPrettyString(level + 2));
 }
 
 bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
                                     ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (!VbkTree::loadBlockForward(index, state)) {
     return false;  // already set
   }
@@ -373,6 +383,7 @@ bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
 
 bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
                                      ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (!VbkTree::loadBlockBackward(index, state)) {
     return false;
   }
@@ -381,6 +392,7 @@ bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
 
 bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   auto hash = index.header->getHash();
   auto height = index.height;
 
@@ -406,6 +418,7 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 }
 
 void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
+  VBK_TRACE_ZONE_SCOPED;
   payloadsIndex_.removePayloadsIndex(toRemove);
   BaseBlockTree::removeSubtree(toRemove);
 }
@@ -413,11 +426,12 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 bool VbkBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   auto* bestBtcTip = btc().getBestChain().tip();
   VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
 
-  int32_t firstBlockHeight = bestBtcTip->getHeight() -
-                             btc().getParams().getOldBlocksWindow();
+  int32_t firstBlockHeight =
+      bestBtcTip->getHeight() - btc().getParams().getOldBlocksWindow();
   int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
@@ -444,6 +458,7 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
       commandGroupStore_(*this, payloadsProvider_) {}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
+  VBK_TRACE_ZONE_SCOPED;
   if (!base::loadTip(hash, state)) {
     return false;
   }

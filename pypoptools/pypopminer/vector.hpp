@@ -12,7 +12,7 @@
 
 template <typename T>
 std::string vector_repr(std::vector<T>& v) {
-  return fmt::sprintf("vector{size=%d}", v.size());
+  return format("vector{size={}}", v.size());
 }
 
 template <typename T>

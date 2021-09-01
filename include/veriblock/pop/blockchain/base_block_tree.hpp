@@ -15,6 +15,7 @@
 #include <veriblock/pop/signals.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/stored_block_index.hpp>
+#include <veriblock/pop/trace.hpp>
 
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
@@ -142,12 +143,14 @@ struct BaseBlockTree {
                 std::is_same<T, hash_t>::value ||
                 std::is_same<T, prev_block_hash_t>::value>::type>
   const index_t* findBlockIndex(const T& hash) const {
+    VBK_TRACE_ZONE_SCOPED;
     auto shortHash = makePrevHash(hash);
     auto it = blocks_.find(shortHash);
     return it == blocks_.end() ? nullptr : it->second.get();
   }
 
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
     auto* tip = getBlockIndex(hash);
     if (!tip) {
       return state.Invalid(block_t::name() + "-no-tip");
@@ -187,6 +190,7 @@ struct BaseBlockTree {
 
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
     index_t* root = &this->getRoot();
     auto oldHeight = root->getHeight();
     std::vector<stored_index_t> tempChain;
@@ -252,6 +256,7 @@ struct BaseBlockTree {
    * @warning fails on assert if unknown hash is provided
    */
   virtual void removeSubtree(index_t& toRemove) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
     // save ptr to a previous block
     auto* prev = toRemove.pprev;
@@ -310,6 +315,7 @@ struct BaseBlockTree {
   void invalidateSubtree(index_t& toBeInvalidated,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Invalidating %s subtree: reason=%d block=%s",
                   block_t::name(),
                   (int)reason,
@@ -383,6 +389,7 @@ struct BaseBlockTree {
   void revalidateSubtree(index_t& toBeValidated,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Revalidating %s subtree: reason=%d block=%s",
                   block_t::name(),
                   (int)reason,
@@ -449,6 +456,7 @@ struct BaseBlockTree {
   }
 
   virtual bool setState(index_t& index, ValidationState&) {
+    VBK_TRACE_ZONE_SCOPED;
     overrideTip(index);
     return true;
   }
@@ -488,6 +496,7 @@ struct BaseBlockTree {
 
   //! @private
   void tryAddTip(index_t* index) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT(index);
 
     if (!index->isValidTip()) {
@@ -506,6 +515,7 @@ struct BaseBlockTree {
 
   //! dangerous! permanently drops the block from the tree
   void eraseBlock(index_t& block) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT_MSG(block.isDeleted(),
                    "cannot erase a block that is not deleted %s",
                    block.toPrettyString());
@@ -524,10 +534,9 @@ struct BaseBlockTree {
   //! create a new block index
   //! @private
   index_t* createBlockIndex(const hash_t& hash, index_t& prev) {
+    VBK_TRACE_ZONE_SCOPED;
     auto shortHash = makePrevHash(hash);
-
     auto newIndex = make_unique<index_t>(&prev);
-
     auto inserted = blocks_.emplace(shortHash, std::move(newIndex));
     VBK_ASSERT_MSG(inserted.second,
                    "attempted to create a blockindex with duplicate hash %s",
@@ -539,10 +548,9 @@ struct BaseBlockTree {
   //! @private
   index_t* createBootstrapBlockIndex(const hash_t& hash,
                                      block_height_t height) {
+    VBK_TRACE_ZONE_SCOPED;
     auto shortHash = makePrevHash(hash);
-
     auto newIndex = make_unique<index_t>(height);
-
     auto inserted = blocks_.emplace(shortHash, std::move(newIndex));
     VBK_ASSERT_MSG(inserted.second,
                    "attempted to create a blockindex with duplicate hash %s",
@@ -554,6 +562,7 @@ struct BaseBlockTree {
   //! @private
   index_t* doInsertBlockHeader(const std::shared_ptr<block_t>& header,
                                block_height_t bootstrapHeight = 0) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT(header != nullptr);
 
     auto* prev = getBlockIndex(header->getPreviousBlock());
@@ -573,6 +582,7 @@ struct BaseBlockTree {
   //! @private
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
+    VBK_TRACE_ZONE_SCOPED;
     assertBlockSanity(*block);
 
     auto hash = block->getHash();
@@ -606,6 +616,7 @@ struct BaseBlockTree {
   bool loadBlockInner(const stored_index_t& index,
                       bool connectForward,
                       ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
@@ -621,10 +632,9 @@ struct BaseBlockTree {
     if (index.height == root.getHeight() &&
         index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
-      return state.Invalid(
-          "bad-root",
-          fmt::format("Can't overwrite root block with block {}",
-                      index.toPrettyString()));
+      return state.Invalid("bad-root",
+                           format("Can't overwrite root block with block {}",
+                                  index.toPrettyString()));
     }
 
     auto& header = *index.header;
@@ -657,8 +667,8 @@ struct BaseBlockTree {
               makePrevHash(currentHash)) {
             return state.Invalid(
                 "bad-block-hash",
-                fmt::format("Can't replace root block with block {}",
-                            index.toPrettyString()));
+                format("Can't replace root block with block {}",
+                       index.toPrettyString()));
           }
 
           current = createBootstrapBlockIndex(currentHash, index.height);
@@ -740,15 +750,15 @@ struct BaseBlockTree {
       tipsStr += (_tip->toPrettyString(level + 2) + "\n");
     }
 
-    return fmt::sprintf("%s{tip=%s}\n%s{blocks=\n%s%s}\n%s{tips=\n%s%s}",
-                        pad,
-                        (tip ? tip->toPrettyString() : "<empty>"),
-                        pad,
-                        blocksStr,
-                        pad,
-                        pad,
-                        tipsStr,
-                        pad);
+    return format("{}{tip={}}\n{}{blocks=\n{}{}}\n{}{tips=\n{}{}}",
+                  pad,
+                  (tip ? tip->toPrettyString() : "<empty>"),
+                  pad,
+                  blocksStr,
+                  pad,
+                  pad,
+                  tipsStr,
+                  pad);
   }
 
  public:
@@ -786,6 +796,7 @@ struct BaseBlockTree {
    * @private
    */
   void deallocateTree(index_t& toDelete) {
+    VBK_TRACE_ZONE_SCOPED;
     auto* index = &toDelete;
 
     // find oldest ancestor
@@ -831,6 +842,7 @@ struct BaseBlockTree {
                                  // see config.preserveBlocksBehindFinal()
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
     index_t* finalizedBlock = &index;
 
     // prereq is not met - finalized block must be on active chain
@@ -942,6 +954,7 @@ struct BaseBlockTree {
    * @private
    */
   void updateAffectedTips(index_t& modifiedBlock) {
+    VBK_TRACE_ZONE_SCOPED;
     if (deferForkResolutionDepth == 0) {
       ValidationState dummy;
       return doUpdateAffectedTips(modifiedBlock, dummy);
@@ -963,6 +976,7 @@ struct BaseBlockTree {
    * @private
    */
   void doUpdateAffectedTips(index_t& modifiedBlock, ValidationState& state) {
+    VBK_TRACE_ZONE_SCOPED;
     auto tips = findValidTips<block_t>(this->getTips(), modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
@@ -986,6 +1000,7 @@ struct BaseBlockTree {
   index_t* lastModifiedBlock = nullptr;
 
   void doUpdateTips() {
+    VBK_TRACE_ZONE_SCOPED;
     for (auto* tip : tips_) {
       VBK_ASSERT_MSG(tip->isValidTip(),
                      "found block %s in tips_ which is not a valid tip",
@@ -1043,6 +1058,7 @@ struct BaseBlockTree {
   }
 
   void doInvalidate(index_t& block, enum BlockValidityStatus reason) {
+    VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT_MSG(
         !block.isValidUpTo(BLOCK_CAN_BE_APPLIED) ||
             (reason & BLOCK_FAILED_POP) == 0u,

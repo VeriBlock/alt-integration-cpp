@@ -136,7 +136,7 @@ bool checkIdsForDuplicates(const std::vector<typename P::id_t>& payloadIds,
                            ValidationState& state) {
   if (hasDuplicateIds<P>(payloadIds)) {
     return state.Invalid(P::name() + "-duplicate",
-                         fmt::format("duplicate {} ids", P::name()));
+                         format("duplicate {} ids", P::name()));
   }
   return true;
 }
