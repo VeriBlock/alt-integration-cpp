@@ -1,0 +1,3 @@
+<map id="altintegration::signals::Connection" name="altintegration::signals::Connection">
+<area shape="rect" id="node1" title="lifetime of connection MUST always be less than of corresponding Signal" alt="" coords="5,5,148,112"/>
+</map>

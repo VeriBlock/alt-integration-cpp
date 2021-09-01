@@ -1,0 +1,28 @@
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.diff-minus {
+    background: rgba(240,128,128, 0.2);
+}
+
+.diff-plus {
+    background: rgba(123, 239, 178, 0.2);
+}
+
+.sign {
+    width: 9px;
+    float: left;
+}
+
+@media screen and (min-width: 767px) and (max-width: 1410px) {
+    #doc-content .contents, #doc-content .header .title {
+        margin-left: 250px;
+    }
+}

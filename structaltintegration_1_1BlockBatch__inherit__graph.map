@@ -1,0 +1,4 @@
+<map id="altintegration::BlockBatch" name="altintegration::BlockBatch">
+<area shape="rect" id="node1" title="An interface which represents single write batch of a group of blocks." alt="" coords="5,5,175,171"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1adaptors_1_1BlockBatchImpl.html" title=" " alt="" coords="14,219,166,413"/>
+</map>
