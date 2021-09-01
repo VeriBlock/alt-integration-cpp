@@ -12,7 +12,7 @@
 #include <veriblock/pop/blob.hpp>
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/consts.hpp>
-#include <veriblock/pop/crypto/progpow.hp
+#include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/trace.hpp>
 
