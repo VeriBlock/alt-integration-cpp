@@ -33,8 +33,8 @@ struct StoredBlockIndex {
   }
 
   std::string toPrettyString(size_t level = 0) const {
-    return fmt::sprintf(
-        "%s%sStoredBlockIndex(height=%d, hash=%s, status=%d, header=%s, %s)",
+    return format(
+        "{}{}StoredBlockIndex(height={}, hash={}, status={}, header={}, {})",
         std::string(level, ' '),
         Block::name(),
         height,

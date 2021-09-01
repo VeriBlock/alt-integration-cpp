@@ -215,7 +215,7 @@ struct Blob {
   }
 
   std::string toPrettyString() const {
-    return fmt::sprintf("Blob<%llu>(%s)", N, toHex());
+    return format("Blob<{}>({})", N, toHex());
   }
 
   //! helper for readSingleByteLenValue
@@ -284,9 +284,7 @@ struct formatter<altintegration::Blob<N>> {
   auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
     auto it = ctx.begin(), end = ctx.end();
     // Check if reached the end of the range:
-    if (it != end && *it != '}') {
-      FMT_THROW("invalid format");
-    }
+    VBK_ASSERT_MSG(it == end || *it == '}', "invalid format");
 
     // Return an iterator past the end of the parsed range:
     return it;

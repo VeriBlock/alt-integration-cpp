@@ -23,10 +23,10 @@ struct StateCorruptedException : public std::domain_error {
   StateCorruptedException(const BlockIndex<Block>& index,
                           ValidationState& state)
       : StateCorruptedException(
-            fmt::format("Error loading payloads from {} block {}, reason={}",
-                        Block::name(),
-                        index.toPrettyString(),
-                        state.toString())) {}
+            format("Error loading payloads from {} block {}, reason={}",
+                   Block::name(),
+                   index.toPrettyString(),
+                   state.toString())) {}
 };
 
 }  // namespace altintegration

@@ -118,12 +118,12 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
-    return fmt::sprintf("%s%sBlockTree{blocks=%llu\n%s\n%s}",
-                        pad,
-                        Block::name(),
-                        base::getBlocks().size(),
-                        base::toPrettyString(level + 2),
-                        pad);
+    return format("{}{}BlockTree{blocks={}\n{}\n{}}",
+                  pad,
+                  Block::name(),
+                  base::getBlocks().size(),
+                  base::toPrettyString(level + 2),
+                  pad);
   }
 
   //! @invariant NOT atomic.
@@ -319,7 +319,7 @@ struct BlockTree : public BaseBlockTree<Block> {
       index->setFlag(BLOCK_FAILED_CHILD);
       return state.Invalid(
           block_t::name() + "-bad-chain",
-          fmt::sprintf("Previous block is invalid=%s", prev->toPrettyString()));
+          format("Previous block is invalid={}", prev->toPrettyString()));
     }
 
     return true;

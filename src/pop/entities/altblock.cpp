@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/entities/altblock.hpp>
-
 #include <veriblock/pop/strutil.hpp>
 
 namespace altintegration {
@@ -44,7 +43,7 @@ bool operator==(const AltBlock& a, const AltBlock& b) {
 bool operator!=(const AltBlock& a, const AltBlock& b) { return !(a == b); }
 
 std::string AltBlock::toPrettyString() const {
-  return fmt::sprintf("AltBlock{height=%d, hash=%s}", height, HexStr(hash));
+  return format("AltBlock{height={}, hash={}}", height, HexStr(hash));
 }
 void AltBlock::toVbkEncoding(WriteStream& stream) const {
   return toRaw(stream);

@@ -6,17 +6,16 @@
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/entities/merkle_tree.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
-
 #include <veriblock/pop/hashutil.hpp>
 
 namespace altintegration {
 
 std::string PopData::toPrettyString() const {
-  return fmt::sprintf("PopData{VBKs=%d, VTBs=%d, ATVs=%d, version=%d}",
-                      context.size(),
-                      vtbs.size(),
-                      atvs.size(),
-                      version);
+  return format("PopData{VBKs={}, VTBs={}, ATVs={}, version={}}",
+                context.size(),
+                vtbs.size(),
+                atvs.size(),
+                version);
 }
 
 // VbkBlocks, then VTBs, then ATVs
@@ -84,7 +83,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   }
   if (pd.version != 1) {
     return state.Invalid("pop-bad-version",
-                         fmt::format("Expected version=1, got {}", pd.version));
+                         format("Expected version=1, got {}", pd.version));
   }
 
   size_t i = 0;

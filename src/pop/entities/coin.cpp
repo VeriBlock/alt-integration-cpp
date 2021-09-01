@@ -11,21 +11,17 @@ void Coin::toVbkEncoding(WriteStream& stream) const {
   writeSingleBEValue(stream, units);
 }
 
-size_t Coin::estimateSize() const {
-  return singleBEValueSize(units);
-}
+size_t Coin::estimateSize() const { return singleBEValueSize(units); }
 
 bool Coin::operator==(const Coin& other) const noexcept {
   return units == other.units;
 }
 
-std::string Coin::toPrettyString() const {
-  return fmt::sprintf("Coin{%lld}", units);
-}
+std::string Coin::toPrettyString() const { return format("Coin{{}}", units); }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
-                                 Coin& out,
-                                 ValidationState& state) {
+                                                Coin& out,
+                                                ValidationState& state) {
   int64_t amount = 0;
   if (!readSingleBEValue<int64_t>(stream, amount, state)) {
     return state.Invalid("invalid-amount");

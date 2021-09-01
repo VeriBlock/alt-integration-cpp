@@ -632,10 +632,9 @@ struct BaseBlockTree {
     if (index.height == root.getHeight() &&
         index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
-      return state.Invalid(
-          "bad-root",
-          fmt::format("Can't overwrite root block with block {}",
-                      index.toPrettyString()));
+      return state.Invalid("bad-root",
+                           format("Can't overwrite root block with block {}",
+                                  index.toPrettyString()));
     }
 
     auto& header = *index.header;
@@ -668,8 +667,8 @@ struct BaseBlockTree {
               makePrevHash(currentHash)) {
             return state.Invalid(
                 "bad-block-hash",
-                fmt::format("Can't replace root block with block {}",
-                            index.toPrettyString()));
+                format("Can't replace root block with block {}",
+                       index.toPrettyString()));
           }
 
           current = createBootstrapBlockIndex(currentHash, index.height);
@@ -751,15 +750,15 @@ struct BaseBlockTree {
       tipsStr += (_tip->toPrettyString(level + 2) + "\n");
     }
 
-    return fmt::sprintf("%s{tip=%s}\n%s{blocks=\n%s%s}\n%s{tips=\n%s%s}",
-                        pad,
-                        (tip ? tip->toPrettyString() : "<empty>"),
-                        pad,
-                        blocksStr,
-                        pad,
-                        pad,
-                        tipsStr,
-                        pad);
+    return format("{}{tip={}}\n{}{blocks=\n{}{}}\n{}{tips=\n{}{}}",
+                  pad,
+                  (tip ? tip->toPrettyString() : "<empty>"),
+                  pad,
+                  blocksStr,
+                  pad,
+                  pad,
+                  tipsStr,
+                  pad);
   }
 
  public:
