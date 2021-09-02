@@ -105,7 +105,7 @@ removePayloads and unsafelyRemovePayload cannot invalidate any block as long as 
 <dd>
 all payloads and blocks are valid as a consequence of the above.</dd></dl>
 <p>Definition: a validation hole is incorrect use of removePayloads and unsafelyRemovePayload by <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> that results in invalid Veriblock tree blocks or corrupted state.</p>
-<p>Notes regarding the validation hole: At this moment, the validation hole can be considered plugged as long as the user never modifies the VBK tree directly, never uses PopStateMachine and only calls <a class="el" href="structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd" title="Switch AltBlockTree from the current tip to different block, while doing all validations of intermedi...">AltBlockTree::setState()</a> and <a class="el" href="structaltintegration_1_1AltBlockTree.html#a29da03ce1981be457281181a5ad23e24" title="Efficiently compares current tip (A) and any other block (B).">AltBlockTree::comparePopScore()</a> as currently implemented. However, a trivial code modification can unintentionally re-introduce the issue.</p>
+<p>Notes regarding the validation hole: At this moment, the validation hole can be considered plugged as long as the user never modifies the VBK tree directly, never uses PopStateMachine and only calls <a class="el" href="structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd" title="Switch AltBlockTree from the current tip to different block, while doing all validations of intermedi...">AltBlockTree::setState()</a> and <a class="el" href="structaltintegration_1_1AltBlockTree.html#a867a99ed5fee955beac858b8d62aa36a" title="Efficiently compares current tip (A) and any other block (B).">AltBlockTree::activateBestChain()</a> as currently implemented. However, a trivial code modification can unintentionally re-introduce the issue.</p>
 <p>To plug the validation hole, we must ensure that any unvalidated block is unapplied before all of the blocks that were applied at the time of the application.</p>
 <p>Suppose, altchain blocks were applied in the following order: V1, V2, V3, U4, U5, U6, V7, V8, U9 (V* are fully valid blocks, U* are unvalidated blocks)</p>
 <p>In this example, <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> must ensure that the blocks are unapplied in the following sequence:</p><ul>
@@ -228,9 +228,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5bffb2735fe2ba1ad712f8efcc071c26"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">loadBlockForward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
 <tr class="memdesc:a5bffb2735fe2ba1ad712f8efcc071c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently connect <code>index</code> to current tree as a leaf, loaded from disk  <a href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">More...</a><br /></td></tr>
 <tr class="separator:a5bffb2735fe2ba1ad712f8efcc071c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a111d7e353423fba705edbd55ded94bea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">loadBlockBackward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="memdesc:a111d7e353423fba705edbd55ded94bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently connect <code>index</code> to current tree as a root, loaded from disk  <a href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">More...</a><br /></td></tr>
-<tr class="separator:a111d7e353423fba705edbd55ded94bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8bd01148477ec5f462de35a85eedddbe"><td class="memItemLeft" align="right" valign="top"><a id="a8bd01148477ec5f462de35a85eedddbe"></a>
 <a class="el" href="structaltintegration_1_1BlockTree.html">BtcTree</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>btc</b> ()</td></tr>
 <tr class="separator:a8bd01148477ec5f462de35a85eedddbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -273,12 +270,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>unsafelyRemovePayload
 <tr class="memitem:a3d5c6f9a9bd9cc7393ea888fed2ba8fb"><td class="memItemLeft" align="right" valign="top"><a id="a3d5c6f9a9bd9cc7393ea888fed2ba8fb"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> (size_t level=0) const</td></tr>
 <tr class="separator:a3d5c6f9a9bd9cc7393ea888fed2ba8fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b83c7afe6ae52a81e924b01a617c2c6"><td class="memItemLeft" align="right" valign="top"><a id="a5b83c7afe6ae52a81e924b01a617c2c6"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>setState</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;to, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="separator:a5b83c7afe6ae52a81e924b01a617c2c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1213330b1a05be755a1ca5311e7e079c"><td class="memItemLeft" align="right" valign="top"><a id="a1213330b1a05be755a1ca5311e7e079c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>overrideTip</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;to) override</td></tr>
 <tr class="separator:a1213330b1a05be755a1ca5311e7e079c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b83c7afe6ae52a81e924b01a617c2c6"><td class="memItemLeft" align="right" valign="top"><a id="a5b83c7afe6ae52a81e924b01a617c2c6"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>setState</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;to, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
+<tr class="separator:a5b83c7afe6ae52a81e924b01a617c2c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa713cc96ce658c99e34dc5803df98e05"><td class="memItemLeft" align="right" valign="top"><a id="aa713cc96ce658c99e34dc5803df98e05"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>setState</b> (const hash_t &amp;block, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
+<tr class="separator:aa713cc96ce658c99e34dc5803df98e05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae02a24393b8600798adad8ccd55f7b1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">removeSubtree</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;toRemove) override</td></tr>
 <tr class="memdesc:ae02a24393b8600798adad8ccd55f7b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes block and all its successors.  <a href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">More...</a><br /></td></tr>
 <tr class="separator:ae02a24393b8600798adad8ccd55f7b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -312,8 +312,6 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString
 <tr class="separator:abb46e4499aa53ccde9f870f160c6ee91 inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24779f15d0d6b38e5d99d68e351bcbad inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#a24779f15d0d6b38e5d99d68e351bcbad">loadBlockForward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
 <tr class="separator:a24779f15d0d6b38e5d99d68e351bcbad inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a573463a4df403c15e4ee13b1b1ec0a38 inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">loadBlockBackward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="separator:a573463a4df403c15e4ee13b1b1ec0a38 inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7de7a66d6867ddbf077f1c20d16d8fc inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ae7de7a66d6867ddbf077f1c20d16d8fc"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a> (height_t height) const</td></tr>
 <tr class="memdesc:ae7de7a66d6867ddbf077f1c20d16d8fc inherit pub_methods_structaltintegration_1_1BlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">block is considered old if it is behind current tip further than 'old blocks window' blocks <br /></td></tr>
@@ -329,12 +327,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>finalizeBlock</b> (<a
 <tr class="memitem:acdeede24636e84dff4a34cea27adf82f inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="acdeede24636e84dff4a34cea27adf82f"></a>
 const std::unordered_set&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getTips</b> () const</td></tr>
 <tr class="separator:acdeede24636e84dff4a34cea27adf82f inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a722a4734ad1c00c25f59ab6686406f51 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a722a4734ad1c00c25f59ab6686406f51"></a>
-std::vector&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlocks</b> () const</td></tr>
-<tr class="separator:a722a4734ad1c00c25f59ab6686406f51 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac63a63b8b1477c3daf7c02283d57b3dd inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ac63a63b8b1477c3daf7c02283d57b3dd"></a>
-std::vector&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getAllBlocks</b> () const</td></tr>
-<tr class="separator:ac63a63b8b1477c3daf7c02283d57b3dd inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa67a72b5cea7327ac8f46a0ce0516ff6 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="aa67a72b5cea7327ac8f46a0ce0516ff6"></a>
+std::vector&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlocks</b> (bool skipDeleted=true) const</td></tr>
+<tr class="separator:aa67a72b5cea7327ac8f46a0ce0516ff6 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f94c05d258afdd3530666d915e7aa52 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a1f94c05d258afdd3530666d915e7aa52"></a>
 const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlockProvider</b> () const</td></tr>
 <tr class="separator:a1f94c05d258afdd3530666d915e7aa52 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -378,9 +373,6 @@ template&lt;typename T , typename  = typename std::enable_if&lt;                
 <tr class="memitem:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a619da2aa9e768d96e844e78139d4e244">findBlockIndex</a> (const T &amp;hash) const</td></tr>
 <tr class="memdesc:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a619da2aa9e768d96e844e78139d4e244 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e98d9d72a61310c5d41f99a6f0aca42 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a6e98d9d72a61310c5d41f99a6f0aca42"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>restoreBlock</b> (const typename block_t::hash_t &amp;hash, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="separator:a6e98d9d72a61310c5d41f99a6f0aca42 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">removeSubtree</a> (const hash_t &amp;toRemove)</td></tr>
 <tr class="memdesc:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">More...</a><br /></td></tr>
 <tr class="separator:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -403,9 +395,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>revalidateSubtree</b>
 <tr class="memitem:ad6875b36b78c402d46e7c7d705312359 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">isBootstrapped</a> () const</td></tr>
 <tr class="memdesc:ad6875b36b78c402d46e7c7d705312359 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the blockchain is bootstrapped.  <a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">More...</a><br /></td></tr>
 <tr class="separator:ad6875b36b78c402d46e7c7d705312359 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73284affd575c2eafc54f7991078683a inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a73284affd575c2eafc54f7991078683a"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>setState</b> (const hash_t &amp;block, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="separator:a73284affd575c2eafc54f7991078683a inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3bc153df731167cab9dc8608ee6a207 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="aa3bc153df731167cab9dc8608ee6a207"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#aa3bc153df731167cab9dc8608ee6a207">connectOnValidityBlockChanged</a> (const std::function&lt; on_invalidate_t &gt; &amp;f)</td></tr>
 <tr class="memdesc:aa3bc153df731167cab9dc8608ee6a207 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects a handler to a signal 'On Invalidate Block' <br /></td></tr>
@@ -523,51 +512,6 @@ const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader<
       </table>
 </div><div class="memdoc">
 <p>If successful, it is possible to setState() to the block after the addPayloads call. If unsuccessful, it leaves the state unchanged. </p><dl class="section invariant"><dt>Invariant</dt><dd>atomic: adds either all or none of the payloads </dd></dl>
-
-</div>
-</div>
-<a id="a111d7e353423fba705edbd55ded94bea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a111d7e353423fba705edbd55ded94bea">&#9670;&nbsp;</a></span>loadBlockBackward()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool altintegration::VbkBlockTree::loadBlockBackward </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<ul>
-<li>recovers all pointers (pprev, pnext, endorsedBy)</li>
-<li>recalculates chainWork</li>
-<li>does validation of endorsements</li>
-<li>recovers tips array <dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. </dd></dl>
-</li>
-</ul>
-
-<p>Reimplemented from <a class="el" href="structaltintegration_1_1BaseBlockTree.html#ab9c8e5e91a8bf0c67a41db06ff61f48c">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
 
 </div>
 </div>
