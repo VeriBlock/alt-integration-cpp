@@ -64,15 +64,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
-"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da1ea4c3ab05ee0c6d4de30740443769cb",
-"namespacealtintegration.html#ad049cdfb8d1539a3bfe55804123ec5db",
-"structaltintegration_1_1AltBlockTree.html#a62347a05a325388bc52f9bcbed5e0be0",
-"structaltintegration_1_1BlockIterator.html#ae489224d16febd52e4c5b8339cc9aa98",
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a46a055948fa02b84d7f46844da6380f3",
-"structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab",
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a2d066dd40d688dabeb62e90880e272fa"
+"addblock_8hpp_source.html",
+"fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
+"namespacealtintegration.html#a2234d92a74d69bbfec999765a19be957",
+"namespacealtintegration.html#ad7f4d29fcebdf62ae40b2e989990ab4d",
+"structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921",
+"structaltintegration_1_1BlockReader.html#a7fd1e1c938d680ce32c406e5a317b5a7",
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#ad3fd4625194133ae94eac0fde98fe2b0",
+"structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42",
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a3ee02f61ecff26ef42fafab481f7c865"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
