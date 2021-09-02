@@ -159,6 +159,8 @@ if(ASAN)
         set(SANITIZERS_CFLAGS "-fsanitize=address -DWITH_ASAN")
 endif()
 
+string(REPLACE ";" " " VBK_DEPENDENCIES_LIBS "${VBK_DEPENDENCIES_LIBS}")
+
 set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"
