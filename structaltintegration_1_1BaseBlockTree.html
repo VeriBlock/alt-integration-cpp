@@ -698,7 +698,7 @@ template&lt;typename Block &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>true if block is valid and successfully loaded, false otherwise. </dd></dl>
 <dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. If returned false, leaves <a class="el" href="structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">BaseBlockTree</a> in undefined state. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">altintegration::BlockTree&lt; Block, ChainParams &gt;</a>, and <a class="el" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">altintegration::BlockTree&lt; VbkBlock, VbkChainParams &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">altintegration::VbkBlockTree</a>, <a class="el" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">altintegration::BlockTree&lt; Block, ChainParams &gt;</a>, <a class="el" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">altintegration::BlockTree&lt; VbkBlock, VbkChainParams &gt;</a>, and <a class="el" href="structaltintegration_1_1AltBlockTree.html#a17896cdaf0bec53948b9b045a18cd007">altintegration::AltBlockTree</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00186">186</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                                                         {</div>
@@ -787,11 +787,11 @@ template&lt;typename Block &gt; </div>
 <p>In this weird case, when Block=<a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a>, we may call <code>getBlockIndex(block-&gt;previousBlock)</code>, it is a call <code>getBlockIndex(<a class="el" href="structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size.">Blob</a>&lt;12&gt;). But when</code>getBlockIndex` accepts it, it does an implicit cast to full hash (hash_t), adding zeroes in the end. Then, .trimLE returns 12 zeroes.</p>
 <p>This hack allows us to inject explicit conversion hash_t (Blob&lt;24&gt;) -&gt; prev_block_hash_t (Blob&lt;12&gt;). </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00329">329</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                           {</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00337">337</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                           {</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>

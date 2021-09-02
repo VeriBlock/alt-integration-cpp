@@ -1,5 +1,14 @@
 var NAVTREEINDEX6 =
 {
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a2491e8a10934aac39fa039718dbe02c9":[5,0,0,59,10],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a46a055948fa02b84d7f46844da6380f3":[5,0,0,59,0],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a489e9fd5a7d7be83dba3e14cac92f62e":[5,0,0,59,12],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a4b85926ec6035e74dd4baacbeaa63c0f":[5,0,0,59,1],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a579ffdc6087f187c7a31dc8c76b03cee":[5,0,0,59,2],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a79f8686dc1fecfd783748e13cb335812":[5,0,0,59,5],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a8db30f8fcae9456e9e1a9c7f1fd5534a":[5,0,0,59,7],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#aab5f0d4237d5416c57a2c66e0ac70685":[5,0,0,59,6],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036":[5,0,0,59,11],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#ad3fd4625194133ae94eac0fde98fe2b0":[5,0,0,59,3],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#af39539bcb281499d6162a2c79eeba932":[5,0,0,59,9],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#af852394966e0553c6d4d4b346f858987":[5,0,0,59,8],
@@ -240,14 +249,5 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1ReadStream.html#a8d096f16d0f52ff05c4624c398e7cd15":[5,0,0,57,7],
 "structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2":[5,0,0,57,12],
 "structaltintegration_1_1ReadStream.html#aa149b1a7ac12659733883445ee8be071":[5,0,0,57,14],
-"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907":[5,0,0,57,3],
-"structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68":[5,0,0,57,5],
-"structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab":[5,0,0,57,1],
-"structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[5,0,0,57,0],
-"structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3":[5,0,0,57,6],
-"structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[5,0,0,57,10],
-"structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[5,0,0,57,11],
-"structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[5,0,0,57,16],
-"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50],
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[5,0,0,50,0]
+"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907":[5,0,0,57,3]
 };
