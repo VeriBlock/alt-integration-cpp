@@ -42,7 +42,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
     alttree.removeSubtree(chain.back().getHash());
     chain.pop_back();
     ValidationState dummy;
-    alttree.setState(chain.back().getHash(), dummy);
+    EXPECT_TRUE(alttree.setState(chain.back().getHash(), dummy));
   }
 
   void submitATV(const ATV& atv) {

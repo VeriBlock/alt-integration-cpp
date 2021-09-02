@@ -20,7 +20,6 @@
 #include <veriblock/pop/storage/block_reader.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
-#include <veriblock/pop/trace.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 #include "alt_chain_params.hpp"
@@ -115,19 +114,16 @@ extern template struct BaseBlockTree<AltBlock>;
 //!         // here, we assume that candidate has all txes downloaded and block is fully available
 //!
 //!         // compare current tip to a candidate
-//!         int result = tree.comparePopScore(tip->getHash(), candidate->getHash());
+//!         int result = tree.activateBestChain(tip->getHash(), candidate->getHash());
 //! ```
 //!
-//! @note after AltBlockTree::comparePopScore AltBlockTree always corresponds to a state, as if winner chain have been applied.
+//! @note after AltBlockTree::activateBestChain AltBlockTree always corresponds to a state, as if winner chain have been applied.
 //!
 //!```cpp
 //!         if(result < 0) {
 //!             // candidate has better POP score.
 //!             // tree already switched to candidate chain.
 //!
-//!             UpdateTip(candidate->getHash());
-//!             // NOTE: update `tip`, otherwise old tip will be passed to first arg,
-//!             // and comparePopScore will die on assert
 //!             tip = candidate;
 //!             return true;
 //!         } else if (result == 0) {
@@ -150,9 +146,9 @@ extern template struct BaseBlockTree<AltBlock>;
 //! } //! end of OnNewFullBlock
 //! ```
 //!
-//! @invariant AltBlockTree::comparePopScore always compares current AltBlockTree tip to other block. To avoid confusion, you must specify tip explicitly as first arg. If incorrect tip is passed, function dies on assert.
+//! @invariant AltBlockTree::activateBestChain always compares current AltBlockTree tip to other block. To avoid confusion, you must specify tip explicitly as first arg. If incorrect tip is passed, function dies on assert.
 //!
-//! @invariant AltBlockTree::comparePopScore always leaves AltBlockTree switched to winner (by POP Score) chain.
+//! @invariant AltBlockTree::activateBestChain always leaves AltBlockTree switched to winner (by POP Score) chain.
 //!
 //! @invariant Current active chain of AltBlockTree always corresponds to an empty tree with all applied blocks from first bootstrap block to current tip, i.e. currently applied active chain and this state MUST be always valid.
 //!
@@ -308,9 +304,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! a block has been successfully handed over to the underlying tree
   signals::Signal<void(index_t& index)> onBlockConnected;
 
-  //! chain reorg signal - the tip is being changed
-  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
-
   /**
    * Efficiently connect block loaded from disk as a leaf.
    *
@@ -325,22 +318,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    */
   VBK_CHECK_RETURN bool loadBlockForward(const stored_index_t& index,
                                          ValidationState& state) override;
-
-  /**
-   * Efficiently connect block loaded from disk as a root.
-   *
-   * It recovers all pointers (pprev, pnext, endorsedBy,
-   * blockOfProofEndorsements), validates block and endorsements, recovers
-   * validity index.
-   * @param[in] index block
-   * @param[out] state validation state
-   * @return true if block is valid
-   * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is
-   undefined
-   * and can not be used. Tip: ask user to run with '-reindex'.
-   */
-  VBK_CHECK_RETURN bool loadBlockBackward(const stored_index_t& index,
-                                          ValidationState& state) override;
 
   /**
    * After all blocks loaded, efficiently set current tip.
@@ -393,8 +370,12 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    *
    * @warning Operation can be expensive for long forks.
    */
-  VBK_CHECK_RETURN int comparePopScore(const AltBlock::hash_t& A,
+  VBK_CHECK_RETURN int activateBestChain(const AltBlock::hash_t& A,
                                        const AltBlock::hash_t& B);
+
+  //! @private
+  //! @invariant the tip must be fully validated
+  void overrideTip(index_t& to) override;
 
   /**
    * Switch AltBlockTree from the current tip to different block, while doing
@@ -416,8 +397,9 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
    * not recover.
    */
   VBK_CHECK_RETURN bool setState(index_t& to, ValidationState& state) override;
-  //! @overload
-  using base::setState;
+
+  VBK_CHECK_RETURN bool setState(const hash_t& block,
+                                 ValidationState& state) override;
 
   //! @private
   bool finalizeBlock(index_t& index, ValidationState& state);
@@ -468,10 +450,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   std::string toPrettyString(size_t level = 0) const;
-
-  //! @private
-  //! @invariant the tip must be fully validated
-  void overrideTip(index_t& to) override;
 
   friend struct MemPoolBlockTree;
 

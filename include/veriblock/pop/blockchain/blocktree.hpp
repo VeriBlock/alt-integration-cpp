@@ -52,7 +52,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual bool bootstrapWithGenesis(const block_t& block,
                                     ValidationState& state) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    return this->bootstrap(0, block, state) ||
+    return bootstrap(0, block, state) ||
            state.Invalid(block_t::name() + "-bootstrap-genesis");
   }
 
@@ -86,7 +86,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     // pick first block from the chain, bootstrap with a single block
     auto genesis = chain[0];
-    if (!this->bootstrap(startHeight, genesis, state)) {
+    if (!bootstrap(startHeight, genesis, state)) {
       return state.Invalid(block_t::name() + "-blocktree-bootstrap");
     }
 
@@ -95,7 +95,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // our store (yet) to check it correctly
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
-      if (!this->acceptBlockHeaderImpl(
+      if (!acceptBlockHeaderImpl(
               std::make_shared<block_t>(block), state, false)) {
         return state.Invalid(block_t::name() + "-blocktree-accept");
       }
@@ -162,35 +162,6 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  //! @invariant NOT atomic
-  bool loadBlockBackward(const stored_index_t& index,
-                         ValidationState& state) override {
-    if (!checkBlock(*index.header, state, *param_)) {
-      return state.Invalid("bad-header");
-    }
-
-    const auto hash = index.header->getHash();
-    if (!base::loadBlockBackward(index, state)) {
-      return false;
-    }
-
-    auto* current = base::getBlockIndex(hash);
-    VBK_ASSERT(current);
-
-    VBK_ASSERT(current->pnext.size() == 1);
-    auto* next = *current->pnext.begin();
-
-    // recover chainwork
-    auto chainWork = getBlockProof(next->getHeader());
-    current->chainWork = next->chainWork - chainWork;
-
-    // clear blockOfProofEndorsements inmem field
-    current->clearBlockOfProofEndorsement();
-
-    current->raiseValidity(BLOCK_VALID_TREE);
-    return true;
-  }
-
   //! block is considered old if it is behind current tip further than 'old
   //! blocks window' blocks
   bool isBlockOld(height_t height) const {
@@ -217,7 +188,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     // TODO: currently can not procced finalization for the vbk and btc trees,
     // need more investigation
 
-    // return this->finalizeBlockImpl(
+    // return finalizeBlockImpl(
     //     index, param_->preserveBlocksBehindFinal(), state);
     return true;
   }

@@ -207,7 +207,7 @@ TEST_F(AltTreeFixture, duplicateVTBs_test) {
    *     \
    *      o[forkContaining, has the same VTB]
    *
-   * and during the comparePopScore() both of them will be applied, so it is
+   * and during the activateBestChain() both of them will be applied, so it is
    * important to allow add duplicates inside
    * VbkBlockTree::addPayloadToAppliedBlock() method
    */
@@ -248,8 +248,8 @@ TEST_F(AltTreeFixture, duplicateVTBs_test) {
 
   // compare different tips with the same payloads, forkresolution algorithm
   // should apply both duplicated payloads
-  ASSERT_EQ(alttree.comparePopScore(forkContaining.getHash(),
-                                    containingBlock.getHash()),
+  ASSERT_EQ(alttree.activateBestChain(forkContaining.getHash(),
+                                      containingBlock.getHash()),
             -1);
 
   containingVTB =

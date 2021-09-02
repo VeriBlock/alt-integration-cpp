@@ -73,7 +73,7 @@ using BtcBlockTree = BlockTree<BtcBlock, BtcChainParams>;
  * Notes regarding the validation hole:
  * At this moment, the validation hole can be considered plugged as long as the
  * user never modifies the VBK tree directly, never uses PopStateMachine and
- * only calls AltBlockTree::setState() and AltBlockTree::comparePopScore() as
+ * only calls AltBlockTree::setState() and AltBlockTree::activateBestChain() as
  * currently implemented. However, a trivial code modification can
  * unintentionally re-introduce the issue.
  *
@@ -134,15 +134,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   bool loadBlockForward(const stored_index_t& index,
                         ValidationState& state) override;
 
-  //! efficiently connect `index` to current tree as a root, loaded from disk
-  //! - recovers all pointers (pprev, pnext, endorsedBy)
-  //! - recalculates chainWork
-  //! - does validation of endorsements
-  //! - recovers tips array
-  //! @invariant NOT atomic.
-  bool loadBlockBackward(const stored_index_t& index,
-                         ValidationState& state) override;
-
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 
@@ -192,10 +183,11 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   std::string toPrettyString(size_t level = 0) const;
 
-  using base::setState;
+  void overrideTip(index_t& to) override;
+
   bool setState(index_t& to, ValidationState& state) override;
 
-  void overrideTip(index_t& to) override;
+  bool setState(const hash_t& block, ValidationState& state) override;
 
   void removeSubtree(index_t& toRemove) override;
 

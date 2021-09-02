@@ -42,22 +42,14 @@ struct BaseBlockTree {
       std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
 
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
-  std::vector<index_t*> getBlocks() const {
+  
+  std::vector<index_t*> getBlocks(bool skipDeleted = true) const {
     std::vector<index_t*> blocks;
     blocks.reserve(blocks_.size());
     for (const auto& el : blocks_) {
-      if (!el.second->isDeleted()) {
+      if (!skipDeleted || !el.second->isDeleted()) {
         blocks.push_back(el.second.get());
       }
-    }
-    return blocks;
-  }
-
-  std::vector<index_t*> getAllBlocks() const {
-    std::vector<index_t*> blocks;
-    blocks.reserve(blocks_.size());
-    for (const auto& el : blocks_) {
-      blocks.push_back(el.second.get());
     }
     return blocks;
   }
@@ -87,7 +79,7 @@ struct BaseBlockTree {
    * Getter for currently Active Chain.
    * @return reference for current chain.
    */
-  const Chain<index_t>& getBestChain() const { return this->activeChain_; }
+  const Chain<index_t>& getBestChain() const { return activeChain_; }
 
   // HACK: see big comment in VBK tree.
   template <typename T>
@@ -156,7 +148,9 @@ struct BaseBlockTree {
       return state.Invalid(block_t::name() + "-no-tip");
     }
 
-    this->overrideTip(*tip);
+    // cannot use setState here because blockchain state is loaded and only
+    // current tip should be modified
+    overrideTip(*tip);
     return true;
   }
 
@@ -175,82 +169,6 @@ struct BaseBlockTree {
   }
 
   /**
-   * Efficiently connects BlockIndex to this tree as a new root, when it is
-   * loaded from disk.
-   * @param[in] index block to be connected
-   * @param[out] state validation state
-   * @return true if block is valid and successfully loaded, false otherwise.
-   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
-   * state.
-   */
-  virtual bool loadBlockBackward(const stored_index_t& index,
-                                 ValidationState& state) {
-    return loadBlockInner(index, false, state);
-  }
-
-  bool restoreBlock(const typename block_t::hash_t& hash,
-                    ValidationState& state) {
-    VBK_TRACE_ZONE_SCOPED;
-    index_t* root = &this->getRoot();
-    auto oldHeight = root->getHeight();
-    std::vector<stored_index_t> tempChain;
-    auto restoringHash = this->makePrevHash(hash);
-    index_t* restoringIndex = this->getBlockIndex(restoringHash);
-
-    while (restoringIndex == nullptr) {
-      // load current block from storage
-      stored_index_t restoringBlock;
-      if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
-        return state.Invalid("can-not-find-block-in-storage");
-      }
-
-      // restore previous root blocks
-      while ((restoringBlock.height < root->getHeight()) &&
-             (root->getHeight() > 0)) {
-        stored_index_t tmpRoot;
-        auto rootPrevHash = root->getHeader().getPreviousBlock();
-        if (!this->blockProvider_.getBlock(rootPrevHash, tmpRoot)) {
-          VBK_ASSERT_MSG(false,
-                         "can not restore prev block for the block: %s",
-                         root->toPrettyString());
-        }
-
-        if (!loadBlockBackward(tmpRoot, state)) {
-          VBK_ASSERT_MSG(
-              false, "can not load block, state: %s", state.toString());
-        }
-
-        root = this->getBlockIndex(rootPrevHash);
-        VBK_ASSERT(root);
-      }
-
-      restoringIndex = getBlockIndex(restoringHash);
-      // add unconnected blocks to the temporary chain
-      if (restoringIndex == nullptr) {
-        // could not find the common block
-        if (restoringBlock.height == 0) {
-          return state.Invalid("restored-block-does-not-connect");
-        }
-
-        tempChain.push_back(restoringBlock);
-      }
-
-      // get the previous block hash
-      restoringHash = restoringBlock.header->getPreviousBlock();
-    }
-
-    for (const auto& b : reverse_iterate(tempChain)) {
-      if (!loadBlockForward(b, state)) {
-        return state.Invalid("load-block-forward-failed");
-      }
-    }
-
-    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
-
-    return true;
-  }
-
-  /**
    * Removes block and all its successors.
    * @param toRemove block to be removed.
    * @warning fails on assert if unknown hash is provided
@@ -265,7 +183,7 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
       ValidationState dummy;
-      bool success = this->setState(*prev, dummy);
+      bool success = setState(*prev, dummy);
       VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
     }
 
@@ -288,7 +206,7 @@ struct BaseBlockTree {
     auto* index = getBlockIndex(toRemove);
     VBK_ASSERT_MSG(
         index, "cannot find the subtree to remove: %s", HexStr(toRemove));
-    return this->removeSubtree(*index);
+    return removeSubtree(*index);
   }
 
   //! @overload
@@ -297,7 +215,7 @@ struct BaseBlockTree {
                    "not a leaf block %s, pnext.size=%d",
                    toRemove.toPrettyString(),
                    toRemove.pnext.size());
-    return this->removeSubtree(toRemove);
+    return removeSubtree(toRemove);
   }
 
   /**
@@ -340,7 +258,7 @@ struct BaseBlockTree {
     bool isOnMainChain = activeChain_.contains(&toBeInvalidated);
     if (isOnMainChain) {
       ValidationState dummy;
-      bool success = this->setState(*toBeInvalidated.pprev, dummy);
+      bool success = setState(*toBeInvalidated.pprev, dummy);
       VBK_ASSERT(success);
     }
 
@@ -377,7 +295,7 @@ struct BaseBlockTree {
   void revalidateSubtree(const hash_t& hash,
                          enum BlockValidityStatus reason,
                          bool shouldDetermineBestChain = true) {
-    auto* index = this->getBlockIndex(hash);
+    auto* index = getBlockIndex(hash);
     VBK_ASSERT(index && "cannot find the subtree to revalidate");
     revalidateSubtree(*index, reason, shouldDetermineBestChain);
   }
@@ -550,7 +468,9 @@ struct BaseBlockTree {
                                      block_height_t height) {
     VBK_TRACE_ZONE_SCOPED;
     auto shortHash = makePrevHash(hash);
+
     auto newIndex = make_unique<index_t>(height);
+
     auto inserted = blocks_.emplace(shortHash, std::move(newIndex));
     VBK_ASSERT_MSG(inserted.second,
                    "attempted to create a blockindex with duplicate hash %s",
@@ -605,7 +525,7 @@ struct BaseBlockTree {
     current->restore();
     tryAddTip(current);
 
-    this->onBlockInserted(current);
+    onBlockInserted(current);
 
     // raise validity may return false if block is invalid
     current->raiseValidity(BLOCK_VALID_TREE);
@@ -977,7 +897,7 @@ struct BaseBlockTree {
    */
   void doUpdateAffectedTips(index_t& modifiedBlock, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    auto tips = findValidTips<block_t>(this->getTips(), modifiedBlock);
+    auto tips = findValidTips<block_t>(getTips(), modifiedBlock);
     VBK_LOG_DEBUG(
         "Found %d affected valid tips in %s", tips.size(), block_t::name());
     for (auto* tip : tips) {

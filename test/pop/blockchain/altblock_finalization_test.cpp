@@ -540,5 +540,5 @@ TEST_F(AltBlockFinalization2, comparePopScore_test) {
 
   assertTreeTips(alttree, {chainA});
 
-  ASSERT_EQ(alttree.comparePopScore(chainA->getHash(), chainB->getHash()), 1);
+  ASSERT_EQ(alttree.activateBestChain(chainA->getHash(), chainB->getHash()), 1);
 }
