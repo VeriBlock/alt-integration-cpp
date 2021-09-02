@@ -124,40 +124,40 @@ This License, the documents related to it and any agreement that incorporates an
 
 **III. Definitions**
 
-&quot;**based on [the Program/Covered Work/…]&quot;** means derived from the original Covered Work (or part thereof) by the act(s) of copying it, modifying it, including it (in whole or in part) or by linking to the original Covered Work or Program (or part thereof) under this License.
+**&quot;based on [the Program/Covered Work/…]&quot;** means derived from the original Covered Work (or part thereof) by the act(s) of copying it, modifying it, including it (in whole or in part) or by linking to the original Covered Work or Program (or part thereof) under this License.
 
-&quot; **BTC Source Code&quot;** means the Bitcoin source code released under the MIT License.
+**&quot;BTC Source Code&quot;** means the Bitcoin source code released under the MIT License.
 
-&quot; **to convey&quot;** means any kind of propagation that enables other parties to make or receive copies, provided that mere interaction with a Covered Work or Program through a computer network, with no transfer of a copy, shall not be deemed conveying.
+**&quot;to convey&quot;** means any kind of propagation that enables other parties to make or receive copies, provided that mere interaction with a Covered Work or Program through a computer network, with no transfer of a copy, shall not be deemed conveying.
 
-&quot; **Copyright Holder&quot;** or **&quot;Licensor&quot;** means the owner of the intellectual property rights over the software as determined by applicable national law and international treaty provisions regulating this subject matter and, for the Original DLT Instance, VeriBlock Foundation.
+**&quot;Copyright Holder&quot;** or **&quot;Licensor&quot;** means the owner of the intellectual property rights over the software as determined by applicable national law and international treaty provisions regulating this subject matter and, for the Original DLT Instance, VeriBlock Foundation.
 
-&quot; **Corresponding Source&quot;** means all the Source Code needed to generate, install, and/or (for an executable work) run the Object Code and to modify the work, including scripts to control those activities and including, among other things, interface definition files associated with source files for the work, Source Code for shared libraries and dynamically linked subprograms that the Covered Work is specifically designed to require, provided that the definition shall not include the work&#39;s system libraries, or general-purpose tools or generally available free programs which are used unmodified in performing those activities but which are not part of the Covered Work. The Corresponding Source for a work in Source Code form is that same work.
+**&quot;Corresponding Source&quot;** means all the Source Code needed to generate, install, and/or (for an executable work) run the Object Code and to modify the work, including scripts to control those activities and including, among other things, interface definition files associated with source files for the work, Source Code for shared libraries and dynamically linked subprograms that the Covered Work is specifically designed to require, provided that the definition shall not include the work&#39;s system libraries, or general-purpose tools or generally available free programs which are used unmodified in performing those activities but which are not part of the Covered Work. The Corresponding Source for a work in Source Code form is that same work.
 
-&quot; **Covered Work&quot;** means any DLT Software or another Program whether based on a DLT Software or otherwise which is developed based on a Covered Work under this License, and/or their respective Object Code and/or Source Code, and/or any other work covered by this License, except for the avoidance of doubt the BTC Source Code and any other Open-Source Components which remain governed by their own respective licenses.
+**&quot;Covered Work&quot;** means any DLT Software or another Program whether based on a DLT Software or otherwise which is developed based on a Covered Work under this License, and/or their respective Object Code and/or Source Code, and/or any other work covered by this License, except for the avoidance of doubt the BTC Source Code and any other Open-Source Components which remain governed by their own respective licenses.
 
-&quot; **DLT Instance&quot;** means aunique instance of distributed ledger consisting of a network of one or more participants (nodes) running a particular DLT Software and which nodes are in a state of consensus with each other within the permitted tolerances of the applicable consensus algorithm.
+**&quot;DLT Instance&quot;** means aunique instance of distributed ledger consisting of a network of one or more participants (nodes) running a particular DLT Software and which nodes are in a state of consensus with each other within the permitted tolerances of the applicable consensus algorithm.
 
-&quot; **DLT Software&quot;** means any distributed ledger computer technology software including but not limited to blockchain technology software regardless of the way the consensus is established.
+**&quot;DLT Software&quot;** means any distributed ledger computer technology software including but not limited to blockchain technology software regardless of the way the consensus is established.
 
-&quot; **General Conditions&quot;** means Chapter I (General Conditions) of this License.
+**&quot;General Conditions&quot;** means Chapter I (General Conditions) of this License.
 
-&quot; **License&quot;** means the vBTC Public License, as amended from time to time by the Copyright Holder, consisting of both the General Conditions and the Special Conditions, including the Definitions.
+**&quot;License&quot;** means the vBTC Public License, as amended from time to time by the Copyright Holder, consisting of both the General Conditions and the Special Conditions, including the Definitions.
 
-&quot; **Licensee&quot;, &quot;You&quot;** means everyone (whether a natural person or a legal entity wherever located) who wants to use, copy, distribute, modify or build on top of a Covered Work or a Program under this License.
+**&quot;Licensee&quot;, &quot;You&quot;** means everyone (whether a natural person or a legal entity wherever located) who wants to use, copy, distribute, modify or build on top of a Covered Work or a Program under this License.
 
-&quot; **to modify&quot;** means copying from or adapting all or part of a Covered Work in a fashion requiring copyright permission, other than the making of an exact copy. The resulting work is called a **&quot;modified version&quot;** of the earlier Covered Work or a **&quot;work based on&quot;** the earlier Covered Work. For the avoidance of doubt, modification also includes translation into another programming language or human language.
+**&quot;to modify&quot;** means copying from or adapting all or part of a Covered Work in a fashion requiring copyright permission, other than the making of an exact copy. The resulting work is called a **&quot;modified version&quot;** of the earlier Covered Work or a **&quot;work based on&quot;** the earlier Covered Work. For the avoidance of doubt, modification also includes translation into another programming language or human language.
 
-&quot; **Object Code&quot;** means the compiled version of the Source Code.
+**&quot;Object Code&quot;** means the compiled version of the Source Code.
 
-&quot; **Open-Source Components&quot;** means any software component of a Covered Work that is subject to an open-source copyright license agreement, including but not limited to GNU General Public License, GNU Library or &quot;Lesser&quot; General Public License, MIT License, and any other obligations, restrictions, or license agreements that substantially conform to the &quot;Open Source Definition&quot; as prescribed by the Open Source Initiative or otherwise may require third-party disclosure or licensing if any source code of such software components is used or compiled.
+**&quot;Open-Source Components&quot;** means any software component of a Covered Work that is subject to an open-source copyright license agreement, including but not limited to GNU General Public License, GNU Library or &quot;Lesser&quot; General Public License, MIT License, and any other obligations, restrictions, or license agreements that substantially conform to the &quot;Open Source Definition&quot; as prescribed by the Open Source Initiative or otherwise may require third-party disclosure or licensing if any source code of such software components is used or compiled.
 
-&quot; **Original DLT Instance&quot;** means any DLT Instance identified by the VeriBlock Foundation as being the Original DLT Instance. At any given point in time, there will only be one Original DLT Instance.
+**&quot;Original DLT Instance&quot;** means any DLT Instance identified by the VeriBlock Foundation as being the Original DLT Instance. At any given point in time, there will only be one Original DLT Instance.
 
-&quot; **Program&quot;** meansany copyrightable work licensed under this License.
+**&quot;Program&quot;** means any copyrightable work licensed under this License.
 
-&quot; **to propagate&quot;** means copying, distributing (with or without modification) and/or otherwise making available to the public or doing anything else with a Covered Work and/or Program that, without permission, would make you directly or secondarily liable for infringement of this License under applicable copyright law, provided that simply executing a Covered Work and/or Program on a computer or modifying a private copy shall not be deemed to constitute propagating.
+**&quot;to propagate&quot;** means copying, distributing (with or without modification) and/or otherwise making available to the public or doing anything else with a Covered Work and/or Program that, without permission, would make you directly or secondarily liable for infringement of this License under applicable copyright law, provided that simply executing a Covered Work and/or Program on a computer or modifying a private copy shall not be deemed to constitute propagating.
 
-&quot; **Source Code&quot;** means, as it pertains to a Covered Work or a Program, those statements in a computer language which, when processed by a compiler, assembler or interpreter, become executable by a computer and includes, without limitation, all comments, notes, flow charts, decision tables, argument lists and other human readable references relating to the operation, purpose, compilation, assembly or interpretation thereof.
+**&quot;Source Code&quot;** means, as it pertains to a Covered Work or a Program, those statements in a computer language which, when processed by a compiler, assembler or interpreter, become executable by a computer and includes, without limitation, all comments, notes, flow charts, decision tables, argument lists and other human readable references relating to the operation, purpose, compilation, assembly or interpretation thereof.
 
-&quot; **Special Conditions&quot;** means Chapter II (Special Conditions) of this License.
+**&quot;Special Conditions&quot;** means Chapter II (Special Conditions) of this License.
