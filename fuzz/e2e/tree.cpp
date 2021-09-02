@@ -53,7 +53,7 @@ bool Tree::acceptBlock(const Block& block) {
   bool success = popcontext->getAltBlockTree().setState(*bestIndex, state);
   VBK_ASSERT(success);
 
-  int result = popcontext->getAltBlockTree().activateBestChain(
+  int result = popcontext->getAltBlockTree().comparePopScore(
       bestIndex->getHash(), index->getHash());
   if (result < 0) {
     bestBlock = index->getHash();
