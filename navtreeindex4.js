@@ -1,12 +1,19 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1AltBlockTree.html#a62347a05a325388bc52f9bcbed5e0be0":[5,0,0,5,2],
+"structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d":[5,0,0,5,24],
+"structaltintegration_1_1AltBlockTree.html#a867a99ed5fee955beac858b8d62aa36a":[5,0,0,5,18],
+"structaltintegration_1_1AltBlockTree.html#a8747831b242c792839e9acb940338c81":[5,0,0,5,7],
+"structaltintegration_1_1AltBlockTree.html#a8c3ab096334231a6d1e8dc9a80282919":[5,0,0,5,28],
+"structaltintegration_1_1AltBlockTree.html#a99ca69840eb2e8cfe725fa521381750e":[5,0,0,5,25],
+"structaltintegration_1_1AltBlockTree.html#a9c4aa4a167a177cbeb017b96572af451":[5,0,0,5,11],
+"structaltintegration_1_1AltBlockTree.html#ab3e39a5c648002f06af4cb607f508e18":[5,0,0,5,4],
 "structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921":[5,0,0,5,15],
 "structaltintegration_1_1AltBlockTree.html#ac093a74a6972a5e1a1ce467b2c0ef789":[5,0,0,5,29],
 "structaltintegration_1_1AltBlockTree.html#ac31836a34ff44f707091c4ea2c5cd4d1":[5,0,0,5,6],
 "structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c":[5,0,0,5,17],
 "structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27":[5,0,0,5,10],
-"structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856":[5,0,0,5,18],
-"structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a":[5,0,0,5,30],
+"structaltintegration_1_1AltBlockTree.html#ad8b7f2af880875ba78e69a83c0949856":[5,0,0,5,19],
 "structaltintegration_1_1AltBlockTree.html#ae7940d71bf588458cd482b542a8f000e":[5,0,0,5,12],
 "structaltintegration_1_1AltBlockTree.html#aff544139ceb38b4bccf018b9b111d4f8":[5,0,0,5,3],
 "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html":[5,0,0,5,0],
@@ -242,12 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1BlockIterator.html#aa036df97ecb383d94ef7d95d4c2a0a58":[5,0,0,64,2],
 "structaltintegration_1_1BlockIterator.html#aaf1b99dddae3f6c9eb721bac1c50cce3":[5,0,0,64,1],
 "structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238":[5,0,0,64,6],
-"structaltintegration_1_1BlockIterator.html#ae01f4813a87aa7df2ee817bf3982eece":[5,0,0,64,0],
-"structaltintegration_1_1BlockIterator.html#ae489224d16febd52e4c5b8339cc9aa98":[5,0,0,64,3],
-"structaltintegration_1_1BlockReader.html":[5,0,0,65],
-"structaltintegration_1_1BlockReader.html#a1d51882198629dc2bfe95a8d24e49be6":[5,0,0,65,11],
-"structaltintegration_1_1BlockReader.html#a2d4f61258ba2bc6708b69ec5162089fc":[5,0,0,65,4],
-"structaltintegration_1_1BlockReader.html#a377c177ac69da70ac6104a79bc0e2925":[5,0,0,65,15],
-"structaltintegration_1_1BlockReader.html#a39ee1fb1fdfb14cfb67421d4a9a32cc5":[5,0,0,65,10],
-"structaltintegration_1_1BlockReader.html#a66544f9eca6ac4565b551345167e2b89":[5,0,0,65,9]
+"structaltintegration_1_1BlockIterator.html#ae01f4813a87aa7df2ee817bf3982eece":[5,0,0,64,0]
 };
