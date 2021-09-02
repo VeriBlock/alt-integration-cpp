@@ -10,6 +10,7 @@
 #include <veriblock/pop/command_group_cache.hpp>
 #include <veriblock/pop/entities/context_info_container.hpp>
 #include <veriblock/pop/reversed_range.hpp>
+#include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
 
@@ -290,7 +291,7 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
   // else - do nothing. AltTree does not (yet) do fork resolution
 }
 
-int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
+int AltBlockTree::activateBestChain(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_INFO(
@@ -317,15 +318,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
 
   ValidationState state;
-  // compare current active chain to other chain
-  int result = cmp_.comparePopScore(*right, state);
-  if (result < 0) {
-    // other chain is better, and we already changed 'cmp' state to winner, so
-    // just update active chain tip
-    activeChain_.setTip(right);
-  }
-
-  return result;
+  // compare current active chain to other chain and activate the winning chain
+  return cmp_.activateBestChain(*right, state);
 }
 
 template <typename Pop, typename Index>
@@ -499,6 +493,10 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
   return {*this, block};
 }
 
+bool AltBlockTree::setState(const hash_t& block, ValidationState& state) {
+  return base::setState(block, state);
+}
+
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_ASSERT_MSG(
@@ -507,6 +505,7 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
+
     // finalize blocks
     {
       auto* bestTip = getBestChain().tip();
@@ -532,7 +531,7 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 }
 
 void AltBlockTree::overrideTip(index_t& to) {
-  VBK_TRACE_ZONE_SCOPED;
+  VBK_TRACE_ZONE_SCOPED;  
   VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
                 to.toShortPrettyString(),
                 (vbk().getBestChain().tip()
@@ -546,22 +545,13 @@ void AltBlockTree::overrideTip(index_t& to) {
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
 
-  onBeforeOverrideTip.emit(to);
-  activeChain_.setTip(&to);
+  base::overrideTip(to);
 }
 
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,
                                     ValidationState& state) {
   if (!base::loadBlockForward(index, state)) {
     return false;  // already set
-  }
-  return loadBlockInner(index, state);
-}
-
-bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
-                                     ValidationState& state) {
-  if (!base::loadBlockBackward(index, state)) {
-    return false;
   }
   return loadBlockInner(index, state);
 }
@@ -683,7 +673,7 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
 }
 
 bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
-  return this->finalizeBlockImpl(
+  return finalizeBlockImpl(
       index, getParams().preserveBlocksBehindFinal(), state);
 }
 

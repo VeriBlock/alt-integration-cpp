@@ -35,28 +35,30 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
     return;
   }
 
-  int result = cmp_.comparePopScore(candidate, state);
+  int result = cmp_.activateBestChain(candidate, state);
   // the pop state is already set to the best of the two chains
   if (result == 0) {
     VBK_LOG_DEBUG("Pop scores are equal");
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(candidate, state);
   } else if (result < 0) {
-    VBK_LOG_DEBUG("Candidate chain won");
     // the other chain won!
-    // setState(candidate) has been already done, so only update the tip
-    this->overrideTip(candidate);
+    VBK_LOG_DEBUG("Candidate chain won");
   } else {
     // the current chain is better
     VBK_LOG_DEBUG("Active chain won");
   }
 }
 
+bool VbkBlockTree::setState(const hash_t& block, ValidationState& state) {
+  return base::setState(block, state);
+}
+
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
   bool success = cmp_.setState(to, state);
   if (success) {
-    overrideTip(to);
+    success = base::setState(to, state);
   } else {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
@@ -377,15 +379,6 @@ bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
   VBK_TRACE_ZONE_SCOPED;
   if (!VbkTree::loadBlockForward(index, state)) {
     return false;  // already set
-  }
-  return loadBlockInner(index, state);
-}
-
-bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
-                                     ValidationState& state) {
-  VBK_TRACE_ZONE_SCOPED;
-  if (!VbkTree::loadBlockBackward(index, state)) {
-    return false;
   }
   return loadBlockInner(index, state);
 }
