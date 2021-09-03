@@ -57,7 +57,7 @@ const BtcBlock::hash_t& BtcBlock::getHash() const {
 
 std::string BtcBlock::toPrettyString() const {
   return format(
-      "BtcBlock{{version=%{}, prev={}, merkleRoot={}, timestamp=%{}, "
+      "BtcBlock{{version={}, prev={}, merkleRoot={}, timestamp={}, "
       "bits={}, nonce={}}}",
       version,
       previousBlock.toHex(),
