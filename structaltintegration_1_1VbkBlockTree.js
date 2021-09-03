@@ -26,6 +26,7 @@ var structaltintegration_1_1VbkBlockTree =
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#a5659af106030eb9c34732ce6335d5569", null ],
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#abc9fb8eea7a1b36c65de56c139d62d1d", null ],
     [ "removeSubtree", "structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d", null ],
+    [ "setState", "structaltintegration_1_1VbkBlockTree.html#aa713cc96ce658c99e34dc5803df98e05", null ],
     [ "setState", "structaltintegration_1_1VbkBlockTree.html#a5b83c7afe6ae52a81e924b01a617c2c6", null ],
     [ "toPrettyString", "structaltintegration_1_1VbkBlockTree.html#a3d5c6f9a9bd9cc7393ea888fed2ba8fb", null ],
     [ "unsafelyRemovePayload", "structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50", null ],
