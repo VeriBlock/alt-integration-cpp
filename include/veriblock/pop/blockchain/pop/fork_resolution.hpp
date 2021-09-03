@@ -499,12 +499,12 @@ struct PopAwareForkResolutionComparator {
   }
 
   /**
-   * Compare the currently applied(best) and candidate chains, activate the best of both
+   * Compare the currently applied(best) and candidate chains
    * @return 0 if the chains are equal,
    *         positive if the current chain is better
    *         negative if the candidate chain is better
    */
-  int activateBestChain(protected_index_t& candidate, ValidationState& state) {
+  int comparePopScore(protected_index_t& candidate, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
 
     if (!candidate.isValid()) {
@@ -552,7 +552,6 @@ struct PopAwareForkResolutionComparator {
       }
 
       VBK_LOG_DEBUG("Candidate contains VALID commands, chain B wins");
-      ed_.overrideTip(candidate);
       return -1;
     }
 
@@ -663,7 +662,6 @@ struct PopAwareForkResolutionComparator {
       }
 
       VBK_LOG_DEBUG("Chain B wins");
-      ed_.overrideTip(candidate);
     }
 
     return result;
