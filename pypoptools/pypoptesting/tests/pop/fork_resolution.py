@@ -187,12 +187,12 @@ class PopForkResolutionTest(PopIntegrationTestFramework):
         # node[i] creates endorsed chain
         for i, node in enumerate(self.nodes):
             self.log.info("node[{}] started to generate random endorsed chain".format(i))
-            generate_endorsed(node, apm, atvs=20, vtbs=20, alt_blocks=20, vbk_blocks=20, btc_blocks=20, seed=12345)
+            generate_endorsed(node, apm, atvs=20, vtbs=20, alt_blocks=self.keystoneInterval+20, vbk_blocks=20, btc_blocks=20, seed=12345)
 
         # all nodes have different tips at height 323
         best_blocks = [node.getbestblock() for node in self.nodes]
         for b in best_blocks:
-            assert b.height == last_block + 20
+            assert b.height == last_block + self.keystoneInterval + 20
         assert len(set([block.hash for block in best_blocks])) == len(best_blocks)
         self.log.info("all nodes have different tips")
 
