@@ -468,9 +468,7 @@ struct BaseBlockTree {
                                      block_height_t height) {
     VBK_TRACE_ZONE_SCOPED;
     auto shortHash = makePrevHash(hash);
-
     auto newIndex = make_unique<index_t>(height);
-
     auto inserted = blocks_.emplace(shortHash, std::move(newIndex));
     VBK_ASSERT_MSG(inserted.second,
                    "attempted to create a blockindex with duplicate hash %s",
