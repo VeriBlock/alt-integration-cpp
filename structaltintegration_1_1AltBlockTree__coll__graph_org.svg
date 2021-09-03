@@ -47,15 +47,15 @@
 <polyline fill="none" stroke="black" points="336.5,-433.5 488.5,-433.5 "/>
 <text text-anchor="start" x="344.5" y="-421.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
 <text text-anchor="start" x="344.5" y="-410.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="344.5" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
-<text text-anchor="start" x="344.5" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
-<text text-anchor="start" x="344.5" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="344.5" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
+<text text-anchor="start" x="344.5" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="344.5" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="344.5" y="-366.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="344.5" y="-355.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="344.5" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="344.5" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="344.5" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="344.5" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="344.5" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 26 more...</text>
+<text text-anchor="start" x="344.5" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
+<text text-anchor="start" x="344.5" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 23 more...</text>
 <text text-anchor="start" x="344.5" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="344.5" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="344.5" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
@@ -113,15 +113,15 @@
 <polyline fill="none" stroke="black" points="459.5,-725.5 611.5,-725.5 "/>
 <text text-anchor="start" x="467.5" y="-713.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
 <text text-anchor="start" x="467.5" y="-702.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="467.5" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
-<text text-anchor="start" x="467.5" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
-<text text-anchor="start" x="467.5" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="467.5" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
+<text text-anchor="start" x="467.5" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="467.5" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="467.5" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="467.5" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="467.5" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="467.5" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="467.5" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="467.5" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 26 more...</text>
+<text text-anchor="start" x="467.5" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="467.5" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="467.5" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="467.5" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBestChain()</text>
+<text text-anchor="start" x="467.5" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 23 more...</text>
 <text text-anchor="start" x="467.5" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00"># eraseBlock()</text>
 <text text-anchor="start" x="467.5" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="467.5" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>

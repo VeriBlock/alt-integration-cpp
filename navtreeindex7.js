@@ -1,9 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68":[5,0,0,57,5],
-"structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab":[5,0,0,57,1],
-"structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[5,0,0,57,0],
-"structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3":[5,0,0,57,6],
 "structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[5,0,0,57,10],
 "structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[5,0,0,57,11],
 "structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[5,0,0,57,16],
@@ -249,5 +245,9 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a93e7af4b98826fd912b75b81fa0329f3":[5,0,0,0,2,0],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70":[5,0,0,0,2,4],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[5,0,0,0,2,5],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[5,0,0,0,0]
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[5,0,0,0,0],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4":[5,0,0,0,0,4],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a2d066dd40d688dabeb62e90880e272fa":[5,0,0,0,0,1],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b":[5,0,0,0,0,3],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712":[5,0,0,0,0,6]
 };
