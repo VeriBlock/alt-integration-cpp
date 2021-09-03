@@ -228,9 +228,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5bffb2735fe2ba1ad712f8efcc071c26"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">loadBlockForward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
 <tr class="memdesc:a5bffb2735fe2ba1ad712f8efcc071c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently connect <code>index</code> to current tree as a leaf, loaded from disk  <a href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">More...</a><br /></td></tr>
 <tr class="separator:a5bffb2735fe2ba1ad712f8efcc071c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a111d7e353423fba705edbd55ded94bea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">loadBlockBackward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="memdesc:a111d7e353423fba705edbd55ded94bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">efficiently connect <code>index</code> to current tree as a root, loaded from disk  <a href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">More...</a><br /></td></tr>
-<tr class="separator:a111d7e353423fba705edbd55ded94bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8bd01148477ec5f462de35a85eedddbe"><td class="memItemLeft" align="right" valign="top"><a id="a8bd01148477ec5f462de35a85eedddbe"></a>
 <a class="el" href="structaltintegration_1_1BlockTree.html">BtcTree</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>btc</b> ()</td></tr>
 <tr class="separator:a8bd01148477ec5f462de35a85eedddbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -515,49 +512,6 @@ const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader<
       </table>
 </div><div class="memdoc">
 <p>If successful, it is possible to setState() to the block after the addPayloads call. If unsuccessful, it leaves the state unchanged. </p><dl class="section invariant"><dt>Invariant</dt><dd>atomic: adds either all or none of the payloads </dd></dl>
-
-</div>
-</div>
-<a id="a111d7e353423fba705edbd55ded94bea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a111d7e353423fba705edbd55ded94bea">&#9670;&nbsp;</a></span>loadBlockBackward()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool altintegration::VbkBlockTree::loadBlockBackward </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<ul>
-<li>recovers all pointers (pprev, pnext, endorsedBy)</li>
-<li>recalculates chainWork</li>
-<li>does validation of endorsements</li>
-<li>recovers tips array <dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. </dd></dl>
-</li>
-</ul>
 
 </div>
 </div>

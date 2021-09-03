@@ -313,9 +313,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memitem:a13c644bfd3db9003611b3dc2bed75de7"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree.html#a13c644bfd3db9003611b3dc2bed75de7">loadBlockForward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
 <tr class="memdesc:a13c644bfd3db9003611b3dc2bed75de7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Efficiently connect block loaded from disk as a leaf.  <a href="structaltintegration_1_1AltBlockTree.html#a13c644bfd3db9003611b3dc2bed75de7">More...</a><br /></td></tr>
 <tr class="separator:a13c644bfd3db9003611b3dc2bed75de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17896cdaf0bec53948b9b045a18cd007"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree.html#a17896cdaf0bec53948b9b045a18cd007">loadBlockBackward</a> (const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;index, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
-<tr class="memdesc:a17896cdaf0bec53948b9b045a18cd007"><td class="mdescLeft">&#160;</td><td class="mdescRight">Efficiently connect block loaded from disk as a root.  <a href="structaltintegration_1_1AltBlockTree.html#a17896cdaf0bec53948b9b045a18cd007">More...</a><br /></td></tr>
-<tr class="separator:a17896cdaf0bec53948b9b045a18cd007"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d85d2745dd3f3be6fee04a4deb8360f"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree.html#a5d85d2745dd3f3be6fee04a4deb8360f">loadTip</a> (const hash_t &amp;hash, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) override</td></tr>
 <tr class="memdesc:a5d85d2745dd3f3be6fee04a4deb8360f"><td class="mdescLeft">&#160;</td><td class="mdescRight">After all blocks loaded, efficiently set current tip.  <a href="structaltintegration_1_1AltBlockTree.html#a5d85d2745dd3f3be6fee04a4deb8360f">More...</a><br /></td></tr>
 <tr class="separator:a5d85d2745dd3f3be6fee04a4deb8360f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -665,51 +662,6 @@ if return value is more or equal to 0, tree state is unchanged.</dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>vector of blocks where every block is connected and after index. </dd></dl>
-
-</div>
-</div>
-<a id="a17896cdaf0bec53948b9b045a18cd007"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17896cdaf0bec53948b9b045a18cd007">&#9670;&nbsp;</a></span>loadBlockBackward()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">VBK_CHECK_RETURN bool altintegration::AltBlockTree::loadBlockBackward </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>It recovers all pointers (pprev, pnext, endorsedBy, blockOfProofEndorsements), validates block and endorsements, recovers validity index. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>block </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">state</td><td>validation state </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if block is valid </dd></dl>
-<dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic. If loadBlock failed, <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> state is undefined and can not be used. Tip: ask user to run with '-reindex'. </dd></dl>
 
 </div>
 </div>
