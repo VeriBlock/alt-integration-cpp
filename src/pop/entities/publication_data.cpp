@@ -24,7 +24,7 @@ size_t PublicationData::estimateSize() const {
 }
 
 std::string PublicationData::toPrettyString() const {
-  return format("PublicationData{id={}, header={}, payoutInfo={}}",
+  return format("PublicationData{{id={}, header={}, payoutInfo={}}}",
                 identifier,
                 HexStr(header),
                 HexStr(payoutInfo));

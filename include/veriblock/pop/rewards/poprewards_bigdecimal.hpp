@@ -25,7 +25,7 @@ struct PopRewardsBigDecimal {
   std::string toPrettyString() const {
     auto decimalFraction = getDecimalDoubleFraction();
     double outValue = (double)getIntegerFraction() + decimalFraction;
-    return format("BigDecimal{{}}", outValue);
+    return format("BigDecimal{{{}}}", outValue);
   }
 
   PopRewardsBigDecimal& operator+=(const PopRewardsBigDecimal& b) {

@@ -669,7 +669,7 @@ struct PopAwareForkResolutionComparator {
 
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
-    return format("{}Comparator{\n{}{tree=\n{}}}",
+    return format("{}Comparator{{\n{}{{tree=\n{}}}}}",
                   pad,
                   pad,
                   ing_->toPrettyString(level + 2));

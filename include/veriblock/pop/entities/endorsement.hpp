@@ -98,7 +98,7 @@ struct Endorsement {
 
   std::string toPrettyString(size_t level = 0) const {
     return format(
-        "{}{}Endorsement{id={}, containing={}, endorsed={}, blockOfProof={}}",
+        "{}{}Endorsement{{{id={}, containing={}, endorsed={}, blockOfProof={}}}}",
         std::string(level, ' '),
         type::name(),
         HexStr(id),
