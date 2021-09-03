@@ -142,6 +142,7 @@ struct BlockIndex : public Block::addon_t {
 
   uint32_t getStatus() const { return status; }
   void setStatus(uint32_t _status) {
+    if (_status == this->status) return;
     this->status = _status;
     setDirty();
   }
@@ -226,11 +227,15 @@ struct BlockIndex : public Block::addon_t {
   bool isDirty() const { return this->dirty; }
 
   void setFlag(enum BlockValidityStatus s) {
-    this->status |= s;
+    auto newStatus = this->status | s;
+    if (newStatus == this->status) return;
+    this->status = newStatus;
     setDirty();
   }
   void unsetFlag(enum BlockValidityStatus s) {
-    this->status &= ~s;
+    auto newStatus = this->status & ~s;
+    if (newStatus == this->status) return;
+    this->status = newStatus;
     setDirty();
   }
 

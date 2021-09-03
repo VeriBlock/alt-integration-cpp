@@ -334,7 +334,37 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
   validateAlttreeIndexState(alttree, containingBlock, popData);
 
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
-  ASSERT_TRUE(endorsedIndex->isDirty());
+  ASSERT_FALSE(endorsedIndex->isDirty());
 
   ASSERT_TRUE(load(alttree2)) << state.toString();
+}
+
+template <typename TreeT>
+void assertTreeNotDirty(const TreeT& tree) {
+  const auto& blocks = tree.getBlocks();
+  for (const auto* b : blocks) {
+    ASSERT_FALSE(b->isDirty());
+  }
+}
+
+TEST_F(SaveLoadTreeTest, CheckForDirtyBlocks_test) {
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+  AltBlock altBlock = chain[5];
+
+  auto* altBlockIndex = alttree.getBlockIndex(altBlock.getHash());
+  ASSERT_TRUE(altBlockIndex->isDirty());
+
+  save(alttree);
+
+  altBlockIndex = alttree.getBlockIndex(altBlock.getHash());
+  ASSERT_FALSE(altBlockIndex->isDirty());
+  ASSERT_TRUE(load(alttree2)) << state.toString();
+
+  assertTreeNotDirty(alttree);
+  assertTreeNotDirty(alttree.btc());
+  assertTreeNotDirty(alttree.vbk());
+  assertTreeNotDirty(alttree2);
+  assertTreeNotDirty(alttree2.btc());
+  assertTreeNotDirty(alttree2.vbk());
 }

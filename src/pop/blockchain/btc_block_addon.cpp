@@ -78,7 +78,6 @@ void BtcBlockAddon::removeRef(BtcBlockAddon::ref_height_t referencedAtHeight) {
 
 void BtcBlockAddon::insertBlockOfProofEndorsement(const VbkEndorsement* e) {
   this->_blockOfProofEndorsements.push_back(e);
-  setDirty();
 }
 
 bool BtcBlockAddon::eraseLastFromBlockOfProofEndorsement(
@@ -86,17 +85,12 @@ bool BtcBlockAddon::eraseLastFromBlockOfProofEndorsement(
   auto rm = [&endorsement](const VbkEndorsement* e) -> bool {
     return e == endorsement;
   };
-  auto res =
-      erase_last_item_if<const VbkEndorsement*>(_blockOfProofEndorsements, rm);
-  if (res) {
-    setDirty();
-  }
-  return res;
+  return erase_last_item_if<const VbkEndorsement*>(_blockOfProofEndorsements,
+                                                   rm);
 }
 
 void BtcBlockAddon::clearBlockOfProofEndorsement() {
   this->_blockOfProofEndorsements.clear();
-  setDirty();
 }
 
 const std::vector<const VbkEndorsement*>&
