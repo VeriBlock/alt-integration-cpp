@@ -41,13 +41,19 @@ struct BaseBlockTree {
   using block_index_t =
       std::unordered_map<prev_block_hash_t, std::unique_ptr<index_t>>;
 
+  enum class GetBlocksPolicy {
+    DEFAULT,  // default policy is to skip deleted blocks
+    ALL_BLOCKS
+  };
+
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
   
-  std::vector<index_t*> getBlocks(bool skipDeleted = true) const {
+  std::vector<index_t*> getBlocks(
+      GetBlocksPolicy policy = GetBlocksPolicy::DEFAULT) const {
     std::vector<index_t*> blocks;
     blocks.reserve(blocks_.size());
     for (const auto& el : blocks_) {
-      if (!skipDeleted || !el.second->isDeleted()) {
+      if (policy == GetBlocksPolicy::ALL_BLOCKS || !el.second->isDeleted()) {
         blocks.push_back(el.second.get());
       }
     }
