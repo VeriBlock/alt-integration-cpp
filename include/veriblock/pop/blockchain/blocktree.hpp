@@ -118,7 +118,7 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   std::string toPrettyString(size_t level = 0) const {
     std::string pad(level, ' ');
-    return format("{}{}BlockTree{blocks={}\n{}\n{}}",
+    return format("{}{}BlockTree{{blocks={}\n{}\n{}}}",
                   pad,
                   Block::name(),
                   base::getBlocks().size(),

@@ -98,7 +98,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     if (!blockOfProof) {
       return state.Invalid(
           "bad-blockofproof",
-          format("Block Of Proof %s does not exist in SP chain",
+          format("Block Of Proof {} does not exist in SP chain",
                  HexStr(e.blockOfProof)));
     }
 

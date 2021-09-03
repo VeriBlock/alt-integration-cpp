@@ -750,7 +750,7 @@ struct BaseBlockTree {
       tipsStr += (_tip->toPrettyString(level + 2) + "\n");
     }
 
-    return format("{}{tip={}}\n{}{blocks=\n{}{}}\n{}{tips=\n{}{}}",
+    return format("{}{{tip={}}}\n{}{{blocks=\n{}{}}}\n{}{{tips=\n{}{}}}",
                   pad,
                   (tip ? tip->toPrettyString() : "<empty>"),
                   pad,

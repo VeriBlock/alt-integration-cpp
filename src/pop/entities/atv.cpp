@@ -50,7 +50,7 @@ ATV::id_t ATV::getId() const {
 }
 
 std::string ATV::toPrettyString() const {
-  return format("ATV{containingTx={}, containingBlock={}}",
+  return format("ATV{{containingTx={}, containingBlock={}}}",
                 transaction.getHash().toHex(),
                 blockOfProof.getHash().toHex());
 }

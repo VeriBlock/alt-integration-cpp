@@ -17,7 +17,7 @@ bool Coin::operator==(const Coin& other) const noexcept {
   return units == other.units;
 }
 
-std::string Coin::toPrettyString() const { return format("Coin{{}}", units); }
+std::string Coin::toPrettyString() const { return format("Coin{{{}}}", units); }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
                                                 Coin& out,
