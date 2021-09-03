@@ -35,13 +35,18 @@ struct PopState {
   void insertEndorsedBy(const endorsement_t* e) {
     VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
     _endorsedBy.push_back(e);
+    setDirty();
   }
 
   bool eraseLastFromEndorsedBy(const endorsement_t* endorsement) {
     auto rm = [&endorsement](const endorsement_t* e) -> bool {
       return e == endorsement;
     };
-    return erase_last_item_if<const endorsement_t*>(_endorsedBy, rm);
+    auto res = erase_last_item_if<const endorsement_t*>(_endorsedBy, rm);
+    if (res) {
+      setDirty();
+    }
+    return res;
   }
 
   void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {

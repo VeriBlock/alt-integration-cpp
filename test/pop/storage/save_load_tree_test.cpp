@@ -334,7 +334,7 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
   validateAlttreeIndexState(alttree, containingBlock, popData);
 
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
-  ASSERT_FALSE(endorsedIndex->isDirty());
+  ASSERT_TRUE(endorsedIndex->isDirty());
 
   ASSERT_TRUE(load(alttree2)) << state.toString();
 }
@@ -345,6 +345,12 @@ void assertTreeNotDirty(const TreeT& tree) {
   for (const auto* b : blocks) {
     ASSERT_FALSE(b->isDirty());
   }
+}
+
+void assertAllTreesNotDirty(const AltBlockTree& tree) {
+  assertTreeNotDirty(tree);
+  assertTreeNotDirty(tree.btc());
+  assertTreeNotDirty(tree.vbk());
 }
 
 TEST_F(SaveLoadTreeTest, CheckForDirtyBlocks_test) {
@@ -361,10 +367,41 @@ TEST_F(SaveLoadTreeTest, CheckForDirtyBlocks_test) {
   ASSERT_FALSE(altBlockIndex->isDirty());
   ASSERT_TRUE(load(alttree2)) << state.toString();
 
-  assertTreeNotDirty(alttree);
-  assertTreeNotDirty(alttree.btc());
-  assertTreeNotDirty(alttree.vbk());
-  assertTreeNotDirty(alttree2);
-  assertTreeNotDirty(alttree2.btc());
-  assertTreeNotDirty(alttree2.vbk());
+  assertAllTreesNotDirty(alttree);
+  assertAllTreesNotDirty(alttree2);
+}
+
+TEST_F(SaveLoadTreeTest, CheckForDirtyEndorsedBlocks_test) {
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  AltBlock containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  PopData popData = generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
+  ASSERT_EQ(popData.atvs.size(), 1);
+  ASSERT_EQ(popData.vtbs.size(), 0);
+
+  // add alt payloads
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+ 
+  containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  alttree.acceptBlock(containingBlock.getHash(), {});
+
+  save(alttree);
+
+  EXPECT_TRUE(load(alttree2));
+  EXPECT_TRUE(state.IsValid());
+
+  assertAllTreesNotDirty(alttree);
+  assertAllTreesNotDirty(alttree2);
 }
