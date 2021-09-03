@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('poprewards__bigdecimal_8hpp_source.htm
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  std::string toPrettyString()<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">auto</span> decimalFraction = getDecimalDoubleFraction();</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">double</span> outValue = (double)getIntegerFraction() + decimalFraction;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">return</span> format(<span class="stringliteral">&quot;BigDecimal{{}}&quot;</span>, outValue);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">return</span> format(<span class="stringliteral">&quot;BigDecimal{{{}}}&quot;</span>, outValue);</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  PopRewardsBigDecimal&amp; operator+=(<span class="keyword">const</span> PopRewardsBigDecimal&amp; b) {</div>
