@@ -146,3 +146,8 @@ func (v *PopContext) MemPoolClear() {
 	v.validate()
 	C.pop_pop_context_function_mempool_clear(v.ref)
 }
+
+func (v *PopContext) MemPoolSetDoStalledCheck(doCheck bool) {
+	v.validate()
+	C.pop_pop_context_function_mempool_set_do_stalled_check(v.ref, C.bool(doCheck))
+}
