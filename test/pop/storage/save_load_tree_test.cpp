@@ -338,3 +338,70 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
 
   ASSERT_TRUE(load(alttree2)) << state.toString();
 }
+
+template <typename TreeT>
+void assertTreeNotDirty(const TreeT& tree) {
+  const auto& blocks = tree.getBlocks();
+  for (const auto* b : blocks) {
+    ASSERT_FALSE(b->isDirty());
+  }
+}
+
+void assertAllTreesNotDirty(const AltBlockTree& tree) {
+  assertTreeNotDirty(tree);
+  assertTreeNotDirty(tree.btc());
+  assertTreeNotDirty(tree.vbk());
+}
+
+TEST_F(SaveLoadTreeTest, CheckForDirtyBlocks_test) {
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+  AltBlock altBlock = chain[5];
+
+  auto* altBlockIndex = alttree.getBlockIndex(altBlock.getHash());
+  ASSERT_TRUE(altBlockIndex->isDirty());
+
+  save(alttree);
+
+  altBlockIndex = alttree.getBlockIndex(altBlock.getHash());
+  ASSERT_FALSE(altBlockIndex->isDirty());
+  ASSERT_TRUE(load(alttree2)) << state.toString();
+
+  assertAllTreesNotDirty(alttree);
+  assertAllTreesNotDirty(alttree2);
+}
+
+TEST_F(SaveLoadTreeTest, CheckForDirtyEndorsedBlocks_test) {
+  // mine 20 blocks
+  mineAltBlocks(20, chain);
+  AltBlock endorsedBlock = chain[5];
+
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  AltBlock containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  PopData popData = generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
+  ASSERT_EQ(popData.atvs.size(), 1);
+  ASSERT_EQ(popData.vtbs.size(), 0);
+
+  // add alt payloads
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
+  EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
+  EXPECT_TRUE(state.IsValid());
+ 
+  containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+
+  EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
+  alttree.acceptBlock(containingBlock.getHash(), {});
+
+  save(alttree);
+
+  EXPECT_TRUE(load(alttree2));
+  EXPECT_TRUE(state.IsValid());
+
+  assertAllTreesNotDirty(alttree);
+  assertAllTreesNotDirty(alttree2);
+}

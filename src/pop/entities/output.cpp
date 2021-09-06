@@ -24,7 +24,8 @@ size_t Output::estimateSize() const {
 }
 
 std::string Output::toPrettyString() const {
-  return format("Output{address={}, coin={}}", address.toString(), coin.units);
+  return format(
+      "Output{{address={}, coin={}}}", address.toString(), coin.units);
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,

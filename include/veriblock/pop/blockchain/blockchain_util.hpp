@@ -98,7 +98,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     if (!blockOfProof) {
       return state.Invalid(
           "bad-blockofproof",
-          format("Block Of Proof %s does not exist in SP chain",
+          format("Block Of Proof {} does not exist in SP chain",
                  HexStr(e.blockOfProof)));
     }
 
@@ -111,13 +111,24 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
       auto& by = endorsed->getEndorsedBy();
       VBK_ASSERT_MSG(std::find(by.begin(), by.end(), endorsement) == by.end(),
                      "same endorsement is added to endorsedBy second time");
+      bool isDirty = endorsed->isDirty();
       endorsed->insertEndorsedBy(endorsement);
+      // keep dirty flag since recoverEndorsements is used when loading blocks from storage
+      // and should not affect dirtyness of the blocks
+      if (!isDirty) {
+        endorsed->unsetDirty();
+      }
 
       const auto& bop = blockOfProof->getBlockOfProofEndorsement();
       VBK_ASSERT_MSG(
           std::find(bop.begin(), bop.end(), endorsement) == bop.end(),
           "same endorsement is added to blockOfProof second time");
+      isDirty = blockOfProof->isDirty();
       blockOfProof->insertBlockOfProofEndorsement(endorsement);
+      // keep dirty flag
+      if (!isDirty) {
+        blockOfProof->unsetDirty();
+      }
     });
   }
 

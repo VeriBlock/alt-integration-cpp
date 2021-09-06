@@ -59,8 +59,8 @@ uint256 VbkPopTx::getHash() const {
 
 std::string VbkPopTx::toPrettyString() const {
   return format(
-      "VbkPopTx{address={}, publishedBlock={}, blockOfProof={}, context={} "
-      "blocks starting with {}}",
+      "VbkPopTx{{address={}, publishedBlock={}, blockOfProof={}, context={} "
+      "blocks starting with {}}}",
       address.toString(),
       publishedBlock.toPrettyString(),
       blockOfProof.toPrettyString(),

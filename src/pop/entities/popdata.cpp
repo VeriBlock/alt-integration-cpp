@@ -11,7 +11,7 @@
 namespace altintegration {
 
 std::string PopData::toPrettyString() const {
-  return format("PopData{VBKs={}, VTBs={}, ATVs={}, version={}}",
+  return format("PopData{{VBKs={}, VTBs={}, ATVs={}, version={}}}",
                 context.size(),
                 vtbs.size(),
                 atvs.size(),

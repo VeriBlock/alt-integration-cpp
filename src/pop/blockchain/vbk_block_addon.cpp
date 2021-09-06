@@ -117,6 +117,7 @@ bool VbkBlockAddon::eraseLastFromBlockOfProofEndorsement(
 }
 
 void VbkBlockAddon::clearBlockOfProofEndorsement() {
+  if (this->_blockOfProofEndorsements.empty()) return;
   this->_blockOfProofEndorsements.clear();
   setDirty();
 }

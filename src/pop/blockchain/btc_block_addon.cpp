@@ -95,6 +95,7 @@ bool BtcBlockAddon::eraseLastFromBlockOfProofEndorsement(
 }
 
 void BtcBlockAddon::clearBlockOfProofEndorsement() {
+  if (this->_blockOfProofEndorsements.empty()) return;
   this->_blockOfProofEndorsements.clear();
   setDirty();
 }

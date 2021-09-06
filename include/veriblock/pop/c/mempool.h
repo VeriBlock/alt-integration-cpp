@@ -229,6 +229,14 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clean_up);
  */
 POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clear);
 
+/**
+ * @copybrief altintegration::MemPool::setDoStalledCheck
+ * @see altintegration::MemPool::setDoStalledCheck
+ * @param[in] self PopContext
+ * @param[in] do_check bool 
+ */
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_set_do_stalled_check, bool do_check);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

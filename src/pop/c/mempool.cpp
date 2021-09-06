@@ -280,3 +280,9 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_clear) {
 
   self->ref->getMemPool().clear();
 }
+
+POP_ENTITY_CUSTOM_FUNCTION(pop_context, void, mempool_set_do_stalled_check, bool do_check) {
+  VBK_ASSERT(self);
+
+  self->ref->getMemPool().setDoStalledCheck(do_check);
+}

@@ -263,7 +263,7 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
 
 std::string AltBlockTree::toPrettyString(size_t level) const {
   std::string pad(level, ' ');
-  return format("{}AltTree{blocks={}\n{}\n{}\n{}}",
+  return format("{}AltTree{{blocks={}\n{}\n{}\n{}}}",
                 pad,
                 base::getBlocks().size(),
                 base::toPrettyString(level + 2),

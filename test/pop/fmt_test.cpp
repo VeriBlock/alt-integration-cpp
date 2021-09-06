@@ -10,6 +10,12 @@
 TEST(Fmt, basic_test) {
   EXPECT_EQ(altintegration::format("{}, {}, {}", "hello", "world", 5),
             "hello, world, 5");
+
+  EXPECT_EQ(altintegration::format("{{{}, {}, {}}}", "hello", "world", 5),
+            "{hello, world, 5}");
+
+  EXPECT_EQ(altintegration::format("{{{{{}}}, {}, {}}}", "hello", "world", 5),
+            "{{hello}, world, 5}");
 }
 
 TEST(Fmt, invalid_format) {
