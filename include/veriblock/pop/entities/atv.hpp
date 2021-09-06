@@ -93,11 +93,15 @@ struct IsPopPayload<ATV> {
 template <typename JsonValue>
 JsonValue ToJSON(const ATV& atv) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(obj, "id", atv.getId().toHex());
   json::putIntKV(obj, "version", atv.version);
   json::putKV(obj, "transaction", ToJSON<JsonValue>(atv.transaction));
   json::putKV(obj, "merklePath", ToJSON<JsonValue>(atv.merklePath));
   json::putKV(obj, "blockOfProof", ToJSON<JsonValue>(atv.blockOfProof));
+
+  // return this entity in VBK-serialized form for easy consumption.
+  // DO NOT REMOVE these fields - otherwise Stratum compat will break.
+  json::putStringKV(obj, "id", atv.getId().toHex());
+  json::putStringKV(obj, "serialized", SerializeToHex(atv));
   return obj;
 }
 
