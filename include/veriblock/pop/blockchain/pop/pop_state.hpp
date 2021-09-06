@@ -32,12 +32,6 @@ struct PopState {
     return _endorsedBy;
   }
 
-  void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
-    VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
-    _containingEndorsements.emplace(e->id, std::move(e));
-    setDirty();
-  }
-
   void insertEndorsedBy(const endorsement_t* e) {
     VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
     _endorsedBy.push_back(e);
@@ -53,6 +47,12 @@ struct PopState {
       setDirty();
     }
     return res;
+  }
+
+  void insertContainingEndorsement(std::shared_ptr<endorsement_t> e) {
+    VBK_ASSERT_MSG(e != nullptr, "Inserted endorsement should not be nullptr");
+    _containingEndorsements.emplace(e->id, std::move(e));
+    setDirty();
   }
 
   const typename containing_endorsement_store_t::const_iterator
