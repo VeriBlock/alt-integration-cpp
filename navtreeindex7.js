@@ -1,13 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[5,0,0,57,0],
-"structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3":[5,0,0,57,6],
-"structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[5,0,0,57,10],
-"structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[5,0,0,57,11],
-"structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[5,0,0,57,16],
-"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50],
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[5,0,0,50,0],
-"structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42":[5,0,0,50,1],
 "structaltintegration_1_1StorageIOException.html":[5,0,0,51],
 "structaltintegration_1_1StorageIOException.html#ac5895f9e5a3d6570477cd8e9f055d33d":[5,0,0,51,0],
 "structaltintegration_1_1StoredBlockIndex.html":[5,0,0,67],
@@ -249,5 +241,13 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[5,0,0,0,2,5],
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[5,0,0,0,0],
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4":[5,0,0,0,0,4],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a2d066dd40d688dabeb62e90880e272fa":[5,0,0,0,0,1]
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a2d066dd40d688dabeb62e90880e272fa":[5,0,0,0,0,1],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b":[5,0,0,0,0,3],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712":[5,0,0,0,0,6],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f":[5,0,0,0,0,2],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a6f43473699faa75b7e4b024c99ddd06b":[5,0,0,0,0,0],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#ad35dbe27e07dc10fd8dafb5252f2cbf0":[5,0,0,0,0,5],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html":[5,0,0,0,1],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a283736460019927cbc85a14d8196a2ac":[5,0,0,0,1,6],
+"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a3ee02f61ecff26ef42fafab481f7c865":[5,0,0,0,1,8]
 };
