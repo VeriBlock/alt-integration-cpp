@@ -168,7 +168,6 @@ struct IsPopPayload<VbkBlock> {
 template <typename JsonValue>
 JsonValue ToJSON(const VbkBlock& b) {
   JsonValue obj = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(obj, "id", HexStr(b.getId()));
   json::putStringKV(obj, "hash", HexStr(b.getHash()));
   json::putIntKV(obj, "height", b.getHeight());
   json::putIntKV(obj, "version", b.getVersion());
@@ -180,6 +179,11 @@ JsonValue ToJSON(const VbkBlock& b) {
   json::putIntKV(obj, "timestamp", b.getTimestamp());
   json::putIntKV(obj, "difficulty", b.getDifficulty());
   json::putIntKV(obj, "nonce", b.getNonce());
+
+  // return this entity in VBK-serialized form for easy consumption.
+  // DO NOT REMOVE these fields - otherwise Stratum compat will break.
+  json::putStringKV(obj, "id", HexStr(b.getId()));
+  json::putStringKV(obj, "serialized", SerializeToHex(b));
   return obj;
 }
 
