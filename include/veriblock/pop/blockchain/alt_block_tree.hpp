@@ -124,6 +124,9 @@ extern template struct BaseBlockTree<AltBlock>;
 //!             // candidate has better POP score.
 //!             // tree already switched to candidate chain.
 //!
+//!             UpdateTip(candidate->getHash());
+//!             // NOTE: update `tip`, otherwise old tip will be passed to first arg,
+//!             // and comparePopScore will die on assert
 //!             tip = candidate;
 //!             return true;
 //!         } else if (result == 0) {

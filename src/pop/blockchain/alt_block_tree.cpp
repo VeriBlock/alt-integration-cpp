@@ -494,7 +494,12 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
 }
 
 bool AltBlockTree::setState(const hash_t& block, ValidationState& state) {
-  return base::setState(block, state);
+  auto* index = getBlockIndex(block);
+  if (!index) {
+    return state.Invalid(block_t::name() + "-setstate-unknown-block",
+                         "could not find the block to set the state to");
+  }
+  return setState(*index, state);
 }
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {

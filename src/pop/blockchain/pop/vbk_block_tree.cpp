@@ -51,7 +51,12 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 }
 
 bool VbkBlockTree::setState(const hash_t& block, ValidationState& state) {
-  return base::setState(block, state);
+  auto* index = getBlockIndex(block);
+  if (!index) {
+    return state.Invalid(block_t::name() + "-setstate-unknown-block",
+                         "could not find the block to set the state to");
+  }
+  return setState(*index, state);
 }
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
