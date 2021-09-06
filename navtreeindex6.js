@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036":[5,0,0,59,11],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#ad3fd4625194133ae94eac0fde98fe2b0":[5,0,0,59,3],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#af39539bcb281499d6162a2c79eeba932":[5,0,0,59,9],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#af852394966e0553c6d4d4b346f858987":[5,0,0,59,8],
 "structaltintegration_1_1Endorsement.html":[5,0,0,36],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179":[5,0,0,57,10],
 "structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1":[5,0,0,57,11],
 "structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[5,0,0,57,16],
-"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50],
-"structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[5,0,0,50,0],
-"structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42":[5,0,0,50,1]
+"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50]
 };
