@@ -12,7 +12,7 @@ var structaltintegration_1_1AltBlock =
     [ "getHeight", "structaltintegration_1_1AltBlock.html#ad9af739d8c3adde1e1adb342a5444a45", null ],
     [ "getPreviousBlock", "structaltintegration_1_1AltBlock.html#aa96ef6807565f1ea73d67fb1e0fbac6e", null ],
     [ "getTimestamp", "structaltintegration_1_1AltBlock.html#a633373c3828f5a58e501068b7696123f", null ],
-    [ "toPrettyString", "structaltintegration_1_1AltBlock.html#aafd640ff55a2cc56f5d0297d3c73d093", null ],
+    [ "toPrettyString", "structaltintegration_1_1AltBlock.html#a87c322cd9b39428311ca3323c9492402", null ],
     [ "toRaw", "structaltintegration_1_1AltBlock.html#a46db512d5b57ec760614cf811f4937dd", null ],
     [ "toRaw", "structaltintegration_1_1AltBlock.html#a9926fbcdd9acd71cf8c91e820f4c0011", null ],
     [ "toVbkEncoding", "structaltintegration_1_1AltBlock.html#af9c78ed22e89f4083f29e65d33703f8c", null ],

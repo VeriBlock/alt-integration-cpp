@@ -15,6 +15,7 @@ var structaltintegration_1_1AltChainParams =
     [ "getMaxVbkBlocksInAltBlock", "structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d", null ],
     [ "getMaxVTBsInAltBlock", "structaltintegration_1_1AltChainParams.html#a30a17437d219fba10e84bb27814ffe35", null ],
     [ "getPayoutParams", "structaltintegration_1_1AltChainParams.html#aa09bd74723bdadf30bfd2d4a70eded20", null ],
+    [ "isReversedBlockHashes", "structaltintegration_1_1AltChainParams.html#a0bf3c801763e8d830f2d791adafb827e", null ],
     [ "maxAltchainFutureBlockTime", "structaltintegration_1_1AltChainParams.html#a1df826389de975b3c767cfce40d041f1", null ],
     [ "maxWorkerQueueSize", "structaltintegration_1_1AltChainParams.html#a2c8435cb1679bd15c9d4a8dc029ade34", null ],
     [ "preserveBlocksBehindFinal", "structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689", null ],
@@ -29,5 +30,6 @@ var structaltintegration_1_1AltChainParams =
     [ "mMaxVbkBlocksInAltBlock", "structaltintegration_1_1AltChainParams.html#a069a34235dccecfd459f70366d016dfc", null ],
     [ "mMaxVTBsInAltBlock", "structaltintegration_1_1AltChainParams.html#a5617ac97e07d6c7e3e8b56909a2a2740", null ],
     [ "mPopPayoutsParams", "structaltintegration_1_1AltChainParams.html#a00d8084e4d4358d60d79546d5e58501e", null ],
-    [ "mPreserveBlocksBehindFinal", "structaltintegration_1_1AltChainParams.html#acc5cdebc50142e23d7d4f539d630be53", null ]
+    [ "mPreserveBlocksBehindFinal", "structaltintegration_1_1AltChainParams.html#acc5cdebc50142e23d7d4f539d630be53", null ],
+    [ "mReverseHashes", "structaltintegration_1_1AltChainParams.html#a888fd462f7d1de496c014a6748c81ed8", null ]
 ];

@@ -1,5 +1,7 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1ReadStream.html#afdc0f52675cae0acf806bdbb3fc73da8":[5,0,0,57,16],
+"structaltintegration_1_1StateCorruptedException.html":[5,0,0,50],
 "structaltintegration_1_1StateCorruptedException.html#a48ca200a3036b3414f8f2aabce9cba57":[5,0,0,50,0],
 "structaltintegration_1_1StateCorruptedException.html#adbce48a6f1cc614426dbe2fe5cc5ea42":[5,0,0,50,1],
 "structaltintegration_1_1StorageIOException.html":[5,0,0,51],
@@ -247,7 +249,5 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b":[5,0,0,0,0,3],
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712":[5,0,0,0,0,6],
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f":[5,0,0,0,0,2],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a6f43473699faa75b7e4b024c99ddd06b":[5,0,0,0,0,0],
-"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#ad35dbe27e07dc10fd8dafb5252f2cbf0":[5,0,0,0,0,5],
-"structaltintegration_1_1adaptors_1_1BlockReaderImpl.html":[5,0,0,0,1]
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a6f43473699faa75b7e4b024c99ddd06b":[5,0,0,0,0,0]
 };

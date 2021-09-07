@@ -158,6 +158,9 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr class="memitem:aa2cdde39235adf3c2e00a8a6cf1b6689"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689">preserveBlocksBehindFinal</a> () const noexcept</td></tr>
 <tr class="memdesc:aa2cdde39235adf3c2e00a8a6cf1b6689"><td class="mdescLeft">&#160;</td><td class="mdescRight">when finalizeBlockImpl is called, this many blocks behind final block will be preserved in RAM.  <a href="structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689">More...</a><br /></td></tr>
 <tr class="separator:aa2cdde39235adf3c2e00a8a6cf1b6689"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bf3c801763e8d830f2d791adafb827e"><td class="memItemLeft" align="right" valign="top"><a id="a0bf3c801763e8d830f2d791adafb827e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReversedBlockHashes</b> () const noexcept</td></tr>
+<tr class="separator:a0bf3c801763e8d830f2d791adafb827e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf75ed10d82c00677bf6ce932861c63a"><td class="memItemLeft" align="right" valign="top"><a id="aaf75ed10d82c00677bf6ce932861c63a"></a>
 virtual int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParams.html#aaf75ed10d82c00677bf6ce932861c63a">getIdentifier</a> () const noexcept=0</td></tr>
 <tr class="memdesc:aaf75ed10d82c00677bf6ce932861c63a"><td class="mdescLeft">&#160;</td><td class="mdescRight">unique POP ID for the chain; identifies altchain in VBK <br /></td></tr>
@@ -206,6 +209,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxVTBsInAltBlock<
 <tr class="memitem:a1c6b78e1e3379aee25507459072136ac"><td class="memItemLeft" align="right" valign="top"><a id="a1c6b78e1e3379aee25507459072136ac"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock</b> = 1000</td></tr>
 <tr class="separator:a1c6b78e1e3379aee25507459072136ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a888fd462f7d1de496c014a6748c81ed8"><td class="memItemLeft" align="right" valign="top"><a id="a888fd462f7d1de496c014a6748c81ed8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>mReverseHashes</b> = false</td></tr>
+<tr class="separator:a888fd462f7d1de496c014a6748c81ed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0caa05ae89b6ac4386bef645eaad1c24"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mForkResolutionLookUpTable</b></td></tr>
 <tr class="separator:a0caa05ae89b6ac4386bef645eaad1c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -467,7 +473,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
 <div class="line">      100, 100, 95, 89, 80, 69, 56, 40, 21}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00274">274</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00278">278</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 
 </div>
 </div>
@@ -485,7 +491,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">      std::make_shared&lt;PopPayoutsParams&gt;()</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00259">259</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00261">261</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 
 </div>
 </div>
