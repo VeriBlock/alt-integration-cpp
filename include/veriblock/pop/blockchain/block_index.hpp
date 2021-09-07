@@ -352,21 +352,31 @@ struct BlockIndex : public Block::addon_t {
     return const_cast<BlockIndex*>(t.getAncestor(_height));
   }
 
-  std::string toPrettyString(size_t level = 0) const {
+  std::string toPrettyString(size_t level = 0,
+                             bool reversed_hash = false) const {
+    auto hash = getHash();
+    if (reversed_hash) {
+      hash = std::vector<uint8_t>(hash.rbegin(), hash.rend());
+    }
     return format(
         "{}{}BlockIndex(height={}, hash={}, next={}, status={}, header={}, {})",
         std::string(level, ' '),
         Block::name(),
         height,
-        HexStr(getHash()),
+        HexStr(hash),
         pnext.size(),
         status,
         header->toPrettyString(),
         addon_t::toPrettyString());
   }
 
-  std::string toShortPrettyString() const {
-    return format("{}:{}:{}", Block::name(), height, HexStr(getHash()));
+  std::string toShortPrettyString(bool reverse_hash = false) const {
+    auto hash = getHash();
+    if (reverse_hash) {
+      hash = std::vector<uint8_t>(hash.rbegin(), hash.rend());
+    }
+
+    return format("{}:{}:{}", Block::name(), height, HexStr(hash));
   }
 
   void toVbkEncoding(WriteStream& stream) const {

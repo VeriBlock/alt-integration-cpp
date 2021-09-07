@@ -96,7 +96,7 @@ void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
 void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
   VBK_LOG_INFO("Accept pop data: %s, for the block: %s ",
                payloads.toPrettyString(),
-               index.toPrettyString());
+               index.toPrettyString(0, getParams().isReversedBlockHashes()));
   ValidationState dummy;
   acceptBlock(index, payloads, dummy);
 }
@@ -221,7 +221,8 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO("Accept new block: %s ", block.toPrettyString());
+  VBK_LOG_INFO("Accept new block: %s ",
+               block.toPrettyString(getParams().isReversedBlockHashes()));
 
   // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
   // with AltBlock, where hash == previousHash. If so, fail loudly.

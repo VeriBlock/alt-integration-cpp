@@ -215,6 +215,8 @@ struct AltChainParams {
     return mPreserveBlocksBehindFinal;
   }
 
+  bool isReversedBlockHashes() const noexcept { return mReverseHashes; }
+
   //! unique POP ID for the chain; identifies altchain in VBK
   virtual int64_t getIdentifier() const noexcept = 0;
 
@@ -270,6 +272,8 @@ struct AltChainParams {
   size_t mMaxVbkBlocksInAltBlock = 200;
   size_t mMaxVTBsInAltBlock = 200;
   size_t mMaxATVsInAltBlock = 1000;
+
+  bool mReverseHashes = false;
 
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};

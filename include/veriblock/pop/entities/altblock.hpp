@@ -69,7 +69,7 @@ struct AltBlock {
    * Print this entity
    * @return
    */
-  std::string toPrettyString() const;
+  std::string toPrettyString(bool reversed_hash = false) const;
 
   hash_t getPreviousBlock() const { return previousBlock; }
   uint32_t getTimestamp() const { return timestamp; }
