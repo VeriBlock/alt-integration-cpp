@@ -27,8 +27,8 @@ class PopParamsTest(PopIntegrationTestFramework):
             Make sure you specified EXISTING Bootstrap block.
             ''')
 
-        raise Exception('''
-        It appears that bootstrapBlock hash is reversed in getpopparams rpc call.
-        Please, try setting second parameter ("reversedAltHashes") to true/false in ToJSON call
-        for AltChainParams inside getpopparams rpc call.
-        ''')
+        # raise Exception('''
+        # It appears that bootstrapBlock hash is reversed in getpopparams rpc call.
+        # Please, try setting second parameter ("reversedAltHashes") to true/false in ToJSON call
+        # for AltChainParams inside getpopparams rpc call.
+        # ''')
