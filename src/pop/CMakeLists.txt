@@ -94,6 +94,7 @@ message(STATUS "BUILD=${BUILD}")
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
 
 if(WITH_TRACER)
+    add_compile_definitions(TRACY_ON_DEMAND)
     target_sources(${LIB_NAME} PRIVATE $<TARGET_OBJECTS:tracy>)
     target_link_libraries(${LIB_NAME} PUBLIC dl)
     set(ADDITIONAL_CFLAGS -DTRACY_ENABLE=1)
