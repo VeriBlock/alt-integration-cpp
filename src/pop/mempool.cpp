@@ -7,6 +7,7 @@
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
+#include <veriblock/pop/txfees.hpp>
 
 namespace altintegration {
 

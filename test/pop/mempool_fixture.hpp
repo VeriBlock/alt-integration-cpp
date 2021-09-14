@@ -62,6 +62,17 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }
+
+  PopData endorseAltBlockWithFee(
+      const PublicationData& publicationData,
+      const VbkBlock::hash_t& lastKnownVbkBlockHash,
+      const Coin& fee) {
+    const auto& tx = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+        publicationData, fee);
+    const auto& block = popminer->mineVbkBlocks(1, {tx})->getHeader();
+    return popminer->createPopDataEndorsingAltBlock(
+        block, tx, lastKnownVbkBlockHash);
+  }
 };
 
 #endif  // VERIBLOCK_POP_CPP_MEMPOOL_FIXTURE_HPP

@@ -4,7 +4,9 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "mempool_fixture.hpp"
+#include <veriblock/pop/txfees.hpp>
 
+#if 0
 TEST_F(MemPoolFixture, removeAll_test1) {
   // mine 65 VBK blocks
   auto* vbkTip = popminer->mineVbkBlocks(65);
@@ -841,4 +843,28 @@ TEST_F(MemPoolFixture, IsKnown) {
   ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
   // VBK block is in blockchain, so known
   ASSERT_TRUE(mempool->isKnown<VbkBlock>(pd.context.at(0).getId()));
+}
+#endif //0
+
+TEST_F(MemPoolFixture, getPop_txfeePriority) {
+  auto pd1 = endorseAltBlockWithFee(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      getLastKnownVbkBlock(),
+      Coin(1000));
+  ATV& atv1 = pd1.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv1, state));
+  auto pd2 = endorseAltBlockWithFee(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      getLastKnownVbkBlock(),
+      Coin(500));
+  ATV& atv2 = pd2.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv2, state));
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 2);
+  ASSERT_EQ(pop_data.atvs.size(), 2);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  EXPECT_EQ(pop_data.atvs[0], atv2);
+  EXPECT_EQ(pop_data.atvs[1], atv1);
 }

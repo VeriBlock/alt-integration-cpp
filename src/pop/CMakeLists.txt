@@ -56,6 +56,7 @@ set(SOURCES
         alt-util.cpp
         pop_context.cpp
         trace.cpp
+        txfees.cpp
         $<TARGET_OBJECTS:mempool>
         $<TARGET_OBJECTS:pop_stateless_validator>
         $<TARGET_OBJECTS:strutil>
