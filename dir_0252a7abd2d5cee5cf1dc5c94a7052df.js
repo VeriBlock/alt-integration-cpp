@@ -48,6 +48,7 @@ var dir_0252a7abd2d5cee5cf1dc5c94a7052df =
     [ "strutil.hpp", "strutil_8hpp_source.html", null ],
     [ "time.hpp", "time_8hpp_source.html", null ],
     [ "trace.hpp", "trace_8hpp_source.html", null ],
+    [ "txfees.hpp", "txfees_8hpp_source.html", null ],
     [ "type_traits.hpp", "type__traits_8hpp_source.html", null ],
     [ "uint.hpp", "uint_8hpp_source.html", null ],
     [ "validation_state.hpp", "validation__state_8hpp_source.html", null ],
