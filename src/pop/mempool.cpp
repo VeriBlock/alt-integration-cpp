@@ -7,23 +7,68 @@
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
-#include <veriblock/pop/txfees.hpp>
 
 namespace altintegration {
 
-namespace {
+int MemPool::TxFeeComparator::operator()(const std::shared_ptr<ATV>& a,
+                                         const std::shared_ptr<ATV>& b) const {
+  auto aFee = a->transaction.calculateTxFee();
+  auto bFee = b->transaction.calculateTxFee();
+  if (aFee.units == bFee.units) return 0;
+  if (aFee.units > bFee.units) return 1;
+  return -1;
+}
 
-// generates a PopData which is not bigger than 'maxPopDataSize' in serialized
-// size
-PopData generatePopDataImpl(
-    const std::vector<std::pair<VbkBlock::id_t,
-                                std::shared_ptr<VbkPayloadsRelations>>>& blocks,
-    const AltChainParams& params) {
+int MemPool::EndorsedAltComparator::operator()(
+    const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) const {
+  auto endorsedHash = parent_.mempool_tree_.alt().getParams().getHash(
+      a->transaction.publicationData.header);
+  auto* aEndorsedIndex =
+      parent_.mempool_tree_.alt().getBlockIndex(endorsedHash);
+  endorsedHash = parent_.mempool_tree_.alt().getParams().getHash(
+      b->transaction.publicationData.header);
+  auto* bEndorsedIndex =
+      parent_.mempool_tree_.alt().getBlockIndex(endorsedHash);
+  if (aEndorsedIndex == bEndorsedIndex) return 0;
+  if (aEndorsedIndex == nullptr) return -1;
+  if (bEndorsedIndex == nullptr) return 1;
+  if (aEndorsedIndex->getHeight() == bEndorsedIndex->getHeight()) return 0;
+  if (aEndorsedIndex->getHeight() < bEndorsedIndex->getHeight()) return 1;
+  return -1;
+}
+
+void MemPool::sortAtvsWithTxfeeAndEndorsedBlock(
+    std::vector<std::shared_ptr<ATV>>& atvs) {
+  EndorsedAltComparator endorsedAltComparator{*this};
+  TxFeeComparator txfeeComparator{};
+  std::sort(atvs.begin(),
+            atvs.end(),
+            [&](const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) {
+              auto comp1 = txfeeComparator(a, b);
+              if (comp1 != 0) return comp1 > 0;
+              return endorsedAltComparator(a, b) > 0;
+            });
+}
+
+PopData MemPool::generatePopData() {
+  VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
+
+  // attempt to connect payloads
+  tryConnectPayloads();
+
+  // sorted array of VBK blocks (ascending order)
+  using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
+  std::vector<P> blocks(relations_.begin(), relations_.end());
+  std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
+    return a.second->header->getHeight() < b.second->header->getHeight();
+  });
+
   PopData ret{};
+
   // size in bytes of pop data added to
   size_t popSize = ret.estimateSize();
 
-  const auto& maxSize = params.getMaxPopDataSize();
+  const auto& maxSize = mempool_tree_.alt().getParams().getMaxPopDataSize();
   for (const auto& block : blocks) {
     // add VBK block if it fits
     auto& header = *block.second->header;
@@ -37,6 +82,7 @@ PopData generatePopDataImpl(
 
     // try to fit ATVs
     auto& atvcandidates = block.second->atvs;
+    sortAtvsWithTxfeeAndEndorsedBlock(atvcandidates);
     for (const auto& atv : atvcandidates) {
       const auto estimate = atv->estimateSize();
       if (popSize + estimate >= maxSize) {
@@ -73,25 +119,6 @@ PopData generatePopDataImpl(
   VBK_ASSERT_MSG(popSize == estimate, "size=%d estimate=%d", popSize, estimate);
   VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 
-  return ret;
-}
-
-}  // namespace
-
-PopData MemPool::generatePopData() {
-  VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
-
-  // attempt to connect payloads
-  tryConnectPayloads();
-
-  // sorted array of VBK blocks (ascending order)
-  using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
-  std::vector<P> blocks(relations_.begin(), relations_.end());
-  std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
-    return a.second->header->getHeight() < b.second->header->getHeight();
-  });
-
-  PopData ret = generatePopDataImpl(blocks, mempool_tree_.alt().getParams());
   mempool_tree_.filterInvalidPayloads(ret);
   return ret;
 }

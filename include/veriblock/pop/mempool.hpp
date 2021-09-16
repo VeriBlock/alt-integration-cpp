@@ -378,6 +378,23 @@ struct MemPool {
   payload_value_sorted_map<T>& getInFlightMapMut() {
     return const_cast<payload_value_sorted_map<T>&>(this->getInFlightMap<T>());
   }
+
+  struct EndorsedAltComparator {
+    EndorsedAltComparator(const MemPool& parent) : parent_(parent) {}
+    int operator()(const std::shared_ptr<ATV>& a,
+                   const std::shared_ptr<ATV>& b) const;
+
+   private:
+    const MemPool& parent_;
+  };
+
+  struct TxFeeComparator {
+    int operator()(const std::shared_ptr<ATV>& a,
+                   const std::shared_ptr<ATV>& b) const;
+  };
+
+  //! @private
+  void sortAtvsWithTxfeeAndEndorsedBlock(std::vector<std::shared_ptr<ATV>>& atvs);
 };
 
 // clang-format off

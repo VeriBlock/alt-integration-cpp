@@ -62,6 +62,16 @@ uint256 VbkTx::getHash() const {
   return sha256(stream.data());
 }
 
+Coin VbkTx::calculateTxFee() const {
+  decltype(Coin::units) output{0};
+  for (const auto& o : outputs) {
+    output += o.coin.units;
+  }
+  VBK_ASSERT_MSG(sourceAmount.units >= output,
+                 "Output amount should be less or equal to the input amount");
+  return Coin{sourceAmount.units - output};
+}
+
 bool altintegration::DeserializeFromRaw(ReadStream& stream,
                                         Slice<const uint8_t> signature,
                                         Slice<const uint8_t> publicKey,
