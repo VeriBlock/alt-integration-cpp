@@ -273,7 +273,6 @@ var namespacealtintegration =
     [ "CalculateTopLevelMerkleRoot", "namespacealtintegration.html#a31ea86d19b70c3241d17c5591bcfdc81", null ],
     [ "CalculateTopLevelMerkleRoot", "namespacealtintegration.html#ade8ace7ff804da89feba6b1cb31a59e7", null ],
     [ "CalculateTopLevelMerkleRoot", "namespacealtintegration.html#a00f54cc63f2e894b82275c5261aa4ec3", null ],
-    [ "calculateTxFee", "namespacealtintegration.html#a727962b3e512ff754aa507eb89f8177a", null ],
     [ "checkATV", "namespacealtintegration.html#a9d21bb63698c7957cdfb9553a94d7f2a", null ],
     [ "checkBitcoinTransactionForPoPData", "namespacealtintegration.html#ae43bd202f1b2b8f09a57a0a2e3345b1a", null ],
     [ "checkBlock", "namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6", null ],
