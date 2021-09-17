@@ -842,7 +842,6 @@ TEST_F(MemPoolFixture, IsKnown) {
   // VBK block is in blockchain, so known
   ASSERT_TRUE(mempool->isKnown<VbkBlock>(pd.context.at(0).getId()));
 }
-#endif
 
 TEST_F(MemPoolFixture, getPop_txfeePriority) {
   const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
