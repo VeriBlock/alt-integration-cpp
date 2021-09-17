@@ -429,6 +429,21 @@ int comparePopScoreImpl(PublicationView& a, PublicationView& b) {
 
 }  // namespace internal
 
+enum class PopFrOutcome {
+  UNKNOWN,
+  CANDIDATE_IS_TIP,
+  CANDIDATE_INVALID_CHAIN,
+  CANDIDATE_INVALID_PAYLOADS,
+  CANDIDATE_PART_OF_ACTIVE_CHAIN,
+  CANDIDATE_IS_TIP_SUCCESSOR,
+  TIP_IS_FINAL,
+  BOTH_DONT_CROSS_KEYSTONE_BOUNDARY,
+  CANDIDATE_INVALID_INDEPENDENTLY,
+  HIGHER_POP_SCORE,
+};
+
+const char* popFrOutcomeToString(PopFrOutcome value);
+
 //! @private
 template <typename ProtectedBlock,
           typename ProtectedParams,
@@ -505,11 +520,13 @@ struct PopAwareForkResolutionComparator {
 
   /**
    * Compare the currently applied(best) and candidate chains
-   * @return 0 if the chains are equal,
-   *         positive if the current chain is better
-   *         negative if the candidate chain is better
+   * @return First: 0 if the chains are equal,
+   *                positive if the current chain is better
+   *                negative if the candidate chain is better
+   *         Second: reason explaining result.
    */
-  int comparePopScore(protected_index_t& candidate, ValidationState& state) {
+  std::pair<int, PopFrOutcome> comparePopScore(protected_index_t& candidate,
+                                               ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Entered method");
 
@@ -518,7 +535,7 @@ struct PopAwareForkResolutionComparator {
       // if the new block is known to be invalid, we always return "A is better"
       VBK_LOG_DEBUG("Candidate %s is invalid, the current chain wins",
                     candidate.toShortPrettyString());
-      return 1;
+      return {1, PopFrOutcome::CANDIDATE_INVALID_CHAIN};
     }
     auto currentBest = ed_.getBestChain();
     auto bestTip = currentBest.tip();
@@ -526,19 +543,19 @@ struct PopAwareForkResolutionComparator {
 
     if (bestTip == &candidate) {
       // we are comparing the best chain to itself
-      return 1;
+      return {1, PopFrOutcome::CANDIDATE_IS_TIP};
     }
 
     if (bestTip->finalized && candidate.getHeight() <= bestTip->getHeight()) {
       // finalized blocks can not be reorganized
-      return 1;
+      return {1, PopFrOutcome::TIP_IS_FINAL};
     }
 
     if (currentBest.contains(&candidate)) {
       VBK_LOG_DEBUG(
           "Candidate %s is part of the active chain, the current chain wins",
           candidate.toShortPrettyString());
-      return 1;
+      return {1, PopFrOutcome::CANDIDATE_PART_OF_ACTIVE_CHAIN};
     }
 
     auto originalProtectingTip = ing_->getBestChain().tip();
@@ -555,11 +572,11 @@ struct PopAwareForkResolutionComparator {
         VBK_LOG_DEBUG("Candidate contains INVALID command(s): %s",
                       state.toString());
         guard.overrideDeferredForkResolution(originalProtectingTip);
-        return 1;
+        return {1, PopFrOutcome::CANDIDATE_INVALID_PAYLOADS};
       }
 
       VBK_LOG_DEBUG("Candidate contains VALID commands, chain B wins");
-      return -1;
+      return {-1, PopFrOutcome::CANDIDATE_IS_TIP_SUCCESSOR};
     }
 
     VBK_LOG_DEBUG("Doing %s POP fork resolution. Best=%s, Candidate=%s",
@@ -583,7 +600,7 @@ struct PopAwareForkResolutionComparator {
       // block `fork+1` is on active chain, and ancestor of currentBest.
       // which means that `fork+1` can not be reorganized and candidate will
       // never win.
-      return 1;
+      return {1, PopFrOutcome::TIP_IS_FINAL};
     }
 
     // perform multi-keystone PoP fork resolution
@@ -595,7 +612,7 @@ struct PopAwareForkResolutionComparator {
       // chains are equal in terms of POP
       VBK_LOG_DEBUG(
           "Neither chain crossed a keystone boundary: chains are equal");
-      return 0;
+      return {0, PopFrOutcome::BOTH_DONT_CROSS_KEYSTONE_BOUNDARY};
     }
 
     // [vbk fork point ... current tip]
@@ -621,7 +638,7 @@ struct PopAwareForkResolutionComparator {
         VBK_LOG_DEBUG("Chain B contains INVALID payloads, Chain A wins (%s)",
                       state.toString());
         guard.overrideDeferredForkResolution(originalProtectingTip);
-        return 1;
+        return {1, PopFrOutcome::CANDIDATE_INVALID_PAYLOADS};
       }
     }
 
@@ -665,13 +682,13 @@ struct PopAwareForkResolutionComparator {
             "state corruption: chainA as a former best chain should be valid");
         VBK_LOG_DEBUG("Chain B is invalid when applied alone. Chain A wins");
         guard.overrideDeferredForkResolution(originalProtectingTip);
-        return 1;
+        return {1, PopFrOutcome::CANDIDATE_INVALID_INDEPENDENTLY};
       }
 
       VBK_LOG_DEBUG("Chain B wins");
     }
 
-    return result;
+    return {result, PopFrOutcome::HIGHER_POP_SCORE};
   }
 
   std::string toPrettyString(size_t level = 0) const {
