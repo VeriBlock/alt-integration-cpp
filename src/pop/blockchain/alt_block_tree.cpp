@@ -221,7 +221,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO("Accept new block: %s ", block.toPrettyString());
+  VBK_LOG_DEBUG("Accept new header: %s ", block.toPrettyString());
 
   // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
   // with AltBlock, where hash == previousHash. If so, fail loudly.
@@ -293,7 +293,7 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
 int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO(
+  VBK_LOG_DEBUG(
       "Compare two chains. chain A: %s, chain B: %s", HexStr(A), HexStr(B));
 
   auto* left = getBlockIndex(A);
@@ -318,12 +318,23 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 
   ValidationState state;
   // compare current active chain to other chain
-  int result = cmp_.comparePopScore(*right, state);
+  auto p = cmp_.comparePopScore(*right, state);
+  auto result = p.first;
+  auto reason = p.second;
   if (result < 0) {
     // other chain is better, and we already changed 'cmp' state to winner, so
     // just update active chain tip
     activeChain_.setTip(right);
   }
+
+  VBK_LOG_WARN(
+      "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), reason: %s.",
+      HexStr(A),
+      HexStr(B),
+      (result == 0 ? "Equal PoP score"
+                   : (result > 0 ? "Tip wins" : "Candidate wins")),
+      result,
+      popFrOutcomeToString(reason));
 
   return result;
 }
@@ -340,7 +351,7 @@ static void clearSideEffects(Index& index, PayloadsIndex& storage) {
 
 void AltBlockTree::removeAllPayloads(index_t& index) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
+  VBK_LOG_DEBUG("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
                block_t::name(),
                index.getPayloadIds<VbkBlock>().size(),
                index.getPayloadIds<VTB>().size(),
