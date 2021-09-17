@@ -273,7 +273,7 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
     return;
   }
 
-  VBK_LOG_DEBUG("Trying to add %s to next block...", pop.toPrettyString());
+  VBK_LOG_WARN("Trying to add %s to next block...", pop.toPrettyString());
 
   // suppress the VBK fork resolution as we don't care about the best chain
   auto guard = tree_->vbk().deferForkResolutionGuard();
@@ -314,7 +314,7 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   // assert PopData does not surpass limits
   assertPopDataFits(pop, tree_->getParams());
 
-  VBK_LOG_DEBUG("Filtered valid: %s", pop.toPrettyString());
+  VBK_LOG_WARN("Filtered valid: %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
   tree_->removeSubtree(*tmpindex);
