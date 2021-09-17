@@ -87,6 +87,7 @@ struct PopStateMachine {
   // atomic: applies either all or none of the block's commands
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method");
 
     assertBlockCanBeApplied(index);
 
@@ -159,6 +160,7 @@ struct PopStateMachine {
    */
   void unapplyBlock(index_t& index) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method");
 
     assertBlockCanBeUnapplied(index);
 
@@ -308,6 +310,7 @@ struct PopStateMachine {
                                  index_t& to,
                                  ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method");
 
     if (&from == &to) {
       // already at this state

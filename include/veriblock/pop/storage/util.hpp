@@ -42,6 +42,8 @@ bool loadValidateTree(
     const BlockTreeT& tree,
     const std::vector<typename BlockTreeT::stored_index_t>& blocks,
     ValidationState& state) {
+  VBK_LOG_DEBUG("Entered method");
+
   using block_t = typename BlockTreeT::block_t;
 
   for (const auto& block : blocks) {
@@ -109,6 +111,8 @@ void saveTree(
     BlockTreeT& tree,
     BlockBatch& batch,
     std::function<void(const typename BlockTreeT::index_t&)> validator) {
+  VBK_LOG_DEBUG("Entered method");
+
   using index_t = typename BlockTreeT::index_t;
   std::vector<const index_t*> dirty_indices;
 
