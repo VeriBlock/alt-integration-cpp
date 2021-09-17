@@ -74,7 +74,7 @@ var namespacealtintegration =
       [ "comparePopScoreImpl", "fork__resolution_8hpp.html#a5011cf3c07ca9102c2ab65d0b4737cf6", null ],
       [ "getConsensusScoreFromRelativeBlockStartingAtZero", "fork__resolution_8hpp.html#abcb0c190b8039c1bb2db31a8871f4ba5", null ],
       [ "getKeystoneContext", "fork__resolution_8hpp.html#a485499cd2161f75230a4b1590cff4f8f", null ],
-      [ "getProtoKeystoneContext", "fork__resolution_8hpp.html#ac67d1886fd51f7a49fb511a1c20d74ec", null ],
+      [ "getProtoKeystoneContext", "fork__resolution_8hpp.html#ab5e5a6588fd1a2eb8b0b372423655e08", null ],
       [ "publicationViolatesFinality", "fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37", null ],
       [ "NO_ENDORSEMENT", "fork__resolution_8hpp.html#abd90b06b1dfdd56b59448f1bdb5c32b8", null ]
     ] ],
@@ -377,7 +377,6 @@ var namespacealtintegration =
     [ "GeneratePublicationData", "namespacealtintegration.html#ac88da7ab3bd8bc8959177081264dcdd5", null ],
     [ "GeneratePublicationData", "namespacealtintegration.html#a66083a017e21bbf1d2bd4034c1b784eb", null ],
     [ "get_id", "namespacealtintegration.html#a02a7242b8f41724b36f2e337d555196a", null ],
-    [ "getAllHashesInChain", "namespacealtintegration.html#aaaf8f6d4c14220cfce7e72370ea88910", null ],
     [ "getBlockProof", "namespacealtintegration.html#ae4d3f84ec565254161ae83841aa41cab", null ],
     [ "getBlockProof", "namespacealtintegration.html#a68f4381af3f29d62fba3223c8b87caa9", null ],
     [ "getBlockProof", "namespacealtintegration.html#a12159783ee81e9e1fd3aa6821349d1e5", null ],

@@ -526,10 +526,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="name
 <tr class="memitem:aedfa430433cd4a67f1627f2e4f4000ef"><td class="memTemplItemLeft" align="right" valign="top">C::index_t *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef">findFork</a> (const C &amp;chain, const typename C::index_t *pindex)</td></tr>
 <tr class="memdesc:aedfa430433cd4a67f1627f2e4f4000ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find fork between <code>chain</code> and <code>pindex</code>.  <a href="namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef">More...</a><br /></td></tr>
 <tr class="separator:aedfa430433cd4a67f1627f2e4f4000ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaaf8f6d4c14220cfce7e72370ea88910"><td class="memTemplParams" colspan="2">template&lt;typename C &gt; </td></tr>
-<tr class="memitem:aaaf8f6d4c14220cfce7e72370ea88910"><td class="memTemplItemLeft" align="right" valign="top">std::unordered_set&lt; typename C::hash_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aaaf8f6d4c14220cfce7e72370ea88910">getAllHashesInChain</a> (const C &amp;chain)</td></tr>
-<tr class="memdesc:aaaf8f6d4c14220cfce7e72370ea88910"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns an unordered set of hashes, present in current chain.  <a href="namespacealtintegration.html#aaaf8f6d4c14220cfce7e72370ea88910">More...</a><br /></td></tr>
-<tr class="separator:aaaf8f6d4c14220cfce7e72370ea88910"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3362928879cb7973a9b15c9bef2e8036"><td class="memItemLeft" align="right" valign="top"><a id="a3362928879cb7973a9b15c9bef2e8036"></a>
 const char *&#160;</td><td class="memItemRight" valign="bottom"><b>popFrOutcomeToString</b> (PopFrOutcome value)</td></tr>
 <tr class="separator:a3362928879cb7973a9b15c9bef2e8036"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2062,39 +2058,6 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if endorsed block found, false otherwise. </dd></dl>
 
-</div>
-</div>
-<a id="aaaf8f6d4c14220cfce7e72370ea88910"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaaf8f6d4c14220cfce7e72370ea88910">&#9670;&nbsp;</a></span>getAllHashesInChain()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename C &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_set&lt;typename C::hash_t&gt; altintegration::getAllHashesInChain </td>
-          <td>(</td>
-          <td class="paramtype">const C &amp;&#160;</td>
-          <td class="paramname"><em>chain</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>useful for small chains for further checks of "hash existence" </p>
-
-<p class="definition">Definition at line <a class="el" href="chain_8hpp_source.html#l00163">163</a> of file <a class="el" href="chain_8hpp_source.html">chain.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                                                                       {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  std::unordered_set&lt;typename C::hash_t&gt; ret;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  ret.reserve(chain.size());</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>* block : chain) {</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    ret.emplace(block-&gt;getHash());</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  }</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;}</div>
-</div><!-- fragment -->
 </div>
 </div>
 <a id="aa8b105f3d96feb6bf461bdd11ce8c7ba"></a>
