@@ -363,6 +363,22 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a798d9fc435a987ae04ecc3ef4f5e736a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags that describe block status.  <a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">More...</a><br /></td></tr>
 <tr class="separator:a798d9fc435a987ae04ecc3ef4f5e736a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9485a2e03607201d8dedfa475eb44151"><td class="memItemLeft" align="right" valign="top"><a id="a9485a2e03607201d8dedfa475eb44151"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>PopFrOutcome</b> { <br />
+&#160;&#160;<b>UNKNOWN</b>
+, <b>CANDIDATE_IS_TIP</b>
+, <b>CANDIDATE_INVALID_CHAIN</b>
+, <b>CANDIDATE_INVALID_PAYLOADS</b>
+, <br />
+&#160;&#160;<b>CANDIDATE_PART_OF_ACTIVE_CHAIN</b>
+, <b>CANDIDATE_IS_TIP_SUCCESSOR</b>
+, <b>TIP_IS_FINAL</b>
+, <b>BOTH_DONT_CROSS_KEYSTONE_BOUNDARY</b>
+, <br />
+&#160;&#160;<b>CANDIDATE_INVALID_INDEPENDENTLY</b>
+, <b>HIGHER_POP_SCORE</b>
+<br />
+ }</td></tr>
+<tr class="separator:a9485a2e03607201d8dedfa475eb44151"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70aee98e5f996404e3f4f5e21656b737"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737">TxType</a> { <a class="el" href="namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737a8ae1eadefa890c33e6d0590995fcaff6">VBK_TX</a> = 0x01
 , <a class="el" href="namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737a10646115beba8f20fc43a3e4ebf79703">VBK_POP_TX</a> = 0x02
  }</td></tr>
@@ -514,6 +530,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="name
 <tr class="memitem:aaaf8f6d4c14220cfce7e72370ea88910"><td class="memTemplItemLeft" align="right" valign="top">std::unordered_set&lt; typename C::hash_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aaaf8f6d4c14220cfce7e72370ea88910">getAllHashesInChain</a> (const C &amp;chain)</td></tr>
 <tr class="memdesc:aaaf8f6d4c14220cfce7e72370ea88910"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns an unordered set of hashes, present in current chain.  <a href="namespacealtintegration.html#aaaf8f6d4c14220cfce7e72370ea88910">More...</a><br /></td></tr>
 <tr class="separator:aaaf8f6d4c14220cfce7e72370ea88910"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3362928879cb7973a9b15c9bef2e8036"><td class="memItemLeft" align="right" valign="top"><a id="a3362928879cb7973a9b15c9bef2e8036"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><b>popFrOutcomeToString</b> (PopFrOutcome value)</td></tr>
+<tr class="separator:a3362928879cb7973a9b15c9bef2e8036"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac49823f310e29a02a4948db9debad9b7"><td class="memTemplParams" colspan="2"><a id="ac49823f310e29a02a4948db9debad9b7"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ac49823f310e29a02a4948db9debad9b7"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac49823f310e29a02a4948db9debad9b7">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, PopState&lt; T &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>

@@ -246,6 +246,18 @@ var namespacealtintegration =
       [ "critical", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da7e85bcb66fb9a809d5ab4f62a8b8bea8", null ],
       [ "off", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da3262d48df5d75e3452f0f16b313b7808", null ]
     ] ],
+    [ "PopFrOutcome", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151", [
+      [ "UNKNOWN", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151a696b031073e74bf2cb98e5ef201d4aa3", null ],
+      [ "CANDIDATE_IS_TIP", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151a58d9c7e77c8562e0543044b7dc169181", null ],
+      [ "CANDIDATE_INVALID_CHAIN", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151adfe4cb1df9b4d8a047d0f6a8bf52d0fa", null ],
+      [ "CANDIDATE_INVALID_PAYLOADS", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151af24c1d65a10de6fded5e1fc3c244169c", null ],
+      [ "CANDIDATE_PART_OF_ACTIVE_CHAIN", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151a37a2d4679c8dc9e0a7519be06d594b79", null ],
+      [ "CANDIDATE_IS_TIP_SUCCESSOR", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151a9f859793e5b99ad5f025fc7edb8f8fae", null ],
+      [ "TIP_IS_FINAL", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151afca4a0697b805a93e1b4850e4cb520a6", null ],
+      [ "BOTH_DONT_CROSS_KEYSTONE_BOUNDARY", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151ad1e2e2152450999ad29c7d25d9f6ab7f", null ],
+      [ "CANDIDATE_INVALID_INDEPENDENTLY", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151ab377610e2a3fb9f00f78f997fc739a4a", null ],
+      [ "HIGHER_POP_SCORE", "namespacealtintegration.html#a9485a2e03607201d8dedfa475eb44151add7345f54f2df0df3a84aa5dad2864d7", null ]
+    ] ],
     [ "TxType", "namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737", [
       [ "VBK_TX", "namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737a8ae1eadefa890c33e6d0590995fcaff6", null ],
       [ "VBK_POP_TX", "namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737a10646115beba8f20fc43a3e4ebf79703", null ]
@@ -418,6 +430,7 @@ var namespacealtintegration =
     [ "payloadToCommandGroup", "namespacealtintegration.html#a9daf1571127790f0304cc1d4200beeb2", null ],
     [ "payloadToCommands", "namespacealtintegration.html#ab1266b4d012968fb3f065a50c388a411", null ],
     [ "payloadToCommands", "namespacealtintegration.html#a54bdefe9ae49dd084967253175ee57e2", null ],
+    [ "popFrOutcomeToString", "namespacealtintegration.html#a3362928879cb7973a9b15c9bef2e8036", null ],
     [ "PrintTo", "namespacealtintegration.html#aac15705f4d0837838ae67c29c4e24826", null ],
     [ "PrintTo", "namespacealtintegration.html#ab117734406f4e6af4b5099f2790e315b", null ],
     [ "PrintTo", "namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310", null ],
