@@ -135,7 +135,8 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& ing,
     const ProtectedChainParams& config) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method with keystoneToConsider={}", keystoneToConsider);
+  VBK_LOG_DEBUG("Entered method with keystoneToConsider={}",
+                keystoneToConsider);
 
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
@@ -163,9 +164,9 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
 
     for (const auto* e : index->getEndorsedBy()) {
       auto* containingBlock = ed.getBlockIndex(e->containingHash);
-      VBK_ASSERT(containingBlock != nullptr &&
-                 "state corruption: could not find the containing block of "
-                 "an applied endorsement");
+      VBK_ASSERT_MSG(containingBlock != nullptr,
+                     "state corruption: could not find the containing block of "
+                     "an applied endorsement");
 
       if (!chain.contains(containingBlock)) {
         // do not count endorsement whose containingHash is not on the same
@@ -174,9 +175,10 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
       }
 
       auto* ind = ing.getBlockIndex(e->blockOfProof);
-      VBK_ASSERT(ind != nullptr &&
-                 "state corruption: could not find the block of proof of "
-                 "an applied endorsement");
+      VBK_ASSERT_MSG(ind != nullptr,
+                     "state corruption: could not find the block of proof of "
+                     "an applied endorsement");
+
       if (!ing.getBestChain().contains(ind)) {
         continue;
       }
@@ -230,11 +232,12 @@ struct ReducedPublicationView {
         protectedTree(_ed),
         protectingTree(_ing),
         firstKeystoneHeight(
-            firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval)),
-        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip()->getHeight(),
-                                                     keystoneInterval)) {
-    VBK_ASSERT(keystoneInterval > 0);
-  }
+            (assert(chain.first() != nullptr),
+             assert(keystoneInterval > 0),
+             firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval))),
+        lastKeystoneHeight((assert(chain.tip() != nullptr),
+                            highestKeystoneAtOrBefore(chain.tip()->getHeight(),
+                                                      keystoneInterval))) {}
 
   const protected_chain_params_t& getConfig() const { return config; }
 
@@ -537,7 +540,6 @@ struct PopAwareForkResolutionComparator {
                                                ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Entered method");
-
 
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
