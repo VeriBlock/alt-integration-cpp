@@ -1,7 +1,8 @@
 var NAVTREEINDEX8 =
 {
-"structaltintegration_1_1VbkTx.html#ad8a4bcf8849b75c248400bb07408fdb7":[5,0,0,48,14],
-"structaltintegration_1_1VbkTx.html#ae528b1156501d02c718720a3b6227ecb":[5,0,0,48,12],
+"structaltintegration_1_1VbkTx.html#ab0387b99aeedd7b5b2b3d0fb4b1ee6bf":[5,0,0,48,3],
+"structaltintegration_1_1VbkTx.html#ad8a4bcf8849b75c248400bb07408fdb7":[5,0,0,48,15],
+"structaltintegration_1_1VbkTx.html#ae528b1156501d02c718720a3b6227ecb":[5,0,0,48,13],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html":[5,0,0,0,2],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2":[5,0,0,0,2,2],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a38dc8b7abb579f8b9616b25a1e5f8fd6":[5,0,0,0,2,3],

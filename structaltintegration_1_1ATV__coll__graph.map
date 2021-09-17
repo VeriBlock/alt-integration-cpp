@@ -1,6 +1,6 @@
 <map id="altintegration::ATV" name="altintegration::ATV">
 <area shape="rect" id="node1" title="Atlchain endorsement." alt="" coords="1083,1608,1211,1773"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1VbkTx.html" title="Veriblock transaction, which endorses ALT block in VBK blockchain." alt="" coords="623,1365,762,1487"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1VbkTx.html" title="Veriblock transaction, which endorses ALT block in VBK blockchain." alt="" coords="623,1358,762,1494"/>
 <area shape="rect" id="node3" href="$namespacealtintegration.html#structaltintegration_1_1NetworkBytePair" title="Stores pair of TxType and VBK network byte." alt="" coords="455,1057,655,1134"/>
 <area shape="rect" id="node4" href="$structaltintegration_1_1VbkNetworkType.html" title="works as optional&lt;uint8_t&gt;" alt="" coords="454,660,657,796"/>
 <area shape="rect" id="node5" title=" " alt="" coords="799,689,941,767"/>

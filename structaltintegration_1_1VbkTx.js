@@ -1,6 +1,7 @@
 var structaltintegration_1_1VbkTx =
 [
     [ "hash_t", "structaltintegration_1_1VbkTx.html#a5d0a515dde2b9f134b23eb9156db9b23", null ],
+    [ "calculateTxFee", "structaltintegration_1_1VbkTx.html#a701a4b627dee25e2e5f10019e085743c", null ],
     [ "estimateSize", "structaltintegration_1_1VbkTx.html#a6bebb4496f77cd2492adf81f8e393195", null ],
     [ "getHash", "structaltintegration_1_1VbkTx.html#ab0387b99aeedd7b5b2b3d0fb4b1ee6bf", null ],
     [ "toVbkEncoding", "structaltintegration_1_1VbkTx.html#a2864a78179db09108ce6f1e9b80998d2", null ],
