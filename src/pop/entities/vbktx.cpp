@@ -67,8 +67,6 @@ Coin VbkTx::calculateTxFee() const {
   for (const auto& o : outputs) {
     output += o.coin.units;
   }
-  VBK_ASSERT_MSG(sourceAmount.units >= output,
-                 "Output amount should be less or equal to the input amount");
   return Coin{sourceAmount.units - output};
 }
 
