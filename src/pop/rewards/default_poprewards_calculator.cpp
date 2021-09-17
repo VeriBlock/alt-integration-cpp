@@ -12,7 +12,7 @@ namespace altintegration {
 
 static int getBestPublicationHeight(const BlockIndex<AltBlock>& endorsedBlock,
                                     const VbkBlockTree& vbk_tree) {
-  VBK_LOG_DEBUG("Entered method={}", __FUNCTION__);
+  VBK_LOG_DEBUG("Entered method");
 
   int bestPublication = -1;
   for (const auto* e : endorsedBlock.getEndorsedBy()) {
@@ -46,7 +46,7 @@ static PopRewardsBigDecimal getRoundRatio(const PopPayoutsParams& rewardParams,
 
 static PopRewardsBigDecimal getMaxScoreThreshold(
     const PopPayoutsParams& rewardParams, uint32_t payoutRound) {
-  VBK_LOG_DEBUG("Entered method={} with payoutRound={}", __FUNCTION__, payoutRound);
+  VBK_LOG_DEBUG("Entered with payoutRound={}", payoutRound);
 
   if (isKeystoneRound(rewardParams, payoutRound)) {
     return rewardParams.maxScoreThresholdKeystone();
@@ -70,7 +70,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
     const PopPayoutsParams& params,
     const PopRewardsBigDecimal& score,
     uint32_t payoutRound) {
-  VBK_LOG_DEBUG("Entered method={} with payoutRound={}", __FUNCTION__, payoutRound);
+  VBK_LOG_DEBUG("Entered method with payoutRound={}", payoutRound);
 
   const auto& slope = getRoundSlope(params, payoutRound);
   VBK_ASSERT(score >= params.startOfSlope());
@@ -86,7 +86,7 @@ static PopRewardsBigDecimal calculateSlopeRatio(
 // rounds for blocks are [3, 1, 2, 0, 1, 2, 0, 1, 2, 0, 3, ...]
 uint32_t DefaultPopRewardsCalculator::getRoundForBlockNumber(
     uint32_t height) const {
-  VBK_LOG_DEBUG("Entered method={} with height={}", __FUNCTION__, height);
+  VBK_LOG_DEBUG("Entered method with height={}", height);
 
   const auto ki = tree_.getParams().getKeystoneInterval();
   const PopPayoutsParams& params = tree_.getParams().getPayoutParams();
@@ -118,7 +118,7 @@ PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateBlockReward(
     uint32_t height,
     PopRewardsBigDecimal popscore,
     PopRewardsBigDecimal popdifficulty) const {
-  VBK_LOG_DEBUG("Entered method={} with height={}", __FUNCTION__, height);
+  VBK_LOG_DEBUG("Entered method with height={}", height);
 
   const auto& params = tree_.getParams().getPayoutParams();
   uint32_t payoutRound = getRoundForBlockNumber(height);
@@ -174,7 +174,7 @@ PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateMinerReward(
 
 PopRewardsBigDecimal DefaultPopRewardsCalculator::scoreFromEndorsements(
     const BlockIndex<AltBlock>& endorsedBlock) {
-  VBK_LOG_DEBUG("Entered method={}", __FUNCTION__);
+  VBK_LOG_DEBUG("Entered method");
 
   PopRewardsBigDecimal totalScore = 0.0;
   // we simply find the lowest VBK height in the endorsements
@@ -193,7 +193,7 @@ PopRewardsBigDecimal DefaultPopRewardsCalculator::scoreFromEndorsements(
 
 PopRewardsBigDecimal DefaultPopRewardsCalculator::calculateDifficulty(
     const BlockIndex<AltBlock>& tip) {
-  VBK_LOG_DEBUG("Entered method={}", __FUNCTION__);
+  VBK_LOG_DEBUG("Entered method");
 
   PopRewardsBigDecimal difficulty = 0.0;
   auto& params = tree_.getParams().getPayoutParams();
@@ -220,7 +220,7 @@ bool DefaultPopRewardsCalculator::calculatePayoutsInner(
     const PopRewardsBigDecimal& popDifficulty,
     PopPayouts& rewards,
     ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method={}", __FUNCTION__);
+  VBK_LOG_DEBUG("Entered method");
 
   int bestPublication = getBestPublicationHeight(endorsedBlock, tree_.vbk());
   if (bestPublication < 0) {
@@ -269,7 +269,7 @@ bool DefaultPopRewardsCalculator::calculatePayouts(
 bool DefaultPopRewardsCalculator::getPopPayout(const AltBlockTree::hash_t& tip,
                                                PopPayouts& rewards,
                                                ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method={}", __FUNCTION__);
+  VBK_LOG_DEBUG("Entered method");
 
   VBK_ASSERT(tree_.isBootstrapped() && "not bootstrapped");
 

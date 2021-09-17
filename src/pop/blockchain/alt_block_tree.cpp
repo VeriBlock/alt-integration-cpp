@@ -37,6 +37,8 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
     return state.Invalid("already bootstrapped");
   }
 
+  VBK_LOG_DEBUG("Entered method");
+
   auto block = alt_config_->getBootstrapBlock();
   auto height = block.getHeight();
   VBK_ASSERT_MSG(
@@ -169,6 +171,8 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added",
                  index.toPrettyString());
@@ -501,6 +505,8 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
 
@@ -568,6 +574,8 @@ bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
 
 bool AltBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
+  VBK_LOG_DEBUG("Entered method");
+
   // load endorsements
   const auto& containingHash = index.header->getHash();
   auto* current = getBlockIndex(containingHash);
@@ -691,6 +699,8 @@ bool AltBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_LOG_DEBUG("Entered method");
+
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
 
