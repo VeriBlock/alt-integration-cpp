@@ -274,30 +274,34 @@ void applyPayloadsOrRemoveIfInvalid(
 void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
   const auto& maxSize = tree_->getParams().getMaxPopDataSize();
 
-  auto popSize = pop.estimateSize();
+  // initialize with the empty pop data size
+  auto popSize = PopData{}.estimateSize();
 
   std::vector<VTB>& vtbs = pop.vtbs;
-  for (auto it = vtbs.rbegin(); it != vtbs.rend();) {
-    it = popSize > maxSize ? (popSize -= it->estimateSize(),
-                              std::vector<VTB>::reverse_iterator{
-                                  vtbs.erase(std::next(it).base())})
-                           : (std::next(it));
+  for (auto it = vtbs.begin(); it != vtbs.end(); ++it) {
+    if (popSize + it->estimateSize() >= maxSize) {
+      vtbs.erase(it, vtbs.end());
+      break;
+    }
+    popSize += it->estimateSize();
   }
 
   std::vector<ATV>& atvs = pop.atvs;
-  for (auto it = atvs.rbegin(); it != atvs.rend();) {
-    it = popSize > maxSize ? (popSize -= it->estimateSize(),
-                              std::vector<ATV>::reverse_iterator{
-                                  atvs.erase(std::next(it).base())})
-                           : (std::next(it));
+  for (auto it = atvs.begin(); it != atvs.end(); ++it) {
+    if (popSize + it->estimateSize() >= maxSize) {
+      atvs.erase(it, atvs.end());
+      break;
+    }
+    popSize += it->estimateSize();
   }
 
   std::vector<VbkBlock>& vbks = pop.context;
-  for (auto it = vbks.rbegin(); it != vbks.rend();) {
-    it = popSize > maxSize ? (popSize -= it->estimateSize(),
-                              std::vector<VbkBlock>::reverse_iterator{
-                                  vbks.erase(std::next(it).base())})
-                           : (std::next(it));
+  for (auto it = vbks.begin(); it != vbks.end(); ++it) {
+    if (popSize + it->estimateSize() >= maxSize) {
+      vbks.erase(it, vbks.end());
+      break;
+    }
+    popSize += it->estimateSize();
   }
 }
 
