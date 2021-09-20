@@ -275,7 +275,7 @@ void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
   const auto& maxSize = tree_->getParams().getMaxPopDataSize();
 
   // initialize with the empty pop data size
-  auto popSize = PopData{}.estimateSize();
+  auto popSize = PopData{}.estimateSize() + 20;
 
   std::vector<VTB>& vtbs = pop.vtbs;
   for (auto it = vtbs.begin(); it != vtbs.end(); ++it) {
