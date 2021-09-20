@@ -288,7 +288,7 @@ void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
 
   std::vector<ATV>& atvs = pop.atvs;
   for (auto it = atvs.begin(); it != atvs.end(); ++it) {
-    if (popSize + it->estimateSize() >= maxSize) {
+    if (popSize + it->estimateSize() > maxSize) {
       atvs.erase(it, atvs.end());
       break;
     }
