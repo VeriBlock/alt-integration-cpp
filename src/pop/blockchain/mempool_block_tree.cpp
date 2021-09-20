@@ -286,6 +286,11 @@ void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
     popSize += it->estimateSize();
   }
 
+  // early return
+  if (pop.estimateSize() <= maxSize) {
+    return;
+  }
+
   std::vector<ATV>& atvs = pop.atvs;
   for (auto it = atvs.begin(); it != atvs.end(); ++it) {
     if (popSize + it->estimateSize() > maxSize) {
@@ -293,6 +298,11 @@ void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
       break;
     }
     popSize += it->estimateSize();
+  }
+
+  // early return
+  if (pop.estimateSize() <= maxSize) {
+    return;
   }
 
   std::vector<VbkBlock>& vbks = pop.context;

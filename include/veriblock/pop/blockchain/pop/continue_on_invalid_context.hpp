@@ -20,7 +20,7 @@ struct ContinueOnInvalidContext {
 
   //! returns true if given command group can fit into a block
   bool canFit(const ATV&) {
-    if (atvs >= params_.getMaxATVsInAltBlock()) {
+    if (atvs > params_.getMaxATVsInAltBlock()) {
       return false;
     }
 
@@ -29,7 +29,7 @@ struct ContinueOnInvalidContext {
   }
 
   bool canFit(const VTB&) {
-    if (vtbs >= params_.getMaxVTBsInAltBlock()) {
+    if (vtbs > params_.getMaxVTBsInAltBlock()) {
       return false;
     }
 
@@ -38,7 +38,7 @@ struct ContinueOnInvalidContext {
   }
 
   bool canFit(const VbkBlock&) {
-    if (vbks >= params_.getMaxVbkBlocksInAltBlock()) {
+    if (vbks > params_.getMaxVbkBlocksInAltBlock()) {
       return false;
     }
 
