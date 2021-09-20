@@ -271,6 +271,36 @@ void applyPayloadsOrRemoveIfInvalid(
   payloads.erase(it, payloads.end());
 }
 
+void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
+  const auto& maxSize = tree_->getParams().getMaxPopDataSize();
+
+  auto popSize = pop.estimateSize();
+
+  std::vector<VTB>& vtbs = pop.vtbs;
+  for (auto it = vtbs.rbegin(); it != vtbs.rend();) {
+    it = popSize > maxSize ? (popSize -= it->estimateSize(),
+                              std::vector<VTB>::reverse_iterator{
+                                  vtbs.erase(std::next(it).base())})
+                           : (std::next(it));
+  }
+
+  std::vector<ATV>& atvs = pop.atvs;
+  for (auto it = atvs.rbegin(); it != atvs.rend();) {
+    it = popSize > maxSize ? (popSize -= it->estimateSize(),
+                              std::vector<ATV>::reverse_iterator{
+                                  atvs.erase(std::next(it).base())})
+                           : (std::next(it));
+  }
+
+  std::vector<VbkBlock>& vbks = pop.context;
+  for (auto it = vbks.rbegin(); it != vbks.rend();) {
+    it = popSize > maxSize ? (popSize -= it->estimateSize(),
+                              std::vector<VbkBlock>::reverse_iterator{
+                                  vbks.erase(std::next(it).base())})
+                           : (std::next(it));
+  }
+}
+
 void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   // return early
   if (pop.empty()) {
@@ -314,6 +344,9 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
       mutator, pop.context, continueOnInvalidContext);
   applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, continueOnInvalidContext);
   applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, continueOnInvalidContext);
+
+  // filter payloads by size
+  filterPopDataBySize(pop);
 
   // assert PopData does not surpass limits
   assertPopDataFits(pop, tree_->getParams());
