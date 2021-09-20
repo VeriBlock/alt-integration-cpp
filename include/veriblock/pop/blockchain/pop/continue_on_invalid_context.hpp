@@ -24,11 +24,11 @@ struct ContinueOnInvalidContext {
       return false;
     }
     size_t atv_size = atv.estimateSize();
-    if (pop_size + atv_size > params_.getMaxPopDataSize()) {
+    if (!canFitSize(atv_size)) {
       return false;
     }
 
-    pop_size += atv_size;
+    atvs_size += atv_size;
     atvs++;
     return true;
   }
@@ -38,11 +38,11 @@ struct ContinueOnInvalidContext {
       return false;
     }
     size_t vtb_size = vtb.estimateSize();
-    if (pop_size + vtb_size > params_.getMaxPopDataSize()) {
+    if (!canFitSize(vtb_size)) {
       return false;
     }
 
-    pop_size += vtb_size;
+    vtbs_size += vtb_size;
     vtbs++;
     return true;
   }
@@ -52,20 +52,30 @@ struct ContinueOnInvalidContext {
       return false;
     }
     size_t vbk_size = vbk.estimateSize();
-    if (pop_size + vbk_size > params_.getMaxPopDataSize()) {
+    if (!canFitSize(vbk_size)) {
       return false;
     }
 
-    pop_size += vbk_size;
+    vbks_size += vbk_size;
     vbks++;
     return true;
   }
 
  private:
-  size_t vtbs = 0;
+  bool canFitSize(size_t size) {
+    size_t popdatasize = PopData{}.estimateSize() + singleBEValueSize(atvs) +
+                         atvs_size + singleBEValueSize(vtbs) + vtbs_size +
+                         singleBEValueSize(vbks) + vbks_size;
+    return popdatasize + size <= params_.getMaxPopDataSize();
+  }
+
+ private:
   size_t atvs = 0;
+  size_t vtbs = 0;
   size_t vbks = 0;
-  size_t pop_size = PopData{}.estimateSize() + 20;
+  size_t atvs_size = 0;
+  size_t vtbs_size = 0;
+  size_t vbks_size = 0;
   const AltChainParams& params_;
 };
 
