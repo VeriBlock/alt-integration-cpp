@@ -279,7 +279,7 @@ void MemPoolBlockTree::filterPopDataBySize(PopData& pop) {
 
   std::vector<VTB>& vtbs = pop.vtbs;
   for (auto it = vtbs.begin(); it != vtbs.end(); ++it) {
-    if (popSize + it->estimateSize() >= maxSize) {
+    if (popSize + it->estimateSize() > maxSize) {
       vtbs.erase(it, vtbs.end());
       break;
     }
