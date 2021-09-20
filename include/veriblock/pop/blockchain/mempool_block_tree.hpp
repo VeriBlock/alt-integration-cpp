@@ -114,8 +114,6 @@ struct MemPoolBlockTree {
   }
 
  private:
-  void filterPopDataBySize(PopData& pop);
-
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
   AltBlockTree* tree_;

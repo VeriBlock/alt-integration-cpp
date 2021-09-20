@@ -19,29 +19,44 @@ struct ContinueOnInvalidContext {
   ContinueOnInvalidContext(const AltChainParams& params) : params_(params) {}
 
   //! returns true if given command group can fit into a block
-  bool canFit(const ATV&) {
-    if (atvs > params_.getMaxATVsInAltBlock()) {
+  bool canFit(const ATV& atv) {
+    if (atvs >= params_.getMaxATVsInAltBlock()) {
+      return false;
+    }
+    size_t atv_size = atv.estimateSize();
+    if (pop_size + atv_size > params_.getMaxPopDataSize()) {
       return false;
     }
 
+    pop_size += atv_size;
     atvs++;
     return true;
   }
 
-  bool canFit(const VTB&) {
-    if (vtbs > params_.getMaxVTBsInAltBlock()) {
+  bool canFit(const VTB& vtb) {
+    if (vtbs >= params_.getMaxVTBsInAltBlock()) {
+      return false;
+    }
+    size_t vtb_size = vtb.estimateSize();
+    if (pop_size + vtb_size > params_.getMaxPopDataSize()) {
       return false;
     }
 
+    pop_size += vtb_size;
     vtbs++;
     return true;
   }
 
-  bool canFit(const VbkBlock&) {
-    if (vbks > params_.getMaxVbkBlocksInAltBlock()) {
+  bool canFit(const VbkBlock& vbk) {
+    if (vbks >= params_.getMaxVbkBlocksInAltBlock()) {
+      return false;
+    }
+    size_t vbk_size = vbk.estimateSize();
+    if (pop_size + vbk_size > params_.getMaxPopDataSize()) {
       return false;
     }
 
+    pop_size += vbk_size;
     vbks++;
     return true;
   }
@@ -50,6 +65,7 @@ struct ContinueOnInvalidContext {
   size_t vtbs = 0;
   size_t atvs = 0;
   size_t vbks = 0;
+  size_t pop_size = PopData{}.estimateSize() + 20;
   const AltChainParams& params_;
 };
 
