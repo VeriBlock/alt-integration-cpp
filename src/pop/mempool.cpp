@@ -25,11 +25,6 @@ PopData MemPool::generatePopData() {
   });
 
   PopData ret{};
-
-  // size in bytes of pop data added to
-  size_t popSize = ret.estimateSize();
-
-  const auto& maxSize = mempool_tree_.alt().getParams().getMaxPopDataSize();
   for (const auto& block : blocks) {
     // add VBK block if it fits
     auto& header = *block.second->header;
