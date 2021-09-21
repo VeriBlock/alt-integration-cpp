@@ -231,10 +231,8 @@ struct ReducedPublicationView {
         chain(_chain),
         protectedTree(_ed),
         protectingTree(_ing),
-        firstKeystoneHeight(
-            firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval)),
-        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip()->getHeight(),
-                                                     keystoneInterval)) {
+        firstKeystoneHeight(firstKeystoneAfter(chain.first())),
+        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip())) {
     VBK_ASSERT(keystoneInterval > 0);
   }
 
@@ -276,6 +274,18 @@ struct ReducedPublicationView {
 
     currentKeystoneContext = getKeystoneContext(pkc, protectingTree);
     return &currentKeystoneContext;
+  }
+
+  int32_t firstKeystoneAfter(typename protected_chain_t::index_t* blockIndex) {
+    VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
+    return firstKeystoneAfter(blockIndex->getHeight(), keystoneInterval);
+  }
+
+  int32_t highestKeystoneAtOrBefore(
+      typename protected_chain_t::index_t* blockIndex) {
+    VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
+    return highestKeystoneAtOrBefore(blockIndex->getHeight(),
+                                     keystoneInterval);
   }
 };
 
@@ -652,7 +662,6 @@ struct PopAwareForkResolutionComparator {
     }
 
     // now the tree contains payloads from both chains
-
     auto reducedPublicationViewA =
         reduced_publication_view_t(chainA, protectedParams_, ed_, *ing_);
     auto reducedPublicationViewB =
