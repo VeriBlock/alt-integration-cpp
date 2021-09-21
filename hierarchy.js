@@ -9,6 +9,7 @@ var hierarchy =
     [ "altintegration::AltChainParams", "structaltintegration_1_1AltChainParams.html", null ],
     [ "altintegration::AltCommandGroupStore", "structaltintegration_1_1AltCommandGroupStore.html", null ],
     [ "altintegration::ATV", "structaltintegration_1_1ATV.html", null ],
+    [ "altintegration::VbkPayloadsRelations::AtvCombinedComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html", null ],
     [ "altintegration::AuthenticatedContextInfoContainer", "structaltintegration_1_1AuthenticatedContextInfoContainer.html", null ],
     [ "altintegration::BaseBlockTree< Block >", "structaltintegration_1_1BaseBlockTree.html", [
       [ "altintegration::BlockTree< VbkBlock, VbkChainParams >", "structaltintegration_1_1BlockTree.html", [
@@ -54,6 +55,7 @@ var hierarchy =
     [ "altintegration::Config", "structaltintegration_1_1Config.html", null ],
     [ "altintegration::signals::Connection", "structaltintegration_1_1signals_1_1Connection.html", null ],
     [ "altintegration::ContextInfoContainer", "structaltintegration_1_1ContextInfoContainer.html", null ],
+    [ "altintegration::VbkPayloadsRelations::EndorsedAltComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html", null ],
     [ "altintegration::Endorsement< EndorsedHash, ContainingHash, Container >", "structaltintegration_1_1Endorsement.html", null ],
     [ "std::exception", null, [
       [ "std::logic_error", null, [
@@ -101,6 +103,7 @@ var hierarchy =
     ] ],
     [ "altintegration::StoredBlockIndex< Block >", "structaltintegration_1_1StoredBlockIndex.html", null ],
     [ "altintegration::MemPool::SubmitResult", "structaltintegration_1_1MemPool_1_1SubmitResult.html", null ],
+    [ "altintegration::VbkPayloadsRelations::TxFeeComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html", null ],
     [ "altintegration::ValidationState", "classaltintegration_1_1ValidationState.html", null ],
     [ "altintegration::VbkBlock", "structaltintegration_1_1VbkBlock.html", null ],
     [ "altintegration::VbkChainParams", "structaltintegration_1_1VbkChainParams.html", [
