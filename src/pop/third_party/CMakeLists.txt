@@ -7,6 +7,7 @@ disable_clang_tidy(secp256k1)
 
 if(WITH_TRACER)
     add_library(tracy OBJECT Tracy.cpp)
+    add_compile_definitions(TRACY_ON_DEMAND)
     disable_clang_tidy(tracy)
     target_compile_options(tracy
             PRIVATE

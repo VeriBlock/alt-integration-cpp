@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <deque>
+#include <iterator>
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
@@ -32,57 +33,30 @@ PopData MemPool::generatePopData() {
   for (const auto& block : blocks) {
     // add VBK block if it fits
     auto& header = *block.second->header;
-    if (popSize + header.estimateSize() >= maxSize) {
-      // PopData is full
-      break;
-    }
     // add VBK block to connect underlying ATVs/VTBs
     ret.context.push_back(header);
-    popSize += header.estimateSize();
 
     // try to fit ATVs
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
-      const auto estimate = atv->estimateSize();
-      if (popSize + estimate >= maxSize) {
-        // do not consider this ATV, it does not fit
-        continue;
-      }
-
       // this ATV fits
       ret.atvs.push_back(*atv);
-      popSize += estimate;
     }
 
     // try to fit VTBs
     auto& vtbcandidates = block.second->vtbs;
     for (const auto& vtb : vtbcandidates) {
-      const auto estimate = vtb->estimateSize();
-      if (popSize + estimate >= maxSize) {
-        // this VTB does not fit
-        continue;
-      }
-
       ret.vtbs.push_back(*vtb);
-      popSize += estimate;
     }
-
-    // update popSize, because `push_back` might have increased size estimate
-    // for more than `estimate` (specifically - when we add new VBK block to
-    // array, and then when size of array serialization goes from 1 byte to 2
-    // bytes, we don't count this byte).
-    popSize = ret.estimateSize();
   }
-
-  const auto estimate = ret.estimateSize();
-  VBK_ASSERT_MSG(popSize == estimate, "size=%d estimate=%d", popSize, estimate);
-  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 
   mempool_tree_.filterInvalidPayloads(ret);
   return ret;
 }
 
 void MemPool::cleanUp() {
+  VBK_LOG_DEBUG("Entered method");
+
   if (do_stalled_check_) {
     auto& vbk_tree = mempool_tree_.vbk().getStableTree();
     for (auto it = relations_.begin(); it != relations_.end();) {
@@ -152,6 +126,8 @@ void MemPool::cleanUp() {
 }
 
 void MemPool::removeAll(const PopData& pop) {
+  VBK_LOG_DEBUG("Entered method");
+
   auto vbkblockids = make_idset(pop.context);
   auto vtbids = make_idset(pop.vtbs);
   auto atvids = make_idset(pop.atvs);
@@ -221,6 +197,8 @@ template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
                                            ValidationState& state,
                                            bool old_block_check) {
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT(atv);
 
   // before any checks and validations, check if payload is old or not
@@ -256,6 +234,8 @@ template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state,
                                            bool old_block_check) {
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT(vtb);
 
   // before any checks and validations, check if payload is old or not
@@ -294,6 +274,8 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
     const std::shared_ptr<VbkBlock>& blk,
     ValidationState& state,
     bool old_block_check) {
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT(blk);
 
   // before any checks and validations, check if payload is old or not

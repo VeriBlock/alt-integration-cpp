@@ -1,7 +1,8 @@
+#include "veriblock/pop/blockchain/mempool_block_tree.hpp"
+
 #include "veriblock/pop/blockchain/alt_block_tree_util.hpp"
 #include "veriblock/pop/blockchain/blockchain_util.hpp"
-#include "veriblock/pop/blockchain/mempool_block_tree.hpp"
-#include "veriblock/pop/blockchain/pop/continue_on_invalid_context.hpp"
+#include "veriblock/pop/blockchain/pop/counting_context.hpp"
 #include "veriblock/pop/fmt.hpp"
 #include "veriblock/pop/keystone_util.hpp"
 
@@ -117,6 +118,8 @@ bool MemPoolBlockTree::acceptVTB(
     const VTB& vtb,
     const std::shared_ptr<VbkBlock>& containingBlock,
     ValidationState& state) {
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT_MSG(
       containingBlock->getHash() == vtb.containingBlock.getHash(),
       "containingBlock should be equal to the vtb containingBlock block");
@@ -150,6 +153,8 @@ bool MemPoolBlockTree::acceptVTB(
 bool MemPoolBlockTree::acceptATV(const ATV& atv,
                                  const std::shared_ptr<VbkBlock>& blockOfProof,
                                  ValidationState& state) {
+  VBK_LOG_DEBUG("Entered method");
+
   VBK_ASSERT_MSG(
       blockOfProof->getHash() == atv.blockOfProof.getHash(),
       "containingBlock should be equal to the atv blockOfProof block");
@@ -253,10 +258,9 @@ bool MemPoolBlockTree::isBlockOld(const VbkBlock& block) const {
 }
 
 template <typename Payload>
-void applyPayloadsOrRemoveIfInvalid(
-    AltBlockTree::BlockPayloadMutator& mutator,
-    std::vector<Payload>& payloads,
-    ContinueOnInvalidContext& continueOnInvalidContext) {
+void applyPayloadsOrRemoveIfInvalid(AltBlockTree::BlockPayloadMutator& mutator,
+                                    std::vector<Payload>& payloads,
+                                    CountingContext& continueOnInvalidContext) {
   auto it = std::remove_if(
       payloads.begin(), payloads.end(), [&](const Payload& payload) {
         ValidationState dummy;
@@ -303,13 +307,12 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   bool success = tree_->setState(*tmpindex, dummy);
   VBK_ASSERT(success);
 
-  ContinueOnInvalidContext continueOnInvalidContext(tree_->getParams());
+  CountingContext counter(tree_->getParams());
   auto mutator = tree_->makeConnectedLeafPayloadMutator(*tmpindex);
 
-  applyPayloadsOrRemoveIfInvalid(
-      mutator, pop.context, continueOnInvalidContext);
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, continueOnInvalidContext);
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, continueOnInvalidContext);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.context, counter);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, counter);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, counter);
 
   // assert PopData does not surpass limits
   assertPopDataFits(pop, tree_->getParams());

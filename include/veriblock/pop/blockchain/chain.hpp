@@ -157,20 +157,6 @@ typename C::index_t* findFork(const C& chain,
   return const_cast<typename C::index_t*>(pindex);
 }
 
-//! returns an unordered set of hashes, present in current chain.
-//! useful for small chains for further checks of "hash existence"
-template <typename C>
-std::unordered_set<typename C::hash_t> getAllHashesInChain(const C& chain) {
-  std::unordered_set<typename C::hash_t> ret;
-  ret.reserve(chain.size());
-
-  for (auto* block : chain) {
-    ret.emplace(block->getHash());
-  }
-
-  return ret;
-}
-
 //! @private
 template <typename index_t>
 const index_t* findBlockContainingEndorsement(

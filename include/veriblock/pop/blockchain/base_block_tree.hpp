@@ -191,6 +191,8 @@ struct BaseBlockTree {
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method");
+
     index_t* root = &this->getRoot();
     auto oldHeight = root->getHeight();
     std::vector<stored_index_t> tempChain;
@@ -583,6 +585,8 @@ struct BaseBlockTree {
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method");
+
     assertBlockSanity(*block);
 
     auto hash = block->getHash();
@@ -617,6 +621,8 @@ struct BaseBlockTree {
                       bool connectForward,
                       ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method with connectForward={}", connectForward);
+
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
@@ -843,6 +849,8 @@ struct BaseBlockTree {
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Entered method");
+
     index_t* finalizedBlock = &index;
 
     // prereq is not met - finalized block must be on active chain
