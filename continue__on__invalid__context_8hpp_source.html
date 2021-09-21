@@ -151,7 +151,7 @@ $(document).ready(function(){initNavTree('continue__on__invalid__context_8hpp_so
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keywordtype">bool</span> canFitSize(<span class="keywordtype">size_t</span> size) {</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">size_t</span> popdatasize = PopData{}.estimateSize() + singleBEValueSize(atvs) +</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">size_t</span> popdatasize = <span class="keyword">sizeof</span>(PopData::version) + singleBEValueSize(atvs) +</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                         atvs_size + singleBEValueSize(vtbs) + vtbs_size +</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                         singleBEValueSize(vbks) + vbks_size;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> popdatasize + size &lt;= params_.getMaxPopDataSize();</div>
