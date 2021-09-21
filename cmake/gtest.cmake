@@ -14,7 +14,7 @@ if(NOT googletest_POPULATED)
 
     FetchContent_Populate(googletest)
     add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
-    if(MAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         # using gcc
         target_compile_options(gtest PRIVATE
                 -Wno-maybe-uninitialized

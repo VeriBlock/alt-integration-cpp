@@ -135,7 +135,8 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& ing,
     const ProtectedChainParams& config) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method with keystoneToConsider={}", keystoneToConsider);
+  VBK_LOG_DEBUG("Entered method with keystoneToConsider={}",
+                keystoneToConsider);
 
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
@@ -162,10 +163,11 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     VBK_ASSERT(index != nullptr);
 
     for (const auto* e : index->getEndorsedBy()) {
+      VBK_ASSERT(e != nullptr);
       auto* containingBlock = ed.getBlockIndex(e->containingHash);
-      VBK_ASSERT(containingBlock != nullptr &&
-                 "state corruption: could not find the containing block of "
-                 "an applied endorsement");
+      VBK_ASSERT_MSG(containingBlock != nullptr,
+                     "state corruption: could not find the containing block of "
+                     "an applied endorsement");
 
       if (!chain.contains(containingBlock)) {
         // do not count endorsement whose containingHash is not on the same
@@ -537,7 +539,6 @@ struct PopAwareForkResolutionComparator {
                                                ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Entered method");
-
 
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
