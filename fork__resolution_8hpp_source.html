@@ -318,8 +318,8 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        chain(_chain),</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        protectedTree(_ed),</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        protectingTree(_ing),</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        firstKeystoneHeight(firstKeystoneAfter(chain.first())),</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip())) {</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        firstKeystoneHeight(firstKeystoneAfterBlockIndex(chain.first())),</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        lastKeystoneHeight(highestKeystoneAtOrBeforeBlockIndex(chain.tip())) {</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    VBK_ASSERT(keystoneInterval &gt; 0);</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  }</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
@@ -363,12 +363,12 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordflow">return</span> &amp;currentKeystoneContext;</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  }</div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  int32_t firstKeystoneAfter(<span class="keyword">typename</span> protected_chain_t::index_t* blockIndex) {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  int32_t firstKeystoneAfterBlockIndex(<span class="keyword">typename</span> protected_chain_t::index_t* blockIndex) {</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    VBK_ASSERT_MSG(blockIndex, <span class="stringliteral">&quot;Protected tree should be bootstrapped&quot;</span>);</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordflow">return</span> firstKeystoneAfter(blockIndex-&gt;getHeight(), keystoneInterval);</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  }</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  int32_t highestKeystoneAtOrBefore(</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  int32_t highestKeystoneAtOrBeforeBlockIndex(</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;      <span class="keyword">typename</span> protected_chain_t::index_t* blockIndex) {</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    VBK_ASSERT_MSG(blockIndex, <span class="stringliteral">&quot;Protected tree should be bootstrapped&quot;</span>);</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keywordflow">return</span> highestKeystoneAtOrBefore(blockIndex-&gt;getHeight(),</div>
