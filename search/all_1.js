@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['acceptblock_3',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)']]],
+  ['acceptblock_3',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)'],['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)']]],
   ['acceptblockheader_4',['acceptBlockHeader',['../structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c',1,'altintegration::AltBlockTree']]],
   ['activechain_5f_5',['activeChain_',['../structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69',1,'altintegration::BaseBlockTree']]],
   ['add_6',['add',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
@@ -29,6 +29,7 @@ var searchData=
   ['assertdeserializefromvbkencoding_29',['AssertDeserializeFromVbkEncoding',['../namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce',1,'altintegration']]],
   ['atv_30',['ATV',['../structaltintegration_1_1ATV.html',1,'altintegration']]],
   ['atv_5fid_5fsize_31',['ATV_ID_SIZE',['../namespacealtintegration.html#a10ed97792cc513732195680713df54af',1,'altintegration']]],
-  ['authenticatedcontextinfocontainer_32',['AuthenticatedContextInfoContainer',['../structaltintegration_1_1AuthenticatedContextInfoContainer.html',1,'altintegration']]],
-  ['json_33',['json',['../namespacealtintegration_1_1json.html',1,'altintegration']]]
+  ['atvcombinedcomparator_32',['AtvCombinedComparator',['../structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html',1,'altintegration::VbkPayloadsRelations']]],
+  ['authenticatedcontextinfocontainer_33',['AuthenticatedContextInfoContainer',['../structaltintegration_1_1AuthenticatedContextInfoContainer.html',1,'altintegration']]],
+  ['json_34',['json',['../namespacealtintegration_1_1json.html',1,'altintegration']]]
 ];
