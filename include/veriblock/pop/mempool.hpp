@@ -342,6 +342,18 @@ struct MemPool {
   }
 
   template <typename POP>
+  void cleanupStale(std::set<std::shared_ptr<POP>,
+                             VbkPayloadsRelations::AtvCombinedComparator>& c,
+                    std::function<void(POP&)> remove) {
+    for (auto it = c.begin(); it != c.end();) {
+      auto& pl = **it;
+      ValidationState state;
+      auto valid = mempool_tree_.checkContextually(pl, state);
+      it = !valid ? (remove(pl), c.erase(it)) : std::next(it);
+    }
+  }
+
+  template <typename POP>
   void cleanupStale(std::vector<std::shared_ptr<POP>>& c,
                     std::function<void(POP&)> remove) {
     for (auto it = c.begin(); it != c.end();) {
@@ -378,23 +390,6 @@ struct MemPool {
   payload_value_sorted_map<T>& getInFlightMapMut() {
     return const_cast<payload_value_sorted_map<T>&>(this->getInFlightMap<T>());
   }
-
-  struct EndorsedAltComparator {
-    EndorsedAltComparator(const MemPool& parent) : parent_(parent) {}
-    int operator()(const std::shared_ptr<ATV>& a,
-                   const std::shared_ptr<ATV>& b) const;
-
-   private:
-    const MemPool& parent_;
-  };
-
-  struct TxFeeComparator {
-    int operator()(const std::shared_ptr<ATV>& a,
-                   const std::shared_ptr<ATV>& b) const;
-  };
-
-  //! @private
-  void sortAtvsWithTxfeeAndEndorsedBlock(std::vector<std::shared_ptr<ATV>>& atvs);
 };
 
 // clang-format off

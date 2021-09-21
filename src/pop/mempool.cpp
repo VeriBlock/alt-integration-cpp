@@ -10,46 +10,6 @@
 
 namespace altintegration {
 
-int MemPool::TxFeeComparator::operator()(const std::shared_ptr<ATV>& a,
-                                         const std::shared_ptr<ATV>& b) const {
-  auto aFee = a->transaction.calculateTxFee();
-  auto bFee = b->transaction.calculateTxFee();
-  if (aFee.units == bFee.units) return 0;
-  if (aFee.units > bFee.units) return 1;
-  return -1;
-}
-
-int MemPool::EndorsedAltComparator::operator()(
-    const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) const {
-  auto endorsedHash = parent_.mempool_tree_.alt().getParams().getHash(
-      a->transaction.publicationData.header);
-  auto* aEndorsedIndex =
-      parent_.mempool_tree_.alt().getBlockIndex(endorsedHash);
-  endorsedHash = parent_.mempool_tree_.alt().getParams().getHash(
-      b->transaction.publicationData.header);
-  auto* bEndorsedIndex =
-      parent_.mempool_tree_.alt().getBlockIndex(endorsedHash);
-  if (aEndorsedIndex == bEndorsedIndex) return 0;
-  if (aEndorsedIndex == nullptr) return -1;
-  if (bEndorsedIndex == nullptr) return 1;
-  if (aEndorsedIndex->getHeight() == bEndorsedIndex->getHeight()) return 0;
-  if (aEndorsedIndex->getHeight() < bEndorsedIndex->getHeight()) return 1;
-  return -1;
-}
-
-void MemPool::sortAtvsWithTxfeeAndEndorsedBlock(
-    std::vector<std::shared_ptr<ATV>>& atvs) {
-  EndorsedAltComparator endorsedAltComparator{*this};
-  TxFeeComparator txfeeComparator{};
-  std::sort(atvs.begin(),
-            atvs.end(),
-            [&](const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) {
-              auto comp1 = txfeeComparator(a, b);
-              if (comp1 != 0) return comp1 > 0;
-              return endorsedAltComparator(a, b) > 0;
-            });
-}
-
 PopData MemPool::generatePopData() {
   VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
 
@@ -82,7 +42,6 @@ PopData MemPool::generatePopData() {
 
     // try to fit ATVs
     auto& atvcandidates = block.second->atvs;
-    sortAtvsWithTxfeeAndEndorsedBlock(atvcandidates);
     for (const auto& atv : atvcandidates) {
       const auto estimate = atv->estimateSize();
       if (popSize + estimate >= maxSize) {
@@ -240,7 +199,7 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
   vbkblocks_.insert({block_id, block});
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block);
+    val = std::make_shared<VbkPayloadsRelations>(mempool_tree_.alt(), block);
     on_vbkblock_accepted.emit(*block);
   }
 
@@ -287,7 +246,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
   VBK_LOG_DEBUG("[POP mempool] ATV=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
-  rel.atvs.push_back(atv);
+  rel.atvs.insert(atv);
   makePayloadConnected<ATV>(atv);
 
   return true;
