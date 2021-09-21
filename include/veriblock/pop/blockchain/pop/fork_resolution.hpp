@@ -231,8 +231,8 @@ struct ReducedPublicationView {
         chain(_chain),
         protectedTree(_ed),
         protectingTree(_ing),
-        firstKeystoneHeight(firstKeystoneAfter(chain.first())),
-        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip())) {
+        firstKeystoneHeight(firstKeystoneAfterBlockIndex(chain.first())),
+        lastKeystoneHeight(highestKeystoneAtOrBeforeBlockIndex(chain.tip())) {
     VBK_ASSERT(keystoneInterval > 0);
   }
 
@@ -276,12 +276,12 @@ struct ReducedPublicationView {
     return &currentKeystoneContext;
   }
 
-  int32_t firstKeystoneAfter(typename protected_chain_t::index_t* blockIndex) {
+  int32_t firstKeystoneAfterBlockIndex(typename protected_chain_t::index_t* blockIndex) {
     VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
     return firstKeystoneAfter(blockIndex->getHeight(), keystoneInterval);
   }
 
-  int32_t highestKeystoneAtOrBefore(
+  int32_t highestKeystoneAtOrBeforeBlockIndex(
       typename protected_chain_t::index_t* blockIndex) {
     VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
     return highestKeystoneAtOrBefore(blockIndex->getHeight(),
