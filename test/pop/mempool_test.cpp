@@ -888,3 +888,60 @@ TEST_F(MemPoolFixture, IsKnown) {
   // VBK block is in blockchain, so known
   ASSERT_TRUE(mempool->isKnown<VbkBlock>(pd.context.at(0).getId()));
 }
+
+TEST_F(MemPoolFixture, getPop_txfeePriority) {
+  const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      Coin(500));
+  const auto& tx2 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      Coin(1000));
+  const auto& block = popminer->mineVbkBlocks(1, {tx1, tx2})->getHeader();
+  auto pd1 = popminer->createPopDataEndorsingAltBlock(
+      block, tx1, getLastKnownVbkBlock());
+  ATV& atv1 = pd1.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv1, state));
+  auto pd2 = popminer->createPopDataEndorsingAltBlock(
+      block, tx2, getLastKnownVbkBlock());
+  ATV& atv2 = pd2.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv2, state));
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 1);
+  ASSERT_EQ(pop_data.atvs.size(), 2);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  EXPECT_EQ(pop_data.atvs[0], atv2);
+  EXPECT_EQ(pop_data.atvs[1], atv1);
+}
+
+TEST_F(MemPoolFixture, getPop_endorsedPriority) {
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+  AltBlock endorsedBlock1 = chain[6];
+  AltBlock endorsedBlock2 = chain[5];
+
+  const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock1),
+      Coin(1000));
+  const auto& tx2 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock2),
+      Coin(1000));
+  const auto& block = popminer->mineVbkBlocks(1, {tx1, tx2})->getHeader();
+  auto pd1 = popminer->createPopDataEndorsingAltBlock(
+      block, tx1, getLastKnownVbkBlock());
+  ATV& atv1 = pd1.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv1, state));
+  auto pd2 = popminer->createPopDataEndorsingAltBlock(
+      block, tx2, getLastKnownVbkBlock());
+  ATV& atv2 = pd2.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv2, state));
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 1);
+  ASSERT_EQ(pop_data.atvs.size(), 2);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  EXPECT_EQ(pop_data.atvs[0], atv2);
+  EXPECT_EQ(pop_data.atvs[1], atv1);
+}

@@ -378,6 +378,10 @@ bool checkVbkTx(const VbkTx& tx,
                tx.networkOrType.networkType.toPrettyString()));
   }
 
+  if (tx.calculateTxFee().units < 0) {
+    return state.Invalid("vbktx-overspending");
+  }
+
   if (!checkPublicationData(tx.publicationData, params, state)) {
     return state.Invalid("vbktx-bad-publicationdata");
   }

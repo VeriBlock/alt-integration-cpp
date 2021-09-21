@@ -54,10 +54,16 @@ struct VbkTx {
   size_t estimateSize() const;
 
   /**
-   * Calculate the hash of the vbk transaction
-   * @return hash vbk transaction hash
+   * Calculate the hash of the VBK transaction
+   * @return hash VBK transaction hash
    */
   uint256 getHash() const;
+
+  /**
+   * Calculate the fee of the VBK transaction
+   * @return amount spent as tx fee
+   */
+  Coin calculateTxFee() const;
 
   friend bool operator==(const VbkTx& a, const VbkTx& b) {
     return a.getHash() == b.getHash();

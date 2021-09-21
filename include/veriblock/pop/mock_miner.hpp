@@ -61,6 +61,9 @@ class MockMiner {
 
   ATV createATV(const VbkBlock& blockOfProof, const VbkTx& transaction) const;
 
+  VbkTx createVbkTxEndorsingAltBlockWithSourceAmount(
+      const PublicationData& publicationData, const Coin& sourceAmount) const;
+
   VbkTx createVbkTxEndorsingAltBlock(
       const PublicationData& publicationData) const;
 
