@@ -345,14 +345,8 @@ void MemPool::tryConnectPayloads() {
 MemPool::MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
 
 std::vector<BtcBlock::hash_t> MemPool::getMissingBtcBlocks() const {
-  std::vector<BtcBlock::hash_t> res;
-  for (const auto& el : mempool_tree_.getInvalidVTBs()) {
-    res.push_back(el.second.missing_btc_block);
-  }
-  for (const auto& el : mempool_tree_.alt().vbk().getInvalidVTBs()) {
-    res.push_back(el.second.missing_btc_block);
-  }
-  return res;
+  // This call is deprecated. Will be removed in future releases.
+  return {};
 }
 
 template <>
