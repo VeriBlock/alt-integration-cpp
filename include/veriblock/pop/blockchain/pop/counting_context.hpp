@@ -8,15 +8,13 @@
 
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/blockchain/command_group.hpp>
-#include <veriblock/pop/entities/atv.hpp>
-#include <veriblock/pop/entities/vbkblock.hpp>
-#include <veriblock/pop/entities/vtb.hpp>
+#include <veriblock/pop/entities/popdata.hpp>
 
 namespace altintegration {
 
 //! @private
-struct ContinueOnInvalidContext {
-  ContinueOnInvalidContext(const AltChainParams& params) : params_(params) {}
+struct CountingContext {
+  CountingContext(const AltChainParams& params) : params_(params) {}
 
   //! returns true if given command group can fit into a block
   bool canFit(const ATV& atv) {
@@ -63,9 +61,13 @@ struct ContinueOnInvalidContext {
 
  private:
   bool canFitSize(size_t size) {
-    size_t popdatasize = sizeof(PopData::version) + singleBEValueSize(atvs) +
-                         atvs_size + singleBEValueSize(vtbs) + vtbs_size +
-                         singleBEValueSize(vbks) + vbks_size;
+    // clang-format off
+    size_t popdatasize =
+      sizeof(PopData::version) +
+      singleBEValueSize(atvs) + atvs_size +
+      singleBEValueSize(vtbs) + vtbs_size +
+      singleBEValueSize(vbks) + vbks_size;
+    // clang-format on
     return popdatasize + size <= params_.getMaxPopDataSize();
   }
 
