@@ -63,7 +63,7 @@ struct ContinueOnInvalidContext {
 
  private:
   bool canFitSize(size_t size) {
-    size_t popdatasize = PopData{}.estimateSize() + singleBEValueSize(atvs) +
+    size_t popdatasize = sizeof(PopData::version) + singleBEValueSize(atvs) +
                          atvs_size + singleBEValueSize(vtbs) + vtbs_size +
                          singleBEValueSize(vbks) + vbks_size;
     return popdatasize + size <= params_.getMaxPopDataSize();
