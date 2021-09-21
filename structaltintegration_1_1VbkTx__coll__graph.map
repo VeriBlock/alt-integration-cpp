@@ -1,5 +1,5 @@
 <map id="altintegration::VbkTx" name="altintegration::VbkTx">
-<area shape="rect" id="node1" title="Veriblock transaction, which endorses ALT block in VBK blockchain." alt="" coords="479,873,617,1009"/>
+<area shape="rect" id="node1" title="Veriblock transaction, which endorses ALT block in VBK blockchain." alt="" coords="479,873,617,995"/>
 <area shape="rect" id="node2" href="$namespacealtintegration.html#structaltintegration_1_1NetworkBytePair" title="Stores pair of TxType and VBK network byte." alt="" coords="8,719,208,796"/>
 <area shape="rect" id="node3" href="$structaltintegration_1_1VbkNetworkType.html" title="works as optional&lt;uint8_t&gt;" alt="" coords="5,469,208,605"/>
 <area shape="rect" id="node4" title=" " alt="" coords="233,498,375,575"/>
