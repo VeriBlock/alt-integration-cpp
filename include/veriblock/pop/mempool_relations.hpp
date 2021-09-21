@@ -61,9 +61,9 @@ struct VbkPayloadsRelations {
         atvs(atvComparator) {}
 
   const AltBlockTree& tree_;
-  AtvCombinedComparator atvComparator;
   std::shared_ptr<VbkBlock> header;
   std::vector<std::shared_ptr<VTB>> vtbs;
+  AtvCombinedComparator atvComparator;
   std::set<std::shared_ptr<ATV>, AtvCombinedComparator> atvs;
 
   bool empty() const { return atvs.empty() && vtbs.empty(); }
