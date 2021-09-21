@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <deque>
+#include <iterator>
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
@@ -15,62 +16,29 @@ namespace {
 // generates a PopData which is not bigger than 'maxPopDataSize' in serialized
 // size
 PopData generatePopDataImpl(
-    const std::vector<std::pair<VbkBlock::id_t,
-                                std::shared_ptr<VbkPayloadsRelations>>>& blocks,
-    const AltChainParams& params) {
+    const std::vector<
+        std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>>&
+        blocks) {
   PopData ret{};
-  // size in bytes of pop data added to
-  size_t popSize = ret.estimateSize();
-
-  const auto& maxSize = params.getMaxPopDataSize();
   for (const auto& block : blocks) {
     // add VBK block if it fits
     auto& header = *block.second->header;
-    if (popSize + header.estimateSize() >= maxSize) {
-      // PopData is full
-      break;
-    }
     // add VBK block to connect underlying ATVs/VTBs
     ret.context.push_back(header);
-    popSize += header.estimateSize();
 
     // try to fit ATVs
     auto& atvcandidates = block.second->atvs;
     for (const auto& atv : atvcandidates) {
-      const auto estimate = atv->estimateSize();
-      if (popSize + estimate >= maxSize) {
-        // do not consider this ATV, it does not fit
-        continue;
-      }
-
       // this ATV fits
       ret.atvs.push_back(*atv);
-      popSize += estimate;
     }
 
     // try to fit VTBs
     auto& vtbcandidates = block.second->vtbs;
     for (const auto& vtb : vtbcandidates) {
-      const auto estimate = vtb->estimateSize();
-      if (popSize + estimate >= maxSize) {
-        // this VTB does not fit
-        continue;
-      }
-
       ret.vtbs.push_back(*vtb);
-      popSize += estimate;
     }
-
-    // update popSize, because `push_back` might have increased size estimate
-    // for more than `estimate` (specifically - when we add new VBK block to
-    // array, and then when size of array serialization goes from 1 byte to 2
-    // bytes, we don't count this byte).
-    popSize = ret.estimateSize();
   }
-
-  const auto estimate = ret.estimateSize();
-  VBK_ASSERT_MSG(popSize == estimate, "size=%d estimate=%d", popSize, estimate);
-  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
 
   return ret;
 }
@@ -90,8 +58,9 @@ PopData MemPool::generatePopData() {
     return a.second->header->getHeight() < b.second->header->getHeight();
   });
 
-  PopData ret = generatePopDataImpl(blocks, mempool_tree_.alt().getParams());
+  PopData ret = generatePopDataImpl(blocks);
   mempool_tree_.filterInvalidPayloads(ret);
+
   return ret;
 }
 

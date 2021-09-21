@@ -824,6 +824,52 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
   ASSERT_EQ(popData.context.size(), vbk_amount);
 }
 
+TEST_F(MemPoolFixture, getPop_scenario_13) {
+  // mine 10 ALT blocks
+  mineAltBlocks(10, chain);
+
+  // mine 10 VBK blocks
+  popminer->mineVbkBlocks(10);
+
+  // submit corrupted atvs
+  AltBlock endorsedBlock = chain[5];
+  endorsedBlock.previousBlock.clear();
+  std::vector<VbkTx> txs;
+  for (size_t i = 0; i < 1000; i++) {
+    VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+        generatePublicationData(endorsedBlock));
+    txs.push_back(tx);
+  };
+
+  auto* containigBlock = popminer->mineVbkBlocks(1, txs);
+  for (const auto& tx : txs) {
+    ATV atv = popminer->createATV(containigBlock->getHeader(), tx);
+    submitATV(atv);
+  }
+
+  // mine 5 VBK blocks
+  popminer->mineVbkBlocks(10);
+
+  // submit valid ATV
+  endorsedBlock = chain[5];
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  auto* block = popminer->mineVbkBlocks(1, {tx});
+  ATV atv = popminer->createATV(block->getHeader(), tx);
+  submitATV(atv);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    submitVBK(*it);
+  }
+
+  auto pop = checkedGetPop();
+  ASSERT_EQ(pop.atvs.size(), 1);
+  ASSERT_EQ(pop.atvs[0], atv);
+}
+
 TEST_F(MemPoolFixture, IsKnown) {
   ASSERT_FALSE(mempool->isKnown<VbkBlock>(VbkBlock{}.getId()));
   auto next = popminer->mineVbkBlocks(1);

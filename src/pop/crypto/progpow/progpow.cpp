@@ -347,8 +347,6 @@ void fill_mix(uint64_t seed, uint32_t lane_id, Slice<uint32_t> mix) {
 kiss99_t progPowInit(uint64_t prog_seed,
                      Slice<int> mix_seq_src,
                      Slice<int> mix_seq_dst) {
-  VBK_LOG_DEBUG("Entered method");
-
   uint32_t leftSeed = uint32_t(prog_seed >> 32);
   uint32_t rightSeed = uint32_t(prog_seed);
 
@@ -684,8 +682,6 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
 }
 
 uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
   const auto headerHash = progpow::getVbkHeaderHash(header);
@@ -707,8 +703,6 @@ uint192 progPowHash(Slice<const uint8_t> header, progpow::ethash_cache* light) {
 }
 
 uint192 progPowHash(Slice<const uint8_t> header) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED_S(40);
   // replace very slow progpow hash with very fast sha256 hash
 #if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
