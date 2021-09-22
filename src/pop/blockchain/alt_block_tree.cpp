@@ -337,8 +337,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   VBK_LOG_WARN(
       "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), "
       "reason: %s.",
-      HexStr(A),
-      HexStr(B),
+      left->toShortPrettyString(),
+      right->toShortPrettyString(),
       (result == 0 ? "Equal PoP score"
                    : (result > 0 ? "Tip wins" : "Candidate wins")),
       result,
