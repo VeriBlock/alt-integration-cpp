@@ -73,8 +73,6 @@ void MemPool::cleanUp() {
 
         // remove VTBs
         for (const auto& vtb : rel.vtbs) {
-          mempool_tree_.removeInvalidVTB(vtb->getId());
-          mempool_tree_.alt().vbk().removeInvalidVTB(vtb->getId());
           stored_vtbs_.erase(vtb->getId());
         }
 
@@ -88,8 +86,6 @@ void MemPool::cleanUp() {
       // cleanup stale VTBs
       cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
         auto id = v.getId();
-        mempool_tree_.removeInvalidVTB(id);
-        mempool_tree_.alt().vbk().removeInvalidVTB(id);
         stored_vtbs_.erase(id);
       });
 
