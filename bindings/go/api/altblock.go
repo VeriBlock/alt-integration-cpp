@@ -76,9 +76,9 @@ func (v *AltBlock) GetHeight() int32 {
 	return int32(C.pop_alt_block_get_height(v.ref))
 }
 
-func (v *AltBlock) ToJSON(reverseHashes bool) (map[string]interface{}, error) {
+func (v *AltBlock) ToJSON() (map[string]interface{}, error) {
 	v.validate()
-	str := C.pop_alt_block_to_json(v.ref, C.bool(reverseHashes))
+	str := C.pop_alt_block_to_json(v.ref)
 	defer freeArrayChar(&str)
 	json_str := createString(&str)
 

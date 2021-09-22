@@ -60,7 +60,7 @@ func TestJSONAltBlock(t *testing.T) {
 
 	alt_block := GenerateDefaultAltBlock()
 
-	json, err := alt_block.ToJSON(true)
+	json, err := alt_block.ToJSON()
 	assert.NoError(err)
 
 	assert.Equal(json["hash"], "01010101010101010101010101010101")

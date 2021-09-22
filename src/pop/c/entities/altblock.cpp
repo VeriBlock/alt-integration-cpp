@@ -78,11 +78,11 @@ POP_ENTITY_GETTER_FUNCTION(alt_block, int32_t, height) {
   return self->ref.getHeight();
 }
 
-POP_ENTITY_TO_JSON(alt_block, bool reverseHashes = true) {
+POP_ENTITY_TO_JSON(alt_block) {
   VBK_ASSERT(self);
 
   std::string json =
-      altintegration::ToJSON<picojson::value>(self->ref, reverseHashes)
+      altintegration::ToJSON<picojson::value>(self->ref)
           .serialize(true);
 
   POP_ARRAY_NAME(string) res;
