@@ -118,7 +118,6 @@ var hierarchy =
     [ "altintegration::VbkTx", "structaltintegration_1_1VbkTx.html", null ],
     [ "altintegration::vblake_ctx", "namespacealtintegration.html#structaltintegration_1_1vblake__ctx", null ],
     [ "altintegration::VTB", "structaltintegration_1_1VTB.html", null ],
-    [ "altintegration::VTBInvalidationInfo", "namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo", null ],
     [ "altintegration::adaptors::WriteBatch", "structaltintegration_1_1adaptors_1_1WriteBatch.html", [
       [ "altintegration::adaptors::InmemWriteBatch", "structaltintegration_1_1adaptors_1_1InmemWriteBatch.html", null ],
       [ "altintegration::adaptors::LevelDBWriteBatch", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html", null ],
