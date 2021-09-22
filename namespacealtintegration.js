@@ -406,6 +406,7 @@ var namespacealtintegration =
     [ "isCrossedKeystoneBoundary", "namespacealtintegration.html#ac51f76dc6c5bb68b10e9fc62c776bec5", null ],
     [ "IsHex", "namespacealtintegration.html#a9b60b791d69bb45a82a8f3a02a257032", null ],
     [ "isKeystone", "namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba", null ],
+    [ "isReversed", "namespacealtintegration.html#ab901720b7e629ddd87d77c0c8db317c4", null ],
     [ "IsSpace", "namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40", null ],
     [ "isValidInvalidationReason", "namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf", null ],
     [ "kiss99", "namespacealtintegration.html#aa5909c3f85b096e25a712638582d2b62", null ],

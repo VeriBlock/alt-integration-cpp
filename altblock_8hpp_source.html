@@ -180,17 +180,22 @@ $(document).ready(function(){initNavTree('altblock_8hpp_source.html',''); initRe
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keyword">const</span> AltBlock::hash_t&amp; <span class="comment">/* ignore */</span> = AltBlock::hash_t{});</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="keyword">struct </span>std::hash&lt;<a class="code" href="namespacealtintegration.html">altintegration</a>::AltBlock&gt; {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <span class="keywordtype">size_t</span> operator()(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltBlock.html">altintegration::AltBlock</a>&amp; block) {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    std::hash&lt;std::vector&lt;uint8_t&gt;&gt; hasher;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">return</span> hasher(block.<a class="code" href="structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786">getHash</a>());</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;};</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Block&gt;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keywordtype">bool</span> isReversed(<span class="keyword">const</span> Block&amp;) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">struct </span>std::hash&lt;<a class="code" href="namespacealtintegration.html">altintegration</a>::AltBlock&gt; {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordtype">size_t</span> operator()(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltBlock.html">altintegration::AltBlock</a>&amp; block) {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::hash&lt;std::vector&lt;uint8_t&gt;&gt; hasher;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">return</span> hasher(block.<a class="code" href="structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786">getHash</a>());</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  }</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;};</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
