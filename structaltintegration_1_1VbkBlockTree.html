@@ -120,7 +120,7 @@ all payloads and blocks are valid as a consequence of the above.</dd></dl>
 </ul>
 <p>In this example, initially, the slice is [U9]. After we unapply U9, the slice becomes [U6, V7, V8]. If U6 is unapplied, the slice becomes [U5, V7, V8]. </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00102">102</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00106">106</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -282,6 +282,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>overrideTip</b> (<a c
 <tr class="memitem:ae02a24393b8600798adad8ccd55f7b1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">removeSubtree</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;toRemove) override</td></tr>
 <tr class="memdesc:ae02a24393b8600798adad8ccd55f7b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes block and all its successors.  <a href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">More...</a><br /></td></tr>
 <tr class="separator:ae02a24393b8600798adad8ccd55f7b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10dddc77e6474c137515b12e9ca4ace1"><td class="memItemLeft" align="right" valign="top"><a id="a10dddc77e6474c137515b12e9ca4ace1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removeInvalidVTB</b> (const <a class="el" href="structaltintegration_1_1Blob.html">VTB::id_t</a> &amp;id)</td></tr>
+<tr class="separator:a10dddc77e6474c137515b12e9ca4ace1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19311caf1bd7104abd13dd18a3dac05e"><td class="memItemLeft" align="right" valign="top"><a id="a19311caf1bd7104abd13dd18a3dac05e"></a>
+const std::unordered_map&lt; <a class="el" href="structaltintegration_1_1Blob.html">VTB::id_t</a>, <a class="el" href="namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo">VTBInvalidationInfo</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getInvalidVTBs</b> () const</td></tr>
+<tr class="separator:a19311caf1bd7104abd13dd18a3dac05e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structaltintegration_1_1BlockTree"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structaltintegration_1_1BlockTree')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree&lt; VbkBlock, VbkChainParams &gt;</a></td></tr>
 <tr class="memitem:ae3c77c5265d8129fe2979928d8b7789f inherit pub_methods_structaltintegration_1_1BlockTree"><td class="memItemLeft" align="right" valign="top"><a id="ae3c77c5265d8129fe2979928d8b7789f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BlockTree</b> (const <a class="el" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a> &amp;param, const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;blockProvider)</td></tr>

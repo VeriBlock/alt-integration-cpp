@@ -286,7 +286,7 @@ $(document).ready(function(){initNavTree('alt__chain__params_8hpp_source.html','
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;};</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a836a0d36faf7599be672693d8d237d7e">  280</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a>&amp; p, <span class="keywordtype">bool</span> reverseAltHashes = <span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a62ee4a02464f212c009fade39a396c1d">  280</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a>&amp; p) {</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;networkId&quot;</span>, p.<a class="code" href="structaltintegration_1_1AltChainParams.html#aaf75ed10d82c00677bf6ce932861c63a">getIdentifier</a>());</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  json::putArrayKV(</div>
@@ -305,7 +305,7 @@ $(document).ready(function(){initNavTree('alt__chain__params_8hpp_source.html','
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;payoutParams&quot;</span>, ToJSON&lt;JsonValue&gt;(p.<a class="code" href="structaltintegration_1_1AltChainParams.html#aa09bd74723bdadf30bfd2d4a70eded20">getPayoutParams</a>()));</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  json::putKV(obj,</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;              <span class="stringliteral">&quot;bootstrapBlock&quot;</span>,</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;              ToJSON&lt;JsonValue&gt;(p.<a class="code" href="structaltintegration_1_1AltChainParams.html#a6189f302f690ca4c6ca8490bed3ef3bf">getBootstrapBlock</a>(), reverseAltHashes));</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;              ToJSON&lt;JsonValue&gt;(p.<a class="code" href="structaltintegration_1_1AltChainParams.html#a6189f302f690ca4c6ca8490bed3ef3bf">getBootstrapBlock</a>()));</div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  <span class="keywordflow">return</span> obj;</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;}</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>

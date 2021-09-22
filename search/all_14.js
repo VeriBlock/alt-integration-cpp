@@ -38,5 +38,6 @@ var searchData=
   ['vblake_5fupdate_439',['vblake_update',['../namespacealtintegration.html#a0bd497a06ce59d3fcc5432eaa526abad',1,'altintegration']]],
   ['version_440',['version',['../structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552',1,'altintegration::ATV']]],
   ['vtb_441',['VTB',['../structaltintegration_1_1VTB.html',1,'altintegration']]],
-  ['vtb_5fid_5fsize_442',['VTB_ID_SIZE',['../namespacealtintegration.html#ac2f0991be783e98c35247d167887bf58',1,'altintegration']]]
+  ['vtb_5fid_5fsize_442',['VTB_ID_SIZE',['../namespacealtintegration.html#ac2f0991be783e98c35247d167887bf58',1,'altintegration']]],
+  ['vtbinvalidationinfo_443',['VTBInvalidationInfo',['../namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo',1,'altintegration']]]
 ];
