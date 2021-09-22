@@ -30,7 +30,7 @@ TEST(Counter, Amount) {
 
 TEST(Counter, Size) {
   auto P = AltChainParamsTest();
-  P.mMaxPopDataSize = PopData{}.estimateSize() + ATV{}.estimateSize();
+  P.mMaxPopDataSize = (uint32_t)(PopData{}.estimateSize() + ATV{}.estimateSize());
   auto C = CountingContext(P);
 
   ASSERT_TRUE(C.canFit(ATV{}));

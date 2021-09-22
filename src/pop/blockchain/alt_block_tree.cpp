@@ -309,6 +309,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
                  "left fork must be applied. Tip: %s, Left: %s",
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
+
+  VBK_LOG_DEBUG("chain A block: %s", left->toPrettyString());
   if (right == nullptr) {
     VBK_LOG_WARN(
         "Unknown 'B block: %s. Maybe you have forgotten to execute "
@@ -316,6 +318,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
         HexStr(B));
     return 1;
   }
+  VBK_LOG_DEBUG("chain B block: %s", right->toPrettyString());
 
   VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
   VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
@@ -332,9 +335,10 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   }
 
   VBK_LOG_WARN(
-      "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), reason: %s.",
-      HexStr(A),
-      HexStr(B),
+      "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), "
+      "reason: %s.",
+      left->toShortPrettyString(),
+      right->toShortPrettyString(),
       (result == 0 ? "Equal PoP score"
                    : (result > 0 ? "Tip wins" : "Candidate wins")),
       result,
@@ -356,11 +360,11 @@ static void clearSideEffects(Index& index, PayloadsIndex& storage) {
 void AltBlockTree::removeAllPayloads(index_t& index) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
-               block_t::name(),
-               index.getPayloadIds<VbkBlock>().size(),
-               index.getPayloadIds<VTB>().size(),
-               index.getPayloadIds<ATV>().size(),
-               index.toShortPrettyString());
+                block_t::name(),
+                index.getPayloadIds<VbkBlock>().size(),
+                index.getPayloadIds<VTB>().size(),
+                index.getPayloadIds<ATV>().size(),
+                index.toShortPrettyString());
 
   // we do not allow adding payloads to the genesis block
   VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");

@@ -11,14 +11,19 @@
 
 namespace altintegration {
 
-namespace {
+PopData MemPool::generatePopData() {
+  VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
 
-// generates a PopData which is not bigger than 'maxPopDataSize' in serialized
-// size
-PopData generatePopDataImpl(
-    const std::vector<
-        std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>>&
-        blocks) {
+  // attempt to connect payloads
+  tryConnectPayloads();
+
+  // sorted array of VBK blocks (ascending order)
+  using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
+  std::vector<P> blocks(relations_.begin(), relations_.end());
+  std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
+    return a.second->header->getHeight() < b.second->header->getHeight();
+  });
+
   PopData ret{};
   for (const auto& block : blocks) {
     // add VBK block if it fits
@@ -40,27 +45,7 @@ PopData generatePopDataImpl(
     }
   }
 
-  return ret;
-}
-
-}  // namespace
-
-PopData MemPool::generatePopData() {
-  VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
-
-  // attempt to connect payloads
-  tryConnectPayloads();
-
-  // sorted array of VBK blocks (ascending order)
-  using P = std::pair<VbkBlock::id_t, std::shared_ptr<VbkPayloadsRelations>>;
-  std::vector<P> blocks(relations_.begin(), relations_.end());
-  std::sort(blocks.begin(), blocks.end(), [](const P& a, const P& b) {
-    return a.second->header->getHeight() < b.second->header->getHeight();
-  });
-
-  PopData ret = generatePopDataImpl(blocks);
   mempool_tree_.filterInvalidPayloads(ret);
-
   return ret;
 }
 
@@ -185,7 +170,7 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
   vbkblocks_.insert({block_id, block});
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block);
+    val = std::make_shared<VbkPayloadsRelations>(mempool_tree_.alt(), block);
     on_vbkblock_accepted.emit(*block);
   }
 
@@ -234,7 +219,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
   VBK_LOG_DEBUG("[POP mempool] ATV=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
-  rel.atvs.push_back(atv);
+  rel.atvs.insert(atv);
   makePayloadConnected<ATV>(atv);
 
   return true;

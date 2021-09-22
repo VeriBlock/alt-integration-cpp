@@ -342,6 +342,18 @@ struct MemPool {
   }
 
   template <typename POP>
+  void cleanupStale(std::set<std::shared_ptr<POP>,
+                             VbkPayloadsRelations::AtvCombinedComparator>& c,
+                    std::function<void(POP&)> remove) {
+    for (auto it = c.begin(); it != c.end();) {
+      auto& pl = **it;
+      ValidationState state;
+      auto valid = mempool_tree_.checkContextually(pl, state);
+      it = !valid ? (remove(pl), c.erase(it)) : std::next(it);
+    }
+  }
+
+  template <typename POP>
   void cleanupStale(std::vector<std::shared_ptr<POP>>& c,
                     std::function<void(POP&)> remove) {
     for (auto it = c.begin(); it != c.end();) {

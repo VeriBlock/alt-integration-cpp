@@ -14,6 +14,7 @@
 #include "entities/popdata.hpp"
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
+#include "blockchain/alt_block_tree.hpp"
 
 namespace altintegration {
 
@@ -22,22 +23,50 @@ struct VbkPayloadsRelations {
   using id_t = VbkBlock::id_t;
   using height_t = typename VbkBlock::height_t;
 
-  VbkPayloadsRelations(const VbkBlock& b)
-      : header(std::make_shared<VbkBlock>(b)) {}
+  struct EndorsedAltComparator {
+    EndorsedAltComparator(const AltBlockTree& tree) : tree_(tree) {}
+    int operator()(const std::shared_ptr<ATV>& a,
+                   const std::shared_ptr<ATV>& b) const;
 
-  VbkPayloadsRelations(std::shared_ptr<VbkBlock> ptr_b)
-      : header(std::move(ptr_b)) {}
+   private:
+    const AltBlockTree& tree_;
+  };
 
+  struct TxFeeComparator {
+    int operator()(const std::shared_ptr<ATV>& a,
+                   const std::shared_ptr<ATV>& b) const;
+  };
+
+  struct AtvCombinedComparator {
+    AtvCombinedComparator(const AltBlockTree& tree) : txFeeComparator(), endorsedAltComparator(tree) {}
+    bool operator()(const std::shared_ptr<ATV>& a,
+                    const std::shared_ptr<ATV>& b) const;
+
+   private:
+    TxFeeComparator txFeeComparator;
+    EndorsedAltComparator endorsedAltComparator;
+  };
+
+  VbkPayloadsRelations(const AltBlockTree& tree, const VbkBlock& b)
+      : tree_(tree),
+        header(std::make_shared<VbkBlock>(b)),
+        atvComparator(tree),
+        atvs(atvComparator) {}
+
+  VbkPayloadsRelations(const AltBlockTree& tree,
+                       std::shared_ptr<VbkBlock> ptr_b)
+      : tree_(tree),
+        header(std::move(ptr_b)),
+        atvComparator(tree),
+        atvs(atvComparator) {}
+
+  const AltBlockTree& tree_;
   std::shared_ptr<VbkBlock> header;
   std::vector<std::shared_ptr<VTB>> vtbs;
-  std::vector<std::shared_ptr<ATV>> atvs;
-
-  PopData toPopData() const;
+  AtvCombinedComparator atvComparator;
+  std::set<std::shared_ptr<ATV>, AtvCombinedComparator> atvs;
 
   bool empty() const { return atvs.empty() && vtbs.empty(); }
-
-  void removeVTB(const VTB::id_t& vtb_id);
-  void removeATV(const ATV::id_t& atv_id);
 };
 
 }  // namespace altintegration
