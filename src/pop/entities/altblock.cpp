@@ -80,4 +80,11 @@ bool DeserializeFromRaw(ReadStream& stream,
   return true;
 }
 
+//! @private
+template <>
+bool isReversed(const AltBlock& block) {
+  return block.reversedHash;
+}
+
+
 }  // namespace altintegration

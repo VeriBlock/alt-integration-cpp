@@ -116,6 +116,12 @@ bool DeserializeFromVbkEncoding(
     ValidationState& state,
     const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
 
+//! @private
+template <typename Block>
+bool isReversed(const Block&) {
+  return false;
+}
+
 }  // namespace altintegration
 
 //! @private

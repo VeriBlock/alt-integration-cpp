@@ -11,6 +11,7 @@
 #include <vector>
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/arith_uint256.hpp>
+#include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/logger.hpp>
@@ -354,11 +355,10 @@ struct BlockIndex : public Block::addon_t {
 
   std::string toPrettyString(size_t level = 0) const {
     return format(
-        "{}{}BlockIndex(height={}, hash={}, next={}, status={}, header={}, {})",
+        "{}{}BlockIndex(height={}, next={}, status={}, header={}, {})",
         std::string(level, ' '),
         Block::name(),
         height,
-        HexStr(getHash()),
         pnext.size(),
         status,
         header->toPrettyString(),
@@ -366,7 +366,8 @@ struct BlockIndex : public Block::addon_t {
   }
 
   std::string toShortPrettyString() const {
-    return format("{}:{}:{}", Block::name(), height, HexStr(getHash()));
+    bool reverse = isReversed(*header);
+    return format("{}:{}:{}", Block::name(), height, HexStr(getHash(), reverse));
   }
 
   void toVbkEncoding(WriteStream& stream) const {
