@@ -79,6 +79,7 @@ struct AltBlock {
   hash_t previousBlock{};
   uint32_t timestamp{};
   height_t height{};
+  bool reversedHash{};
 
  private:
   static const std::string _name;
@@ -86,11 +87,11 @@ struct AltBlock {
 
 //! @overload
 template <typename JsonValue>
-JsonValue ToJSON(const AltBlock& alt, bool reverseHashes = true) {
+JsonValue ToJSON(const AltBlock& alt) {
   JsonValue object = json::makeEmptyObject<JsonValue>();
-  json::putStringKV(object, "hash", HexStr(alt.getHash(), reverseHashes));
+  json::putStringKV(object, "hash", HexStr(alt.getHash(), alt.reversedHash));
   json::putStringKV(
-      object, "previousBlock", HexStr(alt.previousBlock, reverseHashes));
+      object, "previousBlock", HexStr(alt.previousBlock, alt.reversedHash));
   json::putIntKV(object, "timestamp", alt.getBlockTime());
   json::putIntKV(object, "height", alt.height);
   return object;

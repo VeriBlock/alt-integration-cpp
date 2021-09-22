@@ -43,7 +43,7 @@ bool operator==(const AltBlock& a, const AltBlock& b) {
 bool operator!=(const AltBlock& a, const AltBlock& b) { return !(a == b); }
 
 std::string AltBlock::toPrettyString() const {
-  return format("AltBlock{{height={}, hash={}}}", height, HexStr(hash));
+  return format("AltBlock{{height={}, hash={}}}", height, HexStr(hash, reversedHash));
 }
 void AltBlock::toVbkEncoding(WriteStream& stream) const {
   return toRaw(stream);
