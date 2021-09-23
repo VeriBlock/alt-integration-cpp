@@ -208,10 +208,6 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (connectingIndex == nullptr) {
-    invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash;
-
-    VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
-                  vtb.toPrettyString());
     return state.Invalid("bad-prev-block",
                          "Can not find the BTC block referenced by the first "
                          "block of the VTB context");
@@ -223,13 +219,8 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
-                vtb.toPrettyString());
-
-  return isValid
-             ? (invalid_vtbs.erase(vtb.getId()), true)
-             : (invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash,
-                state.Invalid("block-referenced-too-early"));
+  if (isValid) return true;
+  return state.Invalid("block-referenced-too-early");
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
@@ -257,6 +248,8 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   }
 
   if (!validateBTCContext(payload, state)) {
+    VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
+                  payload.toPrettyString());
     return state.Invalid(
         block_t::name() + "-btc-context-does-not-connect",
         format("payload {} we attempted to add to block {} has "

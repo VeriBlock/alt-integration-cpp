@@ -135,7 +135,6 @@ bool MemPoolBlockTree::acceptVTB(
   size_t i = 0;
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
     if (!temp_btc_tree_.acceptBlockHeader(blk, state)) {
-      invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
       return state.Invalid("bad-block-of-proof-context", i);
     }
 
@@ -143,7 +142,6 @@ bool MemPoolBlockTree::acceptVTB(
   }
 
   if (!temp_btc_tree_.acceptBlockHeader(vtb.transaction.blockOfProof, state)) {
-    invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
     return state.Invalid("bad-block-of-proof");
   }
 
@@ -324,10 +322,6 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   tree_->eraseBlock(*tmpindex);
 
   guard.overrideDeferredForkResolution(originalTip);
-
-  for (const auto& vtb : pop.vtbs) {
-    invalid_vtbs_.erase(vtb.getId());
-  }
 }
 
 }  // namespace altintegration
