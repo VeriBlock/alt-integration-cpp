@@ -21,6 +21,5 @@ var structaltintegration_1_1AltBlock =
     [ "hash", "structaltintegration_1_1AltBlock.html#ace2e6c8c2406164e139fe572b2257244", null ],
     [ "height", "structaltintegration_1_1AltBlock.html#ae423669ce38fd38bdc7aa3e253e20c19", null ],
     [ "previousBlock", "structaltintegration_1_1AltBlock.html#aef7b9e45964ee0e303c68eb4e075d438", null ],
-    [ "reversedHash", "structaltintegration_1_1AltBlock.html#a44399243432eb37df0769c9099adef68", null ],
     [ "timestamp", "structaltintegration_1_1AltBlock.html#a68776e3fea2e7af8928a164ad9754f84", null ]
 ];

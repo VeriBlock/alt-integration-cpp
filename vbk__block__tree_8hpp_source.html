@@ -112,234 +112,220 @@ $(document).ready(function(){initNavTree('vbk__block__tree_8hpp_source.html','')
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="namespacealtintegration.html">   25</a></span>&#160;<span class="keyword">struct </span><a class="code" href="namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo">VTBInvalidationInfo</a> {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <a class="code" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> missing_btc_block;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;};</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree&lt;BtcBlock&gt;::decreaseAppliedBlockCount</a>(<span class="keywordtype">size_t</span>) {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// do nothing</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// BTC tree is not protected</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;}</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> BaseBlockTree&lt;BtcBlock&gt;::increaseAppliedBlockCount(<span class="keywordtype">size_t</span>) {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="comment">// do nothing</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="comment">// BTC tree is not protected</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">// defined in vbk_block_tree.cpp</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockIndex&lt;BtcBlock&gt;;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockTree&lt;BtcBlock, BtcChainParams&gt;;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BaseBlockTree&lt;BtcBlock&gt;;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockIndex&lt;VbkBlock&gt;;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockTree&lt;VbkBlock, VbkChainParams&gt;;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BaseBlockTree&lt;VbkBlock&gt;;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">   50</a></span>&#160;<span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockTree.html">BtcBlockTree</a> = <a class="code" href="structaltintegration_1_1BlockTree.html">BlockTree&lt;BtcBlock, BtcChainParams&gt;</a>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html">  106</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a> : <span class="keyword">public</span> <a class="code" href="structaltintegration_1_1BlockTree.html">BlockTree&lt;VbkBlock, VbkChainParams&gt;</a> {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockTree.html">VbkTree</a> = <a class="code" href="structaltintegration_1_1BlockTree.html">BlockTree&lt;VbkBlock, VbkChainParams&gt;</a>;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockTree.html">BtcTree</a> = <a class="code" href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">BtcBlockTree</a>;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a> = VbkTree::index_t;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> = VbkTree::stored_index_t;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">using</span> payloads_t = <span class="keyword">typename</span> index_t::payloads_t;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keyword">using</span> pid_t = <span class="keyword">typename</span> payloads_t::id_t;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keyword">using</span> endorsement_t = <span class="keyword">typename</span> index_t::endorsement_t;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1VbkCommandGroupStore.html">command_group_store_t</a> = <a class="code" href="structaltintegration_1_1VbkCommandGroupStore.html">VbkCommandGroupStore</a>;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keyword">using</span> PopForkComparator = PopAwareForkResolutionComparator&lt;<a class="code" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>,</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                                                             <a class="code" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a>,</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                                                             <a class="code" href="structaltintegration_1_1BlockTree.html">BtcTree</a>,</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                                                             <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>&gt;;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  ~<a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a>&amp; vbkp,</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;               <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BtcChainParams.html">BtcChainParams</a>&amp; btcp,</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;               <a class="code" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a>&amp; payloadsProvider,</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;               <a class="code" href="structaltintegration_1_1BlockReader.html">BlockReader</a>&amp; blockProvider,</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;               PayloadsIndex&amp; payloadsIndex);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">  134</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">loadBlockForward</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a>&amp; index,</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                        <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">  143</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">loadBlockBackward</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a>&amp; index,</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                         <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <a class="code" href="structaltintegration_1_1BlockTree.html">BtcTree</a>&amp; btc() { <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="keyword">const</span> BtcTree&amp; btc()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  PopForkComparator&amp; getComparator() { <span class="keywordflow">return</span> cmp_; }</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="keyword">const</span> PopForkComparator&amp; getComparator()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> cmp_; }</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  PayloadsIndex&amp; getPayloadsIndex() { <span class="keywordflow">return</span> payloadsIndex_; }</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  VbkCommandGroupStore&amp; getCommandGroupStore() { <span class="keywordflow">return</span> commandGroupStore_; }</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keyword">const</span> VbkCommandGroupStore&amp; getCommandGroupStore()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordflow">return</span> commandGroupStore_;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  }</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  <span class="keywordtype">bool</span> loadTip(<span class="keyword">const</span> hash_t&amp; hash, ValidationState&amp; state) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411">  167</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411">addPayloads</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>&amp; hash,</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                   <span class="keyword">const</span> std::vector&lt;payloads_t&gt;&amp; payloads,</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                   <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> BaseBlockTree&lt;BtcBlock&gt;::decreaseAppliedBlockCount(<span class="keywordtype">size_t</span>) {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="comment">// do nothing</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="comment">// BTC tree is not protected</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> BaseBlockTree&lt;BtcBlock&gt;::increaseAppliedBlockCount(<span class="keywordtype">size_t</span>) {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">// do nothing</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">// BTC tree is not protected</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">// defined in vbk_block_tree.cpp</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockIndex&lt;BtcBlock&gt;;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockTree&lt;BtcBlock, BtcChainParams&gt;;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BaseBlockTree&lt;BtcBlock&gt;;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockIndex&lt;VbkBlock&gt;;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BlockTree&lt;VbkBlock, VbkChainParams&gt;;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">extern</span> <span class="keyword">template</span> <span class="keyword">struct </span>BaseBlockTree&lt;VbkBlock&gt;;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">   46</a></span>&#160;<span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockTree.html">BtcBlockTree</a> = <a class="code" href="structaltintegration_1_1BlockTree.html">BlockTree&lt;BtcBlock, BtcChainParams&gt;</a>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html">  102</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a> : <span class="keyword">public</span> <a class="code" href="structaltintegration_1_1BlockTree.html">BlockTree&lt;VbkBlock, VbkChainParams&gt;</a> {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockTree.html">VbkTree</a> = <a class="code" href="structaltintegration_1_1BlockTree.html">BlockTree&lt;VbkBlock, VbkChainParams&gt;</a>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockTree.html">BtcTree</a> = <a class="code" href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">BtcBlockTree</a>;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a> = VbkTree::index_t;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a> = VbkTree::stored_index_t;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">using</span> payloads_t = <span class="keyword">typename</span> index_t::payloads_t;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">using</span> pid_t = <span class="keyword">typename</span> payloads_t::id_t;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">using</span> endorsement_t = <span class="keyword">typename</span> index_t::endorsement_t;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keyword">using</span> <a class="code" href="structaltintegration_1_1VbkCommandGroupStore.html">command_group_store_t</a> = <a class="code" href="structaltintegration_1_1VbkCommandGroupStore.html">VbkCommandGroupStore</a>;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">using</span> PopForkComparator = PopAwareForkResolutionComparator&lt;<a class="code" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>,</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                                                             <a class="code" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a>,</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                                                             <a class="code" href="structaltintegration_1_1BlockTree.html">BtcTree</a>,</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                                                             <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>&gt;;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  ~<a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a>&amp; vbkp,</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;               <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BtcChainParams.html">BtcChainParams</a>&amp; btcp,</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;               <a class="code" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a>&amp; payloadsProvider,</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;               <a class="code" href="structaltintegration_1_1BlockReader.html">BlockReader</a>&amp; blockProvider,</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;               PayloadsIndex&amp; payloadsIndex);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">  130</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">loadBlockForward</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a>&amp; index,</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                        <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">  139</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">loadBlockBackward</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a>&amp; index,</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                         <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  <a class="code" href="structaltintegration_1_1BlockTree.html">BtcTree</a>&amp; btc() { <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keyword">const</span> BtcTree&amp; btc()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  PopForkComparator&amp; getComparator() { <span class="keywordflow">return</span> cmp_; }</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="keyword">const</span> PopForkComparator&amp; getComparator()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> cmp_; }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  PayloadsIndex&amp; getPayloadsIndex() { <span class="keywordflow">return</span> payloadsIndex_; }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  VbkCommandGroupStore&amp; getCommandGroupStore() { <span class="keywordflow">return</span> commandGroupStore_; }</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keyword">const</span> VbkCommandGroupStore&amp; getCommandGroupStore()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordflow">return</span> commandGroupStore_;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keywordtype">bool</span> loadTip(<span class="keyword">const</span> hash_t&amp; hash, ValidationState&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411">  163</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411">addPayloads</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>&amp; hash,</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                   <span class="keyword">const</span> std::vector&lt;payloads_t&gt;&amp; payloads,</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                   <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keywordtype">void</span> removePayloads(<span class="keyword">const</span> hash_t&amp; hash, <span class="keyword">const</span> std::vector&lt;pid_t&gt;&amp; pids);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="keywordtype">void</span> removePayloads(<span class="keyword">const</span> block_t&amp; block, <span class="keyword">const</span> std::vector&lt;pid_t&gt;&amp; pids);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="keywordtype">void</span> removePayloads(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; index, <span class="keyword">const</span> std::vector&lt;pid_t&gt;&amp; pids);</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="keywordtype">void</span> removePayloads(<span class="keyword">const</span> hash_t&amp; hash, <span class="keyword">const</span> std::vector&lt;pid_t&gt;&amp; pids);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  <span class="keywordtype">void</span> removePayloads(<span class="keyword">const</span> block_t&amp; block, <span class="keyword">const</span> std::vector&lt;pid_t&gt;&amp; pids);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;  <span class="keywordtype">void</span> removePayloads(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; index, <span class="keyword">const</span> std::vector&lt;pid_t&gt;&amp; pids);</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50">  187</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50">unsafelyRemovePayload</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">Blob&lt;24&gt;</a>&amp; hash, <span class="keyword">const</span> pid_t&amp; pid);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="keywordtype">void</span> unsafelyRemovePayload(<span class="keyword">const</span> block_t&amp; block, <span class="keyword">const</span> pid_t&amp; pid);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  <span class="keywordtype">void</span> unsafelyRemovePayload(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; index,</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                             <span class="keyword">const</span> pid_t&amp; pid,</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                             <span class="keywordtype">bool</span> shouldDetermineBestChain = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160; </div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  std::string toPrettyString(<span class="keywordtype">size_t</span> level = 0) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="keyword">using</span> base::setState;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  <span class="keywordtype">bool</span> setState(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; to, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50">  183</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50">unsafelyRemovePayload</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">Blob&lt;24&gt;</a>&amp; hash, <span class="keyword">const</span> pid_t&amp; pid);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keywordtype">void</span> unsafelyRemovePayload(<span class="keyword">const</span> block_t&amp; block, <span class="keyword">const</span> pid_t&amp; pid);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="keywordtype">void</span> unsafelyRemovePayload(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; index,</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                             <span class="keyword">const</span> pid_t&amp; pid,</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                             <span class="keywordtype">bool</span> shouldDetermineBestChain = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  std::string toPrettyString(<span class="keywordtype">size_t</span> level = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <span class="keyword">using</span> base::setState;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <span class="keywordtype">bool</span> setState(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; to, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <span class="keywordtype">void</span> overrideTip(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; to) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
+<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">  196</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">removeSubtree</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; toRemove) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  <span class="keywordtype">void</span> overrideTip(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; to) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
-<div class="line"><a name="l00200"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">  200</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">removeSubtree</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; toRemove) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  <span class="keywordtype">void</span> removeInvalidVTB(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1Blob.html">VTB::id_t</a>&amp; <span class="keywordtype">id</span>) { invalid_vtbs.erase(<span class="keywordtype">id</span>); }</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;  <span class="keyword">const</span> std::unordered_map&lt;VTB::id_t, VTBInvalidationInfo&gt;&amp; getInvalidVTBs()<span class="keyword"></span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="keyword">      const </span>{</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordflow">return</span> invalid_vtbs;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  }</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="keywordtype">bool</span> loadBlockInner(<span class="keyword">const</span> stored_index_t&amp; index, ValidationState&amp; state);</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  <span class="keywordtype">bool</span> finalizeBlockImpl(index_t&amp; index,</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                         int32_t preserveBlocksBehindFinal,</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                         ValidationState&amp; state) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keywordtype">bool</span> validateBTCContext(<span class="keyword">const</span> payloads_t&amp; vtb, ValidationState&amp; state);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  <span class="keywordtype">bool</span> addPayloadToAppliedBlock(index_t&amp; index,</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                                <span class="keyword">const</span> payloads_t&amp; payload,</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                                ValidationState&amp; state);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  <span class="keywordtype">void</span> determineBestChain(index_t&amp; candidate, ValidationState&amp; state) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  PopForkComparator cmp_;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  PayloadsStorage&amp; payloadsProvider_;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  PayloadsIndex&amp; payloadsIndex_;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  command_group_store_t commandGroupStore_;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  std::unordered_map&lt;VTB::id_t, VTBInvalidationInfo&gt; invalid_vtbs;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;};</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="keywordtype">void</span> assertBlockCanBeRemoved(<span class="keyword">const</span> BlockIndex&lt;BtcBlock&gt;&amp; index);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="keywordtype">void</span> assertBlockCanBeRemoved(<span class="keyword">const</span> BlockIndex&lt;VbkBlock&gt;&amp; index);</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="keywordtype">void</span> assertBlockSanity(<span class="keyword">const</span> VbkBlock&amp; block);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;std::vector&lt;CommandGroup&gt; payloadsToCommandGroups(</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    VbkBlockTree&amp; tree,</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keyword">const</span> std::vector&lt;VTB&gt;&amp; pop,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; containinghash);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  <span class="keywordtype">bool</span> loadBlockInner(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a>&amp; index, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="keywordtype">bool</span> finalizeBlockImpl(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; index,</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                         int32_t preserveBlocksBehindFinal,</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                         <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  <span class="keywordtype">bool</span> validateBTCContext(<span class="keyword">const</span> payloads_t&amp; vtb, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  <span class="keywordtype">bool</span> addPayloadToAppliedBlock(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; index,</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                                <span class="keyword">const</span> payloads_t&amp; payload,</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                                <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  <span class="keywordtype">void</span> determineBestChain(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; candidate, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  PopForkComparator cmp_;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  <a class="code" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a>&amp; payloadsProvider_;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  PayloadsIndex&amp; payloadsIndex_;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <a class="code" href="structaltintegration_1_1VbkCommandGroupStore.html">command_group_store_t</a> commandGroupStore_;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;};</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="keywordtype">void</span> assertBlockCanBeRemoved(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;BtcBlock&gt;</a>&amp; index);</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="keywordtype">void</span> assertBlockCanBeRemoved(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;VbkBlock&gt;</a>&amp; index);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="keywordtype">void</span> assertBlockSanity(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&amp; block);</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;std::vector&lt;CommandGroup&gt; payloadsToCommandGroups(</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>&amp; tree,</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keyword">const</span> std::vector&lt;VTB&gt;&amp; pop,</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; containinghash);</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="keywordtype">void</span> payloadToCommands(<a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>&amp; tree,</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                       <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VTB.html">VTB</a>&amp; pop,</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                       <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; containingHash,</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                       std::vector&lt;CommandPtr&gt;&amp; cmds);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
+<div class="line"><a name="l00253"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a4d9e107898c043392b8efa60c72b1273">  253</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;VbkBlock&gt;</a>&amp; i) {</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="keywordtype">void</span> payloadToCommands(VbkBlockTree&amp; tree,</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                       <span class="keyword">const</span> VTB&amp; pop,</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                       <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; containingHash,</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                       std::vector&lt;CommandPtr&gt;&amp; cmds);</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a name="l00266"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a4d9e107898c043392b8efa60c72b1273">  266</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;VbkBlock&gt;</a>&amp; i) {</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    endorsements.push_back(e.first);</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  }</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  }</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    endorsements.push_back(e.first);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  }</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;<a class="code" href="structaltintegration_1_1VTB.html">VTB</a>&gt;());</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;      <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;  }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;<a class="code" href="structaltintegration_1_1VTB.html">VTB</a>&gt;());</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    }</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;}</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
+<div class="line"><a name="l00291"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#acb85505cbe32103717a6b19cce6203c8">  291</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;BtcBlock&gt;</a>&amp; i) {</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;}</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a name="l00304"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#acb85505cbe32103717a6b19cce6203c8">  304</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;BtcBlock&gt;</a>&amp; i) {</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;      <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    }</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;  }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;}</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#ab758c9cc0595be4b6ea8093cdad35ccb">  337</a></span>&#160;<span class="keyword">inline</span> BaseBlockTree&lt;VbkBlock&gt;::prev_block_hash_t</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;<a class="code" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree&lt;VbkBlock&gt;::makePrevHash</a>&lt;BaseBlockTree&lt;VbkBlock&gt;::hash_t&gt;(</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keyword">const</span> hash_t&amp; h) <span class="keyword">const</span> {</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;}</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>&amp; tree, std::ostream* os) {</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;  *os &lt;&lt; tree.toPrettyString();</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;}</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;      <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    }</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  }</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;}</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00324"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#ab758c9cc0595be4b6ea8093cdad35ccb">  324</a></span>&#160;<span class="keyword">inline</span> BaseBlockTree&lt;VbkBlock&gt;::prev_block_hash_t</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<a class="code" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree&lt;VbkBlock&gt;::makePrevHash</a>&lt;BaseBlockTree&lt;VbkBlock&gt;::hash_t&gt;(</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keyword">const</span> hash_t&amp; h) <span class="keyword">const</span> {</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;}</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1VbkBlockTree.html">VbkBlockTree</a>&amp; tree, std::ostream* os) {</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  *os &lt;&lt; tree.toPrettyString();</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;}</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_VBK_BLOCK_TREE_HPP_</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a8a10d689ced86bc9e96cfb36b5fd6cb3"><div class="ttname"><a href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">altintegration::BtcBlockTree</a></div><div class="ttdeci">BlockTree&lt; BtcBlock, BtcChainParams &gt; BtcBlockTree</div><div class="ttdoc">Bitcoin tree.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__block__tree_8hpp_source.html#l00050">vbk_block_tree.hpp:50</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a8a10d689ced86bc9e96cfb36b5fd6cb3"><div class="ttname"><a href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">altintegration::BtcBlockTree</a></div><div class="ttdeci">BlockTree&lt; BtcBlock, BtcChainParams &gt; BtcBlockTree</div><div class="ttdoc">Bitcoin tree.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__block__tree_8hpp_source.html#l00046">vbk_block_tree.hpp:46</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00294">arith_uint256.hpp:294</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_structaltintegration_1_1VTBInvalidationInfo"><div class="ttname"><a href="namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo">altintegration::VTBInvalidationInfo</a></div><div class="ttdef"><b>Definition:</b> <a href="vbk__block__tree_8hpp_source.html#l00025">vbk_block_tree.hpp:25</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a></div><div class="ttdoc">Base block tree that stores all blocks, maintains tree tips, maintains active chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00033">base_block_tree.hpp:33</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob&lt; SHA256_HASH_SIZE &gt;</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00033">block_index.hpp:33</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob</a></div><div class="ttdoc">Contiguous byte array of fixed size.</div><div class="ttdef"><b>Definition:</b> <a href="blob_8hpp_source.html#l00026">blob.hpp:26</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00032">block_index.hpp:32</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockReader_html"><div class="ttname"><a href="structaltintegration_1_1BlockReader.html">altintegration::BlockReader</a></div><div class="ttdoc">An abstraction over on-disk storage iterator.</div><div class="ttdef"><b>Definition:</b> <a href="block__reader_8hpp_source.html#l00026">block_reader.hpp:26</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockTree_html"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree</a></div><div class="ttdoc">BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root.</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00030">blocktree.hpp:30</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BtcChainParams_html"><div class="ttname"><a href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a></div><div class="ttdoc">base class for BTC params</div><div class="ttdef"><b>Definition:</b> <a href="btc__chain__params_8hpp_source.html#l00018">btc_chain_params.hpp:18</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1PayloadsStorage_html"><div class="ttname"><a href="structaltintegration_1_1PayloadsStorage.html">altintegration::PayloadsStorage</a></div><div class="ttdoc">Accessor for ATV/VTB/VbkBlock bodies given hash.</div><div class="ttdef"><b>Definition:</b> <a href="payloads__provider_8hpp_source.html#l00024">payloads_provider.hpp:24</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00012">stored_block_index.hpp:12</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VTB_html"><div class="ttname"><a href="structaltintegration_1_1VTB.html">altintegration::VTB</a></div><div class="ttdoc">Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.</div><div class="ttdef"><b>Definition:</b> <a href="vtb_8hpp_source.html#l00028">vtb.hpp:28</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1VbkBlockTree_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlockTree.html">altintegration::VbkBlockTree</a></div><div class="ttdoc">Veriblock block tree.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__block__tree_8hpp_source.html#l00106">vbk_block_tree.hpp:106</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1VbkBlockTree_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlockTree.html">altintegration::VbkBlockTree</a></div><div class="ttdoc">Veriblock block tree.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__block__tree_8hpp_source.html#l00102">vbk_block_tree.hpp:102</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkBlockTree_html_a111d7e353423fba705edbd55ded94bea"><div class="ttname"><a href="structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea">altintegration::VbkBlockTree::loadBlockBackward</a></div><div class="ttdeci">bool loadBlockBackward(const stored_index_t &amp;index, ValidationState &amp;state) override</div><div class="ttdoc">efficiently connect index to current tree as a root, loaded from disk</div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkBlockTree_html_a5bffb2735fe2ba1ad712f8efcc071c26"><div class="ttname"><a href="structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26">altintegration::VbkBlockTree::loadBlockForward</a></div><div class="ttdeci">bool loadBlockForward(const stored_index_t &amp;index, ValidationState &amp;state) override</div><div class="ttdoc">efficiently connect index to current tree as a leaf, loaded from disk</div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkBlockTree_html_a91716b55e733d16cadb8fafe23094a50"><div class="ttname"><a href="structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50">altintegration::VbkBlockTree::unsafelyRemovePayload</a></div><div class="ttdeci">void unsafelyRemovePayload(const Blob&lt; 24 &gt; &amp;hash, const pid_t &amp;pid)</div><div class="ttdoc">If we add payloads to the VBK tree in the following order: A1, B2, A3.</div></div>

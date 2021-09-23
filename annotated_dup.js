@@ -42,7 +42,6 @@ var annotated_dup =
       [ "AltCommandGroupStore", "structaltintegration_1_1AltCommandGroupStore.html", "structaltintegration_1_1AltCommandGroupStore" ],
       [ "CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", "structaltintegration_1_1CheckPublicationData" ],
       [ "VbkCommandGroupStore", "structaltintegration_1_1VbkCommandGroupStore.html", "structaltintegration_1_1VbkCommandGroupStore" ],
-      [ "VTBInvalidationInfo", "namespacealtintegration.html#structaltintegration_1_1VTBInvalidationInfo", "namespacealtintegration_structaltintegration_1_1VTBInvalidationInfo_dup" ],
       [ "VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html", "structaltintegration_1_1VbkBlockTree" ],
       [ "VbkChainParams", "structaltintegration_1_1VbkChainParams.html", "structaltintegration_1_1VbkChainParams" ],
       [ "VbkChainParamsMain", "structaltintegration_1_1VbkChainParamsMain.html", "structaltintegration_1_1VbkChainParamsMain" ],

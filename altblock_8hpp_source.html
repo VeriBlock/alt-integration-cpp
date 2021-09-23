@@ -147,55 +147,49 @@ $(document).ready(function(){initNavTree('altblock_8hpp_source.html',''); initRe
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  hash_t previousBlock{};</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  uint32_t timestamp{};</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  height_t height{};</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordtype">bool</span> reversedHash{};</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string _name;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;};</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#afa19013d0d6e6f1493aabb1d34f6cf6b">   90</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a>&amp; alt) {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  JsonValue <span class="keywordtype">object</span> = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;hash&quot;</span>, <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.<a class="code" href="structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786">getHash</a>(), alt.reversedHash));</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  json::putStringKV(</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      <span class="keywordtype">object</span>, <span class="stringliteral">&quot;previousBlock&quot;</span>, <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.previousBlock, alt.reversedHash));</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;timestamp&quot;</span>, alt.getBlockTime());</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;height&quot;</span>, alt.height);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordflow">return</span> object;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> AltBlock&amp; block, ::std::ostream* os) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  *os &lt;&lt; block.toPrettyString();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">  106</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a>&amp; out,</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keyword">const</span> AltBlock::hash_t&amp; <span class="comment">/* ignore */</span> = AltBlock::hash_t{});</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#ad049cdfb8d1539a3bfe55804123ec5db">  113</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a>&amp; out,</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keyword">const</span> AltBlock::hash_t&amp; <span class="comment">/* ignore */</span> = AltBlock::hash_t{});</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Block&gt;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keywordtype">bool</span> isReversed(<span class="keyword">const</span> Block&amp;) {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">struct </span>std::hash&lt;<a class="code" href="namespacealtintegration.html">altintegration</a>::AltBlock&gt; {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordtype">size_t</span> operator()(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltBlock.html">altintegration::AltBlock</a>&amp; block) {</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::hash&lt;std::vector&lt;uint8_t&gt;&gt; hasher;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">return</span> hasher(block.<a class="code" href="structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786">getHash</a>());</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  }</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;};</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string _name;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;};</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#abf78c37253b2daf9b40000ec319b3eea">   89</a></span>&#160;JsonValue ToJSON(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a>&amp; alt, <span class="keywordtype">bool</span> reverseHashes = <span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  JsonValue <span class="keywordtype">object</span> = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;hash&quot;</span>, <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.<a class="code" href="structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786">getHash</a>(), reverseHashes));</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  json::putStringKV(</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      <span class="keywordtype">object</span>, <span class="stringliteral">&quot;previousBlock&quot;</span>, <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.previousBlock, reverseHashes));</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;timestamp&quot;</span>, alt.getBlockTime());</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;height&quot;</span>, alt.height);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">return</span> object;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> AltBlock&amp; block, ::std::ostream* os) {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  *os &lt;&lt; block.toPrettyString();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">  105</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a>&amp; out,</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">const</span> AltBlock::hash_t&amp; <span class="comment">/* ignore */</span> = AltBlock::hash_t{});</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#ad049cdfb8d1539a3bfe55804123ec5db">  112</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a>&amp; out,</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keyword">const</span> AltBlock::hash_t&amp; <span class="comment">/* ignore */</span> = AltBlock::hash_t{});</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">struct </span>std::hash&lt;<a class="code" href="namespacealtintegration.html">altintegration</a>::AltBlock&gt; {</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keywordtype">size_t</span> operator()(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltBlock.html">altintegration::AltBlock</a>&amp; block) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    std::hash&lt;std::vector&lt;uint8_t&gt;&gt; hasher;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordflow">return</span> hasher(block.<a class="code" href="structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786">getHash</a>());</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;};</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALTBLOCK_HPP_</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
