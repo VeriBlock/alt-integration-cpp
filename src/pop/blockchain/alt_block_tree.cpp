@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <stack>
 #include <veriblock/pop/algorithm.hpp>
-#include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree_util.hpp>
 #include <veriblock/pop/command_group_cache.hpp>
@@ -110,6 +110,36 @@ void AltBlockTree::acceptBlock(index_t& index,
 
   if (index.pprev->isConnected()) {
     connectBlock(index, state);
+
+    // use non-recursive algorithm to connect the descendants.
+    // recursive algorithm caused segfaults on linux alpine because of deep
+    // recursion - thanks @daedalom for reporting it!
+    std::stack<BlockIndex<AltBlock>*> stack;
+    for (auto* pnext : index.pnext) {
+      stack.push(pnext);
+    }
+
+    while (!stack.empty()) {
+      auto* top = stack.top();
+      stack.pop();
+
+      // we never push nullptr to stack
+      VBK_ASSERT(top != nullptr);
+      if (!top->hasFlags(BLOCK_HAS_PAYLOADS)) {
+        // we can't connect this subtree because current block is 'in flight' -
+        // we never added payloads
+        continue;
+      }
+
+      // do connect
+      ValidationState dummy;
+      connectBlock(*top, dummy);
+
+      // fill stack with next candidates
+      for (auto* pnext : top->pnext) {
+        stack.push(pnext);
+      }
+    }
   }
 }
 
@@ -171,8 +201,6 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added",
                  index.toPrettyString());
@@ -208,13 +236,6 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   if (index.isValid()) {
     onBlockConnected.emit(index);
-    // connect the descendants
-    for (auto* successor : index.pnext) {
-      if (successor->hasFlags(BLOCK_HAS_PAYLOADS)) {
-        ValidationState dummy;
-        connectBlock(*successor, dummy);
-      }
-    }
   } else {
     onInvalidBlockConnected.emit(index, state);
   };
