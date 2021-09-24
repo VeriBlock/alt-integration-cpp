@@ -113,6 +113,11 @@ void AltBlockTree::acceptBlock(index_t& index,
   }
 
   connectBlock(index, state);
+  if (!state.IsValid()) {
+    // do not attempt connect the descendants if current block can not be
+    // connected.
+    return;
+  }
 
   // use non-recursive algorithm to connect the descendants.
   // recursive algorithm caused segfaults on linux alpine because of deep
