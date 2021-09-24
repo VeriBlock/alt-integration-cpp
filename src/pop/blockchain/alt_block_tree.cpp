@@ -108,37 +108,39 @@ void AltBlockTree::acceptBlock(index_t& index,
                                ValidationState& state) {
   setPayloads(index, payloads);
 
-  if (index.pprev->isConnected()) {
-    connectBlock(index, state);
+  if (!index.pprev->isConnected()) {
+    return;
+  }
 
-    // use non-recursive algorithm to connect the descendants.
-    // recursive algorithm caused segfaults on linux alpine because of deep
-    // recursion - thanks @daedalom for reporting it!
-    std::stack<BlockIndex<AltBlock>*> stack;
-    for (auto* pnext : index.pnext) {
-      stack.push(pnext);
+  connectBlock(index, state);
+
+  // use non-recursive algorithm to connect the descendants.
+  // recursive algorithm caused segfaults on linux alpine because of deep
+  // recursion - thanks @daedalom for reporting it!
+  std::stack<BlockIndex<AltBlock>*> stack;
+  for (auto* pnext : index.pnext) {
+    stack.push(pnext);
+  }
+
+  while (!stack.empty()) {
+    auto* top = stack.top();
+    stack.pop();
+
+    // we never push nullptr to stack
+    VBK_ASSERT(top != nullptr);
+    if (!top->hasFlags(BLOCK_HAS_PAYLOADS)) {
+      // we can't connect this subtree because current block is 'in flight' -
+      // we never added payloads
+      continue;
     }
 
-    while (!stack.empty()) {
-      auto* top = stack.top();
-      stack.pop();
+    // do connect
+    ValidationState dummy;
+    connectBlock(*top, dummy);
 
-      // we never push nullptr to stack
-      VBK_ASSERT(top != nullptr);
-      if (!top->hasFlags(BLOCK_HAS_PAYLOADS)) {
-        // we can't connect this subtree because current block is 'in flight' -
-        // we never added payloads
-        continue;
-      }
-
-      // do connect
-      ValidationState dummy;
-      connectBlock(*top, dummy);
-
-      // fill stack with next candidates
-      for (auto* pnext : top->pnext) {
-        stack.push(pnext);
-      }
+    // fill stack with next candidates
+    for (auto* pnext : top->pnext) {
+      stack.push(pnext);
     }
   }
 }
