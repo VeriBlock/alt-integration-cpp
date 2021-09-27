@@ -42,15 +42,15 @@ TEST(SIGN_UTIL, Sign) {
 TEST(SIGN_UTIL, Verify) {
   auto privateKey = privateKeyFromVbk(defaultPrivateKeyVbk);
   auto publicKey = derivePublicKey(privateKey);
-  int ret = verify(defaultMsg, defaultSignatureVbk, publicKey);
-  EXPECT_EQ(ret, 1);
+  bool ret = verify(defaultMsg, defaultSignatureVbk, publicKey);
+  EXPECT_EQ(ret, true);
 }
 
 TEST(SIGN_UTIL, Invalid) {
   std::vector<uint8_t> dummy(100, 1);
   EXPECT_THROW(privateKeyFromVbk(dummy), std::invalid_argument);
-  ASSERT_DEATH(derivePublicKey(dummy), "");
-  ASSERT_DEATH(publicKeyToVbk(dummy), "");
-  ASSERT_DEATH(sign(dummy, dummy), "");
-  ASSERT_DEATH(verify(dummy, dummy, dummy), "");
+  EXPECT_THROW(derivePublicKey(dummy), std::domain_error);
+  EXPECT_THROW(publicKeyToVbk(dummy), std::domain_error);
+  EXPECT_THROW(sign(dummy, dummy), std::domain_error);
+  EXPECT_THROW(verify(dummy, dummy, dummy), std::domain_error);
 }
