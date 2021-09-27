@@ -89,10 +89,10 @@ struct MemPool {
 
   /**
    * Use this method to determine if payload of type T with id `id` is already
-   * known.
+   * known to active chain.
    * @tparam T ATV or VTB or VbkBlock
    * @param[in] id payload id
-   * @return true if payload exists in mempool or blockchain, false otherwise.
+   * @return true if payload exists in mempool or active chain, false otherwise.
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
@@ -107,7 +107,25 @@ struct MemPool {
     auto& pl = getPayloadsIndex();
     std::vector<uint8_t> v(id.begin(), id.end());
     const auto& containing = pl.getContainingAltBlocks(v);
-    return !containing.empty();
+    if (containing.empty()) {
+      return false;
+    }
+
+    // check if any of containing is on active chain
+    auto& tree = mempool_tree_.alt();
+    for (const auto& c : containing) {
+      auto* index = tree.getBlockIndex(c);
+      if (index == nullptr) {
+        // block is deleted (too old)
+        continue;
+      }
+      if (tree.getBestChain().contains(index)) {
+        return true;
+      }
+    }
+
+    // `id` is not on active chain
+    return false;
   }
 
   //! getter for payloads stored in mempool

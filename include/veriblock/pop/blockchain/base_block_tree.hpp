@@ -668,21 +668,20 @@ struct BaseBlockTree {
         if (connectForward) {
           return state.Invalid("bad-prev",
                                "Block does not connect to current tree");
-        } else {
-          if (root.getHeader().getPreviousBlock() !=
-              makePrevHash(currentHash)) {
-            return state.Invalid(
-                "bad-block-hash",
-                format("Can't replace root block with block {}",
-                       index.toPrettyString()));
-          }
-
-          current = createBootstrapBlockIndex(currentHash, index.height);
-          current->restore();
-          current->pnext.insert(&root);
-          VBK_ASSERT(root.pprev == nullptr);
-          root.pprev = current;
         }
+
+        if (root.getHeader().getPreviousBlock() != makePrevHash(currentHash)) {
+          return state.Invalid("bad-block-hash",
+                               format("Can't replace root block with block {}",
+                                      index.toPrettyString()));
+        }
+
+        current = createBootstrapBlockIndex(currentHash, index.height);
+        current->restore();
+        current->pnext.insert(&root);
+        VBK_ASSERT(root.pprev == nullptr);
+        root.pprev = current;
+
       } else {
         current = createBlockIndex(currentHash, *prev);
         current->restore();
