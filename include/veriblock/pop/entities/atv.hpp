@@ -45,6 +45,7 @@ struct ATV {
 
   //! create pretty string
   std::string toPrettyString() const;
+  std::string toShortPrettyString() const;
 
   /**
    * Convert ATV to data stream using Vbk byte format
