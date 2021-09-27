@@ -225,18 +225,19 @@ struct Blob {
 
  protected:
   inline void assign(const std::initializer_list<uint8_t>& list) {
-    VBK_ASSERT_MSG(list.size() <= N,
-                   "Blob(): invalid data size: " + std::to_string(list.size()) +
-                       " > " + std::to_string(N));
+    if (list.size() > N) {
+      throw std::domain_error(
+          fmt::format("Blob({}) invalid input size: {}", N, list.size()));
+    }
 
     std::copy(list.begin(), list.end(), data_.begin());
   }
 
   inline void assign(Slice<const uint8_t> slice) {
-    VBK_ASSERT_MSG(
-        slice.size() <= N,
-        "Blob(): invalid data size: " + std::to_string(slice.size()) + " > " +
-            std::to_string(N));
+    if (slice.size() > N) {
+      throw std::domain_error(
+          fmt::format("Blob({}) invalid input size: {}", N, slice.size()));
+    }
 
     std::copy(slice.begin(), slice.end(), data_.begin());
   }

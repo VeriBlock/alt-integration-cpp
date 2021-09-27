@@ -80,6 +80,10 @@ std::vector<uint8_t> VbkBlock::toRaw() const {
   return stream.data();
 }
 
+std::string VbkBlock::toShortPrettyString() const {
+  return format("VBK(height={}, hash={})", height, getHash().toHex());
+}
+
 std::string VbkBlock::toPrettyString() const {
   return format(
       "VbkBlock{{height={}, version={}, prev={}, ks1={}, "

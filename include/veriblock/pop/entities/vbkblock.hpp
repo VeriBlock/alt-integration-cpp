@@ -43,6 +43,7 @@ struct VbkBlock {
   using stored_addon_t = StoredVbkBlockAddon;
 
   std::string toPrettyString() const;
+  std::string toShortPrettyString() const;
 
   /**
    * Convert VbkBlock to data stream using VbkBlock basic byte format

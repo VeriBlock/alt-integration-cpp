@@ -49,6 +49,13 @@ ATV::id_t ATV::getId() const {
   return sha256(left, right);
 }
 
+std::string ATV::toShortPrettyString() const {
+  return format("ATV(id={}, blockOfProof={}:{})",
+                getId().toHex(),
+                blockOfProof.getHeight(),
+                blockOfProof.getHash());
+}
+
 std::string ATV::toPrettyString() const {
   return format("ATV{{containingTx={}, containingBlock={}}}",
                 transaction.getHash().toHex(),
