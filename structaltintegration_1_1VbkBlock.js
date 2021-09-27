@@ -41,6 +41,7 @@ var structaltintegration_1_1VbkBlock =
     [ "toPrettyString", "structaltintegration_1_1VbkBlock.html#ac7a1e62c8aceafc287bd4f40242838ab", null ],
     [ "toRaw", "structaltintegration_1_1VbkBlock.html#a555ec3c76c657c395c66641ab417fc07", null ],
     [ "toRaw", "structaltintegration_1_1VbkBlock.html#a88a18e28dd59bb3ccebf554b5f6d606b", null ],
+    [ "toShortPrettyString", "structaltintegration_1_1VbkBlock.html#a95bffe6fc25d5212408077305fd5489f", null ],
     [ "toVbkEncoding", "structaltintegration_1_1VbkBlock.html#aa85426e112fc48c153616e3b0a79f009", null ],
     [ "toVbkEncoding", "structaltintegration_1_1VbkBlock.html#a7e393edfc53708a06a1fdb60794c5512", null ],
     [ "DeserializeFromRaw", "structaltintegration_1_1VbkBlock.html#a1e135ce7d587b2004627f28be26ab74a", null ],

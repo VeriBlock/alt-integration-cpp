@@ -443,16 +443,16 @@
 <text text-anchor="middle" x="981" y="-291" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 <polyline fill="none" stroke="black" points="921.5,-284 1040.5,-284 "/>
 <text text-anchor="start" x="929.5" y="-272" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
-<text text-anchor="start" x="929.5" y="-261" font-family="Helvetica,sans-Serif" font-size="10.00">+ toRaw()</text>
-<text text-anchor="start" x="929.5" y="-250" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
-<text text-anchor="start" x="929.5" y="-239" font-family="Helvetica,sans-Serif" font-size="10.00">+ toRaw()</text>
-<text text-anchor="start" x="929.5" y="-228" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
-<text text-anchor="start" x="929.5" y="-217" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateSize()</text>
-<text text-anchor="start" x="929.5" y="-206" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockTime()</text>
-<text text-anchor="start" x="929.5" y="-195" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateHash()</text>
-<text text-anchor="start" x="929.5" y="-184" font-family="Helvetica,sans-Serif" font-size="10.00">+ getHash()</text>
-<text text-anchor="start" x="929.5" y="-173" font-family="Helvetica,sans-Serif" font-size="10.00">+ getShortHash()</text>
-<text text-anchor="start" x="929.5" y="-162" font-family="Helvetica,sans-Serif" font-size="10.00">and 21 more...</text>
+<text text-anchor="start" x="929.5" y="-261" font-family="Helvetica,sans-Serif" font-size="10.00">+ toShortPrettyString()</text>
+<text text-anchor="start" x="929.5" y="-250" font-family="Helvetica,sans-Serif" font-size="10.00">+ toRaw()</text>
+<text text-anchor="start" x="929.5" y="-239" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
+<text text-anchor="start" x="929.5" y="-228" font-family="Helvetica,sans-Serif" font-size="10.00">+ toRaw()</text>
+<text text-anchor="start" x="929.5" y="-217" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
+<text text-anchor="start" x="929.5" y="-206" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateSize()</text>
+<text text-anchor="start" x="929.5" y="-195" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockTime()</text>
+<text text-anchor="start" x="929.5" y="-184" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateHash()</text>
+<text text-anchor="start" x="929.5" y="-173" font-family="Helvetica,sans-Serif" font-size="10.00">+ getHash()</text>
+<text text-anchor="start" x="929.5" y="-162" font-family="Helvetica,sans-Serif" font-size="10.00">and 22 more...</text>
 <text text-anchor="start" x="929.5" y="-151" font-family="Helvetica,sans-Serif" font-size="10.00">+ name()</text>
 </a>
 </g>

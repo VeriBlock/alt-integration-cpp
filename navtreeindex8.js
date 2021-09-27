@@ -1,5 +1,8 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a7f65c921af0541e8bf164ac79aa94e4a":[5,0,0,0,2,6],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a93e7af4b98826fd912b75b81fa0329f3":[5,0,0,0,2,0],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70":[5,0,0,0,2,4],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[5,0,0,0,2,5],
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[5,0,0,0,0],
 "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4":[5,0,0,0,0,4],
@@ -153,12 +156,12 @@ var NAVTREEINDEX8 =
 "vtb_8h_source.html":[6,0,1,0,0,2,0,15],
 "vtb_8hpp_source.html":[6,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[6,0,1,0,0,49],
-"":[4,0,1],
-"":[4,0,0,1],
-"":[4,0,0,5],
 "":[4,0,0,3],
+"":[4,0,1],
 "":[4,0,0,2],
-"":[4,0,0,6],
+"":[4,0,0,0],
 "":[4,0,0,7],
-"":[4,0,0,0]
+"":[4,0,0,5],
+"":[4,0,0,1],
+"":[4,0,0,6]
 };

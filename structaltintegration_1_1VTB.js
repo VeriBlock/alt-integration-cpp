@@ -6,6 +6,7 @@ var structaltintegration_1_1VTB =
     [ "getId", "structaltintegration_1_1VTB.html#aed8e8955b62f1b96397e1fb3b1e154e7", null ],
     [ "name", "structaltintegration_1_1VTB.html#acae954054a38e2fe2f7de8fd618c1ade", null ],
     [ "toPrettyString", "structaltintegration_1_1VTB.html#af467548792602672bc1a9e04bd594dd2", null ],
+    [ "toShortPrettyString", "structaltintegration_1_1VTB.html#ade6b4f796efa5a7c1253299efd3713e6", null ],
     [ "toVbkEncoding", "structaltintegration_1_1VTB.html#aec0b8ff40d1d9763aa06b0bc23a89203", null ],
     [ "toVbkEncoding", "structaltintegration_1_1VTB.html#a3d01efdef24e1705cfa0041cba456813", null ],
     [ "operator!=", "structaltintegration_1_1VTB.html#aedb5647cd46e5e2557589ef730c65033", null ],

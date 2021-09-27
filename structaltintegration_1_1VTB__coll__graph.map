@@ -1,5 +1,5 @@
 <map id="altintegration::VTB" name="altintegration::VTB">
-<area shape="rect" id="node1" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock." alt="" coords="862,1601,990,1767"/>
+<area shape="rect" id="node1" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock." alt="" coords="851,1601,1001,1781"/>
 <area shape="rect" id="node2" href="$structaltintegration_1_1VbkMerklePath.html" title="Path in Merkle tree, which proves that subject exists in the tree." alt="" coords="36,1167,227,1289"/>
 <area shape="rect" id="node3" title=" " alt="" coords="229,844,396,936"/>
 <area shape="rect" id="node14" href="$structaltintegration_1_1MerklePath.html" title="Path in Merkle tree which proves that subject is inside this tree." alt="" coords="251,1167,419,1289"/>

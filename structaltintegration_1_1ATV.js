@@ -5,6 +5,7 @@ var structaltintegration_1_1ATV =
     [ "getId", "structaltintegration_1_1ATV.html#a454c043b311d13db58e5fa3e93a0a09b", null ],
     [ "name", "structaltintegration_1_1ATV.html#accced309520d4d095a9c4f75aa378de7", null ],
     [ "toPrettyString", "structaltintegration_1_1ATV.html#a4ea2730b167d30591b53d18a102eee63", null ],
+    [ "toShortPrettyString", "structaltintegration_1_1ATV.html#a719ceb24afe8b443870ca334a8935076", null ],
     [ "toVbkEncoding", "structaltintegration_1_1ATV.html#a6c3ccefc71c86da3d5e95dfc82bb73dc", null ],
     [ "toVbkEncoding", "structaltintegration_1_1ATV.html#a5c09170c6abae48ec131ec4cff670754", null ],
     [ "operator!=", "structaltintegration_1_1ATV.html#a65c0b6a813f102ebf0b5e040fcd83593", null ],
