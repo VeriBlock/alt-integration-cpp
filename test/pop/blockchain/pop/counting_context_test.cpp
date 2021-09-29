@@ -18,24 +18,37 @@ TEST(Counter, Amount) {
   P.mMaxVbkBlocksInAltBlock = 1;
   auto C = CountingContext(P);
 
-  ASSERT_TRUE(C.canFit(ATV{}));
-  ASSERT_FALSE(C.canFit(ATV{}));
+  auto atv = ATV{};
+  auto vtb = VTB{};
+  auto vbk = VbkBlock{};
 
-  ASSERT_TRUE(C.canFit(VTB{}));
-  ASSERT_FALSE(C.canFit(VTB{}));
+  ASSERT_TRUE(C.canFit(atv));
+  C.update(atv);
+  ASSERT_FALSE(C.canFit(atv));
 
-  ASSERT_TRUE(C.canFit(VbkBlock{}));
-  ASSERT_FALSE(C.canFit(VbkBlock{}));
+  ASSERT_TRUE(C.canFit(vtb));
+  C.update(vtb);
+  ASSERT_FALSE(C.canFit(vtb));
+
+  ASSERT_TRUE(C.canFit(vbk));
+  C.update(vbk);
+  ASSERT_FALSE(C.canFit(vbk));
 }
 
 TEST(Counter, Size) {
   auto P = AltChainParamsTest();
-  P.mMaxPopDataSize = (uint32_t)(PopData{}.estimateSize() + ATV{}.estimateSize());
+  P.mMaxPopDataSize =
+      (uint32_t)(PopData{}.estimateSize() + ATV{}.estimateSize());
   auto C = CountingContext(P);
 
-  ASSERT_TRUE(C.canFit(ATV{}));
+  auto atv = ATV{};
+  auto vtb = VTB{};
+  auto vbk = VbkBlock{};
+
+  ASSERT_TRUE(C.canFit(atv));
+  C.update(atv);
   // next payloads do not because of size
-  ASSERT_FALSE(C.canFit(ATV{}));
-  ASSERT_FALSE(C.canFit(VTB{}));
-  ASSERT_FALSE(C.canFit(VbkBlock{}));
+  ASSERT_FALSE(C.canFit(atv));
+  ASSERT_FALSE(C.canFit(vtb));
+  ASSERT_FALSE(C.canFit(vbk));
 }
