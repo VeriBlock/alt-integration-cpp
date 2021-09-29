@@ -272,13 +272,14 @@ void applyPayloadsOrRemoveIfInvalid(AltBlockTree::BlockPayloadMutator& mutator,
           return true;  // should be removed
         }
 
-        if (mutator.add(payload, dummy)) {
-          // actually update context ONLY if payload is valid and applied
-          context.update(payload);
-          return false;  // do not remove this payload
+        if (!mutator.add(payload, dummy)) {
+          // payload is invalid and should be removed
+          return true;
         }
 
-        return true;
+        // actually update context ONLY if payload is valid and applied
+        context.update(payload);
+        return false;  // do not remove this payload
       });
   payloads.erase(it, payloads.end());
 }
