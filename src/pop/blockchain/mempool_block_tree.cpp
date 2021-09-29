@@ -258,13 +258,28 @@ bool MemPoolBlockTree::isBlockOld(const VbkBlock& block) const {
 template <typename Payload>
 void applyPayloadsOrRemoveIfInvalid(AltBlockTree::BlockPayloadMutator& mutator,
                                     std::vector<Payload>& payloads,
-                                    CountingContext& continueOnInvalidContext) {
+                                    CountingContext& context) {
   auto it = std::remove_if(
       payloads.begin(), payloads.end(), [&](const Payload& payload) {
         ValidationState dummy;
-        return !continueOnInvalidContext.canFit(payload) ||
-               mutator.isStatelessDuplicate(getIdVector(payload)) ||
-               !mutator.add(payload, dummy);
+
+        if (!context.canFit(payload)) {
+          // can't fit, doesn't worth even trying to add this payload
+          return true;  // should be removed
+        }
+
+        if (mutator.isStatelessDuplicate(getIdVector(payload))) {
+          return true;  // should be removed
+        }
+
+        if (!mutator.add(payload, dummy)) {
+          // payload is invalid and should be removed
+          return true;
+        }
+
+        // actually update context ONLY if payload is valid and applied
+        context.update(payload);
+        return false;  // do not remove this payload
       });
   payloads.erase(it, payloads.end());
 }

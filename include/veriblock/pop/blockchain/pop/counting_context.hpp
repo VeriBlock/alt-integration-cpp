@@ -17,50 +17,47 @@ struct CountingContext {
   CountingContext(const AltChainParams& params) : params_(params) {}
 
   //! returns true if given command group can fit into a block
-  bool canFit(const ATV& atv) {
+  bool canFit(const ATV& p) const {
     if (atvs >= params_.getMaxATVsInAltBlock()) {
       return false;
     }
-    size_t atv_size = atv.estimateSize();
-    if (!canFitSize(atv_size)) {
-      return false;
-    }
-
-    atvs_size += atv_size;
-    atvs++;
-    return true;
+    size_t size = p.estimateSize();
+    return canFitSize(size);
   }
 
-  bool canFit(const VTB& vtb) {
+  bool canFit(const VTB& p) const {
     if (vtbs >= params_.getMaxVTBsInAltBlock()) {
       return false;
     }
-    size_t vtb_size = vtb.estimateSize();
-    if (!canFitSize(vtb_size)) {
-      return false;
-    }
-
-    vtbs_size += vtb_size;
-    vtbs++;
-    return true;
+    size_t size = p.estimateSize();
+    return canFitSize(size);
   }
 
-  bool canFit(const VbkBlock& vbk) {
+  bool canFit(const VbkBlock& p) const {
     if (vbks >= params_.getMaxVbkBlocksInAltBlock()) {
       return false;
     }
-    size_t vbk_size = vbk.estimateSize();
-    if (!canFitSize(vbk_size)) {
-      return false;
-    }
+    size_t size = p.estimateSize();
+    return canFitSize(size);
+  }
 
-    vbks_size += vbk_size;
+  void update(const ATV& p) {
+    atvs_size += p.estimateSize();
+    atvs++;
+  }
+
+  void update(const VTB& p) {
+    vtbs_size += p.estimateSize();
+    vtbs++;
+  }
+
+  void update(const VbkBlock& p) {
+    vbks_size += p.estimateSize();
     vbks++;
-    return true;
   }
 
  private:
-  bool canFitSize(size_t size) {
+  bool canFitSize(size_t size) const {
     // clang-format off
     size_t popdatasize =
       sizeof(PopData::version) +
