@@ -142,7 +142,8 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(alt_block_index) *,
                            alt_get_block_index,
-                           POP_ARRAY_NAME(u8) hash);
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 /**
  * Find a VbkBlock index from the VbkTree
@@ -156,7 +157,8 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(vbk_block_index) *,
                            vbk_get_block_index,
-                           POP_ARRAY_NAME(u8) hash);
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 /**
  * Find a BtcBlock index from the BtcTree
@@ -170,7 +172,8 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(btc_block_index) *,
                            btc_get_block_index,
-                           POP_ARRAY_NAME(u8) hash);
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state);
 
 /**
  * Return best block (tip) of the AltTree
