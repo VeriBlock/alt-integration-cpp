@@ -91,6 +91,7 @@ func TestPopContextBlockPrecessing(t *testing.T) {
 
 	context.RemoveSubtree(newBlock.GetHash())
 
-	index = context.AltGetBlockIndex(newBlock.GetHash())
+	index, err = context.AltGetBlockIndex(newBlock.GetHash())
+	assert.Error(err)
 	assert.Nil(index)
 }
