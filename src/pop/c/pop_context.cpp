@@ -235,7 +235,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
       "Wrong hash size",
       altintegration::format("provide hash size: {}, expected size: {}",
                              hash.size,
-                             altintegration::BtcBlock::hash_t::size(), ));
+                             altintegration::BtcBlock::hash_t::size()));
   return nullptr;
 }
 
