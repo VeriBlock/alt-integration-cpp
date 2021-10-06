@@ -655,7 +655,7 @@ static uint192 progPowHashImpl(Slice<const uint8_t> header) {
     // cache miss
     LockGuard lock(GetEthashCacheMutex());
     cacheEntry = GetEthashCache().getOrDefault(epoch, [epoch, height] {
-      VBK_LOG_IMP_INFO(
+      VBK_LOG_WARN(
           "Calculating vProgPoW cache for epoch %d. Cache size=%d bytes.",
           epoch,
           progpow::ethash_get_cachesize(height));

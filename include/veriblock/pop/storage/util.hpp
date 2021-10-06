@@ -71,7 +71,7 @@ bool loadTree(BlockTreeT& tree,
 
   if (blocks.size() == 0) return true;
 
-  VBK_LOG_IMP_INFO("Loading %d %s blocks with tip %s",
+  VBK_LOG_WARN("Loading %d %s blocks with tip %s",
                blocks.size(),
                BlockTreeT::block_t::name(),
                HexStr(tiphash));

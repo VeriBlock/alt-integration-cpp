@@ -28,7 +28,7 @@
 namespace altintegration {
 
 //! Log level
-enum class LogLevel { debug, info, warn, imp_info, error, critical, off };
+enum class LogLevel { debug, info, warn, error, critical, off };
 
 /**
  * @struct Logger
@@ -100,8 +100,6 @@ LogLevel StringToLevel(const std::string&);
 #define VBK_LOG_INFO(format, ...)  VBK_LOG(altintegration::LogLevel::info, format, ##__VA_ARGS__)
 //! Format and log line in WARN
 #define VBK_LOG_WARN(format, ...)  VBK_LOG(altintegration::LogLevel::warn, format, ##__VA_ARGS__)
-//! Format and log line in IMP_INFO
-#define VBK_LOG_IMP_INFO(format, ...)  VBK_LOG(altintegration::LogLevel::imp_info, format, ##__VA_ARGS__)
 //! Format and log line in ERROR
 #define VBK_LOG_ERROR(format, ...) VBK_LOG(altintegration::LogLevel::error, format, ##__VA_ARGS__)
 //! Format and log line in CRITICAL
@@ -116,8 +114,6 @@ LogLevel StringToLevel(const std::string&);
 #define VBK_LOG_INFO(...)
 //! Format and log line in WARN
 #define VBK_LOG_WARN(...)
-//! Format and log line in IMP_INFO
-#define VBK_LOG_IMP_INFO(...)
 //! Format and log line in ERROR
 #define VBK_LOG_ERROR(...)
 //! Format and log line in CRITICAL

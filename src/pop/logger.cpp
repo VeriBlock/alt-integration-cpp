@@ -31,8 +31,6 @@ std::string LevelToString(LogLevel l) {
       return "info";
     case LogLevel::warn:
       return "warn";
-    case LogLevel::imp_info:
-      return "imp_info";
     case LogLevel::error:
       return "error";
     case LogLevel::critical:
@@ -53,9 +51,6 @@ LogLevel StringToLevel(const std::string& str) {
   }
   if (str == "warn") {
     return LogLevel::warn;
-  }
-  if (str == "imp_info") {
-    return LogLevel::imp_info;
   }
   if (str == "error") {
     return LogLevel::error;

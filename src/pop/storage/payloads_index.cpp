@@ -129,18 +129,18 @@ void PayloadsIndex::reindex(const AltBlockTree& tree) {
 
   // reindex vbk blocks
   auto vbkblocks = tree.vbk().getBlocks();
-  VBK_LOG_IMP_INFO("Reindexing %d VBK blocks...", vbkblocks.size());
+  VBK_LOG_WARN("Reindexing %d VBK blocks...", vbkblocks.size());
   for (auto& b : vbkblocks) {
     addBlockToIndex(*b);
   }
 
   // reindex alt blocks
   auto altblocks = tree.getBlocks();
-  VBK_LOG_IMP_INFO("Reindexing %d ALT blocks...", altblocks.size());
+  VBK_LOG_WARN("Reindexing %d ALT blocks...", altblocks.size());
   for (auto& b : altblocks) {
     addBlockToIndex(*b);
   }
-  VBK_LOG_IMP_INFO("Reindexing finished");
+  VBK_LOG_WARN("Reindexing finished");
 }
 
 std::vector<uint8_t> PayloadsIndex::makeGlobalPid(
