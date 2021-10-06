@@ -12,7 +12,7 @@
 namespace altintegration {
 
 PopData MemPool::generatePopData() {
-  VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
+  VBK_LOG_DEBUG("Generating a new pop data from mempool for the current tip.");
 
   // attempt to connect payloads
   tryConnectPayloads();

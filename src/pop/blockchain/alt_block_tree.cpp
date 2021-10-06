@@ -96,7 +96,7 @@ void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
 }
 
 void AltBlockTree::acceptBlock(index_t& index, const PopData& payloads) {
-  VBK_LOG_INFO("Accept pop data: %s, for the block: %s ",
+  VBK_LOG_DEBUG("Accept pop data: %s, for the block: %s ",
                payloads.toPrettyString(),
                index.toPrettyString());
   ValidationState dummy;
@@ -362,7 +362,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
     activeChain_.setTip(right);
   }
 
-  VBK_LOG_WARN(
+  VBK_LOG_INFO(
       "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), "
       "reason: %s.",
       left->toShortPrettyString(),
