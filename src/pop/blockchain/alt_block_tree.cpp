@@ -362,7 +362,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
     activeChain_.setTip(right);
   }
 
-  VBK_LOG_DEBUG(
+  VBK_LOG_IMP_INFO(
       "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), "
       "reason: %s.",
       left->toShortPrettyString(),
