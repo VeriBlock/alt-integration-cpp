@@ -6,9 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_CONVERTERS_HPP
 #define VERIBLOCK_POP_CPP_CONVERTERS_HPP
 
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS 1
 #include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
 #include <boost/python/to_python_converter.hpp>
+#include <veriblock/pop/strutil.hpp>
 
 using namespace boost::python;
 using namespace altintegration;
@@ -82,7 +84,7 @@ struct pystring_converter {
       const char* end = begin + PyBytes_Size(object);
       parsed = ParseHex(std::string(begin, end));
     } else if (PyUnicode_Check(object)) {
-      Py_ssize_t size;
+      Py_ssize_t size = 0;
       const char* begin = PyUnicode_AsUTF8AndSize(object, &size);
       parsed = ParseHex(std::string(begin, begin + size));
     }
