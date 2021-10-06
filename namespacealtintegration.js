@@ -241,7 +241,6 @@ var namespacealtintegration =
       [ "debug", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61daad42f6697b035b7580e4fef93be20b4d", null ],
       [ "info", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61dacaf9b6b99962bf5c2264824231d7a40c", null ],
       [ "warn", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da1ea4c3ab05ee0c6d4de30740443769cb", null ],
-      [ "imp_info", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61daf72c1ea5363eb28b35bed07ae8468bc9", null ],
       [ "error", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61dacb5e100e5a9a3e7f6d1fd97512215282", null ],
       [ "critical", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da7e85bcb66fb9a809d5ab4f62a8b8bea8", null ],
       [ "off", "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da3262d48df5d75e3452f0f16b313b7808", null ]
