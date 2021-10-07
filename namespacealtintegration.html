@@ -2133,7 +2133,7 @@ template&lt;typename BlockTreeT &gt; </div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keywordflow">if</span> (blocks.size() == 0) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  VBK_LOG_INFO(<span class="stringliteral">&quot;Loading %d %s blocks with tip %s&quot;</span>,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  VBK_LOG_WARN(<span class="stringliteral">&quot;Loading %d %s blocks with tip %s&quot;</span>,</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;               blocks.size(),</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;               BlockTreeT::block_t::name(),</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;               <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tiphash));</div>
