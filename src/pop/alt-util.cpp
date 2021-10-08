@@ -73,4 +73,21 @@ uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
   return CalculateTopLevelMerkleRoot(c);
 }
 
+int getMaxAtvsInVbkBlock(uint64_t altchainId) {
+  uint8_t last = altchainId & 0xFFu;
+  if(last != 0xff) {
+    return std::numeric_limits<int>::max();
+  }
+
+  uint8_t amountByte = (altchainId >> 8) & 0xFFu;
+  int base = (((int)amountByte & 0x000000FFu) >> 1) + 1;
+  uint8_t exponent = (amountByte & 0x01u) + 1;
+
+  if (exponent == 1) {
+    return base;
+  }
+
+  return base * base;
+}
+
 }  // namespace altintegration

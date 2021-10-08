@@ -114,6 +114,15 @@ uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
                                     const BlockIndex<AltBlock>* prevBlock,
                                     const AltChainParams& params);
 
+//! The second to the last byte is used to determine the max number of occurrences
+//! The first 7 bits determine the base (1 is added to the first 7 bits interpreted as a number),
+//! and the last bit determines the exponent (0 = exponent of 1, 1 = exponent of 2)
+//! For example:
+//! 00000000 has a base of 1 (0+1) and an exponent of 1 for a maximum of 1 publication
+//! 00000110 has a base of 4 (3+1) and an exponent of 1 for a maximum of 4 publications
+//! 00000101 has a base of 3 (2+1) and an exponent of 2 for a maximum of 9 publications
+int getMaxAtvsInVbkBlock(uint64_t altchainId);
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_UTIL_HPP
