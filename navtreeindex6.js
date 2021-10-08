@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"structaltintegration_1_1ContextInfoContainer.html#ad92917c6e4a04bd29ba9b8d32b0503fb":[5,0,0,33,7],
 "structaltintegration_1_1ContextInfoContainer.html#adb3a5a0ccbc36bc93d048af0a720e1cc":[5,0,0,33,3],
 "structaltintegration_1_1ContextInfoContainer.html#ae0b758bfd999d05dbb60cfc95cfbdc6e":[5,0,0,33,1],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html":[5,0,0,58],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1ReadStream.html#a64ba116163a6d7c663ba15b80840c731":[5,0,0,56,17],
 "structaltintegration_1_1ReadStream.html#a6ed425f4893b4455f072e86322ed64ce":[5,0,0,56,13],
 "structaltintegration_1_1ReadStream.html#a7ce1ebf8768623c286fd880e3eff34cf":[5,0,0,56,19],
-"structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6":[5,0,0,56,20],
-"structaltintegration_1_1ReadStream.html#a7f5c83d2f9edc7d6567a7e8c053b58a3":[5,0,0,56,9]
+"structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6":[5,0,0,56,20]
 };

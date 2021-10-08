@@ -118,12 +118,12 @@ $(document).ready(function(){initNavTree('stored__vbk__block__addon_8hpp_source.
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  uint32_t _refCount = 0;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// VTB::id_t</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  std::vector&lt;uint256&gt; _vtbids;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">// list of endorsement of ALT blocks, whose BlockOfProof is</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">// this block ids. Must be a vector, because we can have duplicates here</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  std::vector&lt;uint256&gt; blockOfProofEndorsementIds;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="comment">// list of endorsement pointing to this block ids.</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="comment">// Must be a vector, because we can have duplicates here</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::vector&lt;uint256&gt; endorsedByIds;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">// list of endorsements of ALT blocks, whose BlockOfProof is</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">// this block. must be a vector, because we can have duplicates here</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  std::vector&lt;uint256&gt; blockOfProofEndorsementHashes;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="comment">// list of endorsements pointing to this block.</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="comment">// must be a vector, because we can have duplicates here</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::vector&lt;uint256&gt; endorsedByHashes;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// POP endorsements state</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  pop_state_t popState;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;};</div>

@@ -385,6 +385,7 @@ var namespacealtintegration =
     [ "getIdVector", "namespacealtintegration.html#a5d0814d509776d30ebd041dc25798b9b", null ],
     [ "getLastKnownBlocks", "namespacealtintegration.html#aba330e6739b0bf790a4785ce97f4b08e", null ],
     [ "GetLogger", "namespacealtintegration.html#a12247879d0b91b79b8b82bc317a6fcd9", null ],
+    [ "getMaxAtvsInVbkBlock", "namespacealtintegration.html#a6d614a878c31c63b6c9b39addba9a234", null ],
     [ "getMedianTimePast", "namespacealtintegration.html#aea29607876eddcbab5f44f2d5b17e04d", null ],
     [ "getMedianTimePast", "namespacealtintegration.html#a844315bf89b7b30271e800e2d8adbd66", null ],
     [ "getMedianTimePast", "namespacealtintegration.html#a0183db84bd101e201b9d1e1f672fe430", null ],
