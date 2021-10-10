@@ -146,6 +146,12 @@ struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
   ValidationState state;
 };
 
+TEST(VbkBlockPOW, ValidMainNet) {
+  auto block = AssertDeserializeFromRawHex<VbkBlock>("00277B9100025FD49543BA74A429AC48A3F2297D2CC1E0244EC22EDE46D061CEFED1E35C0AA208EC867AD999CA78861706B6FE606163022A0528F21755576DF2F3");
+  auto P = VbkChainParamsMain();
+  ASSERT_TRUE(checkProofOfWork(block, P));
+}
+
 TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
   ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc))
       << state.toString();
