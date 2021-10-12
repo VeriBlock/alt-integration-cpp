@@ -122,6 +122,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all Altchain-related configs.  <a href="structaltintegration_1_1AltChainParams.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html">AltChainParamsRegTest</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base block tree that stores all blocks, maintains tree tips, maintains active chain.  <a href="structaltintegration_1_1BaseBlockTree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -511,11 +513,6 @@ template&lt;typename Block &gt; </td></tr>
 <tr class="memitem:a80413c3ca23962b5afd87d8d9af42685"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;finalBlock, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;candidate)</td></tr>
 <tr class="memdesc:a80413c3ca23962b5afd87d8d9af42685"><td class="mdescLeft">&#160;</td><td class="mdescRight">a <code>candidate</code> is considered outdated if it is behind <code>finalBlock</code>, or on same height and not equal to <code>finalBlock</code>, or its fork block is outdated <br /></td></tr>
 <tr class="separator:a80413c3ca23962b5afd87d8d9af42685"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47d7e3b4c00fdc32fba7f549ae4d8801"><td class="memTemplParams" colspan="2"><a id="a47d7e3b4c00fdc32fba7f549ae4d8801"></a>
-template&lt;typename Block &gt; </td></tr>
-<tr class="memitem:a47d7e3b4c00fdc32fba7f549ae4d8801"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a47d7e3b4c00fdc32fba7f549ae4d8801">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, typename Block::hash_t precalculatedHash=typename Block::hash_t())</td></tr>
-<tr class="memdesc:a47d7e3b4c00fdc32fba7f549ae4d8801"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
-<tr class="separator:a47d7e3b4c00fdc32fba7f549ae4d8801"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaec558ed72237f1ff885cdc83f43bdbf"><td class="memItemLeft" align="right" valign="top"><a id="aaec558ed72237f1ff885cdc83f43bdbf"></a>
 constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf">isValidInvalidationReason</a> (const <a class="el" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a> &amp;reason)</td></tr>
 <tr class="memdesc:aaec558ed72237f1ff885cdc83f43bdbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the <code>reason</code> value can be used as the reason for invalidateSubtree and revalidateSubtree. <br /></td></tr>
@@ -616,14 +613,14 @@ template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:abf78c37253b2daf9b40000ec319b3eea"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#abf78c37253b2daf9b40000ec319b3eea">ToJSON</a> (const <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &amp;alt, bool reverseHashes=true)</td></tr>
 <tr class="memdesc:abf78c37253b2daf9b40000ec319b3eea"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:abf78c37253b2daf9b40000ec319b3eea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e464ea06b8e897aff3cc896eab17638"><td class="memItemLeft" align="right" valign="top"><a id="a3e464ea06b8e897aff3cc896eab17638"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</td></tr>
-<tr class="memdesc:a3e464ea06b8e897aff3cc896eab17638"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
-<tr class="separator:a3e464ea06b8e897aff3cc896eab17638"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad049cdfb8d1539a3bfe55804123ec5db"><td class="memItemLeft" align="right" valign="top"><a id="ad049cdfb8d1539a3bfe55804123ec5db"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ad049cdfb8d1539a3bfe55804123ec5db">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</td></tr>
-<tr class="memdesc:ad049cdfb8d1539a3bfe55804123ec5db"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
-<tr class="separator:ad049cdfb8d1539a3bfe55804123ec5db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a847b6da44142e45bb712071e2b7f7b0c"><td class="memItemLeft" align="right" valign="top"><a id="a847b6da44142e45bb712071e2b7f7b0c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a847b6da44142e45bb712071e2b7f7b0c">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</td></tr>
+<tr class="memdesc:a847b6da44142e45bb712071e2b7f7b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a847b6da44142e45bb712071e2b7f7b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a768cd5536790615a84de77540b5bae5d"><td class="memItemLeft" align="right" valign="top"><a id="a768cd5536790615a84de77540b5bae5d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a768cd5536790615a84de77540b5bae5d">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</td></tr>
+<tr class="memdesc:a768cd5536790615a84de77540b5bae5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a768cd5536790615a84de77540b5bae5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd9af2a87d53a4598fcc256743e01850"><td class="memTemplParams" colspan="2"><a id="abd9af2a87d53a4598fcc256743e01850"></a>
 template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:abd9af2a87d53a4598fcc256743e01850"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#abd9af2a87d53a4598fcc256743e01850">ToJSON</a> (const <a class="el" href="structaltintegration_1_1ATV.html">ATV</a> &amp;atv)</td></tr>
@@ -638,10 +635,18 @@ template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:a3c6e0cdaf9e30f5c13bd9ef922b9c5ed"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a3c6e0cdaf9e30f5c13bd9ef922b9c5ed">ToJSON</a> (const <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &amp;b)</td></tr>
 <tr class="memdesc:a3c6e0cdaf9e30f5c13bd9ef922b9c5ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a3c6e0cdaf9e30f5c13bd9ef922b9c5ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0809db3111c22e0bd5694af00125f85d"><td class="memItemLeft" align="right" valign="top"><a id="a0809db3111c22e0bd5694af00125f85d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0809db3111c22e0bd5694af00125f85d">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;, const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;precalculatedHash=<a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a>{})</td></tr>
+<tr class="memdesc:a0809db3111c22e0bd5694af00125f85d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a0809db3111c22e0bd5694af00125f85d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf0abba5a855a75708e6969449839f7f"><td class="memItemLeft" align="right" valign="top"><a id="aaf0abba5a855a75708e6969449839f7f"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aaf0abba5a855a75708e6969449839f7f">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;precalculatedHash=<a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a>{})</td></tr>
 <tr class="memdesc:aaf0abba5a855a75708e6969449839f7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:aaf0abba5a855a75708e6969449839f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69c8977212f64324bee414245ff21d54"><td class="memItemLeft" align="right" valign="top"><a id="a69c8977212f64324bee414245ff21d54"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a69c8977212f64324bee414245ff21d54">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;, const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;precalculatedHash=<a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a>{})</td></tr>
+<tr class="memdesc:a69c8977212f64324bee414245ff21d54"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a69c8977212f64324bee414245ff21d54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73227471f28134b6a61909a996d2d66e"><td class="memItemLeft" align="right" valign="top"><a id="a73227471f28134b6a61909a996d2d66e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a73227471f28134b6a61909a996d2d66e">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a> &amp;precalculatedHash=<a class="el" href="structaltintegration_1_1Blob.html">BtcBlock::hash_t</a>{})</td></tr>
 <tr class="memdesc:a73227471f28134b6a61909a996d2d66e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
@@ -744,6 +749,14 @@ template&lt;typename JsonValue &gt; </td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ae8ad3fc8b9498026a3bdc9b7148626fd">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash=<a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>{})</td></tr>
 <tr class="memdesc:ae8ad3fc8b9498026a3bdc9b7148626fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:ae8ad3fc8b9498026a3bdc9b7148626fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b5e330dbcf983b1411ed36bfcf41d4a"><td class="memItemLeft" align="right" valign="top"><a id="a7b5e330dbcf983b1411ed36bfcf41d4a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a7b5e330dbcf983b1411ed36bfcf41d4a">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;, const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash=<a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>{})</td></tr>
+<tr class="memdesc:a7b5e330dbcf983b1411ed36bfcf41d4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:a7b5e330dbcf983b1411ed36bfcf41d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa11ec4ed27d05ff28567c07d69209c0"><td class="memItemLeft" align="right" valign="top"><a id="aaa11ec4ed27d05ff28567c07d69209c0"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aaa11ec4ed27d05ff28567c07d69209c0">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;, const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash=<a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>{})</td></tr>
+<tr class="memdesc:aaa11ec4ed27d05ff28567c07d69209c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:aaa11ec4ed27d05ff28567c07d69209c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa793da7f4900ef93e9ee041f5ace43d8"><td class="memItemLeft" align="right" valign="top"><a id="aa793da7f4900ef93e9ee041f5ace43d8"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa793da7f4900ef93e9ee041f5ace43d8">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a> &amp;hash=<a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::hash_t</a>{})</td></tr>
 <tr class="memdesc:aa793da7f4900ef93e9ee041f5ace43d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
@@ -906,16 +919,31 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ac812fd1390e58bc60703fdbe2f3d5619"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac812fd1390e58bc60703fdbe2f3d5619">DeserializeFromVbkEncoding</a> (Slice&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:ac812fd1390e58bc60703fdbe2f3d5619"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from VBK encoding. <br /></td></tr>
 <tr class="separator:ac812fd1390e58bc60703fdbe2f3d5619"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30ee8bdab130d6d7b94b0d2634bc5dcc"><td class="memTemplParams" colspan="2"><a id="a30ee8bdab130d6d7b94b0d2634bc5dcc"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a30ee8bdab130d6d7b94b0d2634bc5dcc"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a30ee8bdab130d6d7b94b0d2634bc5dcc">DeserializeFromVbkEncoding</a> (Slice&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
+<tr class="memdesc:a30ee8bdab130d6d7b94b0d2634bc5dcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from VBK encoding. <br /></td></tr>
+<tr class="separator:a30ee8bdab130d6d7b94b0d2634bc5dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memTemplParams" colspan="2"><a id="a2caa72fe1fec5c8370ed7c25df4aff33"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a2caa72fe1fec5c8370ed7c25df4aff33">DeserializeFromRaw</a> (Slice&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from RAW encoding. <br /></td></tr>
 <tr class="separator:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa640d4e1b86945e5e03ca9fa77be3e10"><td class="memTemplParams" colspan="2"><a id="aa640d4e1b86945e5e03ca9fa77be3e10"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aa640d4e1b86945e5e03ca9fa77be3e10"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa640d4e1b86945e5e03ca9fa77be3e10">DeserializeFromRaw</a> (Slice&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
+<tr class="memdesc:aa640d4e1b86945e5e03ca9fa77be3e10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from RAW encoding. <br /></td></tr>
+<tr class="separator:aa640d4e1b86945e5e03ca9fa77be3e10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><td class="memTemplParams" colspan="2"><a id="a2270bfd565f6b5e5d6e4f2bd6f01d4fa"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a> (const std::string &amp;hex, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from HEX VBK encoding. <br /></td></tr>
 <tr class="separator:a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae543fc5847c96ed9c202536695950d01"><td class="memTemplParams" colspan="2"><a id="ae543fc5847c96ed9c202536695950d01"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ae543fc5847c96ed9c202536695950d01"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ae543fc5847c96ed9c202536695950d01">DeserializeFromHex</a> (const std::string &amp;hex, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
+<tr class="memdesc:ae543fc5847c96ed9c202536695950d01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from HEX VBK encoding. <br /></td></tr>
+<tr class="separator:ae543fc5847c96ed9c202536695950d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae263b96770a32f74ed8fd29e1f446fc0"><td class="memTemplParams" colspan="2"><a id="ae263b96770a32f74ed8fd29e1f446fc0"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ae263b96770a32f74ed8fd29e1f446fc0"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a> (const std::string &amp;hex, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
@@ -945,10 +973,18 @@ template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a18e4e887c74ecccba41b698fc6bea1d1"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1">AssertDeserializeFromRaw</a> (std::vector&lt; uint8_t &gt; raw)</td></tr>
 <tr class="memdesc:a18e4e887c74ecccba41b698fc6bea1d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from RAW encoding.  <a href="namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1">More...</a><br /></td></tr>
 <tr class="separator:a18e4e887c74ecccba41b698fc6bea1d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f4d93e5040f3d13da599a5c5af76fad"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a6f4d93e5040f3d13da599a5c5af76fad"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a6f4d93e5040f3d13da599a5c5af76fad">AssertDeserializeFromRaw</a> (std::vector&lt; uint8_t &gt; raw, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
+<tr class="memdesc:a6f4d93e5040f3d13da599a5c5af76fad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from RAW encoding.  <a href="namespacealtintegration.html#a6f4d93e5040f3d13da599a5c5af76fad">More...</a><br /></td></tr>
+<tr class="separator:a6f4d93e5040f3d13da599a5c5af76fad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9b90561df75533a192bfb882f72bdce"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:af9b90561df75533a192bfb882f72bdce"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce">AssertDeserializeFromVbkEncoding</a> (Slice&lt; const uint8_t &gt; raw)</td></tr>
 <tr class="memdesc:af9b90561df75533a192bfb882f72bdce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from VBK encoding.  <a href="namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce">More...</a><br /></td></tr>
 <tr class="separator:af9b90561df75533a192bfb882f72bdce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc937d76015cac634563f7ceb3fd7cb1"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:adc937d76015cac634563f7ceb3fd7cb1"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#adc937d76015cac634563f7ceb3fd7cb1">AssertDeserializeFromVbkEncoding</a> (Slice&lt; const uint8_t &gt; raw, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
+<tr class="memdesc:adc937d76015cac634563f7ceb3fd7cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from VBK encoding.  <a href="namespacealtintegration.html#adc937d76015cac634563f7ceb3fd7cb1">More...</a><br /></td></tr>
+<tr class="separator:adc937d76015cac634563f7ceb3fd7cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab982318b9fcddb8d73626e7fd22781cf"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ab982318b9fcddb8d73626e7fd22781cf"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ab982318b9fcddb8d73626e7fd22781cf">AssertDeserializeFromHex</a> (std::string hex)</td></tr>
 <tr class="memdesc:ab982318b9fcddb8d73626e7fd22781cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from HEX VBK encoding.  <a href="namespacealtintegration.html#ab982318b9fcddb8d73626e7fd22781cf">More...</a><br /></td></tr>
@@ -1029,10 +1065,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="name
 <tr class="memitem:a0323152145f8ab579a6214e3df8eeac3"><td class="memItemLeft" align="right" valign="top"><a id="a0323152145f8ab579a6214e3df8eeac3"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, StoredAltBlockAddon &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a0323152145f8ab579a6214e3df8eeac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4afd3d441a56dad5d5acceee458934b7"><td class="memTemplParams" colspan="2"><a id="a4afd3d441a56dad5d5acceee458934b7"></a>
+<tr class="memitem:a5665062c65ba70dda8715fc8b512422a"><td class="memTemplParams" colspan="2"><a id="a5665062c65ba70dda8715fc8b512422a"></a>
 template&lt;typename Block &gt; </td></tr>
-<tr class="memitem:a4afd3d441a56dad5d5acceee458934b7"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; Block &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, typename Block::hash_t precalculatedHash=typename Block::hash_t())</td></tr>
-<tr class="separator:a4afd3d441a56dad5d5acceee458934b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5665062c65ba70dda8715fc8b512422a"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex</a>&lt; Block &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params, typename Block::hash_t precalculatedHash=typename Block::hash_t())</td></tr>
+<tr class="separator:a5665062c65ba70dda8715fc8b512422a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a631b2b6ba11730a6b14d2f9ba693effd"><td class="memItemLeft" align="right" valign="top"><a id="a631b2b6ba11730a6b14d2f9ba693effd"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, StoredBtcBlockAddon &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a631b2b6ba11730a6b14d2f9ba693effd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1587,20 +1623,20 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00431">431</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;                                          {</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;  T t;</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;  ValidationState state;</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a>(hex, t, state);</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;  <span class="keywordflow">return</span> t;</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;}</div>
-<div class="ttc" id="anamespacealtintegration_html_a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><div class="ttname"><a href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">altintegration::DeserializeFromHex</a></div><div class="ttdeci">bool DeserializeFromHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00360">serde.hpp:360</a></div></div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00488">488</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;                                          {</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;  T t;</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;  ValidationState state;</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a>(hex, t, state);</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;  <span class="keywordflow">return</span> t;</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;}</div>
+<div class="ttc" id="anamespacealtintegration_html_a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><div class="ttname"><a href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">altintegration::DeserializeFromHex</a></div><div class="ttdeci">bool DeserializeFromHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00382">serde.hpp:382</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="a18e4e887c74ecccba41b698fc6bea1d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18e4e887c74ecccba41b698fc6bea1d1">&#9670;&nbsp;</a></span>AssertDeserializeFromRaw()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a18e4e887c74ecccba41b698fc6bea1d1">&#9670;&nbsp;</a></span>AssertDeserializeFromRaw() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1618,15 +1654,55 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00409">409</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;                                                   {</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;  T t;</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  ValidationState state;</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(raw, t, state);</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;  <span class="keywordflow">return</span> t;</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;}</div>
-<div class="ttc" id="anamespacealtintegration_html_a3e464ea06b8e897aff3cc896eab17638"><div class="ttname"><a href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">altintegration::DeserializeFromRaw</a></div><div class="ttdeci">bool DeserializeFromRaw(ReadStream &amp;stream, AltBlock &amp;out, ValidationState &amp;state, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00442">442</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;                                                   {</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;  T t;</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;  ValidationState state;</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a847b6da44142e45bb712071e2b7f7b0c">DeserializeFromRaw</a>(raw, t, state);</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;  <span class="keywordflow">return</span> t;</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;}</div>
+<div class="ttc" id="anamespacealtintegration_html_a847b6da44142e45bb712071e2b7f7b0c"><div class="ttname"><a href="namespacealtintegration.html#a847b6da44142e45bb712071e2b7f7b0c">altintegration::DeserializeFromRaw</a></div><div class="ttdeci">bool DeserializeFromRaw(ReadStream &amp;stream, AltBlock &amp;out, ValidationState &amp;state, const AltChainParams &amp;params, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a6f4d93e5040f3d13da599a5c5af76fad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f4d93e5040f3d13da599a5c5af76fad">&#9670;&nbsp;</a></span>AssertDeserializeFromRaw() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T altintegration::AssertDeserializeFromRaw </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; uint8_t &gt;&#160;</td>
+          <td class="paramname"><em>raw</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;&#160;</td>
+          <td class="paramname"><em>params</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00453">453</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;                                                         {</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;  T t;</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;  ValidationState state;</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a847b6da44142e45bb712071e2b7f7b0c">DeserializeFromRaw</a>(raw, t, state, params);</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;  <span class="keywordflow">return</span> t;</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1649,20 +1725,20 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00442">442</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;                                             {</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;  T t;</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;  ValidationState state;</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a>(hex, t, state);</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can`t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;  <span class="keywordflow">return</span> t;</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;}</div>
-<div class="ttc" id="anamespacealtintegration_html_ae263b96770a32f74ed8fd29e1f446fc0"><div class="ttname"><a href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">altintegration::DeserializeFromRawHex</a></div><div class="ttdeci">bool DeserializeFromRawHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00370">serde.hpp:370</a></div></div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00499">499</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;                                             {</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;  T t;</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;  ValidationState state;</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a>(hex, t, state);</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can`t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;  <span class="keywordflow">return</span> t;</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;}</div>
+<div class="ttc" id="anamespacealtintegration_html_ae263b96770a32f74ed8fd29e1f446fc0"><div class="ttname"><a href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">altintegration::DeserializeFromRawHex</a></div><div class="ttdeci">bool DeserializeFromRawHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00403">serde.hpp:403</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="af9b90561df75533a192bfb882f72bdce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9b90561df75533a192bfb882f72bdce">&#9670;&nbsp;</a></span>AssertDeserializeFromVbkEncoding()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af9b90561df75533a192bfb882f72bdce">&#9670;&nbsp;</a></span>AssertDeserializeFromVbkEncoding() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1680,15 +1756,55 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00420">420</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                                                             {</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;  T t;</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;  ValidationState state;</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state);</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;  <span class="keywordflow">return</span> t;</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00465">465</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;                                                             {</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;  T t;</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;  ValidationState state;</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state);</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;  <span class="keywordflow">return</span> t;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;}</div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="adc937d76015cac634563f7ceb3fd7cb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc937d76015cac634563f7ceb3fd7cb1">&#9670;&nbsp;</a></span>AssertDeserializeFromVbkEncoding() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T altintegration::AssertDeserializeFromVbkEncoding </td>
+          <td>(</td>
+          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramname"><em>raw</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;&#160;</td>
+          <td class="paramname"><em>params</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00476">476</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;                                                                 {</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;  T t;</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;  ValidationState state;</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;  <span class="keywordtype">bool</span> result = <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state, params);</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;  <span class="keywordflow">return</span> t;</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1956,12 +2072,12 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>converted byte array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00053">53</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                                       {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  WriteStream inputStream;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  inputStream.writeBE(input);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordflow">return</span> inputStream.data();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00055">55</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                       {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  WriteStream inputStream;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  inputStream.writeBE(input);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordflow">return</span> inputStream.data();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2265,28 +2381,28 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if read is OK, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00251">251</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                                                                   {</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  int32_t count = 0;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <span class="keywordflow">if</span> (!readSingleBEValue&lt;int32_t&gt;(stream, count, state)) {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-count&quot;</span>);</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  }</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3">checkRange</a>(count, min, max, state)) {</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-range&quot;</span>);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  }</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  out.reserve(count);</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00253">253</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                                                                   {</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  int32_t count = 0;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  <span class="keywordflow">if</span> (!readSingleBEValue&lt;int32_t&gt;(stream, count, state)) {</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-count&quot;</span>);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  }</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3">checkRange</a>(count, min, max, state)) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-range&quot;</span>);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  }</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    T item;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    out.push_back(item);</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  }</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;}</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  out.reserve(count);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    T item;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    }</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    out.push_back(item);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;  }</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;}</div>
 <div class="ttc" id="anamespacealtintegration_html_a5420d3ee53a7120f67cf39a00cd37fe3"><div class="ttname"><a href="namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3">altintegration::checkRange</a></div><div class="ttdeci">bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState &amp;state)</div><div class="ttdoc">Checks if expression 'min' &lt;= 'num' &lt;= 'max' is true.</div></div>
 </div><!-- fragment -->
 </div>
@@ -2353,11 +2469,11 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>vector of read elements of type T </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00290">290</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                                                                   {</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  int32_t max = std::numeric_limits&lt;int32_t&gt;::max();</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  <span class="keywordflow">return</span> readArrayOf&lt;T&gt;(stream, out, state, 0, max, readFunc);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00292">292</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                                                                   {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  int32_t max = std::numeric_limits&lt;int32_t&gt;::max();</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  <span class="keywordflow">return</span> readArrayOf&lt;T&gt;(stream, out, state, 0, max, readFunc);</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2502,15 +2618,15 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if read is OK, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00125">125</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                                                                           {</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  Slice&lt;const uint8_t&gt; data;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsinglebe-bad-data&quot;</span>);</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  ReadStream dataStream(data);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordflow">return</span> dataStream.readBE&lt;T&gt;(out, state, data.size());</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00127">127</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                                                                           {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  Slice&lt;const uint8_t&gt; data;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsinglebe-bad-data&quot;</span>);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  ReadStream dataStream(data);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="keywordflow">return</span> dataStream.readBE&lt;T&gt;(out, state, data.size());</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;}</div>
 <div class="ttc" id="anamespacealtintegration_html_a4448797a2a5b62b03e28af03f1dfaa78"><div class="ttname"><a href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">altintegration::readSingleByteLenValue</a></div><div class="ttdeci">bool readSingleByteLenValue(ReadStream &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, ValidationState &amp;state, size_t minLen, size_t maxLen)</div><div class="ttdoc">Read variable length value, which consists of [N=(1 byte = size of slice) | N bytes slice] Size of sl...</div></div>
 </div><!-- fragment -->
 </div>
@@ -3113,12 +3229,12 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00164">164</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                                                           {</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  WriteStream dataStream;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  dataStream.writeBE&lt;T&gt;(value);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <a class="code" href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">writeSingleByteLenValue</a>(stream, dataStream.data());</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00166">166</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                                                           {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  WriteStream dataStream;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  dataStream.writeBE&lt;T&gt;(value);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <a class="code" href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">writeSingleByteLenValue</a>(stream, dataStream.data());</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
 <div class="ttc" id="anamespacealtintegration_html_a8347db9e9900d4149b4e9ea5482782f2"><div class="ttname"><a href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">altintegration::writeSingleByteLenValue</a></div><div class="ttdeci">void writeSingleByteLenValue(WriteStream &amp;stream, Slice&lt; const uint8_t &gt; value)</div><div class="ttdoc">Write single byte length value, which consists of N bytes vector Appends 1 byte data length to the st...</div></div>
 </div><!-- fragment -->
 </div>

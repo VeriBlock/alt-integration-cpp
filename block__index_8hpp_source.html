@@ -431,21 +431,21 @@ $(document).ready(function(){initNavTree('block__index_8hpp_source.html',''); in
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keywordflow">return</span> format(<span class="stringliteral">&quot;{}:{}:{}&quot;</span>, Block::name(), <a class="code" href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">height</a>, <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(getHash()));</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;  }</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160; </div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  <span class="keywordtype">void</span> toVbkEncoding(WriteStream&amp; stream)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keyword">using</span> height_t = <span class="keyword">typename</span> Block::height_t;</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    stream.writeBE&lt;height_t&gt;(<a class="code" href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">height</a>);</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    <a class="code" href="structaltintegration_1_1BlockIndex.html#ac2c32d04484dcf11020021aff7b513f2">header</a>-&gt;toRaw(stream);</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    stream.writeBE&lt;uint32_t&gt;(<a class="code" href="structaltintegration_1_1BlockIndex.html#aebb596a27604345614ebbe5d72d8f08c">status</a>);</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160; </div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keyword">const</span> addon_t* t = <span class="keyword">this</span>;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    t-&gt;toVbkEncoding(stream);</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  }</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  std::vector&lt;uint8_t&gt; toVbkEncoding()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    WriteStream stream;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    toVbkEncoding(stream);</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordflow">return</span> stream.data();</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;  }</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  <span class="comment">/*void toVbkEncoding(WriteStream&amp; stream) const {</span></div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment">    using height_t = typename Block::height_t;</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">    stream.writeBE&lt;height_t&gt;(height);</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">    header-&gt;toRaw(stream);</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">    stream.writeBE&lt;uint32_t&gt;(status);</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment">    const addon_t* t = this;</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">    t-&gt;toVbkEncoding(stream);</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment">  }</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">  std::vector&lt;uint8_t&gt; toVbkEncoding() const {</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">    WriteStream stream;</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">    toVbkEncoding(stream);</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">    return stream.data();</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">  }*/</span></div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160; </div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;  <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html#a74c520710b2858f81736000173840f69">BlockIndex</a>&amp; a, <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html#a74c520710b2858f81736000173840f69">BlockIndex</a>&amp; b) {</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keywordflow">return</span> a.getStatus() == b.getStatus() &amp;&amp; a.getHeight() == b.getHeight() &amp;&amp;</div>
@@ -466,11 +466,11 @@ $(document).ready(function(){initNavTree('block__index_8hpp_source.html',''); in
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
 <div class="line"><a name="l00409"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockIndex.html#abc2a97ffa0857092cee0a0a7d90b685f">  409</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockIndex.html#abc2a97ffa0857092cee0a0a7d90b685f">dirty</a> = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  <span class="keyword">friend</span> <span class="keywordtype">bool</span> DeserializeFromVbkEncoding(<a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;                                         <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;T&gt;</a>&amp; out,</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;                                         <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;                                         <span class="keyword">typename</span> T::hash_t precalculatedHash);</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  <span class="comment">/*template &lt;typename T&gt;</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment">  friend bool DeserializeFromVbkEncoding(ReadStream&amp; stream,</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment">                                         BlockIndex&lt;T&gt;&amp; out,</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment">                                         ValidationState&amp; state,</span></div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;<span class="comment">                                         typename T::hash_t precalculatedHash);*/</span></div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160; </div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160; <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  <span class="comment">// make it non-copyable</span></div>
@@ -537,41 +537,39 @@ $(document).ready(function(){initNavTree('block__index_8hpp_source.html',''); in
 <div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;  *os &lt;&lt; b.toPrettyString();</div>
 <div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;}</div>
 <div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160; </div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Block&gt;</div>
-<div class="line"><a name="l00493"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#a47d7e3b4c00fdc32fba7f549ae4d8801">  493</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(</div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    <a class="code" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    <a class="code" href="structaltintegration_1_1BlockIndex.html">BlockIndex&lt;Block&gt;</a>&amp; out,</div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state,</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    <span class="keyword">typename</span> Block::hash_t precalculatedHash = <span class="keyword">typename</span> Block::hash_t()) {</div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;  <span class="keyword">const</span> <span class="keyword">auto</span>&amp; name = Block::name();</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;  <span class="keyword">using</span> height_t = <span class="keyword">typename</span> Block::height_t;</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;  <span class="keywordflow">if</span> (!stream.readBE&lt;height_t&gt;(out.<a class="code" href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">height</a>, state)) {</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    <span class="keywordflow">return</span> state.Invalid(name + <span class="stringliteral">&quot;-block-index-height&quot;</span>);</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;  }</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;  Block block{};</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, block, state, precalculatedHash)) {</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    <span class="keywordflow">return</span> state.Invalid(name + <span class="stringliteral">&quot;-block-index-header&quot;</span>);</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;  }</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;  out.setHeader(block);</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;  <span class="keywordflow">if</span> (!stream.readBE&lt;uint32_t&gt;(out.<a class="code" href="structaltintegration_1_1BlockIndex.html#aebb596a27604345614ebbe5d72d8f08c">status</a>, state)) {</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    <span class="keywordflow">return</span> state.Invalid(name + <span class="stringliteral">&quot;-block-index-status&quot;</span>);</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;  }</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160; </div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;  <span class="keyword">using</span> addon_t = <span class="keyword">typename</span> Block::addon_t;</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;  addon_t&amp; addon = out;</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, addon, state)) {</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    <span class="keywordflow">return</span> state.Invalid(name + <span class="stringliteral">&quot;-block-index-addon&quot;</span>);</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;  }</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;  out.unsetDirty();</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;}</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="comment">/*template &lt;typename Block&gt;</span></div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="comment">bool DeserializeFromVbkEncoding(</span></div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;<span class="comment">    ReadStream&amp; stream,</span></div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment">    BlockIndex&lt;Block&gt;&amp; out,</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment">    ValidationState&amp; state,</span></div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment">    typename Block::hash_t precalculatedHash = typename Block::hash_t()) {</span></div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment">  const auto&amp; name = Block::name();</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="comment">  using height_t = typename Block::height_t;</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment">  if (!stream.readBE&lt;height_t&gt;(out.height, state)) {</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment">    return state.Invalid(name + &quot;-block-index-height&quot;);</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment">  }</span></div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;<span class="comment">  Block block{};</span></div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="comment">  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {</span></div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="comment">    return state.Invalid(name + &quot;-block-index-header&quot;);</span></div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="comment">  }</span></div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;<span class="comment">  out.setHeader(block);</span></div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="comment">  if (!stream.readBE&lt;uint32_t&gt;(out.status, state)) {</span></div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;<span class="comment">    return state.Invalid(name + &quot;-block-index-status&quot;);</span></div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="comment">  }</span></div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="comment">  using addon_t = typename Block::addon_t;</span></div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;<span class="comment">  addon_t&amp; addon = out;</span></div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;<span class="comment">  if (!DeserializeFromVbkEncoding(stream, addon, state)) {</span></div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;<span class="comment">    return state.Invalid(name + &quot;-block-index-addon&quot;);</span></div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;<span class="comment">  }</span></div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;<span class="comment">  out.unsetDirty();</span></div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="comment">  return true;</span></div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;<span class="comment">}*/</span></div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
 <div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_</span></div>
-<div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a0adfee2584e87651e3e617fc71c2875e"><div class="ttname"><a href="namespacealtintegration.html#a0adfee2584e87651e3e617fc71c2875e">altintegration::getForkBlock</a></div><div class="ttdeci">const BlockIndex&lt; Block &gt; * getForkBlock(const BlockIndex&lt; Block &gt; &amp;a, const BlockIndex&lt; Block &gt; &amp;b)</div><div class="ttdoc">getForkBlock assumes that: the block tree is not malformed the fork block(worst case: genesis/bootstr...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00430">block_index.hpp:430</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a3e464ea06b8e897aff3cc896eab17638"><div class="ttname"><a href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">altintegration::DeserializeFromRaw</a></div><div class="ttdeci">bool DeserializeFromRaw(ReadStream &amp;stream, AltBlock &amp;out, ValidationState &amp;state, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634">altintegration::BlockStateStatus</a></div><div class="ttdeci">BlockStateStatus</div><div class="ttdoc">Flags that describe block status.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00014">block_status.hpp:14</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a2a57696e95e1d3f189388d14dcea28bc"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a2a57696e95e1d3f189388d14dcea28bc">altintegration::BLOCK_VALID_MASK</a></div><div class="ttdeci">@ BLOCK_VALID_MASK</div><div class="ttdoc">all stateful validity levels</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00035">block_status.hpp:33</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00017">block_status.hpp:17</a></div></div>
@@ -584,7 +582,6 @@ $(document).ready(function(){initNavTree('block__index_8hpp_source.html',''); in
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c">altintegration::BLOCK_FAILED_MASK</a></div><div class="ttdeci">@ BLOCK_FAILED_MASK</div><div class="ttdoc">all invalidity flags</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00057">block_status.hpp:56</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7">altintegration::BLOCK_FAILED_POP</a></div><div class="ttdeci">@ BLOCK_FAILED_POP</div><div class="ttdoc">block failed state{less,ful} validation due to its payloads</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00051">block_status.hpp:51</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a80413c3ca23962b5afd87d8d9af42685"><div class="ttname"><a href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">altintegration::isBlockOutdated</a></div><div class="ttdeci">bool isBlockOutdated(const BlockIndex&lt; Block &gt; &amp;finalBlock, const BlockIndex&lt; Block &gt; &amp;candidate)</div><div class="ttdoc">a candidate is considered outdated if it is behind finalBlock, or on same height and not equal to fin...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00450">block_index.hpp:450</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00033">strutil.hpp:33</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00294">arith_uint256.hpp:294</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00032">block_index.hpp:32</a></div></div>
@@ -603,7 +600,6 @@ $(document).ready(function(){initNavTree('block__index_8hpp_source.html',''); in
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_ae52c40ac66b169d4e9d48c4640d84acb"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#ae52c40ac66b169d4e9d48c4640d84acb">altintegration::BlockIndex::isConnected</a></div><div class="ttdeci">bool isConnected() const noexcept</div><div class="ttdoc">Block is connected if it contains block body (PopData), and all its ancestors are connected.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00139">block_index.hpp:139</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_aebb596a27604345614ebbe5d72d8f08c"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#aebb596a27604345614ebbe5d72d8f08c">altintegration::BlockIndex::status</a></div><div class="ttdeci">uint32_t status</div><div class="ttdoc">contains status flags</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00406">block_index.hpp:406</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_afbf74ee9971633b0b8e62dc07fbd1b0d"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#afbf74ee9971633b0b8e62dc07fbd1b0d">altintegration::BlockIndex::isValidTip</a></div><div class="ttdeci">bool isValidTip() const</div><div class="ttdoc">The block is a valid tip if it can be a tip and either there are no descendant blocks or none of the ...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00269">block_index.hpp:269</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00022">read_stream.hpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>

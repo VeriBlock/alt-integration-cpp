@@ -101,10 +101,18 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltChainParams
 </div>
 <p><code>#include &lt;<a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::AltChainParams:</div>
+  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::AltChainParams:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1AltChainParams__inherit__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+</div>
+<div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::AltChainParams:</div>
+<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1AltChainParams__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
@@ -206,6 +214,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxVTBsInAltBlock<
 <tr class="memitem:a1c6b78e1e3379aee25507459072136ac"><td class="memItemLeft" align="right" valign="top"><a id="a1c6b78e1e3379aee25507459072136ac"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock</b> = 1000</td></tr>
 <tr class="separator:a1c6b78e1e3379aee25507459072136ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18841569ada0b6608ffd44ec90b42d53"><td class="memItemLeft" align="right" valign="top"><a id="a18841569ada0b6608ffd44ec90b42d53"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mAltBlockHashSize</b> = <a class="el" href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">SHA256_HASH_SIZE</a></td></tr>
+<tr class="separator:a18841569ada0b6608ffd44ec90b42d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0caa05ae89b6ac4386bef645eaad1c24"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mForkResolutionLookUpTable</b></td></tr>
 <tr class="separator:a0caa05ae89b6ac4386bef645eaad1c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -265,6 +276,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 </li>
 </ul>
 
+<p>Implemented in <a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html#a46f3f725f6afdcf33834067549be37d2">altintegration::AltChainParamsRegTest</a>.</p>
+
 </div>
 </div>
 <a id="a6189f302f690ca4c6ca8490bed3ef3bf"></a>
@@ -290,6 +303,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 </table>
 </div><div class="memdoc">
 <p>This is first block that can be endorsed by POP miners. Can start at genesis block, or at any part of the active chain. This block is immediately finalized, so chain CAN NOT be reorganized past this block. </p>
+
+<p>Implemented in <a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html#a45e78b8a913ae3b26db1e4b8fbecbcb8">altintegration::AltChainParamsRegTest</a>.</p>
 
 </div>
 </div>
@@ -356,6 +371,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 <dl class="section return"><dt>Returns</dt><dd>hash </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>if input data is not valid block header, still calculate hash from input data.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>SHOULD NOT THROW </dd></dl>
+
+<p>Implemented in <a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html#aee6a4c6c28671fa078dd86648b8c522f">altintegration::AltChainParamsRegTest</a>.</p>
 
 </div>
 </div>
@@ -467,7 +484,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
 <div class="line">      100, 100, 95, 89, 80, 69, 56, 40, 21}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00274">274</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00276">276</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 
 </div>
 </div>
