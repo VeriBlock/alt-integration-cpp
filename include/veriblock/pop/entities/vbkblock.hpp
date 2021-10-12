@@ -195,6 +195,21 @@ bool DeserializeFromRaw(ReadStream& stream,
                         const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
 //! @overload
+bool DeserializeFromRaw(ReadStream& stream,
+                        VbkBlock& out,
+                        ValidationState& state,
+                        const AltChainParams& /*ignore*/,
+                        const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
+
+//! @overload
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    VbkBlock& out,
+    ValidationState& state,
+    const AltChainParams& /*ignore*/,
+    const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
+
+//! @overload
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     VbkBlock& out,

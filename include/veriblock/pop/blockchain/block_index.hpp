@@ -369,7 +369,7 @@ struct BlockIndex : public Block::addon_t {
     return format("{}:{}:{}", Block::name(), height, HexStr(getHash()));
   }
 
-  void toVbkEncoding(WriteStream& stream) const {
+  /*void toVbkEncoding(WriteStream& stream) const {
     using height_t = typename Block::height_t;
     stream.writeBE<height_t>(height);
     header->toRaw(stream);
@@ -383,7 +383,7 @@ struct BlockIndex : public Block::addon_t {
     WriteStream stream;
     toVbkEncoding(stream);
     return stream.data();
-  }
+  }*/
 
   friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
     return a.getStatus() == b.getStatus() && a.getHeight() == b.getHeight() &&
@@ -408,11 +408,11 @@ struct BlockIndex : public Block::addon_t {
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
 
-  template <typename T>
+  /*template <typename T>
   friend bool DeserializeFromVbkEncoding(ReadStream& stream,
                                          BlockIndex<T>& out,
                                          ValidationState& state,
-                                         typename T::hash_t precalculatedHash);
+                                         typename T::hash_t precalculatedHash);*/
 
  private:
   // make it non-copyable
@@ -489,7 +489,7 @@ void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
 }
 
 //! @overload
-template <typename Block>
+/*template <typename Block>
 bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     BlockIndex<Block>& out,
@@ -516,7 +516,7 @@ bool DeserializeFromVbkEncoding(
   }
   out.unsetDirty();
   return true;
-}
+}*/
 
 }  // namespace altintegration
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_INDEX_HPP_

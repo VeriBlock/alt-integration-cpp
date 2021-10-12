@@ -26,9 +26,10 @@ struct BtcInvalidationTest {
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
   std::shared_ptr<param_t> params;
+  AltChainParamsRegTest altparam{};
   ValidationState state;
   adaptors::InmemStorageImpl storage{};
-  adaptors::BlockReaderImpl blockProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage, altparam};
 
   BtcInvalidationTest() { params = std::make_shared<BtcChainParamsRegTest>(); }
 };

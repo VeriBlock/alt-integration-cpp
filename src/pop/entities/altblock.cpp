@@ -52,14 +52,17 @@ void AltBlock::toVbkEncoding(WriteStream& stream) const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 AltBlock& out,
                                 ValidationState& state,
+                                const AltChainParams& params,
                                 const AltBlock::hash_t& /* ignore */) {
-  return DeserializeFromRaw(stream, out, state);
+  return DeserializeFromRaw(stream, out, state, params);
 }
 
 bool DeserializeFromRaw(ReadStream& stream,
                         AltBlock& out,
                         ValidationState& state,
+                        const AltChainParams& params,
                         const AltBlock::hash_t& /* ignore */) {
+  (void)params;
   if (!readSingleByteLenValue(
           stream, out.hash, state, MIN_ALT_HASH_SIZE, MAX_ALT_HASH_SIZE)) {
     return state.Invalid("alt-block-hash");

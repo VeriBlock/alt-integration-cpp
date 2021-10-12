@@ -19,6 +19,7 @@
 namespace altintegration {
 
 struct VbkBlock;
+struct AltChainParams;
 
 /**
  * @class AltBlock
@@ -106,6 +107,7 @@ bool DeserializeFromRaw(
     ReadStream& stream,
     AltBlock& out,
     ValidationState& state,
+    const AltChainParams& params,
     const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
 
 //! @overload
@@ -113,6 +115,7 @@ bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     AltBlock& out,
     ValidationState& state,
+    const AltChainParams& params,
     const AltBlock::hash_t& /* ignore */ = AltBlock::hash_t{});
 
 }  // namespace altintegration
