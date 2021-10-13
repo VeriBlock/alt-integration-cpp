@@ -15,11 +15,12 @@
 using namespace altintegration;
 
 struct PopContextFixture : public ::testing::Test {
+  AltChainParamsRegTest altparam{};
   VbkChainParamsRegTest vbkp;
   BtcChainParamsRegTest btcp;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
-  adaptors::BlockReaderImpl blockProvider{storage};
+  adaptors::BlockReaderImpl blockProvider{storage, altparam};
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
       VbkBlockTree(vbkp, btcp, payloadsProvider, blockProvider, payloadsIndex);
