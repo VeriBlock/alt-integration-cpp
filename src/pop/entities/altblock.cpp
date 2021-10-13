@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/entities/altblock.hpp>
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/strutil.hpp>
 
 namespace altintegration {
@@ -62,16 +63,18 @@ bool DeserializeFromRaw(ReadStream& stream,
                         ValidationState& state,
                         const AltChainParams& params,
                         const AltBlock::hash_t& /* ignore */) {
-  (void)params;
-  if (!readSingleByteLenValue(
-          stream, out.hash, state, MIN_ALT_HASH_SIZE, MAX_ALT_HASH_SIZE)) {
+  if (!readSingleByteLenValue(stream,
+                              out.hash,
+                              state,
+                              params.mAltBlockHashSize,
+                              params.mAltBlockHashSize)) {
     return state.Invalid("alt-block-hash");
   }
   if (!readSingleByteLenValue(stream,
                               out.previousBlock,
                               state,
-                              MIN_ALT_HASH_SIZE,
-                              MAX_ALT_HASH_SIZE)) {
+                              params.mAltBlockHashSize,
+                              params.mAltBlockHashSize)) {
     return state.Invalid("alt-block-prevhash");
   }
   if (!stream.readBE<int32_t>(out.height, state)) {

@@ -6,8 +6,6 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_STORED_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_STORED_BLOCK_INDEX_HPP_
 
-#include <veriblock/pop/entities/altblock.hpp>
-
 namespace altintegration {
 
 struct AltChainParams;
