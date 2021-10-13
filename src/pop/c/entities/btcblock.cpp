@@ -120,7 +120,7 @@ POP_ENTITY_SERIALIZE_TO_VBK(btc_block) {
   return res;
 }
 
-POP_ENTITY_DESERIALIZE_FROM_VBK(btc_block) {
+/*POP_ENTITY_DESERIALIZE_FROM_VBK(btc_block) {
   VBK_ASSERT(state);
   VBK_ASSERT(bytes.data);
 
@@ -134,7 +134,7 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(btc_block) {
   auto* res = new POP_ENTITY_NAME(btc_block);
   res->ref = std::move(out);
   return res;
-}
+}*/
 
 POP_GENERATE_DEFAULT_VALUE(btc_block) {
   auto* v = new POP_ENTITY_NAME(btc_block);
