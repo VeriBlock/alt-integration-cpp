@@ -8,6 +8,7 @@
 #include <veriblock/pop/entities/context_info_container.hpp>
 #include <veriblock/pop/entities/keystone_container.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
@@ -52,6 +53,47 @@ template <> BlockIndex<VbkBlock> create() { return BlockIndex<VbkBlock>{0}; }
 template <> BlockIndex<AltBlock> create() { return BlockIndex<AltBlock>{0}; }
 // clang-format on
 
+#define DEFINE_DESER_FUZZ_PARAMS(type)                                         \
+  {                                                                            \
+    AltChainParamsRegTest params{};                                            \
+    auto value = create<type>();                                               \
+    if (DeserializeFromVbkEncoding(stream, value, state, params)) {            \
+      WriteStream w;                                                           \
+      value.toVbkEncoding(w);                                                  \
+      auto value2 = create<type>();                                            \
+      if (!DeserializeFromVbkEncoding(w.data(), value2, state, params)) {      \
+        /* we serialized an entity but were not able to deserialize it back */ \
+        VBK_ASSERT_MSG(false,                                                  \
+                       "type=%s\nbytes=%s\nstate=%s",                          \
+                       STR(type),                                              \
+                       HexStr(w.data()),                                       \
+                       state.toString());                                      \
+      }                                                                        \
+      /* if deserialized value is not same as "before serialization", die */   \
+      auto A = SerializeToHex(value);                                          \
+      auto B = SerializeToHex(value2);                                         \
+      VBK_ASSERT_MSG(A == B, "A=%s\nB=%s\n", A, B);                            \
+      /* if given type provides .estimateSize() method */                      \
+      /* compare its output to size of toVbkEncoding output */                 \
+      if constexpr (hasEstimateSize<type>::value) {                            \
+        auto expectedSize = w.data().size();                                   \
+        auto estimatedSize1 = getEstimateSize(value);                          \
+        auto estimatedSize2 = getEstimateSize(value2);                         \
+        VBK_ASSERT_MSG(                                                        \
+            expectedSize == estimatedSize1 &&                                  \
+                estimatedSize1 == estimatedSize2,                              \
+            "type=%s\nbytes=%s\nexpected=%d\nestimated1=%d\nestimated2=%d\n",  \
+            STR(type),                                                         \
+            HexStr(w.data()),                                                  \
+            expectedSize,                                                      \
+            estimatedSize1,                                                    \
+            estimatedSize2);                                                   \
+      }                                                                        \
+    }                                                                          \
+    state.reset();                                                             \
+    stream.reset();                                                            \
+  }
+
 #define DEFINE_DESER_FUZZ(type)                                                \
   {                                                                            \
     auto value = create<type>();                                               \
@@ -67,7 +109,7 @@ template <> BlockIndex<AltBlock> create() { return BlockIndex<AltBlock>{0}; }
                        HexStr(w.data()),                                       \
                        state.toString());                                      \
       }                                                                        \
-      /* if deserialized value is not same as "before serialization", die */  \
+      /* if deserialized value is not same as "before serialization", die */   \
       auto A = SerializeToHex(value);                                          \
       auto B = SerializeToHex(value2);                                         \
       VBK_ASSERT_MSG(A == B, "A=%s\nB=%s\n", A, B);                            \
@@ -109,9 +151,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   DEFINE_DESER_FUZZ(KeystoneContainer);
   DEFINE_DESER_FUZZ(ContextInfoContainer);
   DEFINE_DESER_FUZZ(AuthenticatedContextInfoContainer);
-  DEFINE_DESER_FUZZ(AltBlock);
-  DEFINE_DESER_FUZZ(BtcBlock);
-  DEFINE_DESER_FUZZ(VbkBlock);
+  DEFINE_DESER_FUZZ_PARAMS(AltBlock);
+  DEFINE_DESER_FUZZ_PARAMS(BtcBlock);
+  DEFINE_DESER_FUZZ_PARAMS(VbkBlock);
   DEFINE_DESER_FUZZ(VbkEndorsement);
   DEFINE_DESER_FUZZ(AltEndorsement);
   DEFINE_DESER_FUZZ(VbkPopTx);
@@ -121,15 +163,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   DEFINE_DESER_FUZZ(StoredBtcBlockAddon);
   DEFINE_DESER_FUZZ(StoredVbkBlockAddon);
   DEFINE_DESER_FUZZ(StoredAltBlockAddon);
-  DEFINE_DESER_FUZZ(StoredBlockIndex<AltBlock>);
-  DEFINE_DESER_FUZZ(StoredBlockIndex<VbkBlock>);
-  DEFINE_DESER_FUZZ(StoredBlockIndex<BtcBlock>);
+  DEFINE_DESER_FUZZ_PARAMS(StoredBlockIndex<AltBlock>);
+  DEFINE_DESER_FUZZ_PARAMS(StoredBlockIndex<VbkBlock>);
+  DEFINE_DESER_FUZZ_PARAMS(StoredBlockIndex<BtcBlock>);
   DEFINE_DESER_FUZZ(BtcBlockAddon);
   DEFINE_DESER_FUZZ(VbkBlockAddon);
   DEFINE_DESER_FUZZ(AltBlockAddon);
-  DEFINE_DESER_FUZZ(BlockIndex<AltBlock>);
-  DEFINE_DESER_FUZZ(BlockIndex<VbkBlock>);
-  DEFINE_DESER_FUZZ(BlockIndex<BtcBlock>);
   DEFINE_DESER_FUZZ(VTB);
   DEFINE_DESER_FUZZ(ATV);
   DEFINE_DESER_FUZZ(PopData);
