@@ -1,13 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1Config.html#a2a9f58ec53d53fba60c49bc50e656945":[5,0,0,26,5],
-"structaltintegration_1_1Config.html#a33c84bcd653b68690d752da6e56513cd":[5,0,0,26,3],
-"structaltintegration_1_1Config.html#a350a3b951170c7a9502289f2ad5c4ca4":[5,0,0,26,9],
-"structaltintegration_1_1Config.html#a37c65b03dc521c49196aeb251a4b114f":[5,0,0,26,8],
-"structaltintegration_1_1Config.html#a3ea1960c7ed296507b7a2a4c9481d434":[5,0,0,26,10],
-"structaltintegration_1_1Config.html#a567bfc710aaf809915274fdce6c08cd7":[5,0,0,26,12],
-"structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b":[5,0,0,26,7],
-"structaltintegration_1_1Config.html#a81feca7d1501979054358316d9da000f":[5,0,0,26,11],
 "structaltintegration_1_1Config.html#a8730eaf51067ecd8091d64cdf7b86ea9":[5,0,0,26,4],
 "structaltintegration_1_1Config.html#ab3b663dd0727f53d6cb6589c775cc867":[5,0,0,26,6],
 "structaltintegration_1_1Config_1_1Bootstrap.html":[5,0,0,26,0],
@@ -249,5 +241,13 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1PopRewardsParams.html#a31b838c287696d205b5753679472a58b":[5,0,0,62,9],
 "structaltintegration_1_1PopRewardsParams.html#a42b236745d958d529a818aa2b0d3dafe":[5,0,0,62,0],
 "structaltintegration_1_1PopRewardsParams.html#a54406a1855beceddfcf97ba874b2a993":[5,0,0,62,11],
-"structaltintegration_1_1PopRewardsParams.html#a63d157bed431d701b785f8c433b94477":[5,0,0,62,7]
+"structaltintegration_1_1PopRewardsParams.html#a63d157bed431d701b785f8c433b94477":[5,0,0,62,7],
+"structaltintegration_1_1PopRewardsParams.html#abdc469f8011e109695a05c55d1c43c61":[5,0,0,62,1],
+"structaltintegration_1_1PopRewardsParams.html#ad75ee6028513db41c53afc46dfaceca4":[5,0,0,62,4],
+"structaltintegration_1_1PopRewardsParams.html#ae73739b4241645ccae35e3d471e53562":[5,0,0,62,10],
+"structaltintegration_1_1PopRewardsParams.html#ae842bd43aacd249a25931fb6fb6b63fc":[5,0,0,62,3],
+"structaltintegration_1_1PublicationData.html":[5,0,0,44],
+"structaltintegration_1_1PublicationData.html#a0f98a09cf5a2476c75893259eb0a4df3":[5,0,0,44,1],
+"structaltintegration_1_1PublicationData.html#a25835c551b4dbd2ea3db199f18f78323":[5,0,0,44,2],
+"structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200":[5,0,0,44,6]
 };
