@@ -146,8 +146,8 @@ inline StoredBlockIndex<AltBlock> getRandomIndex() {
   index.height = rand();
 
   AltBlock block;
-  block.hash = generateRandomBytesVector(12);
-  block.previousBlock = generateRandomBytesVector(12);
+  block.hash = generateRandomBytesVector(32);
+  block.previousBlock = generateRandomBytesVector(32);
   block.timestamp = rand();
   block.height = rand();
 
