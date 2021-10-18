@@ -11,9 +11,7 @@ import (
 	"testing"
 )
 
-func GenerateTestPopContext(t *testing.T, storage *Storage) *PopContext {
-	config := NewConfig()
-
+func GenerateTestPopContext(t *testing.T, storage *Storage, config *Config) *PopContext {
 	config.SelectVbkParams("regtest", 0, "")
 	config.SelectBtcParams("regtest", 0, "")
 
