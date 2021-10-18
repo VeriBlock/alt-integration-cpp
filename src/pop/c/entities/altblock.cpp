@@ -11,10 +11,11 @@
 #include <veriblock/pop/adaptors/picojson.hpp>
 // clang-format on
 
+#include "../config.hpp"
+#include "../validation_state.hpp"
 #include "altblock.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/serde.hpp"
-#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(alt_block) {
   if (self != nullptr) {
@@ -106,21 +107,25 @@ POP_ENTITY_SERIALIZE_TO_VBK(alt_block) {
   return res;
 }
 
-/*POP_ENTITY_DESERIALIZE_FROM_VBK(alt_block) {
+POP_ENTITY_DESERIALIZE_FROM_VBK(alt_block, POP_ENTITY_NAME(config) * config) {
   VBK_ASSERT(state);
+  VBK_ASSERT(config);
   VBK_ASSERT(bytes.data);
+  VBK_ASSERT(config->ref);
+  VBK_ASSERT(config->ref->alt);
 
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 
   altintegration::AltBlock out;
-  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
+  if (!altintegration::DeserializeFromVbkEncoding(
+          v_bytes, out, state->ref, *config->ref->alt)) {
     return nullptr;
   }
 
   auto* res = new POP_ENTITY_NAME(alt_block);
   res->ref = std::move(out);
   return res;
-}*/
+}
 
 POP_GENERATE_DEFAULT_VALUE(alt_block) {
   auto* v = new POP_ENTITY_NAME(alt_block);
@@ -132,8 +137,10 @@ namespace default_value {
 template <>
 altintegration::AltBlock generateDefaultValue<altintegration::AltBlock>() {
   altintegration::AltBlock res;
-  res.hash = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-  res.previousBlock = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+  res.hash = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+  res.previousBlock = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
   res.timestamp = 1;
   res.height = 1;
   return res;

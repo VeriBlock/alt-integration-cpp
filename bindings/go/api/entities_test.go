@@ -66,8 +66,8 @@ func TestAltBlock(t *testing.T) {
 
 	assert.Equal(alt_block.GetHeight(), int32(1))
 	assert.Equal(alt_block.GetTimestamp(), uint32(1))
-	assert.Equal(alt_block.GetHash(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
-	assert.Equal(alt_block.GetPreviousBlock(), []byte{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})
+	assert.Equal(alt_block.GetHash(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(alt_block.GetPreviousBlock(), []byte{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})
 
 	alt_block.Free()
 	alt_block.Free()

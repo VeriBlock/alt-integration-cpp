@@ -35,10 +35,13 @@ func TestAltBlockSerde(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	encodedBytes := assertHexDecode(defaultAltBlockEncoded)
 
 	block := NewAltBlock([]byte{}, []byte{}, 0, 0)
-	err := block.DeserializeFromVbkAltBlock(encodedBytes)
+	err := block.DeserializeFromVbkAltBlock(encodedBytes, config)
 	assert.NoError(err)
 	assert.NotNil(block)
 
@@ -49,7 +52,7 @@ func TestAltBlockSerde(t *testing.T) {
 
 	assert.Equal(block.SerializeToVbk(), encodedBytes)
 
-	err = block.DeserializeFromVbkAltBlock([]byte{1, 2, 3, 4})
+	err = block.DeserializeFromVbkAltBlock([]byte{1, 2, 3, 4}, config)
 	assert.Error(err)
 }
 
@@ -58,10 +61,13 @@ func TestVbkBlockSerde(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	encodedBytes := assertHexDecode(defaultVbkBlockEncoded)
 
 	vbkBlock := CreateVbkBlock()
-	err := vbkBlock.DeserializeFromVbk(encodedBytes)
+	err := vbkBlock.DeserializeFromVbk(encodedBytes, config)
 	assert.NoError(err)
 	assert.NotNil(vbkBlock)
 
@@ -77,7 +83,7 @@ func TestVbkBlockSerde(t *testing.T) {
 
 	assert.Equal(vbkBlock.SerializeToVbk(), encodedBytes)
 
-	err = vbkBlock.DeserializeFromVbk([]byte{1, 2, 3, 4})
+	err = vbkBlock.DeserializeFromVbk([]byte{1, 2, 3, 4}, config)
 	assert.Error(err)
 }
 
@@ -86,10 +92,13 @@ func TestBtcBlockSerde(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	encodedBytes := assertHexDecode(defaultBtcBlockEncoded)
 
 	btcBlock := CreateBtcBlock()
-	err := btcBlock.DeserializeFromVbk(encodedBytes)
+	err := btcBlock.DeserializeFromVbk(encodedBytes, config)
 	assert.NoError(err)
 	assert.NotNil(btcBlock)
 
@@ -102,7 +111,7 @@ func TestBtcBlockSerde(t *testing.T) {
 
 	assert.Equal(btcBlock.SerializeToVbk(), encodedBytes)
 
-	err = btcBlock.DeserializeFromVbk([]byte{1, 2, 3, 4})
+	err = btcBlock.DeserializeFromVbk([]byte{1, 2, 3, 4}, config)
 	assert.Error(err)
 }
 
@@ -111,10 +120,13 @@ func TestVtbSerde(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	encodedBytes := assertHexDecode(defaultVtbEncoded)
 
 	vbkBlock := CreateVbkBlock()
-	err := vbkBlock.DeserializeFromVbk(assertHexDecode(defaultVbkBlockEncoded))
+	err := vbkBlock.DeserializeFromVbk(assertHexDecode(defaultVbkBlockEncoded), config)
 	assert.NoError(err)
 	assert.NotNil(vbkBlock)
 
@@ -136,10 +148,13 @@ func TestAtvSerde(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	encodedBytes := assertHexDecode(defaultAtvEncoded)
 
 	vbkBlock := CreateVbkBlock()
-	err := vbkBlock.DeserializeFromVbk(assertHexDecode(defaultVbkBlockEncoded))
+	err := vbkBlock.DeserializeFromVbk(assertHexDecode(defaultVbkBlockEncoded), config)
 	assert.NoError(err)
 	assert.NotNil(vbkBlock)
 
@@ -179,6 +194,9 @@ func TestPopDataSerde(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	encodedBytes := assertHexDecode(defaultPopDataEncoded)
 
 	atv := CreateAtv()
@@ -192,7 +210,7 @@ func TestPopDataSerde(t *testing.T) {
 	assert.NotNil(vtb)
 
 	vbkBlock := CreateVbkBlock()
-	err = vbkBlock.DeserializeFromVbk(assertHexDecode(defaultVbkBlockEncoded))
+	err = vbkBlock.DeserializeFromVbk(assertHexDecode(defaultVbkBlockEncoded), config)
 	assert.NoError(err)
 	assert.NotNil(vbkBlock)
 
