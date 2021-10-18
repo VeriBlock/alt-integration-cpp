@@ -102,7 +102,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1MemPool.html',
 <dd>
 Those payloads that are not contextually valid <em>given current view</em> may become valid or invalid later. Example: <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a>'s VBK containing block is 100, currently last known VBK block is 90. ATM we can't connect <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a> to current VBK chain, so this <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a> remains in <a class="el" href="structaltintegration_1_1MemPool.html" title="Data structure, that stores in memory all valid payloads (ATV, VTB, VbkBlock) submitted by other peer...">MemPool</a> until we explicitly remove it, or connect containing VBK block with this <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00038">38</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00040">40</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -198,6 +198,9 @@ std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">BtcBlock:
 <tr class="memitem:a857ee8d33550808b2034da04e4c1f175"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1PopData.html">PopData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a857ee8d33550808b2034da04e4c1f175">generatePopData</a> ()</td></tr>
 <tr class="memdesc:a857ee8d33550808b2034da04e4c1f175"><td class="mdescLeft">&#160;</td><td class="mdescRight">(POW) Miners should execute this to get POP content for "next block".  <a href="structaltintegration_1_1MemPool.html#a857ee8d33550808b2034da04e4c1f175">More...</a><br /></td></tr>
 <tr class="separator:a857ee8d33550808b2034da04e4c1f175"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a615f4219aa846007a60ec039eef21143"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1PopData.html">PopData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a615f4219aa846007a60ec039eef21143">generatePopData</a> (const std::function&lt; void(const <a class="el" href="structaltintegration_1_1ATV.html">ATV</a> &amp;, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;)&gt; &amp;onATV, const std::function&lt; void(const <a class="el" href="structaltintegration_1_1VTB.html">VTB</a> &amp;, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;)&gt; &amp;onVTB, const std::function&lt; void(const <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;)&gt; &amp;onVBK)</td></tr>
+<tr class="memdesc:a615f4219aa846007a60ec039eef21143"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="structaltintegration_1_1MemPool.html#a615f4219aa846007a60ec039eef21143">More...</a><br /></td></tr>
+<tr class="separator:a615f4219aa846007a60ec039eef21143"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a338bda64c5577f8d346e02f941ebdc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a0a338bda64c5577f8d346e02f941ebdc">removeAll</a> (const <a class="el" href="structaltintegration_1_1PopData.html">PopData</a> &amp;popData)</td></tr>
 <tr class="memdesc:a0a338bda64c5577f8d346e02f941ebdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove payloads from mempool by their IDs.  <a href="structaltintegration_1_1MemPool.html#a0a338bda64c5577f8d346e02f941ebdc">More...</a><br /></td></tr>
 <tr class="separator:a0a338bda64c5577f8d346e02f941ebdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,7 +259,7 @@ signals::Signal&lt; void(const <a class="el" href="structaltintegration_1_1VbkBl
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a857ee8d33550808b2034da04e4c1f175"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a857ee8d33550808b2034da04e4c1f175">&#9670;&nbsp;</a></span>generatePopData()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a857ee8d33550808b2034da04e4c1f175">&#9670;&nbsp;</a></span>generatePopData() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -271,6 +274,48 @@ signals::Signal&lt; void(const <a class="el" href="structaltintegration_1_1VbkBl
 </div><div class="memdoc">
 <dl class="section warning"><dt>Warning</dt><dd>Expensive operation. It builds virtual VBK Block Tree with payloads stored in mempool, applies them to current <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> tip. All payloads that can not be connected will remain in mempool. As a result, this method returns <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> which contains fully valid and connected payloads. This should be inserted into <a class="el" href="structaltintegration_1_1AltBlock.html" title="Represents a view on Altchain block - i.e.">AltBlock</a> as is.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>statefully valid <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">altintegration::PopData</a> that can be connected to current tip. </dd></dl>
+
+</div>
+</div>
+<a id="a615f4219aa846007a60ec039eef21143"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a615f4219aa846007a60ec039eef21143">&#9670;&nbsp;</a></span>generatePopData() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structaltintegration_1_1PopData.html">PopData</a> altintegration::MemPool::generatePopData </td>
+          <td>(</td>
+          <td class="paramtype">const std::function&lt; void(const <a class="el" href="structaltintegration_1_1ATV.html">ATV</a> &amp;, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>onATV</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(const <a class="el" href="structaltintegration_1_1VTB.html">VTB</a> &amp;, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>onVTB</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(const <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>onVBK</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">onATV</td><td>a callback that is executed when <a class="el" href="structaltintegration_1_1ATV.html" title="Atlchain endorsement.">ATV</a> have been considered </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">onVTB</td><td>a callback that is executed when <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a> have been considered </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">onVBK</td><td>a callback that is executed when <a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a> have been considered </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -313,38 +358,38 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if payload exists in mempool or active chain, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00099">99</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                                               {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="comment">// is `id` in mempool?</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">auto</span>* inmempool = get&lt;T&gt;(<span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">if</span> (inmempool != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="comment">// is `id` in blockchain?</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keyword">auto</span>&amp; pl = getPayloadsIndex();</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    std::vector&lt;uint8_t&gt; v(<span class="keywordtype">id</span>.begin(), <span class="keywordtype">id</span>.end());</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; containing = pl.getContainingAltBlocks(v);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">if</span> (containing.empty()) {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="comment">// check if any of containing is on active chain</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keyword">auto</span>&amp; tree = mempool_tree_.alt();</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : containing) {</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <span class="keyword">auto</span>* index = tree.getBlockIndex(c);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      <span class="keywordflow">if</span> (index == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="comment">// block is deleted (too old)</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      }</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <span class="keywordflow">if</span> (tree.getBestChain().contains(index)) {</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="comment">// `id` is not on active chain</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00101">101</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                                               {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="comment">// is `id` in mempool?</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">auto</span>* inmempool = get&lt;T&gt;(<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">if</span> (inmempool != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="comment">// is `id` in blockchain?</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">auto</span>&amp; pl = getPayloadsIndex();</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    std::vector&lt;uint8_t&gt; v(<span class="keywordtype">id</span>.begin(), <span class="keywordtype">id</span>.end());</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; containing = pl.getContainingAltBlocks(v);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">if</span> (containing.empty()) {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="comment">// check if any of containing is on active chain</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keyword">auto</span>&amp; tree = mempool_tree_.alt();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : containing) {</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      <span class="keyword">auto</span>* index = tree.getBlockIndex(c);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      <span class="keywordflow">if</span> (index == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="comment">// block is deleted (too old)</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      }</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="keywordflow">if</span> (tree.getBestChain().contains(index)) {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="comment">// `id` is not on active chain</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -387,11 +432,11 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>subscription id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00302">302</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                                                     {</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keyword">auto</span>&amp; sig = getSignal&lt;T&gt;();</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">return</span> sig.connect(f);</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00314">314</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                                                     {</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keyword">auto</span>&amp; sig = getSignal&lt;T&gt;();</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordflow">return</span> sig.connect(f);</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -478,14 +523,14 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if payload is accepted to mempool, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00228">228</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                                                   {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    (void)pl;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    (void)state;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    (void)old_block_check;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    static_assert(<span class="keyword">sizeof</span>(T) == 0, <span class="stringliteral">&quot;Undefined type used in MemPool::submit&quot;</span>);</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordflow">return</span> {};</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00230">230</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                                                   {</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    (void)pl;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    (void)state;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    (void)old_block_check;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    static_assert(<span class="keyword">sizeof</span>(T) == 0, <span class="stringliteral">&quot;Undefined type used in MemPool::submit&quot;</span>);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -548,10 +593,10 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if payload is accepted to mempool, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00203">203</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                                                   {</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordflow">return</span> submit&lt;T&gt;(std::make_shared&lt;T&gt;(pl), state, old_block_check);</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00205">205</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                                                   {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">return</span> submit&lt;T&gt;(std::make_shared&lt;T&gt;(pl), state, old_block_check);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -614,17 +659,17 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if payload is accepted to mempool, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00170">170</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                                                   {</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    ReadStream stream(bytes);</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    T payload;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, payload, state)) {</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      <span class="keywordflow">return</span> {FAILED_STATELESS,</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;              state.Invalid(<span class="stringliteral">&quot;pop-mempool-submit-deserialize&quot;</span>)};</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordflow">return</span> submit&lt;T&gt;(payload, state, old_block_check);</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00172">172</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                                                   {</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    ReadStream stream(bytes);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    T payload;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, payload, state)) {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      <span class="keywordflow">return</span> {FAILED_STATELESS,</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;              state.Invalid(<span class="stringliteral">&quot;pop-mempool-submit-deserialize&quot;</span>)};</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    }</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">return</span> submit&lt;T&gt;(payload, state, old_block_check);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
 </div>

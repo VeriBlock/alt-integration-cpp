@@ -18,7 +18,6 @@ var structaltintegration_1_1AltChainParams =
     [ "maxAltchainFutureBlockTime", "structaltintegration_1_1AltChainParams.html#a1df826389de975b3c767cfce40d041f1", null ],
     [ "maxWorkerQueueSize", "structaltintegration_1_1AltChainParams.html#a2c8435cb1679bd15c9d4a8dc029ade34", null ],
     [ "preserveBlocksBehindFinal", "structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689", null ],
-    [ "mAltBlockHashSize", "structaltintegration_1_1AltChainParams.html#a18841569ada0b6608ffd44ec90b42d53", null ],
     [ "mEndorsementSettlementInterval", "structaltintegration_1_1AltChainParams.html#ac830ec898b26a093da4f0902de94d697", null ],
     [ "mFinalityDelay", "structaltintegration_1_1AltChainParams.html#a8ab041ae9b9c1e450428b8016a774a79", null ],
     [ "mForkResolutionLookUpTable", "structaltintegration_1_1AltChainParams.html#a0caa05ae89b6ac4386bef645eaad1c24", null ],

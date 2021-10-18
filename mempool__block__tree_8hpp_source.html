@@ -101,75 +101,79 @@ $(document).ready(function(){initNavTree('mempool__block__tree_8hpp_source.html'
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;alt_block_tree.hpp&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;temp_block_tree.hpp&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">struct </span>MemPoolBlockTree {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">using</span> <a class="code" href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">BtcBlockTree</a> = <span class="keyword">typename</span> VbkBlockTree::BtcTree;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  MemPoolBlockTree(AltBlockTree&amp; tree)</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(&amp;tree) {}</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keywordtype">bool</span> acceptVbkBlock(<span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; blk,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                      ValidationState&amp; state);</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keywordtype">bool</span> acceptVTB(<span class="keyword">const</span> VTB&amp; vtb,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                 <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; containingBlock,</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                 ValidationState&amp; state);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keywordtype">bool</span> acceptATV(<span class="keyword">const</span> ATV&amp; atv,</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                 <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; blockOfProof,</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                 ValidationState&amp; state);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">bool</span> checkContextually(<span class="keyword">const</span> ATV&amp; atv, ValidationState&amp; state);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">bool</span> checkContextually(<span class="keyword">const</span> VTB&amp; vtb, ValidationState&amp; state);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">bool</span> checkContextually(<span class="keyword">const</span> VbkBlock&amp; block, ValidationState&amp; state);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">bool</span> isBlockOld(<span class="keyword">const</span> VbkBlock&amp; block) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">bool</span> areStronglyEquivalent(<span class="keyword">const</span> ATV&amp; atv1, <span class="keyword">const</span> ATV&amp; atv2);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keywordtype">bool</span> areStronglyEquivalent(<span class="keyword">const</span> VTB&amp; vtb1, <span class="keyword">const</span> VTB&amp; vtb2);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keywordtype">bool</span> areWeaklyEquivalent(<span class="keyword">const</span> VTB&amp; vtb1, <span class="keyword">const</span> VTB&amp; vtb2);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keywordtype">int</span> weaklyCompare(<span class="keyword">const</span> VTB&amp; vtb1, <span class="keyword">const</span> VTB&amp; vtb2);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  TempBlockTree&lt;VbkBlockTree&gt;&amp; vbk() { <span class="keywordflow">return</span> temp_vbk_tree_; }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">const</span> TempBlockTree&lt;VbkBlockTree&gt;&amp; vbk()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> temp_vbk_tree_; }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  TempBlockTree&lt;BtcBlockTree&gt;&amp; btc() { <span class="keywordflow">return</span> temp_btc_tree_; }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">const</span> TempBlockTree&lt;BtcBlockTree&gt;&amp; btc()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> temp_btc_tree_; }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="comment">// use this method for stateful validation of pop data. invalid pop data will</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="comment">// be removed from `pop`</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordtype">void</span> filterInvalidPayloads(PopData&amp; pop);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  AltBlockTree&amp; alt() { <span class="keywordflow">return</span> *tree_; }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> AltBlockTree&amp; alt()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> *tree_; }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordtype">void</span> cleanUp() {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    temp_btc_tree_.cleanUpStaleBlocks();</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    temp_vbk_tree_.cleanUpStaleBlocks();</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordtype">void</span> clear() {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    temp_btc_tree_.clear();</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    temp_vbk_tree_.clear();</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  TempBlockTree&lt;VbkBlockTree&gt; temp_vbk_tree_;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  TempBlockTree&lt;BtcBlockTree&gt; temp_btc_tree_;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  AltBlockTree* tree_;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;};</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;veriblock/pop/validation_state.hpp&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">struct </span>MemPoolBlockTree {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keyword">using</span> <a class="code" href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">BtcBlockTree</a> = <span class="keyword">typename</span> VbkBlockTree::BtcTree;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  MemPoolBlockTree(AltBlockTree&amp; tree)</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;      : temp_vbk_tree_(tree.vbk()), temp_btc_tree_(tree.btc()), tree_(&amp;tree) {}</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keywordtype">bool</span> acceptVbkBlock(<span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; blk,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                      ValidationState&amp; state);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordtype">bool</span> acceptVTB(<span class="keyword">const</span> VTB&amp; vtb,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                 <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; containingBlock,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                 ValidationState&amp; state);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordtype">bool</span> acceptATV(<span class="keyword">const</span> ATV&amp; atv,</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                 <span class="keyword">const</span> std::shared_ptr&lt;VbkBlock&gt;&amp; blockOfProof,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                 ValidationState&amp; state);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">bool</span> checkContextually(<span class="keyword">const</span> ATV&amp; atv, ValidationState&amp; state);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">bool</span> checkContextually(<span class="keyword">const</span> VTB&amp; vtb, ValidationState&amp; state);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordtype">bool</span> checkContextually(<span class="keyword">const</span> VbkBlock&amp; block, ValidationState&amp; state);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordtype">bool</span> isBlockOld(<span class="keyword">const</span> VbkBlock&amp; block) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordtype">bool</span> areStronglyEquivalent(<span class="keyword">const</span> ATV&amp; atv1, <span class="keyword">const</span> ATV&amp; atv2);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keywordtype">bool</span> areStronglyEquivalent(<span class="keyword">const</span> VTB&amp; vtb1, <span class="keyword">const</span> VTB&amp; vtb2);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">bool</span> areWeaklyEquivalent(<span class="keyword">const</span> VTB&amp; vtb1, <span class="keyword">const</span> VTB&amp; vtb2);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keywordtype">int</span> weaklyCompare(<span class="keyword">const</span> VTB&amp; vtb1, <span class="keyword">const</span> VTB&amp; vtb2);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  TempBlockTree&lt;VbkBlockTree&gt;&amp; vbk() { <span class="keywordflow">return</span> temp_vbk_tree_; }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keyword">const</span> TempBlockTree&lt;VbkBlockTree&gt;&amp; vbk()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> temp_vbk_tree_; }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  TempBlockTree&lt;BtcBlockTree&gt;&amp; btc() { <span class="keywordflow">return</span> temp_btc_tree_; }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keyword">const</span> TempBlockTree&lt;BtcBlockTree&gt;&amp; btc()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> temp_btc_tree_; }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">void</span> filterInvalidPayloads(</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      PopData&amp; pop,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> ATV&amp;, <span class="keyword">const</span> ValidationState&amp;)&gt;&amp; onATV,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      <span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> VTB&amp;, <span class="keyword">const</span> ValidationState&amp;)&gt;&amp; onVTB,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> VbkBlock&amp;, <span class="keyword">const</span> ValidationState&amp;)&gt;&amp;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;          onVBK);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  AltBlockTree&amp; alt() { <span class="keywordflow">return</span> *tree_; }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keyword">const</span> AltBlockTree&amp; alt()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> *tree_; }</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keywordtype">void</span> cleanUp() {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    temp_btc_tree_.cleanUpStaleBlocks();</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    temp_vbk_tree_.cleanUpStaleBlocks();</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  }</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keywordtype">void</span> clear() {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    temp_btc_tree_.clear();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    temp_vbk_tree_.clear();</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  }</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  TempBlockTree&lt;VbkBlockTree&gt; temp_vbk_tree_;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  TempBlockTree&lt;BtcBlockTree&gt; temp_btc_tree_;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  AltBlockTree* tree_;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;};</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8a10d689ced86bc9e96cfb36b5fd6cb3"><div class="ttname"><a href="namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3">altintegration::BtcBlockTree</a></div><div class="ttdeci">BlockTree&lt; BtcBlock, BtcChainParams &gt; BtcBlockTree</div><div class="ttdoc">Bitcoin tree.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__block__tree_8hpp_source.html#l00046">vbk_block_tree.hpp:46</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
