@@ -4,11 +4,11 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <type_traits>
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/context_info_container.hpp>
 #include <veriblock/pop/entities/keystone_container.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
-#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
@@ -41,9 +41,9 @@ getEstimateSize(const T&) {
 }
 
 using altintegration::AltBlock;
-using altintegration::StoredBlockIndex;
 using altintegration::BlockIndex;
 using altintegration::BtcBlock;
+using altintegration::StoredBlockIndex;
 using altintegration::VbkBlock;
 
 // clang-format off
@@ -94,14 +94,15 @@ template <> BlockIndex<AltBlock> create() { return BlockIndex<AltBlock>{0}; }
     stream.reset();                                                            \
   }
 
-#define DEFINE_DESER_FUZZ(type)                                                \
+#define DEFINE_DESER_FUZZ(type, ...)                                           \
   {                                                                            \
     auto value = create<type>();                                               \
-    if (DeserializeFromVbkEncoding(stream, value, state)) {                    \
+    if (DeserializeFromVbkEncoding(stream, value, state, ##__VA_ARGS__)) {     \
       WriteStream w;                                                           \
       value.toVbkEncoding(w);                                                  \
       auto value2 = create<type>();                                            \
-      if (!DeserializeFromVbkEncoding(w.data(), value2, state)) {              \
+      if (!DeserializeFromVbkEncoding(                                         \
+              w.data(), value2, state, ##__VA_ARGS__)) {                       \
         /* we serialized an entity but were not able to deserialize it back */ \
         VBK_ASSERT_MSG(false,                                                  \
                        "type=%s\nbytes=%s\nstate=%s",                          \
