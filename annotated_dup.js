@@ -30,6 +30,7 @@ var annotated_dup =
       [ "AltBlockTree", "structaltintegration_1_1AltBlockTree.html", "structaltintegration_1_1AltBlockTree" ],
       [ "PopPayoutsParams", "structaltintegration_1_1PopPayoutsParams.html", "structaltintegration_1_1PopPayoutsParams" ],
       [ "AltChainParams", "structaltintegration_1_1AltChainParams.html", "structaltintegration_1_1AltChainParams" ],
+      [ "AltChainParamsRegTest", "structaltintegration_1_1AltChainParamsRegTest.html", "structaltintegration_1_1AltChainParamsRegTest" ],
       [ "BaseBlockTree", "structaltintegration_1_1BaseBlockTree.html", "structaltintegration_1_1BaseBlockTree" ],
       [ "BlockIndex", "structaltintegration_1_1BlockIndex.html", "structaltintegration_1_1BlockIndex" ],
       [ "BlockTree", "structaltintegration_1_1BlockTree.html", "structaltintegration_1_1BlockTree" ],
