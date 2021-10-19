@@ -17,7 +17,6 @@ func TestPopContextMemPoolSubmitAll(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
@@ -91,7 +90,6 @@ func TestPopContextMemPoolSubmitStatefullFailed(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
@@ -161,7 +159,6 @@ func TestPopContextMempoolGeneratePopData(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)

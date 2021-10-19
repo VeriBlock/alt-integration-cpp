@@ -19,7 +19,6 @@ func TestGeneratePublicationData(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
@@ -53,7 +52,6 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
@@ -81,7 +79,6 @@ func TestCheckAll(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
@@ -141,7 +138,6 @@ func TestSaveLoadAllTrees(t *testing.T) {
 	defer os.RemoveAll("/tmp/alt-integration")
 
 	config := NewConfig()
-	defer config.Free()
 
 	storage, err := NewStorage("/tmp/alt-integration")
 	defer storage.Free()
