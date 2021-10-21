@@ -165,30 +165,6 @@ inline StoredBlockIndex<AltBlock> getRandomIndex() {
   return index;
 }
 
-struct AltChainParamsTest : public AltChainParams {
-  AltBlock getBootstrapBlock() const noexcept override {
-    AltBlock genesisBlock;
-    genesisBlock.hash = std::vector<uint8_t>(10, 1);
-    genesisBlock.previousBlock = std::vector<uint8_t>(10, 2);
-    genesisBlock.height = 0;
-    genesisBlock.timestamp = 0;
-    return genesisBlock;
-  }
-
-  int64_t getIdentifier() const noexcept override { return 0x7ec7; }
-
-  std::vector<uint8_t> getHash(
-      const std::vector<uint8_t>& bytes) const noexcept override {
-    return AssertDeserializeFromRaw<AltBlock>(bytes, *this).getHash();
-  }
-
-  bool checkBlockHeader(const std::vector<uint8_t>&,
-                        const std::vector<uint8_t>&,
-                        ValidationState&) const noexcept override {
-    return true;
-  }
-};
-
 }  // namespace altintegration
 
 #endif

@@ -297,10 +297,11 @@ struct AltChainParamsRegTest : public AltChainParams {
     return AssertDeserializeFromRaw<AltBlock>(bytes, *this).getHash();
   }
 
-  bool checkBlockHeader(const std::vector<uint8_t>&,
+  bool checkBlockHeader(const std::vector<uint8_t>& bytes,
                         const std::vector<uint8_t>&,
-                        ValidationState&) const noexcept override {
-    return true;
+                        ValidationState& state) const noexcept override {
+    AltBlock block;
+    return DeserializeFromRaw<AltBlock>(bytes, block, state, *this);
   }
 
   int64_t id = 0;

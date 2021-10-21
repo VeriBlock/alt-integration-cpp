@@ -64,19 +64,9 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
                duplicate->toShortPrettyString()));
   }
 
-  AltBlock endorsed_block;
-  if (!DeserializeFromRaw<AltBlock>(atv.transaction.publicationData.header,
-                                    endorsed_block,
-                                    state,
-                                    tree_->getParams())) {
-    return state.Invalid(
-        "atv-bad-pubdata",
-        format("ATV={} pubdata={}",
-               atv.getId().toHex(),
-               atv.transaction.publicationData.toPrettyString()));
-  }
+  auto endorsed_hash =
+      tree_->getParams().getHash(atv.transaction.publicationData.header);
 
-  auto endorsed_hash = endorsed_block.getHash();
   auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
   if (endorsed_index != nullptr) {
     auto* tip = tree_->getBestChain().tip();
