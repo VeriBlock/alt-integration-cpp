@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1PopRewardsParams.html#a63d157bed431d701b785f8c433b94477":[5,0,0,62,7],
+"structaltintegration_1_1PopRewardsParams.html#abdc469f8011e109695a05c55d1c43c61":[5,0,0,62,1],
+"structaltintegration_1_1PopRewardsParams.html#ad75ee6028513db41c53afc46dfaceca4":[5,0,0,62,4],
+"structaltintegration_1_1PopRewardsParams.html#ae73739b4241645ccae35e3d471e53562":[5,0,0,62,10],
+"structaltintegration_1_1PopRewardsParams.html#ae842bd43aacd249a25931fb6fb6b63fc":[5,0,0,62,3],
+"structaltintegration_1_1PublicationData.html":[5,0,0,44],
+"structaltintegration_1_1PublicationData.html#a0f98a09cf5a2476c75893259eb0a4df3":[5,0,0,44,1],
+"structaltintegration_1_1PublicationData.html#a25835c551b4dbd2ea3db199f18f78323":[5,0,0,44,2],
 "structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200":[5,0,0,44,6],
 "structaltintegration_1_1PublicationData.html#ac607c6ab5dcfe2a0f5428c44b473dcff":[5,0,0,44,0],
 "structaltintegration_1_1PublicationData.html#ad293e2906e9896972986469d1048a5e6":[5,0,0,44,5],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1VbkPopTx.html#aa6a0b6eb9cddaacd2d76a740271ff1d5":[5,0,0,47,3],
 "structaltintegration_1_1VbkPopTx.html#aadd351164f709482dbe14da876b35c55":[5,0,0,47,9],
 "structaltintegration_1_1VbkPopTx.html#aba6a0920a952d1a4c43a17dd1f24a96e":[5,0,0,47,0],
-"structaltintegration_1_1VbkPopTx.html#adf540e55999e85efca2fb74b9f75bca7":[5,0,0,47,13],
-"structaltintegration_1_1VbkPopTx.html#adf7ac58c42e8964381915b91c54852e0":[5,0,0,47,14],
-"structaltintegration_1_1VbkPopTx.html#aee624efbe82d1400009a3f4dac395e62":[5,0,0,47,7],
-"structaltintegration_1_1VbkTx.html":[5,0,0,48],
-"structaltintegration_1_1VbkTx.html#a222f0327518035db416925bf06feb878":[5,0,0,48,5],
-"structaltintegration_1_1VbkTx.html#a245e0c9a0a3a7e105e8ecc58ee5228b7":[5,0,0,48,10],
-"structaltintegration_1_1VbkTx.html#a2864a78179db09108ce6f1e9b80998d2":[5,0,0,48,4],
-"structaltintegration_1_1VbkTx.html#a28ed4ae79e87ca86fbf610e35bcb4015":[5,0,0,48,11],
-"structaltintegration_1_1VbkTx.html#a44078f99044b084bbec415d679b61ff1":[5,0,0,48,6]
+"structaltintegration_1_1VbkPopTx.html#adf540e55999e85efca2fb74b9f75bca7":[5,0,0,47,13]
 };
