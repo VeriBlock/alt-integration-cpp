@@ -127,9 +127,9 @@ int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 <tr class="memitem:aee6a4c6c28671fa078dd86648b8c522f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html#aee6a4c6c28671fa078dd86648b8c522f">getHash</a> (const std::vector&lt; uint8_t &gt; &amp;bytes) const noexcept override</td></tr>
 <tr class="memdesc:aee6a4c6c28671fa078dd86648b8c522f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate hash from block header.  <a href="structaltintegration_1_1AltChainParamsRegTest.html#aee6a4c6c28671fa078dd86648b8c522f">More...</a><br /></td></tr>
 <tr class="separator:aee6a4c6c28671fa078dd86648b8c522f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46f3f725f6afdcf33834067549be37d2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html#a46f3f725f6afdcf33834067549be37d2">checkBlockHeader</a> (const std::vector&lt; uint8_t &gt; &amp;, const std::vector&lt; uint8_t &gt; &amp;, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;) const noexcept override</td></tr>
-<tr class="memdesc:a46f3f725f6afdcf33834067549be37d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if input <code>bytes</code>:  <a href="structaltintegration_1_1AltChainParamsRegTest.html#a46f3f725f6afdcf33834067549be37d2">More...</a><br /></td></tr>
-<tr class="separator:a46f3f725f6afdcf33834067549be37d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1e53548aff0dde488c1967411d40ebe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParamsRegTest.html#ae1e53548aff0dde488c1967411d40ebe">checkBlockHeader</a> (const std::vector&lt; uint8_t &gt; &amp;bytes, const std::vector&lt; uint8_t &gt; &amp;, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) const noexcept override</td></tr>
+<tr class="memdesc:ae1e53548aff0dde488c1967411d40ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if input <code>bytes</code>:  <a href="structaltintegration_1_1AltChainParamsRegTest.html#ae1e53548aff0dde488c1967411d40ebe">More...</a><br /></td></tr>
+<tr class="separator:ae1e53548aff0dde488c1967411d40ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structaltintegration_1_1AltChainParams"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structaltintegration_1_1AltChainParams')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structaltintegration_1_1AltChainParams.html">altintegration::AltChainParams</a></td></tr>
 <tr class="memitem:a2c8435cb1679bd15c9d4a8dc029ade34 inherit pub_methods_structaltintegration_1_1AltChainParams"><td class="memItemLeft" align="right" valign="top"><a id="a2c8435cb1679bd15c9d4a8dc029ade34"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>maxWorkerQueueSize</b> () const noexcept</td></tr>
@@ -224,8 +224,8 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mAltBlockHashSize
 <tr class="separator:a0caa05ae89b6ac4386bef645eaad1c24 inherit pub_attribs_structaltintegration_1_1AltChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a46f3f725f6afdcf33834067549be37d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46f3f725f6afdcf33834067549be37d2">&#9670;&nbsp;</a></span>checkBlockHeader()</h2>
+<a id="ae1e53548aff0dde488c1967411d40ebe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1e53548aff0dde488c1967411d40ebe">&#9670;&nbsp;</a></span>checkBlockHeader()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -282,9 +282,10 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mAltBlockHashSize
 <p>Implements <a class="el" href="structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370">altintegration::AltChainParams</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00300">300</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                                                                  {</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  }</div>
+<div class="fragment"><div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                                                                        {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    AltBlock block;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
