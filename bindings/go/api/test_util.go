@@ -11,7 +11,9 @@ import (
 	"testing"
 )
 
-func GenerateTestPopContext(t *testing.T, storage *Storage, config *Config) *PopContext {
+func GenerateTestPopContext(t *testing.T, storage *Storage) *PopContext {
+	config := NewConfig()
+
 	config.SelectVbkParams("regtest", 0, "")
 	config.SelectBtcParams("regtest", 0, "")
 
@@ -28,20 +30,15 @@ func GenerateTestPopContext(t *testing.T, storage *Storage, config *Config) *Pop
 		fmt.Printf("[POP] [%s]\t%s \n", log_lvl, msg)
 	})
 
-	context := NewPopContext(config, storage, "debug")
-
 	SetOnGetBlockHeaderHash(func(header []byte) []byte {
 	    altblock := NewAltBlock([]byte{}, []byte{}, 0, 0)
-	    altconfig := context.GetConfig()
-	    fmt.Println(altconfig)
-	    err := altblock.DeserializeFromVbkAltBlock(header, altconfig)
-	    altconfig.Free()
+	    err := altblock.DeserializeFromVbkAltBlock(header, config)
 	    if err != nil {
-	    panic(err)
+		panic(err)
 	    }
 	    return altblock.GetHash()
 	})
-	return context
+	return NewPopContext(config, storage, "debug")
 }
 
 func generateNextAltBlock(current *AltBlock) *AltBlock {
