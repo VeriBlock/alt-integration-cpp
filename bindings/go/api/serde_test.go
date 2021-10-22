@@ -36,6 +36,7 @@ func TestAltBlockSerde(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	encodedBytes := assertHexDecode(defaultAltBlockEncoded)
 
@@ -61,6 +62,7 @@ func TestVbkBlockSerde(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	encodedBytes := assertHexDecode(defaultVbkBlockEncoded)
 
@@ -91,6 +93,7 @@ func TestBtcBlockSerde(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	encodedBytes := assertHexDecode(defaultBtcBlockEncoded)
 
@@ -118,6 +121,7 @@ func TestVtbSerde(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	encodedBytes := assertHexDecode(defaultVtbEncoded)
 
@@ -145,6 +149,7 @@ func TestAtvSerde(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	encodedBytes := assertHexDecode(defaultAtvEncoded)
 
@@ -190,6 +195,7 @@ func TestPopDataSerde(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	encodedBytes := assertHexDecode(defaultPopDataEncoded)
 

@@ -26,6 +26,7 @@ func TestConfig(t *testing.T) {
 	assert := assert.New(t)
 
 	config := NewConfig()
+	defer config.Free()
 
 	config.SelectVbkParams("regtest", 0, "")
 	config.SelectBtcParams("regtest", 0, "")
