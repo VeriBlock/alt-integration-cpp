@@ -190,3 +190,10 @@ func (v *PopContext) Lock() (unlock func()) {
 		v.mutex.Unlock()
 	}
 }
+
+func (v *PopContext) GetConfig() *Config {
+	v.validate()
+	altconfig := NewConfig()
+	altconfig.ref = C.pop_pop_context_get_config(v.ref)
+	return altconfig
+}

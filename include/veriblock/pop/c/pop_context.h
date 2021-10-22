@@ -285,6 +285,10 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            get_payload_containing_blocks,
                            POP_ARRAY_NAME(u8) id);
 
+POP_ENTITY_GETTER_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(config) *,
+                           config);
+
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif

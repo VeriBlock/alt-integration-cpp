@@ -13,7 +13,7 @@ std::shared_ptr<PopContext> PopContext::create(
 
   // because default constructor is hidden
   auto ctx = std::shared_ptr<PopContext>(new PopContext());
-  ctx->config_ = config;
+  ctx->config_ = std::move(config);
   ctx->payloadsProvider_ = std::move(payloadsProvider);
   ctx->blockProvider_ = std::move(blockProvider_);
   ctx->altTree_ = std::make_shared<AltBlockTree>(*ctx->config_->alt,

@@ -361,3 +361,13 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   }
   return res;
 }
+
+POP_ENTITY_GETTER_FUNCTION(pop_context,
+                           POP_ENTITY_NAME(config) *,
+                           config) {
+  VBK_ASSERT(self);
+  const auto& c = self->ref->getConfig();
+  auto *altconfig = new POP_ENTITY_NAME(config);
+  altconfig->ref = std::make_shared<altintegration::Config>(c);
+  return altconfig;
+}

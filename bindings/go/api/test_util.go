@@ -19,14 +19,6 @@ func GenerateTestPopContext(t *testing.T, storage *Storage, config *Config) *Pop
 	SetOnGetBootstrapBlock(func() AltBlock {
 		return *GenerateDefaultAltBlock()
 	})
-	SetOnGetBlockHeaderHash(func(header []byte) []byte {
-		altblock := NewAltBlock([]byte{}, []byte{}, 0, 0)
-		err := altblock.DeserializeFromVbkAltBlock(header, config)
-		if err != nil {
-			panic(err)
-		}
-		return altblock.GetHash()
-	})
 
 	SetOnCheckBlockHeader(func(header []byte, root []byte) bool {
 		return true
@@ -36,7 +28,20 @@ func GenerateTestPopContext(t *testing.T, storage *Storage, config *Config) *Pop
 		fmt.Printf("[POP] [%s]\t%s \n", log_lvl, msg)
 	})
 
-	return NewPopContext(config, storage, "debug")
+	context := NewPopContext(config, storage, "debug")
+
+	SetOnGetBlockHeaderHash(func(header []byte) []byte {
+	    altblock := NewAltBlock([]byte{}, []byte{}, 0, 0)
+	    altconfig := context.GetConfig()
+	    fmt.Println(altconfig)
+	    err := altblock.DeserializeFromVbkAltBlock(header, altconfig)
+	    altconfig.Free()
+	    if err != nil {
+	    panic(err)
+	    }
+	    return altblock.GetHash()
+	})
+	return context
 }
 
 func generateNextAltBlock(current *AltBlock) *AltBlock {
