@@ -13,7 +13,6 @@ import (
 )
 
 type PopContext struct {
-	config_ *Config
 	ref   *C.pop_pop_context_t
 	mutex *SafeMutex
 }
@@ -29,7 +28,6 @@ func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext
 	config.validate()
 	storage.validate()
 	context := &PopContext{
-		config_: config,
 		ref:   C.pop_pop_context_new(config.ref, storage.ref, createCString(log_lvl)),
 		mutex: NewSafeMutex(),
 	}
@@ -43,7 +41,6 @@ func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext
 func (v *PopContext) Free() {
 	v.mutex.AssertMutexLocked("PopContext is not locked")
 	if v.ref != nil {
-		v.config_.Free()
 		C.pop_pop_context_free(v.ref)
 		v.ref = nil
 	}
@@ -192,4 +189,11 @@ func (v *PopContext) Lock() (unlock func()) {
 	return func() {
 		v.mutex.Unlock()
 	}
+}
+
+func (v *PopContext) GetConfig() *Config {
+	v.validate()
+	altconfig := NewConfig()
+	altconfig.ref = C.pop_pop_context_get_config(v.ref)
+	return altconfig
 }

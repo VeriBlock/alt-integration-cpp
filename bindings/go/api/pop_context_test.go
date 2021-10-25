@@ -16,11 +16,14 @@ func TestPopContextFree(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 
 	context.Free()
@@ -32,11 +35,14 @@ func TestPopContextBlockPrecessing(t *testing.T) {
 
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 	defer context.Free()
 
