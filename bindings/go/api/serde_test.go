@@ -31,7 +31,6 @@ func assertHexDecode(str string) []byte {
 }
 
 func TestAltBlockSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -57,7 +56,6 @@ func TestAltBlockSerde(t *testing.T) {
 }
 
 func TestVbkBlockSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -88,7 +86,6 @@ func TestVbkBlockSerde(t *testing.T) {
 }
 
 func TestBtcBlockSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -116,7 +113,6 @@ func TestBtcBlockSerde(t *testing.T) {
 }
 
 func TestVtbSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -144,7 +140,6 @@ func TestVtbSerde(t *testing.T) {
 }
 
 func TestAtvSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -172,7 +167,6 @@ func TestAtvSerde(t *testing.T) {
 }
 
 func TestPublicationDataSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -190,7 +184,6 @@ func TestPublicationDataSerde(t *testing.T) {
 }
 
 func TestPopDataSerde(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 

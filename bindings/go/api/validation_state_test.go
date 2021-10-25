@@ -12,7 +12,6 @@ import (
 )
 
 func TestValidationStateFree(t *testing.T) {
-	t.Parallel()
 
 	state := NewValidationState()
 
@@ -21,7 +20,6 @@ func TestValidationStateFree(t *testing.T) {
 }
 
 func TestValidationStateBasic(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 

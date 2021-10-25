@@ -12,7 +12,6 @@ import (
 )
 
 func TestPopContextFree(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -31,7 +30,6 @@ func TestPopContextFree(t *testing.T) {
 }
 
 func TestPopContextBlockPrecessing(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 

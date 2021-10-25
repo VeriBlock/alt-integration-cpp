@@ -12,7 +12,6 @@ import (
 )
 
 func TestPopContextMemPoolSubmitAll(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -86,7 +85,6 @@ func TestPopContextMemPoolSubmitAll(t *testing.T) {
 }
 
 func TestPopContextMemPoolSubmitStatefullFailed(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 

@@ -14,7 +14,6 @@ import (
 )
 
 func TestGeneratePublicationData(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -48,7 +47,6 @@ func TestGeneratePublicationData(t *testing.T) {
 }
 
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
