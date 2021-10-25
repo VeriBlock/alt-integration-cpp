@@ -5,7 +5,7 @@ namespace altintegration {
 std::shared_ptr<PopContext> PopContext::create(
     std::shared_ptr<Config> config,
     std::shared_ptr<PayloadsStorage> payloadsProvider,
-    std::shared_ptr<BlockReader> blockProvider_,
+    std::shared_ptr<BlockReader> blockProvider,
     size_t validatorWorkers) {
   VBK_LOG_DEBUG("Entered method");
 
@@ -13,9 +13,9 @@ std::shared_ptr<PopContext> PopContext::create(
 
   // because default constructor is hidden
   auto ctx = std::shared_ptr<PopContext>(new PopContext());
-  ctx->config_ = config;
+  ctx->config_ = std::move(config);
   ctx->payloadsProvider_ = std::move(payloadsProvider);
-  ctx->blockProvider_ = std::move(blockProvider_);
+  ctx->blockProvider_ = std::move(blockProvider);
   ctx->altTree_ = std::make_shared<AltBlockTree>(*ctx->config_->alt,
                                                  *ctx->config_->vbk.params,
                                                  *ctx->config_->btc.params,
