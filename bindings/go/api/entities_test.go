@@ -12,6 +12,7 @@ import (
 )
 
 func TestBtcBlock(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -33,6 +34,7 @@ func TestBtcBlock(t *testing.T) {
 }
 
 func TestVbkBlock(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -56,6 +58,7 @@ func TestVbkBlock(t *testing.T) {
 }
 
 func TestAltBlock(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -63,14 +66,15 @@ func TestAltBlock(t *testing.T) {
 
 	assert.Equal(alt_block.GetHeight(), int32(1))
 	assert.Equal(alt_block.GetTimestamp(), uint32(1))
-	assert.Equal(alt_block.GetHash(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
-	assert.Equal(alt_block.GetPreviousBlock(), []byte{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})
+	assert.Equal(alt_block.GetHash(), []byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+	assert.Equal(alt_block.GetPreviousBlock(), []byte{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})
 
 	alt_block.Free()
 	alt_block.Free()
 }
 
 func TestVtb(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -94,6 +98,7 @@ func TestVtb(t *testing.T) {
 }
 
 func TestAtv(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -117,6 +122,7 @@ func TestAtv(t *testing.T) {
 }
 
 func TestPopData(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -147,6 +153,7 @@ func TestPopData(t *testing.T) {
 }
 
 func TestNetworkBytePair(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -161,6 +168,7 @@ func TestNetworkBytePair(t *testing.T) {
 }
 
 func TestAddress(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -174,6 +182,7 @@ func TestAddress(t *testing.T) {
 }
 
 func TestBtcTx(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -186,6 +195,7 @@ func TestBtcTx(t *testing.T) {
 }
 
 func TestCoin(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -198,6 +208,7 @@ func TestCoin(t *testing.T) {
 }
 
 func TestMerklePath(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -219,6 +230,7 @@ func TestMerklePath(t *testing.T) {
 }
 
 func TestPopPayout(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -232,6 +244,7 @@ func TestPopPayout(t *testing.T) {
 }
 
 func TestContextInfoContainer(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 

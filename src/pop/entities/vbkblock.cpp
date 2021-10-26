@@ -218,14 +218,6 @@ bool DeserializeFromRaw(ReadStream& stream,
   return true;
 }
 
-bool DeserializeFromRaw(ReadStream& stream,
-                        VbkBlock& block,
-                        ValidationState& state,
-                        const AltChainParams& /*ignore*/,
-                        const VbkBlock::hash_t& hash) {
-  return DeserializeFromRaw(stream, block, state, hash);
-}
-
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkBlock& out,
                                 ValidationState& state,
@@ -241,14 +233,6 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
   ReadStream s(value);
   return DeserializeFromRaw(s, out, state, precalculatedHash);
-}
-
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                VbkBlock& out,
-                                ValidationState& state,
-                                const AltChainParams& /*ignore*/,
-                                const VbkBlock::hash_t& precalculatedHash) {
-  return DeserializeFromVbkEncoding(stream, out, state, precalculatedHash);
 }
 
 }  // namespace altintegration

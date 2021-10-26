@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 
+#include <util/alt_chain_params_regtest.hpp>
 #include <util/test_utils.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
@@ -43,7 +44,7 @@ struct PopTestFixture {
   AltChainParamsRegTest altparam{};
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
-  adaptors::BlockReaderImpl blockProvider{storage, altparam};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   // miners
   std::shared_ptr<MockMiner> popminer;

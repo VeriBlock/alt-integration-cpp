@@ -24,8 +24,6 @@
 
 namespace altintegration {
 
-struct AltChainParams;
-
 /**
  * Checks if expression 'min' <= 'num' <= 'max' is true. If false, returns
  * invalid state with error description.
@@ -348,16 +346,6 @@ bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
   return DeserializeFromVbkEncoding(stream, out, state);
 }
 
-//! Deserialize from VBK encoding.
-template <typename T>
-bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
-                                T& out,
-                                ValidationState& state,
-                                const AltChainParams& params) {
-  ReadStream stream(data);
-  return DeserializeFromVbkEncoding(stream, out, state, params);
-}
-
 //! Deserialize from RAW encoding.
 template <typename T>
 bool DeserializeFromRaw(Slice<const uint8_t> data,
@@ -365,16 +353,6 @@ bool DeserializeFromRaw(Slice<const uint8_t> data,
                         ValidationState& state) {
   ReadStream stream(data);
   return DeserializeFromRaw(stream, out, state);
-}
-
-//! Deserialize from RAW encoding.
-template <typename T>
-bool DeserializeFromRaw(Slice<const uint8_t> data,
-                        T& out,
-                        ValidationState& state,
-                        const AltChainParams& params) {
-  ReadStream stream(data);
-  return DeserializeFromRaw(stream, out, state, params);
 }
 
 //! Deserialize from HEX VBK encoding.
@@ -385,17 +363,6 @@ bool DeserializeFromHex(const std::string& hex,
   auto data = ParseHex(hex);
   ReadStream stream(data);
   return DeserializeFromVbkEncoding(stream, out, state);
-}
-
-//! Deserialize from HEX VBK encoding.
-template <typename T>
-bool DeserializeFromHex(const std::string& hex,
-                        T& out,
-                        ValidationState& state,
-                        const AltChainParams& params) {
-  auto data = ParseHex(hex);
-  ReadStream stream(data);
-  return DeserializeFromVbkEncoding(stream, out, state, params);
 }
 
 //! Deserialize from HEX RAW encoding.
@@ -447,18 +414,6 @@ T AssertDeserializeFromRaw(std::vector<uint8_t> raw) {
   return t;
 }
 
-//! Deserialize from RAW encoding.
-//! @note will fail on assert if can't be deserialized.
-template <typename T>
-T AssertDeserializeFromRaw(std::vector<uint8_t> raw,
-                           const AltChainParams& params) {
-  T t;
-  ValidationState state;
-  bool result = DeserializeFromRaw(raw, t, state, params);
-  VBK_ASSERT_MSG(result, "Can't deserialize: %s", state.toString());
-  return t;
-}
-
 //! Deserialize from VBK encoding.
 //! @note will fail on assert if can't be deserialized.
 template <typename T>
@@ -466,18 +421,6 @@ T AssertDeserializeFromVbkEncoding(Slice<const uint8_t> raw) {
   T t;
   ValidationState state;
   bool result = DeserializeFromVbkEncoding(raw, t, state);
-  VBK_ASSERT_MSG(result, "Can't deserialize: %s", state.toString());
-  return t;
-}
-
-//! Deserialize from VBK encoding.
-//! @note will fail on assert if can't be deserialized.
-template <typename T>
-T AssertDeserializeFromVbkEncoding(Slice<const uint8_t> raw,
-                                   const AltChainParams& params) {
-  T t;
-  ValidationState state;
-  bool result = DeserializeFromVbkEncoding(raw, t, state, params);
   VBK_ASSERT_MSG(result, "Can't deserialize: %s", state.toString());
   return t;
 }

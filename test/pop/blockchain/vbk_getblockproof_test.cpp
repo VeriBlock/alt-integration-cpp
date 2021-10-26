@@ -25,10 +25,9 @@ struct GetProofTest : public testing::Test {
   using hash_t = typename BlockTree<block_t, param_t>::hash_t;
 
   std::shared_ptr<param_t> params;
-  AltChainParamsRegTest altparam;
   ValidationState state;
   adaptors::InmemStorageImpl storage{};
-  adaptors::BlockReaderImpl blockProvider{storage, altparam};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   std::vector<VbkBlock> allBlocks{};
   std::vector<ArithUint256> cumulativeDifficulties{};

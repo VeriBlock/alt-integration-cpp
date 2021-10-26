@@ -112,11 +112,11 @@ func (v *BtcBlock) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func (v *BtcBlock) DeserializeFromVbk(bytes []byte, config *Config) error {
+func (v *BtcBlock) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState()
 	defer state.Free()
 
-	res := C.pop_btc_block_deserialize_from_vbk(createCBytes(bytes), state.ref, config.ref)
+	res := C.pop_btc_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
 		return state.Error()
 	}

@@ -271,40 +271,8 @@ struct AltChainParams {
   size_t mMaxVTBsInAltBlock = 200;
   size_t mMaxATVsInAltBlock = 1000;
 
-  uint32_t mAltBlockHashSize = SHA256_HASH_SIZE;
-
   std::vector<uint32_t> mForkResolutionLookUpTable{
       100, 100, 95, 89, 80, 69, 56, 40, 21};
-};
-
-struct AltChainParamsRegTest : public AltChainParams {
-  AltChainParamsRegTest(int id = 0) : id(id) {}
-  ~AltChainParamsRegTest() override = default;
-
-  AltBlock getBootstrapBlock() const noexcept override {
-    AltBlock b;
-    b.hash = std::vector<uint8_t>(SHA256_HASH_SIZE, 1);
-    b.previousBlock = std::vector<uint8_t>(SHA256_HASH_SIZE, 0);
-    b.height = 0;
-    b.timestamp = 0;
-    return b;
-  }
-
-  int64_t getIdentifier() const noexcept override { return id; }
-
-  std::vector<uint8_t> getHash(
-      const std::vector<uint8_t>& bytes) const noexcept override {
-    return AssertDeserializeFromRaw<AltBlock>(bytes, *this).getHash();
-  }
-
-  bool checkBlockHeader(const std::vector<uint8_t>& bytes,
-                        const std::vector<uint8_t>&,
-                        ValidationState& state) const noexcept override {
-    AltBlock block;
-    return DeserializeFromRaw<AltBlock>(bytes, block, state, *this);
-  }
-
-  int64_t id = 0;
 };
 
 //! @overload

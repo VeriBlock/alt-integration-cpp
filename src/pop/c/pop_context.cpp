@@ -44,7 +44,7 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
           *storage->ref),
       std::make_shared<altintegration::adaptors::BlockReaderImpl>(
-          *storage->ref, *config->ref->alt));
+          *storage->ref));
 
   return res;
 }

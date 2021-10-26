@@ -26,12 +26,11 @@ struct BtcInvalidationTest {
 
   ValidationState state;
 
-  AltChainParamsRegTest altparam;
   BtcChainParamsRegTest btcparam;
   VbkChainParamsRegTest vbkparam;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
-  adaptors::BlockReaderImpl blockProvider{storage, altparam};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
 };
 
@@ -312,12 +311,11 @@ TEST(VbkBlocksTest, basic_test1) {
 
   };
 
-  AltChainParamsRegTest altparam;
   VbkChainParamsTest vbkparam;
   BtcChainParamsRegTest btcparam;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
-  adaptors::BlockReaderImpl blockProvider{storage, altparam};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
   ValidationState state;
 
@@ -587,12 +585,11 @@ TEST(VbkBlocksTest, basic_test2) {
       "741CB53B2D65BE9E963E7573730218626035494E040C45720001EBD567",
   };
 
-  AltChainParamsRegTest altparam;
   VbkChainParamsTest vbkparam;
   BtcChainParamsRegTest btcparam;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
-  adaptors::BlockReaderImpl blockProvider{storage, altparam};
+  adaptors::BlockReaderImpl blockProvider{storage};
   PayloadsIndex payloadsIndex;
   ValidationState state;
 

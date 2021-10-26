@@ -12,6 +12,7 @@ import (
 )
 
 func TestConfigFree(t *testing.T) {
+	t.Parallel()
 
 	config := NewConfig()
 
@@ -20,15 +21,12 @@ func TestConfigFree(t *testing.T) {
 }
 
 func TestConfig(t *testing.T) {
+	t.Parallel()
 
 	assert := assert.New(t)
 
 	config := NewConfig()
 	defer config.Free()
-
-	SetOnGetBootstrapBlock(func() AltBlock {
-		return *GenerateDefaultAltBlock()
-	})
 
 	config.SelectVbkParams("regtest", 0, "")
 	config.SelectBtcParams("regtest", 0, "")

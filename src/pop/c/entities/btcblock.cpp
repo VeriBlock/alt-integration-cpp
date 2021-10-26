@@ -11,10 +11,9 @@
 #include <veriblock/pop/adaptors/picojson.hpp>
 // clang-format on
 
-#include "../config.hpp"
-#include "../validation_state.hpp"
 #include "btcblock.hpp"
 #include "veriblock/pop/assert.hpp"
+#include "../validation_state.hpp"
 #include "veriblock/pop/serde.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(btc_block) {
@@ -121,18 +120,14 @@ POP_ENTITY_SERIALIZE_TO_VBK(btc_block) {
   return res;
 }
 
-POP_ENTITY_DESERIALIZE_FROM_VBK(btc_block, POP_ENTITY_NAME(config) * config) {
+POP_ENTITY_DESERIALIZE_FROM_VBK(btc_block) {
   VBK_ASSERT(state);
-  VBK_ASSERT(config);
   VBK_ASSERT(bytes.data);
-  VBK_ASSERT(config->ref);
-  VBK_ASSERT(config->ref->alt);
 
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 
   altintegration::BtcBlock out;
-  if (!altintegration::DeserializeFromVbkEncoding(
-          v_bytes, out, state->ref, *config->ref->alt)) {
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
     return nullptr;
   }
 
