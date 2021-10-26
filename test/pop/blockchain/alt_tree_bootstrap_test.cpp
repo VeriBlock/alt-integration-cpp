@@ -30,7 +30,7 @@ struct AltChainParamsNon0Bootstrap : public AltChainParams {
 
   std::vector<uint8_t> getHash(
       const std::vector<uint8_t>& bytes) const noexcept override {
-    return AssertDeserializeFromRaw<AltBlock>(bytes, *this).getHash();
+    return AssertDeserializeFromRaw<AltBlock>(bytes).getHash();
   }
 
   bool checkBlockHeader(const std::vector<uint8_t>&,
@@ -53,7 +53,7 @@ TEST_P(PositiveTest, BootstrapSuccess) {
   BtcChainParamsRegTest btc;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl pp{storage};
-  adaptors::BlockReaderImpl bp{storage, alt};
+  adaptors::BlockReaderImpl bp{storage};
 
   AltBlockTree tree(alt, vbk, btc, pp, bp);
   ValidationState state;
@@ -78,7 +78,7 @@ TEST_P(NegativeTest, BootstrapFail) {
   BtcChainParamsRegTest btc;
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl pp{storage};
-  adaptors::BlockReaderImpl bp{storage, alt};
+  adaptors::BlockReaderImpl bp{storage};
 
   AltBlockTree tree(alt, vbk, btc, pp, bp);
   ValidationState state;
@@ -103,12 +103,11 @@ TEST_F(AltBlockTreeTest, AssureBootstrapBtcBlockHasRefs_test) {
   using vbk_block_tree = VbkBlockTree;
 
   ValidationState state;
-  AltChainParamsRegTest altparam;
   BtcChainParamsRegTest btc_params{};
   VbkChainParamsRegTest vbk_params{};
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloads_provider{storage};
-  adaptors::BlockReaderImpl block_provider{storage, altparam};
+  adaptors::BlockReaderImpl block_provider{storage};
   PayloadsIndex payloads_index;
 
   Miner<BtcBlock, BtcChainParams> btc_miner =

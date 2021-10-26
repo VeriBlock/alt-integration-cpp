@@ -17,11 +17,9 @@ extern "C" {
   POP_ARRAY_NAME(u8)                        \
   pop_##entity##_serialize_to_vbk(const pop_##entity##_t* self)
 
-#define POP_ENTITY_DESERIALIZE_FROM_VBK(entity, ...)     \
+#define POP_ENTITY_DESERIALIZE_FROM_VBK(entity)          \
   pop_##entity##_t* pop_##entity##_deserialize_from_vbk( \
-      POP_ARRAY_NAME(u8) bytes,                          \
-      POP_ENTITY_NAME(validation_state) * state,         \
-      ##__VA_ARGS__)
+      POP_ARRAY_NAME(u8) bytes, POP_ENTITY_NAME(validation_state) * state)
 
 #ifdef __cplusplus
 }

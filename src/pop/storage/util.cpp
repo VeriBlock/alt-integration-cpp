@@ -141,10 +141,8 @@ bool loadTrees(AltBlockTree& tree, ValidationState& state) {
   }
   std::vector<typename AltBlockTree::stored_index_t> altblocks;
   typename AltBlock::hash_t alttip;
-  if (!detail::loadBlocksAndTip(altblocks,
-                                alttip,
-                                tree.getBlockProvider(),
-                                state)) {
+  if (!detail::loadBlocksAndTip(
+          altblocks, alttip, tree.getBlockProvider(), state)) {
     return state.Invalid("load-alt-tree-blocks");
   }
 

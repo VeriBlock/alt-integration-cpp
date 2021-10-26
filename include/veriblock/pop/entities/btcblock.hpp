@@ -146,22 +146,6 @@ bool DeserializeFromRaw(
     ReadStream& stream,
     BtcBlock& out,
     ValidationState& state,
-    const AltChainParams& /*ignore*/,
-    const BtcBlock::hash_t& precalculatedHash = BtcBlock::hash_t{});
-
-//! @overload
-bool DeserializeFromRaw(
-    ReadStream& stream,
-    BtcBlock& out,
-    ValidationState& state,
-    const BtcBlock::hash_t& precalculatedHash = BtcBlock::hash_t{});
-
-//! @overload
-bool DeserializeFromVbkEncoding(
-    ReadStream& stream,
-    BtcBlock& out,
-    ValidationState& state,
-    const AltChainParams& /*ignore*/,
     const BtcBlock::hash_t& precalculatedHash = BtcBlock::hash_t{});
 
 //! @overload

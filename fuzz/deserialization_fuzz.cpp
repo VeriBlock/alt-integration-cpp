@@ -4,7 +4,6 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <type_traits>
-#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/context_info_container.hpp>
 #include <veriblock/pop/entities/keystone_container.hpp>
@@ -41,9 +40,9 @@ getEstimateSize(const T&) {
 }
 
 using altintegration::AltBlock;
+using altintegration::StoredBlockIndex;
 using altintegration::BlockIndex;
 using altintegration::BtcBlock;
-using altintegration::StoredBlockIndex;
 using altintegration::VbkBlock;
 
 // clang-format off
@@ -53,15 +52,14 @@ template <> BlockIndex<VbkBlock> create() { return BlockIndex<VbkBlock>{0}; }
 template <> BlockIndex<AltBlock> create() { return BlockIndex<AltBlock>{0}; }
 // clang-format on
 
-#define DEFINE_DESER_FUZZ(type, ...)                                           \
+#define DEFINE_DESER_FUZZ(type)                                                \
   {                                                                            \
     auto value = create<type>();                                               \
-    if (DeserializeFromVbkEncoding(stream, value, state, ##__VA_ARGS__)) {     \
+    if (DeserializeFromVbkEncoding(stream, value, state)) {                    \
       WriteStream w;                                                           \
       value.toVbkEncoding(w);                                                  \
       auto value2 = create<type>();                                            \
-      if (!DeserializeFromVbkEncoding(                                         \
-              w.data(), value2, state, ##__VA_ARGS__)) {                       \
+      if (!DeserializeFromVbkEncoding(w.data(), value2, state)) {              \
         /* we serialized an entity but were not able to deserialize it back */ \
         VBK_ASSERT_MSG(false,                                                  \
                        "type=%s\nbytes=%s\nstate=%s",                          \
@@ -69,7 +67,7 @@ template <> BlockIndex<AltBlock> create() { return BlockIndex<AltBlock>{0}; }
                        HexStr(w.data()),                                       \
                        state.toString());                                      \
       }                                                                        \
-      /* if deserialized value is not same as "before serialization", die */   \
+      /* if deserialized value is not same as "before serialization", die */  \
       auto A = SerializeToHex(value);                                          \
       auto B = SerializeToHex(value2);                                         \
       VBK_ASSERT_MSG(A == B, "A=%s\nB=%s\n", A, B);                            \
@@ -111,9 +109,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   DEFINE_DESER_FUZZ(KeystoneContainer);
   DEFINE_DESER_FUZZ(ContextInfoContainer);
   DEFINE_DESER_FUZZ(AuthenticatedContextInfoContainer);
-  DEFINE_DESER_FUZZ(AltBlock, AltChainParamsRegTest{});
-  DEFINE_DESER_FUZZ(BtcBlock, AltChainParamsRegTest{});
-  DEFINE_DESER_FUZZ(VbkBlock, AltChainParamsRegTest{});
+  DEFINE_DESER_FUZZ(AltBlock);
+  DEFINE_DESER_FUZZ(BtcBlock);
+  DEFINE_DESER_FUZZ(VbkBlock);
   DEFINE_DESER_FUZZ(VbkEndorsement);
   DEFINE_DESER_FUZZ(AltEndorsement);
   DEFINE_DESER_FUZZ(VbkPopTx);
@@ -123,12 +121,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   DEFINE_DESER_FUZZ(StoredBtcBlockAddon);
   DEFINE_DESER_FUZZ(StoredVbkBlockAddon);
   DEFINE_DESER_FUZZ(StoredAltBlockAddon);
-  DEFINE_DESER_FUZZ(StoredBlockIndex<AltBlock>, AltChainParamsRegTest{});
-  DEFINE_DESER_FUZZ(StoredBlockIndex<VbkBlock>, AltChainParamsRegTest{});
-  DEFINE_DESER_FUZZ(StoredBlockIndex<BtcBlock>, AltChainParamsRegTest{});
+  DEFINE_DESER_FUZZ(StoredBlockIndex<AltBlock>);
+  DEFINE_DESER_FUZZ(StoredBlockIndex<VbkBlock>);
+  DEFINE_DESER_FUZZ(StoredBlockIndex<BtcBlock>);
   DEFINE_DESER_FUZZ(BtcBlockAddon);
   DEFINE_DESER_FUZZ(VbkBlockAddon);
   DEFINE_DESER_FUZZ(AltBlockAddon);
+  DEFINE_DESER_FUZZ(BlockIndex<AltBlock>);
+  DEFINE_DESER_FUZZ(BlockIndex<VbkBlock>);
+  DEFINE_DESER_FUZZ(BlockIndex<BtcBlock>);
   DEFINE_DESER_FUZZ(VTB);
   DEFINE_DESER_FUZZ(ATV);
   DEFINE_DESER_FUZZ(PopData);

@@ -44,10 +44,9 @@ struct BlockchainTest : public ::testing::Test {
 
   std::shared_ptr<BlockTree<block_t, params_base_t>> blockchain;
   std::shared_ptr<params_base_t> chainparam;
-  AltChainParamsRegTest altparam{};
   std::shared_ptr<Miner<block_t, params_base_t>> miner;
   adaptors::InmemStorageImpl storage{};
-  adaptors::BlockReaderImpl blockProvider{storage, altparam};
+  adaptors::BlockReaderImpl blockProvider{storage};
 
   height_t height = 0;
   ValidationState state;

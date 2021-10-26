@@ -40,7 +40,6 @@ func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext
 
 func (v *PopContext) Free() {
 	v.mutex.AssertMutexLocked("PopContext is not locked")
-
 	if v.ref != nil {
 		C.pop_pop_context_free(v.ref)
 		v.ref = nil

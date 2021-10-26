@@ -5,7 +5,6 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
@@ -13,6 +12,7 @@
 #include <veriblock/pop/pop_stateless_validator.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 
+#include "util/alt_chain_params_regtest.hpp"
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 
