@@ -183,8 +183,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
 }
 
 template <typename Payload>
-bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
-                           ValidationState& state) {
+bool hasStatefulDuplicatesOf(AltBlockTree::BlockPayloadMutator& mutator,
+                             ValidationState& state) {
   for (const auto& pid : mutator.getBlock().getPayloadIds<Payload>()) {
     if (mutator.isStatefulDuplicate(pid.asVector())) {
       return !state.Invalid(
@@ -197,6 +197,13 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
   }
 
   return false;
+}
+
+bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
+                           ValidationState& state) {
+  return hasStatefulDuplicatesOf<VbkBlock>(mutator, state) ||
+         hasStatefulDuplicatesOf<VTB>(mutator, state) ||
+         hasStatefulDuplicatesOf<ATV>(mutator, state);
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
@@ -226,9 +233,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   auto mutator = makeConnectedLeafPayloadMutator(index);
 
-  if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
-      hasStatefulDuplicates<VTB>(mutator, state) ||
-      hasStatefulDuplicates<ATV>(mutator, state)) {
+  if (hasStatefulDuplicates(mutator, state)) {
     invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
@@ -627,10 +632,13 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
     // connectBlock()
     if (current->isConnected()) {
       auto mutator = makeConnectedLeafPayloadMutator(*current);
-      if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
-          hasStatefulDuplicates<VTB>(mutator, state) ||
-          hasStatefulDuplicates<ATV>(mutator, state)) {
-        return false;
+      if (hasStatefulDuplicates(mutator, state) &&
+          !current->hasFlags(BLOCK_FAILED_POP)) {
+        return state.Invalid(
+            "valid-block-with-stateful-duplicates",
+            format(
+                "Block {} has stateful duplicates but is not marked as invalid",
+                mutator.getBlock().toPrettyString()));
       }
     }
   } else {
