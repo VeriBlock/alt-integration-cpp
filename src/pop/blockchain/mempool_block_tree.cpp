@@ -120,8 +120,6 @@ bool MemPoolBlockTree::acceptVTB(
     const VTB& vtb,
     const std::shared_ptr<VbkBlock>& containingBlock,
     ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT_MSG(
       containingBlock->getHash() == vtb.containingBlock.getHash(),
       "containingBlock should be equal to the vtb containingBlock block");
@@ -153,8 +151,6 @@ bool MemPoolBlockTree::acceptVTB(
 bool MemPoolBlockTree::acceptATV(const ATV& atv,
                                  const std::shared_ptr<VbkBlock>& blockOfProof,
                                  ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT_MSG(
       blockOfProof->getHash() == atv.blockOfProof.getHash(),
       "containingBlock should be equal to the atv blockOfProof block");

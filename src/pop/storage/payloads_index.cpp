@@ -24,8 +24,6 @@ bool PayloadsIndex::getValidity(Slice<const uint8_t> containingBlockHash,
 void PayloadsIndex::setValidity(Slice<const uint8_t> containingBlockHash,
                                 Slice<const uint8_t> payloadId,
                                 bool validity) {
-  VBK_LOG_DEBUG("Entered method with validity={}", validity);
-
   auto key = makeGlobalPid(containingBlockHash, payloadId);
   if (!validity) {
     _cgValidity[key] = validity;

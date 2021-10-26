@@ -22,8 +22,6 @@ template struct BaseBlockTree<VbkBlock>;
 
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED;
   auto bestTip = getBestChain().tip();
   VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
@@ -42,23 +40,21 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   auto reason = p.second;
   // the pop state is already set to the best of the two chains
   if (result == 0) {
-    VBK_LOG_DEBUG("Pop scores are equal. Reason: {}.", popFrOutcomeToString(reason));
+    VBK_LOG_DEBUG("Pop scores are equal. Reason: %s.", popFrOutcomeToString(reason));
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(candidate, state);
   } else if (result < 0) {
-    VBK_LOG_DEBUG("Candidate chain won. Reason: {}.", popFrOutcomeToString(reason));
+    VBK_LOG_DEBUG("Candidate chain won. Reason: %s.", popFrOutcomeToString(reason));
     // the other chain won!
     // setState(candidate) has been already done, so only update the tip
     this->overrideTip(candidate);
   } else {
     // the current chain is better
-    VBK_LOG_DEBUG("Active chain won. Reason: {}.", popFrOutcomeToString(reason));
+    VBK_LOG_DEBUG("Active chain won. Reason: %s.", popFrOutcomeToString(reason));
   }
 }
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED;
   bool success = cmp_.setState(to, state);
   if (success) {
@@ -192,8 +188,6 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
 // or earlier blocks
 bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                       ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED;
   auto& tx = vtb.transaction;
 
@@ -393,8 +387,6 @@ bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
 
 bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED;
   auto hash = index.header->getHash();
   auto height = index.height;
@@ -429,8 +421,6 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
 bool VbkBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED;
   auto* bestBtcTip = btc().getBestChain().tip();
   VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
@@ -463,8 +453,6 @@ VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
       commandGroupStore_(*this, payloadsProvider_) {}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_TRACE_ZONE_SCOPED;
   if (!base::loadTip(hash, state)) {
     return false;

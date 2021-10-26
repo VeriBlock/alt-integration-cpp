@@ -134,9 +134,6 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& ing,
     const ProtectedChainParams& config) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method with keystoneToConsider={}",
-                keystoneToConsider);
-
   auto ki = config.getKeystoneInterval();
   auto* tip = chain.tip();
   VBK_ASSERT(tip != nullptr && "chain must not be empty");
@@ -510,7 +507,6 @@ struct PopAwareForkResolutionComparator {
   //! @return true if the state change was successful, false otherwise
   bool setState(protected_index_t& to, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Entered method");
 
     auto* currentActive = ed_.getBestChain().tip();
     VBK_ASSERT(currentActive != nullptr && "should be bootstrapped");
@@ -547,7 +543,6 @@ struct PopAwareForkResolutionComparator {
   std::pair<int, PopFrOutcome> comparePopScore(protected_index_t& candidate,
                                                ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Entered method");
 
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"

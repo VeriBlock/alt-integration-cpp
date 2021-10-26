@@ -191,7 +191,6 @@ struct BaseBlockTree {
   bool restoreBlock(const typename block_t::hash_t& hash,
                     ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Entered method");
 
     index_t* root = &this->getRoot();
     auto oldHeight = root->getHeight();
@@ -585,7 +584,6 @@ struct BaseBlockTree {
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Entered method");
 
     assertBlockSanity(*block);
 
@@ -621,7 +619,6 @@ struct BaseBlockTree {
                       bool connectForward,
                       ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Entered method with connectForward={}", connectForward);
 
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
@@ -848,7 +845,7 @@ struct BaseBlockTree {
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Entered method");
+    VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind", index.toShortPrettyString(), preserveBlocksBehindFinal);
 
     index_t* finalizedBlock = &index;
 
