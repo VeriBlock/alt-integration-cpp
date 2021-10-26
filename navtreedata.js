@@ -64,15 +64,15 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
-"namespacealtintegration.html#a203f05734842bb1530c6f54f9ae3c5dc",
-"namespacealtintegration.html#ac6d58c2cd4bd47e40fafd113735bff89",
+"",
+"ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
+"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da1ea4c3ab05ee0c6d4de30740443769cb",
+"namespacealtintegration.html#ac6356fe306bbc75d6a4d9bfd968685dc",
 "structaltintegration_1_1AltBlockTree.html#a13c644bfd3db9003611b3dc2bed75de7",
-"structaltintegration_1_1BlockIndex.html#ad9b9cf79ed0d19cf2a9c3d6e5d272bd2",
-"structaltintegration_1_1Config.html#a8730eaf51067ecd8091d64cdf7b86ea9",
-"structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200",
-"structaltintegration_1_1VbkTx.html#a5d0a515dde2b9f134b23eb9156db9b23"
+"structaltintegration_1_1BlockIndex.html#ae6313c957ad5f8fbfdd76cbedb018efd",
+"structaltintegration_1_1Config_1_1Bootstrap.html#a87ed66ca8603a2309ca83fd5ff6bd5ef",
+"structaltintegration_1_1ReadStream.html#a05ef9fc428a2769b60f9f114f12d46d9",
+"structaltintegration_1_1VbkTx.html#aae351e435dec43fd911dcdc07fd81bfc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

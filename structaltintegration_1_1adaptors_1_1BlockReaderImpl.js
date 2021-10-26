@@ -1,7 +1,7 @@
 var structaltintegration_1_1adaptors_1_1BlockReaderImpl =
 [
     [ "~BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a62323718c05fdd3a4d15868af7358dae", null ],
-    [ "BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a79e4af0cc8331ec9da2e7a856aada9a0", null ],
+    [ "BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#ad448494dc3233114860f220d7d4d41da", null ],
     [ "getAltBlockIterator", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#aabb963b23c6040568c0bef02467c88b8", null ],
     [ "getAltTip", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#a73dce581892b3e566e4ede126ef9141c", null ],
     [ "getBlock", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html#ab25912dc7c94452b516692cc8da326eb", null ],
