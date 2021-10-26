@@ -67,6 +67,7 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
 
   auto endorsed_hash =
       tree_->getParams().getHash(atv.transaction.publicationData.header);
+
   auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
   if (endorsed_index != nullptr) {
     auto* tip = tree_->getBestChain().tip();

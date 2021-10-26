@@ -12,7 +12,7 @@
 using namespace altintegration;
 
 TEST(Counter, Amount) {
-  auto P = AltChainParamsTest();
+  auto P = AltChainParamsRegTest();
   P.mMaxATVsInAltBlock = 1;
   P.mMaxVTBsInAltBlock = 1;
   P.mMaxVbkBlocksInAltBlock = 1;
@@ -36,7 +36,7 @@ TEST(Counter, Amount) {
 }
 
 TEST(Counter, Size) {
-  auto P = AltChainParamsTest();
+  auto P = AltChainParamsRegTest();
   P.mMaxPopDataSize =
       (uint32_t)(PopData{}.estimateSize() + ATV{}.estimateSize());
   auto C = CountingContext(P);

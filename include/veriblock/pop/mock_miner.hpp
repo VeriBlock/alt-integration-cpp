@@ -162,9 +162,10 @@ class MockMiner {
 
   BtcChainParamsRegTest btc_params_{};
   VbkChainParamsRegTest vbk_params_{};
+  AltChainParamsRegTest alt_params_{};
   adaptors::InmemStorageImpl storage_{};
   adaptors::PayloadsStorageImpl payloads_provider_{storage_};
-  adaptors::BlockReaderImpl block_provider_{storage_};
+  adaptors::BlockReaderImpl block_provider_{storage_, alt_params_};
   PayloadsIndex payloads_index_;
 
   Miner<BtcBlock, BtcChainParams> btc_miner_ =

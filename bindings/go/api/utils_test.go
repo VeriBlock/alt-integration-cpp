@@ -14,14 +14,16 @@ import (
 )
 
 func TestGeneratePublicationData(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
+
+	config := NewConfig()
+	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -45,15 +47,17 @@ func TestGeneratePublicationData(t *testing.T) {
 }
 
 func TestCalculateTopLevelMerkleRoot(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
+
+	config := NewConfig()
+	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -74,11 +78,14 @@ func TestCalculateTopLevelMerkleRoot(t *testing.T) {
 func TestCheckAll(t *testing.T) {
 	assert := assert.New(t)
 
+	config := NewConfig()
+	defer config.Free()
+
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -131,12 +138,15 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	defer os.RemoveAll("/tmp/alt-integration")
 
+	config := NewConfig()
+	defer config.Free()
+
 	storage, err := NewStorage("/tmp/alt-integration")
 	defer storage.Free()
 
 	assert.NoError(err)
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	unlock := context.Lock()
 
 	// generate new block
@@ -192,7 +202,7 @@ func TestSaveLoadAllTrees(t *testing.T) {
 
 	context.Free()
 	unlock()
-	context = GenerateTestPopContext(t, storage)
+	context = GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 	defer context.Free()
 

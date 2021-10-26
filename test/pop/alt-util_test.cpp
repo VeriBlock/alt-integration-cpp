@@ -5,7 +5,6 @@
 
 #include <gtest/gtest.h>
 
-#include <util/alt_chain_params_regtest.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/mock_miner.hpp>

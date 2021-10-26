@@ -829,7 +829,9 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
   auto* containigBlock = popminer->mineVbkBlocks(1, txs);
   for (const auto& tx : txs) {
     ATV atv = popminer->createATV(containigBlock->getHeader(), tx);
-    submitATV(atv);
+    auto res = mempool->submit(atv, state);
+    EXPECT_FALSE(res.isAccepted()) << state.toString();
+    state.reset();
   }
 
   // mine 5 VBK blocks
