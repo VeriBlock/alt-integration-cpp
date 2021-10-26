@@ -13,8 +13,9 @@
 namespace altintegration {
 
 StoredAltBlockAddon::StoredAltBlockAddon(const addon_t& other) {
-  endorsedByHashes = map_get_id_from_pointers<uint256, const AltEndorsement>(
-      other.getEndorsedBy());
+  endorsedByIds =
+      map_get_id_from_pointers<AltEndorsement::id_t, const AltEndorsement>(
+          other.getEndorsedBy());
   _atvids = other.getPayloadIds<ATV>();
   _vtbids = other.getPayloadIds<VTB>();
   _vbkblockids = other.getPayloadIds<VbkBlock>();
@@ -22,7 +23,7 @@ StoredAltBlockAddon::StoredAltBlockAddon(const addon_t& other) {
 }
 
 void StoredAltBlockAddon::toVbkEncoding(WriteStream& w) const {
-  writeArrayOf<uint256>(w, endorsedByHashes, writeSingleByteLenValue);
+  writeArrayOf<AltEndorsement::id_t>(w, endorsedByIds, writeSingleByteLenValue);
   writeArrayOf<ATV::id_t>(w, _atvids, writeSingleByteLenValue);
   writeArrayOf<VTB::id_t>(w, _vtbids, writeSingleByteLenValue);
   writeArrayOf<VbkBlock::id_t>(w, _vbkblockids, writeSingleByteLenValue);
@@ -50,16 +51,21 @@ std::string StoredAltBlockAddon::toPrettyString() const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 StoredAltBlockAddon& out,
                                 ValidationState& state) {
-  if (!readArrayOf<uint256>(
-          stream,
-          out.endorsedByHashes,
-          state,
-          0,
-          MAX_POPDATA_VBK,
-          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
-            return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
-          })) {
+  if (!readArrayOf<AltEndorsement::id_t>(stream,
+                                         out.endorsedByIds,
+                                         state,
+                                         0,
+                                         MAX_POPDATA_VBK,
+                                         [](ReadStream& stream,
+                                            AltEndorsement::id_t& o,
+                                            ValidationState& state) -> bool {
+                                           return readSingleByteLenValue(
+                                               stream,
+                                               o,
+                                               state,
+                                               AltEndorsement::id_t::size(),
+                                               AltEndorsement::id_t::size());
+                                         })) {
     return state.Invalid("stored-alt-block-addon-bad-endorsedby-hash");
   }
 

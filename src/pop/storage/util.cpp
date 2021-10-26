@@ -69,7 +69,7 @@ bool validateLoadBlock(const AltBlockTree& tree,
       map_get_id_from_pointers<uint256, const AltEndorsement>(
           current->getEndorsedBy());
   if (!same_vectors_unique_unordered(endorsedByIds,
-                                     index.addon.endorsedByHashes)) {
+                                     index.addon.endorsedByIds)) {
     return state.Invalid("alt-block-invalid-stored-endorsed-by");
   }
   return true;
@@ -84,7 +84,7 @@ bool validateLoadBlock(const VbkBlockTree& tree,
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
           current->getEndorsedBy());
   if (!same_vectors_unique_unordered(endorsedByIds,
-                                     index.addon.endorsedByHashes)) {
+                                     index.addon.endorsedByIds)) {
     return state.Invalid("vbk-block-invalid-stored-endorsed-by");
   }
 
@@ -92,7 +92,7 @@ bool validateLoadBlock(const VbkBlockTree& tree,
       map_get_id_from_pointers<uint256, const AltEndorsement>(
           current->getBlockOfProofEndorsement());
   if (!same_vectors_unordered(blockOfProofIds,
-                              index.addon.blockOfProofEndorsementHashes)) {
+                              index.addon.blockOfProofEndorsementIds)) {
     return state.Invalid(
         "vbk-block-invalid-stored-block-of-proof-endorsements");
   }
@@ -108,7 +108,7 @@ bool validateLoadBlock(const BtcBlockTree& tree,
       map_get_id_from_pointers<uint256, const VbkEndorsement>(
           current->getBlockOfProofEndorsement());
   if (!same_vectors_unordered(blockOfProofIds,
-                              index.addon.blockOfProofEndorsementHashes)) {
+                              index.addon.blockOfProofEndorsementIds)) {
     return state.Invalid(
         "btc-block-invalid-stored-block-of-proof-endorsements");
   }

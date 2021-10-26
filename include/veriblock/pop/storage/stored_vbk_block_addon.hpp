@@ -30,12 +30,12 @@ struct StoredVbkBlockAddon {
   uint32_t _refCount = 0;
   // VTB::id_t
   std::vector<uint256> _vtbids;
-  // list of endorsements of ALT blocks, whose BlockOfProof is
-  // this block. must be a vector, because we can have duplicates here
-  std::vector<uint256> blockOfProofEndorsementHashes;
-  // list of endorsements pointing to this block.
-  // must be a vector, because we can have duplicates here
-  std::vector<uint256> endorsedByHashes;
+  // list of endorsement of ALT blocks, whose BlockOfProof is
+  // this block ids. Must be a vector, because we can have duplicates here
+  std::vector<uint256> blockOfProofEndorsementIds;
+  // list of endorsement pointing to this block ids.
+  // Must be a vector, because we can have duplicates here
+  std::vector<uint256> endorsedByIds;
   // POP endorsements state
   pop_state_t popState;
 };

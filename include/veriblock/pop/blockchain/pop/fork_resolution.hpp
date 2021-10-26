@@ -75,7 +75,6 @@ KeystoneContext getKeystoneContext(
     const ProtoKeystoneContext<ProtectingBlockT>& pkc,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method");
 
   int earliestEndorsementIndex = NO_ENDORSEMENT;
   for (const auto* btcIndex : pkc.referencedByBlocks) {

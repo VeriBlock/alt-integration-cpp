@@ -9,9 +9,14 @@
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 
+#include "veriblock/pop/validation_state.hpp"
+
 namespace altintegration {
 
-PopData MemPool::generatePopData() {
+PopData MemPool::generatePopData(
+    const std::function<void(const ATV&, const ValidationState&)>& onATV,
+    const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+    const std::function<void(const VbkBlock&, const ValidationState&)>& onVBK) {
   VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
 
   // attempt to connect payloads
@@ -45,8 +50,14 @@ PopData MemPool::generatePopData() {
     }
   }
 
-  mempool_tree_.filterInvalidPayloads(ret);
+  mempool_tree_.filterInvalidPayloads(ret, onATV, onVTB, onVBK);
   return ret;
+}
+
+PopData MemPool::generatePopData() {
+  return this->generatePopData([](const ATV&, const ValidationState&) {},
+                               [](const VTB&, const ValidationState&) {},
+                               [](const VbkBlock&, const ValidationState&) {});
 }
 
 void MemPool::cleanUp() {

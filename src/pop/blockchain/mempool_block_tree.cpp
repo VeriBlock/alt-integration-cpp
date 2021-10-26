@@ -5,6 +5,7 @@
 #include "veriblock/pop/blockchain/pop/counting_context.hpp"
 #include "veriblock/pop/fmt.hpp"
 #include "veriblock/pop/keystone_util.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 
@@ -257,23 +258,33 @@ bool MemPoolBlockTree::isBlockOld(const VbkBlock& block) const {
 }
 
 template <typename Payload>
-void applyPayloadsOrRemoveIfInvalid(AltBlockTree::BlockPayloadMutator& mutator,
-                                    std::vector<Payload>& payloads,
-                                    CountingContext& context) {
+void applyPayloadsOrRemoveIfInvalid(
+    AltBlockTree::BlockPayloadMutator& mutator,
+    std::vector<Payload>& payloads,
+    CountingContext& context,
+    const std::function<void(const Payload&, const ValidationState&)>&
+        onPayload) {
   auto it = std::remove_if(
       payloads.begin(), payloads.end(), [&](const Payload& payload) {
-        ValidationState dummy;
+        ValidationState state;
+
+        // will be executed when function exits
+        auto finalizer = Finalizer([&]() { onPayload(payload, state); });
 
         if (!context.canFit(payload)) {
           // can't fit, doesn't worth even trying to add this payload
+          state.Invalid("does-not-fit", "Can't fit into a block");
           return true;  // should be removed
         }
 
         if (mutator.isStatelessDuplicate(getIdVector(payload))) {
+          state.Invalid("stateless-duplicate",
+                        format("Stateless duplicate payload with id {}",
+                               HexStr(payload.getId())));
           return true;  // should be removed
         }
 
-        if (!mutator.add(payload, dummy)) {
+        if (!mutator.add(payload, state)) {
           // payload is invalid and should be removed
           return true;
         }
@@ -285,7 +296,11 @@ void applyPayloadsOrRemoveIfInvalid(AltBlockTree::BlockPayloadMutator& mutator,
   payloads.erase(it, payloads.end());
 }
 
-void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
+void MemPoolBlockTree::filterInvalidPayloads(
+    PopData& pop,
+    const std::function<void(const ATV&, const ValidationState&)>& onATV,
+    const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+    const std::function<void(const VbkBlock&, const ValidationState&)>& onVBK) {
   // return early
   if (pop.empty()) {
     return;
@@ -324,9 +339,9 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   CountingContext counter(tree_->getParams());
   auto mutator = tree_->makeConnectedLeafPayloadMutator(*tmpindex);
 
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.context, counter);
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, counter);
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, counter);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.context, counter, onVBK);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, counter, onVTB);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, counter, onATV);
 
   // assert PopData does not surpass limits
   assertPopDataFits(pop, tree_->getParams());
@@ -339,5 +354,4 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
 
   guard.overrideDeferredForkResolution(originalTip);
 }
-
 }  // namespace altintegration

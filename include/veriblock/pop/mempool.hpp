@@ -18,6 +18,8 @@
 #include "serde.hpp"
 #include "signals.hpp"
 #include "value_sorted_map.hpp"
+#include "veriblock/pop/json.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 
@@ -269,6 +271,16 @@ struct MemPool {
    * current tip.
    */
   PopData generatePopData();
+  //! @overload
+  //! @param[in] onATV a callback that is executed when ATV have been considered
+  //! @param[in] onVTB a callback that is executed when VTB have been considered
+  //! @param[in] onVBK a callback that is executed when VbkBlock have been
+  //! considered
+  PopData generatePopData(
+      const std::function<void(const ATV&, const ValidationState&)>& onATV,
+      const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+      const std::function<void(const VbkBlock&, const ValidationState&)>&
+          onVBK);
 
   /**
    * Remove payloads from mempool by their IDs.
@@ -441,13 +453,24 @@ template <> signals::Signal<void(const VbkBlock&)>& MemPool::getSignal();
 namespace detail {
 
 template <typename Value, typename T>
-inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
+inline void mapToJson(Value& obj,
+                      const MemPool& mp,
+                      const std::string& key,
+                      bool verbose = false) {
   auto arr = json::makeEmptyArray<Value>();
   for (auto& p : mp.getMap<T>()) {
-    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    if (verbose) {
+      json::arrayPushBack(arr, ToJSON<Value>(*p.second));
+    } else {
+      json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    }
   }
   for (auto& p : mp.getInFlightMap<T>()) {
-    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    if (verbose) {
+      json::arrayPushBack(arr, ToJSON<Value>(*p.second));
+    } else {
+      json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    }
   }
   json::putKV(obj, key, arr);
 }
@@ -455,12 +478,12 @@ inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
 
 //! @private
 template <typename Value>
-Value ToJSON(const MemPool& mp) {
+Value ToJSON(const MemPool& mp, bool verbose = false) {
   auto obj = json::makeEmptyObject<Value>();
 
-  detail::mapToJson<Value, VbkBlock>(obj, mp, "vbkblocks");
-  detail::mapToJson<Value, ATV>(obj, mp, "atvs");
-  detail::mapToJson<Value, VTB>(obj, mp, "vtbs");
+  detail::mapToJson<Value, VbkBlock>(obj, mp, "vbkblocks", verbose);
+  detail::mapToJson<Value, ATV>(obj, mp, "atvs", verbose);
+  detail::mapToJson<Value, VTB>(obj, mp, "vtbs", verbose);
 
   return obj;
 }

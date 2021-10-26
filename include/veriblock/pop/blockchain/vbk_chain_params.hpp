@@ -96,9 +96,9 @@ struct VbkChainParamsMain : public VbkChainParams {
     return getRetargetPeriod();
   }
 
-  // hex(900000000000) = d18c2e2800
+  // hex(90 000 000 000) = 14f46b0400
   uint256 getMinimumDifficulty() const override {
-    return ArithUint256::fromHex("d18c2e2800");
+    return ArithUint256::fromHex("14f46b0400");
   }
   VbkNetworkType getTransactionMagicByte() const noexcept override {
     VbkNetworkType r;
