@@ -6,7 +6,9 @@ var hierarchy =
     ] ],
     [ "altintegration::Address", "structaltintegration_1_1Address.html", null ],
     [ "altintegration::AltBlock", "structaltintegration_1_1AltBlock.html", null ],
-    [ "altintegration::AltChainParams", "structaltintegration_1_1AltChainParams.html", null ],
+    [ "altintegration::AltChainParams", "structaltintegration_1_1AltChainParams.html", [
+      [ "altintegration::AltChainParamsRegTest", "structaltintegration_1_1AltChainParamsRegTest.html", null ]
+    ] ],
     [ "altintegration::AltCommandGroupStore", "structaltintegration_1_1AltCommandGroupStore.html", null ],
     [ "altintegration::ATV", "structaltintegration_1_1ATV.html", null ],
     [ "altintegration::VbkPayloadsRelations::AtvCombinedComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html", null ],
