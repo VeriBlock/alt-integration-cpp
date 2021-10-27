@@ -52,7 +52,7 @@ jobs:
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
     - name: cmake
-      run: cmake . -Bbuild -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=OFF -DTESTING=OFF -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release
+      run: cmake . -Bbuild -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=OFF -DTESTING=OFF -DCMAKE_BUILD_TYPE=Release
     - name: build
       run: sudo cmake --build build -- -j2 install
 
