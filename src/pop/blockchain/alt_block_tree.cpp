@@ -37,8 +37,6 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
     return state.Invalid("already bootstrapped");
   }
 
-  VBK_LOG_DEBUG("Entered method");
-
   auto block = alt_config_->getBootstrapBlock();
   auto height = block.getHeight();
   VBK_ASSERT_MSG(
@@ -113,11 +111,6 @@ void AltBlockTree::acceptBlock(index_t& index,
   }
 
   connectBlock(index, state);
-  if (!state.IsValid()) {
-    // do not attempt connect the descendants if current block can not be
-    // connected.
-    return;
-  }
 
   // use non-recursive algorithm to connect the descendants.
   // recursive algorithm caused segfaults on linux alpine because of deep
@@ -190,8 +183,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
 }
 
 template <typename Payload>
-bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
-                           ValidationState& state) {
+bool hasStatefulDuplicatesOf(AltBlockTree::BlockPayloadMutator& mutator,
+                             ValidationState& state) {
   for (const auto& pid : mutator.getBlock().getPayloadIds<Payload>()) {
     if (mutator.isStatefulDuplicate(pid.asVector())) {
       return !state.Invalid(
@@ -204,6 +197,13 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
   }
 
   return false;
+}
+
+bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
+                           ValidationState& state) {
+  return hasStatefulDuplicatesOf<VbkBlock>(mutator, state) ||
+         hasStatefulDuplicatesOf<VTB>(mutator, state) ||
+         hasStatefulDuplicatesOf<ATV>(mutator, state);
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
@@ -233,9 +233,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   auto mutator = makeConnectedLeafPayloadMutator(index);
 
-  if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
-      hasStatefulDuplicates<VTB>(mutator, state) ||
-      hasStatefulDuplicates<ATV>(mutator, state)) {
+  if (hasStatefulDuplicates(mutator, state)) {
     invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
@@ -348,8 +346,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   }
   VBK_LOG_DEBUG("chain B block: %s", right->toPrettyString());
 
-  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
-  VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
+  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), format("A is not connected: {}", left->toShortPrettyString()));
+  VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), format("B is not connected: {}", right->toShortPrettyString()));
 
   ValidationState state;
   // compare current active chain to other chain
@@ -548,8 +546,6 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT_MSG(
       to.isConnected(), "block %s must be connected", to.toPrettyString());
 
@@ -617,8 +613,6 @@ bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
 
 bool AltBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
-  VBK_LOG_DEBUG("Entered method");
-
   // load endorsements
   const auto& containingHash = index.header->getHash();
   auto* current = getBlockIndex(containingHash);
@@ -638,10 +632,13 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
     // connectBlock()
     if (current->isConnected()) {
       auto mutator = makeConnectedLeafPayloadMutator(*current);
-      if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
-          hasStatefulDuplicates<VTB>(mutator, state) ||
-          hasStatefulDuplicates<ATV>(mutator, state)) {
-        return false;
+      if (hasStatefulDuplicates(mutator, state) &&
+          !current->hasFlags(BLOCK_FAILED_POP)) {
+        return state.Invalid(
+            "valid-block-with-stateful-duplicates",
+            format(
+                "Block {} has stateful duplicates but is not marked as invalid",
+                mutator.getBlock().toPrettyString()));
       }
     }
   } else {
@@ -742,8 +739,6 @@ bool AltBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal,
                                      ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("Entered method");
-
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
 

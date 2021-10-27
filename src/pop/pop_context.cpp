@@ -7,8 +7,6 @@ std::shared_ptr<PopContext> PopContext::create(
     std::shared_ptr<PayloadsStorage> payloadsProvider,
     std::shared_ptr<BlockReader> blockProvider,
     size_t validatorWorkers) {
-  VBK_LOG_DEBUG("Entered method");
-
   config->validate();
 
   // because default constructor is hidden

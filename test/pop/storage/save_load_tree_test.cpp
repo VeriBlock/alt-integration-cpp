@@ -134,7 +134,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
 
   EXPECT_FALSE(load(alttree2));
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+VBK-duplicate");
+  EXPECT_EQ(state.GetPath(),
+            "failed-to-load-alt-tree+load-tree+valid-block-with-stateful-"
+            "duplicates+VBK-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
@@ -214,7 +216,9 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   EXPECT_FALSE(load(alttree2));
   EXPECT_FALSE(state.IsValid());
-  EXPECT_EQ(state.GetPath(), "failed-to-load-alt-tree+load-tree+ATV-duplicate");
+  EXPECT_EQ(state.GetPath(),
+            "failed-to-load-alt-tree+load-tree+valid-block-with-stateful-"
+            "duplicates+ATV-duplicate");
 }
 
 TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
@@ -390,7 +394,7 @@ TEST_F(SaveLoadTreeTest, CheckForDirtyEndorsedBlocks_test) {
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), popData));
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
- 
+
   containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 

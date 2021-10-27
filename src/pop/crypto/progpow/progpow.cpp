@@ -478,8 +478,6 @@ hash32_t progPowHash(const uint64_t block_number,  // height
                      const uint256& header,
                      const std::vector<uint32_t>& dag,
                      ethash_cache* light) {
-  VBK_LOG_DEBUG("Entered method with block_number={} nonce={}", block_number, nonce);
-
   hash32_t digest, zero, seed_256;
   uint64_t seed = 0;
   uint32_t mix[PROGPOW_LANES][PROGPOW_REGS];

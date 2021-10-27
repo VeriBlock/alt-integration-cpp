@@ -61,8 +61,6 @@ PopData MemPool::generatePopData() {
 }
 
 void MemPool::cleanUp() {
-  VBK_LOG_DEBUG("Entered method");
-
   if (do_stalled_check_) {
     auto& vbk_tree = mempool_tree_.vbk().getStableTree();
     for (auto it = relations_.begin(); it != relations_.end();) {
@@ -128,8 +126,6 @@ void MemPool::cleanUp() {
 }
 
 void MemPool::removeAll(const PopData& pop) {
-  VBK_LOG_DEBUG("Entered method");
-
   auto vbkblockids = make_idset(pop.context);
   auto vtbids = make_idset(pop.vtbs);
   auto atvids = make_idset(pop.atvs);
@@ -199,8 +195,6 @@ template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
                                            ValidationState& state,
                                            bool old_block_check) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT(atv);
 
   // before any checks and validations, check if payload is old or not
@@ -236,8 +230,6 @@ template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state,
                                            bool old_block_check) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT(vtb);
 
   // before any checks and validations, check if payload is old or not
@@ -276,8 +268,6 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
     const std::shared_ptr<VbkBlock>& blk,
     ValidationState& state,
     bool old_block_check) {
-  VBK_LOG_DEBUG("Entered method");
-
   VBK_ASSERT(blk);
 
   // before any checks and validations, check if payload is old or not
