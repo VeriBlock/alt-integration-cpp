@@ -35,7 +35,7 @@ jobs:
           clean: true
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: '3.8'
           architecture: 'x64'
       - name: install reqs on ubuntu
         if: matrix.runson == 'ubuntu-latest'
