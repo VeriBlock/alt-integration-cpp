@@ -116,9 +116,9 @@ struct altintegration::adaptors::BlockIteratorImpl&lt; BlockT &gt;</h3>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae5d4fcd32a40e0b613b9d52128d0f5ee"><td class="memItemLeft" align="right" valign="top"><a id="ae5d4fcd32a40e0b613b9d52128d0f5ee"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BlockIteratorImpl</b> (std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1adaptors_1_1StorageIterator.html">StorageIterator</a> &gt; it, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
-<tr class="separator:ae5d4fcd32a40e0b613b9d52128d0f5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d066dd40d688dabeb62e90880e272fa"><td class="memItemLeft" align="right" valign="top"><a id="a2d066dd40d688dabeb62e90880e272fa"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BlockIteratorImpl</b> (std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1adaptors_1_1StorageIterator.html">StorageIterator</a> &gt; it)</td></tr>
+<tr class="separator:a2d066dd40d688dabeb62e90880e272fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42ebd04a609eb14d647d576146f7fe2b"><td class="memItemLeft" align="right" valign="top"><a id="a42ebd04a609eb14d647d576146f7fe2b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">next</a> () override</td></tr>
 <tr class="memdesc:a42ebd04a609eb14d647d576146f7fe2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate to the next block. <br /></td></tr>
@@ -180,16 +180,16 @@ template&lt;typename BlockT &gt; </div>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BlockIterator.html#aa036df97ecb383d94ef7d95d4c2a0a58">altintegration::BlockIterator&lt; BlockT &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00090">90</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                                                      {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::vector&lt;uint8_t&gt; bytes;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> (!it_-&gt;key(bytes)) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="comment">// remove prefix</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    out = {bytes.begin() + 1, bytes.end()};</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00087">87</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                                                      {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    std::vector&lt;uint8_t&gt; bytes;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">if</span> (!it_-&gt;key(bytes)) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="comment">// remove prefix</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    out = {bytes.begin() + 1, bytes.end()};</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -221,14 +221,14 @@ template&lt;typename BlockT &gt; </div>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BlockIterator.html#a731e91f007dae78fd0ed20a5519600c9">altintegration::BlockIterator&lt; BlockT &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00100">100</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                              {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint8_t prefix = block_key&lt;BlockT&gt;({})[0];</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    std::vector&lt;uint8_t&gt; <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span> it_-&gt;valid() &amp;&amp; it_-&gt;key(<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>) &amp;&amp; !<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>.empty() &amp;&amp; <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>[0] == prefix;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
-<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a5f0ae89803b9e3e023c33b71eef5230f"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">altintegration::adaptors::BlockIteratorImpl::key</a></div><div class="ttdeci">bool key(typename BlockT::hash_t &amp;out) const override</div><div class="ttdoc">Return the current block hash key.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00090">block_provider_impl.hpp:90</a></div></div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00097">97</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                              {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint8_t prefix = block_key&lt;BlockT&gt;({})[0];</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    std::vector&lt;uint8_t&gt; <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">return</span> it_-&gt;valid() &amp;&amp; it_-&gt;key(<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>) &amp;&amp; !<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>.empty() &amp;&amp; <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">key</a>[0] == prefix;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  }</div>
+<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a5f0ae89803b9e3e023c33b71eef5230f"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">altintegration::adaptors::BlockIteratorImpl::key</a></div><div class="ttdeci">bool key(typename BlockT::hash_t &amp;out) const override</div><div class="ttdoc">Return the current block hash key.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00087">block_provider_impl.hpp:87</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -267,16 +267,15 @@ template&lt;typename BlockT &gt; </div>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238">altintegration::BlockIterator&lt; BlockT &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00080">80</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                                           {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::vector&lt;uint8_t&gt; bytes;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">if</span> (!it_-&gt;value(bytes)) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    out = AssertDeserializeFromVbkEncoding&lt;StoredBlockIndex&lt;BlockT&gt;&gt;(bytes,</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                                                                     params_);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00078">78</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                                                           {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    std::vector&lt;uint8_t&gt; bytes;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (!it_-&gt;value(bytes)) {</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    out = AssertDeserializeFromVbkEncoding&lt;StoredBlockIndex&lt;BlockT&gt;&gt;(bytes);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
