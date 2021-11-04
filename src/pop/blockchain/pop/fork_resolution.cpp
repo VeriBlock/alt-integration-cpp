@@ -8,8 +8,7 @@ std::string popFrOutcomeToString(PopFrOutcome value,
     case PopFrOutcome::CANDIDATE_IS_TIP:
       return "comparing tip to itself";
     case PopFrOutcome::CANDIDATE_INVALID_CHAIN:
-      return "candidate has unknown validity, but added to an invalid "
-             "chain, "
+      return "candidate has unknown validity, but added to an invalid chain, "
              "state: " +
              state.toString();
     case PopFrOutcome::CANDIDATE_INVALID_PAYLOADS:
@@ -23,8 +22,7 @@ std::string popFrOutcomeToString(PopFrOutcome value,
     case PopFrOutcome::BOTH_DONT_CROSS_KEYSTONE_BOUNDARY:
       return "both chains do not cross keystone boundary";
     case PopFrOutcome::CANDIDATE_INVALID_INDEPENDENTLY:
-      return "candidate is invalid when applied independently of active "
-             "chain, "
+      return "candidate is invalid when applied independently of active chain, "
              "state: " +
              state.toString();
     case PopFrOutcome::HIGHER_POP_SCORE:
