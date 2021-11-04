@@ -272,7 +272,8 @@ struct ReducedPublicationView {
     return &currentKeystoneContext;
   }
 
-  int32_t firstKeystoneAfterBlockIndex(typename protected_chain_t::index_t* blockIndex) {
+  int32_t firstKeystoneAfterBlockIndex(
+      typename protected_chain_t::index_t* blockIndex) {
     VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
     return firstKeystoneAfter(blockIndex->getHeight(), keystoneInterval);
   }
@@ -280,8 +281,7 @@ struct ReducedPublicationView {
   int32_t highestKeystoneAtOrBeforeBlockIndex(
       typename protected_chain_t::index_t* blockIndex) {
     VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
-    return highestKeystoneAtOrBefore(blockIndex->getHeight(),
-                                     keystoneInterval);
+    return highestKeystoneAtOrBefore(blockIndex->getHeight(), keystoneInterval);
   }
 };
 
@@ -456,7 +456,8 @@ enum class PopFrOutcome {
   HIGHER_POP_SCORE,
 };
 
-const char* popFrOutcomeToString(PopFrOutcome value);
+std::string popFrOutcomeToString(PopFrOutcome value,
+                                 const ValidationState& state);
 
 //! @private
 template <typename ProtectedBlock,

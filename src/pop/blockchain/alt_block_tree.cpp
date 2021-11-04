@@ -234,6 +234,10 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   auto mutator = makeConnectedLeafPayloadMutator(index);
 
   if (hasStatefulDuplicates(mutator, state)) {
+    VBK_LOG_DEBUG("block: %s has stateful duplicate, state: %s",
+                  index.toPrettyString(),
+                  state.toString());
+
     invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
@@ -346,8 +350,11 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   }
   VBK_LOG_DEBUG("chain B block: %s", right->toPrettyString());
 
-  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), format("A is not connected: {}", left->toShortPrettyString()));
-  VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), format("B is not connected: {}", right->toShortPrettyString()));
+  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED),
+                 format("A is not connected: {}", left->toShortPrettyString()));
+  VBK_ASSERT_MSG(
+      right->isValidUpTo(BLOCK_CONNECTED),
+      format("B is not connected: {}", right->toShortPrettyString()));
 
   ValidationState state;
   // compare current active chain to other chain
@@ -368,7 +375,7 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
       (result == 0 ? "Equal PoP score"
                    : (result > 0 ? "Tip wins" : "Candidate wins")),
       result,
-      popFrOutcomeToString(reason));
+      popFrOutcomeToString(reason, state));
 
   return result;
 }

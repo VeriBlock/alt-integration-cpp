@@ -40,17 +40,20 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   auto reason = p.second;
   // the pop state is already set to the best of the two chains
   if (result == 0) {
-    VBK_LOG_DEBUG("Pop scores are equal. Reason: %s.", popFrOutcomeToString(reason));
+    VBK_LOG_DEBUG("Pop scores are equal. Reason: %s.",
+                  popFrOutcomeToString(reason, state));
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(candidate, state);
   } else if (result < 0) {
-    VBK_LOG_DEBUG("Candidate chain won. Reason: %s.", popFrOutcomeToString(reason));
+    VBK_LOG_DEBUG("Candidate chain won. Reason: %s.",
+                  popFrOutcomeToString(reason, state));
     // the other chain won!
     // setState(candidate) has been already done, so only update the tip
     this->overrideTip(candidate);
   } else {
     // the current chain is better
-    VBK_LOG_DEBUG("Active chain won. Reason: %s.", popFrOutcomeToString(reason));
+    VBK_LOG_DEBUG("Active chain won. Reason: %s.",
+                  popFrOutcomeToString(reason, state));
   }
 }
 

@@ -626,7 +626,10 @@ struct BaseBlockTree {
     auto& root = getRoot();
     if (connectForward) {
       VBK_ASSERT_MSG(index.height >= root.getHeight(),
-                     "Blocks can be forward connected after root only");
+                     format("Blocks can be forward connected after root only. "
+                            "index.height: {}, root.height: {}",
+                            index.height,
+                            root.getHeight()));
     } else {
       VBK_ASSERT_MSG(index.height + 1 == root.getHeight(),
                      "Blocks can be backwards connected only to the root");
@@ -845,7 +848,9 @@ struct BaseBlockTree {
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind", index.toShortPrettyString(), preserveBlocksBehindFinal);
+    VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind",
+                  index.toShortPrettyString(),
+                  preserveBlocksBehindFinal);
 
     index_t* finalizedBlock = &index;
 
