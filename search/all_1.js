@@ -3,7 +3,7 @@ var searchData=
   ['acceptblock_3',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)'],['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)']]],
   ['acceptblockheader_4',['acceptBlockHeader',['../structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c',1,'altintegration::AltBlockTree']]],
   ['activechain_5f_5',['activeChain_',['../structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69',1,'altintegration::BaseBlockTree']]],
-  ['add_6',['add',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
+  ['add_6',['add',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a66e4a27dcc82aabc8cf351bc61384b69',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
   ['addblocks_7',['addBlocks',['../namespacealtintegration.html#ae2894d7158d84c3ccc3cf26fe76afc6b',1,'altintegration']]],
   ['adding_20configuration_8',['Adding configuration',['../integration_4_config.html',1,'integration']]],
   ['adding_20persistence_9',['Adding persistence',['../integration_5_persistence.html',1,'integration']]],

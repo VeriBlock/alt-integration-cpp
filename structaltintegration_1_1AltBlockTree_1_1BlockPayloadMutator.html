@@ -106,7 +106,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltBlockTree_1
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator__coll__graph.svg" width="188" height="162"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator__coll__graph.svg" width="188" height="191"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -130,35 +130,44 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae59e83342c29902232b0669da19bbd13"><td class="memItemLeft" align="right" valign="top"><a id="ae59e83342c29902232b0669da19bbd13"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BlockPayloadMutator</b> (<a class="el" href="structaltintegration_1_1AltBlockTree.html">tree_t</a> &amp;tree, block_index_t &amp;block)</td></tr>
 <tr class="separator:ae59e83342c29902232b0669da19bbd13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa278942a6bc04fef8e003f64ee95d772"><td class="memItemLeft" align="right" valign="top"><a id="aa278942a6bc04fef8e003f64ee95d772"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa278942a6bc04fef8e003f64ee95d772">isStatefulDuplicate</a> (const id_vector_t &amp;payload_id)</td></tr>
-<tr class="memdesc:aa278942a6bc04fef8e003f64ee95d772"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateful duplicate payload check as performed by connectBlock() <br /></td></tr>
-<tr class="separator:aa278942a6bc04fef8e003f64ee95d772"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a496658b65b637e8fd9b4fcbcba7a7973"><td class="memTemplParams" colspan="2"><a id="a496658b65b637e8fd9b4fcbcba7a7973"></a>
+template&lt;typename pop_t &gt; </td></tr>
+<tr class="memitem:a496658b65b637e8fd9b4fcbcba7a7973"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a496658b65b637e8fd9b4fcbcba7a7973">isStatefulDuplicate</a> (const typename pop_t::id_t &amp;id)</td></tr>
+<tr class="memdesc:a496658b65b637e8fd9b4fcbcba7a7973"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateful duplicate payload check as performed by connectBlock() <br /></td></tr>
+<tr class="separator:a496658b65b637e8fd9b4fcbcba7a7973"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5fe69d99955528958cab66206d9c57d"><td class="memItemLeft" align="right" valign="top"><a id="ae5fe69d99955528958cab66206d9c57d"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae5fe69d99955528958cab66206d9c57d">isStatelessDuplicate</a> (const id_vector_t &amp;payload_id)</td></tr>
 <tr class="memdesc:ae5fe69d99955528958cab66206d9c57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateless payload duplicate check functionally equivalent to checkPopDataForDuplicates <br /></td></tr>
 <tr class="separator:ae5fe69d99955528958cab66206d9c57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7750263ceaa0bbf32e8b09becd2dbecc"><td class="memTemplParams" colspan="2">template&lt;typename Payload &gt; </td></tr>
-<tr class="memitem:a7750263ceaa0bbf32e8b09becd2dbecc"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc">add</a> (const Payload &amp;payload, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="memdesc:a7750263ceaa0bbf32e8b09becd2dbecc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a payload to a leaf connected block, apply the payload if the block is applied.  <a href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc">More...</a><br /></td></tr>
-<tr class="separator:a7750263ceaa0bbf32e8b09becd2dbecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66e4a27dcc82aabc8cf351bc61384b69"><td class="memTemplParams" colspan="2">template&lt;typename pop_t &gt; </td></tr>
+<tr class="memitem:a66e4a27dcc82aabc8cf351bc61384b69"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a66e4a27dcc82aabc8cf351bc61384b69">add</a> (const pop_t &amp;payload, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a66e4a27dcc82aabc8cf351bc61384b69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a payload to a leaf connected block, apply the payload if the block is applied.  <a href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a66e4a27dcc82aabc8cf351bc61384b69">More...</a><br /></td></tr>
+<tr class="separator:a66e4a27dcc82aabc8cf351bc61384b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee59bd54f998500f6b3fcd2582607e8b"><td class="memItemLeft" align="right" valign="top"><a id="aee59bd54f998500f6b3fcd2582607e8b"></a>
 block_index_t &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getBlock</b> ()</td></tr>
 <tr class="separator:aee59bd54f998500f6b3fcd2582607e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4447038e96f71be4e6908e0a75c7cf66"><td class="memItemLeft" align="right" valign="top"><a id="a4447038e96f71be4e6908e0a75c7cf66"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a4447038e96f71be4e6908e0a75c7cf66"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>isStatefulDuplicate</b> (const <a class="el" href="structaltintegration_1_1Blob.html">ATV::id_t</a> &amp;atv)</td></tr>
+<tr class="separator:a4447038e96f71be4e6908e0a75c7cf66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af70c9d15f07c65f5a7a11986f0e5997e"><td class="memItemLeft" align="right" valign="top"><a id="af70c9d15f07c65f5a7a11986f0e5997e"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:af70c9d15f07c65f5a7a11986f0e5997e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>isStatefulDuplicate</b> (const <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::id_t</a> &amp;vbk)</td></tr>
+<tr class="separator:af70c9d15f07c65f5a7a11986f0e5997e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7750263ceaa0bbf32e8b09becd2dbecc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7750263ceaa0bbf32e8b09becd2dbecc">&#9670;&nbsp;</a></span>add()</h2>
+<a id="a66e4a27dcc82aabc8cf351bc61384b69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66e4a27dcc82aabc8cf351bc61384b69">&#9670;&nbsp;</a></span>add()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Payload &gt; </div>
+template&lt;typename pop_t &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">bool altintegration::AltBlockTree::BlockPayloadMutator::add </td>
           <td>(</td>
-          <td class="paramtype">const Payload &amp;&#160;</td>
+          <td class="paramtype">const pop_t &amp;&#160;</td>
           <td class="paramname"><em>payload</em>, </td>
         </tr>
         <tr>
