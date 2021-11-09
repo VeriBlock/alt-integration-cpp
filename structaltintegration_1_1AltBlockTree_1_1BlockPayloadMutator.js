@@ -7,8 +7,8 @@ var structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator =
     [ "BlockPayloadMutator", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae59e83342c29902232b0669da19bbd13", null ],
     [ "add", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a66e4a27dcc82aabc8cf351bc61384b69", null ],
     [ "getBlock", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aee59bd54f998500f6b3fcd2582607e8b", null ],
-    [ "isStatefulDuplicate", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a4447038e96f71be4e6908e0a75c7cf66", null ],
-    [ "isStatefulDuplicate", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a496658b65b637e8fd9b4fcbcba7a7973", null ],
+    [ "isStatefulDuplicate", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#abdcfae0fa047b9dc54b8c8b05e4c358c", null ],
+    [ "isStatefulDuplicate", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa7f553abc0e9ea162758b02ebe191e35", null ],
     [ "isStatefulDuplicate", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#af70c9d15f07c65f5a7a11986f0e5997e", null ],
     [ "isStatelessDuplicate", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae5fe69d99955528958cab66206d9c57d", null ]
 ];
