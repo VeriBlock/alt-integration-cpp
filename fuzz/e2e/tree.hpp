@@ -51,6 +51,24 @@ struct FuzzAltChainParams : public altintegration::AltChainParams {
     (void)root;
     return true;
   }
+
+  bool isAncestor(const altintegration::AltBlock::hash_t& descendant_hash,
+                  const altintegration::AltBlock::hash_t& ancestor_hash)
+      const noexcept override {
+    if (tree == nullptr) {
+      return false;
+    }
+
+    auto* descendant = tree->getBlockIndex(descendant_hash);
+    auto* ancestor = tree->getBlockIndex(ancestor_hash);
+
+    altintegration::Chain<typename altintegration::AltBlockTree::index_t> chain(
+        tree->getParams().getBootstrapBlock().height, descendant->pprev);
+
+    return chain.contains(ancestor);
+  }
+
+  altintegration::AltBlockTree* tree{nullptr};
 };
 
 class Tree {
@@ -92,7 +110,7 @@ class Tree {
   altintegration::adaptors::InmemStorageImpl storage{};
   std::shared_ptr<altintegration::adaptors::PayloadsStorageImpl> pp = nullptr;
   std::shared_ptr<altintegration::adaptors::BlockReaderImpl> bp = nullptr;
-  std::shared_ptr<altintegration::AltChainParams> params = nullptr;
+  std::shared_ptr<FuzzAltChainParams> params = nullptr;
   std::shared_ptr<altintegration::PopContext> popcontext = nullptr;
   std::unordered_map<std::vector<uint8_t>, std::shared_ptr<Block>> blocks;
 };

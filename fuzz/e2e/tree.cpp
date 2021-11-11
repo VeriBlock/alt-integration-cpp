@@ -94,5 +94,7 @@ Tree::Tree() {
   config->SelectAltParams(params);
 
   popcontext = altintegration::PopContext::create(config, pp, bp);
+
+  params->tree = &popcontext->getAltBlockTree();
 }
 }  // namespace fuzz
