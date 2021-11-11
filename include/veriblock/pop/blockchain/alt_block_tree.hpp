@@ -282,7 +282,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
     block_index_t& block_;
     payload_index_t& payload_index_;
     std::unordered_set<std::vector<uint8_t>> ids_;
-    Chain<block_index_t> chain_;
   };
 
   /**

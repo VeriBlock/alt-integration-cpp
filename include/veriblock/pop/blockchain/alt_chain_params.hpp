@@ -255,6 +255,10 @@ struct AltChainParams {
                                 const std::vector<uint8_t>& root,
                                 ValidationState& state) const noexcept = 0;
 
+  virtual bool isAncestor(
+      const AltBlock::hash_t& descendant_hash,
+      const AltBlock::hash_t& ancestor_hash) const noexcept = 0;
+
  public:
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();

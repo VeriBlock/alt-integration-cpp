@@ -443,11 +443,7 @@ void appendIds(std::unordered_set<std::vector<uint8_t>>& ids,
 
 AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(tree_t& tree,
                                                        block_index_t& block)
-    : tree_(tree),
-      block_(block),
-      payload_index_(tree.getPayloadsIndex()),
-      // don't look for duplicates in the block itself
-      chain_(tree.getParams().getBootstrapBlock().height, block_.pprev) {
+    : tree_(tree), block_(block), payload_index_(tree.getPayloadsIndex()) {
   VBK_ASSERT_MSG(block_.pprev,
                  "Adding payloads to a bootstrap block is not allowed");
   VBK_ASSERT_MSG(block_.isValidUpTo(BLOCK_VALID_TREE),
@@ -472,8 +468,7 @@ bool AltBlockTree::BlockPayloadMutator::isStatefulDuplicate(
     const id_vector_t& payload_id) {
   // make sure existing blocks do not contain this id
   for (const auto& hash : payload_index_.getContainingAltBlocks(payload_id)) {
-    const auto* candidate = tree_.getBlockIndex(hash);
-    if (chain_.contains(candidate)) {
+    if (tree_.getParams().isAncestor(block_.getHash(), hash)) {
       // duplicate found in 'candidate'
       return true;
     }
