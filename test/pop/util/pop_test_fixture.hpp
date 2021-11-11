@@ -71,6 +71,7 @@ struct PopTestFixture {
 
     popminer = std::make_shared<MockMiner>();
     mempool = std::make_shared<MemPool>(alttree);
+    altparam.tree = &alttree;
   }
 
   // T = tree

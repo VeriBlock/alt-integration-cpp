@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_ALT_CHAIN_PARAMS_REGTEST_HPP
 #define ALTINTEGRATION_ALT_CHAIN_PARAMS_REGTEST_HPP
 
+#include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
 
 namespace altintegration {
@@ -36,7 +37,24 @@ struct AltChainParamsRegTest : public AltChainParams {
     return true;
   }
 
+  bool isAncestor(
+      const AltBlock::hash_t& descendant_hash,
+      const AltBlock::hash_t& ancestor_hash) const noexcept override {
+    if (tree == nullptr) {
+      return false;
+    }
+
+    auto* descendant = tree->getBlockIndex(descendant_hash);
+    auto* ancestor = tree->getBlockIndex(ancestor_hash);
+
+    Chain<typename AltBlockTree::index_t> chain(
+        tree->getParams().getBootstrapBlock().height, descendant->pprev);
+
+    return chain.contains(ancestor);
+  }
+
   int64_t id = 0;
+  AltBlockTree* tree{nullptr};
 };
 
 }  // namespace altintegration

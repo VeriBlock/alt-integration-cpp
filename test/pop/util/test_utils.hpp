@@ -136,7 +136,7 @@ inline StoredBlockIndex<VbkBlock> getRandomIndex() {
   index.status = rand() & 0x0f;
   index.addon._refCount = 100;
   index.addon._vtbids.push_back(generateRandomBlob<32>());
-  //index.chainWork = generateRandomBytesVector(uint256::size());
+  // index.chainWork = generateRandomBytesVector(uint256::size());
   return index;
 }
 
@@ -186,6 +186,14 @@ struct AltChainParamsTest : public AltChainParams {
                         const std::vector<uint8_t>&,
                         ValidationState&) const noexcept override {
     return true;
+  }
+
+  bool isAncestor(
+      const AltBlock::hash_t& descendant_hash,
+      const AltBlock::hash_t& ancestor_hash) const noexcept override {
+    (void)descendant_hash;
+    (void)ancestor_hash;
+    return false;
   }
 };
 

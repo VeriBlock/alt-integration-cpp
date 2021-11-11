@@ -39,6 +39,14 @@ struct AltChainParamsNon0Bootstrap : public AltChainParams {
     return true;
   }
 
+  bool isAncestor(
+      const AltBlock::hash_t& descendant_hash,
+      const AltBlock::hash_t& ancestor_hash) const noexcept override {
+    (void)descendant_hash;
+    (void)ancestor_hash;
+    return false;
+  }
+
   int64_t id = 0;
   int height = 0;
 };
