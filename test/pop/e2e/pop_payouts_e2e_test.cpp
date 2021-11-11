@@ -106,7 +106,8 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   for (size_t i = 0; i < 10000; i++) {
     PopPayouts payouts{};
     ASSERT_TRUE(SetState(alttree, chain[i].getHash()));
-    ASSERT_NO_FATAL_FAILURE(calculator_.getPopPayout(chain[i].getHash(), payouts, state));
+    ASSERT_NO_FATAL_FAILURE(
+        calculator_.getPopPayout(chain[i].getHash(), payouts, state));
     // no endorsements = no payouts
     ASSERT_TRUE(payouts.empty());
 
@@ -199,6 +200,7 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
+  altparam.tree = &alttree2;
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
@@ -264,6 +266,7 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
+  altparam.tree = &alttree2;
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
   EXPECT_TRUE(
       alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));

@@ -33,6 +33,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
   AltBlockTree test_alttree(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
+  altparam.tree = &test_alttree;
 
   // do not bootstrap VBK
   ASSERT_TRUE(test_alttree.bootstrap(state));
