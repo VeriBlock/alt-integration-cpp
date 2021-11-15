@@ -400,8 +400,7 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 
   const auto& vtbIds = current->getPayloadIds<VTB>();
 
-  // stateless check for duplicates in each of the payload IDs vectors
-  if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
+  if (hasDuplicateIdsOf<VTB>(vtbIds, state)) return false;
 
   // recover `endorsedBy`
   const auto si = param_->getEndorsementSettlementInterval();

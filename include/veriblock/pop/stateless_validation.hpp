@@ -119,7 +119,7 @@ bool checkVTB(const VTB& vtb,
 
 //! @private
 template <typename P>
-bool hasDuplicateIds(const std::vector<typename P::id_t>& payloadIds) {
+bool hasDuplicateIdsOf(const std::vector<typename P::id_t>& payloadIds) {
   std::unordered_set<typename P::id_t> ids;
   for (const auto& id : payloadIds) {
     bool inserted = ids.insert(id).second;
@@ -132,13 +132,13 @@ bool hasDuplicateIds(const std::vector<typename P::id_t>& payloadIds) {
 
 //! @private
 template <typename P>
-bool checkIdsForDuplicates(const std::vector<typename P::id_t>& payloadIds,
-                           ValidationState& state) {
-  if (hasDuplicateIds<P>(payloadIds)) {
-    return state.Invalid(P::name() + "-duplicate",
-                         format("duplicate {} ids", P::name()));
+bool hasDuplicateIdsOf(const std::vector<typename P::id_t>& payloadIds,
+                       ValidationState& state) {
+  if (hasDuplicateIdsOf<P>(payloadIds)) {
+    return !state.Invalid(P::name() + "-duplicate",
+                          format("duplicate {} ids", P::name()));
   }
-  return true;
+  return false;
 }
 
 //! @private
