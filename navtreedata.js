@@ -66,8 +66,8 @@ var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
 "fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
-"namespacealtintegration.html#a2234d92a74d69bbfec999765a19be957",
-"namespacealtintegration.html#acb85505cbe32103717a6b19cce6203c8",
+"namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa",
+"namespacealtintegration.html#acbc9f536758a3beafa581a904dd585c2",
 "structaltintegration_1_1AltBlockTree.html#a458080d2b38c73b007bf1993d1d96aa3",
 "structaltintegration_1_1BlockIterator.html",
 "structaltintegration_1_1ContextInfoContainer.html#ad8eb0822c31c70d74d5738ca30639c10",
