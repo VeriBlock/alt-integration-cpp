@@ -20,7 +20,7 @@ namespace {
 
 template <typename index_t>
 void assertBlockCanBeApplied(index_t& index) {
-  VBK_ASSERT(index.pprev && "cannot apply the genesis block");
+  VBK_ASSERT_MSG(!index.isRoot(), "cannot apply the root block");
 
   VBK_ASSERT_MSG(index.pprev->hasFlags(BLOCK_ACTIVE),
                  "state corruption: tried to apply a block that follows an "
@@ -44,7 +44,7 @@ void assertBlockCanBeApplied(index_t& index) {
 
 template <typename index_t>
 void assertBlockCanBeUnapplied(index_t& index) {
-  VBK_ASSERT(index.pprev && "cannot unapply the genesis block");
+  VBK_ASSERT_MSG(!index.isRoot(), "cannot unapply the root block");
 
   VBK_ASSERT_MSG(
       index.hasFlags(BLOCK_ACTIVE),
