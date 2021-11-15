@@ -95,8 +95,9 @@ void VbkBlockTree::removePayloads(index_t& index,
   VBK_LOG_DEBUG(
       "remove %d payloads from %s", pids.size(), index.toPrettyString());
 
-  // we do not allow adding payloads to the genesis block
-  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
+  // we do not allow adding payloads to the root block
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "can not remove payloads from the root block");
 
   if (pids.empty()) {
     return;

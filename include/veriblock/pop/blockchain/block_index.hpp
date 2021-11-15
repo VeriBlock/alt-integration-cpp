@@ -55,7 +55,7 @@ struct BlockIndex : public Block::addon_t {
     // TODO: what dirtiness should it have here?
   }
 
-  //! create a bootstrap block in a deleted state
+  //! create a root block in a deleted state
   explicit BlockIndex(height_t _height) : pprev(nullptr), height(_height) {}
 
   ~BlockIndex() {
@@ -77,13 +77,14 @@ struct BlockIndex : public Block::addon_t {
   BlockIndex& operator=(BlockIndex&& other) = default;
 
   bool isDeleted() const { return hasFlags(BLOCK_DELETED); };
+  bool isRoot() const { return pprev == nullptr; };
 
   void restore() {
     VBK_ASSERT_MSG(isDeleted(),
                    "tried to restore block %s that is not deleted",
                    toPrettyString());
 
-    if (pprev != nullptr) {
+    if (!isRoot()) {
       pprev->pnext.insert(this);
 
       if (!pprev->isValid()) {
@@ -100,7 +101,7 @@ struct BlockIndex : public Block::addon_t {
                    "tried to delete block %s that is already deleted",
                    toPrettyString());
 
-    if (pprev != nullptr) {
+    if (!isRoot()) {
       pprev->pnext.erase(this);
     }
 
@@ -195,7 +196,7 @@ struct BlockIndex : public Block::addon_t {
       return false;
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
-      VBK_ASSERT_MSG((pprev == nullptr || pprev->getValidityLevel() >= upTo),
+      VBK_ASSERT_MSG(isRoot() || pprev->getValidityLevel() >= upTo,
                      "attempted to raise the validity level of block %s beyond "
                      "the validity level of its ancestor %s",
                      toPrettyString(),
@@ -303,7 +304,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   const BlockIndex* getPrev() const {
-    VBK_ASSERT_MSG(pprev == nullptr || getHeight() == pprev->getHeight() + 1,
+    VBK_ASSERT_MSG(isRoot() || getHeight() == pprev->getHeight() + 1,
                    "state corruption: unexpected height of the previous block "
                    "%s of block %s",
                    pprev->toPrettyString(),

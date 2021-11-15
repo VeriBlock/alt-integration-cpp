@@ -161,8 +161,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
-  VBK_ASSERT_MSG(index.pprev,
-                 "Adding payloads to a bootstrap block is not allowed");
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "Adding payloads to the root block is not allowed");
 
   ValidationState state;
   VBK_ASSERT_MSG(
@@ -400,7 +400,8 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
                 index.toShortPrettyString());
 
   // we do not allow adding payloads to the genesis block
-  VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "can not remove payloads from the root block");
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "Can remove payloads only from blocks with payloads");
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE), "block is applied");
@@ -448,8 +449,8 @@ AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(tree_t& tree,
       payload_index_(tree.getPayloadsIndex()),
       // don't look for duplicates in the block itself
       chain_(tree.getParams().getBootstrapBlock().height, block_.pprev) {
-  VBK_ASSERT_MSG(block_.pprev,
-                 "Adding payloads to a bootstrap block is not allowed");
+  VBK_ASSERT_MSG(!block_.isRoot(),
+                 "Adding payloads to the root block is not allowed");
   VBK_ASSERT_MSG(block_.isValidUpTo(BLOCK_VALID_TREE),
                  "block %s should be valid",
                  block_.toPrettyString());
@@ -634,7 +635,7 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
   if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
   if (!checkIdsForDuplicates<ATV>(atvIds, state)) return false;
 
-  if (current->pprev != nullptr) {
+  if (!current->isRoot()) {
     // if the block is not yet connected, defer the stateful duplicate check to
     // connectBlock()
     if (current->isConnected()) {
