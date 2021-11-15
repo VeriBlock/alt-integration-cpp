@@ -15,7 +15,6 @@ var structaltintegration_1_1AltChainParams =
     [ "getMaxVbkBlocksInAltBlock", "structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d", null ],
     [ "getMaxVTBsInAltBlock", "structaltintegration_1_1AltChainParams.html#a30a17437d219fba10e84bb27814ffe35", null ],
     [ "getPayoutParams", "structaltintegration_1_1AltChainParams.html#aa09bd74723bdadf30bfd2d4a70eded20", null ],
-    [ "isAncestor", "structaltintegration_1_1AltChainParams.html#a4f626b30fae3312aa2fd8ab34ce5d9c7", null ],
     [ "maxAltchainFutureBlockTime", "structaltintegration_1_1AltChainParams.html#a1df826389de975b3c767cfce40d041f1", null ],
     [ "maxWorkerQueueSize", "structaltintegration_1_1AltChainParams.html#a2c8435cb1679bd15c9d4a8dc029ade34", null ],
     [ "preserveBlocksBehindFinal", "structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689", null ],

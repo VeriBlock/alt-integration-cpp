@@ -362,11 +362,11 @@
 <text text-anchor="start" x="821.5" y="-613.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
 <text text-anchor="start" x="821.5" y="-602.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="821.5" y="-591.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isDeleted()</text>
-<text text-anchor="start" x="821.5" y="-580.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ restore()</text>
-<text text-anchor="start" x="821.5" y="-569.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ deleteTemporarily()</text>
-<text text-anchor="start" x="821.5" y="-558.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mergeFrom()</text>
-<text text-anchor="start" x="821.5" y="-547.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toStoredBlockIndex()</text>
-<text text-anchor="start" x="821.5" y="-536.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 39 more...</text>
+<text text-anchor="start" x="821.5" y="-580.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isRoot()</text>
+<text text-anchor="start" x="821.5" y="-569.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ restore()</text>
+<text text-anchor="start" x="821.5" y="-558.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ deleteTemporarily()</text>
+<text text-anchor="start" x="821.5" y="-547.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mergeFrom()</text>
+<text text-anchor="start" x="821.5" y="-536.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 40 more...</text>
 </a>
 </g>
 </g>

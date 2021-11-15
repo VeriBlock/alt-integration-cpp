@@ -31,6 +31,7 @@ var structaltintegration_1_1BlockIndex =
     [ "isDeleted", "structaltintegration_1_1BlockIndex.html#ab850acb40baf07b180827744a31d7a0c", null ],
     [ "isDescendantOf", "structaltintegration_1_1BlockIndex.html#abc28f5dc327506b5bb55c0891e7a9a02", null ],
     [ "isDirty", "structaltintegration_1_1BlockIndex.html#a80ff9cdd00e60bc174e9b02869297c57", null ],
+    [ "isRoot", "structaltintegration_1_1BlockIndex.html#a2bba056cd9bef925b4399069290f0106", null ],
     [ "isValid", "structaltintegration_1_1BlockIndex.html#a593759ce8b76cbb77f34ad2943869e7d", null ],
     [ "isValidTip", "structaltintegration_1_1BlockIndex.html#afbf74ee9971633b0b8e62dc07fbd1b0d", null ],
     [ "isValidUpTo", "structaltintegration_1_1BlockIndex.html#ab5ee067e670bb8877f0e3e3bd04ae7a1", null ],
