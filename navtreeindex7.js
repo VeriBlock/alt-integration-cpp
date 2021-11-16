@@ -1,12 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"structaltintegration_1_1ReadStream.html#a7ce1ebf8768623c286fd880e3eff34cf":[5,0,0,56,19],
-"structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6":[5,0,0,56,20],
-"structaltintegration_1_1ReadStream.html#a7f5c83d2f9edc7d6567a7e8c053b58a3":[5,0,0,56,9],
-"structaltintegration_1_1ReadStream.html#a8d096f16d0f52ff05c4624c398e7cd15":[5,0,0,56,7],
-"structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2":[5,0,0,56,12],
-"structaltintegration_1_1ReadStream.html#aa149b1a7ac12659733883445ee8be071":[5,0,0,56,14],
-"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907":[5,0,0,56,3],
 "structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68":[5,0,0,56,5],
 "structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab":[5,0,0,56,1],
 "structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[5,0,0,56,0],
@@ -249,5 +242,12 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1VbkTx.html#ad8a4bcf8849b75c248400bb07408fdb7":[5,0,0,47,15],
 "structaltintegration_1_1VbkTx.html#ae528b1156501d02c718720a3b6227ecb":[5,0,0,47,13],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html":[5,0,0,0,2],
-"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2":[5,0,0,0,2,2]
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2":[5,0,0,0,2,2],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a38dc8b7abb579f8b9616b25a1e5f8fd6":[5,0,0,0,2,3],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a694288b8109d3a7511913b8e1b77d5c6":[5,0,0,0,2,7],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a7d9fc0b3c5e429187c5ea6e441dd7aaa":[5,0,0,0,2,1],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a7f65c921af0541e8bf164ac79aa94e4a":[5,0,0,0,2,6],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a93e7af4b98826fd912b75b81fa0329f3":[5,0,0,0,2,0],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70":[5,0,0,0,2,4],
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[5,0,0,0,2,5]
 };

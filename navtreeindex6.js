@@ -1,12 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1ContextInfoContainer.html#ad8eb0822c31c70d74d5738ca30639c10":[5,0,0,33,4],
-"structaltintegration_1_1ContextInfoContainer.html#ad92917c6e4a04bd29ba9b8d32b0503fb":[5,0,0,33,7],
-"structaltintegration_1_1ContextInfoContainer.html#adb3a5a0ccbc36bc93d048af0a720e1cc":[5,0,0,33,3],
-"structaltintegration_1_1ContextInfoContainer.html#ae0b758bfd999d05dbb60cfc95cfbdc6e":[5,0,0,33,1],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html":[5,0,0,58],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a1646a94120f78268d99fcf7cfdd20df1":[5,0,0,58,4],
-"structaltintegration_1_1DefaultPopRewardsCalculator.html#a2491e8a10934aac39fa039718dbe02c9":[5,0,0,58,10],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#a46a055948fa02b84d7f46844da6380f3":[5,0,0,58,0],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#a489e9fd5a7d7be83dba3e14cac92f62e":[5,0,0,58,12],
 "structaltintegration_1_1DefaultPopRewardsCalculator.html#a4b85926ec6035e74dd4baacbeaa63c0f":[5,0,0,58,1],
@@ -249,5 +242,12 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1ReadStream.html#a43fa9ac3b81021585ec0c55c477dbf4a":[5,0,0,56,18],
 "structaltintegration_1_1ReadStream.html#a4a67f5d6731472831bbc79a28cf7a94b":[5,0,0,56,15],
 "structaltintegration_1_1ReadStream.html#a64ba116163a6d7c663ba15b80840c731":[5,0,0,56,17],
-"structaltintegration_1_1ReadStream.html#a6ed425f4893b4455f072e86322ed64ce":[5,0,0,56,13]
+"structaltintegration_1_1ReadStream.html#a6ed425f4893b4455f072e86322ed64ce":[5,0,0,56,13],
+"structaltintegration_1_1ReadStream.html#a7ce1ebf8768623c286fd880e3eff34cf":[5,0,0,56,19],
+"structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6":[5,0,0,56,20],
+"structaltintegration_1_1ReadStream.html#a7f5c83d2f9edc7d6567a7e8c053b58a3":[5,0,0,56,9],
+"structaltintegration_1_1ReadStream.html#a8d096f16d0f52ff05c4624c398e7cd15":[5,0,0,56,7],
+"structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2":[5,0,0,56,12],
+"structaltintegration_1_1ReadStream.html#aa149b1a7ac12659733883445ee8be071":[5,0,0,56,14],
+"structaltintegration_1_1ReadStream.html#aa25e68e99816fef2d8625f0c61ab3907":[5,0,0,56,3]
 };

@@ -171,6 +171,9 @@ virtual int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el"
 <tr class="memitem:af059cc8b6584a95b9ee270fb5f25b370"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370">checkBlockHeader</a> (const std::vector&lt; uint8_t &gt; &amp;bytes, const std::vector&lt; uint8_t &gt; &amp;root, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state) const noexcept=0</td></tr>
 <tr class="memdesc:af059cc8b6584a95b9ee270fb5f25b370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if input <code>bytes</code>:  <a href="structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370">More...</a><br /></td></tr>
 <tr class="separator:af059cc8b6584a95b9ee270fb5f25b370"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f626b30fae3312aa2fd8ab34ce5d9c7"><td class="memItemLeft" align="right" valign="top"><a id="a4f626b30fae3312aa2fd8ab34ce5d9c7"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isAncestor</b> (const AltBlock::hash_t &amp;descendant_hash, const AltBlock::hash_t &amp;ancestor_hash) const noexcept=0</td></tr>
+<tr class="separator:a4f626b30fae3312aa2fd8ab34ce5d9c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -467,7 +470,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
 <div class="line">      100, 100, 95, 89, 80, 69, 56, 40, 21}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00274">274</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00278">278</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 
 </div>
 </div>
@@ -485,7 +488,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">      std::make_shared&lt;PopPayoutsParams&gt;()</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00259">259</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00263">263</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 
 </div>
 </div>

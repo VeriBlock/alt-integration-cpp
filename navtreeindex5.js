@@ -1,12 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structaltintegration_1_1BlockIterator.html":[5,0,0,63],
-"structaltintegration_1_1BlockIterator.html#a731e91f007dae78fd0ed20a5519600c9":[5,0,0,63,5],
-"structaltintegration_1_1BlockIterator.html#a9f0eb8fde6e1dfe9d23cd237fa774393":[5,0,0,63,4],
-"structaltintegration_1_1BlockIterator.html#aa036df97ecb383d94ef7d95d4c2a0a58":[5,0,0,63,2],
-"structaltintegration_1_1BlockIterator.html#aaf1b99dddae3f6c9eb721bac1c50cce3":[5,0,0,63,1],
-"structaltintegration_1_1BlockIterator.html#adcb4cec77bb22dae6005cd732ecc5238":[5,0,0,63,6],
-"structaltintegration_1_1BlockIterator.html#ae01f4813a87aa7df2ee817bf3982eece":[5,0,0,63,0],
 "structaltintegration_1_1BlockIterator.html#ae489224d16febd52e4c5b8339cc9aa98":[5,0,0,63,3],
 "structaltintegration_1_1BlockReader.html":[5,0,0,64],
 "structaltintegration_1_1BlockReader.html#a1d51882198629dc2bfe95a8d24e49be6":[5,0,0,64,11],
@@ -249,5 +242,12 @@ var NAVTREEINDEX5 =
 "structaltintegration_1_1ContextInfoContainer.html#a9c1e5d0d11dfdd103fed9e54bb0d005e":[5,0,0,33,5],
 "structaltintegration_1_1ContextInfoContainer.html#aa338a6e06a9e1b044cb2e3dc86b6cb7d":[5,0,0,33,6],
 "structaltintegration_1_1ContextInfoContainer.html#aa71bbd5ab06292956310b82c9c8672a8":[5,0,0,33,8],
-"structaltintegration_1_1ContextInfoContainer.html#aca484cbfa618424b6430c702dba5f8e3":[5,0,0,33,2]
+"structaltintegration_1_1ContextInfoContainer.html#aca484cbfa618424b6430c702dba5f8e3":[5,0,0,33,2],
+"structaltintegration_1_1ContextInfoContainer.html#ad8eb0822c31c70d74d5738ca30639c10":[5,0,0,33,4],
+"structaltintegration_1_1ContextInfoContainer.html#ad92917c6e4a04bd29ba9b8d32b0503fb":[5,0,0,33,7],
+"structaltintegration_1_1ContextInfoContainer.html#adb3a5a0ccbc36bc93d048af0a720e1cc":[5,0,0,33,3],
+"structaltintegration_1_1ContextInfoContainer.html#ae0b758bfd999d05dbb60cfc95cfbdc6e":[5,0,0,33,1],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html":[5,0,0,58],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a1646a94120f78268d99fcf7cfdd20df1":[5,0,0,58,4],
+"structaltintegration_1_1DefaultPopRewardsCalculator.html#a2491e8a10934aac39fa039718dbe02c9":[5,0,0,58,10]
 };
