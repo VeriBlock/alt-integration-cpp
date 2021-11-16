@@ -11,6 +11,9 @@
 #include <veriblock/pop/entities/context_info_container.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/validation_state.hpp"
+
 namespace altintegration {
 
 template struct BlockIndex<AltBlock>;
@@ -89,7 +92,7 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
 
 void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
   auto* index = getBlockIndex(block);
-  VBK_ASSERT_MSG(index, "cannot find block %s", HexStr(block));
+  VBK_ASSERT_MSG(index != nullptr, "cannot find block %s", HexStr(block));
   return acceptBlock(*index, payloads);
 }
 
@@ -568,6 +571,25 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   return success;
 }
 
+void AltBlockTree::doFinalize() {
+  ValidationState state;
+  auto* tip = getBestChain().tip();
+  VBK_ASSERT(tip && "must be bootstrapped");
+
+  int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
+  uint32_t finalHeight =
+      std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
+
+  auto* finalizedBlock = getBestChain()[finalHeight];
+  VBK_ASSERT(finalizedBlock != nullptr);
+
+  bool result = finalizeBlock(*finalizedBlock, state);
+  VBK_ASSERT_MSG(result,
+                 "Failed to finalize %s: %s",
+                 finalizedBlock->toShortPrettyString(),
+                 state.toString());
+}
+
 void AltBlockTree::overrideTip(index_t& to) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
@@ -585,6 +607,8 @@ void AltBlockTree::overrideTip(index_t& to) {
 
   onBeforeOverrideTip.emit(to);
   activeChain_.setTip(&to);
+
+  doFinalize();
 }
 
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,
@@ -698,6 +722,8 @@ bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
     tip = tip->pprev;
   }
 
+  // finalize a block
+
   return true;
 }
 
@@ -745,9 +771,11 @@ bool AltBlockTree::finalizeBlockImpl(index_t& index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
-  if (!vbk().finalizeBlock(*finalizedIndex, state)) {
-    return state.Invalid("vbktree-finalize-error");
-  }
+  bool result = vbk().finalizeBlock(*finalizedIndex, state);
+  VBK_ASSERT_MSG(result,
+                 "Failed to finalize block %s: %s",
+                 finalizedIndex->toShortPrettyString(),
+                 state.toString());
   return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
 }
 

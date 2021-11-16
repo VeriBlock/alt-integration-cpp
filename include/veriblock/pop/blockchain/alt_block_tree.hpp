@@ -509,6 +509,9 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   void removeAllPayloads(index_t& index);
+
+  //! @private
+  void doFinalize();
 };
 
 //! @private
