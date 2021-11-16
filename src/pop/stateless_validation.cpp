@@ -591,7 +591,7 @@ bool checkBlock(const BtcBlock& block,
 template <typename P>
 static bool hasDuplicatePayloads(const std::vector<P>& payloads) {
   const auto& ids = map_get_id(payloads);
-  return hasDuplicateIds<P>(ids);
+  return hasDuplicateIdsOf<P>(ids);
 }
 
 bool checkPopDataForDuplicates(const PopData& popData, ValidationState& state) {

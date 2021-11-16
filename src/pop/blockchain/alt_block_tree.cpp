@@ -161,8 +161,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
-  VBK_ASSERT_MSG(index.pprev,
-                 "Adding payloads to a bootstrap block is not allowed");
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "Adding payloads to the root block is not allowed");
 
   ValidationState state;
   VBK_ASSERT_MSG(
@@ -400,7 +400,8 @@ void AltBlockTree::removeAllPayloads(index_t& index) {
                 index.toShortPrettyString());
 
   // we do not allow adding payloads to the genesis block
-  VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "can not remove payloads from the root block");
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "Can remove payloads only from blocks with payloads");
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE), "block is applied");
@@ -613,6 +614,18 @@ bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
   return loadBlockInner(index, state);
 }
 
+//! stateless check for duplicates in each of the payload ID vectors
+bool hasDuplicateIds(const AltBlockTree::index_t& index,
+                     ValidationState& state) {
+  const auto& vbkblockIds = index.getPayloadIds<VbkBlock>();
+  const auto& vtbIds = index.getPayloadIds<VTB>();
+  const auto& atvIds = index.getPayloadIds<ATV>();
+
+  return hasDuplicateIdsOf<VbkBlock>(vbkblockIds, state) ||
+         hasDuplicateIdsOf<VTB>(vtbIds, state) ||
+         hasDuplicateIdsOf<ATV>(atvIds, state);
+}
+
 bool AltBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
   // load endorsements
@@ -620,16 +633,9 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  const auto& vbkblockIds = current->getPayloadIds<VbkBlock>();
-  const auto& vtbIds = current->getPayloadIds<VTB>();
-  const auto& atvIds = current->getPayloadIds<ATV>();
+  if (hasDuplicateIds(*current, state)) return false;
 
-  // stateless check for duplicates in each of the payload IDs vectors
-  if (!checkIdsForDuplicates<VbkBlock>(vbkblockIds, state)) return false;
-  if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
-  if (!checkIdsForDuplicates<ATV>(atvIds, state)) return false;
-
-  if (current->pprev != nullptr) {
+  if (!current->isRoot()) {
     // if the block is not yet connected, defer the stateful duplicate check to
     // connectBlock()
     if (current->isConnected()) {
@@ -787,9 +793,7 @@ void removePayloadsFromIndex(PayloadsIndex& storage,
     return;
   }
 
-  // fix MSVC 4127 warning
-  bool valid = false;
-  VBK_ASSERT(valid && "should not reach here");
+  VBK_ASSERT_MSG(false, "should not reach here");
 }
 
 }  // namespace altintegration

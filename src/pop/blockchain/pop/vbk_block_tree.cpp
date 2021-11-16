@@ -95,8 +95,9 @@ void VbkBlockTree::removePayloads(index_t& index,
   VBK_LOG_DEBUG(
       "remove %d payloads from %s", pids.size(), index.toPrettyString());
 
-  // we do not allow adding payloads to the genesis block
-  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
+  // we do not allow adding payloads to the root block
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "can not remove payloads from the root block");
 
   if (pids.empty()) {
     return;
@@ -399,8 +400,7 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 
   const auto& vtbIds = current->getPayloadIds<VTB>();
 
-  // stateless check for duplicates in each of the payload IDs vectors
-  if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
+  if (hasDuplicateIdsOf<VTB>(vtbIds, state)) return false;
 
   // recover `endorsedBy`
   const auto si = param_->getEndorsementSettlementInterval();

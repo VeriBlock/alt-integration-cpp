@@ -147,11 +147,10 @@ struct TempBlockTree {
     current->setHeader(std::move(header));
     current->pprev = prev;
 
-    if (current->pprev != nullptr) {
-      // prev block found
-      current->setHeight(current->pprev->getHeight() + 1);
-    } else {
+    if (current->isRoot()) {
       current->setHeight(0);
+    } else {
+      current->setHeight(current->pprev->getHeight() + 1);
     }
 
     return current;

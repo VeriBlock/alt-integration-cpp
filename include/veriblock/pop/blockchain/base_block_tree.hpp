@@ -259,9 +259,10 @@ struct BaseBlockTree {
   virtual void removeSubtree(index_t& toRemove) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
-    // save ptr to a previous block
+
+    VBK_ASSERT_MSG(!toRemove.isRoot(), "cannot remove the root block");
+    // save the pointer to the previous block
     auto* prev = toRemove.pprev;
-    VBK_ASSERT(prev && "cannot remove the genesis block");
 
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
@@ -322,7 +323,8 @@ struct BaseBlockTree {
                   (int)reason,
                   toBeInvalidated.toShortPrettyString());
 
-    VBK_ASSERT(toBeInvalidated.pprev && "cannot invalidate the genesis block");
+    VBK_ASSERT_MSG(!toBeInvalidated.isRoot(),
+                   "cannot invalidate the root block");
 
     VBK_ASSERT(isValidInvalidationReason(reason) &&
                "invalid invalidation reason");
@@ -396,9 +398,10 @@ struct BaseBlockTree {
                   (int)reason,
                   toBeValidated.toShortPrettyString());
 
-    VBK_ASSERT(toBeValidated.pprev && "cannot revalidate the genesis block");
-    VBK_ASSERT(isValidInvalidationReason(reason) &&
-               "invalid revalidation reason");
+    VBK_ASSERT_MSG(!toBeValidated.isRoot(), "cannot revalidate the root block");
+
+    VBK_ASSERT_MSG(isValidInvalidationReason(reason),
+                   "invalid revalidation reason");
 
     if (!toBeValidated.hasFlags(reason)) {
       return;
@@ -679,7 +682,7 @@ struct BaseBlockTree {
         current = createBootstrapBlockIndex(currentHash, index.height);
         current->restore();
         current->pnext.insert(&root);
-        VBK_ASSERT(root.pprev == nullptr);
+        VBK_ASSERT(root.isRoot());
         root.pprev = current;
 
       } else {
@@ -805,7 +808,7 @@ struct BaseBlockTree {
     auto* index = &toDelete;
 
     // find oldest ancestor
-    while (index != nullptr && index->pprev != nullptr) {
+    while (index != nullptr && !index->isRoot()) {
       index = index->pprev;
     }
 

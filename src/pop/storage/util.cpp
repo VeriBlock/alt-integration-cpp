@@ -179,7 +179,7 @@ void validateBlockIndex(const BlockIndexT&) {}
 template <>
 void validateBlockIndex(const BlockIndex<VbkBlock>& index) {
   const auto& vtbids = index.getPayloadIds<VTB>();
-  VBK_ASSERT_MSG(!hasDuplicateIds<VTB>(vtbids), "Duplicate VTB IDs");
+  VBK_ASSERT_MSG(!hasDuplicateIdsOf<VTB>(vtbids), "Duplicate VTB IDs");
 }
 
 void saveTrees(const AltBlockTree& tree, BlockBatch& batch) {
