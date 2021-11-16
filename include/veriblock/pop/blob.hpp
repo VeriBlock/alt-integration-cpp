@@ -188,21 +188,15 @@ struct Blob {
     return a.compareTo(b) <= 0;
   }
 
-  template <size_t M>
+  template <size_t M, typename = typename std::enable_if<M <= N>::type>
   Blob<M> trim() const {
-    // fix MSVC 4127 warning
-    bool valid = (N >= M);
-    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data(), data() + M, m.begin());
     return m;
   }
 
-  template <size_t M>
+  template <size_t M, typename = typename std::enable_if<M <= N>::type>
   Blob<M> trimLE() const {
-    // fix MSVC 4127 warning
-    bool valid = (N >= M);
-    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data() + size() - M, data() + size(), m.begin());
     return m;
