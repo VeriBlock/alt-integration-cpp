@@ -264,41 +264,43 @@ $(document).ready(function(){initNavTree('alt__block__tree_8hpp_source.html','')
 <div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;  <span class="keywordtype">bool</span> connectBlock(index_t&amp; index, ValidationState&amp; state);</div>
 <div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160; </div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;  <span class="keywordtype">void</span> removeAllPayloads(index_t&amp; index);</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;};</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160; </div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;JsonValue ToJSON(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; i) {</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;    endorsements.push_back(e.first);</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  }</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160; </div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;  }</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160; </div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;vbkblocks&quot;</span>, i.getPayloadIds&lt;VbkBlock&gt;());</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbs&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;atvs&quot;</span>, i.getPayloadIds&lt;ATV&gt;());</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160; </div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160; </div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;}</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160; </div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;  <span class="keywordtype">void</span> doFinalize();</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;};</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160; </div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;JsonValue ToJSON(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; i) {</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    endorsements.push_back(e.first);</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;  }</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160; </div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;  }</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160; </div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;vbkblocks&quot;</span>, i.getPayloadIds&lt;VbkBlock&gt;());</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbs&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;  json::putArrayKV(stored, <span class="stringliteral">&quot;atvs&quot;</span>, i.getPayloadIds&lt;ATV&gt;());</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160; </div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160; </div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> AltBlockTree&amp; tree, std::ostream* os) {</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;  *os &lt;&lt; tree.toPrettyString();</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;}</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160; </div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160; </div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// !</span></div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;}</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160; </div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> AltBlockTree&amp; tree, std::ostream* os) {</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;  *os &lt;&lt; tree.toPrettyString();</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;}</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160; </div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160; </div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// !</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00294">arith_uint256.hpp:294</a></div></div>
