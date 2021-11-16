@@ -66,7 +66,4 @@ TEST_F(StatefulDuplicateWhenFinalized, VBK) {
     ASSERT_TRUE(tip->isValidTip());
     save(alttree);
   }
-
-  // EXPECT_EQ(alttree.getBlocks().size(), 118);
-  // ASSERT_EQ(alttree.getBestChain().tip()->getHeight(), 113);
 }
