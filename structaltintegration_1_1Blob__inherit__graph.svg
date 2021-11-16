@@ -64,21 +64,21 @@ var sectionId = 'dynsection-0';
 <polyline fill="none" stroke="black" points="184.5,-733.5 304.5,-733.5 "/>
 <text text-anchor="start" x="192.5" y="-721.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ data_</text>
 <text text-anchor="start" x="192.5" y="-710.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ this</text>
-<text text-anchor="start" x="192.5" y="-699.5" font-family="Helvetica,sans-Serif" font-size="10.00"># data_</text>
-<polyline fill="none" stroke="black" points="184.5,-692.5 304.5,-692.5 "/>
+<polyline fill="none" stroke="black" points="184.5,-703.5 304.5,-703.5 "/>
+<text text-anchor="start" x="192.5" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="192.5" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="192.5" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="192.5" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="192.5" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
-<text text-anchor="start" x="192.5" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
+<text text-anchor="start" x="192.5" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="192.5" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="192.5" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="192.5" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
-<text text-anchor="start" x="192.5" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
-<text text-anchor="start" x="192.5" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
-<text text-anchor="start" x="192.5" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="192.5" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
-<text text-anchor="start" x="192.5" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
+<text text-anchor="start" x="192.5" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
+<text text-anchor="start" x="192.5" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
+<text text-anchor="start" x="192.5" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
+<text text-anchor="start" x="192.5" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asString()</text>
+<text text-anchor="start" x="192.5" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="192.5" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="192.5" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ compareTo()</text>
 </a>
 </g>
 </g>
@@ -93,21 +93,21 @@ var sectionId = 'dynsection-0';
 <polyline fill="none" stroke="black" points="0,-441.5 157,-441.5 "/>
 <text text-anchor="start" x="8" y="-429.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ data_</text>
 <text text-anchor="start" x="8" y="-418.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ this</text>
-<text text-anchor="start" x="8" y="-407.5" font-family="Helvetica,sans-Serif" font-size="10.00"># data_</text>
-<polyline fill="none" stroke="black" points="0,-400.5 157,-400.5 "/>
+<polyline fill="none" stroke="black" points="0,-411.5 157,-411.5 "/>
+<text text-anchor="start" x="8" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="8" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="8" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="8" y="-366.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="8" y="-355.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
-<text text-anchor="start" x="8" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
+<text text-anchor="start" x="8" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="8" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="8" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
-<text text-anchor="start" x="8" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
-<text text-anchor="start" x="8" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
-<text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="8" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
-<text text-anchor="start" x="8" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
+<text text-anchor="start" x="8" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
+<text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
+<text text-anchor="start" x="8" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
+<text text-anchor="start" x="8" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asString()</text>
+<text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="8" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="8" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ compareTo()</text>
 </a>
 </g>
 </g>
@@ -129,21 +129,21 @@ var sectionId = 'dynsection-0';
 <polyline fill="none" stroke="black" points="177,-447 308,-447 "/>
 <text text-anchor="start" x="185" y="-435" font-family="Helvetica,sans-Serif" font-size="10.00">+ data_</text>
 <text text-anchor="start" x="185" y="-424" font-family="Helvetica,sans-Serif" font-size="10.00">+ this</text>
-<text text-anchor="start" x="185" y="-413" font-family="Helvetica,sans-Serif" font-size="10.00"># data_</text>
-<polyline fill="none" stroke="black" points="177,-406 308,-406 "/>
+<polyline fill="none" stroke="black" points="177,-417 308,-417 "/>
+<text text-anchor="start" x="185" y="-405" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="185" y="-394" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="185" y="-383" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="185" y="-372" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="185" y="-361" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
-<text text-anchor="start" x="185" y="-350" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
+<text text-anchor="start" x="185" y="-350" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="185" y="-339" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="185" y="-328" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="185" y="-317" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
-<text text-anchor="start" x="185" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
-<text text-anchor="start" x="185" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
-<text text-anchor="start" x="185" y="-284" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="185" y="-273" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
-<text text-anchor="start" x="185" y="-262" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
+<text text-anchor="start" x="185" y="-328" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
+<text text-anchor="start" x="185" y="-317" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
+<text text-anchor="start" x="185" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
+<text text-anchor="start" x="185" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">+ asString()</text>
+<text text-anchor="start" x="185" y="-284" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="185" y="-273" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="185" y="-262" font-family="Helvetica,sans-Serif" font-size="10.00">+ compareTo()</text>
 </a>
 </g>
 </g>
@@ -165,21 +165,21 @@ var sectionId = 'dynsection-0';
 <polyline fill="none" stroke="black" points="326.5,-441.5 466.5,-441.5 "/>
 <text text-anchor="start" x="334.5" y="-429.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ data_</text>
 <text text-anchor="start" x="334.5" y="-418.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ this</text>
-<text text-anchor="start" x="334.5" y="-407.5" font-family="Helvetica,sans-Serif" font-size="10.00"># data_</text>
-<polyline fill="none" stroke="black" points="326.5,-400.5 466.5,-400.5 "/>
+<polyline fill="none" stroke="black" points="326.5,-411.5 466.5,-411.5 "/>
+<text text-anchor="start" x="334.5" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="334.5" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="334.5" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="334.5" y="-366.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
 <text text-anchor="start" x="334.5" y="-355.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
-<text text-anchor="start" x="334.5" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Blob()</text>
+<text text-anchor="start" x="334.5" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="334.5" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="334.5" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="334.5" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
-<text text-anchor="start" x="334.5" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
-<text text-anchor="start" x="334.5" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
-<text text-anchor="start" x="334.5" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
-<text text-anchor="start" x="334.5" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
-<text text-anchor="start" x="334.5" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># assign()</text>
+<text text-anchor="start" x="334.5" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ reverse()</text>
+<text text-anchor="start" x="334.5" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator~()</text>
+<text text-anchor="start" x="334.5" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asVector()</text>
+<text text-anchor="start" x="334.5" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ asString()</text>
+<text text-anchor="start" x="334.5" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="334.5" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="334.5" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ compareTo()</text>
 </a>
 </g>
 </g>

@@ -158,13 +158,5 @@ var NAVTREEINDEX8 =
 "vblake_8hpp_source.html":[6,0,1,0,0,4,4],
 "vtb_8h_source.html":[6,0,1,0,0,2,0,15],
 "vtb_8hpp_source.html":[6,0,1,0,0,5,21],
-"write__stream_8hpp_source.html":[6,0,1,0,0,49],
-"":[4,0,0,0],
-"":[4,0,0,5],
-"":[4,0,0,6],
-"":[4,0,0,2],
-"":[4,0,1],
-"":[4,0,0,1],
-"":[4,0,0,3],
-"":[4,0,0,7]
+"write__stream_8hpp_source.html":[6,0,1,0,0,49]
 };

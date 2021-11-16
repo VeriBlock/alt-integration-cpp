@@ -1,10 +1,8 @@
 <map id="altintegration::VbkMerklePath" name="altintegration::VbkMerklePath">
-<area shape="rect" id="node1" title="Path in Merkle tree, which proves that subject exists in the tree." alt="" coords="93,1164,284,1285"/>
-<area shape="rect" id="node2" title=" " alt="" coords="204,907,371,999"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="117,488,277,741"/>
-<area shape="rect" id="node8" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,804,180,1101"/>
-<area shape="rect" id="node4" title=" " alt="" coords="109,348,284,425"/>
-<area shape="rect" id="node5" title=" " alt="" coords="162,145,266,223"/>
-<area shape="rect" id="node6" title=" " alt="" coords="279,5,317,83"/>
-<area shape="rect" id="node7" title=" " alt="" coords="309,247,421,324"/>
+<area shape="rect" id="node1" title="Path in Merkle tree, which proves that subject exists in the tree." alt="" coords="108,851,299,972"/>
+<area shape="rect" id="node2" title=" " alt="" coords="204,593,371,685"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="74,145,234,428"/>
+<area shape="rect" id="node6" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,491,180,788"/>
+<area shape="rect" id="node4" title=" " alt="" coords="319,248,431,325"/>
+<area shape="rect" id="node5" title=" " alt="" coords="356,5,395,83"/>
 </map>

@@ -1,12 +1,10 @@
 <map id="altintegration::AuthenticatedContextInfoContainer" name="altintegration::AuthenticatedContextInfoContainer">
-<area shape="rect" id="node1" title="Contains ContextInfoContainer and merkle path which authenticates hash of ContextInfoContainer to a b..." alt="" coords="99,1116,281,1281"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,756,180,1053"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="18,440,178,693"/>
-<area shape="rect" id="node4" title=" " alt="" coords="11,285,185,363"/>
-<area shape="rect" id="node5" title=" " alt="" coords="70,145,174,223"/>
-<area shape="rect" id="node6" title=" " alt="" coords="168,5,207,83"/>
-<area shape="rect" id="node10" title=" " alt="" coords="199,145,311,223"/>
-<area shape="rect" id="node7" href="$structaltintegration_1_1ContextInfoContainer.html" title="Container of context info for endorsed block." alt="" coords="205,815,373,995"/>
-<area shape="rect" id="node8" href="$structaltintegration_1_1KeystoneContainer.html" title="A container for two previous keystones of endorsed block." alt="" coords="203,499,361,635"/>
-<area shape="rect" id="node9" title=" " alt="" coords="209,285,352,363"/>
+<area shape="rect" id="node1" title="Contains ContextInfoContainer and merkle path which authenticates hash of ContextInfoContainer to a b..." alt="" coords="99,1145,281,1311"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,785,180,1083"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="13,440,173,723"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1ContextInfoContainer.html" title="Container of context info for endorsed block." alt="" coords="205,844,373,1024"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1KeystoneContainer.html" title="A container for two previous keystones of endorsed block." alt="" coords="209,513,368,649"/>
+<area shape="rect" id="node6" title=" " alt="" coords="217,285,360,363"/>
+<area shape="rect" id="node7" title=" " alt="" coords="233,145,345,223"/>
+<area shape="rect" id="node8" title=" " alt="" coords="269,5,308,83"/>
 </map>

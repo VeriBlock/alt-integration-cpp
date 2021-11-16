@@ -11,11 +11,10 @@ var searchData=
   ['removeall_341',['removeAll',['../structaltintegration_1_1MemPool.html#a0a338bda64c5577f8d346e02f941ebdc',1,'altintegration::MemPool']]],
   ['removeleaf_342',['removeLeaf',['../structaltintegration_1_1BaseBlockTree.html#a56b1f7eea3027fe06f480f9e8bf675c0',1,'altintegration::BaseBlockTree']]],
   ['removesubtree_343',['removeSubtree',['../structaltintegration_1_1AltBlockTree.html#a99ca69840eb2e8cfe725fa521381750e',1,'altintegration::AltBlockTree::removeSubtree()'],['../structaltintegration_1_1BaseBlockTree.html#a9feee17d9c4768461b195dec5b0d4ea0',1,'altintegration::BaseBlockTree::removeSubtree(index_t &amp;toRemove)'],['../structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610',1,'altintegration::BaseBlockTree::removeSubtree(const hash_t &amp;toRemove)'],['../structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d',1,'altintegration::VbkBlockTree::removeSubtree()']]],
-  ['resize_344',['resize',['../structaltintegration_1_1Blob.html#afbf79338f5e6297bea790a5b5670c01e',1,'altintegration::Blob']]],
-  ['reverse_5fiterate_345',['reverse_iterate',['../namespacealtintegration.html#aea87419ccb622e04aacf6b7fd18e8990',1,'altintegration']]],
-  ['reverse_5frange_346',['reverse_range',['../classaltintegration_1_1reverse__range.html',1,'altintegration']]],
-  ['rocksdbstorage_347',['RocksDBStorage',['../structaltintegration_1_1adaptors_1_1RocksDBStorage.html',1,'altintegration::adaptors']]],
-  ['rocksdbstorageiterator_348',['RocksDBStorageIterator',['../structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html',1,'altintegration::adaptors']]],
-  ['rocksdbwritebatch_349',['RocksDBWriteBatch',['../structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html',1,'altintegration::adaptors']]],
-  ['roundratios_350',['roundRatios',['../structaltintegration_1_1PopPayoutsParams.html#a34ec946cc8e59bf69a73b748c5605a1a',1,'altintegration::PopPayoutsParams']]]
+  ['reverse_5fiterate_344',['reverse_iterate',['../namespacealtintegration.html#aea87419ccb622e04aacf6b7fd18e8990',1,'altintegration']]],
+  ['reverse_5frange_345',['reverse_range',['../classaltintegration_1_1reverse__range.html',1,'altintegration']]],
+  ['rocksdbstorage_346',['RocksDBStorage',['../structaltintegration_1_1adaptors_1_1RocksDBStorage.html',1,'altintegration::adaptors']]],
+  ['rocksdbstorageiterator_347',['RocksDBStorageIterator',['../structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html',1,'altintegration::adaptors']]],
+  ['rocksdbwritebatch_348',['RocksDBWriteBatch',['../structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html',1,'altintegration::adaptors']]],
+  ['roundratios_349',['roundRatios',['../structaltintegration_1_1PopPayoutsParams.html#a34ec946cc8e59bf69a73b748c5605a1a',1,'altintegration::PopPayoutsParams']]]
 ];

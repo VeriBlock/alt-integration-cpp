@@ -1,21 +1,19 @@
 <map id="altintegration::VTB" name="altintegration::VTB">
-<area shape="rect" id="node1" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock." alt="" coords="851,1601,1001,1781"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1VbkMerklePath.html" title="Path in Merkle tree, which proves that subject exists in the tree." alt="" coords="36,1167,227,1289"/>
-<area shape="rect" id="node3" title=" " alt="" coords="229,844,396,936"/>
-<area shape="rect" id="node14" href="$structaltintegration_1_1MerklePath.html" title="Path in Merkle tree which proves that subject is inside this tree." alt="" coords="251,1167,419,1289"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="199,425,359,679"/>
-<area shape="rect" id="node9" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,741,180,1039"/>
-<area shape="rect" id="node5" title=" " alt="" coords="209,285,384,363"/>
-<area shape="rect" id="node6" title=" " alt="" coords="273,145,377,223"/>
-<area shape="rect" id="node7" title=" " alt="" coords="373,5,412,83"/>
-<area shape="rect" id="node8" title=" " alt="" coords="427,513,539,591"/>
-<area shape="rect" id="node13" title=" " alt="" coords="976,851,1119,929"/>
-<area shape="rect" id="node16" title=" " alt="" coords="444,1182,611,1274"/>
-<area shape="rect" id="node10" href="$structaltintegration_1_1VbkPopTx.html" title="Veriblock POP transaction, which endorses VBK block in BTC blockchain." alt="" coords="845,1417,1007,1539"/>
-<area shape="rect" id="node11" href="$namespacealtintegration.html#structaltintegration_1_1NetworkBytePair" title="Stores pair of TxType and VBK network byte." alt="" coords="1255,1189,1455,1267"/>
-<area shape="rect" id="node12" href="$structaltintegration_1_1VbkNetworkType.html" title="works as optional&lt;uint8_t&gt;" alt="" coords="1254,822,1457,958"/>
-<area shape="rect" id="node18" href="$structaltintegration_1_1BtcTx.html" title="Bitcoin transaction representation." alt="" coords="979,1145,1115,1311"/>
-<area shape="rect" id="node15" href="$structaltintegration_1_1BtcBlock.html" title="Bitcoin block." alt="" coords="710,771,865,1009"/>
-<area shape="rect" id="node17" href="$structaltintegration_1_1Address.html" title="Represents address on VBK chain." alt="" coords="772,1101,955,1355"/>
-<area shape="rect" id="node19" href="$structaltintegration_1_1VbkBlock.html" title="Veriblock block." alt="" coords="1480,1109,1639,1347"/>
+<area shape="rect" id="node1" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock." alt="" coords="851,1351,1001,1531"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1VbkMerklePath.html" title="Path in Merkle tree, which proves that subject exists in the tree." alt="" coords="36,917,227,1038"/>
+<area shape="rect" id="node3" title=" " alt="" coords="229,593,396,685"/>
+<area shape="rect" id="node12" href="$structaltintegration_1_1MerklePath.html" title="Path in Merkle tree which proves that subject is inside this tree." alt="" coords="251,917,419,1038"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="106,145,266,428"/>
+<area shape="rect" id="node7" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,491,180,788"/>
+<area shape="rect" id="node5" title=" " alt="" coords="471,248,583,325"/>
+<area shape="rect" id="node11" title=" " alt="" coords="976,601,1119,678"/>
+<area shape="rect" id="node14" title=" " alt="" coords="444,931,611,1023"/>
+<area shape="rect" id="node6" title=" " alt="" coords="508,5,547,83"/>
+<area shape="rect" id="node8" href="$structaltintegration_1_1VbkPopTx.html" title="Veriblock POP transaction, which endorses VBK block in BTC blockchain." alt="" coords="845,1167,1007,1288"/>
+<area shape="rect" id="node9" href="$namespacealtintegration.html#structaltintegration_1_1NetworkBytePair" title="Stores pair of TxType and VBK network byte." alt="" coords="1255,939,1455,1016"/>
+<area shape="rect" id="node10" href="$structaltintegration_1_1VbkNetworkType.html" title="works as optional&lt;uint8_t&gt;" alt="" coords="1254,571,1457,707"/>
+<area shape="rect" id="node16" href="$structaltintegration_1_1BtcTx.html" title="Bitcoin transaction representation." alt="" coords="979,895,1115,1060"/>
+<area shape="rect" id="node13" href="$structaltintegration_1_1BtcBlock.html" title="Bitcoin block." alt="" coords="710,520,865,759"/>
+<area shape="rect" id="node15" href="$structaltintegration_1_1Address.html" title="Represents address on VBK chain." alt="" coords="772,851,955,1104"/>
+<area shape="rect" id="node17" href="$structaltintegration_1_1VbkBlock.html" title="Veriblock block." alt="" coords="1480,858,1639,1097"/>
 </map>

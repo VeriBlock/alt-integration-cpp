@@ -64,11 +64,11 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
-"namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa",
-"namespacealtintegration.html#acbc9f536758a3beafa581a904dd585c2",
-"structaltintegration_1_1AltBlockTree.html#a458080d2b38c73b007bf1993d1d96aa3",
+"",
+"ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
+"namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61da3262d48df5d75e3452f0f16b313b7808",
+"namespacealtintegration.html#ac7954deb659a2a15a9cf981554446e07",
+"structaltintegration_1_1AltBlockTree.html#a13c644bfd3db9003611b3dc2bed75de7",
 "structaltintegration_1_1BlockIterator.html",
 "structaltintegration_1_1ContextInfoContainer.html#ad8eb0822c31c70d74d5738ca30639c10",
 "structaltintegration_1_1ReadStream.html#a7ce1ebf8768623c286fd880e3eff34cf",
