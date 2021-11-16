@@ -12,7 +12,6 @@ import (
 )
 
 func TestJSONBtcBlock(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -31,7 +30,6 @@ func TestJSONBtcBlock(t *testing.T) {
 }
 
 func TestJSONVbkBlock(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -54,7 +52,6 @@ func TestJSONVbkBlock(t *testing.T) {
 }
 
 func TestJSONAltBlock(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -63,14 +60,13 @@ func TestJSONAltBlock(t *testing.T) {
 	json, err := alt_block.ToJSON(true)
 	assert.NoError(err)
 
-	assert.Equal(json["hash"], "01010101010101010101010101010101")
-	assert.Equal(json["previousBlock"], "02020202020202020202020202020202")
+	assert.Equal(json["hash"], "0101010101010101010101010101010101010101010101010101010101010101")
+	assert.Equal(json["previousBlock"], "0202020202020202020202020202020202020202020202020202020202020202")
 	assert.Equal(json["timestamp"], float64(1))
 	assert.Equal(json["height"], float64(1))
 }
 
 func TestJSONVtb(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -86,7 +82,6 @@ func TestJSONVtb(t *testing.T) {
 }
 
 func TestJSONAtv(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 

@@ -8,6 +8,8 @@
 
 namespace altintegration {
 
+struct AltChainParams;
+
 template <typename Block>
 struct StoredBlockIndex {
   using block_t = Block;
@@ -61,6 +63,7 @@ bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     StoredBlockIndex<Block>& out,
     ValidationState& state,
+    const AltChainParams& params,
     typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
   const auto& name = Block::name();
   using height_t = typename Block::height_t;
@@ -68,7 +71,7 @@ bool DeserializeFromVbkEncoding(
     return state.Invalid(name + "-stored-block-index-height");
   }
   Block block{};
-  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
+  if (!DeserializeFromRaw(stream, block, state, params, precalculatedHash)) {
     return state.Invalid(name + "-stored-block-index-header");
   }
   out.header = std::make_shared<Block>(block);

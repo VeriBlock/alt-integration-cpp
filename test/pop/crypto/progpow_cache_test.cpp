@@ -6,9 +6,9 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
-#include "util/alt_chain_params_regtest.hpp"
 #include <veriblock/pop/crypto/progpow.hpp>
 
 using namespace altintegration;

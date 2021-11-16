@@ -86,7 +86,7 @@ Tree::Tree() {
   bestBlock = genesisBlock.hash;
   params = std::make_shared<FuzzAltChainParams>();
   pp = std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(storage);
-  bp = std::make_shared<altintegration::adaptors::BlockReaderImpl>(storage);
+  bp = std::make_shared<altintegration::adaptors::BlockReaderImpl>(storage, *params);
 
   auto config = std::make_shared<altintegration::Config>();
   config->SelectBtcParams("regtest", 0, {});

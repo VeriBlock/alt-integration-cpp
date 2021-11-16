@@ -693,9 +693,9 @@ TEST(ToJson, AltParams) {
 
   std::string expected = R"({
   "bootstrapBlock": {
-    "hash": "010101010101010101010101",
+    "hash": "0101010101010101010101010101010101010101010101010101010101010101",
     "height": 0,
-    "previousBlock": "000000000000000000000000",
+    "previousBlock": "0000000000000000000000000000000000000000000000000000000000000000",
     "timestamp": 0
   },
   "endorsementSettlementInterval": 50,

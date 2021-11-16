@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/entities/altblock.hpp>
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 
 #include <gtest/gtest.h>
 
@@ -18,8 +19,9 @@ static const AltBlock defaultBlock{
     1466};
 
 TEST(AltBlock, RoundTrip) {
+  AltChainParamsRegTest altparam{};
   std::vector<uint8_t> bytes = defaultBlock.toRaw();
-  AltBlock deserializedBlock = AssertDeserializeFromRaw<AltBlock>(bytes);
+  AltBlock deserializedBlock = AssertDeserializeFromRaw<AltBlock>(bytes, altparam);
 
   EXPECT_EQ(deserializedBlock.getHash(), defaultBlock.getHash());
   EXPECT_EQ(deserializedBlock.height, defaultBlock.height);
