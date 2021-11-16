@@ -577,10 +577,12 @@ void AltBlockTree::doFinalize() {
   VBK_ASSERT(tip && "must be bootstrapped");
 
   int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
-  uint32_t finalHeight =
-      std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
+  if (maxReorg > getRoot().getHeight()) {
+    return;
+  }
 
-  auto* finalizedBlock = getBestChain()[finalHeight];
+  auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
+  auto* finalizedBlock = getBestChain()[finalh];
   VBK_ASSERT(finalizedBlock != nullptr);
 
   bool result = finalizeBlock(*finalizedBlock, state);
