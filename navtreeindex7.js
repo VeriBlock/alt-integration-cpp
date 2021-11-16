@@ -1,6 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"structaltintegration_1_1ReadStream.html#ab38dd7a5175c5dd71d6cf29b7430fe68":[5,0,0,56,5],
 "structaltintegration_1_1ReadStream.html#ab5bff4a00355493a20f58de01dc991ab":[5,0,0,56,1],
 "structaltintegration_1_1ReadStream.html#ae6a91507b72212cf6e6846de5da92d99":[5,0,0,56,0],
 "structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3":[5,0,0,56,6],
@@ -249,5 +248,6 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a7f65c921af0541e8bf164ac79aa94e4a":[5,0,0,0,2,6],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a93e7af4b98826fd912b75b81fa0329f3":[5,0,0,0,2,0],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70":[5,0,0,0,2,4],
-"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[5,0,0,0,2,5]
+"structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186":[5,0,0,0,2,5],
+"structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html":[5,0,0,0,0]
 };

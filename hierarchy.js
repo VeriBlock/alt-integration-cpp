@@ -48,6 +48,7 @@ var hierarchy =
     [ "altintegration::BtcTx", "structaltintegration_1_1BtcTx.html", null ],
     [ "altintegration::Chain< BlockIndexT >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::Chain< altintegration::BlockIndex >", "structaltintegration_1_1Chain.html", null ],
+    [ "altintegration::Chain< block_index_t >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::ChainSlice< BlockIndexT >", "structaltintegration_1_1ChainSlice.html", null ],
     [ "altintegration::CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", null ],
     [ "altintegration::Coin", "structaltintegration_1_1Coin.html", null ],
