@@ -847,10 +847,9 @@ struct BaseBlockTree {
   //!
   //! @returns false if block not found or prereq are not met
   //! @private
-  virtual bool finalizeBlockImpl(index_t& index,
+  virtual void finalizeBlockImpl(index_t& index,
                                  // see config.preserveBlocksBehindFinal()
-                                 int32_t preserveBlocksBehindFinal,
-                                 ValidationState& /*state*/) {
+                                 int32_t preserveBlocksBehindFinal) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind",
                   index.toShortPrettyString(),
@@ -859,7 +858,7 @@ struct BaseBlockTree {
     index_t* finalizedBlock = &index;
 
     if (finalizedBlock == getRoot()) {
-      return true;
+      return;
     }
 
     VBK_ASSERT(activeChain_.contains(finalizedBlock));
@@ -953,7 +952,7 @@ struct BaseBlockTree {
       ptr = ptr->pprev;
     }
 
-    return true;
+    return;
   }
 
   //! callback which is executed when new block is added to a tree

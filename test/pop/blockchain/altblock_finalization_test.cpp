@@ -53,7 +53,7 @@ TEST_F(AltBlockFinalization, FinalizeRoot) {
   save(alttree);
 
   auto *bootstrap = alttree.getBestChain().first();
-  ASSERT_TRUE(alttree.finalizeBlock(*bootstrap, state));
+  alttree.finalizeBlock(*bootstrap);
   // unchanged
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
   assertTreeTips(alttree, {A504, B503, C502, D502, E503, Z251});
@@ -67,7 +67,7 @@ TEST_F(AltBlockFinalization, FinalizeTip0Window) {
   altparam.mEndorsementSettlementInterval = 0;
   altparam.mPreserveBlocksBehindFinal = 0;
   auto *tip = alttree.getBestChain().tip();
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
@@ -79,14 +79,14 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocks) {
   altparam.mPreserveBlocksBehindFinal = 0;
 
   auto *tip = alttree.getBestChain().tip();
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
 
   // save state
   save(alttree);
 
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
@@ -98,7 +98,7 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
   altparam.mPreserveBlocksBehindFinal = 0;
 
   auto *tip = alttree.getBestChain().tip();
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
 
@@ -112,7 +112,7 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
     }
   }
 
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   // do not finilize the whole tree
   ASSERT_LT(alttree.getBlocks().size(), totalBlocks);
@@ -121,7 +121,7 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
   // save state
   save(alttree);
 
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
@@ -134,7 +134,7 @@ TEST_F(AltBlockFinalization, FinalizeA251) {
   save(alttree);
 
   auto *A251 = A504->getAncestor(251);
-  ASSERT_TRUE(alttree.finalizeBlock(*A251, state));
+  alttree.finalizeBlock(*A251);
   ASSERT_TRUE(alttree.setState(A251->getHash(), state)) << state.toString();
 
   auto *A201 = A251->getAncestor(201);
@@ -155,7 +155,7 @@ TEST_F(AltBlockFinalization, FinalizeA501) {
   save(alttree);
 
   auto *A501 = A504->getAncestor(501);
-  ASSERT_TRUE(alttree.finalizeBlock(*A501, state));
+  alttree.finalizeBlock(*A501);
   ASSERT_TRUE(alttree.setState(A501->getHash(), state)) << state.toString();
 
   // 501, 502, 503, 504 + 50 prev blocks
@@ -176,7 +176,7 @@ TEST_F(AltBlockFinalization, FinalizeA500) {
   save(alttree);
 
   auto *A500 = A504->getAncestor(500);
-  ASSERT_TRUE(alttree.finalizeBlock(*A500, state));
+  alttree.finalizeBlock(*A500);
   ASSERT_TRUE(alttree.setState(A500->getHash(), state)) << state.toString();
 
   // 50 prev blocks + 5 chain A + 2 chain C + 1 chain D + 3 chain B + 1 chain E
@@ -197,7 +197,7 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
 
   Chain<BlockIndex<AltBlock>> chain = alttree.getBestChain();
   for (auto *index : chain) {
-    ASSERT_TRUE(alttree.finalizeBlock(*index, state)) << index->getHeight();
+    alttree.finalizeBlock(*index);
   }
   ASSERT_TRUE(alttree.setState(alttree.getBestChain().tip()->getHash(), state))
       << state.toString();

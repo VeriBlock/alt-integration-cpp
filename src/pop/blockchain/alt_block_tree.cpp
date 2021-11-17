@@ -585,11 +585,7 @@ void AltBlockTree::doFinalize() {
   auto* finalizedBlock = getBestChain()[finalh];
   VBK_ASSERT(finalizedBlock != nullptr);
 
-  bool result = finalizeBlock(*finalizedBlock, state);
-  VBK_ASSERT_MSG(result,
-                 "Failed to finalize %s: %s",
-                 finalizedBlock->toShortPrettyString(),
-                 state.toString());
+  finalizeBlock(*finalizedBlock);
 }
 
 void AltBlockTree::overrideTip(index_t& to) {
@@ -724,8 +720,6 @@ bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
     tip = tip->pprev;
   }
 
-  // finalize a block
-
   return true;
 }
 
@@ -755,14 +749,13 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
-  return this->finalizeBlockImpl(
-      index, getParams().preserveBlocksBehindFinal(), state);
+void AltBlockTree::finalizeBlock(index_t& index) {
+  return this->finalizeBlockImpl(index,
+                                 getParams().preserveBlocksBehindFinal());
 }
 
-bool AltBlockTree::finalizeBlockImpl(index_t& index,
-                                     int32_t preserveBlocksBehindFinal,
-                                     ValidationState& state) {
+void AltBlockTree::finalizeBlockImpl(index_t& index,
+                                     int32_t preserveBlocksBehindFinal) {
   VBK_TRACE_ZONE_SCOPED;
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
@@ -773,12 +766,8 @@ bool AltBlockTree::finalizeBlockImpl(index_t& index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
-  bool result = vbk().finalizeBlock(*finalizedIndex, state);
-  VBK_ASSERT_MSG(result,
-                 "Failed to finalize block %s: %s",
-                 finalizedIndex->toShortPrettyString(),
-                 state.toString());
-  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
+  vbk().finalizeBlock(*finalizedIndex);
+  base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
 }
 
 template <typename Payloads>

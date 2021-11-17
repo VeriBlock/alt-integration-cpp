@@ -56,7 +56,7 @@ TEST_F(AltBlockRestoration, RestoreFromActiveChainBasic) {
   auto *A50 = tip->getAncestor(50);
   auto *A200 = tip->getAncestor(200);
   const auto A50hash = A50->getHash();
-  ASSERT_TRUE(alttree.finalizeBlock(*A200, state));
+  alttree.finalizeBlock(*A200);
   // blocks before A200 are removed (excluding blocks we ask to preserve)
   ASSERT_EQ(alttree.getBlocks().size(),
             totalBlocks - (200 - altparam.mPreserveBlocksBehindFinal));
@@ -77,7 +77,7 @@ TEST_F(AltBlockRestoration, RestoreFromActiveChainWithForks) {
   auto *A50 = tip->getAncestor(50);
   auto *A400 = tip->getAncestor(400);
   const auto A50hash = A50->getHash();
-  ASSERT_TRUE(alttree.finalizeBlock(*A400, state));
+  alttree.finalizeBlock(*A400);
   // Z251 was erased as well
   ASSERT_EQ(alttree.getBlocks().size(),
             totalBlocks - (400 - altparam.mPreserveBlocksBehindFinal + 1));
@@ -97,7 +97,7 @@ TEST_F(AltBlockRestoration, RestoreFromForks) {
   auto *tip = alttree.getBestChain().tip();
   auto *A400 = tip->getAncestor(400);
   const auto Z251hash = Z251->getHash();
-  ASSERT_TRUE(alttree.finalizeBlock(*A400, state));
+  alttree.finalizeBlock(*A400);
   // Z251 was erased as well
   ASSERT_EQ(alttree.getBlocks().size(),
             totalBlocks - (400 - altparam.mPreserveBlocksBehindFinal + 1));

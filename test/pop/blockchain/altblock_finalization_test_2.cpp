@@ -61,7 +61,7 @@ TEST_F(AltBlockFinalization2, FinalizeVbkTip) {
   // save state
   save(alttree);
 
-  ASSERT_TRUE(alttree.finalizeBlock(*tip, state));
+  alttree.finalizeBlock(*tip);
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
 
@@ -105,7 +105,7 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   save(alttree);
 
   // finalize block
-  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
+  alttree.finalizeBlock(*tip->pprev);
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
@@ -164,7 +164,7 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   // auto *vbktip = alttree.vbk().getBestChain().tip();
 
   // finalize block
-  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
+  alttree.finalizeBlock(*tip->pprev);
 
   assertTreeTips(alttree, {tip});
 
@@ -235,8 +235,7 @@ TEST_F(AltBlockFinalization2, FinalizeForkedBtcBlocks) {
 
   tip = alttree.getBestChain().tip();
   // finalize block
-  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev->pprev, state))
-      << state.toString();
+  alttree.finalizeBlock(*tip->pprev->pprev);
 
   // check the state after finalization
   ASSERT_TRUE(alttree.setState(*tip->pprev->pprev, state)) << state.toString();
@@ -293,7 +292,7 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   save(alttree);
 
   // finalize block
-  ASSERT_TRUE(alttree.finalizeBlock(*tip->pprev, state));
+  alttree.finalizeBlock(*tip->pprev);
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
@@ -340,7 +339,7 @@ TEST_F(AltBlockFinalization2, comparePopScore_test) {
   save(alttree);
 
   // finalize block
-  ASSERT_TRUE(alttree.finalizeBlock(*chainA, state)) << state.toString();
+  alttree.finalizeBlock(*chainA);
 
   assertTreeTips(alttree, {chainA});
 
