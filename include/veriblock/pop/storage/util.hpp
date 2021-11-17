@@ -42,6 +42,7 @@ bool loadValidateTree(
     const BlockTreeT& tree,
     const std::vector<typename BlockTreeT::stored_index_t>& blocks,
     ValidationState& state) {
+
   using block_t = typename BlockTreeT::block_t;
 
   for (const auto& block : blocks) {

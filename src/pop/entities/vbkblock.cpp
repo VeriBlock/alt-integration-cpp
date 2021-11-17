@@ -80,6 +80,10 @@ std::vector<uint8_t> VbkBlock::toRaw() const {
   return stream.data();
 }
 
+std::string VbkBlock::toShortPrettyString() const {
+  return format("VBK(height={}, hash={})", height, getHash().toHex());
+}
+
 std::string VbkBlock::toPrettyString() const {
   return format(
       "VbkBlock{{height={}, version={}, prev={}, ks1={}, "
@@ -214,6 +218,14 @@ bool DeserializeFromRaw(ReadStream& stream,
   return true;
 }
 
+bool DeserializeFromRaw(ReadStream& stream,
+                        VbkBlock& block,
+                        ValidationState& state,
+                        const AltChainParams& /*ignore*/,
+                        const VbkBlock::hash_t& hash) {
+  return DeserializeFromRaw(stream, block, state, hash);
+}
+
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 VbkBlock& out,
                                 ValidationState& state,
@@ -229,6 +241,14 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
   ReadStream s(value);
   return DeserializeFromRaw(s, out, state, precalculatedHash);
+}
+
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                VbkBlock& out,
+                                ValidationState& state,
+                                const AltChainParams& /*ignore*/,
+                                const VbkBlock::hash_t& precalculatedHash) {
+  return DeserializeFromVbkEncoding(stream, out, state, precalculatedHash);
 }
 
 }  // namespace altintegration

@@ -35,18 +35,22 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
     return;
   }
 
-  int result = cmp_.activateBestChain(candidate, state);
+  auto p = cmp_.activateBestChain(candidate, state);
+  auto result = p.first;
+  auto reason = p.second;
   // the pop state is already set to the best of the two chains
   if (result == 0) {
-    VBK_LOG_DEBUG("Pop scores are equal");
+    VBK_LOG_DEBUG("Pop scores are equal. Reason: %s.",
+                  popFrOutcomeToString(reason, state));
     // pop scores are equal. do PoW fork resolution
     VbkTree::determineBestChain(candidate, state);
   } else if (result < 0) {
-    // the other chain won!
-    VBK_LOG_DEBUG("Candidate chain won");
+    VBK_LOG_DEBUG("Candidate chain won. Reason: %s.",
+                  popFrOutcomeToString(reason, state));
   } else {
     // the current chain is better
-    VBK_LOG_DEBUG("Active chain won");
+    VBK_LOG_DEBUG("Active chain won. Reason: %s.",
+                  popFrOutcomeToString(reason, state));
   }
 }
 
@@ -97,8 +101,9 @@ void VbkBlockTree::removePayloads(index_t& index,
   VBK_LOG_DEBUG(
       "remove %d payloads from %s", pids.size(), index.toPrettyString());
 
-  // we do not allow adding payloads to the genesis block
-  VBK_ASSERT(index.pprev && "can not remove payloads from the genesis block");
+  // we do not allow adding payloads to the root block
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "can not remove payloads from the root block");
 
   if (pids.empty()) {
     return;
@@ -207,10 +212,6 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
 
   auto* connectingIndex = btc().getBlockIndex(connectingHash);
   if (connectingIndex == nullptr) {
-    invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash;
-
-    VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
-                  vtb.toPrettyString());
     return state.Invalid("bad-prev-block",
                          "Can not find the BTC block referenced by the first "
                          "block of the VTB context");
@@ -222,13 +223,8 @@ bool VbkBlockTree::validateBTCContext(const VbkBlockTree::payloads_t& vtb,
                                return height <= vtb.containingBlock.getHeight();
                              });
 
-  VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
-                vtb.toPrettyString());
-
-  return isValid
-             ? (invalid_vtbs.erase(vtb.getId()), true)
-             : (invalid_vtbs[vtb.getId()].missing_btc_block = connectingHash,
-                state.Invalid("block-referenced-too-early"));
+  if (isValid) return true;
+  return state.Invalid("block-referenced-too-early");
 }
 
 bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
@@ -256,6 +252,8 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   }
 
   if (!validateBTCContext(payload, state)) {
+    VBK_LOG_DEBUG("Could not find block that payload %s needs to connect to",
+                  payload.toPrettyString());
     return state.Invalid(
         block_t::name() + "-btc-context-does-not-connect",
         format("payload {} we attempted to add to block {} has "
@@ -399,8 +397,7 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 
   const auto& vtbIds = current->getPayloadIds<VTB>();
 
-  // stateless check for duplicates in each of the payload IDs vectors
-  if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
+  if (hasDuplicateIdsOf<VTB>(vtbIds, state)) return false;
 
   // recover `endorsedBy`
   const auto si = param_->getEndorsementSettlementInterval();

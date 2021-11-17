@@ -247,8 +247,8 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @overload
   void acceptBlock(index_t& index, const PopData& payloads);
 
-  // an incremental block builder
-  // the tree must not be modified during the lifetime of the object
+  //! an incremental block builder
+  //! @invariant the tree must not be modified during the lifetime of the object
   struct BlockPayloadMutator {
     using tree_t = AltBlockTree;
     using payload_index_t = PayloadsIndex;

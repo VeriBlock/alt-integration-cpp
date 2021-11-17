@@ -12,15 +12,17 @@ import (
 )
 
 func TestPopContextFree(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
+
+	config := NewConfig()
+	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 
 	context.Free()
@@ -28,15 +30,17 @@ func TestPopContextFree(t *testing.T) {
 }
 
 func TestPopContextBlockPrecessing(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
+
+	config := NewConfig()
+	defer config.Free()
 
 	storage, err := NewStorage(":inmem:")
 	assert.NoError(err)
 	defer storage.Free()
 
-	context := GenerateTestPopContext(t, storage)
+	context := GenerateTestPopContext(t, storage, config)
 	defer context.Lock()()
 	defer context.Free()
 
@@ -91,6 +95,7 @@ func TestPopContextBlockPrecessing(t *testing.T) {
 
 	context.RemoveSubtree(newBlock.GetHash())
 
-	index = context.AltGetBlockIndex(newBlock.GetHash())
+	index, err = context.AltGetBlockIndex(newBlock.GetHash())
+	assert.Error(err)
 	assert.Nil(index)
 }

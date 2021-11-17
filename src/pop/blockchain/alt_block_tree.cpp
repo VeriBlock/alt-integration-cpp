@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <stack>
 #include <veriblock/pop/algorithm.hpp>
-#include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree_util.hpp>
 #include <veriblock/pop/command_group_cache.hpp>
@@ -107,8 +107,40 @@ void AltBlockTree::acceptBlock(index_t& index,
                                ValidationState& state) {
   setPayloads(index, payloads);
 
-  if (index.pprev->isConnected()) {
-    connectBlock(index, state);
+  if (!index.pprev->isConnected()) {
+    return;
+  }
+
+  connectBlock(index, state);
+
+  // use non-recursive algorithm to connect the descendants.
+  // recursive algorithm caused segfaults on linux alpine because of deep
+  // recursion - thanks @daedalom for reporting it!
+  std::stack<BlockIndex<AltBlock>*> stack;
+  for (auto* pnext : index.pnext) {
+    stack.push(pnext);
+  }
+
+  while (!stack.empty()) {
+    auto* top = stack.top();
+    stack.pop();
+
+    // we never push nullptr to stack
+    VBK_ASSERT(top != nullptr);
+    if (!top->hasFlags(BLOCK_HAS_PAYLOADS)) {
+      // we can't connect this subtree because current block is 'in flight' -
+      // we never added payloads
+      continue;
+    }
+
+    // do connect
+    ValidationState dummy;
+    connectBlock(*top, dummy);
+
+    // fill stack with next candidates
+    for (auto* pnext : top->pnext) {
+      stack.push(pnext);
+    }
   }
 }
 
@@ -130,8 +162,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
                  "state corruption: block %s is applied",
                  index.toPrettyString());
 
-  VBK_ASSERT_MSG(index.pprev,
-                 "Adding payloads to a bootstrap block is not allowed");
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "Adding payloads to the root block is not allowed");
 
   ValidationState state;
   VBK_ASSERT_MSG(
@@ -152,8 +184,8 @@ void AltBlockTree::setPayloads(index_t& index, const PopData& payloads) {
 }
 
 template <typename Payload>
-bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
-                           ValidationState& state) {
+bool hasStatefulDuplicatesOf(AltBlockTree::BlockPayloadMutator& mutator,
+                             ValidationState& state) {
   for (const auto& pid : mutator.getBlock().getPayloadIds<Payload>()) {
     if (mutator.isStatefulDuplicate(pid.asVector())) {
       return !state.Invalid(
@@ -166,6 +198,13 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
   }
 
   return false;
+}
+
+bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
+                           ValidationState& state) {
+  return hasStatefulDuplicatesOf<VbkBlock>(mutator, state) ||
+         hasStatefulDuplicatesOf<VTB>(mutator, state) ||
+         hasStatefulDuplicatesOf<ATV>(mutator, state);
 }
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
@@ -195,9 +234,11 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   auto mutator = makeConnectedLeafPayloadMutator(index);
 
-  if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
-      hasStatefulDuplicates<VTB>(mutator, state) ||
-      hasStatefulDuplicates<ATV>(mutator, state)) {
+  if (hasStatefulDuplicates(mutator, state)) {
+    VBK_LOG_DEBUG("block: %s has stateful duplicate, state: %s",
+                  index.toPrettyString(),
+                  state.toString());
+
     invalidateSubtree(index, BLOCK_FAILED_POP, /*do fr=*/false);
   }
 
@@ -205,13 +246,6 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 
   if (index.isValid()) {
     onBlockConnected.emit(index);
-    // connect the descendants
-    for (auto* successor : index.pnext) {
-      if (successor->hasFlags(BLOCK_HAS_PAYLOADS)) {
-        ValidationState dummy;
-        connectBlock(*successor, dummy);
-      }
-    }
   } else {
     onInvalidBlockConnected.emit(index, state);
   };
@@ -222,7 +256,7 @@ bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
 bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO("Accept new block: %s ", block.toPrettyString());
+  VBK_LOG_DEBUG("Accept new header: %s ", block.toPrettyString());
 
   // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
   // with AltBlock, where hash == previousHash. If so, fail loudly.
@@ -294,7 +328,7 @@ void AltBlockTree::determineBestChain(index_t& candidate, ValidationState&) {
 int AltBlockTree::activateBestChain(const AltBlock::hash_t& A,
                                   const AltBlock::hash_t& B) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO(
+  VBK_LOG_DEBUG(
       "Compare two chains. chain A: %s, chain B: %s", HexStr(A), HexStr(B));
 
   auto* left = getBlockIndex(A);
@@ -306,6 +340,8 @@ int AltBlockTree::activateBestChain(const AltBlock::hash_t& A,
                  "left fork must be applied. Tip: %s, Left: %s",
                  activeChain_.tip()->toPrettyString(),
                  left->toPrettyString());
+
+  VBK_LOG_DEBUG("chain A block: %s", left->toPrettyString());
   if (right == nullptr) {
     VBK_LOG_WARN(
         "Unknown 'B block: %s. Maybe you have forgotten to execute "
@@ -313,13 +349,32 @@ int AltBlockTree::activateBestChain(const AltBlock::hash_t& A,
         HexStr(B));
     return 1;
   }
+  VBK_LOG_DEBUG("chain B block: %s", right->toPrettyString());
 
-  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED), "A is not connected");
-  VBK_ASSERT_MSG(right->isValidUpTo(BLOCK_CONNECTED), "B is not connected");
+  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED),
+                 format("A is not connected: {}", left->toShortPrettyString()));
+  VBK_ASSERT_MSG(
+      right->isValidUpTo(BLOCK_CONNECTED),
+      format("B is not connected: {}", right->toShortPrettyString()));
 
   ValidationState state;
+
   // compare current active chain to other chain and activate the winning chain
-  return cmp_.activateBestChain(*right, state);
+  auto p = cmp_.activateBestChain(*right, state);
+  auto result = p.first;
+  auto reason = p.second;
+
+  VBK_LOG_WARN(
+      "Comparing two chains. Current tip: %s, Candidate: %s. Result: %s (%d), "
+      "reason: %s.",
+      left->toShortPrettyString(),
+      right->toShortPrettyString(),
+      (result == 0 ? "Equal PoP score"
+                   : (result > 0 ? "Tip wins" : "Candidate wins")),
+      result,
+      popFrOutcomeToString(reason, state));
+
+  return result;
 }
 
 template <typename Pop, typename Index>
@@ -334,15 +389,16 @@ static void clearSideEffects(Index& index, PayloadsIndex& storage) {
 
 void AltBlockTree::removeAllPayloads(index_t& index) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_INFO("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
-               block_t::name(),
-               index.getPayloadIds<VbkBlock>().size(),
-               index.getPayloadIds<VTB>().size(),
-               index.getPayloadIds<ATV>().size(),
-               index.toShortPrettyString());
+  VBK_LOG_DEBUG("%s remove VBK=%d VTB=%d ATV=%d payloads from %s",
+                block_t::name(),
+                index.getPayloadIds<VbkBlock>().size(),
+                index.getPayloadIds<VTB>().size(),
+                index.getPayloadIds<ATV>().size(),
+                index.toShortPrettyString());
 
   // we do not allow adding payloads to the genesis block
-  VBK_ASSERT_MSG(index.pprev, "can not remove payloads from the genesis block");
+  VBK_ASSERT_MSG(!index.isRoot(),
+                 "can not remove payloads from the root block");
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "Can remove payloads only from blocks with payloads");
   VBK_ASSERT_MSG(!index.hasFlags(BLOCK_ACTIVE), "block is applied");
@@ -390,8 +446,8 @@ AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(tree_t& tree,
       payload_index_(tree.getPayloadsIndex()),
       // don't look for duplicates in the block itself
       chain_(tree.getParams().getBootstrapBlock().height, block_.pprev) {
-  VBK_ASSERT_MSG(block_.pprev,
-                 "Adding payloads to a bootstrap block is not allowed");
+  VBK_ASSERT_MSG(!block_.isRoot(),
+                 "Adding payloads to the root block is not allowed");
   VBK_ASSERT_MSG(block_.isValidUpTo(BLOCK_VALID_TREE),
                  "block %s should be valid",
                  block_.toPrettyString());
@@ -510,22 +566,6 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
-    // finalize blocks
-    {
-      auto* bestTip = getBestChain().tip();
-      VBK_ASSERT(bestTip && "must be bootstrapped");
-
-      uint32_t max_reorg_distance = getParams().getMaxReorgDistance();
-      uint32_t finalHeight =
-          std::max((int32_t)(bestTip->getHeight() - max_reorg_distance),
-                   (int32_t)getRoot().getHeight());
-
-      auto* finalizedBlock = getBestChain()[finalHeight];
-
-      if (!finalizeBlock(*finalizedBlock, state)) {
-        return state.Invalid("set-state-error");
-      }
-    }
   } else {
     VBK_ASSERT_MSG(!to.isValid(),
                    "if setState failed, then '%s must be invalid",
@@ -560,6 +600,18 @@ bool AltBlockTree::loadBlockForward(const stored_index_t& index,
   return loadBlockInner(index, state);
 }
 
+//! stateless check for duplicates in each of the payload ID vectors
+bool hasDuplicateIds(const AltBlockTree::index_t& index,
+                     ValidationState& state) {
+  const auto& vbkblockIds = index.getPayloadIds<VbkBlock>();
+  const auto& vtbIds = index.getPayloadIds<VTB>();
+  const auto& atvIds = index.getPayloadIds<ATV>();
+
+  return hasDuplicateIdsOf<VbkBlock>(vbkblockIds, state) ||
+         hasDuplicateIdsOf<VTB>(vtbIds, state) ||
+         hasDuplicateIdsOf<ATV>(atvIds, state);
+}
+
 bool AltBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
   // load endorsements
@@ -567,24 +619,20 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  const auto& vbkblockIds = current->getPayloadIds<VbkBlock>();
-  const auto& vtbIds = current->getPayloadIds<VTB>();
-  const auto& atvIds = current->getPayloadIds<ATV>();
+  if (hasDuplicateIds(*current, state)) return false;
 
-  // stateless check for duplicates in each of the payload IDs vectors
-  if (!checkIdsForDuplicates<VbkBlock>(vbkblockIds, state)) return false;
-  if (!checkIdsForDuplicates<VTB>(vtbIds, state)) return false;
-  if (!checkIdsForDuplicates<ATV>(atvIds, state)) return false;
-
-  if (current->pprev != nullptr) {
+  if (!current->isRoot()) {
     // if the block is not yet connected, defer the stateful duplicate check to
     // connectBlock()
     if (current->isConnected()) {
       auto mutator = makeConnectedLeafPayloadMutator(*current);
-      if (hasStatefulDuplicates<VbkBlock>(mutator, state) ||
-          hasStatefulDuplicates<VTB>(mutator, state) ||
-          hasStatefulDuplicates<ATV>(mutator, state)) {
-        return false;
+      if (hasStatefulDuplicates(mutator, state) &&
+          !current->hasFlags(BLOCK_FAILED_POP)) {
+        return state.Invalid(
+            "valid-block-with-stateful-duplicates",
+            format(
+                "Block {} has stateful duplicates but is not marked as invalid",
+                mutator.getBlock().toPrettyString()));
       }
     }
   } else {
@@ -731,9 +779,7 @@ void removePayloadsFromIndex(PayloadsIndex& storage,
     return;
   }
 
-  // fix MSVC 4127 warning
-  bool valid = false;
-  VBK_ASSERT(valid && "should not reach here");
+  VBK_ASSERT_MSG(false, "should not reach here");
 }
 
 }  // namespace altintegration

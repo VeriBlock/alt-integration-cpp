@@ -47,7 +47,7 @@ struct BaseBlockTree {
   };
 
   const std::unordered_set<index_t*>& getTips() const { return tips_; }
-  
+
   std::vector<index_t*> getBlocks(
       GetBlocksPolicy policy = GetBlocksPolicy::DEFAULT) const {
     std::vector<index_t*> blocks;
@@ -182,9 +182,10 @@ struct BaseBlockTree {
   virtual void removeSubtree(index_t& toRemove) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
-    // save ptr to a previous block
+
+    VBK_ASSERT_MSG(!toRemove.isRoot(), "cannot remove the root block");
+    // save the pointer to the previous block
     auto* prev = toRemove.pprev;
-    VBK_ASSERT(prev && "cannot remove the genesis block");
 
     bool isOnMainChain = activeChain_.contains(&toRemove);
     if (isOnMainChain) {
@@ -245,7 +246,8 @@ struct BaseBlockTree {
                   (int)reason,
                   toBeInvalidated.toShortPrettyString());
 
-    VBK_ASSERT(toBeInvalidated.pprev && "cannot invalidate the genesis block");
+    VBK_ASSERT_MSG(!toBeInvalidated.isRoot(),
+                   "cannot invalidate the root block");
 
     VBK_ASSERT(isValidInvalidationReason(reason) &&
                "invalid invalidation reason");
@@ -319,9 +321,10 @@ struct BaseBlockTree {
                   (int)reason,
                   toBeValidated.toShortPrettyString());
 
-    VBK_ASSERT(toBeValidated.pprev && "cannot revalidate the genesis block");
-    VBK_ASSERT(isValidInvalidationReason(reason) &&
-               "invalid revalidation reason");
+    VBK_ASSERT_MSG(!toBeValidated.isRoot(), "cannot revalidate the root block");
+
+    VBK_ASSERT_MSG(isValidInvalidationReason(reason),
+                   "invalid revalidation reason");
 
     if (!toBeValidated.hasFlags(reason)) {
       return;
@@ -507,6 +510,7 @@ struct BaseBlockTree {
   index_t* insertBlockHeader(const std::shared_ptr<block_t>& block,
                              block_height_t bootstrapHeight = 0) {
     VBK_TRACE_ZONE_SCOPED;
+
     assertBlockSanity(*block);
 
     auto hash = block->getHash();
@@ -541,13 +545,17 @@ struct BaseBlockTree {
                       bool connectForward,
                       ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+
     VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
 
     // quick check if given block is sane
     auto& root = getRoot();
     if (connectForward) {
       VBK_ASSERT_MSG(index.height >= root.getHeight(),
-                     "Blocks can be forward connected after root only");
+                     format("Blocks can be forward connected after root only. "
+                            "index.height: {}, root.height: {}",
+                            index.height,
+                            root.getHeight()));
     } else {
       VBK_ASSERT_MSG(index.height + 1 == root.getHeight(),
                      "Blocks can be backwards connected only to the root");
@@ -586,21 +594,20 @@ struct BaseBlockTree {
         if (connectForward) {
           return state.Invalid("bad-prev",
                                "Block does not connect to current tree");
-        } else {
-          if (root.getHeader().getPreviousBlock() !=
-              makePrevHash(currentHash)) {
-            return state.Invalid(
-                "bad-block-hash",
-                format("Can't replace root block with block {}",
-                       index.toPrettyString()));
-          }
-
-          current = createBootstrapBlockIndex(currentHash, index.height);
-          current->restore();
-          current->pnext.insert(&root);
-          VBK_ASSERT(root.pprev == nullptr);
-          root.pprev = current;
         }
+
+        if (root.getHeader().getPreviousBlock() != makePrevHash(currentHash)) {
+          return state.Invalid("bad-block-hash",
+                               format("Can't replace root block with block {}",
+                                      index.toPrettyString()));
+        }
+
+        current = createBootstrapBlockIndex(currentHash, index.height);
+        current->restore();
+        current->pnext.insert(&root);
+        VBK_ASSERT(root.isRoot());
+        root.pprev = current;
+
       } else {
         current = createBlockIndex(currentHash, *prev);
         current->restore();
@@ -724,7 +731,7 @@ struct BaseBlockTree {
     auto* index = &toDelete;
 
     // find oldest ancestor
-    while (index != nullptr && index->pprev != nullptr) {
+    while (index != nullptr && !index->isRoot()) {
       index = index->pprev;
     }
 
@@ -767,6 +774,10 @@ struct BaseBlockTree {
                                  int32_t preserveBlocksBehindFinal,
                                  ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind",
+                  index.toShortPrettyString(),
+                  preserveBlocksBehindFinal);
+
     index_t* finalizedBlock = &index;
 
     // prereq is not met - finalized block must be on active chain

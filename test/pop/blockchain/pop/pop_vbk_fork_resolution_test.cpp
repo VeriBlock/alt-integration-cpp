@@ -135,8 +135,10 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   Chain<BlockIndex<VbkBlock>> chain(0, vbkBlockTip);
 
-  internal::ReducedPublicationView reducedPublicationView{
-      ChainSlice(chain), popminer->vbkParams(), popminer->btc()};
+  internal::ReducedPublicationView reducedPublicationView{ChainSlice(chain),
+                                                          popminer->vbkParams(),
+                                                          popminer->vbk(),
+                                                          popminer->btc()};
 
   EXPECT_NE(
       reducedPublicationView.getKeystone(reducedPublicationView.lastKeystone())

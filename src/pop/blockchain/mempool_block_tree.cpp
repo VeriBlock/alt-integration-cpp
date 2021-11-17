@@ -1,9 +1,11 @@
+#include "veriblock/pop/blockchain/mempool_block_tree.hpp"
+
 #include "veriblock/pop/blockchain/alt_block_tree_util.hpp"
 #include "veriblock/pop/blockchain/blockchain_util.hpp"
-#include "veriblock/pop/blockchain/mempool_block_tree.hpp"
-#include "veriblock/pop/blockchain/pop/continue_on_invalid_context.hpp"
+#include "veriblock/pop/blockchain/pop/counting_context.hpp"
 #include "veriblock/pop/fmt.hpp"
 #include "veriblock/pop/keystone_util.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 
@@ -65,6 +67,7 @@ bool MemPoolBlockTree::checkContextually(const ATV& atv,
 
   auto endorsed_hash =
       tree_->getParams().getHash(atv.transaction.publicationData.header);
+
   auto* endorsed_index = tree_->getBlockIndex(endorsed_hash);
   if (endorsed_index != nullptr) {
     auto* tip = tree_->getBestChain().tip();
@@ -132,7 +135,6 @@ bool MemPoolBlockTree::acceptVTB(
   size_t i = 0;
   for (const auto& blk : vtb.transaction.blockOfProofContext) {
     if (!temp_btc_tree_.acceptBlockHeader(blk, state)) {
-      invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
       return state.Invalid("bad-block-of-proof-context", i);
     }
 
@@ -140,7 +142,6 @@ bool MemPoolBlockTree::acceptVTB(
   }
 
   if (!temp_btc_tree_.acceptBlockHeader(vtb.transaction.blockOfProof, state)) {
-    invalid_vtbs_[vtb.getId()] = {vtb.transaction.blockOfProof.getHash()};
     return state.Invalid("bad-block-of-proof");
   }
 
@@ -256,24 +257,52 @@ template <typename Payload>
 void applyPayloadsOrRemoveIfInvalid(
     AltBlockTree::BlockPayloadMutator& mutator,
     std::vector<Payload>& payloads,
-    ContinueOnInvalidContext& continueOnInvalidContext) {
+    CountingContext& context,
+    const std::function<void(const Payload&, const ValidationState&)>&
+        onPayload) {
   auto it = std::remove_if(
       payloads.begin(), payloads.end(), [&](const Payload& payload) {
-        ValidationState dummy;
-        return !continueOnInvalidContext.canFit(payload) ||
-               mutator.isStatelessDuplicate(getIdVector(payload)) ||
-               !mutator.add(payload, dummy);
+        ValidationState state;
+
+        // will be executed when function exits
+        auto finalizer = Finalizer([&]() { onPayload(payload, state); });
+
+        if (!context.canFit(payload)) {
+          // can't fit, doesn't worth even trying to add this payload
+          state.Invalid("does-not-fit", "Can't fit into a block");
+          return true;  // should be removed
+        }
+
+        if (mutator.isStatelessDuplicate(getIdVector(payload))) {
+          state.Invalid("stateless-duplicate",
+                        format("Stateless duplicate payload with id {}",
+                               HexStr(payload.getId())));
+          return true;  // should be removed
+        }
+
+        if (!mutator.add(payload, state)) {
+          // payload is invalid and should be removed
+          return true;
+        }
+
+        // actually update context ONLY if payload is valid and applied
+        context.update(payload);
+        return false;  // do not remove this payload
       });
   payloads.erase(it, payloads.end());
 }
 
-void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
+void MemPoolBlockTree::filterInvalidPayloads(
+    PopData& pop,
+    const std::function<void(const ATV&, const ValidationState&)>& onATV,
+    const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+    const std::function<void(const VbkBlock&, const ValidationState&)>& onVBK) {
   // return early
   if (pop.empty()) {
     return;
   }
 
-  VBK_LOG_DEBUG("Trying to add %s to next block...", pop.toPrettyString());
+  VBK_LOG_WARN("Trying to add %s to next block...", pop.toPrettyString());
 
   // suppress the VBK fork resolution as we don't care about the best chain
   auto guard = tree_->vbk().deferForkResolutionGuard();
@@ -303,28 +332,22 @@ void MemPoolBlockTree::filterInvalidPayloads(PopData& pop) {
   bool success = tree_->setState(*tmpindex, dummy);
   VBK_ASSERT(success);
 
-  ContinueOnInvalidContext continueOnInvalidContext(tree_->getParams());
+  CountingContext counter(tree_->getParams());
   auto mutator = tree_->makeConnectedLeafPayloadMutator(*tmpindex);
 
-  applyPayloadsOrRemoveIfInvalid(
-      mutator, pop.context, continueOnInvalidContext);
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, continueOnInvalidContext);
-  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, continueOnInvalidContext);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.context, counter, onVBK);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.vtbs, counter, onVTB);
+  applyPayloadsOrRemoveIfInvalid(mutator, pop.atvs, counter, onATV);
 
   // assert PopData does not surpass limits
   assertPopDataFits(pop, tree_->getParams());
 
-  VBK_LOG_DEBUG("Filtered valid: %s", pop.toPrettyString());
+  VBK_LOG_WARN("Filtered valid: %s", pop.toPrettyString());
 
   // at this point `pop` contains only valid payloads
   tree_->removeSubtree(*tmpindex);
   tree_->eraseBlock(*tmpindex);
 
   guard.overrideDeferredForkResolution(originalTip);
-
-  for (const auto& vtb : pop.vtbs) {
-    invalid_vtbs_.erase(vtb.getId());
-  }
 }
-
 }  // namespace altintegration

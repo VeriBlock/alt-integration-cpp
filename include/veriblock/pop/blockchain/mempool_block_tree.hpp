@@ -11,6 +11,7 @@
 
 #include "alt_block_tree.hpp"
 #include "temp_block_tree.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 
@@ -87,9 +88,14 @@ struct MemPoolBlockTree {
 
   const TempBlockTree<BtcBlockTree>& btc() const { return temp_btc_tree_; }
 
-  // use this method for stateful validation of pop data. invalid pop data will
-  // be removed from `pop`
-  void filterInvalidPayloads(PopData& pop);
+  //! use this method for stateful validation of pop data. invalid pop data will
+  //! be removed from `pop`
+  void filterInvalidPayloads(
+      PopData& pop,
+      const std::function<void(const ATV&, const ValidationState&)>& onATV,
+      const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+      const std::function<void(const VbkBlock&, const ValidationState&)>&
+          onVBK);
 
   AltBlockTree& alt() { return *tree_; }
 
@@ -103,22 +109,12 @@ struct MemPoolBlockTree {
   void clear() {
     temp_btc_tree_.clear();
     temp_vbk_tree_.clear();
-    invalid_vtbs_.clear();
-  }
-
-  void removeInvalidVTB(const VTB::id_t& id) { invalid_vtbs_.erase(id); }
-
-  const std::unordered_map<VTB::id_t, VTBInvalidationInfo>& getInvalidVTBs()
-      const {
-    return invalid_vtbs_;
   }
 
  private:
   TempBlockTree<VbkBlockTree> temp_vbk_tree_;
   TempBlockTree<BtcBlockTree> temp_btc_tree_;
   AltBlockTree* tree_;
-
-  std::unordered_map<VTB::id_t, VTBInvalidationInfo> invalid_vtbs_;
 };
 
 }  // namespace altintegration

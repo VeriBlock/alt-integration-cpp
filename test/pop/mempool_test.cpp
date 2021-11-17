@@ -634,21 +634,6 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
     mempool->removeAll(pop2);
   }
 
-  // At this moment, VTB1 is not expected to be connected, because BTC block 8
-  // can not be connected to previous block 6.
-  // add to mempool
-  ASSERT_TRUE(mempool->getMissingBtcBlocks().empty());
-
-  ASSERT_TRUE(mempool->submit<VTB>(VTB1, state)) << state.toString();
-  // mine VTB1 in ALT3
-  mineAltBlocks(1, chain, false, false);
-  auto pop1 = mempool->generatePopData();
-  ASSERT_EQ(pop1.vtbs.size(), 0);
-  ASSERT_EQ(pop1.atvs.size(), 0);
-  ASSERT_EQ(pop1.context.size(), 0);
-
-  ASSERT_FALSE(mempool->getMissingBtcBlocks().empty());
-
   ///// If VTB1 is expected to be connected, uncomment this code
   // {
   //  /// Send VTB1, expect it to connect
@@ -824,6 +809,52 @@ TEST_F(MemPoolFixture, getPop_scenario_12) {
   ASSERT_EQ(popData.context.size(), vbk_amount);
 }
 
+TEST_F(MemPoolFixture, getPop_scenario_13) {
+  // mine 10 ALT blocks
+  mineAltBlocks(10, chain);
+
+  // mine 10 VBK blocks
+  popminer->mineVbkBlocks(10);
+
+  // submit corrupted atvs
+  AltBlock endorsedBlock = chain[5];
+  endorsedBlock.previousBlock.clear();
+  std::vector<VbkTx> txs;
+  for (size_t i = 0; i < 1000; i++) {
+    VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+        generatePublicationData(endorsedBlock));
+    txs.push_back(tx);
+  };
+
+  auto* containigBlock = popminer->mineVbkBlocks(1, txs);
+  for (const auto& tx : txs) {
+    ATV atv = popminer->createATV(containigBlock->getHeader(), tx);
+    submitATV(atv);
+  }
+
+  // mine 5 VBK blocks
+  popminer->mineVbkBlocks(10);
+
+  // submit valid ATV
+  endorsedBlock = chain[5];
+  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+      generatePublicationData(endorsedBlock));
+  auto* block = popminer->mineVbkBlocks(1, {tx});
+  ATV atv = popminer->createATV(block->getHeader(), tx);
+  submitATV(atv);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    submitVBK(*it);
+  }
+
+  auto pop = checkedGetPop();
+  ASSERT_EQ(pop.atvs.size(), 1);
+  ASSERT_EQ(pop.atvs[0], atv);
+}
+
 TEST_F(MemPoolFixture, IsKnown) {
   ASSERT_FALSE(mempool->isKnown<VbkBlock>(VbkBlock{}.getId()));
   auto next = popminer->mineVbkBlocks(1);
@@ -841,4 +872,61 @@ TEST_F(MemPoolFixture, IsKnown) {
   ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
   // VBK block is in blockchain, so known
   ASSERT_TRUE(mempool->isKnown<VbkBlock>(pd.context.at(0).getId()));
+}
+
+TEST_F(MemPoolFixture, getPop_txfeePriority) {
+  const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      Coin(500));
+  const auto& tx2 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(alttree.getBestChain().tip()->getHeader()),
+      Coin(1000));
+  const auto& block = popminer->mineVbkBlocks(1, {tx1, tx2})->getHeader();
+  auto pd1 = popminer->createPopDataEndorsingAltBlock(
+      block, tx1, getLastKnownVbkBlock());
+  ATV& atv1 = pd1.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv1, state));
+  auto pd2 = popminer->createPopDataEndorsingAltBlock(
+      block, tx2, getLastKnownVbkBlock());
+  ATV& atv2 = pd2.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv2, state));
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 1);
+  ASSERT_EQ(pop_data.atvs.size(), 2);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  EXPECT_EQ(pop_data.atvs[0], atv2);
+  EXPECT_EQ(pop_data.atvs[1], atv1);
+}
+
+TEST_F(MemPoolFixture, getPop_endorsedPriority) {
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+  AltBlock endorsedBlock1 = chain[6];
+  AltBlock endorsedBlock2 = chain[5];
+
+  const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock1),
+      Coin(1000));
+  const auto& tx2 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock2),
+      Coin(1000));
+  const auto& block = popminer->mineVbkBlocks(1, {tx1, tx2})->getHeader();
+  auto pd1 = popminer->createPopDataEndorsingAltBlock(
+      block, tx1, getLastKnownVbkBlock());
+  ATV& atv1 = pd1.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv1, state));
+  auto pd2 = popminer->createPopDataEndorsingAltBlock(
+      block, tx2, getLastKnownVbkBlock());
+  ATV& atv2 = pd2.atvs.at(0);
+  ASSERT_TRUE(mempool->submit(atv2, state));
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 1);
+  ASSERT_EQ(pop_data.atvs.size(), 2);
+  ASSERT_EQ(pop_data.vtbs.size(), 0);
+
+  EXPECT_EQ(pop_data.atvs[0], atv2);
+  EXPECT_EQ(pop_data.atvs[1], atv1);
 }

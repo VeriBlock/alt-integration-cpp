@@ -39,9 +39,9 @@ struct StoredBtcBlockAddon {
   // TODO: figure out if this is somehow abusable by spammers/dosers
   std::vector<ref_height_t> refs{};
 
-  //! list of endorsements of VBK blocks, whose BlockOfProof is
-  //! this block. must be a vector, because we can have duplicates here
-  std::vector<uint256> blockOfProofEndorsementHashes;
+  //! list of endorsement of VBK blocks, whose BlockOfProof is
+  //! this block ids. Must be a vector, because we can have duplicates here
+  std::vector<uint256> blockOfProofEndorsementIds;
 };
 
 bool DeserializeFromVbkEncoding(ReadStream& stream,

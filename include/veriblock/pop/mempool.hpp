@@ -18,6 +18,8 @@
 #include "serde.hpp"
 #include "signals.hpp"
 #include "value_sorted_map.hpp"
+#include "veriblock/pop/json.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 
@@ -89,10 +91,10 @@ struct MemPool {
 
   /**
    * Use this method to determine if payload of type T with id `id` is already
-   * known.
+   * known to active chain.
    * @tparam T ATV or VTB or VbkBlock
    * @param[in] id payload id
-   * @return true if payload exists in mempool or blockchain, false otherwise.
+   * @return true if payload exists in mempool or active chain, false otherwise.
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
@@ -107,7 +109,25 @@ struct MemPool {
     auto& pl = getPayloadsIndex();
     std::vector<uint8_t> v(id.begin(), id.end());
     const auto& containing = pl.getContainingAltBlocks(v);
-    return !containing.empty();
+    if (containing.empty()) {
+      return false;
+    }
+
+    // check if any of containing is on active chain
+    auto& tree = mempool_tree_.alt();
+    for (const auto& c : containing) {
+      auto* index = tree.getBlockIndex(c);
+      if (index == nullptr) {
+        // block is deleted (too old)
+        continue;
+      }
+      if (tree.getBestChain().contains(index)) {
+        return true;
+      }
+    }
+
+    // `id` is not on active chain
+    return false;
   }
 
   //! getter for payloads stored in mempool
@@ -251,6 +271,16 @@ struct MemPool {
    * current tip.
    */
   PopData generatePopData();
+  //! @overload
+  //! @param[in] onATV a callback that is executed when ATV have been considered
+  //! @param[in] onVTB a callback that is executed when VTB have been considered
+  //! @param[in] onVBK a callback that is executed when VbkBlock have been
+  //! considered
+  PopData generatePopData(
+      const std::function<void(const ATV&, const ValidationState&)>& onATV,
+      const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+      const std::function<void(const VbkBlock&, const ValidationState&)>&
+          onVBK);
 
   /**
    * Remove payloads from mempool by their IDs.
@@ -342,6 +372,18 @@ struct MemPool {
   }
 
   template <typename POP>
+  void cleanupStale(std::set<std::shared_ptr<POP>,
+                             VbkPayloadsRelations::AtvCombinedComparator>& c,
+                    std::function<void(POP&)> remove) {
+    for (auto it = c.begin(); it != c.end();) {
+      auto& pl = **it;
+      ValidationState state;
+      auto valid = mempool_tree_.checkContextually(pl, state);
+      it = !valid ? (remove(pl), c.erase(it)) : std::next(it);
+    }
+  }
+
+  template <typename POP>
   void cleanupStale(std::vector<std::shared_ptr<POP>>& c,
                     std::function<void(POP&)> remove) {
     for (auto it = c.begin(); it != c.end();) {
@@ -411,13 +453,24 @@ template <> signals::Signal<void(const VbkBlock&)>& MemPool::getSignal();
 namespace detail {
 
 template <typename Value, typename T>
-inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
+inline void mapToJson(Value& obj,
+                      const MemPool& mp,
+                      const std::string& key,
+                      bool verbose = false) {
   auto arr = json::makeEmptyArray<Value>();
   for (auto& p : mp.getMap<T>()) {
-    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    if (verbose) {
+      json::arrayPushBack(arr, ToJSON<Value>(*p.second));
+    } else {
+      json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    }
   }
   for (auto& p : mp.getInFlightMap<T>()) {
-    json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    if (verbose) {
+      json::arrayPushBack(arr, ToJSON<Value>(*p.second));
+    } else {
+      json::arrayPushBack(arr, ToJSON<Value>(p.first));
+    }
   }
   json::putKV(obj, key, arr);
 }
@@ -425,12 +478,12 @@ inline void mapToJson(Value& obj, const MemPool& mp, const std::string& key) {
 
 //! @private
 template <typename Value>
-Value ToJSON(const MemPool& mp) {
+Value ToJSON(const MemPool& mp, bool verbose = false) {
   auto obj = json::makeEmptyObject<Value>();
 
-  detail::mapToJson<Value, VbkBlock>(obj, mp, "vbkblocks");
-  detail::mapToJson<Value, ATV>(obj, mp, "atvs");
-  detail::mapToJson<Value, VTB>(obj, mp, "vtbs");
+  detail::mapToJson<Value, VbkBlock>(obj, mp, "vbkblocks", verbose);
+  detail::mapToJson<Value, ATV>(obj, mp, "atvs", verbose);
+  detail::mapToJson<Value, VTB>(obj, mp, "vtbs", verbose);
 
   return obj;
 }

@@ -4,80 +4,19 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <deque>
+#include <iterator>
 #include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 
+#include "veriblock/pop/validation_state.hpp"
+
 namespace altintegration {
 
-namespace {
-
-// generates a PopData which is not bigger than 'maxPopDataSize' in serialized
-// size
-PopData generatePopDataImpl(
-    const std::vector<std::pair<VbkBlock::id_t,
-                                std::shared_ptr<VbkPayloadsRelations>>>& blocks,
-    const AltChainParams& params) {
-  PopData ret{};
-  // size in bytes of pop data added to
-  size_t popSize = ret.estimateSize();
-
-  const auto& maxSize = params.getMaxPopDataSize();
-  for (const auto& block : blocks) {
-    // add VBK block if it fits
-    auto& header = *block.second->header;
-    if (popSize + header.estimateSize() >= maxSize) {
-      // PopData is full
-      break;
-    }
-    // add VBK block to connect underlying ATVs/VTBs
-    ret.context.push_back(header);
-    popSize += header.estimateSize();
-
-    // try to fit ATVs
-    auto& atvcandidates = block.second->atvs;
-    for (const auto& atv : atvcandidates) {
-      const auto estimate = atv->estimateSize();
-      if (popSize + estimate >= maxSize) {
-        // do not consider this ATV, it does not fit
-        continue;
-      }
-
-      // this ATV fits
-      ret.atvs.push_back(*atv);
-      popSize += estimate;
-    }
-
-    // try to fit VTBs
-    auto& vtbcandidates = block.second->vtbs;
-    for (const auto& vtb : vtbcandidates) {
-      const auto estimate = vtb->estimateSize();
-      if (popSize + estimate >= maxSize) {
-        // this VTB does not fit
-        continue;
-      }
-
-      ret.vtbs.push_back(*vtb);
-      popSize += estimate;
-    }
-
-    // update popSize, because `push_back` might have increased size estimate
-    // for more than `estimate` (specifically - when we add new VBK block to
-    // array, and then when size of array serialization goes from 1 byte to 2
-    // bytes, we don't count this byte).
-    popSize = ret.estimateSize();
-  }
-
-  const auto estimate = ret.estimateSize();
-  VBK_ASSERT_MSG(popSize == estimate, "size=%d estimate=%d", popSize, estimate);
-  VBK_ASSERT_MSG(estimate <= maxSize, "estimate=%d, max=%d", estimate, maxSize);
-
-  return ret;
-}
-
-}  // namespace
-
-PopData MemPool::generatePopData() {
+PopData MemPool::generatePopData(
+    const std::function<void(const ATV&, const ValidationState&)>& onATV,
+    const std::function<void(const VTB&, const ValidationState&)>& onVTB,
+    const std::function<void(const VbkBlock&, const ValidationState&)>& onVBK) {
   VBK_LOG_INFO("Generating a new pop data from mempool for the current tip.");
 
   // attempt to connect payloads
@@ -90,9 +29,35 @@ PopData MemPool::generatePopData() {
     return a.second->header->getHeight() < b.second->header->getHeight();
   });
 
-  PopData ret = generatePopDataImpl(blocks, mempool_tree_.alt().getParams());
-  mempool_tree_.filterInvalidPayloads(ret);
+  PopData ret{};
+  for (const auto& block : blocks) {
+    // add VBK block if it fits
+    auto& header = *block.second->header;
+    // add VBK block to connect underlying ATVs/VTBs
+    ret.context.push_back(header);
+
+    // try to fit ATVs
+    auto& atvcandidates = block.second->atvs;
+    for (const auto& atv : atvcandidates) {
+      // this ATV fits
+      ret.atvs.push_back(*atv);
+    }
+
+    // try to fit VTBs
+    auto& vtbcandidates = block.second->vtbs;
+    for (const auto& vtb : vtbcandidates) {
+      ret.vtbs.push_back(*vtb);
+    }
+  }
+
+  mempool_tree_.filterInvalidPayloads(ret, onATV, onVTB, onVBK);
   return ret;
+}
+
+PopData MemPool::generatePopData() {
+  return this->generatePopData([](const ATV&, const ValidationState&) {},
+                               [](const VTB&, const ValidationState&) {},
+                               [](const VbkBlock&, const ValidationState&) {});
 }
 
 void MemPool::cleanUp() {
@@ -117,8 +82,6 @@ void MemPool::cleanUp() {
 
         // remove VTBs
         for (const auto& vtb : rel.vtbs) {
-          mempool_tree_.removeInvalidVTB(vtb->getId());
-          mempool_tree_.alt().vbk().removeInvalidVTB(vtb->getId());
           stored_vtbs_.erase(vtb->getId());
         }
 
@@ -132,8 +95,6 @@ void MemPool::cleanUp() {
       // cleanup stale VTBs
       cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
         auto id = v.getId();
-        mempool_tree_.removeInvalidVTB(id);
-        mempool_tree_.alt().vbk().removeInvalidVTB(id);
         stored_vtbs_.erase(id);
       });
 
@@ -212,7 +173,7 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
   vbkblocks_.insert({block_id, block});
   auto& val = relations_[block_id];
   if (val == nullptr) {
-    val = std::make_shared<VbkPayloadsRelations>(block);
+    val = std::make_shared<VbkPayloadsRelations>(mempool_tree_.alt(), block);
     on_vbkblock_accepted.emit(*block);
   }
 
@@ -259,7 +220,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
   VBK_LOG_DEBUG("[POP mempool] ATV=%s is connected", id.toHex());
   auto& rel = getOrPutVbkRelation(blockOfProof_ptr);
-  rel.atvs.push_back(atv);
+  rel.atvs.insert(atv);
   makePayloadConnected<ATV>(atv);
 
   return true;
@@ -366,14 +327,8 @@ void MemPool::tryConnectPayloads() {
 MemPool::MemPool(AltBlockTree& tree) : mempool_tree_(tree) {}
 
 std::vector<BtcBlock::hash_t> MemPool::getMissingBtcBlocks() const {
-  std::vector<BtcBlock::hash_t> res;
-  for (const auto& el : mempool_tree_.getInvalidVTBs()) {
-    res.push_back(el.second.missing_btc_block);
-  }
-  for (const auto& el : mempool_tree_.alt().vbk().getInvalidVTBs()) {
-    res.push_back(el.second.missing_btc_block);
-  }
-  return res;
+  // This call is deprecated. Will be removed in future releases.
+  return {};
 }
 
 template <>

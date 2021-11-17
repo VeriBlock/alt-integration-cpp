@@ -22,10 +22,6 @@
 
 namespace altintegration {
 
-struct VTBInvalidationInfo {
-  BtcBlock::hash_t missing_btc_block;
-};
-
 template <>
 inline void BaseBlockTree<BtcBlock>::decreaseAppliedBlockCount(size_t) {
   // do nothing
@@ -191,13 +187,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void removeSubtree(index_t& toRemove) override;
 
-  void removeInvalidVTB(const VTB::id_t& id) { invalid_vtbs.erase(id); }
-
-  const std::unordered_map<VTB::id_t, VTBInvalidationInfo>& getInvalidVTBs()
-      const {
-    return invalid_vtbs;
-  }
-
  private:
   bool loadBlockInner(const stored_index_t& index, ValidationState& state);
 
@@ -224,8 +213,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   PayloadsStorage& payloadsProvider_;
   PayloadsIndex& payloadsIndex_;
   command_group_store_t commandGroupStore_;
-
-  std::unordered_map<VTB::id_t, VTBInvalidationInfo> invalid_vtbs;
 };
 
 //! @private

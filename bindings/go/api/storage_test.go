@@ -12,7 +12,6 @@ import (
 )
 
 func TestStorageFree(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 
@@ -24,7 +23,6 @@ func TestStorageFree(t *testing.T) {
 }
 
 func TestCreateStorageFailure(t *testing.T) {
-	t.Parallel()
 
 	assert := assert.New(t)
 

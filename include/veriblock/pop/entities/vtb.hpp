@@ -38,6 +38,7 @@ struct VTB {
   mutable bool checked{false};
 
   std::string toPrettyString() const;
+  std::string toShortPrettyString() const;
 
   /**
    * Convert VTB to data stream using Vbk byte format

@@ -188,21 +188,15 @@ struct Blob {
     return a.compareTo(b) <= 0;
   }
 
-  template <size_t M>
+  template <size_t M, typename = typename std::enable_if<M <= N>::type>
   Blob<M> trim() const {
-    // fix MSVC 4127 warning
-    bool valid = (N >= M);
-    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data(), data() + M, m.begin());
     return m;
   }
 
-  template <size_t M>
+  template <size_t M, typename = typename std::enable_if<M <= N>::type>
   Blob<M> trimLE() const {
-    // fix MSVC 4127 warning
-    bool valid = (N >= M);
-    VBK_ASSERT_MSG(valid, "invalid data size %d >= %d", N, M);
     Blob<M> m;
     std::copy(data() + size() - M, data() + size(), m.begin());
     return m;
@@ -225,18 +219,19 @@ struct Blob {
 
  protected:
   inline void assign(const std::initializer_list<uint8_t>& list) {
-    VBK_ASSERT_MSG(list.size() <= N,
-                   "Blob(): invalid data size: " + std::to_string(list.size()) +
-                       " > " + std::to_string(N));
+    if (list.size() > N) {
+      throw std::domain_error(
+          fmt::format("Blob({}) invalid input size: {}", N, list.size()));
+    }
 
     std::copy(list.begin(), list.end(), data_.begin());
   }
 
   inline void assign(Slice<const uint8_t> slice) {
-    VBK_ASSERT_MSG(
-        slice.size() <= N,
-        "Blob(): invalid data size: " + std::to_string(slice.size()) + " > " +
-            std::to_string(N));
+    if (slice.size() > N) {
+      throw std::domain_error(
+          fmt::format("Blob({}) invalid input size: {}", N, slice.size()));
+    }
 
     std::copy(slice.begin(), slice.end(), data_.begin());
   }

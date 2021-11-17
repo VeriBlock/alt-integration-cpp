@@ -44,7 +44,7 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
           *storage->ref),
       std::make_shared<altintegration::adaptors::BlockReaderImpl>(
-          *storage->ref));
+          *storage->ref, *config->ref->alt));
 
   return res;
 }
@@ -156,13 +156,16 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(alt_block_index) *,
                            alt_get_block_index,
-                           POP_ARRAY_NAME(u8) hash) {
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash.data);
+  VBK_ASSERT(state);
 
   auto* index = self->ref->getAltBlockTree().getBlockIndex(
       std::vector<uint8_t>(hash.data, hash.data + hash.size));
   if (index == nullptr) {
+    state->ref.Invalid("Can not find block");
     return nullptr;
   }
   return new POP_ENTITY_NAME(alt_block_index){*index};
@@ -171,33 +174,69 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(vbk_block_index) *,
                            vbk_get_block_index,
-                           POP_ARRAY_NAME(u8) hash) {
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash.data);
+  VBK_ASSERT(state);
 
-  altintegration::VbkBlock::hash_t tmp_hash(
-      altintegration::Slice<const uint8_t>(hash.data, hash.size));
-  auto* index = self->ref->getVbkBlockTree().getBlockIndex(tmp_hash);
-  if (index == nullptr) {
-    return nullptr;
+  if (hash.size == altintegration::VbkBlock::hash_t::size()) {
+    altintegration::VbkBlock::hash_t tmp_hash(
+        altintegration::Slice<const uint8_t>(hash.data, hash.size));
+    auto* index = self->ref->getVbkBlockTree().getBlockIndex(tmp_hash);
+    if (index == nullptr) {
+      state->ref.Invalid("Can not find block");
+      return nullptr;
+    }
+    return new POP_ENTITY_NAME(vbk_block_index){*index};
   }
-  return new POP_ENTITY_NAME(vbk_block_index){*index};
+
+  if (hash.size == altintegration::VbkBlock::prev_hash_t::size()) {
+    altintegration::VbkBlock::prev_hash_t tmp_hash(
+        altintegration::Slice<const uint8_t>(hash.data, hash.size));
+    auto* index = self->ref->getVbkBlockTree().getBlockIndex(tmp_hash);
+    if (index == nullptr) {
+      state->ref.Invalid("Can not find block");
+      return nullptr;
+    }
+    return new POP_ENTITY_NAME(vbk_block_index){*index};
+  }
+
+  state->ref.Invalid(
+      "Wrong hash size",
+      altintegration::format("provide hash size: {}, expected size: {} or: {}",
+                             hash.size,
+                             altintegration::VbkBlock::hash_t::size(),
+                             altintegration::VbkBlock::prev_hash_t::size()));
+  return nullptr;
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ENTITY_NAME(btc_block_index) *,
                            btc_get_block_index,
-                           POP_ARRAY_NAME(u8) hash) {
+                           POP_ARRAY_NAME(u8) hash,
+                           POP_ENTITY_NAME(validation_state) * state) {
   VBK_ASSERT(self);
   VBK_ASSERT(hash.data);
+  VBK_ASSERT(state);
 
-  altintegration::BtcBlock::hash_t s_hash(
-      altintegration::Slice<const uint8_t>(hash.data, hash.size));
-  auto* index = self->ref->getBtcBlockTree().getBlockIndex(s_hash);
-  if (index == nullptr) {
-    return nullptr;
+  if (hash.size == altintegration::BtcBlock::hash_t::size()) {
+    altintegration::BtcBlock::hash_t tmp_hash(
+        altintegration::Slice<const uint8_t>(hash.data, hash.size));
+    auto* index = self->ref->getBtcBlockTree().getBlockIndex(tmp_hash);
+    if (index == nullptr) {
+      state->ref.Invalid("Can not find block");
+      return nullptr;
+    }
+    return new POP_ENTITY_NAME(btc_block_index){*index};
   }
-  return new POP_ENTITY_NAME(btc_block_index){*index};
+
+  state->ref.Invalid(
+      "Wrong hash size",
+      altintegration::format("provide hash size: {}, expected size: {}",
+                             hash.size,
+                             altintegration::BtcBlock::hash_t::size()));
+  return nullptr;
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,

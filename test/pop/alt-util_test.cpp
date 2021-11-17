@@ -5,7 +5,6 @@
 
 #include <gtest/gtest.h>
 
-#include <util/alt_chain_params_regtest.hpp>
 #include <util/pop_test_fixture.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/mock_miner.hpp>
@@ -15,6 +14,17 @@ using namespace altintegration;
 struct AltUtilTest : public ::testing::Test {
   MockMiner popminer;
 };
+
+TEST(AltUtil, MaxAtvsInVbk) {
+  EXPECT_EQ(getMaxAtvsInVbkBlock(0), 2147483647);
+  EXPECT_EQ(getMaxAtvsInVbkBlock(0xFF), 1);
+  EXPECT_EQ(getMaxAtvsInVbkBlock(0x06FF), 4);
+  EXPECT_EQ(getMaxAtvsInVbkBlock(0x05FF), 9);
+  EXPECT_EQ(getMaxAtvsInVbkBlock((0b10011 << 8) + 0xff), 100); // (9+1)*(9+1)
+  EXPECT_EQ(getMaxAtvsInVbkBlock((0b101000 << 8) + 0xff), 21); // 20+1
+  EXPECT_EQ(getMaxAtvsInVbkBlock((0b100110 << 8) + 0xff), 20); // 19+1
+  EXPECT_EQ(getMaxAtvsInVbkBlock(0x26ff), 20);
+}
 
 TEST_F(AltUtilTest, GetLastKnownBlocks) {
   auto genesis = getLastKnownBlocks(popminer.btc(), 1ull);

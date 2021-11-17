@@ -10,7 +10,6 @@
 #include <set>
 #include <vector>
 #include <veriblock/pop/algorithm.hpp>
-#include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/logger.hpp>
@@ -55,7 +54,7 @@ struct BlockIndex : public Block::addon_t {
     // TODO: what dirtiness should it have here?
   }
 
-  //! create a bootstrap block in a deleted state
+  //! create a root block in a deleted state
   explicit BlockIndex(height_t _height) : pprev(nullptr), height(_height) {}
 
   ~BlockIndex() {
@@ -77,13 +76,14 @@ struct BlockIndex : public Block::addon_t {
   BlockIndex& operator=(BlockIndex&& other) = default;
 
   bool isDeleted() const { return hasFlags(BLOCK_DELETED); };
+  bool isRoot() const { return pprev == nullptr; };
 
   void restore() {
     VBK_ASSERT_MSG(isDeleted(),
                    "tried to restore block %s that is not deleted",
                    toPrettyString());
 
-    if (pprev != nullptr) {
+    if (!isRoot()) {
       pprev->pnext.insert(this);
 
       if (!pprev->isValid()) {
@@ -100,7 +100,7 @@ struct BlockIndex : public Block::addon_t {
                    "tried to delete block %s that is already deleted",
                    toPrettyString());
 
-    if (pprev != nullptr) {
+    if (!isRoot()) {
       pprev->pnext.erase(this);
     }
 
@@ -195,7 +195,7 @@ struct BlockIndex : public Block::addon_t {
       return false;
     }
     if ((status & BLOCK_VALID_MASK) < upTo) {
-      VBK_ASSERT_MSG((pprev == nullptr || pprev->getValidityLevel() >= upTo),
+      VBK_ASSERT_MSG(isRoot() || pprev->getValidityLevel() >= upTo,
                      "attempted to raise the validity level of block %s beyond "
                      "the validity level of its ancestor %s",
                      toPrettyString(),
@@ -303,7 +303,7 @@ struct BlockIndex : public Block::addon_t {
   }
 
   const BlockIndex* getPrev() const {
-    VBK_ASSERT_MSG(pprev == nullptr || getHeight() == pprev->getHeight() + 1,
+    VBK_ASSERT_MSG(isRoot() || getHeight() == pprev->getHeight() + 1,
                    "state corruption: unexpected height of the previous block "
                    "%s of block %s",
                    pprev->toPrettyString(),
@@ -369,22 +369,6 @@ struct BlockIndex : public Block::addon_t {
     return format("{}:{}:{}", Block::name(), height, HexStr(getHash()));
   }
 
-  void toVbkEncoding(WriteStream& stream) const {
-    using height_t = typename Block::height_t;
-    stream.writeBE<height_t>(height);
-    header->toRaw(stream);
-    stream.writeBE<uint32_t>(status);
-
-    const addon_t* t = this;
-    t->toVbkEncoding(stream);
-  }
-
-  std::vector<uint8_t> toVbkEncoding() const {
-    WriteStream stream;
-    toVbkEncoding(stream);
-    return stream.data();
-  }
-
   friend bool operator==(const BlockIndex& a, const BlockIndex& b) {
     return a.getStatus() == b.getStatus() && a.getHeight() == b.getHeight() &&
            a.getHeader() == b.getHeader();
@@ -407,12 +391,6 @@ struct BlockIndex : public Block::addon_t {
 
   //! (memory only) if true, this block should be written on disk
   bool dirty = false;
-
-  template <typename T>
-  friend bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                         BlockIndex<T>& out,
-                                         ValidationState& state,
-                                         typename T::hash_t precalculatedHash);
 
  private:
   // make it non-copyable
@@ -486,36 +464,6 @@ bool isBlockOutdated(const BlockIndex<Block>& finalBlock,
 template <typename Block>
 void PrintTo(const BlockIndex<Block>& b, ::std::ostream* os) {
   *os << b.toPrettyString();
-}
-
-//! @overload
-template <typename Block>
-bool DeserializeFromVbkEncoding(
-    ReadStream& stream,
-    BlockIndex<Block>& out,
-    ValidationState& state,
-    typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
-  const auto& name = Block::name();
-  using height_t = typename Block::height_t;
-  if (!stream.readBE<height_t>(out.height, state)) {
-    return state.Invalid(name + "-block-index-height");
-  }
-  Block block{};
-  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
-    return state.Invalid(name + "-block-index-header");
-  }
-  out.setHeader(block);
-  if (!stream.readBE<uint32_t>(out.status, state)) {
-    return state.Invalid(name + "-block-index-status");
-  }
-
-  using addon_t = typename Block::addon_t;
-  addon_t& addon = out;
-  if (!DeserializeFromVbkEncoding(stream, addon, state)) {
-    return state.Invalid(name + "-block-index-addon");
-  }
-  out.unsetDirty();
-  return true;
 }
 
 }  // namespace altintegration

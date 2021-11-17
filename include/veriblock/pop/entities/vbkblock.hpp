@@ -43,6 +43,7 @@ struct VbkBlock {
   using stored_addon_t = StoredVbkBlockAddon;
 
   std::string toPrettyString() const;
+  std::string toShortPrettyString() const;
 
   /**
    * Convert VbkBlock to data stream using VbkBlock basic byte format
@@ -192,6 +193,21 @@ bool DeserializeFromRaw(ReadStream& stream,
                         VbkBlock& out,
                         ValidationState& state,
                         const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
+
+//! @overload
+bool DeserializeFromRaw(ReadStream& stream,
+                        VbkBlock& out,
+                        ValidationState& state,
+                        const AltChainParams& /*ignore*/,
+                        const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
+
+//! @overload
+bool DeserializeFromVbkEncoding(
+    ReadStream& stream,
+    VbkBlock& out,
+    ValidationState& state,
+    const AltChainParams& /*ignore*/,
+    const VbkBlock::hash_t& hash = VbkBlock::hash_t{});
 
 //! @overload
 bool DeserializeFromVbkEncoding(

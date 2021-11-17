@@ -75,6 +75,7 @@ KeystoneContext getKeystoneContext(
     const ProtoKeystoneContext<ProtectingBlockT>& pkc,
     const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree) {
   VBK_TRACE_ZONE_SCOPED;
+
   int earliestEndorsementIndex = NO_ENDORSEMENT;
   for (const auto* btcIndex : pkc.referencedByBlocks) {
     if (btcIndex == nullptr) {
@@ -124,13 +125,13 @@ KeystoneContext getKeystoneContext(
 template <typename ProtectedBlockT,
           typename ProtectingBlockT,
           typename ProtectingChainParams,
-          typename ProtectedChainParams>
+          typename ProtectedChainParams,
+          typename ProtectedBlockTree>
 ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     int keystoneToConsider,
     const ChainSlice<BlockIndex<ProtectedBlockT>>& chain,
-    const std::unordered_set<typename ProtectedBlockT::hash_t>&
-        allHashesInChain,
-    const BlockTree<ProtectingBlockT, ProtectingChainParams>& tree,
+    const ProtectedBlockTree& ed,
+    const BlockTree<ProtectingBlockT, ProtectingChainParams>& ing,
     const ProtectedChainParams& config) {
   VBK_TRACE_ZONE_SCOPED;
   auto ki = config.getKeystoneInterval();
@@ -158,17 +159,23 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
     VBK_ASSERT(index != nullptr);
 
     for (const auto* e : index->getEndorsedBy()) {
-      if (!allHashesInChain.count(e->containingHash)) {
+      VBK_ASSERT(e != nullptr);
+      auto* containingBlock = ed.getBlockIndex(e->containingHash);
+      VBK_ASSERT_MSG(containingBlock != nullptr,
+                     "state corruption: could not find the containing block of "
+                     "an applied endorsement");
+
+      if (!chain.contains(containingBlock)) {
         // do not count endorsement whose containingHash is not on the same
         // chain as 'endorsedHash'
         continue;
       }
 
-      auto* ind = tree.getBlockIndex(e->blockOfProof);
+      auto* ind = ing.getBlockIndex(e->blockOfProof);
       VBK_ASSERT(ind != nullptr &&
                  "state corruption: could not find the block of proof of "
                  "an applied endorsement");
-      if (!tree.getBestChain().contains(ind)) {
+      if (!ing.getBestChain().contains(ind)) {
         continue;
       }
 
@@ -187,13 +194,15 @@ ProtoKeystoneContext<ProtectingBlockT> getProtoKeystoneContext(
 template <typename ProtectedBlockT,
           typename ProtectingBlockT,
           typename ProtectingChainParams,
-          typename ProtectedChainParams>
+          typename ProtectedChainParams,
+          typename ProtectedBlockTree>
 struct ReducedPublicationView {
   using protecting_block_t = ProtectingBlockT;
   using protected_block_t = ProtectedBlockT;
   using protecting_chain_params_t = ProtectingChainParams;
   using protected_chain_params_t = ProtectedChainParams;
   using protected_chain_t = ChainSlice<BlockIndex<protected_block_t>>;
+  using protected_tree_t = ProtectedBlockTree;
   using protecting_tree_t =
       BlockTree<protecting_block_t, protecting_chain_params_t>;
 
@@ -201,9 +210,7 @@ struct ReducedPublicationView {
   const int keystoneInterval;
   const protected_chain_t chain;
 
-  // FIXME: get rid of this hack
-  std::unordered_set<typename protected_chain_t::hash_t> allHashesInChain;
-
+  const protected_tree_t& protectedTree;
   const protecting_tree_t& protectingTree;
 
   const int firstKeystoneHeight;
@@ -213,16 +220,15 @@ struct ReducedPublicationView {
 
   ReducedPublicationView(const protected_chain_t _chain,
                          const protected_chain_params_t& _config,
-                         const protecting_tree_t& _tree)
+                         const protected_tree_t& _ed,
+                         const protecting_tree_t& _ing)
       : config(_config),
         keystoneInterval(config.getKeystoneInterval()),
         chain(_chain),
-        allHashesInChain(getAllHashesInChain(chain)),
-        protectingTree(_tree),
-        firstKeystoneHeight(
-            firstKeystoneAfter(chain.first()->getHeight(), keystoneInterval)),
-        lastKeystoneHeight(highestKeystoneAtOrBefore(chain.tip()->getHeight(),
-                                                     keystoneInterval)) {
+        protectedTree(_ed),
+        protectingTree(_ing),
+        firstKeystoneHeight(firstKeystoneAfterBlockIndex(chain.first())),
+        lastKeystoneHeight(highestKeystoneAtOrBeforeBlockIndex(chain.tip())) {
     VBK_ASSERT(keystoneInterval > 0);
   }
 
@@ -260,10 +266,22 @@ struct ReducedPublicationView {
     // FIXME: there's no need to store the intermediate list of blocks and thus
     // no need for ProtoKeystoneContext entity
     auto pkc = getProtoKeystoneContext(
-        blockHeight, chain, allHashesInChain, protectingTree, config);
+        blockHeight, chain, protectedTree, protectingTree, config);
 
     currentKeystoneContext = getKeystoneContext(pkc, protectingTree);
     return &currentKeystoneContext;
+  }
+
+  int32_t firstKeystoneAfterBlockIndex(
+      typename protected_chain_t::index_t* blockIndex) {
+    VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
+    return firstKeystoneAfter(blockIndex->getHeight(), keystoneInterval);
+  }
+
+  int32_t highestKeystoneAtOrBeforeBlockIndex(
+      typename protected_chain_t::index_t* blockIndex) {
+    VBK_ASSERT_MSG(blockIndex, "Protected tree should be bootstrapped");
+    return highestKeystoneAtOrBefore(blockIndex->getHeight(), keystoneInterval);
   }
 };
 
@@ -425,6 +443,22 @@ int comparePopScoreImpl(PublicationView& a, PublicationView& b) {
 
 }  // namespace internal
 
+enum class PopFrOutcome {
+  UNKNOWN,
+  CANDIDATE_IS_TIP,
+  CANDIDATE_INVALID_CHAIN,
+  CANDIDATE_INVALID_PAYLOADS,
+  CANDIDATE_PART_OF_ACTIVE_CHAIN,
+  CANDIDATE_IS_TIP_SUCCESSOR,
+  TIP_IS_FINAL,
+  BOTH_DONT_CROSS_KEYSTONE_BOUNDARY,
+  CANDIDATE_INVALID_INDEPENDENTLY,
+  HIGHER_POP_SCORE,
+};
+
+std::string popFrOutcomeToString(PopFrOutcome value,
+                                 const ValidationState& state);
+
 //! @private
 template <typename ProtectedBlock,
           typename ProtectedParams,
@@ -433,6 +467,7 @@ template <typename ProtectedBlock,
 struct PopAwareForkResolutionComparator {
   using protected_block_t = ProtectedBlock;
   using protected_params_t = ProtectedParams;
+  using protected_block_tree_t = ProtectedBlockTree;
   using protecting_params_t = typename ProtectingBlockTree::params_t;
   using protected_index_t = BlockIndex<protected_block_t>;
   using protecting_index_t = typename ProtectingBlockTree::index_t;
@@ -447,7 +482,8 @@ struct PopAwareForkResolutionComparator {
       internal::ReducedPublicationView<protected_block_t,
                                        protecting_block_t,
                                        protecting_params_t,
-                                       protected_params_t>;
+                                       protected_params_t,
+                                       protected_block_tree_t>;
 
   PopAwareForkResolutionComparator(ProtectedBlockTree& ed,
                                    std::shared_ptr<ProtectingBlockTree> ing,
@@ -500,18 +536,20 @@ struct PopAwareForkResolutionComparator {
 
   /**
    * Compare the currently applied(best) and candidate chains, activate the best of both
-   * @return 0 if the chains are equal,
-   *         positive if the current chain is better
-   *         negative if the candidate chain is better
+   * @return First: 0 if the chains are equal,
+   *                positive if the current chain is better
+   *                negative if the candidate chain is better
+   *         Second: reason explaining result.
    */
-  int activateBestChain(protected_index_t& candidate, ValidationState& state) {
+  std::pair<int, PopFrOutcome> activateBestChain(protected_index_t& candidate,
+                                                 ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
 
     if (!candidate.isValid()) {
       // if the new block is known to be invalid, we always return "A is better"
       VBK_LOG_DEBUG("Candidate %s is invalid, the current chain wins",
                     candidate.toShortPrettyString());
-      return 1;
+      return {1, PopFrOutcome::CANDIDATE_INVALID_CHAIN};
     }
     auto currentBest = ed_.getBestChain();
     auto bestTip = currentBest.tip();
@@ -519,19 +557,19 @@ struct PopAwareForkResolutionComparator {
 
     if (bestTip == &candidate) {
       // we are comparing the best chain to itself
-      return 1;
+      return {1, PopFrOutcome::CANDIDATE_IS_TIP};
     }
 
     if (bestTip->finalized && candidate.getHeight() <= bestTip->getHeight()) {
       // finalized blocks can not be reorganized
-      return 1;
+      return {1, PopFrOutcome::TIP_IS_FINAL};
     }
 
     if (currentBest.contains(&candidate)) {
       VBK_LOG_DEBUG(
           "Candidate %s is part of the active chain, the current chain wins",
           candidate.toShortPrettyString());
-      return 1;
+      return {1, PopFrOutcome::CANDIDATE_PART_OF_ACTIVE_CHAIN};
     }
 
     auto originalProtectingTip = ing_->getBestChain().tip();
@@ -548,12 +586,12 @@ struct PopAwareForkResolutionComparator {
         VBK_LOG_DEBUG("Candidate contains INVALID command(s): %s",
                       state.toString());
         guard.overrideDeferredForkResolution(originalProtectingTip);
-        return 1;
+        return {1, PopFrOutcome::CANDIDATE_INVALID_PAYLOADS};
       }
 
       VBK_LOG_DEBUG("Candidate contains VALID commands, chain B wins");
       ed_.overrideTip(candidate);
-      return -1;
+      return {-1, PopFrOutcome::CANDIDATE_IS_TIP_SUCCESSOR};
     }
 
     VBK_LOG_DEBUG("Doing %s POP fork resolution. Best=%s, Candidate=%s",
@@ -577,7 +615,7 @@ struct PopAwareForkResolutionComparator {
       // block `fork+1` is on active chain, and ancestor of currentBest.
       // which means that `fork+1` can not be reorganized and candidate will
       // never win.
-      return 1;
+      return {1, PopFrOutcome::TIP_IS_FINAL};
     }
 
     // perform multi-keystone PoP fork resolution
@@ -589,7 +627,7 @@ struct PopAwareForkResolutionComparator {
       // chains are equal in terms of POP
       VBK_LOG_DEBUG(
           "Neither chain crossed a keystone boundary: chains are equal");
-      return 0;
+      return {0, PopFrOutcome::BOTH_DONT_CROSS_KEYSTONE_BOUNDARY};
     }
 
     // [vbk fork point ... current tip]
@@ -615,16 +653,15 @@ struct PopAwareForkResolutionComparator {
         VBK_LOG_DEBUG("Chain B contains INVALID payloads, Chain A wins (%s)",
                       state.toString());
         guard.overrideDeferredForkResolution(originalProtectingTip);
-        return 1;
+        return {1, PopFrOutcome::CANDIDATE_INVALID_PAYLOADS};
       }
     }
 
     // now the tree contains payloads from both chains
-
     auto reducedPublicationViewA =
-        reduced_publication_view_t(chainA, protectedParams_, *ing_);
+        reduced_publication_view_t(chainA, protectedParams_, ed_, *ing_);
     auto reducedPublicationViewB =
-        reduced_publication_view_t(chainB, protectedParams_, *ing_);
+        reduced_publication_view_t(chainB, protectedParams_, ed_, *ing_);
 
     int result = internal::comparePopScoreImpl(reducedPublicationViewA,
                                                reducedPublicationViewB);
@@ -659,14 +696,14 @@ struct PopAwareForkResolutionComparator {
             "state corruption: chainA as a former best chain should be valid");
         VBK_LOG_DEBUG("Chain B is invalid when applied alone. Chain A wins");
         guard.overrideDeferredForkResolution(originalProtectingTip);
-        return 1;
+        return {1, PopFrOutcome::CANDIDATE_INVALID_INDEPENDENTLY};
       }
 
       VBK_LOG_DEBUG("Chain B wins");
       ed_.overrideTip(candidate);
     }
 
-    return result;
+    return {result, PopFrOutcome::HIGHER_POP_SCORE};
   }
 
   std::string toPrettyString(size_t level = 0) const {

@@ -5,6 +5,7 @@
 
 #include <gtest/gtest.h>
 
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
@@ -12,7 +13,6 @@
 #include <veriblock/pop/pop_stateless_validator.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 
-#include "util/alt_chain_params_regtest.hpp"
 #include "util/pop_test_fixture.hpp"
 #include "util/test_utils.hpp"
 
@@ -145,6 +145,12 @@ struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
   AltChainParamsRegTest alt;
   ValidationState state;
 };
+
+TEST(VbkBlockPOW, ValidMainNet) {
+  auto block = AssertDeserializeFromRawHex<VbkBlock>("00277B9100025FD49543BA74A429AC48A3F2297D2CC1E0244EC22EDE46D061CEFED1E35C0AA208EC867AD999CA78861706B6FE606163022A0528F21755576DF2F3");
+  auto P = VbkChainParamsMain();
+  ASSERT_TRUE(checkProofOfWork(block, P));
+}
 
 TEST_F(StatelessValidationTest, checkBtcBlock_when_valid_test) {
   ASSERT_TRUE(checkBlock(validVTB.transaction.blockOfProof, state, btc))

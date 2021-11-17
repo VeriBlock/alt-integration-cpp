@@ -10,10 +10,11 @@
 namespace altintegration {
 
 StoredVbkBlockAddon::StoredVbkBlockAddon(const addon_t& other) {
-  endorsedByHashes = map_get_id_from_pointers<uint256, const VbkEndorsement>(
-      other.getEndorsedBy());
-  blockOfProofEndorsementHashes =
-      map_get_id_from_pointers<uint256, const AltEndorsement>(
+  endorsedByIds =
+      map_get_id_from_pointers<VbkEndorsement::id_t, const VbkEndorsement>(
+          other.getEndorsedBy());
+  blockOfProofEndorsementIds =
+      map_get_id_from_pointers<AltEndorsement::id_t, const AltEndorsement>(
           other.getBlockOfProofEndorsement());
   _refCount = other.refCount();
   _vtbids = other.getPayloadIds<VTB>();
@@ -21,9 +22,9 @@ StoredVbkBlockAddon::StoredVbkBlockAddon(const addon_t& other) {
 }
 
 void StoredVbkBlockAddon::toVbkEncoding(WriteStream& w) const {
-  writeArrayOf<uint256>(w, endorsedByHashes, writeSingleByteLenValue);
-  writeArrayOf<uint256>(
-      w, blockOfProofEndorsementHashes, writeSingleByteLenValue);
+  writeArrayOf<VbkEndorsement::id_t>(w, endorsedByIds, writeSingleByteLenValue);
+  writeArrayOf<AltEndorsement::id_t>(
+      w, blockOfProofEndorsementIds, writeSingleByteLenValue);
   w.writeBE<uint32_t>(_refCount);
   writeArrayOf<VTB::id_t>(w, _vtbids, [](WriteStream& w, const VTB::id_t& u) {
     writeSingleByteLenValue(w, u);
@@ -46,29 +47,39 @@ std::string StoredVbkBlockAddon::toPrettyString() const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 StoredVbkBlockAddon& out,
                                 ValidationState& state) {
-  if (!readArrayOf<uint256>(
-          stream,
-          out.endorsedByHashes,
-          state,
-          0,
-          MAX_POPDATA_VBK,
-          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
-            return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
-          })) {
+  if (!readArrayOf<VbkEndorsement::id_t>(stream,
+                                         out.endorsedByIds,
+                                         state,
+                                         0,
+                                         MAX_POPDATA_VBK,
+                                         [](ReadStream& stream,
+                                            VbkEndorsement::id_t& o,
+                                            ValidationState& state) -> bool {
+                                           return readSingleByteLenValue(
+                                               stream,
+                                               o,
+                                               state,
+                                               VbkEndorsement::id_t::size(),
+                                               VbkEndorsement::id_t::size());
+                                         })) {
     return state.Invalid("stored-vbk-block-addon-bad-endorsedby-hash");
   }
 
-  if (!readArrayOf<uint256>(
-          stream,
-          out.blockOfProofEndorsementHashes,
-          state,
-          0,
-          MAX_POPDATA_VBK,
-          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
-            return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
-          })) {
+  if (!readArrayOf<AltEndorsement::id_t>(stream,
+                                         out.blockOfProofEndorsementIds,
+                                         state,
+                                         0,
+                                         MAX_POPDATA_VBK,
+                                         [](ReadStream& stream,
+                                            AltEndorsement::id_t& o,
+                                            ValidationState& state) -> bool {
+                                           return readSingleByteLenValue(
+                                               stream,
+                                               o,
+                                               state,
+                                               AltEndorsement::id_t::size(),
+                                               AltEndorsement::id_t::size());
+                                         })) {
     return state.Invalid("stored-vbk-block-addon-bad-block-of-proof-hash");
   }
 

@@ -8,7 +8,9 @@ package api
 // #cgo pkg-config: veriblock-pop-cpp
 // #include <veriblock/pop/c/pop_context.h>
 import "C"
-import "runtime"
+import (
+	"runtime"
+)
 
 type PopContext struct {
 	ref   *C.pop_pop_context_t
@@ -38,6 +40,7 @@ func NewPopContext(config *Config, storage *Storage, log_lvl string) *PopContext
 
 func (v *PopContext) Free() {
 	v.mutex.AssertMutexLocked("PopContext is not locked")
+
 	if v.ref != nil {
 		C.pop_pop_context_free(v.ref)
 		v.ref = nil
@@ -91,28 +94,34 @@ func (v *PopContext) RemoveSubtree(hash []byte) {
 	C.pop_pop_context_function_remove_subtree(v.ref, createCBytes(hash))
 }
 
-func (v *PopContext) AltGetBlockIndex(hash []byte) *AltBlockIndex {
+func (v *PopContext) AltGetBlockIndex(hash []byte) (*AltBlockIndex, error) {
 	v.validate()
-	if res := C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash)); res != nil {
-		return createAltBlockIndex(res)
+	state := NewValidationState()
+	defer state.Free()
+	if res := C.pop_pop_context_function_alt_get_block_index(v.ref, createCBytes(hash), state.ref); res != nil {
+		return createAltBlockIndex(res), state.Error()
 	}
-	return nil
+	return nil, state.Error()
 }
 
-func (v *PopContext) VbkGetBlockIndex(hash []byte) *VbkBlockIndex {
+func (v *PopContext) VbkGetBlockIndex(hash []byte) (*VbkBlockIndex, error) {
 	v.validate()
-	if res := C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash)); res != nil {
-		return createVbkBlockIndex(res)
+	state := NewValidationState()
+	defer state.Free()
+	if res := C.pop_pop_context_function_vbk_get_block_index(v.ref, createCBytes(hash), state.ref); res != nil {
+		return createVbkBlockIndex(res), state.Error()
 	}
-	return nil
+	return nil, state.Error()
 }
 
-func (v *PopContext) BtcGetBlockIndex(hash []byte) *BtcBlockIndex {
+func (v *PopContext) BtcGetBlockIndex(hash []byte) (*BtcBlockIndex, error) {
 	v.validate()
-	if res := C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash)); res != nil {
-		return createBtcBlockIndex(res)
+	state := NewValidationState()
+	defer state.Free()
+	if res := C.pop_pop_context_function_btc_get_block_index(v.ref, createCBytes(hash), state.ref); res != nil {
+		return createBtcBlockIndex(res), state.Error()
 	}
-	return nil
+	return nil, state.Error()
 }
 
 func (v *PopContext) AltGetBestBlock() *AltBlockIndex {

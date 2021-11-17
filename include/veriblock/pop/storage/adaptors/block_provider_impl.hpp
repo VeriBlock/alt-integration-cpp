@@ -71,7 +71,9 @@ template <typename BlockT>
 struct BlockIteratorImpl : public BlockIterator<BlockT> {
   ~BlockIteratorImpl() override = default;
 
-  BlockIteratorImpl(std::shared_ptr<StorageIterator> it) : it_(it) {}
+  BlockIteratorImpl(std::shared_ptr<StorageIterator> it,
+                    const AltChainParams& params)
+      : it_(it), params_(params) {}
 
   void next() override { it_->next(); }
 
@@ -80,7 +82,8 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
     if (!it_->value(bytes)) {
       return false;
     }
-    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(bytes);
+    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(bytes,
+                                                                     params_);
     return true;
   }
 
@@ -109,12 +112,14 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
 
  private:
   std::shared_ptr<StorageIterator> it_;
+  const AltChainParams& params_;
 };
 
 struct BlockReaderImpl : public BlockReader {
   ~BlockReaderImpl() override = default;
 
-  BlockReaderImpl(Storage& storage) : storage_(storage) {}
+  BlockReaderImpl(Storage& storage, const AltChainParams& params)
+      : storage_(storage), params_(params) {}
 
   bool getAltTip(AltBlock::hash_t& out) const override {
     std::vector<uint8_t> bytes_out;
@@ -159,17 +164,17 @@ struct BlockReaderImpl : public BlockReader {
   std::shared_ptr<BlockIterator<AltBlock>> getAltBlockIterator()
       const override {
     return std::make_shared<BlockIteratorImpl<AltBlock>>(
-        storage_.generateIterator());
+        storage_.generateIterator(), params_);
   }
   std::shared_ptr<BlockIterator<VbkBlock>> getVbkBlockIterator()
       const override {
     return std::make_shared<BlockIteratorImpl<VbkBlock>>(
-        storage_.generateIterator());
+        storage_.generateIterator(), params_);
   }
   std::shared_ptr<BlockIterator<BtcBlock>> getBtcBlockIterator()
       const override {
     return std::make_shared<BlockIteratorImpl<BtcBlock>>(
-        storage_.generateIterator());
+        storage_.generateIterator(), params_);
   }
 
  private:
@@ -187,12 +192,13 @@ struct BlockReaderImpl : public BlockReader {
       return false;
     }
 
-    out =
-        AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out);
+    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out,
+                                                                      params_);
     return true;
   }
 
   Storage& storage_;
+  const AltChainParams& params_;
 };
 
 struct BlockBatchImpl : public BlockBatch {

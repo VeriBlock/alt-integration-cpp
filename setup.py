@@ -117,7 +117,8 @@ setup(
     zip_safe=False,
     setup_requires=[
         'pytest-runner',
-        'pathlib'
+        'pathlib',
+        'wheel'
     ],
     tests_require=[
         'pytest'

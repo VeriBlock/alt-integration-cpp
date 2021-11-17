@@ -73,6 +73,13 @@ bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
   return true;
 }
 
+std::string VTB::toShortPrettyString() const {
+  return format("VTB(id={}, containing={}:{})",
+                getId().toHex(),
+                containingBlock.getHeight(),
+                containingBlock.getHash().toHex());
+}
+
 std::string VTB::toPrettyString() const {
   return format("VTB(version={},containingTx={}({}), containingBlock={}({}))",
                 version,

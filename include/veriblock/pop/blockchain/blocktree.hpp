@@ -141,17 +141,17 @@ struct BlockTree : public BaseBlockTree<Block> {
     auto* current = base::getBlockIndex(hash);
     VBK_ASSERT(current);
 
-    auto* prev = current->pprev;
     // we only check blocks contextually if they are not bootstrap blocks, and
     // previous block exists
-    if (prev && !current->hasFlags(BLOCK_BOOTSTRAP) &&
-        !contextuallyCheckBlock(*prev, current->getHeader(), state, *param_)) {
+    if (!current->isRoot() && !current->hasFlags(BLOCK_BOOTSTRAP) &&
+        !contextuallyCheckBlock(
+            *current->pprev, current->getHeader(), state, *param_)) {
       return state.Invalid("bad-block-contextually");
     }
 
     // recover chainwork
     current->chainWork = getBlockProof(current->getHeader());
-    if (prev) {
+    if (!current->isRoot()) {
       current->chainWork += current->pprev->chainWork;
     }
 
@@ -318,7 +318,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   //! whenever new block is inserted, BlockTree has to update its ChainWork
   void onBlockInserted(index_t* newIndex) override final {
     newIndex->chainWork = getBlockProof(newIndex->getHeader());
-    if (newIndex->pprev) {
+    if (!newIndex->isRoot()) {
       newIndex->chainWork += newIndex->pprev->chainWork;
     }
   }

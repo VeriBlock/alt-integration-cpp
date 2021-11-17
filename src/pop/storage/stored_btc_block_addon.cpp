@@ -9,15 +9,15 @@
 namespace altintegration {
 
 StoredBtcBlockAddon::StoredBtcBlockAddon(const addon_t& other) {
-  blockOfProofEndorsementHashes =
-      map_get_id_from_pointers<uint256, const VbkEndorsement>(
+  blockOfProofEndorsementIds =
+      map_get_id_from_pointers<VbkEndorsement::id_t, const VbkEndorsement>(
           other.getBlockOfProofEndorsement());
   refs = other.getRefs();
 }
 
 void StoredBtcBlockAddon::toVbkEncoding(WriteStream& w) const {
-  writeArrayOf<uint256>(
-      w, blockOfProofEndorsementHashes, writeSingleByteLenValue);
+  writeArrayOf<VbkEndorsement::id_t>(
+      w, blockOfProofEndorsementIds, writeSingleByteLenValue);
   writeArrayOf<ref_height_t>(
       w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
         w.writeBE<ref_height_t>(value);
@@ -39,16 +39,21 @@ std::string StoredBtcBlockAddon::toPrettyString() const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 StoredBtcBlockAddon& out,
                                 ValidationState& state) {
-  if (!readArrayOf<uint256>(
-          stream,
-          out.blockOfProofEndorsementHashes,
-          state,
-          0,
-          MAX_POPDATA_VBK,
-          [](ReadStream& stream, uint256& o, ValidationState& state) -> bool {
-            return readSingleByteLenValue(
-                stream, o, state, uint256::size(), uint256::size());
-          })) {
+  if (!readArrayOf<VbkEndorsement::id_t>(stream,
+                                         out.blockOfProofEndorsementIds,
+                                         state,
+                                         0,
+                                         MAX_POPDATA_VBK,
+                                         [](ReadStream& stream,
+                                            VbkEndorsement::id_t& o,
+                                            ValidationState& state) -> bool {
+                                           return readSingleByteLenValue(
+                                               stream,
+                                               o,
+                                               state,
+                                               VbkEndorsement::id_t::size(),
+                                               VbkEndorsement::id_t::size());
+                                         })) {
     return state.Invalid("stored-btc-block-addon-bad-block-of-proof-hash");
   }
 

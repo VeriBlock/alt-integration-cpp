@@ -70,13 +70,13 @@ ATV MockMiner::createATV(const VbkBlock& blockOfProof,
   return atv;
 }
 
-VbkTx MockMiner::createVbkTxEndorsingAltBlock(
-    const PublicationData& publicationData) const {
+VbkTx MockMiner::createVbkTxEndorsingAltBlockWithSourceAmount(
+    const PublicationData& publicationData, const Coin& sourceAmount) const {
   VbkTx tx;
   tx.signatureIndex = 7;
   tx.networkOrType.networkType = vbk_params_.getTransactionMagicByte();
   tx.networkOrType.typeId = (uint8_t)TxType::VBK_TX;
-  tx.sourceAmount = Coin(1000);
+  tx.sourceAmount = sourceAmount;
   tx.sourceAddress = Address::fromPublicKey(defaultPublicKeyVbk);
   tx.publicKey = defaultPublicKeyVbk;
   tx.publicationData = publicationData;
@@ -86,6 +86,12 @@ VbkTx MockMiner::createVbkTxEndorsingAltBlock(
       secp256k1::sign(hash, secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk));
 
   return tx;
+}
+
+VbkTx MockMiner::createVbkTxEndorsingAltBlock(
+    const PublicationData& publicationData) const {
+  return createVbkTxEndorsingAltBlockWithSourceAmount(publicationData,
+                                                      Coin(1000));
 }
 
 VTB MockMiner::createVTB(const VbkBlock& containingBlock,

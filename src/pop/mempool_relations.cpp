@@ -2,59 +2,38 @@
 
 namespace altintegration {
 
-PopData VbkPayloadsRelations::toPopData() const {
-  PopData pop;
-  pop.context.push_back(*header);
-  for (const auto& vtb : vtbs) {
-    pop.vtbs.push_back(*vtb);
-  }
-
-  for (const auto& atv : atvs) {
-    pop.atvs.push_back(*atv);
-  }
-
-  VBK_ASSERT_DEBUG(
-      std::all_of(pop.vtbs.begin(), pop.vtbs.end(), [this](const VTB& a) {
-        return a.containingBlock == *header;
-      }));
-
-  // all VTBs have same VBK containing block, sort them based on time of
-  // earliest BTC block (based on time).
-  // note: use stable sort to preserve relative insertion order to mempool
-  std::stable_sort(
-      pop.vtbs.begin(), pop.vtbs.end(), [](const VTB& a, const VTB& b) {
-        auto& earliestA = a.transaction.blockOfProofContext.empty()
-                              ? a.transaction.blockOfProof
-                              : a.transaction.blockOfProofContext.front();
-        auto& earliestB = b.transaction.blockOfProofContext.empty()
-                              ? b.transaction.blockOfProof
-                              : b.transaction.blockOfProofContext.front();
-        return earliestA.getTimestamp() < earliestB.getTimestamp();
-      });
-
-  return pop;
+int VbkPayloadsRelations::TxFeeComparator::operator()(
+    const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) const {
+  auto aFee = a->transaction.calculateTxFee();
+  auto bFee = b->transaction.calculateTxFee();
+  if (aFee.units == bFee.units) return 0;
+  if (aFee.units > bFee.units) return 1;
+  return -1;
 }
 
-void VbkPayloadsRelations::removeVTB(const VTB::id_t& vtb_id) {
-  auto it = std::find_if(
-      vtbs.begin(), vtbs.end(), [&vtb_id](const std::shared_ptr<VTB>& vtb) {
-        return vtb->getId() == vtb_id;
-      });
-
-  if (it != vtbs.end()) {
-    vtbs.erase(it);
-  }
+int VbkPayloadsRelations::EndorsedAltComparator::operator()(
+    const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) const {
+  auto endorsedHash =
+      tree_.getParams().getHash(a->transaction.publicationData.header);
+  auto* aEndorsedIndex = tree_.getBlockIndex(endorsedHash);
+  endorsedHash =
+      tree_.getParams().getHash(b->transaction.publicationData.header);
+  auto* bEndorsedIndex = tree_.getBlockIndex(endorsedHash);
+  if (aEndorsedIndex == bEndorsedIndex) return 0;
+  if (aEndorsedIndex == nullptr) return -1;
+  if (bEndorsedIndex == nullptr) return 1;
+  if (aEndorsedIndex->getHeight() == bEndorsedIndex->getHeight()) return 0;
+  if (aEndorsedIndex->getHeight() < bEndorsedIndex->getHeight()) return 1;
+  return -1;
 }
 
-void VbkPayloadsRelations::removeATV(const ATV::id_t& atv_id) {
-  auto it = std::find_if(
-      atvs.begin(), atvs.end(), [&atv_id](const std::shared_ptr<ATV>& atv) {
-        return atv->getId() == atv_id;
-      });
-
-  if (it != atvs.end()) {
-    atvs.erase(it);
-  }
+bool VbkPayloadsRelations::AtvCombinedComparator::operator()(
+    const std::shared_ptr<ATV>& a, const std::shared_ptr<ATV>& b) const {
+  auto ret1 = txFeeComparator(a, b);
+  if (ret1 != 0) return ret1 > 0;
+  auto ret2 = endorsedAltComparator(a, b);
+  if (ret2 != 0) return ret2 > 0;
+  return a < b;
 }
 
 }  // namespace altintegration
