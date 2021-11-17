@@ -574,10 +574,10 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
 void AltBlockTree::doFinalize() {
   ValidationState state;
   auto* tip = getBestChain().tip();
-  VBK_ASSERT(tip && "must be bootstrapped");
+  VBK_ASSERT(tip != nullptr && "must be bootstrapped");
 
   int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
-  if (maxReorg > getRoot().getHeight()) {
+  if (maxReorg > tip->getHeight()) {
     return;
   }
 
