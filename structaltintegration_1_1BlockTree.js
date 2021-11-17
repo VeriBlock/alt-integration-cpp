@@ -18,7 +18,7 @@ var structaltintegration_1_1BlockTree =
     [ "bootstrapWithChain", "structaltintegration_1_1BlockTree.html#a378e5bc6b86e1f273a31071a27a4ec78", null ],
     [ "bootstrapWithGenesis", "structaltintegration_1_1BlockTree.html#aeaaae6936ec9464d11d0f887605a18c3", null ],
     [ "determineBestChain", "structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905", null ],
-    [ "finalizeBlock", "structaltintegration_1_1BlockTree.html#a7d4d15bb06e7eeae2ecf12eb6ab6f935", null ],
+    [ "finalizeBlock", "structaltintegration_1_1BlockTree.html#a5eea3b0c060f6060679d10d5bfc96c12", null ],
     [ "getParams", "structaltintegration_1_1BlockTree.html#a0746be8a5c44e3b861b42a0ae2b32fbf", null ],
     [ "isBlockOld", "structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7", null ],
     [ "isBlockOld", "structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc", null ],
