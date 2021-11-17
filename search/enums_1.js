@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['blockstatestatus_859',['BlockStateStatus',['../namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634',1,'altintegration']]],
-  ['blockvaliditystatus_860',['BlockValidityStatus',['../namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a',1,'altintegration']]]
+  ['blockstatestatus_863',['BlockStateStatus',['../namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634',1,'altintegration']]],
+  ['blockvaliditystatus_864',['BlockValidityStatus',['../namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a',1,'altintegration']]]
 ];

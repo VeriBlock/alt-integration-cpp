@@ -1,5 +1,7 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1VbkTx.html#a44078f99044b084bbec415d679b61ff1":[5,0,0,48,6],
+"structaltintegration_1_1VbkTx.html#a5d0a515dde2b9f134b23eb9156db9b23":[5,0,0,48,0],
 "structaltintegration_1_1VbkTx.html#a657b46ecc7d61859e9dcc4d80c147076":[5,0,0,48,8],
 "structaltintegration_1_1VbkTx.html#a6804267dffe5b19b507f9252ce02ec7d":[5,0,0,48,14],
 "structaltintegration_1_1VbkTx.html#a6bebb4496f77cd2492adf81f8e393195":[5,0,0,48,2],
