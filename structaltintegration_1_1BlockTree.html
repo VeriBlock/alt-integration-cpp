@@ -577,24 +577,24 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00327">327</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                                                                               {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    }</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    }</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;      this-&gt;setState(candidate, state);</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    }</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="blocktree_8hpp_source.html#l00326">326</a> of file <a class="el" href="blocktree_8hpp_source.html">blocktree.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                                                                               {</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    }</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      this-&gt;setState(candidate, state);</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  }</div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00090">base_block_tree.hpp:90</a></div></div>
 </div><!-- fragment -->
 </div>
