@@ -434,7 +434,7 @@ void VbkBlockTree::finalizeBlockImpl(index_t& index,
   auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
   btc().finalizeBlock(*finalizedIndex);
-  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
+  base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

@@ -218,7 +218,6 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     // return this->finalizeBlockImpl(
     //     index, param_->preserveBlocksBehindFinal(), state);
-    return;
   }
 
  protected:

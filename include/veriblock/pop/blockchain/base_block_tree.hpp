@@ -951,8 +951,6 @@ struct BaseBlockTree {
       ptr->finalized = true;
       ptr = ptr->pprev;
     }
-
-    return;
   }
 
   //! callback which is executed when new block is added to a tree

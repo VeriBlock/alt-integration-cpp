@@ -25,8 +25,8 @@ struct StatefulDuplicateWhenFinalized : public ::testing::Test,
 
 TEST_F(StatefulDuplicateWhenFinalized, VBK) {
   alttree.onInvalidBlockConnected.connect(
-      [](BlockIndex<AltBlock> &/*index*/, ValidationState &state) {
-        EXPECT_EQ(state.GetPath(), "VBK-duplicate");
+      [](BlockIndex<AltBlock> & /*index*/, ValidationState &s) {
+        EXPECT_EQ(s.GetPath(), "VBK-duplicate");
       });
 
   auto *tip = alttree.getBestChain().tip();
