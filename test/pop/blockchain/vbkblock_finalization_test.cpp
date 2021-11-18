@@ -46,7 +46,7 @@ TEST_F(VbkBlockFinalization, BasicTest) {
 
   ASSERT_TRUE(tree->setState(vbktip->pprev->getHash(), state));
 
-  ASSERT_TRUE(tree->finalizeBlock(*finalizedBlock, state));
+  tree->finalizeBlock(*finalizedBlock);
   ASSERT_TRUE(tree->setState(vbktip->getHash(), state));
   ASSERT_EQ(tree->getBlocks().size(), vbkTotalBlocks);
   ASSERT_EQ(tree->btc().getBlocks().size(), btcTotalBlocks);
@@ -80,7 +80,7 @@ TEST_F(VbkBlockFinalization, OverBtcLimitTest) {
 
   ASSERT_TRUE(tree->setState(vbktip->pprev->getHash(), state));
 
-  ASSERT_TRUE(tree->finalizeBlock(*finalizedBlock, state)) << state.toString();
+  tree->finalizeBlock(*finalizedBlock);
   ASSERT_TRUE(tree->setState(vbktip->getHash(), state)) << state.toString();
 }
 
@@ -101,6 +101,6 @@ TEST_F(VbkBlockFinalization, NegativeBtcAppliedBlockCountTest) {
   ASSERT_TRUE(tree->setState(vbktip->getHash(), state));
 
   ASSERT_EQ(btctip->getHash(), tree->btc().getBestChain().tip()->getHash());
-  ASSERT_TRUE(tree->finalizeBlock(*vbktip, state));
+  tree->finalizeBlock(*vbktip);
   ASSERT_GE(tree->btc().appliedBlockCount, 0);
 }

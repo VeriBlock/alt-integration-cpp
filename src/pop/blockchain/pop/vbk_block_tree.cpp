@@ -421,9 +421,8 @@ void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   BaseBlockTree::removeSubtree(toRemove);
 }
 
-bool VbkBlockTree::finalizeBlockImpl(index_t& index,
-                                     int32_t preserveBlocksBehindFinal,
-                                     ValidationState& state) {
+void VbkBlockTree::finalizeBlockImpl(index_t& index,
+                                     int32_t preserveBlocksBehindFinal) {
   VBK_TRACE_ZONE_SCOPED;
   auto* bestBtcTip = btc().getBestChain().tip();
   VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
@@ -434,10 +433,8 @@ bool VbkBlockTree::finalizeBlockImpl(index_t& index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
-  if (!btc().finalizeBlock(*finalizedIndex, state)) {
-    return state.Invalid("btctree-finalize-error");
-  }
-  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
+  btc().finalizeBlock(*finalizedIndex);
+  base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

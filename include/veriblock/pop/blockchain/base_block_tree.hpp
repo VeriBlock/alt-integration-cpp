@@ -816,6 +816,7 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(*index, [&](index_t& next) {
       auto h = makePrevHash(next.getHash());
+      VBK_LOG_INFO("Deallocating block %s", next.toShortPrettyString());
       blocks_.erase(h);
     });
   }
@@ -846,10 +847,9 @@ struct BaseBlockTree {
   //!
   //! @returns false if block not found or prereq are not met
   //! @private
-  virtual bool finalizeBlockImpl(index_t& index,
+  virtual void finalizeBlockImpl(index_t& index,
                                  // see config.preserveBlocksBehindFinal()
-                                 int32_t preserveBlocksBehindFinal,
-                                 ValidationState& state) {
+                                 int32_t preserveBlocksBehindFinal) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind",
                   index.toShortPrettyString(),
@@ -857,13 +857,14 @@ struct BaseBlockTree {
 
     index_t* finalizedBlock = &index;
 
-    // prereq is not met - finalized block must be on active chain
-    if (!activeChain_.contains(finalizedBlock)) {
-      return state.Invalid("block-not-on-active-chain");
+    if (finalizedBlock == getRoot()) {
+      return;
     }
 
+    VBK_ASSERT(activeChain_.contains(finalizedBlock));
+
     // we need to clarify which block will be final. we can not remove blocks
-    // which has not been saved into the storage
+    // which have not been saved into the storage
     for (auto* walkBlock = finalizedBlock; walkBlock != nullptr;
          walkBlock = walkBlock->pprev) {
       if (walkBlock->isDirty()) {
@@ -880,8 +881,7 @@ struct BaseBlockTree {
           if (!activeChain_.contains(tip) &&
               isBlockOutdated(*finalizedBlock, *tip)) {
             // we need to clarify which block will be final. we can not remove
-            // blocks
-            // which has not been saved into the storage
+            // blocks which have not been saved into the storage
             bool newFinalized = false;
             auto* walkBlock = tip;
             for (; tip != nullptr && !activeChain_.contains(walkBlock);
@@ -907,13 +907,14 @@ struct BaseBlockTree {
     // be deallocated
     int32_t firstBlockHeight =
         finalizedBlock->getHeight() - preserveBlocksBehindFinal;
-    int32_t bootstrapBlockHeight = getRoot().getHeight();
-    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+    int32_t rootBlockHeight = getRoot().getHeight();
+    firstBlockHeight = std::max(rootBlockHeight, firstBlockHeight);
 
     // before we deallocate subtree, disconnect "new root block" from previous
     // tree
     auto* newRoot = activeChain_[firstBlockHeight];
     VBK_ASSERT(newRoot);
+
     auto* rootPrev = newRoot->pprev;
     if (newRoot->pprev != nullptr) {
       newRoot->pprev->pnext.erase(newRoot);
@@ -939,8 +940,8 @@ struct BaseBlockTree {
     }
 
     // update active chain
-    VBK_ASSERT(firstBlockHeight >= bootstrapBlockHeight);
-    size_t deallocatedBlocks = firstBlockHeight - bootstrapBlockHeight;
+    VBK_ASSERT(firstBlockHeight >= rootBlockHeight);
+    size_t deallocatedBlocks = firstBlockHeight - rootBlockHeight;
     decreaseAppliedBlockCount(deallocatedBlocks);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
@@ -950,8 +951,6 @@ struct BaseBlockTree {
       ptr->finalized = true;
       ptr = ptr->pprev;
     }
-
-    return true;
   }
 
   //! callback which is executed when new block is added to a tree
