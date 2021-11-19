@@ -746,8 +746,7 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
 }
 
 void AltBlockTree::finalizeBlock(index_t& index) {
-  return finalizeBlockImpl(index,
-                           getParams().preserveBlocksBehindFinal());
+  finalizeBlockImpl(index, getParams().preserveBlocksBehindFinal());
 }
 
 void AltBlockTree::finalizeBlockImpl(index_t& index,
