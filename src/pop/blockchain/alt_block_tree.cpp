@@ -336,27 +336,29 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
 
-  VBK_ASSERT_MSG(left, "unknown 'A' block %s", HexStr(A));
-  VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
-  VBK_ASSERT_MSG(activeChain_.tip() == left,
-                 "left fork must be applied. Tip: %s, Left: %s",
-                 activeChain_.tip()->toPrettyString(),
-                 left->toPrettyString());
-
+  VBK_ASSERT_MSG(left, "unknown block A: %s", HexStr(A));
   VBK_LOG_DEBUG("chain A block: %s", left->toPrettyString());
+
+  VBK_ASSERT(activeChain_.tip() && "not bootstrapped");
+  VBK_ASSERT_MSG(
+      activeChain_.tip() == left,
+      "Chain A must be the current active chain. Tip: %s, Chain A: %s",
+      activeChain_.tip()->toPrettyString(),
+      left->toPrettyString());
+
   if (right == nullptr) {
     VBK_LOG_WARN(
-        "Unknown 'B block: %s. Maybe you have forgotten to execute "
+        "Unknown block B: %s. Maybe you have forgotten to execute "
         "acceptBlockHeader and acceptBlock on such block.",
         HexStr(B));
     return 1;
   }
   VBK_LOG_DEBUG("chain B block: %s", right->toPrettyString());
 
-  VBK_ASSERT_MSG(left->isValidUpTo(BLOCK_CONNECTED),
+  VBK_ASSERT_MSG(left->isConnected(),
                  format("A is not connected: {}", left->toShortPrettyString()));
   VBK_ASSERT_MSG(
-      right->isValidUpTo(BLOCK_CONNECTED),
+      right->isConnected(),
       format("B is not connected: {}", right->toShortPrettyString()));
 
   ValidationState state;

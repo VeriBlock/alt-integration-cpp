@@ -92,7 +92,7 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
             alttree.comparePopScore(chain[100].getHash(), chain[60].getHash());
         (void)r;
       },
-      "left fork must be applied");
+      "Chain A must be the current active chain");
   ASSERT_TRUE(SetState(alttree, chain[100].getHash()));
   ASSERT_EQ(alttree.comparePopScore(chain[100].getHash(), chain[60].getHash()),
             1);
@@ -106,7 +106,7 @@ TEST_F(SetStateTest, AddPayloadsSingleChain) {
             alttree.comparePopScore({1, 2, 3, 4, 5, 6}, chain[100].getHash());
         (void)r;
       },
-      "unknown 'A' block");
+      "unknown block A");
 
   ASSERT_TRUE(SetState(alttree, chain[100].getHash())) << state.toString();
   ASSERT_EQ(alttree.getBestChain().tip()->getHash(), chain[100].getHash());
