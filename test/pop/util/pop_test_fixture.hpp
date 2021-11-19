@@ -174,6 +174,29 @@ struct PopTestFixture {
 
     return const_cast<BlockIndex<AltBlock>*>(index);
   }
+  
+
+  BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
+                                      size_t num,
+                                      const PopData& pd,
+                                      bool setState = true) {
+    const BlockIndex<AltBlock>* index = &prev;
+    // first block will contain given PopData, others will not.
+    auto pop = pd;
+    for (size_t i = 0; i < num; i++) {
+      auto next = generateNextBlock(index->getHeader());
+      EXPECT_TRUE(alttree.acceptBlockHeader(next, state)) << state.toString();
+      alttree.acceptBlock(next.getHash(), pop);
+      pop = {};
+      if (setState) {
+        EXPECT_TRUE(SetState(alttree, next.getHash()));
+      }
+      index = alttree.getBlockIndex(next.getHash());
+    }
+
+    return const_cast<BlockIndex<AltBlock>*>(index);
+  }
+
 
   void mineAltBlocks(uint32_t num,
                      std::vector<AltBlock>& chain,
@@ -229,7 +252,7 @@ struct PopTestFixture {
 
   VbkPopTx generatePopTx(const VbkBlock::hash_t& endorsedBlock) {
     auto index = popminer->vbk().getBlockIndex(endorsedBlock);
-    if (!index) {
+    if (index == nullptr) {
       throw std::logic_error("can't find endorsed block");
     }
 

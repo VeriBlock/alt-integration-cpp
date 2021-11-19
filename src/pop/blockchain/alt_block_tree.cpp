@@ -12,6 +12,9 @@
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/trace.hpp>
 
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/validation_state.hpp"
+
 namespace altintegration {
 
 template struct BlockIndex<AltBlock>;
@@ -90,7 +93,7 @@ void commitPayloadsIds(BlockIndex<AltBlock>& index,
 
 void AltBlockTree::acceptBlock(const hash_t& block, const PopData& payloads) {
   auto* index = getBlockIndex(block);
-  VBK_ASSERT_MSG(index, "cannot find block %s", HexStr(block));
+  VBK_ASSERT_MSG(index != nullptr, "cannot find block %s", HexStr(block));
   return acceptBlock(*index, payloads);
 }
 
@@ -574,6 +577,23 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   return success;
 }
 
+void AltBlockTree::doFinalize() {
+  ValidationState state;
+  auto* tip = getBestChain().tip();
+  VBK_ASSERT(tip != nullptr && "must be bootstrapped");
+
+  int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
+  if (maxReorg > tip->getHeight()) {
+    return;
+  }
+
+  auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
+  auto* finalizedBlock = getBestChain()[finalh];
+  VBK_ASSERT(finalizedBlock != nullptr);
+
+  finalizeBlock(*finalizedBlock);
+}
+
 void AltBlockTree::overrideTip(index_t& to) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
@@ -590,6 +610,7 @@ void AltBlockTree::overrideTip(index_t& to) {
                  to.toPrettyString());
 
   base::overrideTip(to);
+  doFinalize();
 }
 
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,
@@ -724,14 +745,13 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-bool AltBlockTree::finalizeBlock(index_t& index, ValidationState& state) {
-  return finalizeBlockImpl(
-      index, getParams().preserveBlocksBehindFinal(), state);
+void AltBlockTree::finalizeBlock(index_t& index) {
+  return finalizeBlockImpl(index,
+                           getParams().preserveBlocksBehindFinal());
 }
 
-bool AltBlockTree::finalizeBlockImpl(index_t& index,
-                                     int32_t preserveBlocksBehindFinal,
-                                     ValidationState& state) {
+void AltBlockTree::finalizeBlockImpl(index_t& index,
+                                     int32_t preserveBlocksBehindFinal) {
   VBK_TRACE_ZONE_SCOPED;
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
@@ -742,10 +762,8 @@ bool AltBlockTree::finalizeBlockImpl(index_t& index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
-  if (!vbk().finalizeBlock(*finalizedIndex, state)) {
-    return state.Invalid("vbktree-finalize-error");
-  }
-  return base::finalizeBlockImpl(index, preserveBlocksBehindFinal, state);
+  vbk().finalizeBlock(*finalizedIndex);
+  base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
 }
 
 template <typename Payloads>
