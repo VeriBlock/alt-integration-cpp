@@ -35,7 +35,7 @@ struct BlockIndex : public Block::addon_t {
   using prev_hash_t = typename block_t::prev_hash_t;
   using height_t = typename block_t::height_t;
 
-  //! (memory only) pointer to a previous block
+  //! (memory only) pointer to the previous block
   BlockIndex* pprev = nullptr;
 
   //! (memory only) a set of pointers for forward iteration
@@ -49,6 +49,12 @@ struct BlockIndex : public Block::addon_t {
     // FIXME: prev should be a reference
     VBK_ASSERT(prev != nullptr);
 
+    pprev->pnext.insert(this);
+
+    if (pprev->isFailed()) {
+      setFlag(BLOCK_FAILED_CHILD);
+    }
+
     height = prev->getHeight() + 1;
 
     // TODO: what dirtiness should it have here?
@@ -58,11 +64,16 @@ struct BlockIndex : public Block::addon_t {
   explicit BlockIndex(height_t _height) : pprev(nullptr), height(_height) {}
 
   ~BlockIndex() {
-    // make sure we deleted this block from prev->pnext
+    // revert the block to the "just constructed" state
     if (!isDeleted()) {
       deleteTemporarily();
     }
 
+    if (!isRoot()) {
+      pprev->pnext.erase(this);
+    }
+
+    // FIXME: ideally we want to assert(pnext.empty())
     // disconnect from next blocks so that next blocks won't have invalid
     // pointers
     for (auto* it : pnext) {
@@ -83,14 +94,6 @@ struct BlockIndex : public Block::addon_t {
                    "tried to restore block %s that is not deleted",
                    toPrettyString());
 
-    if (!isRoot()) {
-      pprev->pnext.insert(this);
-
-      if (!pprev->isValid()) {
-        setFlag(BLOCK_FAILED_CHILD);
-      }
-    }
-
     // unsetFlag runs setDirty() for us
     unsetFlag(BLOCK_DELETED);
   }
@@ -100,14 +103,13 @@ struct BlockIndex : public Block::addon_t {
                    "tried to delete block %s that is already deleted",
                    toPrettyString());
 
-    if (!isRoot()) {
-      pprev->pnext.erase(this);
-    }
-
     // FIXME: this is a hack that might eventually bite us
     addon_t::setNull();
 
-    this->status = BLOCK_VALID_UNKNOWN | BLOCK_DELETED;
+    // preserve FAILED_* flags
+    this->status = (this->status & BLOCK_FAILED_MASK) | BLOCK_VALID_UNKNOWN |
+                   BLOCK_DELETED;
+
     // make it dirty by default
     setDirty();
   }
@@ -153,12 +155,10 @@ struct BlockIndex : public Block::addon_t {
     return level;
   }
 
+  bool isFailed() const { return (status & BLOCK_FAILED_MASK) != 0u; }
+
   bool isValid(enum BlockStateStatus upTo = BLOCK_VALID_TREE) const {
-    if ((status & BLOCK_FAILED_MASK) != 0u) {
-      // block failed
-      return false;
-    }
-    return isValidUpTo(upTo);
+    return !isFailed() && isValidUpTo(upTo);
   }
 
   bool isValidUpTo(enum BlockStateStatus upTo) const {
@@ -261,7 +261,9 @@ struct BlockIndex : public Block::addon_t {
     setDirty();
   }
 
-  bool canBeATip() const { return isValid(addon_t::validTipLevel); }
+  bool canBeATip() const {
+    return !isDeleted() && isValid(addon_t::validTipLevel);
+  }
   /**
    * The block is a valid tip if it can be a tip and either there are no
    * descendant blocks or none of the descendants can be a tip
@@ -282,6 +284,16 @@ struct BlockIndex : public Block::addon_t {
            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
              return !index->hasFlags(BLOCK_ACTIVE);
            });
+  }
+
+  /**
+   *  Count the descendants that are not deleted
+   */
+  size_t nondeletedDescendantCount() const {
+    return std::count_if(
+        pnext.begin(), pnext.end(), [](const BlockIndex* index) {
+          return !index->isDeleted();
+        });
   }
 
   /**
@@ -354,12 +366,13 @@ struct BlockIndex : public Block::addon_t {
 
   std::string toPrettyString(size_t level = 0) const {
     return format(
-        "{}{}BlockIndex(height={}, hash={}, next={}, status={}, header={}, {})",
+        "{}{}BlockIndex(height={}, hash={}, next-deleted={}, status={}, "
+        "header={}, {})",
         std::string(level, ' '),
         Block::name(),
         height,
         HexStr(getHash()),
-        pnext.size(),
+        nondeletedDescendantCount(),
         status,
         header->toPrettyString(),
         addon_t::toPrettyString());

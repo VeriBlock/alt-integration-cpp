@@ -69,7 +69,8 @@ TEST_F(Scenario3, scenario_3) {
   ASSERT_GT(vbkTip1->getHeight(), vbkTip2->getHeight());
   // but active chain on the vbkTip2 because this chain has endorsements
   std::cout << vbkTip2->toPrettyString() << std::endl;
-  std::cout << popminer->vbk().getBestChain().tip()->toPrettyString() << std::endl;
+  std::cout << popminer->vbk().getBestChain().tip()->toPrettyString()
+            << std::endl;
   ASSERT_TRUE(cmp(*vbkTip2, *popminer->vbk().getBestChain().tip()));
 
   vbkTip1 = popminer->mineVbkBlocks(1, *vbkTip1, {popTx1, popTx3});
@@ -82,10 +83,10 @@ TEST_F(Scenario3, scenario_3) {
   auto vtb12 = popminer->createVTB(vbkTip1->getHeader(), popTx3);
   auto vtb2 = popminer->createVTB(vbkTip2->getHeader(), popTx2);
 
-  auto* btcContaininBlock1 = popminer->btc().getBlockIndex(
-      vtb11.transaction.blockOfProof.getHash());
-  auto* btcContaininBlock2 = popminer->btc().getBlockIndex(
-      vtb12.transaction.blockOfProof.getHash());
+  auto* btcContaininBlock1 =
+      popminer->btc().getBlockIndex(vtb11.transaction.blockOfProof.getHash());
+  auto* btcContaininBlock2 =
+      popminer->btc().getBlockIndex(vtb12.transaction.blockOfProof.getHash());
 
   // check vtbs1[0] is better for scorring than vtbs1[1]
   ASSERT_LT(btcContaininBlock1->getHeight(), btcContaininBlock2->getHeight());
@@ -154,8 +155,8 @@ TEST_F(Scenario3, scenario_3) {
   EXPECT_TRUE(alttree.setState(containingBlock.getHash(), state));
   EXPECT_TRUE(state.IsValid());
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(), vbkTip2->getHash());
-  ASSERT_TRUE(alttree.btc().getBestChain().tip()->pnext.empty());
-  ASSERT_FALSE(alttree.btc().getBestChain()[1]->pnext.empty());
+  ASSERT_EQ(alttree.btc().getBestChain().tip()->nondeletedDescendantCount(), 0);
+  ASSERT_NE(alttree.btc().getBestChain()[1]->nondeletedDescendantCount(), 0);
   validateAlttreeIndexState(alttree, containingBlock, altPayloads2);
 
   VBK_LOG_DEBUG("Step 4");
