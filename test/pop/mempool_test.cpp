@@ -929,7 +929,10 @@ TEST_F(MemPoolFixture, getPop_endorsedPriority) {
   EXPECT_EQ(pop_data.atvs[1], atv1);
 }
 
-TEST_F(MemPoolFixture, getPop_payloads_order) {
+TEST_F(MemPoolFixture, getPop_payloads_order1) {
+  // Payloads with earlier VBK block will be earlier. VBK = use itself,
+  // ATV=block of proof, VTB=containing.
+
   // mine 10 blocks
   mineAltBlocks(10, chain);
   AltBlock endorsedBlock1 = chain[6];
@@ -996,4 +999,89 @@ TEST_F(MemPoolFixture, getPop_payloads_order) {
     ASSERT_LE(pop_data.vtbs[i - 1].containingBlock.getHeight(),
               pop_data.vtbs[i].containingBlock.getHeight());
   }
+}
+
+TEST_F(MemPoolFixture, getPop_payloads_order2) {
+  // Payloads with VBK block on active chain will be earlier.
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+  AltBlock endorsedBlock1 = chain[6];
+  AltBlock endorsedBlock2 = chain[5];
+
+  // mine 30 VBK blocks
+  auto* vbkForkPoint = popminer->mineVbkBlocks(30);
+
+  auto* vbkChainA = popminer->mineVbkBlocks(15, *vbkForkPoint);
+  auto* vbkChainB = popminer->mineVbkBlocks(35, *vbkForkPoint);
+
+  ASSERT_EQ(popminer->vbk().getBestChain().tip(), vbkChainB);
+
+  // endorse VBK blocks
+  ASSERT_GE(vbkChainA->getHeight(), 11);
+  ASSERT_GE(vbkChainB->getHeight(), 11);
+
+  const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock1), Coin(1000));
+  const auto& tx2 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock2), Coin(1000));
+  vbkChainA = popminer->mineVbkBlocks(1, *vbkChainA, {tx1});
+  auto pd1 = popminer->createPopDataEndorsingAltBlock(
+      vbkChainA->getHeader(), tx1, getLastKnownVbkBlock());
+  ATV& atv1 = pd1.atvs.at(0);
+  vbkChainB = popminer->mineVbkBlocks(1, *vbkChainB, {tx2});
+  auto pd2 = popminer->createPopDataEndorsingAltBlock(
+      vbkChainB->getHeader(), tx2, getLastKnownVbkBlock());
+  ATV& atv2 = pd2.atvs.at(0);
+
+  const auto* endorsedVbkBlock1 =
+      vbkChainA->getAncestor(vbkChainA->getHeight() - 10);
+  const auto* endorsedVbkBlock2 =
+      vbkChainB->getAncestor(vbkChainB->getHeight() - 11);
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
+  popminer->mineBtcBlocks(100);
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
+
+  vbkChainA = popminer->mineVbkBlocks(1, *vbkChainA, {vbkPopTx1});
+  vbkChainB = popminer->mineVbkBlocks(1, *vbkChainB, {vbkPopTx2});
+
+  auto vtb1 = popminer->createVTB(vbkChainA->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(vbkChainB->getHeader(), vbkPopTx2);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context,
+                 GetRegTestVbkBlock().getHash(),
+                 vbkChainA->getHash(),
+                 popminer->vbk());
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    ASSERT_TRUE(mempool->submit(*it, state));
+  }
+  context.clear();
+  fillVbkContext(context,
+                 GetRegTestVbkBlock().getHash(),
+                 vbkChainB->getHash(),
+                 popminer->vbk());
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    ASSERT_TRUE(mempool->submit(*it, state));
+  }
+
+  ASSERT_TRUE(mempool->submit(atv1, state));
+  ASSERT_TRUE(mempool->submit(atv2, state));
+
+  ASSERT_TRUE(mempool->submit(vtb1, state));
+  ASSERT_TRUE(mempool->submit(vtb2, state));
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 84);
+  ASSERT_EQ(pop_data.atvs.size(), 2);
+  ASSERT_EQ(pop_data.vtbs.size(), 2);
+
+  ASSERT_EQ(popminer->vbk().getBestChain().tip(), vbkChainB);
+
+  // check payloads order
+  ASSERT_EQ(pop_data.atvs[0].getId(), atv2.getId());
+  ASSERT_EQ(pop_data.atvs[1].getId(), atv1.getId());
+
+  ASSERT_EQ(pop_data.vtbs[0].getId(), vtb2.getId());
+  ASSERT_EQ(pop_data.vtbs[1].getId(), vtb1.getId());
 }
