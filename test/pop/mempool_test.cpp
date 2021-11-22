@@ -875,6 +875,9 @@ TEST_F(MemPoolFixture, IsKnown) {
 }
 
 TEST_F(MemPoolFixture, getPop_txfeePriority) {
+  // ATVs with same VBK block will be compared by ATV VBK tx fee. Higher fee -
+  // more chances that ATV will be picked.
+
   const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
       generatePublicationData(alttree.getBestChain().tip()->getHeader()),
       Coin(500));
