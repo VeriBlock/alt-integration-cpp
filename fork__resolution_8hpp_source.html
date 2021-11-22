@@ -616,8 +616,8 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;  }</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160; </div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;  std::pair&lt;int, PopFrOutcome&gt; activateBestChain(protected_index_t&amp; candidate,</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;                                                 ValidationState&amp; state) {</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;  std::pair&lt;int, PopFrOutcome&gt; comparePopScore(protected_index_t&amp; candidate,</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;                                               ValidationState&amp; state) {</div>
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    VBK_TRACE_ZONE_SCOPED;</div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160; </div>
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
@@ -665,143 +665,141 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;      }</div>
 <div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160; </div>
 <div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Candidate contains VALID commands, chain B wins&quot;</span>);</div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;      ed_.overrideTip(candidate);</div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;      <span class="keywordflow">return</span> {-1, PopFrOutcome::CANDIDATE_IS_TIP_SUCCESSOR};</div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;    }</div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160; </div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Doing %s POP fork resolution. Best=%s, Candidate=%s&quot;</span>,</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;                  protected_block_t::name(),</div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                  bestTip-&gt;toShortPrettyString(),</div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;                  candidate.toShortPrettyString());</div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160; </div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;    <span class="keyword">auto</span> ki = ed_.getParams().getKeystoneInterval();</div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span>* fork = <a class="code" href="namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef">findFork</a>(currentBest, &amp;candidate);</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;    VBK_ASSERT_MSG(</div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;        fork != <span class="keyword">nullptr</span>,</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;        <span class="stringliteral">&quot;state corruption: all blocks in a blocktree must form a tree, &quot;</span></div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;        <span class="stringliteral">&quot;thus all pairs of chains must have a fork point: chainA=%s, chainB=%s&quot;</span>,</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        bestTip-&gt;toPrettyString(),</div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;        candidate.toPrettyString());</div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160; </div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    <span class="comment">// if block next to fork is finalized, we don&#39;t do FR, since it can not be</span></div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="comment">// reorganized.</span></div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;    <span class="keyword">auto</span>* nextToFork = currentBest[fork-&gt;getHeight() + 1];</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;    <span class="keywordflow">if</span> (nextToFork != <span class="keyword">nullptr</span> &amp;&amp; nextToFork-&gt;finalized) {</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;      <span class="comment">// block `fork+1` is on active chain, and ancestor of currentBest.</span></div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;      <span class="comment">// which means that `fork+1` can not be reorganized and candidate will</span></div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;      <span class="comment">// never win.</span></div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;      <span class="keywordflow">return</span> {1, PopFrOutcome::TIP_IS_FINAL};</div>
-<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;    }</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160; </div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    <span class="comment">// perform multi-keystone PoP fork resolution</span></div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    <span class="keywordtype">bool</span> AcrossedKeystoneBoundary =</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;        isCrossedKeystoneBoundary(fork-&gt;getHeight(), bestTip-&gt;getHeight(), ki);</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;    <span class="keywordtype">bool</span> BcrossedKeystoneBoundary =</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;        isCrossedKeystoneBoundary(fork-&gt;getHeight(), candidate.getHeight(), ki);</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;    <span class="keywordflow">if</span> (!AcrossedKeystoneBoundary &amp;&amp; !BcrossedKeystoneBoundary) {</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;      <span class="comment">// chains are equal in terms of POP</span></div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;      VBK_LOG_DEBUG(</div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;          <span class="stringliteral">&quot;Neither chain crossed a keystone boundary: chains are equal&quot;</span>);</div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;      <span class="keywordflow">return</span> {0, PopFrOutcome::BOTH_DONT_CROSS_KEYSTONE_BOUNDARY};</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;    }</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160; </div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    <span class="comment">// [vbk fork point ... current tip]</span></div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;    ChainSlice&lt;protected_index_t&gt; chainA(currentBest, fork-&gt;getHeight());</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;    <span class="comment">// [vbk fork point ... new block]</span></div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;    Chain&lt;protected_index_t&gt; chainB(fork-&gt;getHeight(), &amp;candidate);</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160; </div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;    <span class="comment">// chains are not empty and chains start at the same block</span></div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;    VBK_ASSERT(chainA.first() != <span class="keyword">nullptr</span> &amp;&amp; chainA.first() == chainB.first());</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160; </div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;    <span class="comment">// we ALWAYS compare the currently applied chain (chainA) and the candidate</span></div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;    <span class="comment">// (chainB)</span></div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;    VBK_ASSERT(chainA.tip() == bestTip);</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160; </div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;    <span class="comment">// we are at chainA.</span></div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;    <span class="comment">// apply all payloads from chain B (both chains have same first block - the</span></div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;    <span class="comment">// fork point, so exclude it during &#39;apply&#39;)</span></div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;    {</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160; </div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;      <span class="keywordflow">if</span> (!sm_.apply(chainB, state)) {</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;        <span class="comment">// chain B has been unapplied and invalidated already</span></div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B contains INVALID payloads, Chain A wins (%s)&quot;</span>,</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                      state.toString());</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;        <span class="keywordflow">return</span> {1, PopFrOutcome::CANDIDATE_INVALID_PAYLOADS};</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;      }</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;    }</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160; </div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;    <span class="comment">// now the tree contains payloads from both chains</span></div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;    <span class="keyword">auto</span> reducedPublicationViewA =</div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;        reduced_publication_view_t(chainA, protectedParams_, ed_, *ing_);</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;    <span class="keyword">auto</span> reducedPublicationViewB =</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;        reduced_publication_view_t(chainB, protectedParams_, ed_, *ing_);</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160; </div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    <span class="keywordtype">int</span> result = internal::comparePopScoreImpl(reducedPublicationViewA,</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                                               reducedPublicationViewB);</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    <span class="keywordflow">if</span> (result &gt;= 0) {</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;      <span class="comment">// chain A remains the best one. unapply B and leave A applied</span></div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;      sm_.unapply(chainB);</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;      guard.overrideDeferredForkResolution(originalProtectingTip);</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain A remains the best chain&quot;</span>);</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;      <span class="comment">// chain B is better. unapply A and leave B applied</span></div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160; </div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;      <span class="comment">// if part of chainB has uncertain validity(never been applied before with</span></div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;      <span class="comment">// setState()), we have to unapply this part before unapplying chainA and</span></div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;      <span class="comment">// try to apply the unvalidated part of chainB without any payloads from</span></div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;      <span class="comment">// chainA to make sure it is fully valid</span></div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;      <span class="keyword">auto</span>&amp; chainBValidFrom =</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;          sm_.unapplyWhile(chainB, [](protected_index_t&amp; index) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;            <span class="keywordflow">return</span> !index.isValid(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">BLOCK_CAN_BE_APPLIED</a>);</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;          });</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160; </div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;      <span class="comment">// unapply losing chain</span></div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;      sm_.unapply(chainA);</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160; </div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;      <span class="comment">// validate the unvalidated part of chainB</span></div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;      <span class="keywordflow">if</span> (!sm_.apply(chainBValidFrom, *chainB.tip(), state)) {</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;        sm_.unapply(chainBValidFrom, *chainB.first());</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;        <span class="keywordtype">bool</span> success = sm_.apply(*chainA.first(), *chainA.tip(), state);</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;        VBK_ASSERT_MSG(</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            success,</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;            <span class="stringliteral">&quot;state corruption: chainA as a former best chain should be valid&quot;</span>);</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B is invalid when applied alone. Chain A wins&quot;</span>);</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;        <span class="keywordflow">return</span> {1, PopFrOutcome::CANDIDATE_INVALID_INDEPENDENTLY};</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;      }</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160; </div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B wins&quot;</span>);</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;      ed_.overrideTip(candidate);</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    }</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160; </div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    <span class="keywordflow">return</span> {result, PopFrOutcome::HIGHER_POP_SCORE};</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;  }</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160; </div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;  std::string toPrettyString(<span class="keywordtype">size_t</span> level = 0)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    std::string pad(level, <span class="charliteral">&#39; &#39;</span>);</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;    <span class="keywordflow">return</span> format(<span class="stringliteral">&quot;{}Comparator{{\n{}{{tree=\n{}}}}}&quot;</span>,</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                  pad,</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;                  pad,</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;                  ing_-&gt;toPrettyString(level + 2));</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;  }</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160; </div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;  ProtectedBlockTree&amp; ed_;</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;  std::shared_ptr&lt;ProtectingBlockTree&gt; ing_;</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160; </div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;  <span class="keyword">const</span> protected_params_t&amp; protectedParams_;</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;  PayloadsStorage&amp; payloadsProvider_;</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;  PayloadsIndex&amp; payloadsIndex_;</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;  sm_t sm_;</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;};</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;      <span class="keywordflow">return</span> {-1, PopFrOutcome::CANDIDATE_IS_TIP_SUCCESSOR};</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;    }</div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160; </div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Doing %s POP fork resolution. Best=%s, Candidate=%s&quot;</span>,</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;                  protected_block_t::name(),</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;                  bestTip-&gt;toShortPrettyString(),</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;                  candidate.toShortPrettyString());</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160; </div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;    <span class="keyword">auto</span> ki = ed_.getParams().getKeystoneInterval();</div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span>* fork = <a class="code" href="namespacealtintegration.html#aedfa430433cd4a67f1627f2e4f4000ef">findFork</a>(currentBest, &amp;candidate);</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;    VBK_ASSERT_MSG(</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;        fork != <span class="keyword">nullptr</span>,</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;        <span class="stringliteral">&quot;state corruption: all blocks in a blocktree must form a tree, &quot;</span></div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;        <span class="stringliteral">&quot;thus all pairs of chains must have a fork point: chainA=%s, chainB=%s&quot;</span>,</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;        bestTip-&gt;toPrettyString(),</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        candidate.toPrettyString());</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160; </div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;    <span class="comment">// if block next to fork is finalized, we don&#39;t do FR, since it can not be</span></div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    <span class="comment">// reorganized.</span></div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="keyword">auto</span>* nextToFork = currentBest[fork-&gt;getHeight() + 1];</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;    <span class="keywordflow">if</span> (nextToFork != <span class="keyword">nullptr</span> &amp;&amp; nextToFork-&gt;finalized) {</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;      <span class="comment">// block `fork+1` is on active chain, and ancestor of currentBest.</span></div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;      <span class="comment">// which means that `fork+1` can not be reorganized and candidate will</span></div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;      <span class="comment">// never win.</span></div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;      <span class="keywordflow">return</span> {1, PopFrOutcome::TIP_IS_FINAL};</div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;    }</div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160; </div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;    <span class="comment">// perform multi-keystone PoP fork resolution</span></div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    <span class="keywordtype">bool</span> AcrossedKeystoneBoundary =</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;        isCrossedKeystoneBoundary(fork-&gt;getHeight(), bestTip-&gt;getHeight(), ki);</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;    <span class="keywordtype">bool</span> BcrossedKeystoneBoundary =</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        isCrossedKeystoneBoundary(fork-&gt;getHeight(), candidate.getHeight(), ki);</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    <span class="keywordflow">if</span> (!AcrossedKeystoneBoundary &amp;&amp; !BcrossedKeystoneBoundary) {</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;      <span class="comment">// chains are equal in terms of POP</span></div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;      VBK_LOG_DEBUG(</div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;          <span class="stringliteral">&quot;Neither chain crossed a keystone boundary: chains are equal&quot;</span>);</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;      <span class="keywordflow">return</span> {0, PopFrOutcome::BOTH_DONT_CROSS_KEYSTONE_BOUNDARY};</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;    }</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160; </div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;    <span class="comment">// [vbk fork point ... current tip]</span></div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    ChainSlice&lt;protected_index_t&gt; chainA(currentBest, fork-&gt;getHeight());</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;    <span class="comment">// [vbk fork point ... new block]</span></div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;    Chain&lt;protected_index_t&gt; chainB(fork-&gt;getHeight(), &amp;candidate);</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160; </div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;    <span class="comment">// chains are not empty and chains start at the same block</span></div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;    VBK_ASSERT(chainA.first() != <span class="keyword">nullptr</span> &amp;&amp; chainA.first() == chainB.first());</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160; </div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;    <span class="comment">// we ALWAYS compare the currently applied chain (chainA) and the candidate</span></div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;    <span class="comment">// (chainB)</span></div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;    VBK_ASSERT(chainA.tip() == bestTip);</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160; </div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;    <span class="comment">// we are at chainA.</span></div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;    <span class="comment">// apply all payloads from chain B (both chains have same first block - the</span></div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;    <span class="comment">// fork point, so exclude it during &#39;apply&#39;)</span></div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;    {</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160; </div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;      <span class="keywordflow">if</span> (!sm_.apply(chainB, state)) {</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;        <span class="comment">// chain B has been unapplied and invalidated already</span></div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B contains INVALID payloads, Chain A wins (%s)&quot;</span>,</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                      state.toString());</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;        <span class="keywordflow">return</span> {1, PopFrOutcome::CANDIDATE_INVALID_PAYLOADS};</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;      }</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;    }</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160; </div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;    <span class="comment">// now the tree contains payloads from both chains</span></div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;    <span class="keyword">auto</span> reducedPublicationViewA =</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;        reduced_publication_view_t(chainA, protectedParams_, ed_, *ing_);</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;    <span class="keyword">auto</span> reducedPublicationViewB =</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;        reduced_publication_view_t(chainB, protectedParams_, ed_, *ing_);</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160; </div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;    <span class="keywordtype">int</span> result = internal::comparePopScoreImpl(reducedPublicationViewA,</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;                                               reducedPublicationViewB);</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;    <span class="keywordflow">if</span> (result &gt;= 0) {</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;      <span class="comment">// chain A remains the best one. unapply B and leave A applied</span></div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;      sm_.unapply(chainB);</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;      guard.overrideDeferredForkResolution(originalProtectingTip);</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain A remains the best chain&quot;</span>);</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;      <span class="comment">// chain B is better. unapply A and leave B applied</span></div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;      <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160; </div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;      <span class="comment">// if part of chainB has uncertain validity(never been applied before with</span></div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;      <span class="comment">// setState()), we have to unapply this part before unapplying chainA and</span></div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;      <span class="comment">// try to apply the unvalidated part of chainB without any payloads from</span></div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;      <span class="comment">// chainA to make sure it is fully valid</span></div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;      <span class="keyword">auto</span>&amp; chainBValidFrom =</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;          sm_.unapplyWhile(chainB, [](protected_index_t&amp; index) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;            <span class="keywordflow">return</span> !index.isValid(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">BLOCK_CAN_BE_APPLIED</a>);</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;          });</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160; </div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;      <span class="comment">// unapply losing chain</span></div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;      sm_.unapply(chainA);</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160; </div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;      <span class="comment">// validate the unvalidated part of chainB</span></div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;      <span class="keywordflow">if</span> (!sm_.apply(chainBValidFrom, *chainB.tip(), state)) {</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;        sm_.unapply(chainBValidFrom, *chainB.first());</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;        <span class="keywordtype">bool</span> success = sm_.apply(*chainA.first(), *chainA.tip(), state);</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;        VBK_ASSERT_MSG(</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            success,</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            <span class="stringliteral">&quot;state corruption: chainA as a former best chain should be valid&quot;</span>);</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;        VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B is invalid when applied alone. Chain A wins&quot;</span>);</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        guard.overrideDeferredForkResolution(originalProtectingTip);</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <span class="keywordflow">return</span> {1, PopFrOutcome::CANDIDATE_INVALID_INDEPENDENTLY};</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;      }</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160; </div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;      VBK_LOG_DEBUG(<span class="stringliteral">&quot;Chain B wins&quot;</span>);</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;    }</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160; </div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    <span class="keywordflow">return</span> {result, PopFrOutcome::HIGHER_POP_SCORE};</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;  }</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160; </div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;  std::string toPrettyString(<span class="keywordtype">size_t</span> level = 0)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;    std::string pad(level, <span class="charliteral">&#39; &#39;</span>);</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;    <span class="keywordflow">return</span> format(<span class="stringliteral">&quot;{}Comparator{{\n{}{{tree=\n{}}}}}&quot;</span>,</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;                  pad,</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;                  pad,</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;                  ing_-&gt;toPrettyString(level + 2));</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;  }</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160; </div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;  ProtectedBlockTree&amp; ed_;</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;  std::shared_ptr&lt;ProtectingBlockTree&gt; ing_;</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160; </div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;  <span class="keyword">const</span> protected_params_t&amp; protectedParams_;</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;  PayloadsStorage&amp; payloadsProvider_;</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;  PayloadsIndex&amp; payloadsIndex_;</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;  sm_t sm_;</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;};</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160; </div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
 <div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160; </div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_</span></div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">altintegration::BLOCK_CAN_BE_APPLIED</a></div><div class="ttdeci">@ BLOCK_CAN_BE_APPLIED</div><div class="ttdoc">the chain with the block at its tip is fully valid, so if we do SetState on this block,...</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00030">block_status.hpp:30</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_aa8b105f3d96feb6bf461bdd11ce8c7ba"><div class="ttname"><a href="namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba">altintegration::isKeystone</a></div><div class="ttdeci">bool isKeystone(int32_t blockNumber, uint32_t keystoneInterval)</div><div class="ttdoc">Calculates if block with height = blockNumber is keystone.</div></div>

@@ -133,7 +133,7 @@ $(document).ready(function(){initNavTree('blocktree_8hpp_source.html',''); initR
 <div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#aeaaae6936ec9464d11d0f887605a18c3">   52</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockTree.html#aeaaae6936ec9464d11d0f887605a18c3">bootstrapWithGenesis</a>(<span class="keyword">const</span> block_t&amp; block,</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                                    <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) {</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    VBK_ASSERT(!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>() &amp;&amp; <span class="stringliteral">&quot;already bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> bootstrap(0, block, state) ||</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> this-&gt;bootstrap(0, block, state) ||</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;           state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap-genesis&quot;</span>);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('blocktree_8hpp_source.html',''); initR
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="comment">// pick first block from the chain, bootstrap with a single block</span></div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">auto</span> genesis = chain[0];</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">if</span> (!bootstrap(startHeight, genesis, state)) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">if</span> (!this-&gt;bootstrap(startHeight, genesis, state)) {</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-blocktree-bootstrap&quot;</span>);</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
@@ -165,7 +165,7 @@ $(document).ready(function(){initNavTree('blocktree_8hpp_source.html',''); initR
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="comment">// our store (yet) to check it correctly</span></div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1, size = chain.size(); i &lt; size; i++) {</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="keyword">auto</span>&amp; block = chain[i];</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordflow">if</span> (!acceptBlockHeaderImpl(</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordflow">if</span> (!this-&gt;acceptBlockHeaderImpl(</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;              std::make_shared&lt;block_t&gt;(block), state, <span class="keyword">false</span>)) {</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-blocktree-accept&quot;</span>);</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      }</div>
@@ -231,169 +231,197 @@ $(document).ready(function(){initNavTree('blocktree_8hpp_source.html',''); initR
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  }</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">  167</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a>(height_t height)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keyword">auto</span>* tip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    VBK_ASSERT(tip);</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordflow">return</span> tip-&gt;getHeight() - height &gt; getParams().getOldBlocksWindow();</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;  }</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">  175</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">isBlockOld</a>(<span class="keyword">const</span> hash_t&amp; hash)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keyword">auto</span>* index = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(hash);</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">if</span> (index == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      <span class="comment">// block is unknown, so not &quot;old&quot;</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    }</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a>(index-&gt;getHeight());</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  }</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="keywordtype">void</span> finalizeBlock(index_t&amp; index) {</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    (void)index;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="comment">// TODO: currently can not procced finalization for the vbk and btc trees,</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="comment">// need more investigation</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">  166</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">loadBlockBackward</a>(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1StoredBlockIndex.html">stored_index_t</a>&amp; index,</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                         <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*index.<a class="code" href="structaltintegration_1_1StoredBlockIndex.html#ad03f28f9e717ece7e050d2b30e40f985">header</a>, state, *param_)) {</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;bad-header&quot;</span>);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    }</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> hash = index.<a class="code" href="structaltintegration_1_1StoredBlockIndex.html#ad03f28f9e717ece7e050d2b30e40f985">header</a>-&gt;getHash();</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ab9c8e5e91a8bf0c67a41db06ff61f48c">base::loadBlockBackward</a>(index, state)) {</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    }</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keyword">auto</span>* current = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(hash);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    VBK_ASSERT(current);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    VBK_ASSERT(current-&gt;pnext.size() == 1);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keyword">auto</span>* next = *current-&gt;pnext.begin();</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="comment">// recover chainwork</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keyword">auto</span> chainWork = getBlockProof(next-&gt;getHeader());</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    current-&gt;chainWork = next-&gt;chainWork - chainWork;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="comment">// clear blockOfProofEndorsements inmem field</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    current-&gt;clearBlockOfProofEndorsement();</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="comment">// return finalizeBlockImpl(</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="comment">//     index, param_-&gt;preserveBlocksBehindFinal(), state);</span></div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    current-&gt;raiseValidity(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">BLOCK_VALID_TREE</a>);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  }</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="keyword">const</span> ChainParams* param_ = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  <span class="keywordtype">bool</span> acceptBlockHeaderImpl(<span class="keyword">const</span> std::shared_ptr&lt;block_t&gt;&amp; block,</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                             ValidationState&amp; state,</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                             <span class="keywordtype">bool</span> shouldContextuallyCheck) {</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    index_t* index = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordflow">if</span> (!validateAndAddBlock(block, state, shouldContextuallyCheck, &amp;index)) {</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    }</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    VBK_ASSERT(index);</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordflow">if</span> (!shouldContextuallyCheck) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;      <span class="comment">// this is a bootstrap block</span></div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">BLOCK_BOOTSTRAP</a>);</div>
+<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">  196</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a>(height_t height)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keyword">auto</span>* tip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    VBK_ASSERT(tip);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordflow">return</span> tip-&gt;getHeight() - height &gt; getParams().getOldBlocksWindow();</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">  204</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">isBlockOld</a>(<span class="keyword">const</span> hash_t&amp; hash)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keyword">auto</span>* index = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(hash);</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordflow">if</span> (index == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;      <span class="comment">// block is unknown, so not &quot;old&quot;</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    }</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160; </div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    base::tryAddTip(index);</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="comment">// don&#39;t defer fork resolution in the acceptBlockHeader+addPayloads flow</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="comment">// until the validation hole is plugged</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <a class="code" href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">determineBestChain</a>(*index, state);</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;  }</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  <span class="keywordtype">bool</span> bootstrap(height_t height,</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                 <span class="keyword">const</span> block_t&amp; block,</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                 ValidationState&amp; state) {</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordflow">return</span> bootstrap(height, std::make_shared&lt;block_t&gt;(block), state);</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  }</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">isBlockOld</a>(index-&gt;getHeight());</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  <span class="keywordtype">void</span> finalizeBlock(index_t&amp; index) {</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    (void)index;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="comment">// TODO: currently can not procced finalization for the vbk and btc trees,</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="comment">// need more investigation</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="comment">// return this-&gt;finalizeBlockImpl(</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="comment">//     index, param_-&gt;preserveBlocksBehindFinal(), state);</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  }</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  <span class="keyword">const</span> ChainParams* param_ = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  <span class="keywordtype">bool</span> bootstrap(height_t height,</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                 std::shared_ptr&lt;block_t&gt; block,</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                 ValidationState&amp; state) {</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*block, state, *param_)) {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap&quot;</span>);</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keyword">auto</span>* index = base::insertBlockHeader(block, height);</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span> &amp;&amp;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;               <span class="stringliteral">&quot;insertBlockHeader should have never returned nullptr&quot;</span>);</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    index-&gt;setHeight(height);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">base::activeChain_</a> = Chain&lt;index_t&gt;(height, index);</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    index-&gt;setIsBootstrap(<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    VBK_ASSERT(<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>());</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    VBK_ASSERT(<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(index-&gt;getHash()) != <span class="keyword">nullptr</span> &amp;&amp;</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;               <span class="stringliteral">&quot;getBlockIndex must be able to find the block added by &quot;</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;               <span class="stringliteral">&quot;insertBlockHeader&quot;</span>);</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  <span class="keywordtype">bool</span> acceptBlockHeaderImpl(<span class="keyword">const</span> std::shared_ptr&lt;block_t&gt;&amp; block,</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                             ValidationState&amp; state,</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                             <span class="keywordtype">bool</span> shouldContextuallyCheck) {</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    index_t* index = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordflow">if</span> (!validateAndAddBlock(block, state, shouldContextuallyCheck, &amp;index)) {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    VBK_ASSERT(index);</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordflow">if</span> (!shouldContextuallyCheck) {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;      <span class="comment">// this is a bootstrap block</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;      index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">BLOCK_BOOTSTRAP</a>);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    }</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    base::tryAddTip(index);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="comment">// don&#39;t defer fork resolution in the acceptBlockHeader+addPayloads flow</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="comment">// until the validation hole is plugged</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <a class="code" href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">determineBestChain</a>(*index, state);</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    base::tryAddTip(index);</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9">BLOCK_ACTIVE</a>);</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordtype">bool</span> success = index-&gt;raiseValidity(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">BLOCK_CAN_BE_APPLIED</a>);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    VBK_ASSERT(success);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">BLOCK_BOOTSTRAP</a>);</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    base::appliedBlockCount = 1;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;  }</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="keywordtype">bool</span> bootstrap(height_t height,</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                 <span class="keyword">const</span> block_t&amp; block,</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                 ValidationState&amp; state) {</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordflow">return</span> bootstrap(height, std::make_shared&lt;block_t&gt;(block), state);</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  }</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  <span class="keywordtype">bool</span> validateAndAddBlock(<span class="keyword">const</span> std::shared_ptr&lt;block_t&gt;&amp; block,</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                           ValidationState&amp; state,</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                           <span class="keywordtype">bool</span> shouldContextuallyCheck,</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                           index_t** ret) {</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*block, state, *param_)) {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-check-block&quot;</span>);</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    }</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="comment">// we must know previous block</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keyword">auto</span>* prev = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(block-&gt;getPreviousBlock());</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordflow">if</span> (prev == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;          block_t::name() + <span class="stringliteral">&quot;-bad-prev-block&quot;</span>,</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;          <span class="stringliteral">&quot;can not find previous block: &quot;</span> + <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(block-&gt;getPreviousBlock()));</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    }</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordflow">if</span> (shouldContextuallyCheck &amp;&amp;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        !contextuallyCheckBlock(*prev, *block, state, *param_)) {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-contextually-check-block&quot;</span>);</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    }</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keyword">auto</span> index = base::insertBlockHeader(block);</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span> &amp;&amp;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;               <span class="stringliteral">&quot;insertBlockHeader should have never returned nullptr&quot;</span>);</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordflow">if</span> (ret) {</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;      *ret = index;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  <span class="keywordtype">bool</span> bootstrap(height_t height,</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                 std::shared_ptr&lt;block_t&gt; block,</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                 ValidationState&amp; state) {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*block, state, *param_)) {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-bootstrap&quot;</span>);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    }</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keyword">auto</span>* index = base::insertBlockHeader(block, height);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span> &amp;&amp;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;               <span class="stringliteral">&quot;insertBlockHeader should have never returned nullptr&quot;</span>);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    index-&gt;setHeight(height);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">base::activeChain_</a> = Chain&lt;index_t&gt;(height, index);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    index-&gt;setIsBootstrap(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    VBK_ASSERT(<a class="code" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">base::isBootstrapped</a>());</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    VBK_ASSERT(<a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(index-&gt;getHash()) != <span class="keyword">nullptr</span> &amp;&amp;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;               <span class="stringliteral">&quot;getBlockIndex must be able to find the block added by &quot;</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;               <span class="stringliteral">&quot;insertBlockHeader&quot;</span>);</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    base::tryAddTip(index);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa99ab5033e6949bd96e626c3e266a7ff9">BLOCK_ACTIVE</a>);</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keywordtype">bool</span> success = index-&gt;raiseValidity(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">BLOCK_CAN_BE_APPLIED</a>);</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    VBK_ASSERT(success);</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaecc63790525f2babca692e3b28783ec4">BLOCK_BOOTSTRAP</a>);</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    base::appliedBlockCount = 1;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  }</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    index-&gt;raiseValidity(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a7f0d0fe2352a96058a62330d29df6d37">BLOCK_CONNECTED</a>);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="comment">// if prev block is invalid, mark this block as invalid</span></div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keywordflow">if</span> (!prev-&gt;isValid()) {</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;      index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a>);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;          block_t::name() + <span class="stringliteral">&quot;-bad-chain&quot;</span>,</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;          format(<span class="stringliteral">&quot;Previous block is invalid={}&quot;</span>, prev-&gt;toPrettyString()));</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    }</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00297"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">  297</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">determineBestChain</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; candidate, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="keywordtype">bool</span> validateAndAddBlock(<span class="keyword">const</span> std::shared_ptr&lt;block_t&gt;&amp; block,</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                           ValidationState&amp; state,</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                           <span class="keywordtype">bool</span> shouldContextuallyCheck,</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                           index_t** ret) {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">checkBlock</a>(*block, state, *param_)) {</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-check-block&quot;</span>);</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="comment">// we must know previous block</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keyword">auto</span>* prev = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">base::getBlockIndex</a>(block-&gt;getPreviousBlock());</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">if</span> (prev == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;          block_t::name() + <span class="stringliteral">&quot;-bad-prev-block&quot;</span>,</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;          <span class="stringliteral">&quot;can not find previous block: &quot;</span> + <a class="code" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(block-&gt;getPreviousBlock()));</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    }</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keywordflow">if</span> (shouldContextuallyCheck &amp;&amp;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        !contextuallyCheckBlock(*prev, *block, state, *param_)) {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-contextually-check-block&quot;</span>);</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    }</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    }</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;      this-&gt;setState(candidate, state);</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    }</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  }</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
-<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e">  317</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e">onBlockInserted</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>* newIndex) <span class="keyword">override</span> <span class="keyword">final</span> {</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    newIndex-&gt;chainWork = getBlockProof(newIndex-&gt;getHeader());</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keywordflow">if</span> (!newIndex-&gt;isRoot()) {</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;      newIndex-&gt;chainWork += newIndex-&gt;pprev-&gt;chainWork;</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keyword">auto</span> index = base::insertBlockHeader(block);</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    VBK_ASSERT(index != <span class="keyword">nullptr</span> &amp;&amp;</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;               <span class="stringliteral">&quot;insertBlockHeader should have never returned nullptr&quot;</span>);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keywordflow">if</span> (ret) {</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;      *ret = index;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    }</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    index-&gt;raiseValidity(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a7f0d0fe2352a96058a62330d29df6d37">BLOCK_CONNECTED</a>);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="comment">// if prev block is invalid, mark this block as invalid</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordflow">if</span> (!prev-&gt;isValid()) {</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;      index-&gt;setFlag(<a class="code" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a>);</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;          block_t::name() + <span class="stringliteral">&quot;-bad-chain&quot;</span>,</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;          format(<span class="stringliteral">&quot;Previous block is invalid={}&quot;</span>, prev-&gt;toPrettyString()));</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  }</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;};</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Block, <span class="keyword">typename</span> ChainParams&gt;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> BlockTree&lt;Block, ChainParams&gt;&amp; tree, std::ostream* os) {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  *os &lt;&lt; tree.toPrettyString();</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;}</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">  326</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">determineBestChain</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp; candidate, <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keyword">auto</span> bestTip = <a class="code" href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">base::getBestChain</a>().tip();</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    VBK_ASSERT(bestTip != <span class="keyword">nullptr</span> &amp;&amp; <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">if</span> (bestTip == &amp;candidate) {</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="comment">// do not even consider invalid candidates</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keywordflow">if</span> (!candidate.isValid()) {</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    }</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keywordflow">if</span> (bestTip-&gt;chainWork &lt; candidate.chainWork) {</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;      this-&gt;setState(candidate, state);</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  }</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160; </div>
+<div class="line"><a name="l00346"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e">  346</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e">onBlockInserted</a>(<a class="code" href="structaltintegration_1_1BlockIndex.html">index_t</a>* newIndex) <span class="keyword">override</span> <span class="keyword">final</span> {</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    newIndex-&gt;chainWork = getBlockProof(newIndex-&gt;getHeader());</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordflow">if</span> (!newIndex-&gt;isRoot()) {</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;      newIndex-&gt;chainWork += newIndex-&gt;pprev-&gt;chainWork;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    }</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  }</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;};</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160; </div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Block, <span class="keyword">typename</span> ChainParams&gt;</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> BlockTree&lt;Block, ChainParams&gt;&amp; tree, std::ostream* os) {</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;  *os &lt;&lt; tree.toPrettyString();</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;}</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160; </div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCKTREE_HPP_</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="picojson_8hpp_source.html#l00023">picojson.hpp:23</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00017">block_status.hpp:17</a></div></div>
@@ -406,20 +434,22 @@ $(document).ready(function(){initNavTree('blocktree_8hpp_source.html',''); initR
 <div class="ttc" id="anamespacealtintegration_html_a8f11a78c3709de515ce810b744ac05f6"><div class="ttname"><a href="namespacealtintegration.html#a8f11a78c3709de515ce810b744ac05f6">altintegration::checkBlock</a></div><div class="ttdeci">bool checkBlock(const BtcBlock &amp;block, ValidationState &amp;state, const BtcChainParams &amp;params)</div><div class="ttdoc">Stateless validation for a single block.</div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00294">arith_uint256.hpp:294</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a></div><div class="ttdoc">Base block tree that stores all blocks, maintains tree tips, maintains active chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00033">base_block_tree.hpp:33</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0a1ab4ab0c45ad2691be3f192e1c6d1e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00107">base_block_tree.hpp:107</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0a1ab4ab0c45ad2691be3f192e1c6d1e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0a1ab4ab0c45ad2691be3f192e1c6d1e">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00109">base_block_tree.hpp:109</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a48c1ac8d9b8139e000c439898b2c587e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a48c1ac8d9b8139e000c439898b2c587e">altintegration::BaseBlockTree::loadBlockForward</a></div><div class="ttdeci">virtual bool loadBlockForward(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree as a leaf, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00172">base_block_tree.hpp:172</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01021">base_block_tree.hpp:1021</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00088">base_block_tree.hpp:88</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00361">base_block_tree.hpp:361</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01098">base_block_tree.hpp:1098</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aa622ea5f02c156f6cec4b5eaa38504dc"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aa622ea5f02c156f6cec4b5eaa38504dc">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00090">base_block_tree.hpp:90</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ab9c8e5e91a8bf0c67a41db06ff61f48c"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ab9c8e5e91a8bf0c67a41db06ff61f48c">altintegration::BaseBlockTree::loadBlockBackward</a></div><div class="ttdeci">virtual bool loadBlockBackward(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree as a new root, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00186">base_block_tree.hpp:186</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00438">base_block_tree.hpp:438</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00031">block_index.hpp:31</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockReader_html"><div class="ttname"><a href="structaltintegration_1_1BlockReader.html">altintegration::BlockReader</a></div><div class="ttdoc">An abstraction over on-disk storage iterator.</div><div class="ttdef"><b>Definition:</b> <a href="block__reader_8hpp_source.html#l00026">block_reader.hpp:26</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockTree_html"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html">altintegration::BlockTree</a></div><div class="ttdoc">BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root.</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00030">blocktree.hpp:30</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockTree_html_a24779f15d0d6b38e5d99d68e351bcbad"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a24779f15d0d6b38e5d99d68e351bcbad">altintegration::BlockTree::loadBlockForward</a></div><div class="ttdeci">bool loadBlockForward(const stored_index_t &amp;index, ValidationState &amp;state) override</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00130">blocktree.hpp:130</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockTree_html_a378e5bc6b86e1f273a31071a27a4ec78"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a378e5bc6b86e1f273a31071a27a4ec78">altintegration::BlockTree::bootstrapWithChain</a></div><div class="ttdeci">virtual bool bootstrapWithChain(height_t startHeight, const std::vector&lt; block_t &gt; &amp;chain, ValidationState &amp;state)</div><div class="ttdoc">Bootstrap network with a chain that starts at 'startHeight'.</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00070">blocktree.hpp:70</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockTree_html_a3aa99cb1232cd715b3a48ac55d71f10e"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e">altintegration::BlockTree::onBlockInserted</a></div><div class="ttdeci">void onBlockInserted(index_t *newIndex) override final</div><div class="ttdoc">whenever new block is inserted, BlockTree has to update its ChainWork</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00317">blocktree.hpp:317</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockTree_html_a3b8358271f6f4f65d22408725fb21905"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">altintegration::BlockTree::determineBestChain</a></div><div class="ttdeci">void determineBestChain(index_t &amp;candidate, ValidationState &amp;state) override</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00297">blocktree.hpp:297</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockTree_html_ae60dda418fe822190cbd54741a3c10f7"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">altintegration::BlockTree::isBlockOld</a></div><div class="ttdeci">bool isBlockOld(const hash_t &amp;hash) const</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00175">blocktree.hpp:175</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockTree_html_ae7de7a66d6867ddbf077f1c20d16d8fc"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">altintegration::BlockTree::isBlockOld</a></div><div class="ttdeci">bool isBlockOld(height_t height) const</div><div class="ttdoc">block is considered old if it is behind current tip further than 'old blocks window' blocks</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00167">blocktree.hpp:167</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockTree_html_a3aa99cb1232cd715b3a48ac55d71f10e"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a3aa99cb1232cd715b3a48ac55d71f10e">altintegration::BlockTree::onBlockInserted</a></div><div class="ttdeci">void onBlockInserted(index_t *newIndex) override final</div><div class="ttdoc">whenever new block is inserted, BlockTree has to update its ChainWork</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00346">blocktree.hpp:346</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockTree_html_a3b8358271f6f4f65d22408725fb21905"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a3b8358271f6f4f65d22408725fb21905">altintegration::BlockTree::determineBestChain</a></div><div class="ttdeci">void determineBestChain(index_t &amp;candidate, ValidationState &amp;state) override</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00326">blocktree.hpp:326</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockTree_html_a573463a4df403c15e4ee13b1b1ec0a38"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#a573463a4df403c15e4ee13b1b1ec0a38">altintegration::BlockTree::loadBlockBackward</a></div><div class="ttdeci">bool loadBlockBackward(const stored_index_t &amp;index, ValidationState &amp;state) override</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00166">blocktree.hpp:166</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockTree_html_ae60dda418fe822190cbd54741a3c10f7"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#ae60dda418fe822190cbd54741a3c10f7">altintegration::BlockTree::isBlockOld</a></div><div class="ttdeci">bool isBlockOld(const hash_t &amp;hash) const</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00204">blocktree.hpp:204</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockTree_html_ae7de7a66d6867ddbf077f1c20d16d8fc"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#ae7de7a66d6867ddbf077f1c20d16d8fc">altintegration::BlockTree::isBlockOld</a></div><div class="ttdeci">bool isBlockOld(height_t height) const</div><div class="ttdoc">block is considered old if it is behind current tip further than 'old blocks window' blocks</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00196">blocktree.hpp:196</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockTree_html_aeaaae6936ec9464d11d0f887605a18c3"><div class="ttname"><a href="structaltintegration_1_1BlockTree.html#aeaaae6936ec9464d11d0f887605a18c3">altintegration::BlockTree::bootstrapWithGenesis</a></div><div class="ttdeci">virtual bool bootstrapWithGenesis(const block_t &amp;block, ValidationState &amp;state)</div><div class="ttdoc">Bootstrap blockchain with a single genesis block.</div><div class="ttdef"><b>Definition:</b> <a href="blocktree_8hpp_source.html#l00052">blocktree.hpp:52</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00014">stored_block_index.hpp:14</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html_ad03f28f9e717ece7e050d2b30e40f985"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html#ad03f28f9e717ece7e050d2b30e40f985">altintegration::StoredBlockIndex::header</a></div><div class="ttdeci">std::shared_ptr&lt; block_t &gt; header</div><div class="ttdoc">block header</div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00053">stored_block_index.hpp:53</a></div></div>
