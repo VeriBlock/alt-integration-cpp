@@ -71,23 +71,20 @@ void MemPool::cleanUp() {
     bool tooOld = tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
                   rel.header->getHeight();
 
-    // cleanup stale relations
+    // cleanup stale payloads
     if (tooOld) {
-      // remove ATVs
+      // cleanup ATVs
       for (const auto& atv : rel.atvs) {
+        it->second->atvs.erase(atv);
         stored_atvs_.erase(atv->getId());
       }
 
-      // remove VTBs
-      for (const auto& vtb : rel.vtbs) {
-        stored_vtbs_.erase(vtb->getId());
+      // remove vbk block if we do not have VTBs
+      if (it->second->vtbs.empty()) {
+        vbkblocks_.erase(rel.header->getId());
+        it = relations_.erase(it);
+        continue;
       }
-
-      // remove vbk block
-      vbkblocks_.erase(rel.header->getId());
-      it = relations_.erase(it);
-
-      continue;
     }
 
     // cleanup stale VTBs
@@ -226,11 +223,6 @@ template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
                                            ValidationState& state) {
   VBK_ASSERT(vtb);
-
-  // before any checks and validations, check if payload is old or not
-  if (mempool_tree_.isBlockOld(vtb->containingBlock)) {
-    return {FAILED_STATELESS, state.Invalid("too-old")};
-  }
 
   // stateless validation
   if (!checkVTB(*vtb,
