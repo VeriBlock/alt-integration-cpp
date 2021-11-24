@@ -169,9 +169,7 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(Slice<const uint8_t> bytes,
-                      ValidationState& state,
-                      bool old_block_check = true) {
+  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
     ReadStream stream(bytes);
     T payload;
     if (!DeserializeFromVbkEncoding(stream, payload, state)) {
@@ -179,7 +177,7 @@ struct MemPool {
               state.Invalid("pop-mempool-submit-deserialize")};
     }
 
-    return submit<T>(payload, state, old_block_check);
+    return submit<T>(payload, state);
   }
 
   /**
@@ -202,10 +200,8 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(const T& pl,
-                      ValidationState& state,
-                      bool old_block_check = true) {
-    return submit<T>(std::make_shared<T>(pl), state, old_block_check);
+  SubmitResult submit(const T& pl, ValidationState& state) {
+    return submit<T>(std::make_shared<T>(pl), state);
   }
 
   /**
@@ -227,12 +223,9 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(const std::shared_ptr<T>& pl,
-                      ValidationState& state,
-                      bool old_block_check = true) {
+  SubmitResult submit(const std::shared_ptr<T>& pl, ValidationState& state) {
     (void)pl;
     (void)state;
-    (void)old_block_check;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return {};
   }
@@ -251,10 +244,6 @@ struct MemPool {
     static_assert(sizeof(T) == 0,
                   "Undefined type used in MemPool::getInFlightMap");
   }
-
-  void setDoStalledCheck(bool do_check) { this->do_stalled_check_ = do_check; }
-
-  bool getDoStalledCheck() const { return this->do_stalled_check_; }
 
   std::vector<BtcBlock::hash_t> getMissingBtcBlocks() const;
 
@@ -330,8 +319,6 @@ struct MemPool {
   vbk_map_t vbkblocks_;
   atv_map_t stored_atvs_;
   vtb_map_t stored_vtbs_;
-
-  bool do_stalled_check_{true};
 
   atv_value_sorted_map_t atvs_in_flight_{
       [](const std::shared_ptr<ATV>& v1,
@@ -424,11 +411,11 @@ struct MemPool {
 
 // clang-format off
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state,  bool old_block_check);
+template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state,  bool old_block_check);
+template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state,  bool old_block_check);
+template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload
