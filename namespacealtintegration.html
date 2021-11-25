@@ -543,11 +543,11 @@ template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:acb85505cbe32103717a6b19cce6203c8"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#acb85505cbe32103717a6b19cce6203c8">ToJSON</a> (const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;i)</td></tr>
 <tr class="memdesc:acb85505cbe32103717a6b19cce6203c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:acb85505cbe32103717a6b19cce6203c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab73d75cdeed794526d74961fcab1d6e2"><td class="memTemplParams" colspan="2"><a id="ab73d75cdeed794526d74961fcab1d6e2"></a>
+<tr class="memitem:a1f4a8d5bd53e800b4a5c5a1fa45462e4"><td class="memTemplParams" colspan="2"><a id="a1f4a8d5bd53e800b4a5c5a1fa45462e4"></a>
 template&lt;typename Block &gt; </td></tr>
-<tr class="memitem:ab73d75cdeed794526d74961fcab1d6e2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ab73d75cdeed794526d74961fcab1d6e2">forEachNodePostorder</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;index, const std::function&lt; void(<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;)&gt; &amp;visit)</td></tr>
-<tr class="memdesc:ab73d75cdeed794526d74961fcab1d6e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Postorder tree traversal algorithm. <br /></td></tr>
-<tr class="separator:ab73d75cdeed794526d74961fcab1d6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f4a8d5bd53e800b4a5c5a1fa45462e4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a1f4a8d5bd53e800b4a5c5a1fa45462e4">forEachNodePostorder</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;index, const std::function&lt; void(<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;)&gt; &amp;visit, const std::function&lt; bool(<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;)&gt; &amp;shouldVisit)</td></tr>
+<tr class="memdesc:a1f4a8d5bd53e800b4a5c5a1fa45462e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Postorder tree traversal algorithm. <br /></td></tr>
+<tr class="separator:a1f4a8d5bd53e800b4a5c5a1fa45462e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a869a4359297806bc6fc2821a67e7dadd"><td class="memTemplParams" colspan="2"><a id="a869a4359297806bc6fc2821a67e7dadd"></a>
 template&lt;typename Block &gt; </td></tr>
 <tr class="memitem:a869a4359297806bc6fc2821a67e7dadd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a869a4359297806bc6fc2821a67e7dadd">forEachNodePreorder</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;index, const std::function&lt; bool(<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;)&gt; &amp;visit)</td></tr>
@@ -1972,28 +1972,28 @@ template&lt;typename Block &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tree__algo_8hpp_source.html#l00076">76</a> of file <a class="el" href="tree__algo_8hpp_source.html">tree_algo.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                                                                      {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keyword">using</span> index_t = BlockIndex&lt;Block&gt;;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  std::vector&lt;index_t*&gt; ret{};</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  forEachNodePreorder&lt;Block&gt;(index, [&amp;ret](index_t&amp; next) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (!next.isValid()) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="comment">// this is invalid subtree</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      return false;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="comment">// this is valid subtree</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    if (next.isValidTip()) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      ret.push_back(&amp;next);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="comment">// do not continue, as there are no valid next blocks</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      return false;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  });</div>
+<p class="definition">Definition at line <a class="el" href="tree__algo_8hpp_source.html#l00079">79</a> of file <a class="el" href="tree__algo_8hpp_source.html">tree_algo.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                                                      {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keyword">using</span> index_t = BlockIndex&lt;Block&gt;;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  std::vector&lt;index_t*&gt; ret{};</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  forEachNodePreorder&lt;Block&gt;(index, [&amp;ret](index_t&amp; next) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">if</span> (!next.isValid()) {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="comment">// this is invalid subtree</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      return false;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="comment">// this is valid subtree</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    if (next.isValidTip()) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      ret.push_back(&amp;next);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      <span class="comment">// do not continue, as there are no valid next blocks</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;      return false;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  });</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2031,19 +2031,19 @@ template&lt;typename Block &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tree__algo_8hpp_source.html#l00103">103</a> of file <a class="el" href="tree__algo_8hpp_source.html">tree_algo.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                              {</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keyword">using</span> index_t = BlockIndex&lt;Block&gt;;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  std::vector&lt;index_t*&gt; ret{};</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>* tip : tips) {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">auto</span>* ancestor = tip-&gt;getAncestor(index.getHeight());</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">if</span> (ancestor == &amp;index) {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      ret.push_back(tip);</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="tree__algo_8hpp_source.html#l00106">106</a> of file <a class="el" href="tree__algo_8hpp_source.html">tree_algo.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                              {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">using</span> index_t = BlockIndex&lt;Block&gt;;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  std::vector&lt;index_t*&gt; ret{};</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span>* tip : tips) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keyword">auto</span>* ancestor = tip-&gt;getAncestor(index.getHeight());</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">if</span> (ancestor == &amp;index) {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;      ret.push_back(tip);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  }</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
