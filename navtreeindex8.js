@@ -1,7 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"structaltintegration_1_1VbkTx.html#ab001ac046facc664b9c6939bc71c88a7":[5,0,0,48,9],
-"structaltintegration_1_1VbkTx.html#ab0387b99aeedd7b5b2b3d0fb4b1ee6bf":[5,0,0,48,3],
 "structaltintegration_1_1VbkTx.html#ad8a4bcf8849b75c248400bb07408fdb7":[5,0,0,48,15],
 "structaltintegration_1_1VbkTx.html#ae528b1156501d02c718720a3b6227ecb":[5,0,0,48,13],
 "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html":[5,0,0,0,2],
@@ -165,12 +163,12 @@ var NAVTREEINDEX8 =
 "vtb_8h_source.html":[6,0,1,0,0,2,0,15],
 "vtb_8hpp_source.html":[6,0,1,0,0,5,21],
 "write__stream_8hpp_source.html":[6,0,1,0,0,49],
-"":[4,0,0,5],
-"":[4,0,0,1],
-"":[4,0,0,6],
-"":[4,0,0,3],
+"":[4,0,0,7],
 "":[4,0,1],
+"":[4,0,0,5],
+"":[4,0,0,3],
 "":[4,0,0,0],
+"":[4,0,0,1],
 "":[4,0,0,2],
-"":[4,0,0,7]
+"":[4,0,0,6]
 };
