@@ -280,7 +280,7 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
 
   applyInNextBlock(popdata);
 
-  // mine one more block on top of the block full of VBK payloads
+  VBK_LOG_DEBUG("mine one more block on top of the block full of VBK payloads");
   popdata = checkedGetPop();
   applyInNextBlock(popdata);
 
@@ -288,16 +288,16 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   // auto *vbktip = alttree.vbk().getBestChain().tip();
   // auto *btctip = alttree.btc().getBestChain().tip();
 
-  // save state
+  VBK_LOG_DEBUG("save state");
   save(alttree);
 
-  // finalize block
+  VBK_LOG_DEBUG("finalize block");
   alttree.finalizeBlock(*tip->pprev);
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
 
-  // check the state after finalization
+  VBK_LOG_DEBUG("check the state after finalization");
   ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
   // TODO: enable these checks after vbk/btc finalization will work

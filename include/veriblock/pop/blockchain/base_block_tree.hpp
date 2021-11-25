@@ -271,10 +271,10 @@ struct BaseBlockTree {
       VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
     }
 
-    // remove this block from 'pnext' set of previous block
-    prev->pnext.erase(&toRemove);
     forEachNodePostorder<block_t>(
-        toRemove, [&](index_t& next) { removeSingleBlock(next); });
+        toRemove,
+        [&](index_t& next) { removeSingleBlock(next); },
+        [&](index_t& next) { return !next.isDeleted(); });
 
     // after removal, try to add tip
     tryAddTip(prev);
@@ -295,10 +295,12 @@ struct BaseBlockTree {
 
   //! @overload
   void removeLeaf(index_t& toRemove) {
-    VBK_ASSERT_MSG(toRemove.pnext.empty(),
-                   "not a leaf block %s, pnext.size=%d",
+    auto nondeletedDescendantCount = toRemove.nondeletedDescendantCount();
+
+    VBK_ASSERT_MSG(nondeletedDescendantCount == 0,
+                   "not a leaf block %s, has %d non-deleted descendants",
                    toRemove.toPrettyString(),
-                   toRemove.pnext.size());
+                   nondeletedDescendantCount);
     return this->removeSubtree(toRemove);
   }
 
@@ -349,13 +351,13 @@ struct BaseBlockTree {
 
     doInvalidate(toBeInvalidated, reason);
 
-    // flag next subtrees (excluding current block) as BLOCK_FAILED_CHILD
+    // flag the child subtrees (excluding current block) as BLOCK_FAILED_CHILD
     for (auto* ptr : toBeInvalidated.pnext) {
       auto* pnext = ptr;
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) {
-        bool valid = index.isValid();
+        bool failed = index.isFailed();
         doInvalidate(index, BLOCK_FAILED_CHILD);
-        return valid;
+        return !failed;
       });
     }
 
@@ -420,8 +422,8 @@ struct BaseBlockTree {
     for (auto* pnext : toBeValidated.pnext) {
       forEachNodePreorder<block_t>(*pnext, [&](index_t& index) -> bool {
         doReValidate(index, BLOCK_FAILED_CHILD);
-        bool valid = index.isValid();
-        return valid;
+        bool failed = index.isFailed();
+        return !failed;
       });
     }
 
@@ -612,7 +614,7 @@ struct BaseBlockTree {
 
     this->onBlockInserted(current);
 
-    // raise validity may return false if block is invalid
+    // raise validity may return false if the block is invalid
     current->raiseValidity(BLOCK_VALID_TREE);
     return current;
   }
@@ -623,7 +625,7 @@ struct BaseBlockTree {
                       ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
 
-    VBK_ASSERT(isBootstrapped() && "should be bootstrapped");
+    VBK_ASSERT_MSG(isBootstrapped(), "should be bootstrapped");
 
     // quick check if given block is sane
     auto& root = getRoot();
@@ -814,11 +816,14 @@ struct BaseBlockTree {
 
     // starting at oldest ancestor, remove all blocks during post-order tree
     // traversal
-    forEachNodePostorder<block_t>(*index, [&](index_t& next) {
-      auto h = makePrevHash(next.getHash());
-      VBK_LOG_INFO("Deallocating block %s", next.toShortPrettyString());
-      blocks_.erase(h);
-    });
+    forEachNodePostorder<block_t>(
+        *index,
+        [&](index_t& next) {
+          auto h = makePrevHash(next.getHash());
+          VBK_LOG_INFO("Deallocating block %s", next.toShortPrettyString());
+          blocks_.erase(h);
+        },
+        [&](index_t&) { return true; });
   }
 
   inline void decreaseAppliedBlockCount(size_t erasedBlocks) {

@@ -18,19 +18,22 @@ namespace altintegration {
 template <typename Block>
 void forEachNodePostorder(
     BlockIndex<Block>& index,
-    const std::function<void(BlockIndex<Block>&)>& visit) {
+    const std::function<void(BlockIndex<Block>&)>& visit,
+    const std::function<bool(BlockIndex<Block>&)>& shouldVisit) {
   using index_t = BlockIndex<Block>;
   std::unordered_set<index_t*> set;
   std::stack<index_t*> stack;
   stack.push(&index);
   while (!stack.empty()) {
     auto* item = stack.top();
-    if (item->pnext.empty() || set.count(item) > 0) {
+    if (set.count(item) > 0) {
       visit(*item);
       stack.pop();
     } else {
       for (auto* next : item->pnext) {
-        stack.push(next);
+        if (shouldVisit(*next)) {
+          stack.push(next);
+        }
       }
       set.insert(item);
     }
