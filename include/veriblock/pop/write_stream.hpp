@@ -9,8 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-
-#include "assert.hpp"
+#include <veriblock/pop/assert.hpp>
 
 namespace altintegration {
 

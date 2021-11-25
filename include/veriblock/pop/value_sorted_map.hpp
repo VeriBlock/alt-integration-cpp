@@ -10,8 +10,7 @@
 #include <functional>
 #include <set>
 #include <unordered_map>
-
-#include "assert.hpp"
+#include <veriblock/pop/assert.hpp>
 
 namespace altintegration {
 

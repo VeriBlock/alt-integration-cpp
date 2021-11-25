@@ -4,5 +4,6 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/include/veriblock/pop/ct_params.hpp
 )
 
+add_subdirectory(abfi)
 add_subdirectory(pop)
 add_subdirectory(bfi)

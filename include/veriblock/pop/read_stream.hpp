@@ -9,8 +9,8 @@
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
+#include <veriblock/pop/assert.hpp>
 
-#include "assert.hpp"
 #include "slice.hpp"
 #include "validation_state.hpp"
 

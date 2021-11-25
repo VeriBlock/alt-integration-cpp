@@ -5,6 +5,7 @@
 #include "veriblock/pop/time.hpp"
 
 #include <atomic>
+#include <chrono>
 #include <cstdint>
 #include <ctime>
 
@@ -13,9 +14,9 @@
 namespace altintegration {
 
 // for unit testing
-static std::atomic<uint32_t> MockTime(0);
+static std::atomic<int64_t> MockTime(0);
 
-void setMockTime(uint32_t mocktime) {
+void setMockTime(int64_t mocktime) {
   MockTime.store(mocktime, std::memory_order_relaxed);
 }
 
