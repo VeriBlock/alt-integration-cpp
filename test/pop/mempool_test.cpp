@@ -933,6 +933,51 @@ TEST_F(MemPoolFixture, getPop_endorsedPriority) {
   EXPECT_EQ(pop_data.atvs[1], atv1);
 }
 
+TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
+  // When only VBK blocks are added but not VTBs, we may end up in a situation
+  // when we no longer can advance BTC context, due to all VTBs added into
+  // "finalized" (tip-2000) VBK blocks. Issue:
+  // https://github.com/VeriBlock/alt-integration-cpp/issues/894
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+  AltBlock endorsedBlock1 = chain[6];
+  AltBlock endorsedBlock2 = chain[5];
+
+  // mine 65 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(65);
+
+  // endorse VBK blocks
+  ASSERT_GE(vbkTip->getHeight(), 11);
+
+  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
+  auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
+  popminer->mineBtcBlocks(100);
+  auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
+
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
+
+  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+
+  ASSERT_TRUE(mempool->submit(vtb1, state));
+  ASSERT_TRUE(mempool->submit(vtb2, state));
+
+  vbkTip = popminer->mineVbkBlocks(vbkparam.getOldBlocksWindow());
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    ASSERT_TRUE(mempool->submit(*it, state));
+  }
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 200);
+  ASSERT_EQ(pop_data.atvs.size(), 0);
+  ASSERT_EQ(pop_data.vtbs.size(), 2);
+}
+
 TEST_F(MemPoolFixture, getPop_payloads_order1) {
   // Payloads with earlier VBK block will be earlier. VBK = use itself,
   // ATV=block of proof, VTB=containing.
