@@ -100,14 +100,14 @@ extern template struct BaseBlockTree<AltBlock>;
 //! After that, users can check if this block is connected:
 //! ```cpp
 //!     // ...
-//!     // this returns nullptr if block can not be found
+//!     // this returns nullptr if the block can not be found
 //!     auto* blockindex = tree.getBlockIndex(block.getHash());
-//!     assert(blockindex && "we added this block to a tree, so it must exist");
+//!     assert(blockindex && "we added this block to the tree, so it must exist");
 //!
 //!     auto candidates = tree.getConnectedTipsAfter(*blockindex);
 //!     if(candidates.empty()) {
 //!       // we have no POP FR candidates
-//!       return true; //! block have been added
+//!       return true; //! block has been added
 //!     }
 //!
 //!     const auto* tip = tree.getBestChain().tip();
@@ -202,12 +202,12 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
                         BlockReader& blockProvider);
 
   /**
-   * Set very first (bootstrap) altchain block with enabled POP.
+   * Set the very first (bootstrap) altchain block with POP enabled.
    *
    * Call this method before any use of AltBlockTree.
    *
    * @param[out] state validation state
-   * @return true in success, false if block is invalid.
+   * @return true if success, false if the block is invalid.
    * @private
    */
   VBK_CHECK_RETURN bool bootstrap(ValidationState& state);
