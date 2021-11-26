@@ -271,8 +271,8 @@ struct BlockIndex : public Block::addon_t {
   bool isValidTip() const {
     return canBeATip() &&
            (pnext.empty() ||
-            std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-              return !index->canBeATip();
+            std::none_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+              return index->canBeATip();
             }));
   }
 
@@ -281,8 +281,8 @@ struct BlockIndex : public Block::addon_t {
    */
   bool allDescendantsUnapplied() const {
     return pnext.empty() ||
-           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-             return !index->hasFlags(BLOCK_ACTIVE);
+           std::none_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+             return index->hasFlags(BLOCK_ACTIVE);
            });
   }
 
@@ -301,8 +301,8 @@ struct BlockIndex : public Block::addon_t {
    */
   bool allDescendantsUnconnected() const {
     return pnext.empty() ||
-           std::all_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
-             return !index->isConnected();
+           std::none_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
+             return index->isConnected();
            });
   }
 
