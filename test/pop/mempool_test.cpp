@@ -972,10 +972,15 @@ TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
     ASSERT_TRUE(mempool->submit(*it, state));
   }
 
-  auto pop_data = mempool->generatePopData();
-  ASSERT_EQ(pop_data.context.size(), 200);
-  ASSERT_EQ(pop_data.atvs.size(), 0);
-  ASSERT_EQ(pop_data.vtbs.size(), 2);
+  const auto* endorsedVbkBlock3 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
+  auto vbkPopTx3 = generatePopTx(endorsedVbkBlock3->getHeader());
+  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx3});
+  auto vtb3 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx3);
+
+  ASSERT_TRUE(mempool->submit(vtb3, state));
+
+  ASSERT_EQ(
+      mempool->getInFlightMap<VTB>().size() + mempool->getMap<VTB>().size(), 3);
 }
 
 TEST_F(MemPoolFixture, getPop_payloads_order1) {
