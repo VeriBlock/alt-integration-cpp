@@ -134,9 +134,9 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltBlockTree.h
 <div class="line">    <span class="comment">// ...</span></div>
 </div><!-- fragment --><p><a class="el" href="structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c" title="Validate and add ALT block header to AltBlockTree.">AltBlockTree::acceptBlockHeader()</a> connects block immediately if all previous blocks are connected, or just adds block body to <a class="el" href="structaltintegration_1_1AltBlock.html" title="Represents a view on Altchain block - i.e.">AltBlock</a> when one of previous blocks is not connected.</p>
 <p>After that, users can check if this block is connected: </p><div class="fragment"><div class="line"><span class="comment">// ...</span></div>
-<div class="line"><span class="comment">// this returns nullptr if block can not be found</span></div>
+<div class="line"><span class="comment">// this returns nullptr if the block can not be found</span></div>
 <div class="line"><span class="keyword">auto</span>* blockindex = tree.getBlockIndex(block.getHash());</div>
-<div class="line">assert(blockindex &amp;&amp; <span class="stringliteral">&quot;we added this block to a tree, so it must exist&quot;</span>);</div>
+<div class="line">assert(blockindex &amp;&amp; <span class="stringliteral">&quot;we added this block to the tree, so it must exist&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">auto</span> candidates = tree.getConnectedTipsAfter(*blockindex);</div>
 <div class="line"><span class="keywordflow">if</span>(candidates.empty()) {</div>
