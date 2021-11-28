@@ -944,12 +944,13 @@ TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
   AltBlock endorsedBlock1 = chain[6];
   AltBlock endorsedBlock2 = chain[5];
 
-  // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+  // mine 20 VBK blocks
+  auto* vbkTip = popminer->mineVbkBlocks(20);
 
   // endorse VBK blocks
   ASSERT_GE(vbkTip->getHeight(), 11);
 
+  // generate two VTBs
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
@@ -961,10 +962,24 @@ TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
   auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
   auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
 
-  ASSERT_TRUE(mempool->submit(vtb1, state));
-  ASSERT_TRUE(mempool->submit(vtb2, state));
+  // generate two ATVs
+  const auto& tx1 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock1), Coin(1000));
+  const auto& tx2 = popminer->createVbkTxEndorsingAltBlockWithSourceAmount(
+      generatePublicationData(endorsedBlock2), Coin(1000));
+  const auto& block = popminer->mineVbkBlocks(1, {tx1, tx2})->getHeader();
+  auto pd1 = popminer->createPopDataEndorsingAltBlock(
+      block, tx1, getLastKnownVbkBlock());
+  ATV& atv1 = pd1.atvs.at(0);
+  auto pd2 = popminer->createPopDataEndorsingAltBlock(
+      block, tx2, getLastKnownVbkBlock());
+  ATV& atv2 = pd2.atvs.at(0);
 
-  vbkTip = popminer->mineVbkBlocks(vbkparam.getOldBlocksWindow());
+  // generate VBK fork block
+  auto* fork_block = popminer->mineVbkBlocks(1, *vbkTip);
+
+  // mine vbk blocks more than "old block" window
+  vbkTip = popminer->mineVbkBlocks(vbkparam.getOldBlocksWindow() + 5);
 
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
@@ -972,15 +987,22 @@ TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
     ASSERT_TRUE(mempool->submit(*it, state));
   }
 
-  const auto* endorsedVbkBlock3 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
-  auto vbkPopTx3 = generatePopTx(endorsedVbkBlock3->getHeader());
-  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx3});
-  auto vtb3 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx3);
+  state.reset();
 
-  ASSERT_TRUE(mempool->submit(vtb3, state));
+  while (alttree.vbk().getBestChain().tip()->getHeight() !=
+         vbkTip->getHeight()) {
+    auto pop_data = mempool->generatePopData();
+    mineAltBlocks(1, chain, false, false);
+    ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop_data));
+    ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+  }
 
-  ASSERT_EQ(
-      mempool->getInFlightMap<VTB>().size() + mempool->getMap<VTB>().size(), 3);
+  ASSERT_FALSE(mempool->submit(atv1, state));
+  ASSERT_FALSE(mempool->submit(atv2, state));
+  ASSERT_FALSE(mempool->submit(fork_block->getHeader(), state));
+
+  ASSERT_TRUE(mempool->submit(vtb1, state));
+  ASSERT_TRUE(mempool->submit(vtb2, state));
 }
 
 TEST_F(MemPoolFixture, getPop_payloads_order1) {
