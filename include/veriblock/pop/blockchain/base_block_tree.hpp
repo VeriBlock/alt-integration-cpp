@@ -520,6 +520,15 @@ struct BaseBlockTree {
   }
 
   //! dangerous! permanently drops the block from the tree
+  void eraseBlockUnchecked(index_t& block) {
+    VBK_LOG_INFO("Deallocating block %s", block.toShortPrettyString());
+    auto count = blocks_.erase(makePrevHash(block.getHash()));
+    VBK_ASSERT_MSG(count == 1,
+                   "state corruption: block %s is not in the store",
+                   block.toPrettyString());
+  }
+
+  //! dangerous! permanently drops the block from the tree
   void eraseBlock(index_t& block) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT_MSG(block.isDeleted(),
@@ -527,14 +536,11 @@ struct BaseBlockTree {
                    block.toPrettyString());
     VBK_ASSERT_MSG(
         block.pnext.empty(),
-        "cannot erase a block that has ancestors as that would split "
+        "cannot erase a block that has descendants as that would split "
         "the tree: %s",
         block.toPrettyString());
-    auto shortHash = makePrevHash(block.getHash());
-    auto count = blocks_.erase(shortHash);
-    VBK_ASSERT_MSG(count == 1,
-                   "state corruption: block %s is not in the store",
-                   block.toPrettyString());
+
+    eraseBlockUnchecked(block);
   }
 
   //! create a new block index
@@ -818,11 +824,7 @@ struct BaseBlockTree {
     // traversal
     forEachNodePostorder<block_t>(
         *index,
-        [&](index_t& next) {
-          auto h = makePrevHash(next.getHash());
-          VBK_LOG_INFO("Deallocating block %s", next.toShortPrettyString());
-          blocks_.erase(h);
-        },
+        [&](index_t& block) { return eraseBlockUnchecked(block); },
         [&](index_t&) { return true; });
   }
 
