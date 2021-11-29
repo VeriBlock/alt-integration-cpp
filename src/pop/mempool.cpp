@@ -61,61 +61,55 @@ PopData MemPool::generatePopData() {
 }
 
 void MemPool::cleanUp() {
-  if (do_stalled_check_) {
-    auto& vbk_tree = mempool_tree_.vbk().getStableTree();
-    for (auto it = relations_.begin(); it != relations_.end();) {
-      auto& rel = *it->second;
-      auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
+  auto& vbk_tree = mempool_tree_.vbk().getStableTree();
+  for (auto it = relations_.begin(); it != relations_.end();) {
+    auto& rel = *it->second;
+    auto* index = vbk_tree.getBlockIndex(it->second->header->getHash());
 
-      auto* tip = vbk_tree.getBestChain().tip();
-      VBK_ASSERT(tip);
-      bool tooOld =
-          tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
-          rel.header->getHeight();
+    auto* tip = vbk_tree.getBestChain().tip();
+    VBK_ASSERT(tip);
+    bool tooOld = tip->getHeight() - vbk_tree.getParams().getMaxReorgBlocks() >
+                  rel.header->getHeight();
 
-      // cleanup stale relations
-      if (tooOld) {
-        // remove ATVs
-        for (const auto& atv : rel.atvs) {
-          stored_atvs_.erase(atv->getId());
-        }
-
-        // remove VTBs
-        for (const auto& vtb : rel.vtbs) {
-          stored_vtbs_.erase(vtb->getId());
-        }
-
-        // remove vbk block
-        vbkblocks_.erase(rel.header->getId());
-        it = relations_.erase(it);
-
-        continue;
+    // cleanup stale payloads
+    if (tooOld) {
+      // cleanup ATVs
+      for (const auto& atv : rel.atvs) {
+        it->second->atvs.erase(atv);
+        stored_atvs_.erase(atv->getId());
       }
 
-      // cleanup stale VTBs
-      cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
-        auto id = v.getId();
-        stored_vtbs_.erase(id);
-      });
-
-      // cleanup stale ATVs
-      cleanupStale<ATV>(
-          rel.atvs, [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
-
-      if (index != nullptr && rel.empty()) {
+      // remove vbk block if we do not have VTBs
+      if (it->second->vtbs.empty()) {
         vbkblocks_.erase(rel.header->getId());
         it = relations_.erase(it);
         continue;
       }
-
-      ++it;
     }
 
-    // remove payloads from inFlight storage
-    cleanupStale<VTB>(vtbs_in_flight_);
-    cleanupStale<ATV>(atvs_in_flight_);
-    cleanupStale<VbkBlock>(vbkblocks_in_flight_);
+    // cleanup stale VTBs
+    cleanupStale<VTB>(rel.vtbs, [this](const VTB& v) {
+      auto id = v.getId();
+      stored_vtbs_.erase(id);
+    });
+
+    // cleanup stale ATVs
+    cleanupStale<ATV>(rel.atvs,
+                      [this](const ATV& v) { stored_atvs_.erase(v.getId()); });
+
+    if (index != nullptr && rel.empty()) {
+      vbkblocks_.erase(rel.header->getId());
+      it = relations_.erase(it);
+      continue;
+    }
+
+    ++it;
   }
+
+  // remove payloads from inFlight storage
+  cleanupStale<VTB>(vtbs_in_flight_);
+  cleanupStale<ATV>(atvs_in_flight_);
+  cleanupStale<VbkBlock>(vbkblocks_in_flight_);
 
   mempool_tree_.cleanUp();
 
@@ -193,12 +187,11 @@ void MemPool::clear() {
 
 template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
-                                           ValidationState& state,
-                                           bool old_block_check) {
+                                           ValidationState& state) {
   VBK_ASSERT(atv);
 
   // before any checks and validations, check if payload is old or not
-  if (old_block_check && mempool_tree_.isBlockOld(atv->blockOfProof)) {
+  if (mempool_tree_.isBlockOld(atv->blockOfProof)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 
@@ -228,14 +221,8 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
 template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
-                                           ValidationState& state,
-                                           bool old_block_check) {
+                                           ValidationState& state) {
   VBK_ASSERT(vtb);
-
-  // before any checks and validations, check if payload is old or not
-  if (old_block_check && mempool_tree_.isBlockOld(vtb->containingBlock)) {
-    return {FAILED_STATELESS, state.Invalid("too-old")};
-  }
 
   // stateless validation
   if (!checkVTB(*vtb,
@@ -265,13 +252,11 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 
 template <>
 MemPool::SubmitResult MemPool::submit<VbkBlock>(
-    const std::shared_ptr<VbkBlock>& blk,
-    ValidationState& state,
-    bool old_block_check) {
+    const std::shared_ptr<VbkBlock>& blk, ValidationState& state) {
   VBK_ASSERT(blk);
 
   // before any checks and validations, check if payload is old or not
-  if (old_block_check && mempool_tree_.isBlockOld(*blk)) {
+  if (mempool_tree_.isBlockOld(*blk)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 

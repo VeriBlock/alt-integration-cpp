@@ -174,7 +174,6 @@ struct PopTestFixture {
 
     return const_cast<BlockIndex<AltBlock>*>(index);
   }
-  
 
   BlockIndex<AltBlock>* mineAltBlocks(const BlockIndex<AltBlock>& prev,
                                       size_t num,
@@ -197,7 +196,6 @@ struct PopTestFixture {
     return const_cast<BlockIndex<AltBlock>*>(index);
   }
 
-
   void mineAltBlocks(uint32_t num,
                      std::vector<AltBlock>& chain,
                      bool connectBlocks = true,
@@ -215,7 +213,7 @@ struct PopTestFixture {
       if (setState) {
         ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
       }
-      ASSERT_TRUE(state.IsValid());
+      ASSERT_TRUE(state.IsValid()) << state.toString();
     }
   }
 
