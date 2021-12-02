@@ -820,7 +820,8 @@ struct BaseBlockTree {
         *index,
         [&](index_t& next) {
           auto h = makePrevHash(next.getHash());
-          VBK_LOG_INFO("Deallocating block %s", next.toShortPrettyString());
+          //! @warning: do not use logger in destructor, as logger instance may
+          //! be deallocated!
           blocks_.erase(h);
         },
         [&](index_t&) { return true; });

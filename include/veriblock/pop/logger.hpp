@@ -54,6 +54,7 @@ struct Logger {
 };
 
 //! getter for global logger instance
+//! @warning DO NOT USE LOGGER IN DESTRUCTORS.
 Logger& GetLogger();
 //! setter for global logger instance
 void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl = LogLevel::info);
