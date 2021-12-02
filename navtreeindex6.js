@@ -1,13 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1Config.html#a567bfc710aaf809915274fdce6c08cd7":[5,0,0,26,12],
-"structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b":[5,0,0,26,7],
-"structaltintegration_1_1Config.html#a81feca7d1501979054358316d9da000f":[5,0,0,26,11],
-"structaltintegration_1_1Config.html#a8730eaf51067ecd8091d64cdf7b86ea9":[5,0,0,26,4],
-"structaltintegration_1_1Config.html#ab3b663dd0727f53d6cb6589c775cc867":[5,0,0,26,6],
-"structaltintegration_1_1Config_1_1Bootstrap.html":[5,0,0,26,0],
-"structaltintegration_1_1Config_1_1Bootstrap.html#a067afda8589eb095f3382781b700bbb4":[5,0,0,26,0,1],
-"structaltintegration_1_1Config_1_1Bootstrap.html#a3dda1b273cd4b9438a9e8b47c3afda47":[5,0,0,26,0,0],
 "structaltintegration_1_1Config_1_1Bootstrap.html#a48840270db4f535dca32e02225413149":[5,0,0,26,0,3],
 "structaltintegration_1_1Config_1_1Bootstrap.html#a87ed66ca8603a2309ca83fd5ff6bd5ef":[5,0,0,26,0,2],
 "structaltintegration_1_1ContextInfoContainer.html":[5,0,0,34],
@@ -249,5 +241,13 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1PopRewardsParams.html#ae73739b4241645ccae35e3d471e53562":[5,0,0,62,10],
 "structaltintegration_1_1PopRewardsParams.html#ae842bd43aacd249a25931fb6fb6b63fc":[5,0,0,62,3],
 "structaltintegration_1_1PublicationData.html":[5,0,0,44],
-"structaltintegration_1_1PublicationData.html#a0f98a09cf5a2476c75893259eb0a4df3":[5,0,0,44,1]
+"structaltintegration_1_1PublicationData.html#a0f98a09cf5a2476c75893259eb0a4df3":[5,0,0,44,1],
+"structaltintegration_1_1PublicationData.html#a25835c551b4dbd2ea3db199f18f78323":[5,0,0,44,2],
+"structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200":[5,0,0,44,6],
+"structaltintegration_1_1PublicationData.html#ac607c6ab5dcfe2a0f5428c44b473dcff":[5,0,0,44,0],
+"structaltintegration_1_1PublicationData.html#ad293e2906e9896972986469d1048a5e6":[5,0,0,44,5],
+"structaltintegration_1_1PublicationData.html#add06191a76226e51c6487a7af44ad46a":[5,0,0,44,3],
+"structaltintegration_1_1PublicationData.html#affe04ae79503b38169ecafdb34ea14f1":[5,0,0,44,4],
+"structaltintegration_1_1ReadStream.html":[5,0,0,57],
+"structaltintegration_1_1ReadStream.html#a05ef9fc428a2769b60f9f114f12d46d9":[5,0,0,57,4]
 };

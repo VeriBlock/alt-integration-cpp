@@ -820,14 +820,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="name
 <tr class="memitem:aa8b105f3d96feb6bf461bdd11ce8c7ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba">isKeystone</a> (int32_t blockNumber, uint32_t keystoneInterval)</td></tr>
 <tr class="memdesc:aa8b105f3d96feb6bf461bdd11ce8c7ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates if block with height = <code>blockNumber</code> is keystone.  <a href="namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba">More...</a><br /></td></tr>
 <tr class="separator:aa8b105f3d96feb6bf461bdd11ce8c7ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12247879d0b91b79b8b82bc317a6fcd9"><td class="memItemLeft" align="right" valign="top"><a id="a12247879d0b91b79b8b82bc317a6fcd9"></a>
-<a class="el" href="structaltintegration_1_1Logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a12247879d0b91b79b8b82bc317a6fcd9">GetLogger</a> ()</td></tr>
-<tr class="memdesc:a12247879d0b91b79b8b82bc317a6fcd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for global logger instance <br /></td></tr>
+<tr class="memitem:a12247879d0b91b79b8b82bc317a6fcd9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1Logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a12247879d0b91b79b8b82bc317a6fcd9">GetLogger</a> ()</td></tr>
+<tr class="memdesc:a12247879d0b91b79b8b82bc317a6fcd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for global logger instance  <a href="namespacealtintegration.html#a12247879d0b91b79b8b82bc317a6fcd9">More...</a><br /></td></tr>
 <tr class="separator:a12247879d0b91b79b8b82bc317a6fcd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c9c4b412aba76535420989b8f2f2326"><td class="memItemLeft" align="right" valign="top"><a id="a4c9c4b412aba76535420989b8f2f2326"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4c9c4b412aba76535420989b8f2f2326">SetLogger</a> (const <a class="el" href="structaltintegration_1_1Logger.html">Logger</a> &amp;lgr, <a class="el" href="namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61d">LogLevel</a> log_lvl=LogLevel::info)</td></tr>
-<tr class="memdesc:a4c9c4b412aba76535420989b8f2f2326"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for global logger instance <br /></td></tr>
-<tr class="separator:a4c9c4b412aba76535420989b8f2f2326"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada8ffc7bff1b5b13b6600a5905abaa32"><td class="memItemLeft" align="right" valign="top"><a id="ada8ffc7bff1b5b13b6600a5905abaa32"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ada8ffc7bff1b5b13b6600a5905abaa32">SetLogger</a> (std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1Logger.html">Logger</a> &gt; lgr, <a class="el" href="namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61d">LogLevel</a> log_lvl=LogLevel::info)</td></tr>
+<tr class="memdesc:ada8ffc7bff1b5b13b6600a5905abaa32"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for global logger instance <br /></td></tr>
+<tr class="separator:ada8ffc7bff1b5b13b6600a5905abaa32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cacfa7b162d842639af877743c2e123"><td class="memTemplParams" colspan="2"><a id="a0cacfa7b162d842639af877743c2e123"></a>
 template&lt;typename L &gt; </td></tr>
 <tr class="memitem:a0cacfa7b162d842639af877743c2e123"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0cacfa7b162d842639af877743c2e123">SetLogger</a> (<a class="el" href="namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61d">LogLevel</a> log_lvl=LogLevel::info)</td></tr>
@@ -2142,6 +2141,24 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if endorsed block found, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a12247879d0b91b79b8b82bc317a6fcd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12247879d0b91b79b8b82bc317a6fcd9">&#9670;&nbsp;</a></span>GetLogger()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structaltintegration_1_1Logger.html">Logger</a>&amp; altintegration::GetLogger </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section warning"><dt>Warning</dt><dd>DO NOT USE LOGGER IN DESTRUCTORS. </dd></dl>
 
 </div>
 </div>
