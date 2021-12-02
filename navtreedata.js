@@ -67,7 +67,7 @@ var NAVTREEINDEX =
 "",
 "ethash_8hpp.html#aa4af792ca7f14504af342b243af5a947",
 "namespacealtintegration.html#a1febed3a1883d6cf7c66c5ec0a30e61d",
-"namespacealtintegration.html#ac2b96e9b7c868d1fa800491b5535d5a3",
+"namespacealtintegration.html#ac2b722a3cdc1cda335215cb443cfaeb5",
 "structaltintegration_1_1AltBlock.html#ad9af739d8c3adde1e1adb342a5444a45",
 "structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb",
 "structaltintegration_1_1Config.html#a567bfc710aaf809915274fdce6c08cd7",

@@ -9,7 +9,7 @@ var searchData=
   ['serializetorawhex_742',['SerializeToRawHex',['../namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e',1,'altintegration']]],
   ['serializetovbkencoding_743',['SerializeToVbkEncoding',['../namespacealtintegration.html#a70596b439aa8324197a36b9e35940847',1,'altintegration']]],
   ['setbtc_744',['setBTC',['../structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b',1,'altintegration::Config']]],
-  ['setlogger_745',['SetLogger',['../namespacealtintegration.html#a0cacfa7b162d842639af877743c2e123',1,'altintegration::SetLogger(LogLevel log_lvl=LogLevel::info)'],['../namespacealtintegration.html#ada8ffc7bff1b5b13b6600a5905abaa32',1,'altintegration::SetLogger(std::unique_ptr&lt; Logger &gt; lgr, LogLevel log_lvl=LogLevel::info)']]],
+  ['setlogger_745',['SetLogger',['../namespacealtintegration.html#a0cacfa7b162d842639af877743c2e123',1,'altintegration::SetLogger(LogLevel log_lvl=LogLevel::info)'],['../namespacealtintegration.html#a4c9c4b412aba76535420989b8f2f2326',1,'altintegration::SetLogger(const Logger &amp;lgr, LogLevel log_lvl=LogLevel::info)']]],
   ['setmocktime_746',['setMockTime',['../namespacealtintegration.html#a6fa0fd58ffe1d2cebbb19b36aa3a7182',1,'altintegration']]],
   ['setstate_747',['setState',['../structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd',1,'altintegration::AltBlockTree']]],
   ['setvbk_748',['setVBK',['../structaltintegration_1_1Config.html#a37c65b03dc521c49196aeb251a4b114f',1,'altintegration::Config']]],
