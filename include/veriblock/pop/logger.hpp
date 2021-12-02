@@ -56,12 +56,12 @@ struct Logger {
 //! getter for global logger instance
 Logger& GetLogger();
 //! setter for global logger instance
-void SetLogger(std::unique_ptr<Logger> lgr, LogLevel log_lvl = LogLevel::info);
+void SetLogger(const Logger& lgr, LogLevel log_lvl = LogLevel::info);
 
 //! setter for global logger instance
 template <typename L>
 void SetLogger(LogLevel log_lvl = LogLevel::info) {
-  SetLogger(std::unique_ptr<L>(new L()), log_lvl);
+  SetLogger(L{}, log_lvl);
 }
 
 //! convert loglevel to string
