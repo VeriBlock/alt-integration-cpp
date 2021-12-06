@@ -12,7 +12,7 @@ var structaltintegration_1_1AltBlockTree =
     [ "PopForkComparator", "structaltintegration_1_1AltBlockTree.html#a33a715e0480f2031370aa00deef1fc51", null ],
     [ "stored_index_t", "structaltintegration_1_1AltBlockTree.html#acab9a41566176dc7fb385eb3b9676a27", null ],
     [ "vbk_config_t", "structaltintegration_1_1AltBlockTree.html#a9c4aa4a167a177cbeb017b96572af451", null ],
-    [ "~AltBlockTree", "structaltintegration_1_1AltBlockTree.html#ae7940d71bf588458cd482b542a8f000e", null ],
+    [ "~AltBlockTree", "structaltintegration_1_1AltBlockTree.html#abacd0898233fe2e6bb64d881beab087e", null ],
     [ "AltBlockTree", "structaltintegration_1_1AltBlockTree.html#a61baa26057064e2315a9ad5d9ea4a9e7", null ],
     [ "acceptBlock", "structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59", null ],
     [ "acceptBlock", "structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921", null ],

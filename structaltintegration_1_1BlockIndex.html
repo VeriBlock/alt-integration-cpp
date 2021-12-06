@@ -157,12 +157,12 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BlockIndex.html#a4c49a036f27fca781f06c4ceb4e36949">BlockIndex</a> (height_t _height)</td></tr>
 <tr class="memdesc:a4c49a036f27fca781f06c4ceb4e36949"><td class="mdescLeft">&#160;</td><td class="mdescRight">create a root block in a deleted state <br /></td></tr>
 <tr class="separator:a4c49a036f27fca781f06c4ceb4e36949"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d5b2a863e3148cad9eb09b9cf1f5063"><td class="memItemLeft" align="right" valign="top"><a id="a6d5b2a863e3148cad9eb09b9cf1f5063"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BlockIndex</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a> &amp;&amp;other) noexcept=default</td></tr>
-<tr class="separator:a6d5b2a863e3148cad9eb09b9cf1f5063"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a0fb5b9687e873c4828eccc590e57f1"><td class="memItemLeft" align="right" valign="top"><a id="a7a0fb5b9687e873c4828eccc590e57f1"></a>
-<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a> &amp;&amp;other) noexcept=default</td></tr>
-<tr class="separator:a7a0fb5b9687e873c4828eccc590e57f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc1e3c15b8dcecaa383cbbe010603c2b"><td class="memItemLeft" align="right" valign="top"><a id="adc1e3c15b8dcecaa383cbbe010603c2b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BlockIndex</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a> &amp;&amp;other)=default</td></tr>
+<tr class="separator:adc1e3c15b8dcecaa383cbbe010603c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ba4145ee00dbb15759d8030554ff56e"><td class="memItemLeft" align="right" valign="top"><a id="a6ba4145ee00dbb15759d8030554ff56e"></a>
+<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a> &amp;&amp;other)=default</td></tr>
+<tr class="separator:a6ba4145ee00dbb15759d8030554ff56e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab850acb40baf07b180827744a31d7a0c"><td class="memItemLeft" align="right" valign="top"><a id="ab850acb40baf07b180827744a31d7a0c"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isDeleted</b> () const</td></tr>
 <tr class="separator:ab850acb40baf07b180827744a31d7a0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -374,26 +374,26 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>a pointer to ancestor on height <code>_height</code>, if any. If no ancestor on this height, or height is greater than this block height, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00343">343</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                                                        {</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    VBK_ASSERT(_height &gt;= 0);</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordflow">if</span> (_height &gt; this-&gt;<a class="code" href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">height</a>) {</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    }</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// TODO: this algorithm is not optimal. for O(n) seek backwards until we hit</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="comment">// valid height. also it assumes whole blockchain is in memory (pprev is</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="comment">// valid until given height)</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html#a74c520710b2858f81736000173840f69">BlockIndex</a>* index = <span class="keyword">this</span>;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">while</span> (index != <span class="keyword">nullptr</span> &amp;&amp; index-&gt;height &gt; _height) {</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;      index = index-&gt;getPrev();</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    }</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    VBK_ASSERT(index == <span class="keyword">nullptr</span> || index-&gt;height == _height);</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordflow">return</span> index;</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00345">345</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                                                        {</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    VBK_ASSERT(_height &gt;= 0);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">if</span> (_height &gt; this-&gt;<a class="code" href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">height</a>) {</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    }</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="comment">// TODO: this algorithm is not optimal. for O(n) seek backwards until we hit</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="comment">// valid height. also it assumes whole blockchain is in memory (pprev is</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="comment">// valid until given height)</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1BlockIndex.html#a74c520710b2858f81736000173840f69">BlockIndex</a>* index = <span class="keyword">this</span>;</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordflow">while</span> (index != <span class="keyword">nullptr</span> &amp;&amp; index-&gt;height &gt; _height) {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;      index = index-&gt;getPrev();</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    }</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    VBK_ASSERT(index == <span class="keyword">nullptr</span> || index-&gt;height == _height);</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keywordflow">return</span> index;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;  }</div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_a74c520710b2858f81736000173840f69"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#a74c520710b2858f81736000173840f69">altintegration::BlockIndex::BlockIndex</a></div><div class="ttdeci">BlockIndex(BlockIndex *prev)</div><div class="ttdoc">create a regular block in a deleted state</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00048">block_index.hpp:48</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BlockIndex_html_acc15cab5a18a9df01871f8cf67fe26eb"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">altintegration::BlockIndex::height</a></div><div class="ttdeci">height_t height</div><div class="ttdoc">height of the entry in the chain</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00397">block_index.hpp:397</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockIndex_html_acc15cab5a18a9df01871f8cf67fe26eb"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#acc15cab5a18a9df01871f8cf67fe26eb">altintegration::BlockIndex::height</a></div><div class="ttdeci">height_t height</div><div class="ttdoc">height of the entry in the chain</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00399">block_index.hpp:399</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -423,10 +423,10 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>true if block is connected, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00141">141</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                                    {</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keywordflow">return</span> this-&gt;isValidUpTo(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a7f0d0fe2352a96058a62330d29df6d37">BLOCK_CONNECTED</a>);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00143">143</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                                    {</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordflow">return</span> this-&gt;isValidUpTo(<a class="code" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a7f0d0fe2352a96058a62330d29df6d37">BLOCK_CONNECTED</a>);</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a7f0d0fe2352a96058a62330d29df6d37"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a7f0d0fe2352a96058a62330d29df6d37">altintegration::BLOCK_CONNECTED</a></div><div class="ttdeci">@ BLOCK_CONNECTED</div><div class="ttdoc">the block is connected via connectBlock, which means that this block and all its ancestors are at lea...</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00021">block_status.hpp:21</a></div></div>
 </div><!-- fragment -->
 </div>
