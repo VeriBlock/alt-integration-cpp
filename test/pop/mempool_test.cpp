@@ -1163,3 +1163,35 @@ TEST_F(MemPoolFixture, getPop_payloads_order1) {
 //   ASSERT_EQ(pop_data.vtbs[0].getId(), vtb2.getId());
 //   ASSERT_EQ(pop_data.vtbs[1].getId(), vtb1.getId());
 // }
+
+TEST_F(MemPoolFixture, vbkblocks_cleanup_bug) {
+  // For some reason VBK statefully duplicate blocks remain in mempool (should
+  // be removed). Issue:
+  // https://github.com/VeriBlock/alt-integration-cpp/issues/893
+
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  // mine 65 VBK blocks
+  popminer->mineVbkBlocks(65);
+
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+  for (auto it = context.rbegin(); it != context.rend(); ++it) {
+    ASSERT_TRUE(mempool->submit(*it, state));
+  }
+
+  auto pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 65);
+
+  state.reset();
+  mineAltBlocks(1, chain, false, false);
+  ASSERT_TRUE(AddPayloads(alttree, chain.back().getHash(), pop_data));
+  ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
+
+  pop_data = mempool->generatePopData();
+  ASSERT_EQ(pop_data.context.size(), 0);
+  ASSERT_EQ(mempool->getMap<VbkBlock>().size() +
+                mempool->getInFlightMap<VbkBlock>().size(),
+            0);
+}

@@ -51,6 +51,7 @@ PopData MemPool::generatePopData(
   }
 
   mempool_tree_.filterInvalidPayloads(ret, onATV, onVTB, onVBK);
+  this->cleanUp();
   return ret;
 }
 
