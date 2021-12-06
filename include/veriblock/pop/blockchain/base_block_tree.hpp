@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/pop/algorithm.hpp>
+#include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/signals.hpp>
@@ -21,7 +22,6 @@
 #include "blockchain_util.hpp"
 #include "chain.hpp"
 #include "tree_algo.hpp"
-#include "veriblock/pop/assert.hpp"
 
 namespace altintegration {
 

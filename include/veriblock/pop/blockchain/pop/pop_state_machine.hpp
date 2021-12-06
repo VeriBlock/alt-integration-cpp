@@ -45,7 +45,7 @@ void assertBlockCanBeApplied(index_t& index) {
 template <typename index_t>
 void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT_MSG(!index.isRoot(), "cannot unapply the root block");
-
+  VBK_ASSERT_MSG(!index.finalized, "cannot unapply finalized block");
   VBK_ASSERT_MSG(
       index.hasFlags(BLOCK_ACTIVE),
       "state corruption: tried to unapply an already unapplied block %s",
