@@ -81,8 +81,10 @@ struct BaseBlockTree {
   BaseBlockTree& operator=(const BaseBlockTree&) = delete;
 
   // movable
-  BaseBlockTree(BaseBlockTree&&) noexcept = default;
-  BaseBlockTree& operator=(BaseBlockTree&&) noexcept = default;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
+  BaseBlockTree(BaseBlockTree&&) = default;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
+  BaseBlockTree& operator=(BaseBlockTree&&) = default;
 
   /**
    * Getter for currently Active Chain.

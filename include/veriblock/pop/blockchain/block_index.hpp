@@ -83,8 +83,10 @@ struct BlockIndex : public Block::addon_t {
 
   // BlockIndex is not copyable
   // BlockIndex is movable
-  BlockIndex(BlockIndex&& other) noexcept = default;
-  BlockIndex& operator=(BlockIndex&& other) noexcept = default;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
+  BlockIndex(BlockIndex&& other) = default;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
+  BlockIndex& operator=(BlockIndex&& other) = default;
 
   bool isDeleted() const { return hasFlags(BLOCK_DELETED); };
   bool isRoot() const { return pprev == nullptr; };
