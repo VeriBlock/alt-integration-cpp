@@ -71,6 +71,8 @@ var namespacealtintegration =
       [ "validateLoadBlock", "util_8hpp.html#a93a837b3f5d7eb38dda11b417f714d16", null ]
     ] ],
     [ "internal", null, [
+      [ "assertBlockCanBeApplied", "pop__state__machine_8hpp.html#a80577699b03b62eee82ad520e01f10cd", null ],
+      [ "assertBlockCanBeUnapplied", "pop__state__machine_8hpp.html#af7298bb59bf3c65889f28cf13b7b75a6", null ],
       [ "comparePopScoreImpl", "fork__resolution_8hpp.html#a5011cf3c07ca9102c2ab65d0b4737cf6", null ],
       [ "getConsensusScoreFromRelativeBlockStartingAtZero", "fork__resolution_8hpp.html#abcb0c190b8039c1bb2db31a8871f4ba5", null ],
       [ "getKeystoneContext", "fork__resolution_8hpp.html#a485499cd2161f75230a4b1590cff4f8f", null ],

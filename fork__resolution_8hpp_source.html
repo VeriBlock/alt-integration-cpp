@@ -682,8 +682,8 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;        bestTip-&gt;toPrettyString(),</div>
 <div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;        candidate.toPrettyString());</div>
 <div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160; </div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;    <span class="comment">// if block next to fork is finalized, we don&#39;t do FR, since it can not be</span></div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    <span class="comment">// reorganized.</span></div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;    <span class="comment">// if block next to fork (on active chain) is finalized, we don&#39;t do FR,</span></div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    <span class="comment">// since it can not be reorganized.</span></div>
 <div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="keyword">auto</span>* nextToFork = currentBest[fork-&gt;getHeight() + 1];</div>
 <div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;    <span class="keywordflow">if</span> (nextToFork != <span class="keyword">nullptr</span> &amp;&amp; nextToFork-&gt;finalized) {</div>
 <div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;      <span class="comment">// block `fork+1` is on active chain, and ancestor of currentBest.</span></div>

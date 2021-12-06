@@ -128,6 +128,8 @@ var NAVTREEINDEX3 =
 "pop__payouts_8h_source.html":[6,0,1,0,0,2,0,10],
 "pop__payouts_8hpp_source.html":[6,0,1,0,0,5,14],
 "pop__state_8hpp_source.html":[6,0,1,0,0,1,1,2],
+"pop__state__machine_8hpp.html#a80577699b03b62eee82ad520e01f10cd":[4,0,0,3,0],
+"pop__state__machine_8hpp.html#af7298bb59bf3c65889f28cf13b7b75a6":[4,0,0,3,1],
 "pop__state__machine_8hpp_source.html":[6,0,1,0,0,1,1,3],
 "pop__stateless__validator_8hpp_source.html":[6,0,1,0,0,33],
 "popdata_8h_source.html":[6,0,1,0,0,2,0,11],
@@ -247,7 +249,5 @@ var NAVTREEINDEX3 =
 "structaltintegration_1_1AltBlock.html#aec8a92c9eed1696e6857f9e97acae016":[5,0,0,29,17],
 "structaltintegration_1_1AltBlock.html#aef7b9e45964ee0e303c68eb4e075d438":[5,0,0,29,20],
 "structaltintegration_1_1AltBlock.html#af9c78ed22e89f4083f29e65d33703f8c":[5,0,0,29,15],
-"structaltintegration_1_1AltBlockTree.html":[5,0,0,5],
-"structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59":[5,0,0,5,14],
-"structaltintegration_1_1AltBlockTree.html#a07648b57d3fc92bf96e92d26c574a89f":[5,0,0,5,5]
+"structaltintegration_1_1AltBlockTree.html":[5,0,0,5]
 };

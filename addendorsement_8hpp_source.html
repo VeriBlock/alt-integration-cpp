@@ -123,7 +123,7 @@ $(document).ready(function(){initNavTree('addendorsement_8hpp_source.html',''); 
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                          std::shared_ptr&lt;endorsement_t&gt; e)</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      : ing_(&amp;ing), ed_(&amp;ed), e_(std::move(e)) {}</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">bool</span> Execute(ValidationState&amp; state)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">bool</span> Execute(ValidationState&amp; state) noexcept <span class="keyword">override</span> {</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">auto</span>* containing = ed_-&gt;getBlockIndex(e_-&gt;containingHash);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordflow">if</span> (!containing) {</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      <span class="keywordflow">return</span> state.Invalid(</div>
@@ -170,7 +170,7 @@ $(document).ready(function(){initNavTree('addendorsement_8hpp_source.html',''); 
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  }</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordtype">void</span> UnExecute()<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordtype">void</span> UnExecute() noexcept<span class="keyword"> override </span>{</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">auto</span>* containing = ed_-&gt;getBlockIndex(e_-&gt;containingHash);</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    VBK_ASSERT_MSG(</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        containing != <span class="keyword">nullptr</span>,</div>
@@ -218,9 +218,9 @@ $(document).ready(function(){initNavTree('addendorsement_8hpp_source.html',''); 
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  }</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  ProtectingTree* ing_;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  ProtectedTree* ed_;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  std::shared_ptr&lt;endorsement_t&gt; e_;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  ProtectingTree* ing_ = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  ProtectedTree* ed_ = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  std::shared_ptr&lt;endorsement_t&gt; e_ = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;};</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="keyword">struct </span>AltBlockTree;</div>

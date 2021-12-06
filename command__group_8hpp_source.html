@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('command__group_8hpp_source.html',''); 
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> unExecute()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordtype">void</span> unExecute() const noexcept {</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; cmd : <a class="code" href="namespacealtintegration.html#aea87419ccb622e04aacf6b7fd18e8990">reverse_iterate</a>(commands)) {</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      cmd-&gt;UnExecute();</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
