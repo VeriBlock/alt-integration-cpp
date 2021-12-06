@@ -8,7 +8,7 @@
 
 namespace altintegration {
 
-bool CheckPublicationData::Execute(ValidationState& state) {
+bool CheckPublicationData::Execute(ValidationState& state) noexcept {
   AuthenticatedContextInfoContainer c;
   if (!DeserializeFromVbkEncoding(pub.contextInfo, c, state)) {
     return state.Invalid("bad-sf-contextinfo");

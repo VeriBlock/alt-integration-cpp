@@ -21,6 +21,7 @@
 #include "blockchain_util.hpp"
 #include "chain.hpp"
 #include "tree_algo.hpp"
+#include "veriblock/pop/assert.hpp"
 
 namespace altintegration {
 
@@ -80,8 +81,8 @@ struct BaseBlockTree {
   BaseBlockTree& operator=(const BaseBlockTree&) = delete;
 
   // movable
-  BaseBlockTree(BaseBlockTree&&) = default;
-  BaseBlockTree& operator=(BaseBlockTree&&) = default;
+  BaseBlockTree(BaseBlockTree&&) noexcept = default;
+  BaseBlockTree& operator=(BaseBlockTree&&) noexcept = default;
 
   /**
    * Getter for currently Active Chain.
@@ -780,6 +781,15 @@ struct BaseBlockTree {
     DeferForkResolutionGuard(BaseBlockTree<Block>& tree) : tree_(tree) {
       tree_.deferForkResolution();
     }
+
+    // non-copyable
+    DeferForkResolutionGuard(const DeferForkResolutionGuard& other) = delete;
+    DeferForkResolutionGuard& operator=(const DeferForkResolutionGuard& other) =
+        delete;
+    // movable
+    DeferForkResolutionGuard(DeferForkResolutionGuard&& o) noexcept = default;
+    DeferForkResolutionGuard& operator=(DeferForkResolutionGuard&& o) noexcept =
+        default;
 
     void overrideDeferredForkResolution(index_t* bestChain) {
       // there's no obvious way to go back to having no best chain, so we

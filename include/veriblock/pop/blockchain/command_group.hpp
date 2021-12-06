@@ -75,7 +75,7 @@ struct CommandGroup {
   /**
    * UnExecute all commands in the group
    */
-  void unExecute() const {
+  void unExecute() const noexcept {
     for (auto& cmd : reverse_iterate(commands)) {
       cmd->UnExecute();
     }

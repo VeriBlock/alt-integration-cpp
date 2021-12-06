@@ -30,7 +30,7 @@ struct AddBlock : public Command {
         block_(std::move(block)),
         referencedAtHeight_(referencedAtHeight) {}
 
-  bool Execute(ValidationState& state) override {
+  bool Execute(ValidationState& state) noexcept override {
     auto& hash = block_->getHash();
     auto* index = tree_->getBlockIndex(hash);
 
@@ -48,7 +48,7 @@ struct AddBlock : public Command {
     return true;
   }
 
-  void UnExecute() override {
+  void UnExecute() noexcept override {
     auto hash = block_->getHash();
     auto* index = tree_->getBlockIndex(hash);
     VBK_ASSERT_MSG(index != nullptr,
@@ -59,13 +59,14 @@ struct AddBlock : public Command {
 
     if (index->refCount() == 0) {
       assertBlockCanBeRemoved(*index);
-      return tree_->removeLeaf(*index);
+      tree_->removeLeaf(*index);
+      return;
     }
   }
 
  private:
-  Tree* tree_;
-  std::shared_ptr<Block> block_;
+  Tree* tree_ = nullptr;
+  std::shared_ptr<Block> block_ = nullptr;
   int32_t referencedAtHeight_;
 };
 

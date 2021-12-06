@@ -17,8 +17,8 @@ struct Command {
   virtual ~Command() = default;
 
   //! @invariant atomic
-  VBK_CHECK_RETURN virtual bool Execute(ValidationState& state) = 0;
-  virtual void UnExecute() = 0;
+  VBK_CHECK_RETURN virtual bool Execute(ValidationState& state) noexcept = 0;
+  virtual void UnExecute() noexcept = 0;
 };
 
 //! @private

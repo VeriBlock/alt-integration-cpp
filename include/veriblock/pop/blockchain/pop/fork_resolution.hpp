@@ -607,8 +607,8 @@ struct PopAwareForkResolutionComparator {
         bestTip->toPrettyString(),
         candidate.toPrettyString());
 
-    // if block next to fork is finalized, we don't do FR, since it can not be
-    // reorganized.
+    // if block next to fork (on active chain) is finalized, we don't do FR,
+    // since it can not be reorganized.
     auto* nextToFork = currentBest[fork->getHeight() + 1];
     if (nextToFork != nullptr && nextToFork->finalized) {
       // block `fork+1` is on active chain, and ancestor of currentBest.

@@ -98,7 +98,7 @@ struct PopTestFixture {
     auto* index = tree.getBlockIndex(hash);
     VBK_ASSERT(index);
     std::vector<BlockIndex<AltBlock>*> indices;
-    while (index && !index->isValidUpTo(BLOCK_CONNECTED)) {
+    while (index != nullptr && !index->isValidUpTo(BLOCK_CONNECTED)) {
       indices.push_back(index);
       index = index->pprev;
     }
@@ -128,7 +128,7 @@ struct PopTestFixture {
     auto index = tree.getBlockIndex(hash);
     EXPECT_TRUE(index);
 
-    if (index->pprev) {
+    if (index->pprev != nullptr) {
       ConnectBlocksUntil(tree, index->pprev->getHash());
     }
 
@@ -139,7 +139,7 @@ struct PopTestFixture {
   bool validatePayloads(const AltBlock::hash_t& block_hash,
                         const PopData& popData) {
     auto* index = alttree.getBlockIndex(block_hash);
-    if (!index) {
+    if (index == nullptr) {
       return state.Invalid("bad-block", "Can't find containing block");
     }
 
@@ -440,7 +440,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       bool payloads_existance = true) {
   auto& payloadsIndex = tree.getPayloadsIndex();
   auto& commandGroupStore = tree.getCommandGroupStore();
-  auto containingHash = containing.getHash();
+  const auto& containingHash = containing.getHash();
 
   validatePayloadsIndexState(
       payloadsIndex, containingHash, popData.context, payloads_existance);

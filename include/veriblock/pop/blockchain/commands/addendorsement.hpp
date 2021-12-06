@@ -34,7 +34,7 @@ struct AddEndorsement : public Command {
                           std::shared_ptr<endorsement_t> e)
       : ing_(&ing), ed_(&ed), e_(std::move(e)) {}
 
-  bool Execute(ValidationState& state) override {
+  bool Execute(ValidationState& state) noexcept override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
     if (!containing) {
       return state.Invalid(
@@ -81,7 +81,7 @@ struct AddEndorsement : public Command {
     return true;
   }
 
-  void UnExecute() override {
+  void UnExecute() noexcept override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
     VBK_ASSERT_MSG(
         containing != nullptr,
@@ -129,9 +129,9 @@ struct AddEndorsement : public Command {
   }
 
  private:
-  ProtectingTree* ing_;
-  ProtectedTree* ed_;
-  std::shared_ptr<endorsement_t> e_;
+  ProtectingTree* ing_ = nullptr;
+  ProtectedTree* ed_ = nullptr;
+  std::shared_ptr<endorsement_t> e_ = nullptr;
 };
 
 struct AltBlockTree;
