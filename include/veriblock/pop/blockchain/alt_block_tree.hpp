@@ -193,7 +193,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
                                                              VbkBlockTree,
                                                              AltBlockTree>;
 
-  virtual ~AltBlockTree() = default;
+  ~AltBlockTree() override = default;
 
   explicit AltBlockTree(const alt_config_t& alt_config,
                         const vbk_config_t& vbk_config,

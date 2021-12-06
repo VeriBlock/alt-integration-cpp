@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/pop/algorithm.hpp>
+#include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/signals.hpp>
@@ -80,7 +81,9 @@ struct BaseBlockTree {
   BaseBlockTree& operator=(const BaseBlockTree&) = delete;
 
   // movable
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
   BaseBlockTree(BaseBlockTree&&) = default;
+  // NOLINTNEXTLINE(performance-noexcept-move-constructor)
   BaseBlockTree& operator=(BaseBlockTree&&) = default;
 
   /**
@@ -780,6 +783,15 @@ struct BaseBlockTree {
     DeferForkResolutionGuard(BaseBlockTree<Block>& tree) : tree_(tree) {
       tree_.deferForkResolution();
     }
+
+    // non-copyable
+    DeferForkResolutionGuard(const DeferForkResolutionGuard& other) = delete;
+    DeferForkResolutionGuard& operator=(const DeferForkResolutionGuard& other) =
+        delete;
+    // movable
+    DeferForkResolutionGuard(DeferForkResolutionGuard&& o) noexcept = default;
+    DeferForkResolutionGuard& operator=(DeferForkResolutionGuard&& o) noexcept =
+        default;
 
     void overrideDeferredForkResolution(index_t* bestChain) {
       // there's no obvious way to go back to having no best chain, so we

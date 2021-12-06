@@ -12,10 +12,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include "comparator_macro.hpp"
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/base_block_tree.hpp>
+
+#include "comparator_macro.hpp"
 
 namespace altintegration {
 

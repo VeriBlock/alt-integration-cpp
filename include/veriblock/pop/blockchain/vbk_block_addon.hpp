@@ -6,6 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 #define VERIBLOCK_POP_CPP_VBK_BLOCK_INDEX_HPP
 
+#include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/uint.hpp>

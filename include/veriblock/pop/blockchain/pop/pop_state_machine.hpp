@@ -16,7 +16,7 @@
 
 namespace altintegration {
 
-namespace {
+namespace internal {
 
 template <typename index_t>
 void assertBlockCanBeApplied(index_t& index) {
@@ -45,7 +45,7 @@ void assertBlockCanBeApplied(index_t& index) {
 template <typename index_t>
 void assertBlockCanBeUnapplied(index_t& index) {
   VBK_ASSERT_MSG(!index.isRoot(), "cannot unapply the root block");
-
+  VBK_ASSERT_MSG(!index.finalized, "cannot unapply finalized block");
   VBK_ASSERT_MSG(
       index.hasFlags(BLOCK_ACTIVE),
       "state corruption: tried to unapply an already unapplied block %s",
@@ -62,7 +62,7 @@ void assertBlockCanBeUnapplied(index_t& index) {
       index.toPrettyString());
 }
 
-}  // namespace
+}  // namespace internal
 
 //! @private
 template <typename ProtectingBlockTree,
@@ -88,7 +88,7 @@ struct PopStateMachine {
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
 
-    assertBlockCanBeApplied(index);
+    internal::assertBlockCanBeApplied(index);
 
     if (!index.isValid()) {
       return state.Invalid(
@@ -113,7 +113,9 @@ struct PopStateMachine {
                       HexStr((*cgroup)->id),
                       index.toShortPrettyString());
 
-        if (!(*cgroup)->execute(state)) {
+        CommandGroup& cg = *(*cgroup);
+
+        if (!cg.execute(state)) {
           VBK_LOG_ERROR("Invalid %s command in block %s: %s",
                         index_t::block_t::name(),
                         index.toPrettyString(),
@@ -137,10 +139,12 @@ struct PopStateMachine {
     // if the applied block count equals the size of the chain between the root
     // and index, we have just applied a block on top of the only applied chain,
     // so it is fully valid
+    auto appliedChainBlockCount =
+        ed_.getRoot().getHeight() +
+        (typename block_t::height_t)ed_.appliedBlockCount;
+
     if (index.pprev->isValid(BLOCK_CAN_BE_APPLIED) &&
-        index.getHeight() ==
-            ed_.getRoot().getHeight() +
-                (typename block_t::height_t)ed_.appliedBlockCount) {
+        index.getHeight() == appliedChainBlockCount) {
       index.raiseValidity(BLOCK_CAN_BE_APPLIED);
     } else {
       // this block is applied together with the other chain during POP FR
@@ -160,7 +164,7 @@ struct PopStateMachine {
   void unapplyBlock(index_t& index) {
     VBK_TRACE_ZONE_SCOPED;
 
-    assertBlockCanBeUnapplied(index);
+    internal::assertBlockCanBeUnapplied(index);
 
     if (index.hasPayloads()) {
       ValidationState state;

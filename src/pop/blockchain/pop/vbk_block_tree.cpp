@@ -110,11 +110,12 @@ void VbkBlockTree::removePayloads(index_t& index,
     VBK_ASSERT(success);
   }
 
+  auto containingHash = index.getHash();
   for (const auto& pid : pids) {
     auto& vtbids = index.getPayloadIds<VTB>();
     auto it = std::find(vtbids.begin(), vtbids.end(), pid);
     // using an assert because throwing breaks atomicity
-    // if there are multiple pids
+    // if there are missing pids
     VBK_ASSERT(it != vtbids.end() && "could not find the payload to remove");
 
     // removing a payload cannot alter the block validity as addPayloads adds
@@ -124,7 +125,7 @@ void VbkBlockTree::removePayloads(index_t& index,
                    index.toPrettyString());
 
     index.removePayloadId<VTB>(pid);
-    payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
+    payloadsIndex_.removeVbkPayloadIndex(containingHash, pid.asVector());
   }
 
   updateTips();
@@ -495,8 +496,8 @@ void assertBlockCanBeRemoved(const BlockIndex<VbkBlock>& index) {
 template <>
 void assertBlockSanity(const VbkBlock& block) {
   VBK_ASSERT_MSG(block.getShortHash() != block.getPreviousBlock(),
-                 "Previous block hash should NOT be equal to the current block "
-                 "hash: %s. A collision in altchain hash?",
+                 "Block hash and previous hash are equal = %s. A collision in "
+                 "altchain hash?",
                  HexStr(block.getShortHash()));
 }
 

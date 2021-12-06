@@ -20,9 +20,9 @@ struct CheckPublicationData : public Command {
                        AltBlockTree& tree,
                        AltBlock::hash_t endorsed_hash);
 
-  bool Execute(ValidationState& state) override;
+  bool Execute(ValidationState& state) noexcept override;
 
-  void UnExecute() override {
+  void UnExecute() noexcept override {
     // This command does not modify current state, thus UnExecute is a no-op
   }
 

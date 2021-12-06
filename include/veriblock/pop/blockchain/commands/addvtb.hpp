@@ -21,13 +21,13 @@ struct AddVTB : public Command {
   AddVTB(AltBlockTree& tree, VTB_t&& vtb)
       : tree_(tree), vtb_(std::forward<VTB_t>(vtb)) {}
 
-  bool Execute(ValidationState& state) override {
+  bool Execute(ValidationState& state) noexcept override {
     // add commands to the containing VBK block
     return tree_.vbk().addPayloads(
         vtb_.containingBlock.getHash(), {vtb_}, state);
   }
 
-  void UnExecute() override {
+  void UnExecute() noexcept override {
     return tree_.vbk().unsafelyRemovePayload(vtb_.containingBlock,
                                              vtb_.getId());
   }
