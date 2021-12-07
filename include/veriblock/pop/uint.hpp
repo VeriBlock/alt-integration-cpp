@@ -11,6 +11,12 @@
 
 namespace altintegration {
 
+extern template struct Blob<VBK_MERKLE_ROOT_HASH_SIZE>;
+extern template struct Blob<SHA256_HASH_SIZE>;
+extern template struct Blob<VBK_PREVIOUS_KEYSTONE_HASH_SIZE>;
+extern template struct Blob<VBK_PREVIOUS_BLOCK_HASH_SIZE>;
+extern template struct Blob<VBK_BLOCK_HASH_SIZE>;
+
 //! Fixed-size array.
 using uint128 = Blob<VBK_MERKLE_ROOT_HASH_SIZE>;
 //! @overload

@@ -45,6 +45,7 @@ set(SOURCES
         validation_state.cpp
         bootstraps.cpp
         time.cpp
+        uint.cpp
         keystone_util.cpp
         hashutil.cpp
         stateless_validation.cpp
