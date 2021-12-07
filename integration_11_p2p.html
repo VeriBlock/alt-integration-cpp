@@ -137,7 +137,7 @@ Overview</h1>
 <div class="line">+    <span class="keyword">const</span> CBlockIndex *pindexLastCommonBlock = <span class="keyword">nullptr</span>;</div>
 <div class="line">+    </div>
 <div class="line">+    <span class="keyword">const</span> CBlockIndex *pindexLastCommonAnnouncedBlock = <span class="keyword">nullptr</span>;</div>
-<div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00017">uint.hpp:17</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00023">uint.hpp:23</a></div></div>
 </div><!-- fragment --> <div class="fragment"><div class="line">+</div>
 <div class="line">+<span class="keyword">static</span> <span class="keywordtype">void</span> UpdateBestChainTip(NodeId nodeid, <span class="keyword">const</span> uint256 &amp;tip) EXCLUSIVE_LOCKS_REQUIRED(cs_main) {</div>
 <div class="line">+    CNodeState *state = State(nodeid);</div>
