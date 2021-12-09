@@ -77,8 +77,6 @@ class BlockAndNetwork:
 @dataclass
 class PopParamsResponse:
     popActivationHeight: int
-    popRewardPercentage: int
-    popRewardCoefficient: int
     popPayoutDelay: int
     bootstrapBlock: GenericBlock
     vbkBootstrap: BlockAndNetwork
