@@ -259,17 +259,43 @@ struct BaseBlockTree {
    * @param toRemove block to be removed.
    * @warning fails on assert if unknown hash is provided
    */
-  virtual void removeSubtree(index_t& toRemove) {
-    this->removeSubtree(toRemove, nullptr);
+  void removeSubtree(index_t& toRemove) {
+    VBK_TRACE_ZONE_SCOPED;
+    VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
+
+    VBK_ASSERT_MSG(!toRemove.isRoot(), "cannot remove the root block");
+    // save the pointer to the previous block
+    auto* prev = toRemove.pprev;
+
+    bool isOnMainChain = activeChain_.contains(&toRemove);
+    if (isOnMainChain) {
+      ValidationState dummy;
+      bool success = this->setState(*prev, dummy);
+      VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
+    }
+
+    forEachNodePostorder<block_t>(
+        toRemove,
+        [&](index_t& next) {
+          removeSingleBlock(next);
+        },
+        [&](index_t& next) { return !next.isDeleted(); });
+
+    // after removal, try to add tip
+    tryAddTip(prev);
+
+    if (isOnMainChain) {
+      updateTips();
+    }
   }
 
   //! @overload
   //! @invariant block must exist in a tree
-  virtual void removeSubtree(const hash_t& toRemove) {
+  void removeSubtree(const hash_t& toRemove) {
     auto* index = getBlockIndex(toRemove);
     VBK_ASSERT_MSG(
         index, "cannot find the subtree to remove: %s", HexStr(toRemove));
-    return this->removeSubtree(*index, nullptr);
+    return this->removeSubtree(*index);
   }
 
   //! @overload
@@ -478,48 +504,6 @@ struct BaseBlockTree {
   //! @private
   virtual void determineBestChain(index_t& candidate,
                                   ValidationState& state) = 0;
-
-  void removeSubtree(index_t& toRemove,
-                     const std::function<void(BlockIndex<Block>&)>* onRemove) {
-    VBK_TRACE_ZONE_SCOPED;
-    VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
-
-    VBK_ASSERT_MSG(!toRemove.isRoot(), "cannot remove the root block");
-    // save the pointer to the previous block
-    auto* prev = toRemove.pprev;
-
-    bool isOnMainChain = activeChain_.contains(&toRemove);
-    if (isOnMainChain) {
-      ValidationState dummy;
-      bool success = this->setState(*prev, dummy);
-      VBK_ASSERT_MSG(success, "err: %s", dummy.toString());
-    }
-
-    forEachNodePostorder<block_t>(
-        toRemove,
-        [&](index_t& next) {
-          if (onRemove != nullptr) {
-            (*onRemove)(next);
-          }
-          removeSingleBlock(next);
-        },
-        [&](index_t& next) { return !next.isDeleted(); });
-
-    // after removal, try to add tip
-    tryAddTip(prev);
-
-    if (isOnMainChain) {
-      updateTips();
-    }
-  }
-
-  void removeSubtree(const hash_t& toRemove,
-                     const std::function<void(BlockIndex<Block>&)>* onRemove) {
-    auto* index = getBlockIndex(toRemove);
-    VBK_ASSERT_MSG(
-        index, "cannot find the subtree to remove: %s", HexStr(toRemove));
-    return this->removeSubtree(*index, onRemove);
-  }
 
   //! @private
   void tryAddTip(index_t* index) {
@@ -1097,7 +1081,11 @@ struct BaseBlockTree {
     }
   }
 
+  virtual void onSingleBlockRemove(const index_t&) {}
+
   void removeSingleBlock(index_t& block) {
+    onSingleBlockRemove(block);
+
     // if it is a tip, we also remove it
     tips_.erase(&block);
 

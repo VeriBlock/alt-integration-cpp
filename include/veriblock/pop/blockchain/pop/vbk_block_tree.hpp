@@ -193,9 +193,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void overrideTip(index_t& to) override;
 
-  void removeSubtree(const hash_t& toRemove) override;
-
-  void removeSubtree(index_t& toRemove) override;
+  void onSingleBlockRemove(const index_t& block) override;
 
  private:
   bool loadBlockInner(const stored_index_t& index, ValidationState& state);
