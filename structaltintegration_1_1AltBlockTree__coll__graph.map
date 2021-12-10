@@ -1,8 +1,8 @@
 <map id="altintegration::AltBlockTree" name="altintegration::AltBlockTree">
-<area shape="rect" id="node1" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="456,2036,655,2304"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="454,1631,657,1987"/>
+<area shape="rect" id="node1" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="456,1977,655,2245"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="454,1601,657,1928"/>
 <area shape="rect" id="node3" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="218,918,394,1142"/>
-<area shape="rect" id="node20" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="618,1212,821,1568"/>
+<area shape="rect" id="node20" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="618,1212,821,1539"/>
 <area shape="rect" id="node4" href="$structaltintegration_1_1Chain.html" title=" " alt="" coords="5,911,193,1149"/>
 <area shape="rect" id="node5" href="$structaltintegration_1_1Chain.html" title="Fully in&#45;memory chain representation." alt="" coords="25,573,160,811"/>
 <area shape="rect" id="node6" title=" " alt="" coords="816,977,999,1083"/>
