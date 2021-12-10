@@ -1081,10 +1081,12 @@ struct BaseBlockTree {
     }
   }
 
-  virtual void onSingleBlockRemove(const index_t&) {}
+  //! callback which is executed when block is removing from the tree
+  //! @private
+  virtual void onBeforeLeafRemoved(const index_t&) {}
 
   void removeSingleBlock(index_t& block) {
-    onSingleBlockRemove(block);
+    onBeforeLeafRemoved(block);
 
     // if it is a tip, we also remove it
     tips_.erase(&block);

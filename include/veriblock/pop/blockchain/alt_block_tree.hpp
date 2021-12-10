@@ -422,8 +422,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @private
   void finalizeBlock(index_t& index);
 
-  void onSingleBlockRemove(const index_t& block) override;
-
   /**
    * Removes all payloads from a block
    * @param[in] hash
@@ -483,6 +481,9 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;
+
+  //! @private
+  void onBeforeLeafRemoved(const index_t& block) override;
 
   //! @private
   void setPayloads(index_t& index, const PopData& payloads);

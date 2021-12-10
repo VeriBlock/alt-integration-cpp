@@ -699,7 +699,7 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
       payloadsProvider_(payloadsProvider),
       commandGroupStore_(*this, payloadsProvider_) {}
 
-void AltBlockTree::onSingleBlockRemove(const index_t& block) {
+void AltBlockTree::onBeforeLeafRemoved(const index_t& block) {
   payloadsIndex_.removePayloadsIndex(block);
 }
 

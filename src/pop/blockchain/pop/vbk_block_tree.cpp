@@ -416,7 +416,7 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
   return true;
 }
 
-void VbkBlockTree::onSingleBlockRemove(const index_t& block) {
+void VbkBlockTree::onBeforeLeafRemoved(const index_t& block) {
   payloadsIndex_.removePayloadsIndex(block);
 }
 

@@ -193,13 +193,13 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   void overrideTip(index_t& to) override;
 
-  void onSingleBlockRemove(const index_t& block) override;
-
  private:
   bool loadBlockInner(const stored_index_t& index, ValidationState& state);
 
   void finalizeBlockImpl(index_t& index,
                          int32_t preserveBlocksBehindFinal) override;
+
+  void onBeforeLeafRemoved(const index_t& block) override;
 
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**
