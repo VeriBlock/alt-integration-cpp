@@ -279,6 +279,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>setState</b> (<a clas
 <tr class="memitem:a1213330b1a05be755a1ca5311e7e079c"><td class="memItemLeft" align="right" valign="top"><a id="a1213330b1a05be755a1ca5311e7e079c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>overrideTip</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;to) override</td></tr>
 <tr class="separator:a1213330b1a05be755a1ca5311e7e079c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91ebe7b32920544fe28fe855762aa63f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#a91ebe7b32920544fe28fe855762aa63f">removeSubtree</a> (const hash_t &amp;toRemove) override</td></tr>
+<tr class="memdesc:a91ebe7b32920544fe28fe855762aa63f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="structaltintegration_1_1VbkBlockTree.html#a91ebe7b32920544fe28fe855762aa63f">More...</a><br /></td></tr>
+<tr class="separator:a91ebe7b32920544fe28fe855762aa63f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae02a24393b8600798adad8ccd55f7b1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">removeSubtree</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;toRemove) override</td></tr>
 <tr class="memdesc:ae02a24393b8600798adad8ccd55f7b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes block and all its successors.  <a href="structaltintegration_1_1VbkBlockTree.html#ae02a24393b8600798adad8ccd55f7b1d">More...</a><br /></td></tr>
 <tr class="separator:ae02a24393b8600798adad8ccd55f7b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -375,9 +378,6 @@ template&lt;typename T , typename  = typename std::enable_if&lt;                
 <tr class="memitem:a6e98d9d72a61310c5d41f99a6f0aca42 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a6e98d9d72a61310c5d41f99a6f0aca42"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>restoreBlock</b> (const typename block_t::hash_t &amp;hash, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a6e98d9d72a61310c5d41f99a6f0aca42 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">removeSubtree</a> (const hash_t &amp;toRemove)</td></tr>
-<tr class="memdesc:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">More...</a><br /></td></tr>
-<tr class="separator:a066ff76575eaea27374b1dac26860610 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56b1f7eea3027fe06f480f9e8bf675c0 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a56b1f7eea3027fe06f480f9e8bf675c0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a56b1f7eea3027fe06f480f9e8bf675c0">removeLeaf</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;toRemove)</td></tr>
 <tr class="memdesc:a56b1f7eea3027fe06f480f9e8bf675c0 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
@@ -440,6 +440,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="memdesc:a3aa99cb1232cd715b3a48ac55d71f10e inherit pro_methods_structaltintegration_1_1BlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">whenever new block is inserted, BlockTree has to update its ChainWork <br /></td></tr>
 <tr class="separator:a3aa99cb1232cd715b3a48ac55d71f10e inherit pro_methods_structaltintegration_1_1BlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_structaltintegration_1_1BaseBlockTree"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_structaltintegration_1_1BaseBlockTree')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree&lt; Block &gt;</a></td></tr>
+<tr class="memitem:a365db98c54cb1662adcc11efbe325c5f inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a365db98c54cb1662adcc11efbe325c5f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removeSubtree</b> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;toRemove, const std::function&lt; void(<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;)&gt; *onRemove)</td></tr>
+<tr class="separator:a365db98c54cb1662adcc11efbe325c5f inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa36b4dbb28a769cc81bc8ba9b191ff94 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="aa36b4dbb28a769cc81bc8ba9b191ff94"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removeSubtree</b> (const hash_t &amp;toRemove, const std::function&lt; void(<a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; Block &gt; &amp;)&gt; *onRemove)</td></tr>
+<tr class="separator:aa36b4dbb28a769cc81bc8ba9b191ff94 inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09b11b0e5e3fd03e322bd24942a6424e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a id="a09b11b0e5e3fd03e322bd24942a6424e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e">eraseBlock</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;block)</td></tr>
 <tr class="memdesc:a09b11b0e5e3fd03e322bd24942a6424e inherit pro_methods_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">dangerous! permanently drops the block from the tree <br /></td></tr>
@@ -610,8 +616,37 @@ const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader<
 
 </div>
 </div>
+<a id="a91ebe7b32920544fe28fe855762aa63f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91ebe7b32920544fe28fe855762aa63f">&#9670;&nbsp;</a></span>removeSubtree() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void altintegration::VbkBlockTree::removeSubtree </td>
+          <td>(</td>
+          <td class="paramtype">const hash_t &amp;&#160;</td>
+          <td class="paramname"><em>toRemove</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section invariant"><dt>Invariant</dt><dd>block must exist in a tree </dd></dl>
+
+<p>Reimplemented from <a class="el" href="structaltintegration_1_1BaseBlockTree.html#a0f4837e04c4d6cfd00722e542627c8b8">altintegration::BaseBlockTree&lt; Block &gt;</a>.</p>
+
+</div>
+</div>
 <a id="ae02a24393b8600798adad8ccd55f7b1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae02a24393b8600798adad8ccd55f7b1d">&#9670;&nbsp;</a></span>removeSubtree()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae02a24393b8600798adad8ccd55f7b1d">&#9670;&nbsp;</a></span>removeSubtree() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
