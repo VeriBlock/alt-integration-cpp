@@ -344,7 +344,7 @@ bool MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
   ValidationState state;
   if (!vbk_tree_.addPayloads(hash, vtbs, state)) {
     blockIndex->removeRef(0);
-    vbk_tree_.removeSubtree(*blockIndex);
+    vbk_tree_.removeLeaf(*blockIndex);
     return false;
 //    throw std::domain_error(state.toString());
   }
