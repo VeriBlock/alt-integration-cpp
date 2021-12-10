@@ -20,7 +20,6 @@ var structaltintegration_1_1VbkBlockTree =
     [ "loadBlockBackward", "structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea", null ],
     [ "loadBlockForward", "structaltintegration_1_1VbkBlockTree.html#a5bffb2735fe2ba1ad712f8efcc071c26", null ],
     [ "loadTip", "structaltintegration_1_1VbkBlockTree.html#aba7f9010e94294a5d6eb523c3f1ed04c", null ],
-    [ "onSingleBlockRemove", "structaltintegration_1_1VbkBlockTree.html#a3c6b2292cf75ce1db32649c03871d0b2", null ],
     [ "overrideTip", "structaltintegration_1_1VbkBlockTree.html#a1213330b1a05be755a1ca5311e7e079c", null ],
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#a6db4ccc2d38fc47f903d62f33a94f00d", null ],
     [ "removePayloads", "structaltintegration_1_1VbkBlockTree.html#a5659af106030eb9c34732ce6335d5569", null ],
