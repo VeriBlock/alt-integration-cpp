@@ -416,10 +416,22 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
   return true;
 }
 
+void VbkBlockTree::removeSubtree(const VbkBlockTree::hash_t& toRemove) {
+  VBK_TRACE_ZONE_SCOPED;
+  std::function<void(BlockIndex<VbkBlock>&)> onRemove =
+      [&](const BlockIndex<VbkBlock>& next) {
+        payloadsIndex_.removePayloadsIndex(next);
+      };
+  BaseBlockTree::removeSubtree(toRemove, &onRemove);
+}
+
 void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
   VBK_TRACE_ZONE_SCOPED;
-  payloadsIndex_.removePayloadsIndex(toRemove);
-  BaseBlockTree::removeSubtree(toRemove);
+  std::function<void(BlockIndex<VbkBlock>&)> onRemove =
+      [&](const BlockIndex<VbkBlock>& next) {
+        payloadsIndex_.removePayloadsIndex(next);
+      };
+  BaseBlockTree::removeSubtree(toRemove, &onRemove);
 }
 
 void VbkBlockTree::finalizeBlockImpl(index_t& index,

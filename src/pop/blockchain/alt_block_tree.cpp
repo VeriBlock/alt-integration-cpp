@@ -699,10 +699,22 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
       payloadsProvider_(payloadsProvider),
       commandGroupStore_(*this, payloadsProvider_) {}
 
+void AltBlockTree::removeSubtree(const AltBlockTree::hash_t& toRemove) {
+  VBK_TRACE_ZONE_SCOPED;
+  std::function<void(BlockIndex<AltBlock>&)> onRemove =
+      [&](const BlockIndex<AltBlock>& next) {
+        payloadsIndex_.removePayloadsIndex(next);
+      };
+  base::removeSubtree(toRemove, &onRemove);
+}
+
 void AltBlockTree::removeSubtree(AltBlockTree::index_t& toRemove) {
   VBK_TRACE_ZONE_SCOPED;
-  payloadsIndex_.removePayloadsIndex(toRemove);
-  base::removeSubtree(toRemove);
+  std::function<void(BlockIndex<AltBlock>&)> onRemove =
+      [&](const BlockIndex<AltBlock>& next) {
+        payloadsIndex_.removePayloadsIndex(next);
+      };
+  base::removeSubtree(toRemove, &onRemove);
 }
 
 bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
