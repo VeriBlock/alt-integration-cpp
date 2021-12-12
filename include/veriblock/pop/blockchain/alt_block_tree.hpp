@@ -423,15 +423,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   void finalizeBlock(index_t& index);
 
   /**
-   * Removes given block and all blocks after it.
-   * @param[in] toRemove block to be removed.
-   * @warning fails on assert if block can not be found in this tree.
-   */
-  using base::removeSubtree;
-  //! @overload
-  void removeSubtree(index_t& toRemove) override;
-
-  /**
    * Removes all payloads from a block
    * @param[in] hash
    * @private
@@ -490,6 +481,9 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;
+
+  //! @private
+  void onBeforeLeafRemoved(const index_t& block) override;
 
   //! @private
   void setPayloads(index_t& index, const PopData& payloads);

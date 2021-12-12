@@ -259,7 +259,7 @@ struct BaseBlockTree {
    * @param toRemove block to be removed.
    * @warning fails on assert if unknown hash is provided
    */
-  virtual void removeSubtree(index_t& toRemove) {
+  void removeSubtree(index_t& toRemove) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_LOG_DEBUG("remove subtree %s", toRemove.toPrettyString());
 
@@ -276,7 +276,9 @@ struct BaseBlockTree {
 
     forEachNodePostorder<block_t>(
         toRemove,
-        [&](index_t& next) { removeSingleBlock(next); },
+        [&](index_t& next) {
+          removeSingleBlock(next);
+        },
         [&](index_t& next) { return !next.isDeleted(); });
 
     // after removal, try to add tip
@@ -1079,7 +1081,13 @@ struct BaseBlockTree {
     }
   }
 
+  //! callback which is executed when block is removing from the tree
+  //! @private
+  virtual void onBeforeLeafRemoved(const index_t&) {}
+
   void removeSingleBlock(index_t& block) {
+    onBeforeLeafRemoved(block);
+
     // if it is a tip, we also remove it
     tips_.erase(&block);
 

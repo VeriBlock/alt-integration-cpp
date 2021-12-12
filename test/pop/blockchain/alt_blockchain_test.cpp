@@ -235,7 +235,8 @@ TEST_F(AltTreeFixture, duplicateVTBs_test) {
             alttree.btc().getBestChain().tip()->getHash());
 
   // generate fork chain
-  auto forkContaining = generateNextBlock(chain[chain.size() - keystoneInterval - 10]);
+  auto forkContaining =
+      generateNextBlock(chain[chain.size() - keystoneInterval - 10]);
   ASSERT_TRUE(alttree.acceptBlockHeader(forkContaining, state));
   auto* forkIndex = alttree.getBlockIndex(forkContaining.getHash());
   ASSERT_NE(forkIndex, nullptr);
@@ -279,4 +280,63 @@ TEST_F(AltTreeFixture, assertBlockSanity_test) {
         (void)ok;
       },
       "Previous block hash should NOT be equal to the current block hash");
+}
+
+TEST_F(AltTreeFixture, cleanupPayloadsIndex_test) {
+  std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
+  // mine 10 blocks
+  mineAltBlocks(10, chain);
+
+  // generate vtb
+  auto containing_block_1 = generateNextBlock(chain.back());
+  chain.push_back(containing_block_1);
+  auto pop_data =
+      generateAltPayloads({}, alttree.vbk().getBestChain().tip()->getHash(), 1);
+
+  ASSERT_EQ(pop_data.vtbs.size(), 1);
+
+  auto vtb_id_1 = pop_data.vtbs[0].getId();
+
+  // submit new block with VTB
+  ASSERT_TRUE(alttree.acceptBlockHeader(containing_block_1, state));
+  ASSERT_TRUE(validatePayloads(containing_block_1.getHash(), pop_data));
+  ASSERT_TRUE(state.IsValid());
+
+  // mine 10 alt blocks
+  mineAltBlocks(10, chain);
+
+  // generate new VTB in the different block
+  auto containing_block_2 = generateNextBlock(chain.back());
+  chain.push_back(containing_block_2);
+  pop_data =
+      generateAltPayloads({}, alttree.vbk().getBestChain().tip()->getHash(), 1);
+
+  ASSERT_EQ(pop_data.vtbs.size(), 1);
+
+  auto vtb_id_2 = pop_data.vtbs[0].getId();
+
+  // submit new block with VTB
+  ASSERT_TRUE(alttree.acceptBlockHeader(containing_block_2, state));
+  ASSERT_TRUE(validatePayloads(containing_block_2.getHash(), pop_data));
+  ASSERT_TRUE(state.IsValid());
+
+  ASSERT_NE(vtb_id_1, vtb_id_2);
+
+  // validate payloads index
+  auto set =
+      alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_1.asVector());
+  ASSERT_EQ(set.size(), 1);
+  ASSERT_TRUE(set.count(containing_block_1.getHash()));
+  set = alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_2.asVector());
+  ASSERT_EQ(set.size(), 1);
+  ASSERT_TRUE(set.count(containing_block_2.getHash()));
+
+  // remove alt block
+  alttree.removeSubtree(containing_block_1.getHash());
+
+  // validate payloads index
+  set = alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_1.asVector());
+  ASSERT_EQ(set.size(), 0);
+  set = alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_2.asVector());
+  ASSERT_EQ(set.size(), 0);
 }

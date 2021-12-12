@@ -416,10 +416,8 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
   return true;
 }
 
-void VbkBlockTree::removeSubtree(VbkBlockTree::index_t& toRemove) {
-  VBK_TRACE_ZONE_SCOPED;
-  payloadsIndex_.removePayloadsIndex(toRemove);
-  BaseBlockTree::removeSubtree(toRemove);
+void VbkBlockTree::onBeforeLeafRemoved(const index_t& block) {
+  payloadsIndex_.removePayloadsIndex(block);
 }
 
 void VbkBlockTree::finalizeBlockImpl(index_t& index,
