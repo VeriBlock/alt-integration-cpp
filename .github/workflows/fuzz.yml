@@ -9,15 +9,15 @@ on:
     branches:
       - fuzz
   schedule:
-    # run at the start of every 30min.
-    - cron:  '*/30 * * * *'
+    # run at the start of every 4 hours.
+    - cron:  '0 */4 * * *'
 
 jobs:
   fuzz:
     runs-on: ubuntu-20.04
     env:
-      # 30 min in sec
-      FUZZ_TIMEOUT: 1800
+      # 4 hours in sec
+      FUZZ_TIMEOUT: 14400
       CC: clang
       CXX: clang++
       VBK_FUZZ_CORPUS_DIR: ${{ github.workspace }}/fuzz-corpus
