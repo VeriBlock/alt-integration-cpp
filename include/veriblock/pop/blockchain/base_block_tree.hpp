@@ -276,9 +276,7 @@ struct BaseBlockTree {
 
     forEachNodePostorder<block_t>(
         toRemove,
-        [&](index_t& next) {
-          removeSingleBlock(next);
-        },
+        [&](index_t& next) { removeSingleBlock(next); },
         [&](index_t& next) { return !next.isDeleted(); });
 
     // after removal, try to add tip
@@ -635,14 +633,27 @@ struct BaseBlockTree {
     // quick check if given block is sane
     auto& root = getRoot();
     if (connectForward) {
-      VBK_ASSERT_MSG(index.height >= root.getHeight(),
-                     format("Blocks can be forward connected after root only. "
-                            "index.height: {}, root.height: {}",
-                            index.height,
-                            root.getHeight()));
+      if (index.height < root.getHeight()) {
+        auto hash = index.header->getHash();
+        return state.Invalid(
+            "bad-height",
+            format("Blocks can be forward connected after root only. "
+                   "index.height: {}, root.height: {}, index.hash: {}",
+                   index.height,
+                   root.getHeight(),
+                   HexStr(hash.begin(), hash.end())));
+      }
     } else {
-      VBK_ASSERT_MSG(index.height + 1 == root.getHeight(),
-                     "Blocks can be backwards connected only to the root");
+      if (index.height + 1 != root.getHeight()) {
+        auto hash = index.header->getHash();
+        return state.Invalid(
+            "bad-height",
+            format("Blocks can be backwards connected only to the "
+                   "root, index.height: {}, root.height: {}, index.hash: {}",
+                   index.height,
+                   root.getHeight(),
+                   HexStr(hash.begin(), hash.end())));
+      }
     }
 
     if (index.height == root.getHeight() &&
