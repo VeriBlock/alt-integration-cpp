@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
+#include <pop/util/pop_test_fixture.hpp>
 #include <veriblock/pop/alt-util.hpp>
 
 using namespace altintegration;

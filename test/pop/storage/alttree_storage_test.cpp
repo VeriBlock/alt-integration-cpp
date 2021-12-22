@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
+#include <pop/util/pop_test_fixture.hpp>
 #include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/storage/util.hpp>
 

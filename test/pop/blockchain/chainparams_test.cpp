@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
+#include <pop/util/pop_test_fixture.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/stateless_validation.hpp>

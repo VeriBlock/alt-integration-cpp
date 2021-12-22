@@ -8,8 +8,8 @@
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/mempool.hpp>
 
-#include "util/pop_test_fixture.hpp"
-#include "util/test_utils.hpp"
+#include "pop/util/pop_test_fixture.hpp"
+#include "pop/util/test_utils.hpp"
 
 using namespace altintegration;
 

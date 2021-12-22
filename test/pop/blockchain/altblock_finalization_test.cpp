@@ -5,8 +5,8 @@
 
 #include <gtest/gtest.h>
 
-#include <mempool_fixture.hpp>
-#include <util/pop_test_fixture.hpp>
+#include <pop/util/mempool_fixture.hpp>
+#include <pop/util/pop_test_fixture.hpp>
 
 using namespace altintegration;
 

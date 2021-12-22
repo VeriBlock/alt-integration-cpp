@@ -8,7 +8,6 @@
 
 #include <gtest/gtest.h>
 
-#include <util/test_utils.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
@@ -23,9 +22,9 @@
 #include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
 #include <veriblock/pop/storage/util.hpp>
 
-#include "util/comparator_test.hpp"
-#include "util/fmtlogger.hpp"
-#include "util/test_utils.hpp"
+#include "pop/util/comparator_test.hpp"
+#include "pop/util/fmtlogger.hpp"
+#include "pop/util/test_utils.hpp"
 
 namespace altintegration {
 

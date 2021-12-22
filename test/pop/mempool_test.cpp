@@ -3,7 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "mempool_fixture.hpp"
+#include "pop/util/mempool_fixture.hpp"
 
 TEST_F(MemPoolFixture, removeAll_test1) {
   // mine 65 VBK blocks

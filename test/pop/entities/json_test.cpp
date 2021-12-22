@@ -9,9 +9,10 @@
 #include <veriblock/pop/adaptors/picojson.hpp>
 // clang-format on
 
-#include "util/pop_test_fixture.hpp"
 #include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/mock_miner.hpp>
+
+#include "pop/util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 

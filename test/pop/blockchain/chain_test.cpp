@@ -10,7 +10,7 @@
 #include <veriblock/pop/entities/endorsements.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 
-#include "util/test_utils.hpp"
+#include "pop/util/test_utils.hpp"
 
 using namespace altintegration;
 

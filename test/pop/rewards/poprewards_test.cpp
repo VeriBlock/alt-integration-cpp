@@ -7,7 +7,7 @@
 
 #include <veriblock/pop/rewards/default_poprewards_calculator.hpp>
 
-#include "util/pop_test_fixture.hpp"
+#include "pop/util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 
@@ -221,7 +221,8 @@ TEST_F(RewardsTestFixture, basicReward_test) {
   endorseForRewardLastBlock(1);
 
   PopPayouts payouts = {};
-  ASSERT_TRUE(sampleCalculator->getPopPayout(altchain.back().getHash(), payouts, state));
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_TRUE(payouts.size());
 
   auto payoutBlockRound =
@@ -242,7 +243,8 @@ TEST_F(RewardsTestFixture, largeKeystoneReward_test) {
   endorseForRewardLastBlock(30);
 
   PopPayouts payouts = {};
-  ASSERT_TRUE(sampleCalculator->getPopPayout(altchain.back().getHash(), payouts, state));
+  ASSERT_TRUE(sampleCalculator->getPopPayout(
+      altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
   // make sure we have calculations for the keystone round
   ASSERT_EQ(sampleCalculator->getRoundForBlockNumber(endorsedBlock.height),
@@ -359,7 +361,8 @@ TEST_F(RewardsTestFixture, basicCacheReward_test) {
   ASSERT_TRUE(sampleCalculator->getPopPayout(
       altchain.back().getHash(), payouts, state));
   ASSERT_EQ(payouts.size(), 1);
-  ASSERT_TRUE(sampleCalculator->calculatePayouts(*endorsedIndex, payoutsUncached, state));
+  ASSERT_TRUE(sampleCalculator->calculatePayouts(
+      *endorsedIndex, payoutsUncached, state));
 
   ASSERT_EQ(payoutsUncached.size(), 1);
   ASSERT_EQ(payoutsUncached.payouts.begin()->second,
