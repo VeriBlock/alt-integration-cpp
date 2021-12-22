@@ -16,7 +16,7 @@
 #include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
 #include <veriblock/pop/time.hpp>
 
-#include "util/visualize.hpp"
+#include "pop/util/visualize.hpp"
 
 using namespace altintegration;
 

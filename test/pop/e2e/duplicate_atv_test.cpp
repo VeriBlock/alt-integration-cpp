@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "util/pop_test_fixture.hpp"
+#include "pop/util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 
@@ -173,5 +173,6 @@ TEST_F(DuplicateATVfixture, DuplicateATV_SameContaining_2A) {
   payloads.atvs.push_back(payloads.atvs.at(0));
 
   // should fail due to payloads being statelessly invalid(duplicate ids)
-  ASSERT_DEATH(AddPayloads(chain[100].getHash(), payloads), "checkPopDataForDuplicates");
+  ASSERT_DEATH(AddPayloads(chain[100].getHash(), payloads),
+               "checkPopDataForDuplicates");
 }

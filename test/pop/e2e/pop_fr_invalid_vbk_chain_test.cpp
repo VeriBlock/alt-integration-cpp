@@ -4,7 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <gtest/gtest.h>
 
-#include "util/pop_test_fixture.hpp"
+#include "pop/util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 
@@ -28,7 +28,8 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   auto vbkpoptx2 = popminer->createVbkPopTxEndorsingVbkBlock(
       tipB->getAncestor(25)->getHeader(), getLastKnownBtcBlock());
 
-  auto vbkcontaining = popminer->mineVbkBlocks(1, *tipB, {vbkpoptx1, vbkpoptx2});
+  auto vbkcontaining =
+      popminer->mineVbkBlocks(1, *tipB, {vbkpoptx1, vbkpoptx2});
   EXPECT_EQ(vbkcontaining->getHeight(), 39);
   tipB = vbkcontaining;
   auto vtbcontaining = vbkcontaining->getHeader();
@@ -53,7 +54,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse ALT5
   auto vbktx1 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
-  auto* vbkblock1 = popminer->mineVbkBlocks(1, {vbktx1});
+  auto *vbkblock1 = popminer->mineVbkBlocks(1, {vbktx1});
   ATV atv1 = popminer->createATV(vbkblock1->getHeader(), vbktx1);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
@@ -78,7 +79,7 @@ TEST_F(PopFrInvalidVbkChainTest, SendInvalidVTBtoAlternativeVBKchain) {
   // endorse ALT5
   auto vbktx2 =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[5]));
-  auto* vbkblock2 = popminer->mineVbkBlocks(1, {vbktx2});
+  auto *vbkblock2 = popminer->mineVbkBlocks(1, {vbktx2});
   ATV atv2 = popminer->createATV(vbkblock2->getHeader(), vbktx2);
   ASSERT_EQ(atv1.blockOfProof.getHeight(), 42);
 
@@ -119,16 +120,18 @@ TEST_F(PopFrInvalidVbkChainTest, DuplicateEndorsementsInForks) {
       popminer->createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
   auto *btcTip = popminer->mineBtcBlocks(1, {btcTx});
 
-  auto vbkPopTxA = popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
-                                            btcTx,
-                                            endorsedBlock->getHeader(),
-                                            GetRegTestBtcBlock().getHash());
+  auto vbkPopTxA =
+      popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+                                                btcTx,
+                                                endorsedBlock->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
   tipA = popminer->mineVbkBlocks(1, *tipA, {vbkPopTxA});
 
-  auto vbkPopTxB = popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
-                                            btcTx,
-                                            endorsedBlock->getHeader(),
-                                            GetRegTestBtcBlock().getHash());
+  auto vbkPopTxB =
+      popminer->createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+                                                btcTx,
+                                                endorsedBlock->getHeader(),
+                                                GetRegTestBtcBlock().getHash());
   tipB = popminer->mineVbkBlocks(1, *tipB, {vbkPopTxB});
 
   ASSERT_TRUE(tipA->isValid());

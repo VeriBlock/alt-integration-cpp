@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
+#include <pop/util/pop_test_fixture.hpp>
 #include <veriblock/pop/rewards/default_poprewards_calculator.hpp>
 
 using namespace altintegration;

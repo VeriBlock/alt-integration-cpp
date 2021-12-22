@@ -7,7 +7,7 @@
 
 #include <veriblock/pop/blockchain/commands/commands.hpp>
 
-#include "util/pop_test_fixture.hpp"
+#include "pop/util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 

@@ -6,9 +6,9 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/pop/entities/popdata.hpp>
-
-#include "util/test_utils.hpp"
 #include <veriblock/pop/literals.hpp>
+
+#include "pop/util/test_utils.hpp"
 
 using namespace altintegration;
 

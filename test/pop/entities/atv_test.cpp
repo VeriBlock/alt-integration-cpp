@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/atv.hpp>
-
 #include <gtest/gtest.h>
 
-#include "util/test_utils.hpp"
+#include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/literals.hpp>
+
+#include "pop/util/test_utils.hpp"
 
 using namespace altintegration;
 

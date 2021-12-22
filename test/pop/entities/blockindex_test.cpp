@@ -4,17 +4,16 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <gtest/gtest.h>
 
+#include <pop/util/test_utils.hpp>
 #include <string>
-#include <util/test_utils.hpp>
 #include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/storage/stored_block_index.hpp>
-
-#include <veriblock/pop/literals.hpp>
 
 static const std::string AltBlockIndexVbkEncoded =
     "00000000201fec8aa4983d69395010e4d18cd8b943749d5b4f575e88a375debdc5ed22531c"
@@ -86,8 +85,8 @@ TYPED_TEST_P(BlockIndexTest, RoundTrip) {
 
   auto vbkencoded = SerializeToVbkEncoding<Index>(index);
   Index decodedVbk;
-  ASSERT_TRUE(
-      DeserializeFromVbkEncoding<Index>(vbkencoded, decodedVbk, state, altparam))
+  ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(
+      vbkencoded, decodedVbk, state, altparam))
       << state.toString();
   ASSERT_TRUE(state.IsValid());
   ASSERT_EQ(index.toVbkEncoding(), decodedVbk.toVbkEncoding());

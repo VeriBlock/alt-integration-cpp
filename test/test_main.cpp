@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 
 #include <sstream>
-#include <util/fmtlogger.hpp>
+#include <pop/util/fmtlogger.hpp>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/logger.hpp>
 

@@ -5,8 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include <util/pop_test_fixture.hpp>
-
+#include <pop/util/pop_test_fixture.hpp>
 #include <veriblock/pop/blockchain/temp_block_tree.hpp>
 
 using namespace altintegration;
@@ -212,8 +211,7 @@ REGISTER_TYPED_TEST_SUITE_P(TempBlockTreeTest,
                             scenario_1,
                             scenario_2,
                             scenario_3,
-                            TempTreeDoesNotAffectRealTree
-                            );
+                            TempTreeDoesNotAffectRealTree);
 
 // clang-format off
 typedef ::testing::Types<

@@ -8,7 +8,7 @@
 #include <exception>
 #include <veriblock/pop/blockchain/pop/fork_resolution.hpp>
 
-#include "util/pop_test_fixture.hpp"
+#include "pop/util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 

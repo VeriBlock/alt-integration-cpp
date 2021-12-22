@@ -3,15 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/vtb.hpp>
-
 #include <gtest/gtest.h>
 
 #include <string>
 #include <vector>
-
-#include "util/test_utils.hpp"
+#include <veriblock/pop/entities/vtb.hpp>
 #include <veriblock/pop/literals.hpp>
+
+#include "pop/util/test_utils.hpp"
 
 using namespace altintegration;
 
