@@ -127,7 +127,7 @@ func TestVtbSerde(t *testing.T) {
 	assert.NotNil(vbkBlock)
 
 	vtb := CreateVtb()
-	err = vtb.DeserializeFromVbk(encodedBytes)
+	err = vtb.DeserializeFromVbk(encodedBytes, config)
 	assert.NoError(err)
 	assert.NotNil(vtb)
 
@@ -135,7 +135,7 @@ func TestVtbSerde(t *testing.T) {
 
 	assert.Equal(vtb.SerializeToVbk(), encodedBytes)
 
-	err = vtb.DeserializeFromVbk([]byte{1, 2, 3, 4})
+	err = vtb.DeserializeFromVbk([]byte{1, 2, 3, 4}, config)
 	assert.Error(err)
 }
 
@@ -154,7 +154,7 @@ func TestAtvSerde(t *testing.T) {
 	assert.NotNil(vbkBlock)
 
 	atv := CreateAtv()
-	err = atv.DeserializeFromVbk(encodedBytes)
+	err = atv.DeserializeFromVbk(encodedBytes, config)
 	assert.NoError(err)
 	assert.NotNil(atv)
 
@@ -162,7 +162,7 @@ func TestAtvSerde(t *testing.T) {
 
 	assert.Equal(atv.SerializeToVbk(), encodedBytes)
 
-	err = atv.DeserializeFromVbk([]byte{1, 2, 3, 4})
+	err = atv.DeserializeFromVbk([]byte{1, 2, 3, 4}, config)
 	assert.Error(err)
 }
 
@@ -193,12 +193,12 @@ func TestPopDataSerde(t *testing.T) {
 	encodedBytes := assertHexDecode(defaultPopDataEncoded)
 
 	atv := CreateAtv()
-	err := atv.DeserializeFromVbk(assertHexDecode(defaultAtvEncoded))
+	err := atv.DeserializeFromVbk(assertHexDecode(defaultAtvEncoded), config)
 	assert.NoError(err)
 	assert.NotNil(atv)
 
 	vtb := CreateVtb()
-	err = vtb.DeserializeFromVbk(assertHexDecode(defaultVtbEncoded))
+	err = vtb.DeserializeFromVbk(assertHexDecode(defaultVtbEncoded), config)
 	assert.NoError(err)
 	assert.NotNil(vtb)
 
