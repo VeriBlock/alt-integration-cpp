@@ -22,7 +22,11 @@
 #include <vector>
 
 #include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/read_stream.hpp"
 #include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/write_stream.hpp"
+
+namespace btc {
 
 static const unsigned int MAX_SIZE = 0x02000000;
 
@@ -100,37 +104,49 @@ inline void ser_writedata64(Stream& s, uint64_t obj) {
 template <typename Stream>
 inline uint8_t ser_readdata8(Stream& s) {
   uint8_t obj;
-  s.read((char*)&obj, 1);
+  altintegration::ValidationState state;
+  auto res = s.read(1, (uint8_t*)&obj, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return obj;
 }
 template <typename Stream>
 inline uint16_t ser_readdata16(Stream& s) {
   uint16_t obj;
-  s.read((char*)&obj, 2);
+  altintegration::ValidationState state;
+  auto res = s.read(2, (uint8_t*)&obj, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return le16toh(obj);
 }
 template <typename Stream>
 inline uint16_t ser_readdata16be(Stream& s) {
   uint16_t obj;
-  s.read((char*)&obj, 2);
+  altintegration::ValidationState state;
+  auto res = s.read(2, (uint8_t*)&obj, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return be16toh(obj);
 }
 template <typename Stream>
 inline uint32_t ser_readdata32(Stream& s) {
   uint32_t obj;
-  s.read((char*)&obj, 4);
+  altintegration::ValidationState state;
+  auto res = s.read(4, (uint8_t*)&obj, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return le32toh(obj);
 }
 template <typename Stream>
 inline uint32_t ser_readdata32be(Stream& s) {
   uint32_t obj;
-  s.read((char*)&obj, 4);
+  altintegration::ValidationState state;
+  auto res = s.read(4, (uint8_t*)&obj, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return be32toh(obj);
 }
 template <typename Stream>
 inline uint64_t ser_readdata64(Stream& s) {
   uint64_t obj;
-  s.read((char*)&obj, 8);
+  altintegration::ValidationState state;
+  auto res = s.read(8, (uint8_t*)&obj, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return le64toh(obj);
 }
 inline uint64_t ser_double_to_uint64(double x) {
@@ -736,7 +752,7 @@ void Serialize_impl(Stream& os, const std::vector<T, A>& v, const bool&) {
   // due to std::vector's special casing for bool arguments.
   WriteCompactSize(os, v.size());
   for (bool elem : v) {
-    ::Serialize(os, elem);
+    Serialize(os, elem);
   }
 }
 
@@ -744,8 +760,9 @@ template <typename Stream, typename T, typename A, typename V>
 void Serialize_impl(Stream& os, const std::vector<T, A>& v, const V&) {
   WriteCompactSize(os, v.size());
   for (typename std::vector<T, A>::const_iterator vi = v.begin(); vi != v.end();
-       ++vi)
-    ::Serialize(os, (*vi));
+       ++vi) {
+    Serialize(os, (*vi));
+  }
 }
 
 template <typename Stream, typename T, typename A>
@@ -910,7 +927,7 @@ class CSizeComputer {
 
   template <typename T>
   CSizeComputer& operator<<(const T& obj) {
-    ::Serialize(*this, obj);
+    Serialize(*this, obj);
     return (*this);
   }
 
@@ -924,8 +941,8 @@ void SerializeMany(Stream&) {}
 
 template <typename Stream, typename Arg, typename... Args>
 void SerializeMany(Stream& s, const Arg& arg, const Args&... args) {
-  ::Serialize(s, arg);
-  ::SerializeMany(s, args...);
+  Serialize(s, arg);
+  SerializeMany(s, args...);
 }
 
 template <typename Stream>
@@ -933,20 +950,20 @@ inline void UnserializeMany(Stream&) {}
 
 template <typename Stream, typename Arg, typename... Args>
 inline void UnserializeMany(Stream& s, Arg&& arg, Args&&... args) {
-  ::Unserialize(s, arg);
-  ::UnserializeMany(s, args...);
+  Unserialize(s, arg);
+  UnserializeMany(s, args...);
 }
 
 template <typename Stream, typename... Args>
 inline void SerReadWriteMany(Stream& s,
                              CSerActionSerialize,
                              const Args&... args) {
-  ::SerializeMany(s, args...);
+  SerializeMany(s, args...);
 }
 
 template <typename Stream, typename... Args>
 inline void SerReadWriteMany(Stream& s, CSerActionUnserialize, Args&&... args) {
-  ::UnserializeMany(s, args...);
+  UnserializeMany(s, args...);
 }
 
 template <typename I>
@@ -969,5 +986,21 @@ size_t GetSerializeSizeMany(int nVersion, const T&... t) {
   SerializeMany(sc, t...);
   return sc.size();
 }
+
+}  // namespace btc
+
+namespace altintegration {
+
+template <typename T>
+void SerializeBtc(WriteStream& stream, const T& obj) {
+  btc::Serialize(stream, obj);
+}
+
+template <typename T>
+void UnserializeBtc(ReadStream& stream, T& obj) {
+  btc::Unserialize(stream, obj);
+}
+
+}  // namespace altintegration
 
 #endif  // BITCOIN_SERIALIZE_H
