@@ -111,3 +111,24 @@ TEST(Serialize, floats) {
     EXPECT_EQ(j, i);
   }
 }
+
+TEST(Serialize, doubles) {
+  WriteStream writer;
+  // encode
+  for (int i = 0; i < 1000; i++) {
+    SerializeBtc(writer, double(i));
+  }
+
+  EXPECT_EQ(
+      sha256twice(writer.data()).reverse(),
+      uint256::fromHex(
+          "43d0c82591953c4eafe114590d392676a01585d25b25d433557f0d7878b23f96"));
+
+  ReadStream reader{writer.data()};
+  // decode
+  for (int i = 0; i < 1000; i++) {
+    double j;
+    UnserializeBtc(reader, j);
+    EXPECT_EQ(j, i);
+  }
+}
