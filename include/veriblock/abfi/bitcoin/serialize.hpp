@@ -992,12 +992,12 @@ size_t GetSerializeSizeMany(int nVersion, const T&... t) {
 namespace altintegration {
 
 template <typename T>
-void SerializeBtc(WriteStream& stream, const T& obj) {
+void SerializeBtc(WriteStream& stream, const T&& obj) {
   btc::Serialize(stream, obj);
 }
 
 template <typename T>
-void UnserializeBtc(ReadStream& stream, T& obj) {
+void UnserializeBtc(ReadStream& stream, T&& obj) {
   btc::Unserialize(stream, obj);
 }
 
