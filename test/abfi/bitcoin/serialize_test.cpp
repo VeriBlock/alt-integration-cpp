@@ -238,7 +238,7 @@ TEST(Serialize, varints_bitpatterns) {
 
 TEST(Serialize, compactsize) {
   WriteStream writer;
-  std::vector<char>::size_type i, j;
+  size_t i, j;
 
   for (i = 1; i <= MAX_SIZE; i *= 2) {
     WriteCompactSize(writer, i - 1);
@@ -254,16 +254,67 @@ TEST(Serialize, compactsize) {
   }
 }
 
-// TEST(Serialize, vector_bool) {
-//   WriteStream writer1;
-//   std::vector<uint8_t> vec1{1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
-//                             1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1};
-//   WriteStream writer2;
-//   std::vector<bool> vec2{1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
-//                          1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1};
+TEST(Serialize, vector_bool) {
+  WriteStream writer1;
+  std::vector<uint8_t> vec1{1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
+                            1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1};
+  WriteStream writer2;
+  std::vector<bool> vec2{1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
+                         1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1};
 
-//   SerializeBtc(writer1, vec1);
-//   SerializeBtc(writer2, vec2);
+  SerializeBtc(writer1, vec1);
+  SerializeBtc(writer2, vec2);
 
-//   EXPECT_EQ(vec1, vec2);
-// }
+  EXPECT_EQ(writer1.data(), writer2.data());
+}
+
+TEST(Serialize, noncanonical) {
+  // Write some non-canonical CompactSize encodings, and
+  // make sure an exception is thrown when read back.
+  WriteStream writer;
+  ReadStream reader{std::vector<uint8_t>{}};
+  size_t n;
+
+  // zero encoded with three bytes:
+  writer.write("\xfd\x00\x00", 3);
+  reader = ReadStream{writer.data()};
+  EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
+  writer = WriteStream{};
+
+  // 0xfc encoded with three bytes:
+  writer.write("\xfd\xfc\x00", 3);
+  reader = ReadStream{writer.data()};
+  EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
+  writer = WriteStream{};
+
+  // 0xfd encoded with three bytes is OK:
+  writer.write("\xfd\xfd\x00", 3);
+  reader = ReadStream{writer.data()};
+  n = ReadCompactSize(reader);
+  EXPECT_EQ(n, 0xfd);
+  writer = WriteStream{};
+
+  // zero encoded with five bytes:
+  writer.write("\xfe\x00\x00\x00\x00", 5);
+  reader = ReadStream{writer.data()};
+  EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
+  writer = WriteStream{};
+
+  // 0xffff encoded with five bytes:
+  writer.write("\xfe\xff\xff\x00\x00", 5);
+  reader = ReadStream{writer.data()};
+  EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
+  writer = WriteStream{};
+
+  // zero encoded with nine bytes:
+  writer.write("\xff\x00\x00\x00\x00\x00\x00\x00\x00", 9);
+  reader = ReadStream{writer.data()};
+  EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
+  writer = WriteStream{};
+
+  // 0x01ffffff encoded with nine bytes:
+  writer.write("\xff\xff\xff\xff\x01\x00\x00\x00\x00", 9);
+  reader = ReadStream{writer.data()};
+  EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
+  writer = WriteStream{};
+}
