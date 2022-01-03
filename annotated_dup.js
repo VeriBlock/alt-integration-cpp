@@ -94,6 +94,17 @@ var annotated_dup =
       [ "ValidationState", "classaltintegration_1_1ValidationState.html", "classaltintegration_1_1ValidationState" ],
       [ "WriteStream", "classaltintegration_1_1WriteStream.html", "classaltintegration_1_1WriteStream" ]
     ] ],
+    [ "btc", null, [
+      [ "deserialize_type", "structbtc_1_1deserialize__type.html", null ],
+      [ "CheckVarIntMode", "structbtc_1_1CheckVarIntMode.html", "structbtc_1_1CheckVarIntMode" ],
+      [ "CVarInt", "classbtc_1_1CVarInt.html", "classbtc_1_1CVarInt" ],
+      [ "BigEndian", "classbtc_1_1BigEndian.html", "classbtc_1_1BigEndian" ],
+      [ "CCompactSize", "classbtc_1_1CCompactSize.html", "classbtc_1_1CCompactSize" ],
+      [ "LimitedString", "classbtc_1_1LimitedString.html", "classbtc_1_1LimitedString" ],
+      [ "CSerActionSerialize", "structbtc_1_1CSerActionSerialize.html", "structbtc_1_1CSerActionSerialize" ],
+      [ "CSerActionUnserialize", "structbtc_1_1CSerActionUnserialize.html", "structbtc_1_1CSerActionUnserialize" ],
+      [ "CSizeComputer", "classbtc_1_1CSizeComputer.html", "classbtc_1_1CSizeComputer" ]
+    ] ],
     [ "fmt", null, [
       [ "formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4" ]
     ] ]

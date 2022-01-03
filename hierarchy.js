@@ -22,6 +22,7 @@ var hierarchy =
     [ "altintegration::BaseBlockTree< AltBlock >", "structaltintegration_1_1BaseBlockTree.html", [
       [ "altintegration::AltBlockTree", "structaltintegration_1_1AltBlockTree.html", null ]
     ] ],
+    [ "btc::BigEndian< I >", "classbtc_1_1BigEndian.html", null ],
     [ "altintegration::Blob< N >", "structaltintegration_1_1Blob.html", null ],
     [ "altintegration::Blob< SHA256_HASH_SIZE >", "structaltintegration_1_1Blob.html", [
       [ "altintegration::ArithUint256", "classaltintegration_1_1ArithUint256.html", null ]
@@ -48,15 +49,22 @@ var hierarchy =
       [ "altintegration::BtcChainParamsTest", "structaltintegration_1_1BtcChainParamsTest.html", null ]
     ] ],
     [ "altintegration::BtcTx", "structaltintegration_1_1BtcTx.html", null ],
+    [ "btc::CCompactSize", "classbtc_1_1CCompactSize.html", null ],
     [ "altintegration::Chain< BlockIndexT >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::Chain< altintegration::BlockIndex >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::Chain< block_index_t >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::ChainSlice< BlockIndexT >", "structaltintegration_1_1ChainSlice.html", null ],
     [ "altintegration::CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", null ],
+    [ "btc::CheckVarIntMode< Mode, I >", "structbtc_1_1CheckVarIntMode.html", null ],
     [ "altintegration::Coin", "structaltintegration_1_1Coin.html", null ],
     [ "altintegration::Config", "structaltintegration_1_1Config.html", null ],
     [ "altintegration::signals::Connection", "structaltintegration_1_1signals_1_1Connection.html", null ],
     [ "altintegration::ContextInfoContainer", "structaltintegration_1_1ContextInfoContainer.html", null ],
+    [ "btc::CSerActionSerialize", "structbtc_1_1CSerActionSerialize.html", null ],
+    [ "btc::CSerActionUnserialize", "structbtc_1_1CSerActionUnserialize.html", null ],
+    [ "btc::CSizeComputer", "classbtc_1_1CSizeComputer.html", null ],
+    [ "btc::CVarInt< Mode, I >", "classbtc_1_1CVarInt.html", null ],
+    [ "btc::deserialize_type", "structbtc_1_1deserialize__type.html", null ],
     [ "altintegration::VbkPayloadsRelations::EndorsedAltComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html", null ],
     [ "altintegration::Endorsement< EndorsedHash, ContainingHash, Container >", "structaltintegration_1_1Endorsement.html", null ],
     [ "std::exception", null, [
@@ -71,6 +79,7 @@ var hierarchy =
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
     [ "altintegration::IsPopPayload< T >", "structaltintegration_1_1IsPopPayload.html", null ],
     [ "altintegration::KeystoneContainer", "structaltintegration_1_1KeystoneContainer.html", null ],
+    [ "btc::LimitedString< Limit >", "classbtc_1_1LimitedString.html", null ],
     [ "altintegration::Logger", "structaltintegration_1_1Logger.html", null ],
     [ "altintegration::MemPool", "structaltintegration_1_1MemPool.html", null ],
     [ "altintegration::MempoolResult", "namespacealtintegration.html#structaltintegration_1_1MempoolResult", null ],

@@ -64,15 +64,16 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"addblock_8hpp_source.html",
-"fork__resolution_8hpp.html#a44156b05fd9bf2b94d7e51300932cb37",
-"namespacealtintegration.html#a203f05734842bb1530c6f54f9ae3c5dc",
-"namespacealtintegration.html#ac7b3c50040acc97d8d53a0d021359778",
-"structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59",
-"structaltintegration_1_1BlockIndex.html#ae52c40ac66b169d4e9d48c4640d84acb",
-"structaltintegration_1_1Config_1_1Bootstrap.html#a3dda1b273cd4b9438a9e8b47c3afda47",
-"structaltintegration_1_1ReadStream.html#a05ef9fc428a2769b60f9f114f12d46d9",
-"structaltintegration_1_1VbkTx.html#ab001ac046facc664b9c6939bc71c88a7"
+"",
+"context__info__container_8h_source.html",
+"namespacealtintegration.html#a0323152145f8ab579a6214e3df8eeac3",
+"namespacealtintegration.html#aaa11ec4ed27d05ff28567c07d69209c0",
+"serialize_8hpp.html#a3b2f31b448112de54b3f82ece094d4c6",
+"structaltintegration_1_1BaseBlockTree.html#a1c244540d5a6f7e6bbe2f2b4a1e0525c",
+"structaltintegration_1_1BtcChainParams.html#aaa39054eed31fa6ed188edc8594b667c",
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a3ca5ebf5f05553aa515dad24d94338db",
+"structaltintegration_1_1VbkBlock.html#afdd22f36754b6015915722dd93dedb3f",
+"structaltintegration_1_1adaptors_1_1Storage.html#a31efb8044419da5e6adb510da3daee9b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
