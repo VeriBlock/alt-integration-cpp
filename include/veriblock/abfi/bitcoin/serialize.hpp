@@ -20,11 +20,10 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-#include "veriblock/pop/blob.hpp"
-#include "veriblock/pop/read_stream.hpp"
-#include "veriblock/pop/slice.hpp"
-#include "veriblock/pop/write_stream.hpp"
+#include <veriblock/pop/blob.hpp>
+#include <veriblock/pop/read_stream.hpp>
+#include <veriblock/pop/slice.hpp>
+#include <veriblock/pop/write_stream.hpp>
 
 namespace btc {
 
@@ -336,16 +335,22 @@ inline void Unserialize(Stream& s, double& a) {
 }
 template <typename Stream, int N>
 inline void Unserialize(Stream& s, char (&a)[N]) {
-  s.read(a, N);
+  altintegration::ValidationState state;
+  auto res = s.read(N, (uint8_t*)a, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
 }
 template <typename Stream, int N>
 inline void Unserialize(Stream& s, unsigned char (&a)[N]) {
-  s.read(CharCast(a), N);
+  altintegration::ValidationState state;
+  auto res = s.read(N, a, state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
 }
 template <typename Stream>
 inline void Unserialize(Stream& s,
                         altintegration::Slice<const uint8_t>& slice) {
-  s.read(CharCast(slice.data()), slice.size());
+  altintegration::ValidationState state;
+  auto res = s.read(slice.size(), slice.data(), state);
+  VBK_ASSERT_MSG(res, "error: %s", state.toString());
 }
 
 template <typename Stream>
@@ -610,7 +615,11 @@ class LimitedString {
       throw std::ios_base::failure("String length limit exceeded");
     }
     string.resize(size);
-    if (size != 0) s.read((char*)string.data(), size);
+    altintegration::ValidationState state;
+    if (size != 0) {
+      auto res = s.read(size, (uint8_t*)string.data(), state);
+      VBK_ASSERT_MSG(res, "error: %s", state.toString());
+    }
   }
 
   template <typename Stream>
@@ -731,7 +740,11 @@ template <typename Stream, typename C>
 void Unserialize(Stream& is, std::basic_string<C>& str) {
   unsigned int nSize = ReadCompactSize(is);
   str.resize(nSize);
-  if (nSize != 0) is.read((char*)str.data(), nSize * sizeof(C));
+  altintegration::ValidationState state;
+  if (nSize != 0) {
+    auto res = is.read(nSize * sizeof(C), (uint8_t*)str.data(), state);
+    VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  }
 }
 
 /**
@@ -776,11 +789,13 @@ void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&) {
   v.clear();
   unsigned int nSize = ReadCompactSize(is);
   unsigned int i = 0;
+  altintegration::ValidationState state;
   while (i < nSize) {
     unsigned int blk =
         std::min(nSize - i, (unsigned int)(1 + 4999999 / sizeof(T)));
     v.resize(i + blk);
-    is.read((char*)&v[i], blk * sizeof(T));
+    auto res = is.read(blk * sizeof(T), (uint8_t*)&v[i], state);
+    VBK_ASSERT_MSG(res, "error: %s", state.toString());
     i += blk;
   }
 }

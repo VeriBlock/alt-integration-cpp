@@ -13,6 +13,54 @@
 using namespace btc;
 using namespace altintegration;
 
+class CSerializeMethodsTestSingle {
+ public:
+  int intval;
+  bool boolval;
+  std::string stringval;
+  char charstrval[16];
+
+ public:
+  CSerializeMethodsTestSingle() = default;
+  CSerializeMethodsTestSingle(int intvalin,
+                              bool boolvalin,
+                              std::string stringvalin,
+                              const char* charstrvalin)
+      : intval(intvalin),
+        boolval(boolvalin),
+        stringval(std::move(stringvalin)) {
+    memcpy(charstrval, charstrvalin, sizeof(charstrval));
+  }
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(intval);
+    READWRITE(boolval);
+    READWRITE(stringval);
+    READWRITE(charstrval);
+  }
+};
+
+class CSerializeMethodsTestMany : public CSerializeMethodsTestSingle {
+ public:
+  using CSerializeMethodsTestSingle::CSerializeMethodsTestSingle;
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(intval, boolval, stringval, charstrval);
+  }
+};
+
+template <typename T1, typename T2>
+bool is_equal(const T1& val1, T2& val2) {
+  return val1.intval == val2.intval && val1.boolval == val2.boolval &&
+         val1.stringval == val2.stringval &&
+         strcmp(val1.charstrval, val2.charstrval) == 0;
+}
+
 TEST(Serialize, sizes) {
   EXPECT_EQ(sizeof(char), GetSerializeSize(char(0), 0));
   EXPECT_EQ(sizeof(int8_t), GetSerializeSize(int8_t(0), 0));
@@ -317,4 +365,31 @@ TEST(Serialize, noncanonical) {
   reader = ReadStream{writer.data()};
   EXPECT_THROW(ReadCompactSize(reader), std::ios_base::failure);
   writer = WriteStream{};
+}
+
+TEST(Serialize, class_methods) {
+  int intval(100);
+  bool boolval(true);
+  std::string stringval("testing");
+  const char charstrval[16] = "testing charstr";
+
+  CSerializeMethodsTestSingle methodtest1(
+      intval, boolval, stringval, charstrval);
+  CSerializeMethodsTestMany methodtest2(intval, boolval, stringval, charstrval);
+  CSerializeMethodsTestSingle methodtest3;
+  CSerializeMethodsTestMany methodtest4;
+
+  EXPECT_TRUE(is_equal(methodtest1, methodtest2));
+
+  WriteStream writer;
+  SerializeBtc(writer, methodtest1);
+  SerializeBtc(writer, methodtest2);
+
+  ReadStream reader{writer.data()};
+  UnserializeBtc(reader, methodtest4);
+  UnserializeBtc(reader, methodtest3);
+
+  EXPECT_TRUE(is_equal(methodtest1, methodtest2));
+  EXPECT_TRUE(is_equal(methodtest2, methodtest3));
+  EXPECT_TRUE(is_equal(methodtest3, methodtest4));
 }
