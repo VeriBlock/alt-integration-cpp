@@ -73,32 +73,27 @@ inline const char* CharCast(const unsigned char* c) { return (const char*)c; }
  */
 template <typename Stream>
 inline void ser_writedata8(Stream& s, uint8_t obj) {
-  s.write((char*)&obj, 1);
+  s.template writeLE<uint8_t>(obj);
 }
 template <typename Stream>
 inline void ser_writedata16(Stream& s, uint16_t obj) {
-  obj = htole16(obj);
-  s.write((char*)&obj, 2);
+  s.template writeLE<uint16_t>(obj);
 }
 template <typename Stream>
 inline void ser_writedata16be(Stream& s, uint16_t obj) {
-  obj = htobe16(obj);
-  s.write((char*)&obj, 2);
+  s.template writeBE<uint16_t>(obj);
 }
 template <typename Stream>
 inline void ser_writedata32(Stream& s, uint32_t obj) {
-  obj = htole32(obj);
-  s.write((char*)&obj, 4);
+  s.template writeLE<uint32_t>(obj);
 }
 template <typename Stream>
 inline void ser_writedata32be(Stream& s, uint32_t obj) {
-  obj = htobe32(obj);
-  s.write((char*)&obj, 4);
+  s.template writeBE<uint16_t>(obj);
 }
 template <typename Stream>
 inline void ser_writedata64(Stream& s, uint64_t obj) {
-  obj = htole64(obj);
-  s.write((char*)&obj, 8);
+  s.template writeLE<uint64_t>(obj);
 }
 template <typename Stream>
 inline uint8_t ser_readdata8(Stream& s) {
@@ -936,6 +931,20 @@ class CSizeComputer {
   explicit CSizeComputer(int nVersionIn) : nSize(0), nVersion(nVersionIn) {}
 
   void write(const char*, size_t _nSize) { this->nSize += _nSize; }
+
+  template <
+      typename T,
+      typename = typename std::enable_if<std::is_integral<T>::value>::type>
+  void writeLE(T) {
+    this->nSize += sizeof(T);
+  }
+
+  template <
+      typename T,
+      typename = typename std::enable_if<std::is_integral<T>::value>::type>
+  void writeBE(T, size_t) {
+    this->nSize += sizeof(T);
+  }
 
   /** Pretend _nSize bytes are written, without specifying them. */
   void seek(size_t _nSize) { this->nSize += _nSize; }
