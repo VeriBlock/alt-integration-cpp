@@ -380,13 +380,13 @@ inline void WriteCompactSize(CSizeComputer& os, uint64_t nSize);
 template <typename Stream>
 void WriteCompactSize(Stream& os, uint64_t nSize) {
   if (nSize < 253) {
-    ser_writedata8(os, nSize);
+    ser_writedata8(os, (uint8_t)nSize);
   } else if (nSize <= std::numeric_limits<unsigned short>::max()) {
     ser_writedata8(os, 253);
-    ser_writedata16(os, nSize);
+    ser_writedata16(os, (uint16_t)nSize);
   } else if (nSize <= std::numeric_limits<unsigned int>::max()) {
     ser_writedata8(os, 254);
-    ser_writedata32(os, nSize);
+    ser_writedata32(os, (uint32_t)nSize);
   } else {
     ser_writedata8(os, 255);
     ser_writedata64(os, nSize);
@@ -732,7 +732,7 @@ void Serialize(Stream& os, const std::basic_string<C>& str) {
 
 template <typename Stream, typename C>
 void Unserialize(Stream& is, std::basic_string<C>& str) {
-  unsigned int nSize = ReadCompactSize(is);
+  uint32_t nSize = (uint32_t)ReadCompactSize(is);
   str.resize(nSize);
   altintegration::ValidationState state;
   if (nSize != 0) {

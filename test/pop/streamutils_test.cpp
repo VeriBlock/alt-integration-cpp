@@ -176,7 +176,7 @@ TEST(Streams, big_uint64t) {
   uint64_t out = 0;
 
   reader.readLE<uint64_t>(out, state);
-  ASSERT_EQ(out, 4607182418800017408LL);
+  ASSERT_EQ(out, (uint64_t)4607182418800017408LL);
   reader.readLE<uint64_t>(out, state);
-  ASSERT_EQ(out, 4611686018427387904LL);
+  ASSERT_EQ(out, (uint64_t)4611686018427387904LL);
 }
