@@ -1,14 +1,5 @@
 var NAVTREEINDEX0 =
 {
-"":[4,0,0,0],
-"":[4,0,0,1],
-"":[4,0,1],
-"":[4,0,0,2],
-"":[4,0,0,3],
-"":[4,0,2],
-"":[4,0,0,5],
-"":[4,0,0,6],
-"":[4,0,0,7],
 "addblock_8hpp_source.html":[6,0,1,0,1,1,0,0],
 "addendorsement_8hpp_source.html":[6,0,1,0,1,1,0,1],
 "address_8h_source.html":[6,0,1,0,1,2,0,0],
@@ -249,5 +240,14 @@ var NAVTREEINDEX0 =
 "consts_8hpp.html#af5b0d16525b7f744c295d649063697e6":[6,0,1,0,1,19,35],
 "consts_8hpp.html#afcc5258725c8e410a9d6d9afd9bc239a":[6,0,1,0,1,19,29],
 "consts_8hpp.html#afd19924cf68f9b9367c1b39815b94941":[6,0,1,0,1,19,27],
-"consts_8hpp_source.html":[6,0,1,0,1,19]
+"consts_8hpp_source.html":[6,0,1,0,1,19],
+"context__info__container_8h_source.html":[6,0,1,0,1,2,0,7],
+"context__info__container_8hpp_source.html":[6,0,1,0,1,5,6],
+"counting__context_8hpp_source.html":[6,0,1,0,1,1,1,0],
+"default__poprewards__calculator_8hpp_source.html":[6,0,1,0,1,7,0],
+"description.html":[0,1],
+"description.html#autotoc_md2":[0,1,0],
+"description.html#autotoc_md3":[0,1,1],
+"dir_0252a7abd2d5cee5cf1dc5c94a7052df.html":[6,0,1,0,1],
+"dir_0400561d0d5a2d57dc000ed65d436d0c.html":[6,0,1,0,1,2,0]
 };
