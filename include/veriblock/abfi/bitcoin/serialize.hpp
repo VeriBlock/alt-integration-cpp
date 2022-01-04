@@ -87,7 +87,7 @@ inline void ser_writedata32(Stream& s, uint32_t obj) {
 }
 template <typename Stream>
 inline void ser_writedata32be(Stream& s, uint32_t obj) {
-  s.template writeBE<uint16_t>(obj);
+  s.template writeBE<uint32_t>(obj);
 }
 template <typename Stream>
 inline void ser_writedata64(Stream& s, uint64_t obj) {
@@ -97,7 +97,7 @@ template <typename Stream>
 inline uint8_t ser_readdata8(Stream& s) {
   uint8_t obj;
   altintegration::ValidationState state;
-  auto res = s.read(1, (uint8_t*)&obj, state);
+  auto res = s.template readLE<uint8_t>(obj, state);
   VBK_ASSERT_MSG(res, "error: %s", state.toString());
   return obj;
 }
@@ -105,41 +105,41 @@ template <typename Stream>
 inline uint16_t ser_readdata16(Stream& s) {
   uint16_t obj;
   altintegration::ValidationState state;
-  auto res = s.read(2, (uint8_t*)&obj, state);
+  auto res = s.template readLE<uint16_t>(obj, state);
   VBK_ASSERT_MSG(res, "error: %s", state.toString());
-  return le16toh(obj);
+  return obj;
 }
 template <typename Stream>
 inline uint16_t ser_readdata16be(Stream& s) {
   uint16_t obj;
   altintegration::ValidationState state;
-  auto res = s.read(2, (uint8_t*)&obj, state);
+  auto res = s.template readBE<uint16_t>(obj, state);
   VBK_ASSERT_MSG(res, "error: %s", state.toString());
-  return be16toh(obj);
+  return obj;
 }
 template <typename Stream>
 inline uint32_t ser_readdata32(Stream& s) {
   uint32_t obj;
   altintegration::ValidationState state;
-  auto res = s.read(4, (uint8_t*)&obj, state);
+  auto res = s.template readLE<uint32_t>(obj, state);
   VBK_ASSERT_MSG(res, "error: %s", state.toString());
-  return le32toh(obj);
+  return obj;
 }
 template <typename Stream>
 inline uint32_t ser_readdata32be(Stream& s) {
   uint32_t obj;
   altintegration::ValidationState state;
-  auto res = s.read(4, (uint8_t*)&obj, state);
+  auto res = s.template readBE<uint32_t>(obj, state);
   VBK_ASSERT_MSG(res, "error: %s", state.toString());
-  return be32toh(obj);
+  return obj;
 }
 template <typename Stream>
 inline uint64_t ser_readdata64(Stream& s) {
   uint64_t obj;
   altintegration::ValidationState state;
-  auto res = s.read(8, (uint8_t*)&obj, state);
+  auto res = s.template readLE<uint64_t>(obj, state);
   VBK_ASSERT_MSG(res, "error: %s", state.toString());
-  return le64toh(obj);
+  return obj;
 }
 inline uint64_t ser_double_to_uint64(double x) {
   union {

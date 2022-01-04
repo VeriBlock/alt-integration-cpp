@@ -165,3 +165,18 @@ TEST(Streams, BE_Sized) {
   uint64_t actual = rs.assertReadBE<uint64_t>(5);
   ASSERT_EQ(nonce, actual) << std::hex << actual;
 }
+
+TEST(Streams, big_uint64t) {
+  altintegration::WriteStream writer;
+  writer.writeLE<uint64_t>(4607182418800017408LL);
+  writer.writeLE<uint64_t>(4611686018427387904LL);
+
+  altintegration::ReadStream reader{writer.data()};
+  altintegration::ValidationState state;
+  uint64_t out = 0;
+
+  reader.readLE<uint64_t>(out, state);
+  ASSERT_EQ(out, 4607182418800017408LL);
+  reader.readLE<uint64_t>(out, state);
+  ASSERT_EQ(out, 4611686018427387904LL);
+}
