@@ -106,7 +106,7 @@ struct ReadStream {
 
     t = 0;
     for (size_t i = 0, shift = 0; i < sizeof(T); i++, shift += 8) {
-      t += m_Buffer[m_Pos++] << shift;
+      t += ((T)m_Buffer[m_Pos++]) << shift;
     }
     return true;
   }
