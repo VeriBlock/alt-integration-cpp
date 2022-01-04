@@ -97,48 +97,54 @@ template <typename Stream>
 inline uint8_t ser_readdata8(Stream& s) {
   uint8_t obj;
   altintegration::ValidationState state;
-  auto res = s.template readLE<uint8_t>(obj, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.template readLE<uint8_t>(obj, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
   return obj;
 }
 template <typename Stream>
 inline uint16_t ser_readdata16(Stream& s) {
   uint16_t obj;
   altintegration::ValidationState state;
-  auto res = s.template readLE<uint16_t>(obj, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.template readLE<uint16_t>(obj, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
   return obj;
 }
 template <typename Stream>
 inline uint16_t ser_readdata16be(Stream& s) {
   uint16_t obj;
   altintegration::ValidationState state;
-  auto res = s.template readBE<uint16_t>(obj, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.template readBE<uint16_t>(obj, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
   return obj;
 }
 template <typename Stream>
 inline uint32_t ser_readdata32(Stream& s) {
   uint32_t obj;
   altintegration::ValidationState state;
-  auto res = s.template readLE<uint32_t>(obj, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.template readLE<uint32_t>(obj, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
   return obj;
 }
 template <typename Stream>
 inline uint32_t ser_readdata32be(Stream& s) {
   uint32_t obj;
   altintegration::ValidationState state;
-  auto res = s.template readBE<uint32_t>(obj, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.template readBE<uint32_t>(obj, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
   return obj;
 }
 template <typename Stream>
 inline uint64_t ser_readdata64(Stream& s) {
   uint64_t obj;
   altintegration::ValidationState state;
-  auto res = s.template readLE<uint64_t>(obj, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.template readLE<uint64_t>(obj, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
   return obj;
 }
 inline uint64_t ser_double_to_uint64(double x) {
@@ -329,21 +335,24 @@ inline void Unserialize(Stream& s, double& a) {
 template <typename Stream, int N>
 inline void Unserialize(Stream& s, char (&a)[N]) {
   altintegration::ValidationState state;
-  auto res = s.read(N, (uint8_t*)a, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.read(N, (uint8_t*)a, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
 }
 template <typename Stream, int N>
 inline void Unserialize(Stream& s, unsigned char (&a)[N]) {
   altintegration::ValidationState state;
-  auto res = s.read(N, a, state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.read(N, a, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
 }
 template <typename Stream>
 inline void Unserialize(Stream& s,
                         altintegration::Slice<const uint8_t>& slice) {
   altintegration::ValidationState state;
-  auto res = s.read(slice.size(), slice.data(), state);
-  VBK_ASSERT_MSG(res, "error: %s", state.toString());
+  if (!s.read(slice.size(), slice.data(), state)) {
+    throw std::ios_base::failure(state.toString());
+  }
 }
 
 template <typename Stream>
@@ -610,8 +619,9 @@ class LimitedString {
     string.resize(size);
     altintegration::ValidationState state;
     if (size != 0) {
-      auto res = s.read(size, (uint8_t*)string.data(), state);
-      VBK_ASSERT_MSG(res, "error: %s", state.toString());
+      if (!s.read(size, (uint8_t*)string.data(), state)) {
+        throw std::ios_base::failure(state.toString());
+      }
     }
   }
 
@@ -735,8 +745,9 @@ void Unserialize(Stream& is, std::basic_string<C>& str) {
   str.resize(nSize);
   altintegration::ValidationState state;
   if (nSize != 0) {
-    auto res = is.read(nSize * sizeof(C), (uint8_t*)str.data(), state);
-    VBK_ASSERT_MSG(res, "error: %s", state.toString());
+    if (!is.read(nSize * sizeof(C), (uint8_t*)str.data(), state)) {
+      throw std::ios_base::failure(state.toString());
+    }
   }
 }
 
@@ -787,8 +798,9 @@ void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&) {
     unsigned int blk =
         std::min(nSize - i, (unsigned int)(1 + 4999999 / sizeof(T)));
     v.resize(i + blk);
-    auto res = is.read(blk * sizeof(T), (uint8_t*)&v[i], state);
-    VBK_ASSERT_MSG(res, "error: %s", state.toString());
+    if (!is.read(blk * sizeof(T), (uint8_t*)&v[i], state)) {
+      throw std::ios_base::failure(state.toString());
+    }
     i += blk;
   }
 }
