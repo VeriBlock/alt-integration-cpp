@@ -68,12 +68,12 @@ var NAVTREEINDEX =
 "dir_15edb939ead1335fa04d191893c40fb2.html",
 "namespacealtintegration.html#a09db8f8c3f64b17f0a5bd6573d21ad72",
 "namespacealtintegration.html#aaf59d85fef938af997a5b1944e207c19",
-"serialize_8hpp.html#a51a303bc06c0126605dc9d65cae0e954",
-"structaltintegration_1_1BaseBlockTree.html#a4e8b3a7980e6750687a053ff9acf0084",
-"structaltintegration_1_1BtcChainParamsMain.html#a0d52669dbbc0f8381ee38452c97277fd",
-"structaltintegration_1_1MerklePath.html#a01b734b8c63386ab6aac7a0305e6528b",
-"structaltintegration_1_1VbkBlockTree.html#a2667b39ae3722d0968f2badc4655fb4e",
-"structaltintegration_1_1adaptors_1_1StorageIterator.html#ae0a8a47d91d27c6b3f6db8a5ab5dfd2b"
+"serialize_8hpp.html#a50e9bee7d084dc3d8a37e57917771302",
+"structaltintegration_1_1BaseBlockTree.html#a48c1ac8d9b8139e000c439898b2c587e",
+"structaltintegration_1_1BtcChainParamsMain.html",
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#af882cb9c2035c7e1bda62efc798792d7",
+"structaltintegration_1_1VbkBlockTree.html#a14b25dfbc00c8bf8ff9582dd8f43f7c4",
+"structaltintegration_1_1adaptors_1_1StorageIterator.html#a7565df9810c17aba97af94d6ec2313db"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
