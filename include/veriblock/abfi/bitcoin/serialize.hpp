@@ -93,59 +93,50 @@ template <typename Stream>
 inline void ser_writedata64(Stream& s, uint64_t obj) {
   s.template writeLE<uint64_t>(obj);
 }
-template <typename Stream>
-inline uint8_t ser_readdata8(Stream& s) {
-  uint8_t obj;
+
+template <typename Stream, typename T>
+T ReadLE(Stream& s) {
+  T out;
   altintegration::ValidationState state;
-  if (!s.template readLE<uint8_t>(obj, state)) {
+  if (!s.template readLE<T>(out, state)) {
     throw std::ios_base::failure(state.toString());
   }
-  return obj;
+  return out;
+}
+
+template <typename Stream, typename T>
+T ReadBE(Stream& s) {
+  T out;
+  altintegration::ValidationState state;
+  if (!s.template readBE<T>(out, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
+  return out;
+}
+
+template <typename Stream>
+inline uint8_t ser_readdata8(Stream& s) {
+  return ReadLE<Stream, uint8_t>(s);
 }
 template <typename Stream>
 inline uint16_t ser_readdata16(Stream& s) {
-  uint16_t obj;
-  altintegration::ValidationState state;
-  if (!s.template readLE<uint16_t>(obj, state)) {
-    throw std::ios_base::failure(state.toString());
-  }
-  return obj;
+  return ReadLE<Stream, uint16_t>(s);
 }
 template <typename Stream>
 inline uint16_t ser_readdata16be(Stream& s) {
-  uint16_t obj;
-  altintegration::ValidationState state;
-  if (!s.template readBE<uint16_t>(obj, state)) {
-    throw std::ios_base::failure(state.toString());
-  }
-  return obj;
+  return ReadBE<Stream, uint16_t>(s);
 }
 template <typename Stream>
 inline uint32_t ser_readdata32(Stream& s) {
-  uint32_t obj;
-  altintegration::ValidationState state;
-  if (!s.template readLE<uint32_t>(obj, state)) {
-    throw std::ios_base::failure(state.toString());
-  }
-  return obj;
+  return ReadLE<Stream, uint32_t>(s);
 }
 template <typename Stream>
 inline uint32_t ser_readdata32be(Stream& s) {
-  uint32_t obj;
-  altintegration::ValidationState state;
-  if (!s.template readBE<uint32_t>(obj, state)) {
-    throw std::ios_base::failure(state.toString());
-  }
-  return obj;
+  return ReadBE<Stream, uint32_t>(s);
 }
 template <typename Stream>
 inline uint64_t ser_readdata64(Stream& s) {
-  uint64_t obj;
-  altintegration::ValidationState state;
-  if (!s.template readLE<uint64_t>(obj, state)) {
-    throw std::ios_base::failure(state.toString());
-  }
-  return obj;
+  return ReadLE<Stream, uint64_t>(s);
 }
 inline uint64_t ser_double_to_uint64(double x) {
   union {
