@@ -711,7 +711,7 @@ $(document).ready(function(){initNavTree('serialize_8hpp_source.html',''); initR
 <div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160; </div>
 <div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Stream, <span class="keyword">typename</span> C&gt;</div>
 <div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;<span class="keywordtype">void</span> Unserialize(Stream&amp; is, std::basic_string&lt;C&gt;&amp; str) {</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> nSize = ReadCompactSize(is);</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;  uint32_t nSize = (uint32_t)ReadCompactSize(is);</div>
 <div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;  str.resize(nSize);</div>
 <div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;  <a class="code" href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a> state;</div>
 <div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;  <span class="keywordflow">if</span> (nSize != 0) {</div>
