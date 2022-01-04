@@ -96,7 +96,7 @@ inline void ser_writedata64(Stream& s, uint64_t obj) {
 
 template <typename Stream, typename T>
 T ReadLE(Stream& s) {
-  T out;
+  T out = 0;
   altintegration::ValidationState state;
   if (!s.template readLE<T>(out, state)) {
     throw std::ios_base::failure(state.toString());
@@ -106,7 +106,7 @@ T ReadLE(Stream& s) {
 
 template <typename Stream, typename T>
 T ReadBE(Stream& s) {
-  T out;
+  T out = 0;
   altintegration::ValidationState state;
   if (!s.template readBE<T>(out, state)) {
     throw std::ios_base::failure(state.toString());
