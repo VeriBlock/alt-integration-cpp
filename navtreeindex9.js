@@ -1,14 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structaltintegration_1_1adaptors_1_1Storage.html":[5,0,0,0,15],
-"structaltintegration_1_1adaptors_1_1Storage.html#a02be0e085767b36b707a50bade5916b9":[5,0,0,0,15,0],
-"structaltintegration_1_1adaptors_1_1Storage.html#a31efb8044419da5e6adb510da3daee9b":[5,0,0,0,15,2],
-"structaltintegration_1_1adaptors_1_1Storage.html#a8ad21c384371bb79a492b96b935b8d55":[5,0,0,0,15,4],
-"structaltintegration_1_1adaptors_1_1Storage.html#a8e45a9a3f35642e585e26369fbc00565":[5,0,0,0,15,3],
-"structaltintegration_1_1adaptors_1_1Storage.html#aa1e96602666f91bfe9721653ebc432dd":[5,0,0,0,15,1],
-"structaltintegration_1_1adaptors_1_1StorageIterator.html":[5,0,0,0,13],
-"structaltintegration_1_1adaptors_1_1StorageIterator.html#a22362e3a5dc9da03347d92f810f15fad":[5,0,0,0,13,0],
-"structaltintegration_1_1adaptors_1_1StorageIterator.html#a7044420fd3cd26b5ca0304b2633ce75b":[5,0,0,0,13,6],
 "structaltintegration_1_1adaptors_1_1StorageIterator.html#a7565df9810c17aba97af94d6ec2313db":[5,0,0,0,13,4],
 "structaltintegration_1_1adaptors_1_1StorageIterator.html#aba774411a79b4a80a46c6e2fa28d7fb2":[5,0,0,0,13,5],
 "structaltintegration_1_1adaptors_1_1StorageIterator.html#ae0a8a47d91d27c6b3f6db8a5ab5dfd2b":[5,0,0,0,13,1],
@@ -67,5 +58,14 @@ var NAVTREEINDEX9 =
 "vblake_8hpp_source.html":[6,0,1,0,1,4,4],
 "vtb_8h_source.html":[6,0,1,0,1,2,0,15],
 "vtb_8hpp_source.html":[6,0,1,0,1,5,21],
-"write__stream_8hpp_source.html":[6,0,1,0,1,49]
+"write__stream_8hpp_source.html":[6,0,1,0,1,49],
+"":[4,0,0,7],
+"":[4,0,2],
+"":[4,0,0,3],
+"":[4,0,0,2],
+"":[4,0,0,1],
+"":[4,0,0,5],
+"":[4,0,0,6],
+"":[4,0,1],
+"":[4,0,0,0]
 };

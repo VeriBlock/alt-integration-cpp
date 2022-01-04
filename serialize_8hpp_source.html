@@ -436,13 +436,13 @@ $(document).ready(function(){initNavTree('serialize_8hpp_source.html',''); initR
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Stream&gt;</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="keywordtype">void</span> WriteCompactSize(Stream&amp; os, uint64_t nSize) {</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  <span class="keywordflow">if</span> (nSize &lt; 253) {</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    ser_writedata8(os, nSize);</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    ser_writedata8(os, (uint8_t)nSize);</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (nSize &lt;= std::numeric_limits&lt;unsigned short&gt;::max()) {</div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    ser_writedata8(os, 253);</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    ser_writedata16(os, nSize);</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    ser_writedata16(os, (uint16_t)nSize);</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (nSize &lt;= std::numeric_limits&lt;unsigned int&gt;::max()) {</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    ser_writedata8(os, 254);</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    ser_writedata32(os, nSize);</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    ser_writedata32(os, (uint32_t)nSize);</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    ser_writedata8(os, 255);</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    ser_writedata64(os, nSize);</div>
