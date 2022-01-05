@@ -9,6 +9,7 @@
 #include <functional>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/blockchain/chain.hpp>
+#include <veriblock/pop/blockchain/chain_slice.hpp>
 #include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
@@ -84,7 +85,7 @@ struct PopStateMachine {
         commandGroupStore_(ed_.getCommandGroupStore()),
         payloadsIndex_(payloadsIndex) {}
 
-  // atomic: applies either all or none of the block's commands
+  //! @invariant atomic - applies either all or none of the block's commands
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
 
@@ -160,6 +161,7 @@ struct PopStateMachine {
   /**
    * Removes all side effects made by this block.
    * @param[in] index block to unapply
+   * @invariant atomic
    */
   void unapplyBlock(index_t& index) {
     VBK_TRACE_ZONE_SCOPED;
@@ -192,7 +194,8 @@ struct PopStateMachine {
    * @return the block index on which the predicate returns false or 'to' if the
    * predicate returns true for all blocks
    *
-   * atomic: either unapplies all of the requested blocks or fails on an assert
+   * @invariant atomic - either unapplies all of the requested blocks or fails
+   * on an assert
    */
   VBK_CHECK_RETURN index_t& unapplyWhile(
       index_t& from,

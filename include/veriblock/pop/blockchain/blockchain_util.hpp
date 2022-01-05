@@ -193,16 +193,17 @@ void vectorPopToCommandGroup(Tree& tree,
                              const std::vector<Pop>& pop,
                              const std::vector<uint8_t>& containingHash,
                              std::vector<CommandGroup>& cgs) {
-  const auto& pl = tree.getPayloadsIndex();
+  // const auto& pl = tree.getPayloadsIndex();
   for (const auto& b : pop) {
     CommandGroup cg;
     cg.payload_type_name = &Pop::name();
     cg.id = b.getId().asVector();
-    cg.valid = pl.getValidity(containingHash, cg.id);
+    // cg.valid = pl.getValidity(containingHash, cg.id);
     payloadToCommands(tree, b, containingHash, cg.commands);
 
     cgs.push_back(std::move(cg));
   }
+  cgs.shrink_to_fit();
 }
 
 //! @private
