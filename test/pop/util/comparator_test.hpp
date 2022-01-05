@@ -346,7 +346,6 @@ struct TestComparator {
         this->operator()(a.getPayloadsInVbk(), b.getPayloadsInVbk(), suppress),
         suppress);
 
-    VBK_EXPECT_EQ(a.getValidity(), b.getValidity(), suppress);
     return true;
   }
 };

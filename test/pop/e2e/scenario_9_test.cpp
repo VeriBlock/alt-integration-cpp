@@ -98,7 +98,7 @@ TEST_F(Scenario9, scenario_9) {
 
   EXPECT_FALSE(alttree.setState(containingBlock.getHash(), state))
       << state.toString();
-  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true, true);
+  validateAlttreeIndexState(alttree, containingBlock, altPayloads2, true);
 
   verifyEndorsementAdded(alttree.vbk(), E1);
 }

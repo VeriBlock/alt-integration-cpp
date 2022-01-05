@@ -389,20 +389,6 @@ void validatePayloadsIndexState(PayloadsIndex& storage,
   }
 }
 
-template <typename pop_t>
-bool allPayloadsIsValid(PayloadsIndex& storage,
-                        const AltBlock::hash_t& containingHash,
-                        const std::vector<pop_t>& payloads) {
-  for (const auto& p : payloads) {
-    auto id = p.getId();
-    if (!storage.getValidity(containingHash, id)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 template <typename Tree>
 void assertBlockTreeHasNoOrphans(const Tree& tree) {
   // orphan = block whose pprev == nullptr, and this block is not `genesis`
@@ -435,7 +421,6 @@ void assertTreeTips(Tree& tree, std::vector<typename Tree::index_t*> expected) {
 inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       const AltBlock& containing,
                                       const PopData& popData,
-                                      bool payloads_validation = true,
                                       bool payloads_existance = true) {
   auto& payloadsIndex = tree.getPayloadsIndex();
   auto& commandGroupStore = tree.getCommandGroupStore();
@@ -458,12 +443,6 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
   EXPECT_EQ(commands->size() == popData.context.size() + popData.atvs.size() +
                                     popData.vtbs.size(),
             payloads_existance);
-
-  EXPECT_EQ(
-      allPayloadsIsValid(payloadsIndex, containingHash, popData.context) &&
-          allPayloadsIsValid(payloadsIndex, containingHash, popData.atvs) &&
-          allPayloadsIsValid(payloadsIndex, containingHash, popData.vtbs),
-      payloads_validation);
 }
 
 }  // namespace altintegration
