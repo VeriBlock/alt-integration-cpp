@@ -9,37 +9,6 @@
 
 namespace altintegration {
 
-// bool PayloadsIndex::getValidity(Slice<const uint8_t> containingBlockHash,
-//                                 Slice<const uint8_t> payloadId) const {
-//   auto key = makeGlobalPid(containingBlockHash, payloadId);
-//   auto it = _cgValidity.find(key);
-//   if (it == _cgValidity.end()) {
-//     // we don't know if this payload is invalid, so assume it is valid
-//     return true;
-//   }
-
-//   return it->second;
-// }
-
-// void PayloadsIndex::setValidity(Slice<const uint8_t> containingBlockHash,
-//                                 Slice<const uint8_t> payloadId,
-//                                 bool validity) {
-//   auto key = makeGlobalPid(containingBlockHash, payloadId);
-//   if (!validity) {
-//     _cgValidity[key] = validity;
-//     return;
-//   }
-
-//   auto it = _cgValidity.find(key);
-//   if (it != _cgValidity.end()) {
-//     // this saves some memory, because we assume that
-//     // anything that is not in this map is valid by default
-//     _cgValidity.erase(it);
-//   }
-
-//   // do nothing. any entry that is not in this map is valid by default
-// }
-
 const std::set<AltBlock::hash_t>& PayloadsIndex::getContainingAltBlocks(
     const std::vector<uint8_t>& payloadId) const {
   static const std::set<AltBlock::hash_t> empty;
@@ -150,10 +119,5 @@ const std::unordered_map<std::vector<uint8_t>, std::set<VbkBlock::hash_t>>&
 PayloadsIndex::getPayloadsInVbk() const {
   return payload_in_vbk;
 }
-
-// const std::unordered_map<std::vector<uint8_t>, bool>&
-// PayloadsIndex::getValidity() const {
-//   return _cgValidity;
-// }
 
 }  // namespace altintegration
