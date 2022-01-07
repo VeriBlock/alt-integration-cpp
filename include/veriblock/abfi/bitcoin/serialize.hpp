@@ -197,9 +197,9 @@ const X& ReadWriteAsHelper(const X& x) {
   return x;
 }
 
-#define READWRITE(...) (::SerReadWriteMany(s, ser_action, __VA_ARGS__))
+#define READWRITE(...) (SerReadWriteMany(s, ser_action, __VA_ARGS__))
 #define READWRITEAS(type, obj) \
-  (::SerReadWriteMany(s, ser_action, ReadWriteAsHelper<type>(obj)))
+  (SerReadWriteMany(s, ser_action, ReadWriteAsHelper<type>(obj)))
 
 /**
  * Implement three methods for serializable objects. These are actually wrappers
@@ -911,7 +911,7 @@ struct CSerActionUnserialize {
   constexpr bool ForRead() const { return true; }
 };
 
-/* ::GetSerializeSize implementations
+/* GetSerializeSize implementations
  *
  * Computing the serialized size of objects is done through a special stream
  * object of type CSizeComputer, which only records the number of bytes written

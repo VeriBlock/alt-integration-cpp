@@ -8,7 +8,6 @@
 #include "veriblock/abfi/bitcoin/serialize.hpp"
 #include "veriblock/pop/hashutil.hpp"
 #include "veriblock/pop/literals.hpp"
-#include "veriblock/pop/read_stream.hpp"
 
 using namespace btc;
 using namespace altintegration;

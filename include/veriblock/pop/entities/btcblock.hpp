@@ -101,7 +101,7 @@ struct BtcBlock {
   void setNonce(uint32_t nnc);
   void setTimestamp(uint32_t ts);
 
- private:
+ protected:
   static const std::string _name;
 
   void invalidateHash() const { hash_.fill(0); }
