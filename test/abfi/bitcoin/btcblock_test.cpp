@@ -11,10 +11,20 @@ using namespace btc;
 using namespace altintegration;
 
 TEST(BlockHeader, serde_test) {
-  BlockHeader header{2, uint256{}, uint256{}, 618224212, 818092824, 4271835236};
+  BlockHeader header{
+      2,
+      uint256::fromHex(
+          "b6ff0b1b1680a2862a30ca44d346d9e8910d334beb48ca0c0000000000000000"),
+      uint256::fromHex(
+          "9d10aa52ee949386ca9385695f04ede270dda20810decd12bc9b048aaab31471"),
+      618224212,
+      818092824,
+      4271835236};
   WriteStream writer;
 
   SerializeBtc(writer, header);
+
+  ASSERT_EQ(writer.HexData(), "");
 
   BlockHeader decoded{};
   ReadStream reader{writer.data()};

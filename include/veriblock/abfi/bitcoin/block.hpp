@@ -20,8 +20,8 @@ struct BlockHeader : public altintegration::BtcBlock {
   template <typename Stream, typename Operation>
   inline void SerializationOp(Stream& s, Operation ser_action) {
     READWRITE(this->version);
-    READWRITE(this->previousBlock.asVector());
-    READWRITE(this->merkleRoot.asVector());
+    READWRITE(this->previousBlock);
+    READWRITE(this->merkleRoot);
     READWRITE(this->timestamp);
     READWRITE(this->bits);
     READWRITE(this->nonce);

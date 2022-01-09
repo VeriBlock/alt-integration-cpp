@@ -276,6 +276,10 @@ inline void Serialize(Stream& s,
                       const altintegration::Slice<const uint8_t>& slice) {
   s.write(CharCast(slice.data()), slice.size());
 }
+template <typename Stream, size_t N>
+inline void Serialize(Stream& s, const altintegration::Blob<N>& blob) {
+    s.write(CharCast(blob.data()), blob.size());
+}
 
 #ifndef CHAR_EQUALS_INT8
 template <typename Stream>
@@ -342,6 +346,13 @@ inline void Unserialize(Stream& s,
                         altintegration::Slice<const uint8_t>& slice) {
   altintegration::ValidationState state;
   if (!s.read(slice.size(), slice.data(), state)) {
+    throw std::ios_base::failure(state.toString());
+  }
+}
+template <typename Stream, size_t N>
+inline void Unserialize(Stream& s, altintegration::Blob<N>& blob) {
+  altintegration::ValidationState state;
+  if (!s.read(blob.size(), blob.data(), state)) {
     throw std::ios_base::failure(state.toString());
   }
 }
