@@ -11,8 +11,15 @@ using namespace btc;
 using namespace altintegration;
 
 TEST(BlockHeader, serde_test) {
-  BlockHeader header{};
+  BlockHeader header{2, uint256{}, uint256{}, 618224212, 818092824, 4271835236};
   WriteStream writer;
 
   SerializeBtc(writer, header);
+
+  BlockHeader decoded{};
+  ReadStream reader{writer.data()};
+
+  UnserializeBtc(reader, decoded);
+
+  ASSERT_EQ(header, decoded);
 }

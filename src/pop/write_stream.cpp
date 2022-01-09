@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/pop/strutil.hpp>
 #include <veriblock/pop/write_stream.hpp>
 
 namespace altintegration {
@@ -16,6 +17,10 @@ void WriteStream::write(const void *buf, size_t size) {
 
 const WriteStream::storage_t &WriteStream::data() const noexcept {
   return m_data;
+}
+
+std::string WriteStream::HexData() const noexcept {
+  return HexStr(m_data.begin(), m_data.end());
 }
 
 }  // namespace altintegration

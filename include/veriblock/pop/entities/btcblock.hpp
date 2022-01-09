@@ -39,7 +39,7 @@ struct BtcBlock {
   using stored_addon_t = StoredBtcBlockAddon;
 
   BtcBlock() = default;
-  BtcBlock(uint32_t version,
+  BtcBlock(int32_t version,
            uint256 previousBlock,
            uint256 merkleRoot,
            uint32_t timestamp,
@@ -87,14 +87,14 @@ struct BtcBlock {
 
   std::string toPrettyString() const;
 
-  uint32_t getVersion() const { return version; }
+  int32_t getVersion() const { return version; }
   uint256 getPreviousBlock() const { return previousBlock; }
   uint256 getMerkleRoot() const { return merkleRoot; }
   uint32_t getNonce() const { return nonce; }
   uint32_t getTimestamp() const { return timestamp; }
   uint32_t getDifficulty() const { return bits; }
 
-  void setVersion(uint32_t v);
+  void setVersion(int32_t v);
   void setPreviousBlock(const uint256& prev);
   void setMerkleRoot(const uint256& mr);
   void setDifficulty(uint32_t bits);
@@ -106,7 +106,7 @@ struct BtcBlock {
 
   void invalidateHash() const { hash_.fill(0); }
 
-  uint32_t version = 0;
+  int32_t version = 0;
   uint256 previousBlock{};
   uint256 merkleRoot{};
   uint32_t timestamp = 0;

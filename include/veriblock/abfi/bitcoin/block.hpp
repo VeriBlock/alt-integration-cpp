@@ -4,6 +4,17 @@
 namespace btc {
 
 struct BlockHeader : public altintegration::BtcBlock {
+  BlockHeader() {}
+
+  BlockHeader(int32_t version,
+              altintegration::uint256 previousBlock,
+              altintegration::uint256 merkleRoot,
+              uint32_t timestamp,
+              uint32_t bits,
+              uint32_t nonce)
+      : altintegration::BtcBlock(
+            version, previousBlock, merkleRoot, timestamp, bits, nonce) {}
+
   ADD_SERIALIZE_METHODS;
 
   template <typename Stream, typename Operation>
