@@ -85,10 +85,6 @@ jobs:
       fail-fast: false
       matrix:
         flags: [
-          # build fuzzers and run 1 iteration (with fixed corpus) during ctest
-          "-DASAN=ON",
-          "-DUBSAN=ON",
-          "-DVBK_NO_THREADS=ON",
           "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
           "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
           # release build with all dependencies with rocksdb
