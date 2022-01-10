@@ -10,5 +10,5 @@ type Payload interface {
 	GetID() []byte
 	ToJSON() (map[string]interface{}, error)
 	SerializeToVbk() []byte
-	DeserializeFromVbk(bytes []byte) error
+	DeserializeFromVbk(data []byte) error
 }
