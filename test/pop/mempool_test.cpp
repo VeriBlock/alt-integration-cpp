@@ -818,7 +818,7 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
 
   // submit corrupted atvs
   AltBlock endorsedBlock = chain[5];
-  std::fill(endorsedBlock.previousBlock.begin(), endorsedBlock.previousBlock.end(), 3);
+  std::fill(endorsedBlock.previousBlock.begin(), endorsedBlock.previousBlock.end(), uint8_t(3u));
   std::vector<VbkTx> txs;
   for (size_t i = 0; i < 1000; i++) {
     VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
