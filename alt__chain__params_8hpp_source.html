@@ -304,14 +304,14 @@ $(document).ready(function(){initNavTree('alt__chain__params_8hpp_source.html','
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
 <div class="line"><a name="l00295"></a><span class="lineno"><a class="line" href="structaltintegration_1_1AltChainParamsRegTest.html#aee6a4c6c28671fa078dd86648b8c522f">  295</a></span>&#160;  std::vector&lt;uint8_t&gt; <a class="code" href="structaltintegration_1_1AltChainParamsRegTest.html#aee6a4c6c28671fa078dd86648b8c522f">getHash</a>(</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;      <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; bytes) <span class="keyword">const</span> noexcept <span class="keyword">override</span> {</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">return</span> AssertDeserializeFromRaw&lt;AltBlock&gt;(bytes, *<span class="keyword">this</span>).getHash();</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">return</span> AssertDeserializeFromRaw&lt;AltBlock&gt;(bytes).getHash();</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  }</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
 <div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="structaltintegration_1_1AltChainParamsRegTest.html#ae1e53548aff0dde488c1967411d40ebe">  300</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1AltChainParamsRegTest.html#ae1e53548aff0dde488c1967411d40ebe">checkBlockHeader</a>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; bytes,</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                        <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp;,</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                        <a class="code" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">const</span> noexcept <span class="keyword">override</span> {</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <a class="code" href="structaltintegration_1_1AltBlock.html">AltBlock</a> block;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state);</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  }</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  int64_t <span class="keywordtype">id</span> = 0;</div>

@@ -98,82 +98,82 @@ $(document).ready(function(){initNavTree('block__provider__impl_8hpp_source.html
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/c/extern.h&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/serde.hpp&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/storage/block_batch.hpp&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/storage/block_reader.hpp&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;storage_interface.hpp&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>adaptors {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_BTC_BLOCK = <span class="charliteral">&#39;Q&#39;</span>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_BTC_PREV_BLOCK = <span class="charliteral">&#39;R&#39;</span>;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_BTC_TIP = <span class="charliteral">&#39;q&#39;</span>;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_VBK_BLOCK = <span class="charliteral">&#39;W&#39;</span>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_VBK_PREV_BLOCK = <span class="charliteral">&#39;T&#39;</span>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_VBK_TIP = <span class="charliteral">&#39;w&#39;</span>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_ALT_BLOCK = <span class="charliteral">&#39;E&#39;</span>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_ALT_PREV_BLOCK = <span class="charliteral">&#39;Y&#39;</span>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_ALT_TIP = <span class="charliteral">&#39;e&#39;</span>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> block_t&gt;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;std::vector&lt;uint8_t&gt; tip_key();</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;std::vector&lt;uint8_t&gt; tip_key&lt;AltBlock&gt;();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;std::vector&lt;uint8_t&gt; tip_key&lt;VbkBlock&gt;();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;std::vector&lt;uint8_t&gt; tip_key&lt;BtcBlock&gt;();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> block_t&gt;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;std::vector&lt;uint8_t&gt; block_key(<span class="keyword">const</span> <span class="keyword">typename</span> block_t::hash_t&amp; hash);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;std::vector&lt;uint8_t&gt; block_key&lt;AltBlock&gt;(<span class="keyword">const</span> AltBlock::hash_t&amp; hash);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;std::vector&lt;uint8_t&gt; block_key&lt;VbkBlock&gt;(<span class="keyword">const</span> VbkBlock::hash_t&amp; hash);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;std::vector&lt;uint8_t&gt; block_key&lt;BtcBlock&gt;(<span class="keyword">const</span> BtcBlock::hash_t&amp; hash);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> block_t&gt;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key(<span class="keyword">const</span> <span class="keyword">typename</span> block_t::prev_hash_t&amp; hash);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key&lt;AltBlock&gt;(</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">const</span> AltBlock::prev_hash_t&amp; hash);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key&lt;VbkBlock&gt;(</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">const</span> VbkBlock::prev_hash_t&amp; hash);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key&lt;BtcBlock&gt;(</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">const</span> BtcBlock::prev_hash_t&amp; hash);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> BlockT&gt;</div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">   71</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">BlockIteratorImpl</a> : <span class="keyword">public</span> <a class="code" href="structaltintegration_1_1BlockIterator.html">BlockIterator</a>&lt;BlockT&gt; {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  ~<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">BlockIteratorImpl</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">BlockIteratorImpl</a>(std::shared_ptr&lt;StorageIterator&gt; it,</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                    <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a>&amp; params)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      : it_(it), params_(params) {}</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">   78</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">next</a>()<span class="keyword"> override </span>{ it_-&gt;next(); }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712">   80</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712">value</a>(<a class="code" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex&lt;BlockT&gt;</a>&amp; out)<span class="keyword"> const override </span>{</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::vector&lt;uint8_t&gt; bytes;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">if</span> (!it_-&gt;value(bytes)) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    out = AssertDeserializeFromVbkEncoding&lt;StoredBlockIndex&lt;BlockT&gt;&gt;(bytes,</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                                                                     params_);</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/serde.hpp&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/storage/block_batch.hpp&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;veriblock/pop/storage/block_reader.hpp&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;storage_interface.hpp&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacealtintegration.html">altintegration</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>adaptors {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_BTC_BLOCK = <span class="charliteral">&#39;Q&#39;</span>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_BTC_PREV_BLOCK = <span class="charliteral">&#39;R&#39;</span>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_BTC_TIP = <span class="charliteral">&#39;q&#39;</span>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_VBK_BLOCK = <span class="charliteral">&#39;W&#39;</span>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_VBK_PREV_BLOCK = <span class="charliteral">&#39;T&#39;</span>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_VBK_TIP = <span class="charliteral">&#39;w&#39;</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_ALT_BLOCK = <span class="charliteral">&#39;E&#39;</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_ALT_PREV_BLOCK = <span class="charliteral">&#39;Y&#39;</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> DB_ALT_TIP = <span class="charliteral">&#39;e&#39;</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> block_t&gt;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;std::vector&lt;uint8_t&gt; tip_key();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;std::vector&lt;uint8_t&gt; tip_key&lt;AltBlock&gt;();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;std::vector&lt;uint8_t&gt; tip_key&lt;VbkBlock&gt;();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;std::vector&lt;uint8_t&gt; tip_key&lt;BtcBlock&gt;();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> block_t&gt;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;std::vector&lt;uint8_t&gt; block_key(<span class="keyword">const</span> <span class="keyword">typename</span> block_t::hash_t&amp; hash);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;std::vector&lt;uint8_t&gt; block_key&lt;AltBlock&gt;(<span class="keyword">const</span> AltBlock::hash_t&amp; hash);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;std::vector&lt;uint8_t&gt; block_key&lt;VbkBlock&gt;(<span class="keyword">const</span> VbkBlock::hash_t&amp; hash);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;std::vector&lt;uint8_t&gt; block_key&lt;BtcBlock&gt;(<span class="keyword">const</span> BtcBlock::hash_t&amp; hash);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> block_t&gt;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key(<span class="keyword">const</span> <span class="keyword">typename</span> block_t::prev_hash_t&amp; hash);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key&lt;AltBlock&gt;(</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">const</span> AltBlock::prev_hash_t&amp; hash);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key&lt;VbkBlock&gt;(</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">const</span> VbkBlock::prev_hash_t&amp; hash);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;std::vector&lt;uint8_t&gt; block_prev_key&lt;BtcBlock&gt;(</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">const</span> BtcBlock::prev_hash_t&amp; hash);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> BlockT&gt;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">   72</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">BlockIteratorImpl</a> : <span class="keyword">public</span> <a class="code" href="structaltintegration_1_1BlockIterator.html">BlockIterator</a>&lt;BlockT&gt; {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  ~<a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">BlockIteratorImpl</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">BlockIteratorImpl</a>(std::shared_ptr&lt;StorageIterator&gt; it,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                    <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a>&amp; params)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      : it_(std::move(it)), params_(params) {}</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">   79</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">next</a>()<span class="keyword"> override </span>{ it_-&gt;next(); }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712">   81</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712">value</a>(<a class="code" href="structaltintegration_1_1StoredBlockIndex.html">StoredBlockIndex&lt;BlockT&gt;</a>&amp; out)<span class="keyword"> const override </span>{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    std::vector&lt;uint8_t&gt; bytes;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">if</span> (!it_-&gt;value(bytes)) {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    out = AssertDeserializeFromVbkEncoding&lt;StoredBlockIndex&lt;BlockT&gt;&gt;(bytes);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
@@ -282,8 +282,8 @@ $(document).ready(function(){initNavTree('block__provider__impl_8hpp_source.html
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    }</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    out = AssertDeserializeFromVbkEncoding&lt;StoredBlockIndex&lt;block_t&gt;&gt;(bytes_out,</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                                                                      params_);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    out =</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        AssertDeserializeFromVbkEncoding&lt;StoredBlockIndex&lt;block_t&gt;&gt;(bytes_out);</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  }</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
@@ -339,13 +339,13 @@ $(document).ready(function(){initNavTree('block__provider__impl_8hpp_source.html
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00004">block.hpp:4</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a70596b439aa8324197a36b9e35940847"><div class="ttname"><a href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">altintegration::SerializeToVbkEncoding</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; SerializeToVbkEncoding(const T &amp;obj)</div><div class="ttdoc">Serialize to VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00413">serde.hpp:413</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a70596b439aa8324197a36b9e35940847"><div class="ttname"><a href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">altintegration::SerializeToVbkEncoding</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; SerializeToVbkEncoding(const T &amp;obj)</div><div class="ttdoc">Serialize to VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00383">serde.hpp:383</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1AltChainParams_html"><div class="ttname"><a href="structaltintegration_1_1AltChainParams.html">altintegration::AltChainParams</a></div><div class="ttdoc">Base class for all Altchain-related configs.</div><div class="ttdef"><b>Definition:</b> <a href="alt__chain__params_8hpp_source.html#l00136">alt_chain_params.hpp:136</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob</a></div><div class="ttdoc">Contiguous byte array of fixed size.</div><div class="ttdef"><b>Definition:</b> <a href="blob_8hpp_source.html#l00026">blob.hpp:26</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockBatch_html"><div class="ttname"><a href="structaltintegration_1_1BlockBatch.html">altintegration::BlockBatch</a></div><div class="ttdoc">An interface which represents single write batch of a group of blocks.</div><div class="ttdef"><b>Definition:</b> <a href="block__batch_8hpp_source.html#l00022">block_batch.hpp:22</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIterator_html"><div class="ttname"><a href="structaltintegration_1_1BlockIterator.html">altintegration::BlockIterator</a></div><div class="ttdoc">An abstraction over on-disk storage block iterator.</div><div class="ttdef"><b>Definition:</b> <a href="block__iterator_8hpp_source.html#l00026">block_iterator.hpp:26</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockReader_html"><div class="ttname"><a href="structaltintegration_1_1BlockReader.html">altintegration::BlockReader</a></div><div class="ttdoc">An abstraction over on-disk storage iterator.</div><div class="ttdef"><b>Definition:</b> <a href="block__reader_8hpp_source.html#l00026">block_reader.hpp:26</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00014">stored_block_index.hpp:14</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00018">stored_block_index.hpp:18</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockBatchImpl_html"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html">altintegration::adaptors::BlockBatchImpl</a></div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00204">block_provider_impl.hpp:204</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockBatchImpl_html_a34f34f615b867dc0c941d188998b10b2"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2">altintegration::adaptors::BlockBatchImpl::writeBlock</a></div><div class="ttdeci">void writeBlock(const AltBlock::hash_t &amp;hash, const AltBlock::prev_hash_t &amp;prev_hash, const StoredBlockIndex&lt; AltBlock &gt; &amp;blk) override</div><div class="ttdoc">Save BlockIndex on disk.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00209">block_provider_impl.hpp:209</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockBatchImpl_html_a38dc8b7abb579f8b9616b25a1e5f8fd6"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a38dc8b7abb579f8b9616b25a1e5f8fd6">altintegration::adaptors::BlockBatchImpl::writeBlock</a></div><div class="ttdeci">void writeBlock(const BtcBlock::hash_t &amp;hash, const BtcBlock::prev_hash_t &amp;prev_hash, const StoredBlockIndex&lt; BtcBlock &gt; &amp;blk) override</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00223">block_provider_impl.hpp:223</a></div></div>
@@ -353,10 +353,10 @@ $(document).ready(function(){initNavTree('block__provider__impl_8hpp_source.html
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockBatchImpl_html_a7f65c921af0541e8bf164ac79aa94e4a"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a7f65c921af0541e8bf164ac79aa94e4a">altintegration::adaptors::BlockBatchImpl::writeTip</a></div><div class="ttdeci">void writeTip(const BtcBlock::hash_t &amp;hash) override</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00238">block_provider_impl.hpp:238</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockBatchImpl_html_ab93f7726736c13d03630c8abbc9ffd70"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70">altintegration::adaptors::BlockBatchImpl::writeBlock</a></div><div class="ttdeci">void writeBlock(const VbkBlock::hash_t &amp;hash, const VbkBlock::prev_hash_t &amp;prev_hash, const StoredBlockIndex&lt; VbkBlock &gt; &amp;blk) override</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00216">block_provider_impl.hpp:216</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockBatchImpl_html_ae97a03ff540402b978da8c91a1210186"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ae97a03ff540402b978da8c91a1210186">altintegration::adaptors::BlockBatchImpl::writeTip</a></div><div class="ttdeci">void writeTip(const AltBlock::hash_t &amp;hash) override</div><div class="ttdoc">Save Tree tip on disk.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00230">block_provider_impl.hpp:230</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">altintegration::adaptors::BlockIteratorImpl</a></div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00071">block_provider_impl.hpp:71</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html">altintegration::adaptors::BlockIteratorImpl</a></div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00072">block_provider_impl.hpp:72</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a25e8f3fb68492da68ae2f29b6e8ac6f4"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4">altintegration::adaptors::BlockIteratorImpl::seek_start</a></div><div class="ttdeci">void seek_start() override</div><div class="ttdoc">Set iterator to the start of the collection.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00107">block_provider_impl.hpp:107</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a42ebd04a609eb14d647d576146f7fe2b"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">altintegration::adaptors::BlockIteratorImpl::next</a></div><div class="ttdeci">void next() override</div><div class="ttdoc">Iterate to the next block.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00078">block_provider_impl.hpp:78</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a5a05b03c05c8fbf81645a598c4537712"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712">altintegration::adaptors::BlockIteratorImpl::value</a></div><div class="ttdeci">bool value(StoredBlockIndex&lt; BlockT &gt; &amp;out) const override</div><div class="ttdoc">Return the current block value.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00080">block_provider_impl.hpp:80</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a42ebd04a609eb14d647d576146f7fe2b"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a42ebd04a609eb14d647d576146f7fe2b">altintegration::adaptors::BlockIteratorImpl::next</a></div><div class="ttdeci">void next() override</div><div class="ttdoc">Iterate to the next block.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00079">block_provider_impl.hpp:79</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a5a05b03c05c8fbf81645a598c4537712"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5a05b03c05c8fbf81645a598c4537712">altintegration::adaptors::BlockIteratorImpl::value</a></div><div class="ttdeci">bool value(StoredBlockIndex&lt; BlockT &gt; &amp;out) const override</div><div class="ttdoc">Return the current block value.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00081">block_provider_impl.hpp:81</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_a5f0ae89803b9e3e023c33b71eef5230f"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a5f0ae89803b9e3e023c33b71eef5230f">altintegration::adaptors::BlockIteratorImpl::key</a></div><div class="ttdeci">bool key(typename BlockT::hash_t &amp;out) const override</div><div class="ttdoc">Return the current block hash key.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00090">block_provider_impl.hpp:90</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockIteratorImpl_html_ad35dbe27e07dc10fd8dafb5252f2cbf0"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#ad35dbe27e07dc10fd8dafb5252f2cbf0">altintegration::adaptors::BlockIteratorImpl::valid</a></div><div class="ttdeci">bool valid() const override</div><div class="ttdoc">Return if valid iterator or not.</div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00100">block_provider_impl.hpp:100</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1adaptors_1_1BlockReaderImpl_html"><div class="ttname"><a href="structaltintegration_1_1adaptors_1_1BlockReaderImpl.html">altintegration::adaptors::BlockReaderImpl</a></div><div class="ttdef"><b>Definition:</b> <a href="block__provider__impl_8hpp_source.html#l00118">block_provider_impl.hpp:118</a></div></div>

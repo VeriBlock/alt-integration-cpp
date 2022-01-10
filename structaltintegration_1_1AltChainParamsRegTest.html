@@ -284,7 +284,7 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mAltBlockHashSize
 <p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00300">300</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                                                                        {</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    AltBlock block;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state, *<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state);</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
@@ -365,7 +365,7 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mAltBlockHashSize
 
 <p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00295">295</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                                                               {</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">return</span> AssertDeserializeFromRaw&lt;AltBlock&gt;(bytes, *<span class="keyword">this</span>).getHash();</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">return</span> AssertDeserializeFromRaw&lt;AltBlock&gt;(bytes).getHash();</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
