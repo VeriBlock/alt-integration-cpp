@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1adaptors_1_1Bl
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00221">221</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00204">204</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::adaptors::BlockBatchImpl:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -190,12 +190,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 
 <p>Implements <a class="el" href="structaltintegration_1_1BlockBatch.html#af279231e6954603d1013950e4e94bace">altintegration::BlockBatch</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00226">226</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                                                                  {</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    batch_.write(block_prev_key&lt;AltBlock&gt;(prev_hash), hash);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    batch_.write(block_key&lt;AltBlock&gt;(hash), <a class="code" href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">SerializeToVbkEncoding</a>(blk));</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  }</div>
-<div class="ttc" id="anamespacealtintegration_html_a70596b439aa8324197a36b9e35940847"><div class="ttname"><a href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">altintegration::SerializeToVbkEncoding</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; SerializeToVbkEncoding(const T &amp;obj)</div><div class="ttdoc">Serialize to VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00383">serde.hpp:383</a></div></div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00209">209</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                                                                  {</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    batch_.write(block_prev_key&lt;AltBlock&gt;(prev_hash), hash);</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    batch_.write(block_key&lt;AltBlock&gt;(hash), <a class="code" href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">SerializeToVbkEncoding</a>(blk));</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  }</div>
+<div class="ttc" id="anamespacealtintegration_html_a70596b439aa8324197a36b9e35940847"><div class="ttname"><a href="namespacealtintegration.html#a70596b439aa8324197a36b9e35940847">altintegration::SerializeToVbkEncoding</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; SerializeToVbkEncoding(const T &amp;obj)</div><div class="ttdoc">Serialize to VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00413">serde.hpp:413</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -231,10 +231,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 
 <p>Implements <a class="el" href="structaltintegration_1_1BlockBatch.html#a8e70a46dd771b1ad12edc2d981a8ca43">altintegration::BlockBatch</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00247">247</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                                                     {</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    batch_.write(tip_key&lt;AltBlock&gt;(), hash);</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="block__provider__impl_8hpp_source.html#l00230">230</a> of file <a class="el" href="block__provider__impl_8hpp_source.html">block_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                                                     {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    batch_.write(tip_key&lt;AltBlock&gt;(), hash);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>

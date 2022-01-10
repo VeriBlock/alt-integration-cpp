@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92":[5,0,0,0,11,1],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a80d36319071b844f6fca6f0c668c6037":[5,0,0,0,11,0],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ac840060ec50bfce6095189249459c93b":[5,0,0,0,11,3],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ad24f64fc72379ac6ad3d26e11e3e475b":[5,0,0,0,11,2],
@@ -75,5 +76,14 @@ var NAVTREEINDEX9 =
 "vblake_8hpp_source.html":[6,0,1,0,1,4,4],
 "vtb_8h_source.html":[6,0,1,0,1,2,0,15],
 "vtb_8hpp_source.html":[6,0,1,0,1,5,21],
-"write__stream_8hpp_source.html":[6,0,1,0,1,49]
+"write__stream_8hpp_source.html":[6,0,1,0,1,49],
+"":[4,0,0,8],
+"":[4,0,1],
+"":[4,0,0,1],
+"":[4,0,0,0],
+"":[4,0,0,4],
+"":[4,0,0,2],
+"":[4,0,0,3],
+"":[4,0,0,6],
+"":[4,0,0,7]
 };
