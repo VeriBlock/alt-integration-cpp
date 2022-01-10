@@ -117,8 +117,7 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(alt_block, POP_ENTITY_NAME(config) * config) {
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 
   altintegration::AltBlock out;
-  if (!altintegration::DeserializeFromVbkEncoding(
-          v_bytes, out, state->ref, *config->ref->alt)) {
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
     return nullptr;
   }
 
@@ -137,10 +136,8 @@ namespace default_value {
 template <>
 altintegration::AltBlock generateDefaultValue<altintegration::AltBlock>() {
   altintegration::AltBlock res;
-  res.hash = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-  res.previousBlock = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+  res.hash = std::vector<uint8_t>(32, 1);
+  res.previousBlock = std::vector<uint8_t>(32, 2);
   res.timestamp = 1;
   res.height = 1;
   return res;
