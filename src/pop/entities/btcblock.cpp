@@ -125,14 +125,6 @@ bool DeserializeFromRaw(ReadStream& stream,
   return true;
 }
 
-bool DeserializeFromRaw(ReadStream& stream,
-                        BtcBlock& block,
-                        ValidationState& state,
-                        const AltChainParams& /*ignore*/,
-                        const BtcBlock::hash_t& precalculatedHash) {
-  return DeserializeFromRaw(stream, block, state, precalculatedHash);
-}
-
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 BtcBlock& out,
                                 ValidationState& state,
@@ -144,14 +136,6 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   }
   out.hash_ = precalculatedHash;
   return DeserializeFromRaw(value, out, state);
-}
-
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                BtcBlock& out,
-                                ValidationState& state,
-                                const AltChainParams& /*ignore*/,
-                                const BtcBlock::hash_t& precalculatedHash) {
-  return DeserializeFromVbkEncoding(stream, out, state, precalculatedHash);
 }
 
 BtcBlock::BtcBlock(int32_t version,

@@ -6,6 +6,10 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_STORED_BLOCK_INDEX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_STORAGE_STORED_BLOCK_INDEX_HPP_
 
+#include <veriblock/pop/blockchain/block_status.hpp>
+#include <veriblock/pop/read_stream.hpp>
+#include <veriblock/pop/write_stream.hpp>
+
 namespace altintegration {
 
 struct AltChainParams;
@@ -18,7 +22,7 @@ struct StoredBlockIndex {
 
   ~StoredBlockIndex() = default;
 
-  bool isDeleted() const { return status & BLOCK_DELETED; };
+  bool isDeleted() const { return this->status & BLOCK_DELETED; };
 
   void toVbkEncoding(WriteStream& stream) const {
     using height_t = typename Block::height_t;
@@ -63,7 +67,6 @@ bool DeserializeFromVbkEncoding(
     ReadStream& stream,
     StoredBlockIndex<Block>& out,
     ValidationState& state,
-    const AltChainParams& params,
     typename Block::hash_t precalculatedHash = typename Block::hash_t()) {
   const auto& name = Block::name();
   using height_t = typename Block::height_t;
@@ -71,7 +74,7 @@ bool DeserializeFromVbkEncoding(
     return state.Invalid(name + "-stored-block-index-height");
   }
   Block block{};
-  if (!DeserializeFromRaw(stream, block, state, params, precalculatedHash)) {
+  if (!DeserializeFromRaw(stream, block, state, precalculatedHash)) {
     return state.Invalid(name + "-stored-block-index-header");
   }
   out.header = std::make_shared<Block>(block);

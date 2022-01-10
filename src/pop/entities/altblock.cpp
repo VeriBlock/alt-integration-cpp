@@ -3,8 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
+#include <veriblock/pop/ct_params.hpp>
+#include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/strutil.hpp>
 
 namespace altintegration {
@@ -53,28 +54,20 @@ void AltBlock::toVbkEncoding(WriteStream& stream) const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 AltBlock& out,
                                 ValidationState& state,
-                                const AltChainParams& params,
                                 const AltBlock::hash_t& /* ignore */) {
-  return DeserializeFromRaw(stream, out, state, params);
+  return DeserializeFromRaw(stream, out, state);
 }
 
 bool DeserializeFromRaw(ReadStream& stream,
                         AltBlock& out,
                         ValidationState& state,
-                        const AltChainParams& params,
                         const AltBlock::hash_t& /* ignore */) {
-  if (!readSingleByteLenValue(stream,
-                              out.hash,
-                              state,
-                              0,
-                              params.mAltBlockHashSize)) {
+  if (!readSingleByteLenValue(
+          stream, out.hash, state, ALT_HASH_SIZE, ALT_HASH_SIZE)) {
     return state.Invalid("alt-block-hash");
   }
-  if (!readSingleByteLenValue(stream,
-                              out.previousBlock,
-                              state,
-                              0,
-                              params.mAltBlockHashSize)) {
+  if (!readSingleByteLenValue(
+          stream, out.previousBlock, state, ALT_HASH_SIZE, ALT_HASH_SIZE)) {
     return state.Invalid("alt-block-prevhash");
   }
   if (!stream.readBE<int32_t>(out.height, state)) {

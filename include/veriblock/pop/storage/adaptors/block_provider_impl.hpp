@@ -8,6 +8,7 @@
 
 #include <veriblock/pop/c/extern.h>
 
+#include <memory>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/storage/block_batch.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
@@ -73,7 +74,7 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
 
   BlockIteratorImpl(std::shared_ptr<StorageIterator> it,
                     const AltChainParams& params)
-      : it_(it), params_(params) {}
+      : it_(std::move(it)), params_(params) {}
 
   void next() override { it_->next(); }
 
@@ -82,8 +83,7 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
     if (!it_->value(bytes)) {
       return false;
     }
-    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(bytes,
-                                                                     params_);
+    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(bytes);
     return true;
   }
 
@@ -192,8 +192,8 @@ struct BlockReaderImpl : public BlockReader {
       return false;
     }
 
-    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out,
-                                                                      params_);
+    out =
+        AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out);
     return true;
   }
 

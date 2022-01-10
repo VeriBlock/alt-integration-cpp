@@ -44,30 +44,27 @@ static const AltBlock defaultBlock{
     1466};
 
 TEST(BlockIndex, BTC) {
-  AltChainParamsRegTest altparam{};
   StoredBlockIndex<BtcBlock> index;
   auto data = ParseHex(BtcBlockIndexVbkEncoded);
   ReadStream stream(data);
   ValidationState state;
-  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state, altparam));
+  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state));
 }
 
 TEST(BlockIndex, VBK) {
-  AltChainParamsRegTest altparam{};
   StoredBlockIndex<VbkBlock> index;
   auto data = ParseHex(VbkBlockIndexVbkEncoded);
   ReadStream stream(data);
   ValidationState state;
-  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state, altparam));
+  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state));
 }
 
 TEST(BlockIndex, ALT) {
-  AltChainParamsRegTest altparam{};
   StoredBlockIndex<AltBlock> index;
   auto data = ParseHex(AltBlockIndexVbkEncoded);
   ReadStream stream(data);
   ValidationState state;
-  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state, altparam))
+  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, index, state))
       << state.toString();
 }
 
@@ -85,8 +82,7 @@ TYPED_TEST_P(BlockIndexTest, RoundTrip) {
 
   auto vbkencoded = SerializeToVbkEncoding<Index>(index);
   Index decodedVbk;
-  ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(
-      vbkencoded, decodedVbk, state, altparam))
+  ASSERT_TRUE(DeserializeFromVbkEncoding<Index>(vbkencoded, decodedVbk, state))
       << state.toString();
   ASSERT_TRUE(state.IsValid());
   ASSERT_EQ(index.toVbkEncoding(), decodedVbk.toVbkEncoding());
@@ -107,7 +103,6 @@ INSTANTIATE_TYPED_TEST_SUITE_P(BlockIndexTestSuite,
                                TypesUnderTest);
 
 TEST(AltBlockIndex, IdsAreEqual) {
-  AltChainParamsRegTest altparam{};
   StoredBlockIndex<AltBlock> index;
   index.header = std::make_shared<AltBlock>(defaultBlock);
   index.addon._atvids.push_back(uint256::fromHex("01"));
@@ -121,14 +116,13 @@ TEST(AltBlockIndex, IdsAreEqual) {
   StoredBlockIndex<AltBlock> after;
   auto hex = SerializeToHex(index);
 
-  ASSERT_TRUE(DeserializeFromHex(hex, after, state, altparam));
+  ASSERT_TRUE(DeserializeFromHex(hex, after, state));
   ASSERT_EQ(index.addon._atvids, after.addon._atvids);
   ASSERT_EQ(index.addon._vtbids, after.addon._vtbids);
   ASSERT_EQ(index.addon._vbkblockids, after.addon._vbkblockids);
 }
 
 TEST(VbkBlockIndex, IdsAreEqual) {
-  AltChainParamsRegTest altparam{};
   StoredBlockIndex<VbkBlock> index;
   index.addon._vtbids.push_back(uint256::fromHex("01"));
   index.addon._vtbids.push_back(uint256::fromHex("02"));
@@ -137,6 +131,6 @@ TEST(VbkBlockIndex, IdsAreEqual) {
   StoredBlockIndex<VbkBlock> after;
   auto hex = SerializeToHex(index);
 
-  ASSERT_TRUE(DeserializeFromHex(hex, after, state, altparam));
+  ASSERT_TRUE(DeserializeFromHex(hex, after, state));
   ASSERT_EQ(index.addon._vtbids, after.addon._vtbids);
 }
