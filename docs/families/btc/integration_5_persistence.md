@@ -20,7 +20,7 @@ Block provider: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/ada
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp)
 ```cpp
-// Copyright (c) 2019-2021 Xenios SEZC
+// Copyright (c) 2019-2022 Xenios SEZC
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -54,7 +54,7 @@ bool loadTrees(CDBWrapper& db);
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.cpp)
 ```cpp
-// Copyright (c) 2019-2021 Xenios SEZC
+// Copyright (c) 2019-2022 Xenios SEZC
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
