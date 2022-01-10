@@ -168,20 +168,21 @@ POP_ENTITY_SERIALIZE_TO_VBK(vbk_block) {
   return res;
 }
 
-POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block, POP_ENTITY_NAME(config) * config) {
+POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block) {
   VBK_ASSERT(state);
-  VBK_ASSERT(config);
   VBK_ASSERT(bytes.data);
-  VBK_ASSERT(config->ref);
-  VBK_ASSERT(config->ref->alt);
+
+  auto config = pop_config_new();
 
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 
   altintegration::VbkBlock out;
   if (!altintegration::DeserializeFromVbkEncoding(
           v_bytes, out, state->ref, *config->ref->alt)) {
+    pop_config_free(config);
     return nullptr;
   }
+  pop_config_free(config);
 
   auto* res = new POP_ENTITY_NAME(vbk_block);
   res->ref = std::move(out);
