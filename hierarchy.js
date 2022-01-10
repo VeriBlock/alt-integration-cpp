@@ -42,9 +42,7 @@ var hierarchy =
     [ "altintegration::Config::Bootstrap< Block, ChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::BtcBlock, altintegration::BtcChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::VbkBlock, altintegration::VbkChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
-    [ "altintegration::BtcBlock", "structaltintegration_1_1BtcBlock.html", [
-      [ "btc::BlockHeader", "structbtc_1_1BlockHeader.html", null ]
-    ] ],
+    [ "altintegration::BtcBlock", "structaltintegration_1_1BtcBlock.html", null ],
     [ "altintegration::BtcChainParams", "structaltintegration_1_1BtcChainParams.html", [
       [ "altintegration::BtcChainParamsMain", "structaltintegration_1_1BtcChainParamsMain.html", null ],
       [ "altintegration::BtcChainParamsRegTest", "structaltintegration_1_1BtcChainParamsRegTest.html", null ],

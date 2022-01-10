@@ -95,7 +95,6 @@ var annotated_dup =
       [ "WriteStream", "classaltintegration_1_1WriteStream.html", "classaltintegration_1_1WriteStream" ]
     ] ],
     [ "btc", null, [
-      [ "BlockHeader", "structbtc_1_1BlockHeader.html", "structbtc_1_1BlockHeader" ],
       [ "deserialize_type", "structbtc_1_1deserialize__type.html", null ],
       [ "CheckVarIntMode", "structbtc_1_1CheckVarIntMode.html", "structbtc_1_1CheckVarIntMode" ],
       [ "CVarInt", "classbtc_1_1CVarInt.html", "classbtc_1_1CVarInt" ],
