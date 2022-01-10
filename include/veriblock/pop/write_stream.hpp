@@ -65,7 +65,7 @@ class WriteStream {
 
   const storage_t &data() const noexcept;
 
-  std::string HexData() const noexcept;
+  std::string hex() const noexcept;
 
  private:
   // publicly non-copyable

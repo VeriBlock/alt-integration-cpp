@@ -19,7 +19,7 @@ const WriteStream::storage_t &WriteStream::data() const noexcept {
   return m_data;
 }
 
-std::string WriteStream::HexData() const noexcept {
+std::string WriteStream::hex() const noexcept {
   return HexStr(m_data.begin(), m_data.end());
 }
 
