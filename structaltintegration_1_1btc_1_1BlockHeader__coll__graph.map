@@ -1,0 +1,8 @@
+<map id="altintegration::btc::BlockHeader" name="altintegration::btc::BlockHeader">
+<area shape="rect" id="node1" title=" " alt="" coords="106,1072,313,1193"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BtcBlock.html" title="Bitcoin block." alt="" coords="132,725,287,1023"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="5,5,165,288"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="122,351,297,648"/>
+<area shape="rect" id="node5" title=" " alt="" coords="321,461,399,538"/>
+<area shape="rect" id="node6" title=" " alt="" coords="298,101,422,193"/>
+</map>

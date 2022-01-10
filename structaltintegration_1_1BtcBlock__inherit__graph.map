@@ -1,0 +1,4 @@
+<map id="altintegration::BtcBlock" name="altintegration::BtcBlock">
+<area shape="rect" id="node1" title="Bitcoin block." alt="" coords="31,5,186,361"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1btc_1_1BlockHeader.html" title=" " alt="" coords="5,409,212,531"/>
+</map>

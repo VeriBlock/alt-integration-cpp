@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structaltintegration_1_1Config.html" title="A container for Bitcoin and Veriblock configuration data." alt="" coords="5,5,144,32"/>
+<area shape="rect" id="node1" href="$structaltintegration_1_1BtcChainParams.html" title="base class for BTC params" alt="" coords="5,71,160,112"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BtcChainParamsMain.html" title="mainnet network params in Bitcoin chain." alt="" coords="208,5,363,47"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1BtcChainParamsRegTest.html" title="regtest network params in Bitcoin chain." alt="" coords="208,71,363,112"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1BtcChainParamsTest.html" title="testnet3 network params in Bitcoin chain." alt="" coords="208,136,363,177"/>
 </map>

@@ -88,6 +88,9 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcBlock.html'
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="structaltintegration_1_1BtcBlock-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -103,11 +106,19 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcBlock.html'
 </div>
 <p><code>#include &lt;<a class="el" href="btcblock_8hpp_source.html">btcblock.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::BtcBlock:</div>
+  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::BtcBlock:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcBlock__coll__graph.svg" width="166" height="250"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcBlock__inherit__graph.svg" width="218" height="536"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
+</div>
+<div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for altintegration::BtcBlock:</div>
+<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-1-content" class="dyncontent" style="display:none;">
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcBlock__coll__graph.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <table class="memberdecls">
@@ -137,9 +148,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>stored_addon_t</b> =
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2a1e644e0b9269b24f53234f39c8afdc"><td class="memItemLeft" align="right" valign="top"><a id="a2a1e644e0b9269b24f53234f39c8afdc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BtcBlock</b> (uint32_t version, <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> previousBlock, <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> merkleRoot, uint32_t timestamp, uint32_t bits, uint32_t nonce)</td></tr>
-<tr class="separator:a2a1e644e0b9269b24f53234f39c8afdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a997da0ca314fb2f18d604e122d2e9f"><td class="memItemLeft" align="right" valign="top"><a id="a0a997da0ca314fb2f18d604e122d2e9f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BtcBlock</b> (int32_t version, <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> previousBlock, <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> merkleRoot, uint32_t timestamp, uint32_t bits, uint32_t nonce)</td></tr>
+<tr class="separator:a0a997da0ca314fb2f18d604e122d2e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bd736a6212b4d543a50d3cffed77639"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcBlock.html#a3bd736a6212b4d543a50d3cffed77639">toRaw</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream) const</td></tr>
 <tr class="memdesc:a3bd736a6212b4d543a50d3cffed77639"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert <a class="el" href="structaltintegration_1_1BtcBlock.html" title="Bitcoin block.">BtcBlock</a> to data stream using <a class="el" href="structaltintegration_1_1BtcBlock.html" title="Bitcoin block.">BtcBlock</a> basic byte format.  <a href="structaltintegration_1_1BtcBlock.html#a3bd736a6212b4d543a50d3cffed77639">More...</a><br /></td></tr>
 <tr class="separator:a3bd736a6212b4d543a50d3cffed77639"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,9 +169,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>estimateSize</b> ()
 <tr class="memitem:a313ab09c881cedbd4e86e5e422229f5a"><td class="memItemLeft" align="right" valign="top"><a id="a313ab09c881cedbd4e86e5e422229f5a"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString</b> () const</td></tr>
 <tr class="separator:a313ab09c881cedbd4e86e5e422229f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69025b09561ee61810eae5aa721c3019"><td class="memItemLeft" align="right" valign="top"><a id="a69025b09561ee61810eae5aa721c3019"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getVersion</b> () const</td></tr>
-<tr class="separator:a69025b09561ee61810eae5aa721c3019"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae889b75e473fd7cfaeeffe249eba01a"><td class="memItemLeft" align="right" valign="top"><a id="aae889b75e473fd7cfaeeffe249eba01a"></a>
+int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getVersion</b> () const</td></tr>
+<tr class="separator:aae889b75e473fd7cfaeeffe249eba01a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab1e06aae431e992937a8b30ed066384"><td class="memItemLeft" align="right" valign="top"><a id="aab1e06aae431e992937a8b30ed066384"></a>
 <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPreviousBlock</b> () const</td></tr>
 <tr class="separator:aab1e06aae431e992937a8b30ed066384"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,9 +187,9 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getTimestamp</b> 
 <tr class="memitem:ad65e218029ce72a82c75d4cef6339a10"><td class="memItemLeft" align="right" valign="top"><a id="ad65e218029ce72a82c75d4cef6339a10"></a>
 uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getDifficulty</b> () const</td></tr>
 <tr class="separator:ad65e218029ce72a82c75d4cef6339a10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74272a5dc24f3741d7db1d4be1359bfa"><td class="memItemLeft" align="right" valign="top"><a id="a74272a5dc24f3741d7db1d4be1359bfa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setVersion</b> (uint32_t v)</td></tr>
-<tr class="separator:a74272a5dc24f3741d7db1d4be1359bfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4620a8a4fc95894535e1adb7d447a25"><td class="memItemLeft" align="right" valign="top"><a id="af4620a8a4fc95894535e1adb7d447a25"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setVersion</b> (int32_t v)</td></tr>
+<tr class="separator:af4620a8a4fc95894535e1adb7d447a25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75eae66350ff58816f4533a4528759b2"><td class="memItemLeft" align="right" valign="top"><a id="a75eae66350ff58816f4533a4528759b2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setPreviousBlock</b> (const <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> &amp;prev)</td></tr>
 <tr class="separator:a75eae66350ff58816f4533a4528759b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -200,6 +211,42 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a2de677a5a444154e45f335ccbde33597"><td class="memItemLeft" align="right" valign="top"><a id="a2de677a5a444154e45f335ccbde33597"></a>
 static const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>name</b> ()</td></tr>
 <tr class="separator:a2de677a5a444154e45f335ccbde33597"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ac930fdc471077a1083feead6a4120244"><td class="memItemLeft" align="right" valign="top"><a id="ac930fdc471077a1083feead6a4120244"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>invalidateHash</b> () const</td></tr>
+<tr class="separator:ac930fdc471077a1083feead6a4120244"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a452a49affc8305d5d28723e6d04247fc"><td class="memItemLeft" align="right" valign="top"><a id="a452a49affc8305d5d28723e6d04247fc"></a>
+int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> = 0</td></tr>
+<tr class="separator:a452a49affc8305d5d28723e6d04247fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8671c33f84cda847f09d55760233673"><td class="memItemLeft" align="right" valign="top"><a id="ad8671c33f84cda847f09d55760233673"></a>
+<a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>previousBlock</b> {}</td></tr>
+<tr class="separator:ad8671c33f84cda847f09d55760233673"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bfc0e60f013ec07d43bf5e8a518b9f6"><td class="memItemLeft" align="right" valign="top"><a id="a6bfc0e60f013ec07d43bf5e8a518b9f6"></a>
+<a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>merkleRoot</b> {}</td></tr>
+<tr class="separator:a6bfc0e60f013ec07d43bf5e8a518b9f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc3c473b3d2ff9cec5b236bc2b5d9e8e"><td class="memItemLeft" align="right" valign="top"><a id="acc3c473b3d2ff9cec5b236bc2b5d9e8e"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>timestamp</b> = 0</td></tr>
+<tr class="separator:acc3c473b3d2ff9cec5b236bc2b5d9e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5e424ca04511659ea87ff76fdcf256b"><td class="memItemLeft" align="right" valign="top"><a id="ab5e424ca04511659ea87ff76fdcf256b"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>bits</b> = 0</td></tr>
+<tr class="separator:ab5e424ca04511659ea87ff76fdcf256b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86e28caa5fb419acd516af904dfe6bad"><td class="memItemLeft" align="right" valign="top"><a id="a86e28caa5fb419acd516af904dfe6bad"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>nonce</b> = 0</td></tr>
+<tr class="separator:a86e28caa5fb419acd516af904dfe6bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b121ae15ea5a27a6c99f601ae4e2ece"><td class="memItemLeft" align="right" valign="top"><a id="a0b121ae15ea5a27a6c99f601ae4e2ece"></a>
+<a class="el" href="structaltintegration_1_1Blob.html">hash_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>hash_</b></td></tr>
+<tr class="separator:a0b121ae15ea5a27a6c99f601ae4e2ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:a6262dd1d6c49432119e4a41161d1ed28"><td class="memItemLeft" align="right" valign="top"><a id="a6262dd1d6c49432119e4a41161d1ed28"></a>
+static const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>_name</b></td></tr>
+<tr class="separator:a6262dd1d6c49432119e4a41161d1ed28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
