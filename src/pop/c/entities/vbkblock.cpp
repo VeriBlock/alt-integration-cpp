@@ -179,8 +179,10 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block) {
   altintegration::VbkBlock out;
   if (!altintegration::DeserializeFromVbkEncoding(
           v_bytes, out, state->ref, *config->ref->alt)) {
+    pop_config_free(config);
     return nullptr;
   }
+  pop_config_free(config);
 
   auto* res = new POP_ENTITY_NAME(vbk_block);
   res->ref = std::move(out);
