@@ -54,6 +54,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+set(ALT_HASH_SIZE 32 CACHE STRING "Size of block hash in bytes in altchain block")
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
 option(ASAN         "Enable Address Sanitizer" OFF)
 option(TSAN         "Enable Thread Sanitizer" OFF)
@@ -79,6 +80,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 ## setup compilation flags
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(Clang)$")
+    # using clang
+    find_program(LLD ld.lld)
+    if(LLD)
+        # try to use lld linker (it is faster)
+        message(STATUS "Using lld linker: ${LLD}")
+        add_link_options(-fuse-ld=${LLD})
+    endif()
+endif()
+
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     if(WERROR)
         add_compile_options(-Werror)
@@ -99,6 +110,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
 
     # disable errors
     add_cxx_flag(-Wno-error=literal-suffix)
+    add_flag(-Wno-error=unused-function)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # Release flags
@@ -129,7 +141,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
     if(SHARED)
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd") 
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
     else()
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
@@ -185,6 +197,7 @@ if(WITH_PYPOPTOOLS)
     add_subdirectory(pypoptools)
 endif()
 
+message(STATUS "ALT_HASH_SIZE=${ALT_HASH_SIZE}")
 message(STATUS "CLANG_TIDY=${CLANG_TIDY}")
 message(STATUS "ASAN=${ASAN}")
 message(STATUS "TSAN=${TSAN}")

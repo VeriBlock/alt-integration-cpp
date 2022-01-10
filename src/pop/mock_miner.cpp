@@ -138,17 +138,23 @@ BtcTx MockMiner::createBtcTxEndorsingVbkBlock(
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
-  return mineBlocks(amount, *vbkTip(), std::vector<VbkTx>());
+  auto* tip = vbkTip();
+  VBK_ASSERT(tip != nullptr);
+  return mineBlocks(amount, *tip, std::vector<VbkTx>());
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
     size_t amount, const std::vector<VbkTx>& transactions) {
-  return mineBlocks(amount, *vbkTip(), transactions);
+  auto* tip = vbkTip();
+  VBK_ASSERT(tip != nullptr);
+  return mineBlocks(amount, *tip, transactions);
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
     size_t amount, const std::vector<VbkPopTx>& transactions) {
-  return mineBlocks(amount, *vbkTip(), transactions);
+  auto* tip = vbkTip();
+  VBK_ASSERT(tip != nullptr);
+  return mineBlocks(amount, *tip, transactions);
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
@@ -305,7 +311,7 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(
   BlockIndex<VbkBlock>* blockIndex = acceptBlock(vbk_tree_, block);
 
   vbk_merkle_trees_.insert({block.getHash(), merkleTree});
-  if(!saveVTBs(blockIndex, transactions)){
+  if (!saveVTBs(blockIndex, transactions)) {
     return nullptr;
   }
 
@@ -346,7 +352,7 @@ bool MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
     blockIndex->removeRef(0);
     vbk_tree_.removeLeaf(*blockIndex);
     return false;
-//    throw std::domain_error(state.toString());
+    //    throw std::domain_error(state.toString());
   }
 
   vtbs_.insert({hash, vtbs});

@@ -8,11 +8,13 @@
 
 #include <veriblock/pop/c/extern.h>
 
+#include <memory>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/storage/block_batch.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
 
 #include "storage_interface.hpp"
+#include "veriblock/pop/logger.hpp"
 
 namespace altintegration {
 
@@ -73,7 +75,7 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
 
   BlockIteratorImpl(std::shared_ptr<StorageIterator> it,
                     const AltChainParams& params)
-      : it_(it), params_(params) {}
+      : it_(std::move(it)), params_(params) {}
 
   void next() override { it_->next(); }
 
@@ -82,8 +84,16 @@ struct BlockIteratorImpl : public BlockIterator<BlockT> {
     if (!it_->value(bytes)) {
       return false;
     }
-    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(bytes,
-                                                                     params_);
+
+    ValidationState dummy;
+    if (!DeserializeFromVbkEncoding<StoredBlockIndex<BlockT>>(
+            bytes, out, dummy)) {
+      VBK_LOG_ERROR("Can not deserialize StoredBlockIndex<%s>: %s",
+                    BlockT::name(),
+                    dummy.toString());
+      return false;
+    }
+
     return true;
   }
 
@@ -192,8 +202,15 @@ struct BlockReaderImpl : public BlockReader {
       return false;
     }
 
-    out = AssertDeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(bytes_out,
-                                                                      params_);
+    ValidationState dummy;
+    if (!DeserializeFromVbkEncoding<StoredBlockIndex<block_t>>(
+            bytes_out, out, dummy)) {
+      VBK_LOG_ERROR("Can not deserialize StoredBlockIndex<%s> block: %s",
+                    block_t::name(),
+                    dummy.toString());
+      return false;
+    }
+
     return true;
   }
 

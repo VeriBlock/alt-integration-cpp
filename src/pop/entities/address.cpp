@@ -75,7 +75,7 @@ Address Address::fromPublicKey(Slice<const uint8_t> publicKey) {
   auto data = std::string{STARTING_CHAR} +
               keyHashEncoded.substr(0, MULTISIG_ADDRESS_DATA_END);
   auto checksum = calculateChecksum(data, false);
-  return Address(AddressType::STANDARD, data + checksum);
+  return {AddressType::STANDARD, data + checksum};
 }
 
 bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {

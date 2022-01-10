@@ -178,8 +178,7 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block, POP_ENTITY_NAME(config) * config) {
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 
   altintegration::VbkBlock out;
-  if (!altintegration::DeserializeFromVbkEncoding(
-          v_bytes, out, state->ref, *config->ref->alt)) {
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
     return nullptr;
   }
 

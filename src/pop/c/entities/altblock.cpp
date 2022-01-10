@@ -3,19 +3,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <string.h>
+#include "altblock.hpp"
+
+#include <cstring>
 
 #include <memory>
-
-// clang-format off
 #include <veriblock/pop/adaptors/picojson.hpp>
-// clang-format on
+#include <veriblock/pop/assert.hpp>
+#include <veriblock/pop/ct_params.hpp>
+#include <veriblock/pop/serde.hpp>
 
 #include "../config.hpp"
 #include "../validation_state.hpp"
-#include "altblock.hpp"
-#include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/serde.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(alt_block) {
   if (self != nullptr) {
@@ -117,8 +116,7 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(alt_block, POP_ENTITY_NAME(config) * config) {
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 
   altintegration::AltBlock out;
-  if (!altintegration::DeserializeFromVbkEncoding(
-          v_bytes, out, state->ref, *config->ref->alt)) {
+  if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
     return nullptr;
   }
 
@@ -137,10 +135,8 @@ namespace default_value {
 template <>
 altintegration::AltBlock generateDefaultValue<altintegration::AltBlock>() {
   altintegration::AltBlock res;
-  res.hash = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-  res.previousBlock = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+  res.hash = std::vector<uint8_t>(altintegration::ALT_HASH_SIZE, 1);
+  res.previousBlock = std::vector<uint8_t>(altintegration::ALT_HASH_SIZE, 2);
   res.timestamp = 1;
   res.height = 1;
   return res;

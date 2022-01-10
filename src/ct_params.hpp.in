@@ -1,0 +1,16 @@
+#ifndef VERIBLOCK_CT_PARAMS_HPP
+#define VERIBLOCK_CT_PARAMS_HPP
+
+//! @file ct_params.hpp
+//! @brief Contains parameters defined in CMake.
+
+namespace altintegration {
+
+//! length of altchain hash in bytes
+constexpr const int ALT_HASH_SIZE = @ALT_HASH_SIZE@;
+static_assert(ALT_HASH_SIZE > 0, "hash size must be positive");
+static_assert(ALT_HASH_SIZE < 1000, "hash size can not be too big");
+
+}
+
+#endif // VERIBLOCK_CT_PARAMS_HPP
