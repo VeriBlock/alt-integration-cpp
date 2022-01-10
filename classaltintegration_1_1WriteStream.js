@@ -5,7 +5,6 @@ var classaltintegration_1_1WriteStream =
     [ "WriteStream", "classaltintegration_1_1WriteStream.html#a635bb464e756232c0e97a7007383665d", null ],
     [ "WriteStream", "classaltintegration_1_1WriteStream.html#a050d80e5796c4d9a439ba95382a03ad4", null ],
     [ "data", "classaltintegration_1_1WriteStream.html#a37a1086990552d6a934619cec645172d", null ],
-    [ "hex", "classaltintegration_1_1WriteStream.html#a6751697acac21a6aee83d3db2cbb1865", null ],
     [ "operator=", "classaltintegration_1_1WriteStream.html#a5403fab6e9500986a416dddf48175b16", null ],
     [ "write", "classaltintegration_1_1WriteStream.html#a5c942d0ae98f25bd93144f2705b01730", null ],
     [ "write", "classaltintegration_1_1WriteStream.html#ac9e9483abb85e99570ec2f2997e35aa6", null ],

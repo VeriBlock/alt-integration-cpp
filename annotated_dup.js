@@ -19,18 +19,6 @@ var annotated_dup =
         [ "WriteBatch", "structaltintegration_1_1adaptors_1_1WriteBatch.html", "structaltintegration_1_1adaptors_1_1WriteBatch" ],
         [ "Storage", "structaltintegration_1_1adaptors_1_1Storage.html", "structaltintegration_1_1adaptors_1_1Storage" ]
       ] ],
-      [ "btc", null, [
-        [ "BlockHeader", "structaltintegration_1_1btc_1_1BlockHeader.html", "structaltintegration_1_1btc_1_1BlockHeader" ],
-        [ "deserialize_type", "structaltintegration_1_1btc_1_1deserialize__type.html", null ],
-        [ "CheckVarIntMode", "structaltintegration_1_1btc_1_1CheckVarIntMode.html", "structaltintegration_1_1btc_1_1CheckVarIntMode" ],
-        [ "CVarInt", "classaltintegration_1_1btc_1_1CVarInt.html", "classaltintegration_1_1btc_1_1CVarInt" ],
-        [ "BigEndian", "classaltintegration_1_1btc_1_1BigEndian.html", "classaltintegration_1_1btc_1_1BigEndian" ],
-        [ "CCompactSize", "classaltintegration_1_1btc_1_1CCompactSize.html", "classaltintegration_1_1btc_1_1CCompactSize" ],
-        [ "LimitedString", "classaltintegration_1_1btc_1_1LimitedString.html", "classaltintegration_1_1btc_1_1LimitedString" ],
-        [ "CSerActionSerialize", "structaltintegration_1_1btc_1_1CSerActionSerialize.html", "structaltintegration_1_1btc_1_1CSerActionSerialize" ],
-        [ "CSerActionUnserialize", "structaltintegration_1_1btc_1_1CSerActionUnserialize.html", "structaltintegration_1_1btc_1_1CSerActionUnserialize" ],
-        [ "CSizeComputer", "classaltintegration_1_1btc_1_1CSizeComputer.html", "classaltintegration_1_1btc_1_1CSizeComputer" ]
-      ] ],
       [ "cache", null, [
         [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
       ] ],
@@ -105,6 +93,17 @@ var annotated_dup =
       [ "IsPopPayload", "structaltintegration_1_1IsPopPayload.html", "structaltintegration_1_1IsPopPayload" ],
       [ "ValidationState", "classaltintegration_1_1ValidationState.html", "classaltintegration_1_1ValidationState" ],
       [ "WriteStream", "classaltintegration_1_1WriteStream.html", "classaltintegration_1_1WriteStream" ]
+    ] ],
+    [ "btc", null, [
+      [ "deserialize_type", "structbtc_1_1deserialize__type.html", null ],
+      [ "CheckVarIntMode", "structbtc_1_1CheckVarIntMode.html", "structbtc_1_1CheckVarIntMode" ],
+      [ "CVarInt", "classbtc_1_1CVarInt.html", "classbtc_1_1CVarInt" ],
+      [ "BigEndian", "classbtc_1_1BigEndian.html", "classbtc_1_1BigEndian" ],
+      [ "CCompactSize", "classbtc_1_1CCompactSize.html", "classbtc_1_1CCompactSize" ],
+      [ "LimitedString", "classbtc_1_1LimitedString.html", "classbtc_1_1LimitedString" ],
+      [ "CSerActionSerialize", "structbtc_1_1CSerActionSerialize.html", "structbtc_1_1CSerActionSerialize" ],
+      [ "CSerActionUnserialize", "structbtc_1_1CSerActionUnserialize.html", "structbtc_1_1CSerActionUnserialize" ],
+      [ "CSizeComputer", "classbtc_1_1CSizeComputer.html", "classbtc_1_1CSizeComputer" ]
     ] ],
     [ "fmt", null, [
       [ "formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4" ]
