@@ -1,6 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#afe8cb837363d5c1b54a475e910d6316d":[5,0,0,0,10,0],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html":[5,0,0,0,11],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92":[5,0,0,0,11,1],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a80d36319071b844f6fca6f0c668c6037":[5,0,0,0,11,0],
