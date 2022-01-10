@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['acceptblock_582',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)'],['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)']]],
+  ['acceptblock_582',['acceptBlock',['../structaltintegration_1_1AltBlockTree.html#a007ab574539c9a9f6b61d7755f32ce59',1,'altintegration::AltBlockTree::acceptBlock(const hash_t &amp;block, const PopData &amp;payloads)'],['../structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads, ValidationState &amp;state)'],['../structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921',1,'altintegration::AltBlockTree::acceptBlock(index_t &amp;index, const PopData &amp;payloads)']]],
   ['acceptblockheader_583',['acceptBlockHeader',['../structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c',1,'altintegration::AltBlockTree']]],
   ['add_584',['add',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
   ['addblocks_585',['addBlocks',['../namespacealtintegration.html#ae2894d7158d84c3ccc3cf26fe76afc6b',1,'altintegration']]],
@@ -10,7 +10,7 @@ var searchData=
   ['assertdecodebase58_589',['AssertDecodeBase58',['../namespacealtintegration.html#aa0a07869f3be03ff2487448621a34997',1,'altintegration']]],
   ['assertdecodebase59_590',['AssertDecodeBase59',['../namespacealtintegration.html#aa79cffa7e82b68d843402c124e1dced3',1,'altintegration']]],
   ['assertdeserializefromhex_591',['AssertDeserializeFromHex',['../namespacealtintegration.html#ab982318b9fcddb8d73626e7fd22781cf',1,'altintegration']]],
-  ['assertdeserializefromraw_592',['AssertDeserializeFromRaw',['../namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1',1,'altintegration::AssertDeserializeFromRaw(std::vector&lt; uint8_t &gt; raw)'],['../namespacealtintegration.html#a6f4d93e5040f3d13da599a5c5af76fad',1,'altintegration::AssertDeserializeFromRaw(std::vector&lt; uint8_t &gt; raw, const AltChainParams &amp;params)']]],
+  ['assertdeserializefromraw_592',['AssertDeserializeFromRaw',['../namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1',1,'altintegration']]],
   ['assertdeserializefromrawhex_593',['AssertDeserializeFromRawHex',['../namespacealtintegration.html#a840937815279ab03555cbb38cfbe06c8',1,'altintegration']]],
-  ['assertdeserializefromvbkencoding_594',['AssertDeserializeFromVbkEncoding',['../namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce',1,'altintegration::AssertDeserializeFromVbkEncoding(Slice&lt; const uint8_t &gt; raw)'],['../namespacealtintegration.html#adc937d76015cac634563f7ceb3fd7cb1',1,'altintegration::AssertDeserializeFromVbkEncoding(Slice&lt; const uint8_t &gt; raw, const AltChainParams &amp;params)']]]
+  ['assertdeserializefromvbkencoding_594',['AssertDeserializeFromVbkEncoding',['../namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce',1,'altintegration']]]
 ];

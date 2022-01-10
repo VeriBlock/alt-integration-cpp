@@ -1,13 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a2c61f0c97348df3916394efbdf723c72":[5,0,0,0,10,1],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a71fb00cdf8e5c592342d7c7743d2ee81":[5,0,0,0,10,6],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a7b9712cb3f7330423a02daafe276e927":[5,0,0,0,10,3],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a828e46b5ec47c9abd1949d5575dead87":[5,0,0,0,10,5],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a884f77cb1d89c3c26143b2b71e952bd6":[5,0,0,0,10,4],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#ad28b062f55ab7134b96ac04c48a7f718":[5,0,0,0,10,7],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#ae132a312ea7c41b4b58691517dba957c":[5,0,0,0,10,2],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#afe8cb837363d5c1b54a475e910d6316d":[5,0,0,0,10,0],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html":[5,0,0,0,11],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92":[5,0,0,0,11,1],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a80d36319071b844f6fca6f0c668c6037":[5,0,0,0,11,0],
