@@ -21,7 +21,7 @@ Bootstrap blocks header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.cpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/bootstraps.cpp)
 ```cpp
-// Copyright (c) 2019-2021 Xenios SEZC
+// Copyright (c) 2019-2022 Xenios SEZC
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
