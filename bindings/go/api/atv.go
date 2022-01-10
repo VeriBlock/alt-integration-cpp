@@ -100,9 +100,7 @@ func (v *Atv) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-// FIXME: Delete config. A config was added just to match the Payload interface because of vbkblock.DeserializeFromVbk.
-// Config is not used.
-func (v *Atv) DeserializeFromVbk(bytes []byte, config *Config) error {
+func (v *Atv) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState()
 	defer state.Free()
 
