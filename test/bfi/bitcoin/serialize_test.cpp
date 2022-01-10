@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "veriblock/abfi/bitcoin/serialize.hpp"
+#include "veriblock/bfi/bitcoin/serialize.hpp"
 #include "veriblock/pop/hashutil.hpp"
 #include "veriblock/pop/literals.hpp"
 

@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "veriblock/abfi/bitcoin/block.hpp"
+#include "veriblock/bfi/bitcoin/block.hpp"
 
 using namespace btc;
 using namespace altintegration;

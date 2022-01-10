@@ -1,4 +1,4 @@
-#include "veriblock/abfi/bitcoin/serialize.hpp"
+#include "veriblock/bfi/bitcoin/serialize.hpp"
 #include "veriblock/pop/entities/btcblock.hpp"
 
 namespace btc {

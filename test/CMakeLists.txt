@@ -6,4 +6,4 @@ add_library(test_main OBJECT test_main.cpp)
 target_link_libraries(test_main PUBLIC gtest)
 
 add_subdirectory(pop)
-add_subdirectory(abfi)
+add_subdirectory(bfi)
