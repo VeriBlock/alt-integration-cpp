@@ -66,14 +66,14 @@ var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
 "dir_0252a7abd2d5cee5cf1dc5c94a7052df.html",
-"namespacealtintegration.html#a090f5e56494396e0a7b6bb1b744d9876",
-"namespacealtintegration.html#aaf0abba5a855a75708e6969449839f7f",
-"serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851",
-"structaltintegration_1_1BaseBlockTree.html#a2a9090e335380b4d3aad38a515d2905a",
-"structaltintegration_1_1BtcChainParams.html#a60d3e85978ed006cffbec66fad1c48c7",
-"structaltintegration_1_1MemPool.html#adb8a8c4c2bb8d4efd8fa1a3c8646baeb",
-"structaltintegration_1_1VbkBlock.html#ac7a1e62c8aceafc287bd4f40242838ab",
-"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92"
+"namespacealtintegration.html#a094185d46352a701763c6e63a03e076a",
+"namespacealtintegration.html#ab2edf8bfcba7d373340b6bac3f80bf14",
+"serialize_8hpp.html#a6f62541fd812bb01e4e62ddfe11b9398",
+"structaltintegration_1_1BaseBlockTree.html#a619da2aa9e768d96e844e78139d4e244",
+"structaltintegration_1_1BtcChainParams.html#abccdcdb7869b273683a056131688e9a4",
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#aa40411cafc2a53395935b10e0072b534",
+"structaltintegration_1_1VbkBlockTree.html#a0f79fa75b36a7f879b47ce1e15122940",
+"structaltintegration_1_1adaptors_1_1StorageIterator.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
