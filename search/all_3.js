@@ -9,7 +9,7 @@ var searchData=
   ['calculatepayoutsinner_99',['calculatePayoutsInner',['../structaltintegration_1_1DefaultPopRewardsCalculator.html#a8db30f8fcae9456e9e1a9c7f1fd5534a',1,'altintegration::DefaultPopRewardsCalculator']]],
   ['calculatetoplevelmerkleroot_100',['CalculateTopLevelMerkleRoot',['../namespacealtintegration.html#ade8ace7ff804da89feba6b1cb31a59e7',1,'altintegration::CalculateTopLevelMerkleRoot(const std::vector&lt; uint8_t &gt; &amp;txMerkleRoot, const PopData &amp;popData, const BlockIndex&lt; AltBlock &gt; *prevBlock, const AltChainParams &amp;params)'],['../namespacealtintegration.html#a31ea86d19b70c3241d17c5591bcfdc81',1,'altintegration::CalculateTopLevelMerkleRoot(const AuthenticatedContextInfoContainer &amp;ctx)'],['../namespacealtintegration.html#a00f54cc63f2e894b82275c5261aa4ec3',1,'altintegration::CalculateTopLevelMerkleRoot(const std::vector&lt; uint8_t &gt; &amp;txMerkleRoot, const uint256 &amp;popDataMerkleRoot, const ContextInfoContainer &amp;ctx)']]],
   ['calculatetxfee_101',['calculateTxFee',['../structaltintegration_1_1VbkTx.html#a701a4b627dee25e2e5f10019e085743c',1,'altintegration::VbkTx']]],
-  ['ccompactsize_102',['CCompactSize',['../classbtc_1_1CCompactSize.html',1,'btc']]],
+  ['ccompactsize_102',['CCompactSize',['../classaltintegration_1_1btc_1_1CCompactSize.html',1,'altintegration::btc']]],
   ['chain_103',['Chain',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
   ['chain_3c_20altintegration_3a_3ablockindex_20_3e_104',['Chain&lt; altintegration::BlockIndex &gt;',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
   ['chain_3c_20block_5findex_5ft_20_3e_105',['Chain&lt; block_index_t &gt;',['../structaltintegration_1_1Chain.html',1,'altintegration']]],
@@ -28,7 +28,7 @@ var searchData=
   ['checkpublicationdata_118',['checkPublicationData',['../namespacealtintegration.html#aab06629ffa720e2980627b8ca8ed5eed',1,'altintegration']]],
   ['checkrange_119',['checkRange',['../namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3',1,'altintegration']]],
   ['checksignature_120',['checkSignature',['../namespacealtintegration.html#ac82f9e17cf5ec46949ae4b357d51e1bb',1,'altintegration::checkSignature(const VbkTx &amp;tx, ValidationState &amp;state)'],['../namespacealtintegration.html#af62ee956a81f5b10b89696bd6ab5cde5',1,'altintegration::checkSignature(const VbkPopTx &amp;tx, ValidationState &amp;state)']]],
-  ['checkvarintmode_121',['CheckVarIntMode',['../structbtc_1_1CheckVarIntMode.html',1,'btc']]],
+  ['checkvarintmode_121',['CheckVarIntMode',['../structaltintegration_1_1btc_1_1CheckVarIntMode.html',1,'altintegration::btc']]],
   ['checkvbkblockplausibility_122',['checkVbkBlockPlausibility',['../namespacealtintegration.html#a934d4fb44481484f81964f7ecc89efc4',1,'altintegration']]],
   ['checkvbkblocks_123',['checkVbkBlocks',['../namespacealtintegration.html#a3fe4811d021bc9487759ba2e883868dd',1,'altintegration']]],
   ['checkvbkpoptx_124',['checkVbkPopTx',['../namespacealtintegration.html#a09db8f8c3f64b17f0a5bd6573d21ad72',1,'altintegration']]],
@@ -48,9 +48,9 @@ var searchData=
   ['contextinfocontainer_138',['ContextInfoContainer',['../structaltintegration_1_1ContextInfoContainer.html',1,'altintegration']]],
   ['create_139',['create',['../structaltintegration_1_1Config_1_1Bootstrap.html#a3dda1b273cd4b9438a9e8b47c3afda47',1,'altintegration::Config::Bootstrap::create()'],['../structaltintegration_1_1PopContext.html#a85ec86af4bb85babb5fc0ebe81ed8625',1,'altintegration::PopContext::create()']]],
   ['createfromprevious_140',['createFromPrevious',['../structaltintegration_1_1AuthenticatedContextInfoContainer.html#a63f24e44a05e9ebcd86a922aff86c2fd',1,'altintegration::AuthenticatedContextInfoContainer::createFromPrevious(const std::vector&lt; uint8_t &gt; &amp;txRoot, const uint256 &amp;popDataRoot, const BlockIndex&lt; AltBlock &gt; *prev, const AltChainParams &amp;p)'],['../structaltintegration_1_1AuthenticatedContextInfoContainer.html#a2aca9efbe5de4f0916c14578ecbde454',1,'altintegration::AuthenticatedContextInfoContainer::createFromPrevious(const uint256 &amp;stateRoot, const BlockIndex&lt; AltBlock &gt; *prev, const AltChainParams &amp;p)']]],
-  ['cseractionserialize_141',['CSerActionSerialize',['../structbtc_1_1CSerActionSerialize.html',1,'btc']]],
-  ['cseractionunserialize_142',['CSerActionUnserialize',['../structbtc_1_1CSerActionUnserialize.html',1,'btc']]],
-  ['csizecomputer_143',['CSizeComputer',['../classbtc_1_1CSizeComputer.html',1,'btc']]],
+  ['cseractionserialize_141',['CSerActionSerialize',['../structaltintegration_1_1btc_1_1CSerActionSerialize.html',1,'altintegration::btc']]],
+  ['cseractionunserialize_142',['CSerActionUnserialize',['../structaltintegration_1_1btc_1_1CSerActionUnserialize.html',1,'altintegration::btc']]],
+  ['csizecomputer_143',['CSizeComputer',['../classaltintegration_1_1btc_1_1CSizeComputer.html',1,'altintegration::btc']]],
   ['currenttimestamp4_144',['currentTimestamp4',['../namespacealtintegration.html#a3f56c41f86e4bd505dba41d53d11e586',1,'altintegration']]],
-  ['cvarint_145',['CVarInt',['../classbtc_1_1CVarInt.html',1,'btc']]]
+  ['cvarint_145',['CVarInt',['../classaltintegration_1_1btc_1_1CVarInt.html',1,'altintegration::btc']]]
 ];

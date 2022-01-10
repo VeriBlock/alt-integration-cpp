@@ -3,7 +3,7 @@ var searchData=
   ['savealltrees_757',['saveAllTrees',['../structaltintegration_1_1PopContext.html#af4a75ce0d9b92146523799a102d5a12b',1,'altintegration::PopContext']]],
   ['savetrees_758',['saveTrees',['../namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995',1,'altintegration']]],
   ['scorefromendorsements_759',['scoreFromEndorsements',['../structaltintegration_1_1DefaultPopRewardsCalculator.html#aabaaf0487fd34ecb2d0b0d88e81e5036',1,'altintegration::DefaultPopRewardsCalculator']]],
-  ['seek_760',['seek',['../classbtc_1_1CSizeComputer.html#ac3452e5ec6336905671b23fe473e4e16',1,'btc::CSizeComputer']]],
+  ['seek_760',['seek',['../classaltintegration_1_1btc_1_1CSizeComputer.html#a3fd318db1c2efb9ead0bfd510f51515e',1,'altintegration::btc::CSizeComputer']]],
   ['seek_5fstart_761',['seek_start',['../structaltintegration_1_1BlockIterator.html#a9f0eb8fde6e1dfe9d23cd237fa774393',1,'altintegration::BlockIterator::seek_start()'],['../structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html#a25e8f3fb68492da68ae2f29b6e8ac6f4',1,'altintegration::adaptors::BlockIteratorImpl::seek_start()']]],
   ['serializetohex_762',['SerializeToHex',['../namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05',1,'altintegration']]],
   ['serializetoraw_763',['SerializeToRaw',['../namespacealtintegration.html#a2ecf7eac8bcfa9ea8d36bc1634ffcb4a',1,'altintegration']]],
