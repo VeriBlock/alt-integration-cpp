@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 
+#include <veriblock/pop/ct_params.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
@@ -228,6 +229,8 @@ struct PopTestFixture {
     pubData.payoutInfo = getPayoutInfo();
     pubData.identifier = altparam.getIdentifier();
     pubData.header = endorsed.toRaw();
+    VBK_ASSERT(endorsed.hash.size() == ALT_HASH_SIZE);
+    VBK_ASSERT(endorsed.previousBlock.size() == ALT_HASH_SIZE);
 
     const auto* prev = tree.getBlockIndex(endorsed.previousBlock);
     auto c = AuthenticatedContextInfoContainer::createFromPrevious(

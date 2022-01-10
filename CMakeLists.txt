@@ -186,6 +186,7 @@ if(WITH_PYPOPTOOLS)
     add_subdirectory(pypoptools)
 endif()
 
+message(STATUS "ALT_HASH_SIZE=${ALT_HASH_SIZE}")
 message(STATUS "CLANG_TIDY=${CLANG_TIDY}")
 message(STATUS "ASAN=${ASAN}")
 message(STATUS "TSAN=${TSAN}")
