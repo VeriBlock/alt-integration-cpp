@@ -80,6 +80,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 ## setup compilation flags
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(Clang)$")
+    # using clang
+    find_program(LLD ld.lld)
+    if(LLD)
+        # try to use lld linker (it is faster)
+        message(STATUS "Using lld linker: ${LLD}")
+        add_link_options(-fuse-ld=${LLD})
+    endif()
+endif()
+
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     if(WERROR)
         add_compile_options(-Werror)
@@ -100,6 +110,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
 
     # disable errors
     add_cxx_flag(-Wno-error=literal-suffix)
+    add_flag(-Wno-error=unused-function)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # Release flags

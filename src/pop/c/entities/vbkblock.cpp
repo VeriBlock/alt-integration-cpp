@@ -179,7 +179,6 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block, POP_ENTITY_NAME(config) * config) {
 
   altintegration::VbkBlock out;
   if (!altintegration::DeserializeFromVbkEncoding(v_bytes, out, state->ref)) {
-    pop_config_free(config);
     return nullptr;
   }
 
