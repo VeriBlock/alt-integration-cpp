@@ -77,7 +77,7 @@ void BtcBlock::setNonce(uint32_t nnc) {
   invalidateHash();
 }
 
-void BtcBlock::setVersion(uint32_t v) {
+void BtcBlock::setVersion(int32_t v) {
   version = v;
   invalidateHash();
 }
@@ -98,7 +98,7 @@ bool DeserializeFromRaw(ReadStream& stream,
                         BtcBlock& block,
                         ValidationState& state,
                         const BtcBlock::hash_t& precalculatedHash) {
-  if (!stream.readLE<uint32_t>(block.version, state)) {
+  if (!stream.readLE<int32_t>(block.version, state)) {
     return state.Invalid("btc-block-version");
   }
   Slice<const uint8_t> previousBlock;
@@ -154,7 +154,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   return DeserializeFromVbkEncoding(stream, out, state, precalculatedHash);
 }
 
-BtcBlock::BtcBlock(uint32_t version,
+BtcBlock::BtcBlock(int32_t version,
                    uint256 previousBlock,
                    uint256 merkleRoot,
                    uint32_t timestamp,

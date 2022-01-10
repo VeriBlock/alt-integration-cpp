@@ -25,6 +25,8 @@
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/write_stream.hpp>
 
+namespace altintegration {
+
 namespace btc {
 
 static const unsigned int MAX_SIZE = 0x02000000;
@@ -197,9 +199,9 @@ const X& ReadWriteAsHelper(const X& x) {
   return x;
 }
 
-#define READWRITE(...) (::SerReadWriteMany(s, ser_action, __VA_ARGS__))
+#define READWRITE(...) (SerReadWriteMany(s, ser_action, __VA_ARGS__))
 #define READWRITEAS(type, obj) \
-  (::SerReadWriteMany(s, ser_action, ReadWriteAsHelper<type>(obj)))
+  (SerReadWriteMany(s, ser_action, ReadWriteAsHelper<type>(obj)))
 
 /**
  * Implement three methods for serializable objects. These are actually wrappers
@@ -276,6 +278,10 @@ inline void Serialize(Stream& s,
                       const altintegration::Slice<const uint8_t>& slice) {
   s.write(CharCast(slice.data()), slice.size());
 }
+template <typename Stream, size_t N>
+inline void Serialize(Stream& s, const altintegration::Blob<N>& blob) {
+  s.write(CharCast(blob.data()), blob.size());
+}
 
 #ifndef CHAR_EQUALS_INT8
 template <typename Stream>
@@ -342,6 +348,13 @@ inline void Unserialize(Stream& s,
                         altintegration::Slice<const uint8_t>& slice) {
   altintegration::ValidationState state;
   if (!s.read(slice.size(), slice.data(), state)) {
+    throw std::ios_base::failure(state.toString());
+  }
+}
+template <typename Stream, size_t N>
+inline void Unserialize(Stream& s, altintegration::Blob<N>& blob) {
+  altintegration::ValidationState state;
+  if (!s.read(blob.size(), blob.data(), state)) {
     throw std::ios_base::failure(state.toString());
   }
 }
@@ -911,7 +924,7 @@ struct CSerActionUnserialize {
   constexpr bool ForRead() const { return true; }
 };
 
-/* ::GetSerializeSize implementations
+/* GetSerializeSize implementations
  *
  * Computing the serialized size of objects is done through a special stream
  * object of type CSizeComputer, which only records the number of bytes written
@@ -1013,8 +1026,6 @@ size_t GetSerializeSizeMany(int nVersion, const T&... t) {
 }
 
 }  // namespace btc
-
-namespace altintegration {
 
 template <typename T>
 void SerializeBtc(WriteStream& stream, const T& obj) {

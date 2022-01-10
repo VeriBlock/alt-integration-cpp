@@ -5,13 +5,12 @@
 
 #include <gtest/gtest.h>
 
-#include "veriblock/abfi/bitcoin/serialize.hpp"
+#include "veriblock/bfi/bitcoin/serialize.hpp"
 #include "veriblock/pop/hashutil.hpp"
 #include "veriblock/pop/literals.hpp"
-#include "veriblock/pop/read_stream.hpp"
 
-using namespace btc;
 using namespace altintegration;
+using namespace altintegration::btc;
 
 class CSerializeMethodsTestSingle {
  public:
@@ -216,71 +215,69 @@ TEST(Serialize, varints_bitpatterns) {
   WriteStream writer;
 
   SerializeBtc(writer, VARINT(0, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "00");
+  EXPECT_EQ(writer.hex(), "00");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0x7f, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "7f");
+  EXPECT_EQ(writer.hex(), "7f");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT((int8_t)0x7f, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "7f");
+  EXPECT_EQ(writer.hex(), "7f");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0x80, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "8000");
+  EXPECT_EQ(writer.hex(), "8000");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT((uint8_t)0x80));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "8000");
+  EXPECT_EQ(writer.hex(), "8000");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0x1234, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "a334");
+  EXPECT_EQ(writer.hex(), "a334");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT((int16_t)0x1234, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "a334");
+  EXPECT_EQ(writer.hex(), "a334");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0xffff, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "82fe7f");
+  EXPECT_EQ(writer.hex(), "82fe7f");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT((uint16_t)0xffff));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "82fe7f");
+  EXPECT_EQ(writer.hex(), "82fe7f");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0x123456, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "c7e756");
+  EXPECT_EQ(writer.hex(), "c7e756");
   writer = WriteStream{};
 
   SerializeBtc(writer,
                VARINT((int32_t)0x123456, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "c7e756");
+  EXPECT_EQ(writer.hex(), "c7e756");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0x80123456U));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "86ffc7e756");
+  EXPECT_EQ(writer.hex(), "86ffc7e756");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT((uint32_t)0x80123456U));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "86ffc7e756");
+  EXPECT_EQ(writer.hex(), "86ffc7e756");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0xffffffff));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()), "8efefefe7f");
+  EXPECT_EQ(writer.hex(), "8efefefe7f");
   writer = WriteStream{};
 
   SerializeBtc(writer,
                VARINT(0x7fffffffffffffffLL, VarIntMode::NONNEGATIVE_SIGNED));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()),
-            "fefefefefefefefe7f");
+  EXPECT_EQ(writer.hex(), "fefefefefefefefe7f");
   writer = WriteStream{};
 
   SerializeBtc(writer, VARINT(0xffffffffffffffffULL));
-  EXPECT_EQ(HexStr(writer.data().begin(), writer.data().end()),
-            "80fefefefefefefefe7f");
+  EXPECT_EQ(writer.hex(), "80fefefefefefefefe7f");
   writer = WriteStream{};
 }
 
