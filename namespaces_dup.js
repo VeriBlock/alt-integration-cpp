@@ -2,6 +2,7 @@ var namespaces_dup =
 [
     [ "altintegration", "namespacealtintegration.html", "namespacealtintegration" ],
     [ "btc", null, [
+      [ "BlockHeader", "structbtc_1_1BlockHeader.html", "structbtc_1_1BlockHeader" ],
       [ "deserialize_type", "structbtc_1_1deserialize__type.html", null ],
       [ "CheckVarIntMode", "structbtc_1_1CheckVarIntMode.html", "structbtc_1_1CheckVarIntMode" ],
       [ "CVarInt", "classbtc_1_1CVarInt.html", "classbtc_1_1CVarInt" ],
@@ -57,6 +58,7 @@ var namespaces_dup =
       [ "Serialize", "serialize_8hpp.html#ae2a8eed4915086fe0bc26ce4886b21aa", null ],
       [ "Serialize", "serialize_8hpp.html#a90c38d7da47644be1ed136fb154a43ba", null ],
       [ "Serialize", "serialize_8hpp.html#a7244186fb2e58a8b8f580069daff3e2f", null ],
+      [ "Serialize", "serialize_8hpp.html#a67c6aa237d491384427fcb4a3db00150", null ],
       [ "Serialize", "serialize_8hpp.html#a50e9bee7d084dc3d8a37e57917771302", null ],
       [ "Serialize", "serialize_8hpp.html#a13b7414a321260f425904c901cd73ebc", null ],
       [ "Serialize", "serialize_8hpp.html#add0dc1f9506d5e6b802460e6ef090bcc", null ],
@@ -85,6 +87,7 @@ var namespaces_dup =
       [ "Unserialize", "serialize_8hpp.html#a0a77ed64a3e01ab2f53a666767062e99", null ],
       [ "Unserialize", "serialize_8hpp.html#acee9e9692b8d6134f5ddc098ad1b829d", null ],
       [ "Unserialize", "serialize_8hpp.html#a7335a7405c255ce89d708a1445030e1d", null ],
+      [ "Unserialize", "serialize_8hpp.html#a89072eea2801b4de8711ed716d643d64", null ],
       [ "Unserialize", "serialize_8hpp.html#aeccb55a6ad1bd71c6acdb0b600e83218", null ],
       [ "Unserialize", "serialize_8hpp.html#ae37e11ba17e6b63cdb3e5473e42c8180", null ],
       [ "Unserialize", "serialize_8hpp.html#a25601fe8ef6372ae5137f35e6b2e86b7", null ],
