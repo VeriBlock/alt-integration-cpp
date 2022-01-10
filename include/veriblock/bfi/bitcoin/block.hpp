@@ -1,19 +1,20 @@
 #include "veriblock/bfi/bitcoin/serialize.hpp"
 #include "veriblock/pop/entities/btcblock.hpp"
 
+namespace altintegration {
+
 namespace btc {
 
-struct BlockHeader : public altintegration::BtcBlock {
+struct BlockHeader : public BtcBlock {
   BlockHeader() {}
 
   BlockHeader(int32_t version,
-              altintegration::uint256 previousBlock,
-              altintegration::uint256 merkleRoot,
+              uint256 previousBlock,
+              uint256 merkleRoot,
               uint32_t timestamp,
               uint32_t bits,
               uint32_t nonce)
-      : altintegration::BtcBlock(
-            version, previousBlock, merkleRoot, timestamp, bits, nonce) {}
+      : BtcBlock(version, previousBlock, merkleRoot, timestamp, bits, nonce) {}
 
   ADD_SERIALIZE_METHODS;
 
@@ -29,3 +30,5 @@ struct BlockHeader : public altintegration::BtcBlock {
 };
 
 }  // namespace btc
+
+}  // namespace altintegration

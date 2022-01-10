@@ -9,8 +9,8 @@
 #include "veriblock/pop/hashutil.hpp"
 #include "veriblock/pop/literals.hpp"
 
-using namespace btc;
 using namespace altintegration;
+using namespace altintegration::btc;
 
 class CSerializeMethodsTestSingle {
  public:

@@ -25,6 +25,8 @@
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/write_stream.hpp>
 
+namespace altintegration {
+
 namespace btc {
 
 static const unsigned int MAX_SIZE = 0x02000000;
@@ -278,7 +280,7 @@ inline void Serialize(Stream& s,
 }
 template <typename Stream, size_t N>
 inline void Serialize(Stream& s, const altintegration::Blob<N>& blob) {
-    s.write(CharCast(blob.data()), blob.size());
+  s.write(CharCast(blob.data()), blob.size());
 }
 
 #ifndef CHAR_EQUALS_INT8
@@ -1024,8 +1026,6 @@ size_t GetSerializeSizeMany(int nVersion, const T&... t) {
 }
 
 }  // namespace btc
-
-namespace altintegration {
 
 template <typename T>
 void SerializeBtc(WriteStream& stream, const T& obj) {

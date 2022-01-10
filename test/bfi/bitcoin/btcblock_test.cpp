@@ -7,8 +7,8 @@
 
 #include "veriblock/bfi/bitcoin/block.hpp"
 
-using namespace btc;
 using namespace altintegration;
+using namespace altintegration::btc;
 
 TEST(BlockHeader, serde_test) {
   BlockHeader header{
