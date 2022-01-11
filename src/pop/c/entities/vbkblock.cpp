@@ -168,12 +168,9 @@ POP_ENTITY_SERIALIZE_TO_VBK(vbk_block) {
   return res;
 }
 
-POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block, POP_ENTITY_NAME(config) * config) {
+POP_ENTITY_DESERIALIZE_FROM_VBK(vbk_block) {
   VBK_ASSERT(state);
-  VBK_ASSERT(config);
   VBK_ASSERT(bytes.data);
-  VBK_ASSERT(config->ref);
-  VBK_ASSERT(config->ref->alt);
 
   std::vector<uint8_t> v_bytes(bytes.data, bytes.data + bytes.size);
 

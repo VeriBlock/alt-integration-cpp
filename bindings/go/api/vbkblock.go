@@ -155,11 +155,11 @@ func (v *VbkBlock) SerializeToVbk() []byte {
 	return createBytes(&res)
 }
 
-func (v *VbkBlock) DeserializeFromVbk(bytes []byte, config *Config) error {
+func (v *VbkBlock) DeserializeFromVbk(bytes []byte) error {
 	state := NewValidationState()
 	defer state.Free()
 
-	res := C.pop_vbk_block_deserialize_from_vbk(createCBytes(bytes), state.ref, config.ref)
+	res := C.pop_vbk_block_deserialize_from_vbk(createCBytes(bytes), state.ref)
 	if res == nil {
 		return state.Error()
 	}
