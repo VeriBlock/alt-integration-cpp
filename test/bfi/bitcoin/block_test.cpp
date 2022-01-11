@@ -22,7 +22,7 @@ TEST(BlockHeader, serde_test) {
       1678286846};
   WriteStream writer;
 
-  SerializeBtc(writer, header);
+  Serialize(writer, header);
 
   ASSERT_EQ(writer.hex(),
             "02000000b6ff0b1b1680a2862a30ca44d346d9e8910d334beb48ca0c0000000000"
@@ -32,7 +32,7 @@ TEST(BlockHeader, serde_test) {
   BlockHeader decoded{};
   ReadStream reader{writer.data()};
 
-  UnserializeBtc(reader, decoded);
+  Unserialize(reader, decoded);
 
   ASSERT_EQ(header, decoded);
 }

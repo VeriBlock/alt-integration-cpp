@@ -1027,26 +1027,6 @@ size_t GetSerializeSizeMany(int nVersion, const T&... t) {
 
 }  // namespace btc
 
-template <typename T>
-void SerializeBtc(WriteStream& stream, const T& obj) {
-  btc::Serialize(stream, obj);
-}
-
-template <typename T>
-void SerializeBtc(WriteStream& stream, const T&& obj) {
-  btc::Serialize(stream, obj);
-}
-
-template <typename T>
-void UnserializeBtc(ReadStream& stream, T& obj) {
-  btc::Unserialize(stream, obj);
-}
-
-template <typename T>
-void UnserializeBtc(ReadStream& stream, T&& obj) {
-  btc::Unserialize(stream, obj);
-}
-
 }  // namespace altintegration
 
 #endif  // BITCOIN_SERIALIZE_H

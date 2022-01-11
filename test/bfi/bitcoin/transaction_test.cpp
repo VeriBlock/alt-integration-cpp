@@ -24,7 +24,7 @@ TEST(Transaction, serde_test) {
   Transaction tx{{in}, {out}, 1, 0};
   WriteStream writer;
 
-  SerializeBtc(writer, tx);
+  Serialize(writer, tx);
 
   ASSERT_EQ(writer.hex(),
             "01000000017b1eabe0209b1fe794124575ef807057c77ada2138ae4fa8d6c4de03"
@@ -36,7 +36,7 @@ TEST(Transaction, serde_test) {
   Transaction decoded{};
   ReadStream reader{writer.data()};
 
-  UnserializeBtc(reader, decoded);
+  Unserialize(reader, decoded);
 
   ASSERT_EQ(tx, decoded);
 }

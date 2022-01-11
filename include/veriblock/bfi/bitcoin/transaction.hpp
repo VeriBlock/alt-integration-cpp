@@ -139,29 +139,29 @@ inline void UnserializeTransaction(Transaction& tx, Stream& s) {
   //    SERIALIZE_TRANSACTION_NO_WITNESS);
   const bool fAllowWitness = false;
 
-  UnserializeBtc(s, tx.nVersion);
+  Unserialize(s, tx.nVersion);
   unsigned char flags = 0;
   tx.vin.clear();
   tx.vout.clear();
   /* Try to read the vin. In case the dummy is there, this will be read as an
    * empty vector. */
-  UnserializeBtc(s, tx.vin);
+  Unserialize(s, tx.vin);
   if (tx.vin.size() == 0 && fAllowWitness) {
     /* We read a dummy or an empty vin. */
-    UnserializeBtc(s, flags);
+    Unserialize(s, flags);
     if (flags != 0) {
-      UnserializeBtc(s, tx.vin);
-      UnserializeBtc(s, tx.vout);
+      Unserialize(s, tx.vin);
+      Unserialize(s, tx.vout);
     }
   } else {
     /* We read a non-empty vin. Assume a normal vout follows. */
-    UnserializeBtc(s, tx.vout);
+    Unserialize(s, tx.vout);
   }
   if ((flags & 1) && fAllowWitness) {
     /* The witness flag is present, and we support witnesses. */
     flags ^= 1;
     for (size_t i = 0; i < tx.vin.size(); i++) {
-      UnserializeBtc(s, tx.vin[i].scriptWitness);
+      Unserialize(s, tx.vin[i].scriptWitness);
     }
     if (!tx.HasWitness()) {
       /* It's illegal to encode witnesses when all witness stacks are empty. */
@@ -172,7 +172,7 @@ inline void UnserializeTransaction(Transaction& tx, Stream& s) {
     /* Unknown flag in the serialization */
     throw std::ios_base::failure("Unknown transaction optional data");
   }
-  UnserializeBtc(s, tx.nLockTime);
+  Unserialize(s, tx.nLockTime);
 }
 
 template <typename Stream>
@@ -182,7 +182,7 @@ inline void SerializeTransaction(const Transaction& tx, Stream& s) {
   //    SERIALIZE_TRANSACTION_NO_WITNESS);
   const bool fAllowWitness = false;
 
-  SerializeBtc(s, tx.nVersion);
+  Serialize(s, tx.nVersion);
   unsigned char flags = 0;
   // Consistency check
   if (fAllowWitness) {
@@ -194,17 +194,17 @@ inline void SerializeTransaction(const Transaction& tx, Stream& s) {
   if (flags) {
     /* Use extended format in case witnesses are to be serialized. */
     std::vector<TxIn> vinDummy;
-    SerializeBtc(s, vinDummy);
-    SerializeBtc(s, flags);
+    Serialize(s, vinDummy);
+    Serialize(s, flags);
   }
-  SerializeBtc(s, tx.vin);
-  SerializeBtc(s, tx.vout);
+  Serialize(s, tx.vin);
+  Serialize(s, tx.vout);
   if (flags & 1) {
     for (size_t i = 0; i < tx.vin.size(); i++) {
-      SerializeBtc(s, tx.vin[i].scriptWitness);
+      Serialize(s, tx.vin[i].scriptWitness);
     }
   }
-  SerializeBtc(s, tx.nLockTime);
+  Serialize(s, tx.nLockTime);
 }
 
 }  // namespace btc
