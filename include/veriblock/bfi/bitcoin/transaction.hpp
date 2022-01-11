@@ -30,6 +30,14 @@ struct OutPoint {
     READWRITE(hash);
     READWRITE(n);
   }
+
+  friend bool operator==(const OutPoint& a, const OutPoint& b) {
+    return a.hash == b.hash && a.n == b.n;
+  }
+
+  friend bool operator!=(const OutPoint& a, const OutPoint& b) {
+    return !(a == b);
+  }
 };
 
 /** An input of a transaction.  It contains the location of the previous
@@ -50,6 +58,13 @@ struct TxIn {
     READWRITE(scriptSig);
     READWRITE(nSequence);
   }
+
+  friend bool operator==(const TxIn& a, const TxIn& b) {
+    return a.prevout == b.prevout && a.scriptSig == b.scriptSig &&
+           a.nSequence == b.nSequence && a.scriptWitness == b.scriptWitness;
+  }
+
+  friend bool operator!=(const TxIn& a, const TxIn& b) { return !(a == b); }
 };
 
 /** An output of a transaction.  It contains the public key that the next input
@@ -66,6 +81,12 @@ struct TxOut {
     READWRITE(nValue);
     READWRITE(scriptPubKey);
   }
+
+  friend bool operator==(const TxOut& a, const TxOut& b) {
+    return a.nValue == b.nValue && a.scriptPubKey == b.scriptPubKey;
+  }
+
+  friend bool operator!=(const TxOut& a, const TxOut& b) { return !(a == b); }
 };
 
 /** The basic transaction that is broadcasted on the network and contained in
@@ -90,6 +111,15 @@ struct Transaction {
   template <typename Stream>
   inline void Unserialize(Stream& s) {
     UnserializeTransaction(*this, s);
+  }
+
+  friend bool operator==(const Transaction& a, const Transaction& b) {
+    return a.vin == b.vin && a.vout == b.vout && a.nVersion == b.nVersion &&
+           a.nLockTime == b.nLockTime;
+  }
+
+  friend bool operator!=(const Transaction& a, const Transaction& b) {
+    return !(a == b);
   }
 
   bool HasWitness() const {
