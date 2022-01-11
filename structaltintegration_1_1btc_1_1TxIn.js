@@ -1,6 +1,8 @@
 var structaltintegration_1_1btc_1_1TxIn =
 [
     [ "SerializationOp", "structaltintegration_1_1btc_1_1TxIn.html#ad418f9edae7930f043ccdbcc2424e15b", null ],
+    [ "operator!=", "structaltintegration_1_1btc_1_1TxIn.html#a890882f8d854e86f16eedb4744da0502", null ],
+    [ "operator==", "structaltintegration_1_1btc_1_1TxIn.html#a5e978aec6d14c8df92733d3d0cd3650c", null ],
     [ "ADD_SERIALIZE_METHODS", "structaltintegration_1_1btc_1_1TxIn.html#a25cd004813907ac2bea473b68c3bb0a9", null ],
     [ "nSequence", "structaltintegration_1_1btc_1_1TxIn.html#a6fa7531911b9ecf2af12459be0243f1d", null ],
     [ "prevout", "structaltintegration_1_1btc_1_1TxIn.html#a8c0ad8a1d0945280ba70ecf19b13862a", null ],
