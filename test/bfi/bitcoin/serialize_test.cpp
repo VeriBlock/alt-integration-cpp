@@ -142,7 +142,7 @@ TEST(Serialize, floats) {
   WriteStream writer;
   // encode
   for (int i = 0; i < 1000; i++) {
-    SerializeBtc(writer, float(i));
+    Serialize(writer, float(i));
   }
 
   EXPECT_EQ(
@@ -154,7 +154,7 @@ TEST(Serialize, floats) {
   // decode
   for (int i = 0; i < 1000; i++) {
     float j;
-    UnserializeBtc(reader, j);
+    Unserialize(reader, j);
     EXPECT_EQ(j, i);
   }
 }
@@ -163,7 +163,7 @@ TEST(Serialize, doubles) {
   // encode
   WriteStream writer;
   for (int i = 0; i < 1000; i++) {
-    SerializeBtc(writer, double(i));
+    Serialize(writer, double(i));
   }
 
   EXPECT_EQ(
@@ -175,7 +175,7 @@ TEST(Serialize, doubles) {
   ReadStream reader{writer.data()};
   for (int i = 0; i < 1000; i++) {
     double j;
-    UnserializeBtc(reader, j);
+    Unserialize(reader, j);
     EXPECT_EQ(j, i);
   }
 }
@@ -185,13 +185,13 @@ TEST(Serialize, varints) {
   WriteStream writer;
   size_t size = 0;
   for (int i = 0; i < 100000; i++) {
-    SerializeBtc(writer, VARINT(i, VarIntMode::NONNEGATIVE_SIGNED));
+    Serialize(writer, VARINT(i, VarIntMode::NONNEGATIVE_SIGNED));
     size += GetSerializeSize(VARINT(i, VarIntMode::NONNEGATIVE_SIGNED), 0);
     EXPECT_EQ(size, writer.data().size());
   }
 
   for (uint64_t i = 0; i < 100000000000ULL; i += 999999937) {
-    SerializeBtc(writer, VARINT(i));
+    Serialize(writer, VARINT(i));
     size += ::GetSerializeSize(VARINT(i), 0);
     EXPECT_EQ(size, writer.data().size());
   }
@@ -200,13 +200,13 @@ TEST(Serialize, varints) {
   ReadStream reader{writer.data()};
   for (int i = 0; i < 100000; i++) {
     int j = -1;
-    UnserializeBtc(reader, VARINT(j, VarIntMode::NONNEGATIVE_SIGNED));
+    Unserialize(reader, VARINT(j, VarIntMode::NONNEGATIVE_SIGNED));
     EXPECT_EQ(i, j);
   }
 
   for (uint64_t i = 0; i < 100000000000ULL; i += 999999937) {
     uint64_t j = std::numeric_limits<uint64_t>::max();
-    UnserializeBtc(reader, VARINT(j));
+    Unserialize(reader, VARINT(j));
     EXPECT_EQ(i, j);
   }
 }
@@ -214,69 +214,69 @@ TEST(Serialize, varints) {
 TEST(Serialize, varints_bitpatterns) {
   WriteStream writer;
 
-  SerializeBtc(writer, VARINT(0, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT(0, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "00");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0x7f, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT(0x7f, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "7f");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT((int8_t)0x7f, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT((int8_t)0x7f, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "7f");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0x80, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT(0x80, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "8000");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT((uint8_t)0x80));
+  Serialize(writer, VARINT((uint8_t)0x80));
   EXPECT_EQ(writer.hex(), "8000");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0x1234, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT(0x1234, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "a334");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT((int16_t)0x1234, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT((int16_t)0x1234, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "a334");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0xffff, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT(0xffff, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "82fe7f");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT((uint16_t)0xffff));
+  Serialize(writer, VARINT((uint16_t)0xffff));
   EXPECT_EQ(writer.hex(), "82fe7f");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0x123456, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT(0x123456, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "c7e756");
   writer = WriteStream{};
 
-  SerializeBtc(writer,
+  Serialize(writer,
                VARINT((int32_t)0x123456, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "c7e756");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0x80123456U));
+  Serialize(writer, VARINT(0x80123456U));
   EXPECT_EQ(writer.hex(), "86ffc7e756");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT((uint32_t)0x80123456U));
+  Serialize(writer, VARINT((uint32_t)0x80123456U));
   EXPECT_EQ(writer.hex(), "86ffc7e756");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0xffffffff));
+  Serialize(writer, VARINT(0xffffffff));
   EXPECT_EQ(writer.hex(), "8efefefe7f");
   writer = WriteStream{};
 
-  SerializeBtc(writer,
+  Serialize(writer,
                VARINT(0x7fffffffffffffffLL, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "fefefefefefefefe7f");
   writer = WriteStream{};
 
-  SerializeBtc(writer, VARINT(0xffffffffffffffffULL));
+  Serialize(writer, VARINT(0xffffffffffffffffULL));
   EXPECT_EQ(writer.hex(), "80fefefefefefefefe7f");
   writer = WriteStream{};
 }
@@ -307,8 +307,8 @@ TEST(Serialize, vector_bool) {
   std::vector<bool> vec2{1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1,
                          1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1};
 
-  SerializeBtc(writer1, vec1);
-  SerializeBtc(writer2, vec2);
+  Serialize(writer1, vec1);
+  Serialize(writer2, vec2);
 
   EXPECT_EQ(writer1.data(), writer2.data());
 }
@@ -379,12 +379,12 @@ TEST(Serialize, class_methods) {
   EXPECT_TRUE(is_equal(methodtest1, methodtest2));
 
   WriteStream writer;
-  SerializeBtc(writer, methodtest1);
-  SerializeBtc(writer, methodtest2);
+  Serialize(writer, methodtest1);
+  Serialize(writer, methodtest2);
 
   ReadStream reader{writer.data()};
-  UnserializeBtc(reader, methodtest4);
-  UnserializeBtc(reader, methodtest3);
+  Unserialize(reader, methodtest4);
+  Unserialize(reader, methodtest3);
 
   EXPECT_TRUE(is_equal(methodtest1, methodtest2));
   EXPECT_TRUE(is_equal(methodtest2, methodtest3));

@@ -29,7 +29,7 @@ namespace altintegration {
 
 namespace btc {
 
-static const unsigned int MAX_SIZE = 0x02000000;
+static const uint64_t MAX_SIZE = 0x02000000;
 
 /**
  * Dummy data type to identify deserializing constructors.
@@ -426,7 +426,7 @@ uint64_t ReadCompactSize(Stream& is) {
     if (nSizeRet < 0x100000000ULL)
       throw std::ios_base::failure("non-canonical ReadCompactSize()");
   }
-  if (nSizeRet > (uint64_t)MAX_SIZE)
+  if (nSizeRet > MAX_SIZE)
     throw std::ios_base::failure("ReadCompactSize(): size too large");
   return nSizeRet;
 }
@@ -795,12 +795,11 @@ template <typename Stream, typename T, typename A>
 void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&) {
   // Limit size per read so bogus size value won't cause out of memory
   v.clear();
-  unsigned int nSize = ReadCompactSize(is);
-  unsigned int i = 0;
+  uint64_t nSize = ReadCompactSize(is);
+  uint64_t i = 0;
   altintegration::ValidationState state;
   while (i < nSize) {
-    unsigned int blk =
-        std::min(nSize - i, (unsigned int)(1 + 4999999 / sizeof(T)));
+    uint64_t blk = std::min(nSize - i, (uint64_t)(1 + 4999999 / sizeof(T)));
     v.resize(i + blk);
     if (!is.read(blk * sizeof(T), (uint8_t*)&v[i], state)) {
       throw std::ios_base::failure(state.toString());
@@ -812,9 +811,9 @@ void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&) {
 template <typename Stream, typename T, typename A, typename V>
 void Unserialize_impl(Stream& is, std::vector<T, A>& v, const V&) {
   v.clear();
-  unsigned int nSize = ReadCompactSize(is);
-  unsigned int i = 0;
-  unsigned int nMid = 0;
+  uint64_t nSize = ReadCompactSize(is);
+  uint64_t i = 0;
+  uint64_t nMid = 0;
   while (nMid < nSize) {
     nMid += 5000000 / sizeof(T);
     if (nMid > nSize) nMid = nSize;
@@ -855,9 +854,9 @@ void Serialize(Stream& os, const std::map<K, T, Pred, A>& m) {
 template <typename Stream, typename K, typename T, typename Pred, typename A>
 void Unserialize(Stream& is, std::map<K, T, Pred, A>& m) {
   m.clear();
-  unsigned int nSize = ReadCompactSize(is);
+  uint64_t nSize = ReadCompactSize(is);
   typename std::map<K, T, Pred, A>::iterator mi = m.begin();
-  for (unsigned int i = 0; i < nSize; i++) {
+  for (uint64_t i = 0; i < nSize; i++) {
     std::pair<K, T> item;
     Unserialize(is, item);
     mi = m.insert(mi, item);
@@ -879,9 +878,9 @@ void Serialize(Stream& os, const std::set<K, Pred, A>& m) {
 template <typename Stream, typename K, typename Pred, typename A>
 void Unserialize(Stream& is, std::set<K, Pred, A>& m) {
   m.clear();
-  unsigned int nSize = ReadCompactSize(is);
+  uint64_t nSize = ReadCompactSize(is);
   typename std::set<K, Pred, A>::iterator it = m.begin();
-  for (unsigned int i = 0; i < nSize; i++) {
+  for (uint64_t i = 0; i < nSize; i++) {
     K key;
     Unserialize(is, key);
     it = m.insert(it, key);
@@ -1026,26 +1025,6 @@ size_t GetSerializeSizeMany(int nVersion, const T&... t) {
 }
 
 }  // namespace btc
-
-template <typename T>
-void SerializeBtc(WriteStream& stream, const T& obj) {
-  btc::Serialize(stream, obj);
-}
-
-template <typename T>
-void SerializeBtc(WriteStream& stream, const T&& obj) {
-  btc::Serialize(stream, obj);
-}
-
-template <typename T>
-void UnserializeBtc(ReadStream& stream, T& obj) {
-  btc::Unserialize(stream, obj);
-}
-
-template <typename T>
-void UnserializeBtc(ReadStream& stream, T&& obj) {
-  btc::Unserialize(stream, obj);
-}
 
 }  // namespace altintegration
 
