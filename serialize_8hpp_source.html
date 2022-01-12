@@ -772,7 +772,7 @@ $(document).ready(function(){initNavTree('serialize_8hpp_source.html',''); initR
 <div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;  <span class="comment">// Limit size per read so bogus size value won&#39;t cause out of memory</span></div>
 <div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;  v.clear();</div>
 <div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;  uint64_t nSize = ReadCompactSize(is);</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;  uint64_t = 0;</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;  uint64_t i = 0;</div>
 <div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;  <a class="code" href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a> state;</div>
 <div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;  <span class="keywordflow">while</span> (i &lt; nSize) {</div>
 <div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    uint64_t blk = std::min(nSize - i, (uint64_t)(1 + 4999999 / <span class="keyword">sizeof</span>(T)));</div>
