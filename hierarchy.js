@@ -87,6 +87,7 @@ var hierarchy =
     [ "altintegration::MempoolResult", "namespacealtintegration.html#structaltintegration_1_1MempoolResult", null ],
     [ "altintegration::MerklePath", "structaltintegration_1_1MerklePath.html", null ],
     [ "altintegration::NetworkBytePair", "namespacealtintegration.html#structaltintegration_1_1NetworkBytePair", null ],
+    [ "altintegration::btc::OutPoint", "structaltintegration_1_1btc_1_1OutPoint.html", null ],
     [ "altintegration::Output", "structaltintegration_1_1Output.html", null ],
     [ "altintegration::PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", [
       [ "altintegration::adaptors::PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", null ]
@@ -116,7 +117,10 @@ var hierarchy =
     ] ],
     [ "altintegration::StoredBlockIndex< Block >", "structaltintegration_1_1StoredBlockIndex.html", null ],
     [ "altintegration::MemPool::SubmitResult", "structaltintegration_1_1MemPool_1_1SubmitResult.html", null ],
+    [ "altintegration::btc::Transaction", "structaltintegration_1_1btc_1_1Transaction.html", null ],
     [ "altintegration::VbkPayloadsRelations::TxFeeComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html", null ],
+    [ "altintegration::btc::TxIn", "structaltintegration_1_1btc_1_1TxIn.html", null ],
+    [ "altintegration::btc::TxOut", "structaltintegration_1_1btc_1_1TxOut.html", null ],
     [ "altintegration::ValidationState", "classaltintegration_1_1ValidationState.html", null ],
     [ "altintegration::VbkBlock", "structaltintegration_1_1VbkBlock.html", null ],
     [ "altintegration::VbkChainParams", "structaltintegration_1_1VbkChainParams.html", [

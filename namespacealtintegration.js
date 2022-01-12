@@ -67,6 +67,13 @@ var namespacealtintegration =
       [ "CSerActionSerialize", "structaltintegration_1_1btc_1_1CSerActionSerialize.html", "structaltintegration_1_1btc_1_1CSerActionSerialize" ],
       [ "CSerActionUnserialize", "structaltintegration_1_1btc_1_1CSerActionUnserialize.html", "structaltintegration_1_1btc_1_1CSerActionUnserialize" ],
       [ "CSizeComputer", "classaltintegration_1_1btc_1_1CSizeComputer.html", "classaltintegration_1_1btc_1_1CSizeComputer" ],
+      [ "OutPoint", "structaltintegration_1_1btc_1_1OutPoint.html", "structaltintegration_1_1btc_1_1OutPoint" ],
+      [ "TxIn", "structaltintegration_1_1btc_1_1TxIn.html", "structaltintegration_1_1btc_1_1TxIn" ],
+      [ "TxOut", "structaltintegration_1_1btc_1_1TxOut.html", "structaltintegration_1_1btc_1_1TxOut" ],
+      [ "Transaction", "structaltintegration_1_1btc_1_1Transaction.html", "structaltintegration_1_1btc_1_1Transaction" ],
+      [ "Amount", "transaction_8hpp.html#adc17e223604aa594b7b2760178af1938", null ],
+      [ "Script", "transaction_8hpp.html#a0cad516b7c3a9c4269c48b6e760b0218", null ],
+      [ "ScriptWitness", "transaction_8hpp.html#a67f1a289a7d6b5b162b452b429fde6de", null ],
       [ "VarIntMode", "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851", [
         [ "DEFAULT", "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851a5b39c8b553c821e7cddc6da64b5bd2ee", null ],
         [ "NONNEGATIVE_SIGNED", "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851ad0ca2eaff396dc2fe510e3283f4ce626", null ]
@@ -132,6 +139,7 @@ var namespacealtintegration =
       [ "Serialize_impl", "serialize_8hpp.html#a6de281152dca3bdd6e1eec3668266e89", null ],
       [ "SerializeMany", "serialize_8hpp.html#a33ed559a71671b7a078c537baef0d061", null ],
       [ "SerializeMany", "serialize_8hpp.html#a6e36c6da546029987ea2b8b64c2097dd", null ],
+      [ "SerializeTransaction", "transaction_8hpp.html#a899c3398bf0f3ece63d06d126e65cb09", null ],
       [ "SerReadWriteMany", "serialize_8hpp.html#afb9788fa1752c4c16924ec13e2f14c97", null ],
       [ "SerReadWriteMany", "serialize_8hpp.html#ad606d31ed762963963b9b7da3eb939e4", null ],
       [ "Unserialize", "serialize_8hpp.html#a5c1947ab86994c7d89a61353ee238e76", null ],
@@ -162,6 +170,7 @@ var namespacealtintegration =
       [ "Unserialize_impl", "serialize_8hpp.html#ab3134965610b6558893ea847becbccf6", null ],
       [ "UnserializeMany", "serialize_8hpp.html#a8dd1db55cb930e264351fb42f3f8590c", null ],
       [ "UnserializeMany", "serialize_8hpp.html#a840b1ecbe9c4a2b9cc16c94f24650802", null ],
+      [ "UnserializeTransaction", "transaction_8hpp.html#a5494262712cb5d0a588200750a73a959", null ],
       [ "WrapBigEndian", "serialize_8hpp.html#a0b0bb66ef6a4b0f3225b0ec34c060d85", null ],
       [ "WrapVarInt", "serialize_8hpp.html#ae229dd960472b289870bbde8cd973776", null ],
       [ "WriteCompactSize", "serialize_8hpp.html#aeba0d950acec9995dc8145d9c1082bd6", null ],
@@ -169,7 +178,8 @@ var namespacealtintegration =
       [ "WriteVarInt", "serialize_8hpp.html#a4de22b7659797040d58a120758acbe6d", null ],
       [ "WriteVarInt", "serialize_8hpp.html#afb8c7dac63deac614fddd30c01e0623e", null ],
       [ "deserialize", "serialize_8hpp.html#a5213db5ff15a2cdfae3130b84f5784d4", null ],
-      [ "MAX_SIZE", "serialize_8hpp.html#a7409ed5f464b532bda66d9e926cfaf01", null ]
+      [ "MAX_SIZE", "serialize_8hpp.html#ac35a878425e079dc736c006fd89af880", null ],
+      [ "SERIALIZE_TRANSACTION_NO_WITNESS", "transaction_8hpp.html#aa186252c77bc872e5addfa70703634fc", null ]
     ] ],
     [ "cache", null, [
       [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
@@ -575,8 +585,6 @@ var namespacealtintegration =
     [ "saveTree", "namespacealtintegration.html#a5198a99c2dc2c6c7ebbdcc87817fd18f", null ],
     [ "saveTree", "namespacealtintegration.html#afe6960d0cfe7aefd1eb917a0d6bfd32a", null ],
     [ "saveTrees", "namespacealtintegration.html#a1036e0889afa590fec23e3efc7b3c995", null ],
-    [ "SerializeBtc", "namespacealtintegration.html#a79bcd9dc63defdab2dbcb135654fa8d6", null ],
-    [ "SerializeBtc", "namespacealtintegration.html#af839b3d4a013e77af86700f21371d310", null ],
     [ "SerializeToHex", "namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05", null ],
     [ "SerializeToRaw", "namespacealtintegration.html#a2ecf7eac8bcfa9ea8d36bc1634ffcb4a", null ],
     [ "SerializeToRawHex", "namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e", null ],
@@ -627,8 +635,6 @@ var namespacealtintegration =
     [ "ToJSON", "namespacealtintegration.html#a49f6e73be1f8a63ba57a552dce082e55", null ],
     [ "ToJSON", "namespacealtintegration.html#ab930f0ae037a14c3c0ca3c3f8d151636", null ],
     [ "trimmedArray", "namespacealtintegration.html#a45ea806b69db70cce7b77944164ff6ab", null ],
-    [ "UnserializeBtc", "namespacealtintegration.html#a311cc5952521f9a371c8425f268f36c7", null ],
-    [ "UnserializeBtc", "namespacealtintegration.html#a1b38bec8b1bbe5e94a3e64c16b74fa5d", null ],
     [ "validateBlockIndex", "namespacealtintegration.html#a5979afa80b9862521d66f1f3565449c8", null ],
     [ "validateKeystones", "namespacealtintegration.html#ade563f016cc34d9adc79f02a6217bb6f", null ],
     [ "varLenValueSize", "namespacealtintegration.html#a4145ce6888ba7e0719bf44c05bd62f44", null ],
