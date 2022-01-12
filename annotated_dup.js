@@ -29,11 +29,7 @@ var annotated_dup =
         [ "LimitedString", "classaltintegration_1_1btc_1_1LimitedString.html", "classaltintegration_1_1btc_1_1LimitedString" ],
         [ "CSerActionSerialize", "structaltintegration_1_1btc_1_1CSerActionSerialize.html", "structaltintegration_1_1btc_1_1CSerActionSerialize" ],
         [ "CSerActionUnserialize", "structaltintegration_1_1btc_1_1CSerActionUnserialize.html", "structaltintegration_1_1btc_1_1CSerActionUnserialize" ],
-        [ "CSizeComputer", "classaltintegration_1_1btc_1_1CSizeComputer.html", "classaltintegration_1_1btc_1_1CSizeComputer" ],
-        [ "OutPoint", "structaltintegration_1_1btc_1_1OutPoint.html", "structaltintegration_1_1btc_1_1OutPoint" ],
-        [ "TxIn", "structaltintegration_1_1btc_1_1TxIn.html", "structaltintegration_1_1btc_1_1TxIn" ],
-        [ "TxOut", "structaltintegration_1_1btc_1_1TxOut.html", "structaltintegration_1_1btc_1_1TxOut" ],
-        [ "Transaction", "structaltintegration_1_1btc_1_1Transaction.html", "structaltintegration_1_1btc_1_1Transaction" ]
+        [ "CSizeComputer", "classaltintegration_1_1btc_1_1CSizeComputer.html", "classaltintegration_1_1btc_1_1CSizeComputer" ]
       ] ],
       [ "cache", null, [
         [ "SmallLFRUCache", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", "structaltintegration_1_1cache_1_1SmallLFRUCache" ]
