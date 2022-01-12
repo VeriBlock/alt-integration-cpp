@@ -67,7 +67,7 @@ bool DeserializeFromRaw(ReadStream& stream,
     return state.Invalid("alt-block-hash");
   }
   if (!readSingleByteLenValue(
-          stream, out.previousBlock, state, ALT_HASH_SIZE, ALT_HASH_SIZE)) {
+          stream, out.previousBlock, state, 0, ALT_HASH_SIZE)) {
     return state.Invalid("alt-block-prevhash");
   }
   if (!stream.readBE<int32_t>(out.height, state)) {
