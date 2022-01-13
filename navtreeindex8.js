@@ -1,5 +1,9 @@
 var NAVTREEINDEX8 =
 {
+"structaltintegration_1_1VbkBlock.html#ae5ff290afb7f397a8d79d5ba4bb53b0f":[5,0,0,47,45],
+"structaltintegration_1_1VbkBlock.html#af4d6ad58ac81265a99c2925415e2b907":[5,0,0,47,6],
+"structaltintegration_1_1VbkBlock.html#af84adae024dc0fae9cf650eb2ed4a5d2":[5,0,0,47,34],
+"structaltintegration_1_1VbkBlock.html#afdd22f36754b6015915722dd93dedb3f":[5,0,0,47,47],
 "structaltintegration_1_1VbkBlock.html#aff22f81464582991d0f95ea336d678c7":[5,0,0,47,21],
 "structaltintegration_1_1VbkBlockTree.html":[5,0,0,22],
 "structaltintegration_1_1VbkBlockTree.html#a06180fdcb1566eede8a53ba4d03af282":[5,0,0,22,13],
@@ -245,9 +249,5 @@ var NAVTREEINDEX8 =
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html":[5,0,0,0,11],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92":[5,0,0,0,11,1],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a80d36319071b844f6fca6f0c668c6037":[5,0,0,0,11,0],
-"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ac840060ec50bfce6095189249459c93b":[5,0,0,0,11,3],
-"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ad24f64fc72379ac6ad3d26e11e3e475b":[5,0,0,0,11,2],
-"structaltintegration_1_1adaptors_1_1Storage.html":[5,0,0,0,15],
-"structaltintegration_1_1adaptors_1_1Storage.html#a02be0e085767b36b707a50bade5916b9":[5,0,0,0,15,0],
-"structaltintegration_1_1adaptors_1_1Storage.html#a31efb8044419da5e6adb510da3daee9b":[5,0,0,0,15,2]
+"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ac840060ec50bfce6095189249459c93b":[5,0,0,0,11,3]
 };
