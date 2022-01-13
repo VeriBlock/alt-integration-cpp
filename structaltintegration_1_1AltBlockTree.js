@@ -22,6 +22,7 @@ var structaltintegration_1_1AltBlockTree =
     [ "comparePopScore", "structaltintegration_1_1AltBlockTree.html#a29da03ce1981be457281181a5ad23e24", null ],
     [ "getConnectedTipsAfter", "structaltintegration_1_1AltBlockTree.html#a58902c73ffc07bdf8ec6bbb9210428fd", null ],
     [ "getParams", "structaltintegration_1_1AltBlockTree.html#a458080d2b38c73b007bf1993d1d96aa3", null ],
+    [ "loadBlockBackward", "structaltintegration_1_1AltBlockTree.html#a17896cdaf0bec53948b9b045a18cd007", null ],
     [ "loadBlockForward", "structaltintegration_1_1AltBlockTree.html#a13c644bfd3db9003611b3dc2bed75de7", null ],
     [ "loadTip", "structaltintegration_1_1AltBlockTree.html#a5d85d2745dd3f3be6fee04a4deb8360f", null ],
     [ "makeConnectedLeafPayloadMutator", "structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d", null ],
