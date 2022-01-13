@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-set(VCPKG_CRT_LINKAGE static)
-set(VCPKG_LIBRARY_LINKAGE static)
-string(TOLOWER VCPKG_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     message(STATUS "Using vcpkg")
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")

@@ -30,9 +30,11 @@ add_library(version OBJECT
         version.cpp
         )
 target_compile_definitions(version PRIVATE VBK_VERSION=${VERSION})
-target_add_flag_visibility(version PRIVATE
-        -Wno-unused-variable
-        )
+if(UNIX)
+    target_add_flag_visibility(version PRIVATE
+            -Wno-unused-variable
+            )
+endif()
 
 add_library(pop_stateless_validator OBJECT
         pop_stateless_validator.cpp

@@ -13,7 +13,7 @@ if(NOT googletest_POPULATED)
     message(STATUS "Downloading googletest...")
 
     FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
+    add_subdirectory(${googletest_SOURCE_DIR} EXCLUDE_FROM_ALL)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         # using gcc
         target_compile_options(gtest PRIVATE
