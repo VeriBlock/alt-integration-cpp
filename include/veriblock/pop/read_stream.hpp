@@ -111,6 +111,8 @@ struct ReadStream {
     return true;
   }
 
+  uint32_t getVersion() const noexcept;
+  void setVersion(uint32_t version) noexcept;
   size_t position() const noexcept;
   void setPosition(const size_t &) noexcept;
   size_t remaining() const noexcept { return (m_Size - m_Pos); }
@@ -127,9 +129,10 @@ struct ReadStream {
   ReadStream &operator=(const ReadStream &) = default;
 
  private:
-  size_t m_Pos = 0;
-  const uint8_t *m_Buffer = nullptr;
-  size_t m_Size = 0;
+  uint32_t m_version{0};
+  size_t m_Pos{0};
+  const uint8_t *m_Buffer{nullptr};
+  size_t m_Size{0};
 };
 
 }  // namespace altintegration

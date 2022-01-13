@@ -63,6 +63,10 @@ class WriteStream {
     }
   }
 
+  uint32_t getVersion() const noexcept;
+
+  void setVersion(uint32_t version) noexcept;
+
   const storage_t &data() const noexcept;
 
   std::string hex() const noexcept;
@@ -73,6 +77,7 @@ class WriteStream {
   WriteStream &operator=(const WriteStream &) = default;
 
  private:
+  uint32_t m_version{0};
   storage_t m_data;
 };
 

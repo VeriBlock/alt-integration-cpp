@@ -22,6 +22,10 @@ void ReadStream::assign(const void *buff, size_t numOfBytes) {
   m_Size = numOfBytes;
 }
 
+uint32_t ReadStream::getVersion() const noexcept { return m_version; }
+
+void ReadStream::setVersion(uint32_t version) noexcept { m_version = version; }
+
 size_t ReadStream::position() const noexcept { return m_Pos; }
 
 void ReadStream::setPosition(const size_t &pos) noexcept { m_Pos = pos; }

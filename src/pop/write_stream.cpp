@@ -15,6 +15,10 @@ void WriteStream::write(const void *buf, size_t size) {
   m_data.insert(m_data.end(), inp, inp + size);
 }
 
+uint32_t WriteStream::getVersion() const noexcept { return m_version; }
+
+void WriteStream::setVersion(uint32_t version) noexcept { m_version = version; }
+
 const WriteStream::storage_t &WriteStream::data() const noexcept {
   return m_data;
 }
