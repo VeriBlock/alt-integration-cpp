@@ -24,8 +24,6 @@ jobs:
             macos-latest
         ]
     runs-on: ${{ matrix.runson }}
-    env:
-      VCPKG_COMMIT: 5568f110b509a9fd90711978a7cb76bae75bb092
     # env:
     #   VCPKG_DEFAULT_TRIPLET: x64-windows-static
     steps:
@@ -41,7 +39,7 @@ jobs:
       - name: run-vcpkg
         uses: lukka/run-vcpkg@v10.0
         with:
-          vcpkgGitCommitId: ${VCPKG_COMMIT}
+          vcpkgGitCommitId: 5568f110b509a9fd90711978a7cb76bae75bb092
 
       # - name: install reqs on ubuntu
       #   if: matrix.runson == 'ubuntu-latest'
