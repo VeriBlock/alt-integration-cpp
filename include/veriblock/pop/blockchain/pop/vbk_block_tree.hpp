@@ -130,15 +130,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   bool loadBlockForward(const stored_index_t& index,
                         ValidationState& state) override;
 
-  //! efficiently connect `index` to current tree as a root, loaded from disk
-  //! - recovers all pointers (pprev, pnext, endorsedBy)
-  //! - recalculates chainWork
-  //! - does validation of endorsements
-  //! - recovers tips array
-  //! @invariant NOT atomic.
-  bool loadBlockBackward(const stored_index_t& index,
-                         ValidationState& state) override;
-
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
   const BtcTree& btc() const { return cmp_.getProtectingBlockTree(); }
 

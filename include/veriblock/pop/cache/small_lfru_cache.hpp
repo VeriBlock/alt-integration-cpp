@@ -33,6 +33,12 @@ struct SmallLFRUCache {
     size_t lastAccessed = 0;
     Key key;
     std::shared_ptr<Value> value = nullptr;
+
+    void clear() {
+      frequency = 0;
+      lastAccessed = 0;
+      value.reset();
+    }
   };
 
   std::shared_ptr<Value> getOrDefault(
@@ -49,7 +55,7 @@ struct SmallLFRUCache {
   void clear() {
     size_ = 0;
     for (auto& i : container_) {
-      i.value = nullptr;
+      i.clear();
     }
   }
 

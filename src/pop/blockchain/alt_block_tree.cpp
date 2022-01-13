@@ -619,14 +619,6 @@ bool AltBlockTree::loadBlockForward(const stored_index_t& index,
   return loadBlockInner(index, state);
 }
 
-bool AltBlockTree::loadBlockBackward(const stored_index_t& index,
-                                     ValidationState& state) {
-  if (!base::loadBlockBackward(index, state)) {
-    return false;
-  }
-  return loadBlockInner(index, state);
-}
-
 //! stateless check for duplicates in each of the payload ID vectors
 bool hasDuplicateIds(const AltBlockTree::index_t& index,
                      ValidationState& state) {
