@@ -59,8 +59,8 @@ jobs:
       #   run: |
       #     vcpkg integrate install
       #     vcpkg install boost-python
-      # - name: prepare
-      #   run: pip install --user --upgrade pip cmake
+      - name: prepare
+        run: pip install --user --upgrade pip cmake
       - name: build
         run: python setup.py install --user
       - name: test
