@@ -1,8 +1,8 @@
 import os
 import platform
-import re
 import subprocess
 import sys
+import multiprocessing
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 import distutils
@@ -54,7 +54,7 @@ class CMakeBuild(build_ext):
             build_args += ['--', '/m']
         else:
             cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
-            build_args += ['--', '-j4']
+            build_args += ['--', '-j{}'.format(multiprocessing.cpu_count())]
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
@@ -116,7 +116,8 @@ setup(
     zip_safe=False,
     setup_requires=[
         'pytest-runner',
-        'wheel'
+        'wheel',
+        'cmake'
     ],
     tests_require=[
         'pytest'
