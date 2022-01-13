@@ -1,5 +1,7 @@
 var NAVTREEINDEX3 =
 {
+"namespacealtintegration.html#aaf59d85fef938af997a5b1944e207c19":[4,0,0,213],
+"namespacealtintegration.html#aafee22219a196385396df736d43e8f42":[4,0,0,172],
 "namespacealtintegration.html#ab117734406f4e6af4b5099f2790e315b":[4,0,0,264],
 "namespacealtintegration.html#ab1266b4d012968fb3f065a50c388a411":[4,0,0,260],
 "namespacealtintegration.html#ab1e599c2c9a9cd9044e01c97fd23cb1c":[4,0,0,102],
@@ -247,7 +249,5 @@ var NAVTREEINDEX3 =
 "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851":[4,0,0,1,17],
 "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851a5b39c8b553c821e7cddc6da64b5bd2ee":[4,0,0,1,17,0],
 "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851ad0ca2eaff396dc2fe510e3283f4ce626":[4,0,0,1,17,1],
-"serialize_8hpp.html#a5c1947ab86994c7d89a61353ee238e76":[4,0,0,1,82],
-"serialize_8hpp.html#a5f0bc39faf03fbd69f705e1eb100ac35":[4,0,0,1,106],
-"serialize_8hpp.html#a6de281152dca3bdd6e1eec3668266e89":[4,0,0,1,76]
+"serialize_8hpp.html#a5c1947ab86994c7d89a61353ee238e76":[4,0,0,1,82]
 };

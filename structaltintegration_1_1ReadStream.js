@@ -10,6 +10,7 @@ var structaltintegration_1_1ReadStream =
     [ "assertReadLE", "structaltintegration_1_1ReadStream.html#a8d096f16d0f52ff05c4624c398e7cd15", null ],
     [ "assertReadSlice", "structaltintegration_1_1ReadStream.html#a41b0c932d94f6653a2e8eaf94fdab7fe", null ],
     [ "data", "structaltintegration_1_1ReadStream.html#a7f5c83d2f9edc7d6567a7e8c053b58a3", null ],
+    [ "getVersion", "structaltintegration_1_1ReadStream.html#a18c236fa3b8d818e7166d54e101c737d", null ],
     [ "hasMore", "structaltintegration_1_1ReadStream.html#af10417bd8703e1f14c87c970553b4179", null ],
     [ "operator=", "structaltintegration_1_1ReadStream.html#af758c30fbf538e6110d4d81af8bad5d1", null ],
     [ "position", "structaltintegration_1_1ReadStream.html#a8dffe984334b9f49f260e824e5204ef2", null ],
@@ -20,5 +21,6 @@ var structaltintegration_1_1ReadStream =
     [ "remaining", "structaltintegration_1_1ReadStream.html#a64ba116163a6d7c663ba15b80840c731", null ],
     [ "remainingBytes", "structaltintegration_1_1ReadStream.html#a43fa9ac3b81021585ec0c55c477dbf4a", null ],
     [ "reset", "structaltintegration_1_1ReadStream.html#a7ce1ebf8768623c286fd880e3eff34cf", null ],
-    [ "setPosition", "structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6", null ]
+    [ "setPosition", "structaltintegration_1_1ReadStream.html#a7dc49d8dd8a170e2a4e09fa39c33adc6", null ],
+    [ "setVersion", "structaltintegration_1_1ReadStream.html#aa66ea60b7d123891780d25c3630ca834", null ]
 ];
