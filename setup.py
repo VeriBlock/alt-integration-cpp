@@ -109,7 +109,8 @@ setup(
     install_requires=[
         'requests',
         'dataclasses',
-        'cmake'
+        'cmake',
+        'wheel'
     ],
     ext_modules=[CMakeExtension('pypopminer', sourcedir=str(thisdir))],
     cmdclass=dict(build_ext=CMakeBuild),

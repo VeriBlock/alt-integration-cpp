@@ -20,9 +20,8 @@ jobs:
       matrix:
         runson: [
             ubuntu-latest,
-        # TODO: fix builds on mac and win
-        #    windows-latest,
-        #    macos-latest
+            windows-latest,
+            macos-latest
         ]
     runs-on: ${{ matrix.runson }}
     env:
@@ -35,11 +34,11 @@ jobs:
           clean: true
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.8'
           architecture: 'x64'
       - name: install reqs on ubuntu
         if: matrix.runson == 'ubuntu-latest'
-        run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev
+        run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev=1.71.0.0ubuntu2
       - name: install reqs on mac
         if: matrix.runson == 'macos-latest'
         run: brew install boost-python --with-python3
