@@ -215,9 +215,23 @@ size_t Address::estimateSize() const {
 }
 
 void Address::getPopBytes(WriteStream& stream) const {
-  std::vector<uint8_t> bytes = AssertDecodeBase58(m_Address.substr(1));
-  stream.write(std::vector<uint8_t>(
-      bytes.begin(), bytes.begin() + ADDRESS_POP_DATA_SIZE_PROGPOW));
+  auto data = m_Address.substr(1);
+  std::vector<uint8_t> bytes;
+  switch (getType()) {
+    case AddressType::STANDARD: {
+      bytes = AssertDecodeBase58(data);
+      break;
+    }
+    case AddressType::MULTISIG: {
+      bytes = AssertDecodeBase59(data);
+      break;
+    }
+    default:
+      VBK_ASSERT_MSG(false,
+                     "Address have been constructed with an invalid type");
+  }
+
+  stream.write(bytes.data(), ADDRESS_POP_DATA_SIZE_PROGPOW);
 }
 
 bool Address::operator==(const Address& other) const noexcept {
@@ -242,7 +256,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
   Slice<const uint8_t> addressBytes;
   if (!readSingleByteLenValue(
           stream, addressBytes, state, 0, altintegration::VBK_ADDRESS_SIZE)) {
-    return state.Invalid("address-bytes");
+    return state.Invalid("address-bytes-len");
   }
 
   std::string addressText;
@@ -254,11 +268,11 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
       addressText = EncodeBase59(addressBytes);
       break;
     default:
-      return state.Invalid("invalid-address-type");
+      return state.Invalid("invalid-address-type", format("{}", addressType));
   }
 
   if (!out.fromString(addressText, state)) {
-    return state.Invalid("bad-addr");
+    return state.Invalid("bad-addr", format("Bad address: {}", addressText));
   }
 
   return true;

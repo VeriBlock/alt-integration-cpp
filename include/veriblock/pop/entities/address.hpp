@@ -14,11 +14,9 @@
 
 namespace altintegration {
 
-//! VBK Address type.
+//! VBK Address type (modelled after transaction type).
 enum class AddressType {
-  ZERO_UNUSED = 0,
   STANDARD = 1,
-  PROOF_OF_PROOF = 2,
   MULTISIG = 3,
 };
 

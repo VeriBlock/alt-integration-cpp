@@ -11,6 +11,7 @@
 #include <veriblock/pop/serde.hpp>
 
 #include <veriblock/pop/literals.hpp>
+#include "veriblock/pop/write_stream.hpp"
 
 using namespace altintegration;
 
@@ -115,4 +116,11 @@ TEST(Address, ParseMultisig) {
 
   EXPECT_EQ(decoded.toString(), addressString);
   EXPECT_EQ(decoded.getType(), AddressType::MULTISIG);
+
+  auto size = address.estimateSize();
+  EXPECT_EQ(size, 24);
+
+  WriteStream pop;
+  address.getPopBytes(pop);
+  ASSERT_EQ(pop.hex(), "1b399ac284bf41ece9fdd9bc21fcfd");
 }
