@@ -47,7 +47,11 @@ jobs:
           architecture: 'x64'
       - name: install reqs on ubuntu
         if: matrix.runson == 'ubuntu-latest'
-        run: sudo apt-get install -y python-setuptools python3-setuptools libboost-python-dev
+        run: sudo apt-get install -y \
+          python-setuptools \
+          python3-setuptools \
+          python3 \
+          libboost-python-dev
       - name: install reqs on mac
         if: matrix.runson == 'macos-latest'
         run: brew install boost-python --with-python3
