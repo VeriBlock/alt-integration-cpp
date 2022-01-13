@@ -203,7 +203,7 @@ size_t Address::estimateSize() const {
       decoded = AssertDecodeBase58(toString());
       break;
     case AddressType ::MULTISIG:
-      decoded = AssertDecodeBase58(toString());
+      decoded = AssertDecodeBase59(toString());
       break;
     default:
       // if we don't know address type, do not encode anything
