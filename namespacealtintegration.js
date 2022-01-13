@@ -342,9 +342,7 @@ var namespacealtintegration =
     [ "uint96", "namespacealtintegration.html#a29f82823fc29f3b0e720adb256c9760a", null ],
     [ "ValidationThreadPool", "namespacealtintegration.html#ad7f4d29fcebdf62ae40b2e989990ab4d", null ],
     [ "AddressType", "namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6f", [
-      [ "ZERO_UNUSED", "namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fa99f999b6b8a4c347117222914f9a13dc", null ],
       [ "STANDARD", "namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fa94e94133f4bdc1794c6b647b8ea134d0", null ],
-      [ "PROOF_OF_PROOF", "namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fadb526ad154fc99ee7a1720f9d45562a7", null ],
       [ "MULTISIG", "namespacealtintegration.html#a380d50d66c01162f8bfa6f328f726c6fae50f553ee62b9fcbec1b8c8120c29050", null ]
     ] ],
     [ "BlockStateStatus", "namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634", [
