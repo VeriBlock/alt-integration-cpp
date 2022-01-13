@@ -1,6 +1,9 @@
 find_package(Boost QUIET COMPONENTS python3)
 if(NOT ${Boost_FOUND})
-    find_package(Boost REQUIRED COMPONENTS python)
+    find_package(Boost QUIET COMPONENTS python)
+    if (NOT ${Boost_FOUND})
+        find_package(Boost MODULE REQUIRED COMPONENTS python)
+    endif()
 endif()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

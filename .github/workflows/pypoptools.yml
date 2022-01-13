@@ -23,11 +23,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: windows-latest
-            triplet: x64-windows-static
+            triplet: x64-windows
           - os: ubuntu-latest
-            triplet: x64-linux-static
+            triplet: x64-linux
           - os: macos-latest
-            triplet: x64-osx-static
+            triplet: x64-osx
 
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
