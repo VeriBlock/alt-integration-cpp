@@ -3,7 +3,11 @@ find_package(PythonLibs 3 REQUIRED)
 include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
 if(NOT PYTHON_EXECUTABLE)
-    set(PYTHON_EXECUTABLE python3)
+    find_program(PY3 python3)
+    if(PY3)
+        set(PYTHON_EXECUTABLE ${PY3})
+        find_program(PYTHON_EXECUTABLE python REQUIRED)
+    endif()
 endif()
 
 execute_process(
