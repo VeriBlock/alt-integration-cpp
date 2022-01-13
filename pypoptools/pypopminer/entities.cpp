@@ -60,9 +60,7 @@ void init_entities() {
       .def_readwrite("contextInfo", &PublicationData::contextInfo);
 
   enum_<AddressType>("AddressType")
-      .value("ZERO_UNUSED", AddressType::ZERO_UNUSED)
       .value("STANDARD", AddressType::STANDARD)
-      .value("PROOF_OF_PROOF", AddressType::PROOF_OF_PROOF)
       .value("MULTISIG", AddressType::MULTISIG);
 
   class_<Address, boost::shared_ptr<Address>>("Address")

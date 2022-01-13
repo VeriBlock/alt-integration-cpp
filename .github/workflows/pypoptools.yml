@@ -35,7 +35,7 @@ jobs:
           clean: true
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.10'
           architecture: 'x64'
       - name: install reqs on ubuntu
         if: matrix.runson == 'ubuntu-latest'
@@ -49,7 +49,7 @@ jobs:
           vcpkg integrate install
           vcpkg install boost-python
       - name: prepare
-        run: pip install --user --upgrade pip cmake pathlib
+        run: pip install --user --upgrade pip cmake
       - name: build
         run: python setup.py install --user
       - name: test

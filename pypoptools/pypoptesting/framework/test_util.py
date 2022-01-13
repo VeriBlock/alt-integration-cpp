@@ -2,7 +2,6 @@ import datetime
 import logging
 import multiprocessing as mp
 import os
-import pathlib
 import sys
 import tempfile
 import time
@@ -11,7 +10,7 @@ import platform
 
 from .node import Node
 
-CreateNodeFunction = Callable[[int, pathlib.Path], Node]
+CreateNodeFunction = Callable[[int, str], Node]
 
 TEST_EXIT_PASSED = 0
 TEST_EXIT_FAILED = 1
