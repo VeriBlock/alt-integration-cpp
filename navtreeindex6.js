@@ -1,14 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structaltintegration_1_1BtcChainParams.html#aa65ed2dcd6bec96c88ef07a36f9569c9":[5,0,0,13,1],
-"structaltintegration_1_1BtcChainParams.html#aaa39054eed31fa6ed188edc8594b667c":[5,0,0,13,0],
-"structaltintegration_1_1BtcChainParams.html#aad38f3f1118c6234925dbd1805206a95":[5,0,0,13,11],
-"structaltintegration_1_1BtcChainParams.html#ab79123e917c60dfc7a13cee35fb30d46":[5,0,0,13,13],
-"structaltintegration_1_1BtcChainParams.html#abbb41e428a57577882c8a7149a6578f3":[5,0,0,13,14],
-"structaltintegration_1_1BtcChainParams.html#abccdcdb7869b273683a056131688e9a4":[5,0,0,13,6],
-"structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110":[5,0,0,13,12],
-"structaltintegration_1_1BtcChainParams.html#aff0c47611a36e96cf37541198f228e09":[5,0,0,13,7],
-"structaltintegration_1_1BtcChainParamsMain.html":[5,0,0,14],
 "structaltintegration_1_1BtcChainParamsMain.html#a07eb99a6263a5d991c5347a51f8121c1":[5,0,0,14,7],
 "structaltintegration_1_1BtcChainParamsMain.html#a0d52669dbbc0f8381ee38452c97277fd":[5,0,0,14,8],
 "structaltintegration_1_1BtcChainParamsMain.html#a39a97b286420a655284ac78443c6dd7b":[5,0,0,14,5],
@@ -249,5 +240,14 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1MemPool.html#ae10e6a8ad87fb1617cc6fc2a4ae7d15b":[5,0,0,55,18],
 "structaltintegration_1_1MemPool.html#aee936f653e65f97996c2c91a14a7efa8":[5,0,0,55,29],
 "structaltintegration_1_1MemPool.html#afebd9b2a2157e626466a20ccb129e8eb":[5,0,0,55,31],
-"structaltintegration_1_1MemPool_1_1SubmitResult.html":[5,0,0,55,0]
+"structaltintegration_1_1MemPool_1_1SubmitResult.html":[5,0,0,55,0],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a2ca060d33b3ec3dc95758fa43c72f2d1":[5,0,0,55,0,0],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a3ca5ebf5f05553aa515dad24d94338db":[5,0,0,55,0,5],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a51649ac209fa68108522f154f6a9dd91":[5,0,0,55,0,4],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a6b10ac19fc685f073ada4be36f5ba6e3":[5,0,0,55,0,3],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a8087023064f35d3207490272a3a303d5":[5,0,0,55,0,1],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#aa40411cafc2a53395935b10e0072b534":[5,0,0,55,0,6],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#aa55d8e8d1a643d1372755ad831157aac":[5,0,0,55,0,2],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#ad51fc44762647a4a2f1f68a90c46694f":[5,0,0,55,0,7],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#af882cb9c2035c7e1bda62efc798792d7":[5,0,0,55,0,8]
 };
