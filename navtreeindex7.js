@@ -1,5 +1,12 @@
 var NAVTREEINDEX7 =
 {
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#a8087023064f35d3207490272a3a303d5":[5,0,0,55,0,1],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#aa40411cafc2a53395935b10e0072b534":[5,0,0,55,0,6],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#aa55d8e8d1a643d1372755ad831157aac":[5,0,0,55,0,2],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#ad51fc44762647a4a2f1f68a90c46694f":[5,0,0,55,0,7],
+"structaltintegration_1_1MemPool_1_1SubmitResult.html#af882cb9c2035c7e1bda62efc798792d7":[5,0,0,55,0,8],
+"structaltintegration_1_1MerklePath.html":[5,0,0,39],
+"structaltintegration_1_1MerklePath.html#a01b734b8c63386ab6aac7a0305e6528b":[5,0,0,39,2],
 "structaltintegration_1_1MerklePath.html#a0c1573f4c7cbcc21fd1a8f8d0996ff9b":[5,0,0,39,6],
 "structaltintegration_1_1MerklePath.html#a264bdc1815f4090741b5c7e613674e06":[5,0,0,39,4],
 "structaltintegration_1_1MerklePath.html#a2ce092b20111a93562442d53e91bd483":[5,0,0,39,5],
@@ -242,12 +249,5 @@ var NAVTREEINDEX7 =
 "structaltintegration_1_1VbkBlock.html#af84adae024dc0fae9cf650eb2ed4a5d2":[5,0,0,47,34],
 "structaltintegration_1_1VbkBlock.html#afdd22f36754b6015915722dd93dedb3f":[5,0,0,47,47],
 "structaltintegration_1_1VbkBlock.html#aff22f81464582991d0f95ea336d678c7":[5,0,0,47,21],
-"structaltintegration_1_1VbkBlockTree.html":[5,0,0,22],
-"structaltintegration_1_1VbkBlockTree.html#a06180fdcb1566eede8a53ba4d03af282":[5,0,0,22,13],
-"structaltintegration_1_1VbkBlockTree.html#a0f79fa75b36a7f879b47ce1e15122940":[5,0,0,22,8],
-"structaltintegration_1_1VbkBlockTree.html#a111d7e353423fba705edbd55ded94bea":[5,0,0,22,17],
-"structaltintegration_1_1VbkBlockTree.html#a1213330b1a05be755a1ca5311e7e079c":[5,0,0,22,20],
-"structaltintegration_1_1VbkBlockTree.html#a14b25dfbc00c8bf8ff9582dd8f43f7c4":[5,0,0,22,5],
-"structaltintegration_1_1VbkBlockTree.html#a17ee508b1b70187269f64ee70b2e2fbc":[5,0,0,22,10],
-"structaltintegration_1_1VbkBlockTree.html#a2667b39ae3722d0968f2badc4655fb4e":[5,0,0,22,2]
+"structaltintegration_1_1VbkBlockTree.html":[5,0,0,22]
 };
