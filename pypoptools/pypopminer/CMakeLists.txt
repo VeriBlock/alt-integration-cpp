@@ -1,7 +1,6 @@
 set(Boost_USE_DEBUG_PYTHON OFF)
 set(Boost_NO_WARN_NEW_VERSIONS TRUE)
-set(pyversion "")
-foreach(ver 3 36 37 38 39 310)
+foreach(ver "" "3" "36" "37" "38" "39" "310")
     find_package(Boost COMPONENTS python${ver})
     if(${Boost_FOUND})
         message(STATUS "Found boost-python${ver}")
