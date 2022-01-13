@@ -52,6 +52,20 @@ jobs:
           python3-setuptools
           python3
           libboost-python-dev
+          ccache
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        run: |
+          echo "::set-output name=timestamp::`date +%s`}"
+      - name: ccache cache files
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: ccache-${{matrix.os}}-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            ccache-${{matrix.os}}-
       - name: install reqs on mac
         if: matrix.os == 'macos-latest'
         run: brew install boost-python --with-python3
