@@ -3,16 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include "veriblock/bfi/bitcoin/serialize.hpp"
-#include "veriblock/bfi/bitcoin/transaction.hpp"
-#include "veriblock/pop/entities/btcblock.hpp"
-#include "veriblock/pop/entities/popdata.hpp"
+#include <veriblock/bfi/bitcoin/serialize.hpp>
+#include <veriblock/bfi/bitcoin/transaction.hpp>
+#include <veriblock/pop/entities/btcblock.hpp>
 
 namespace altintegration {
 
 namespace btc {
-
-const static int32_t POP_BLOCK_VERSION_BIT = 0x80000UL;
 
 struct BlockHeader : public BtcBlock {
   BlockHeader() = default;
@@ -40,7 +37,6 @@ struct BlockHeader : public BtcBlock {
 
 struct Block : public BlockHeader {
   std::vector<Transaction> vtx{};
-  PopData popData{};
 
   Block() = default;
 
@@ -59,14 +55,10 @@ struct Block : public BlockHeader {
   inline void SerializationOp(Stream& s, Operation ser_action) {
     READWRITEAS(BlockHeader, *this);
     READWRITE(this->vtx);
-    if (this->version & POP_BLOCK_VERSION_BIT) {
-      READWRITE(this->popData);
-    }
   }
 
   friend bool operator==(const Block& a, const Block& b) {
-    return (BlockHeader)a == (BlockHeader)b && a.vtx == b.vtx &&
-           a.popData == b.popData;
+    return (BlockHeader)a == (BlockHeader)b && a.vtx == b.vtx;
   }
 
   friend bool operator!=(const Block& a, const Block& b) { return !(a == b); }
