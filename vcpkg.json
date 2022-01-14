@@ -1,0 +1,7 @@
+{
+    "name": "pypoptools",
+    "version-string": "latest",
+    "dependencies": [
+      "boost-python"
+    ]
+  }

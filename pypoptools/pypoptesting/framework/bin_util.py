@@ -1,14 +1,13 @@
 import os
-import pathlib
 import socket
 import errno
 import contextlib
 import random
 
 
-def assert_dir_accessible(dirname: pathlib.Path) -> None:
-    assert dirname.exists(), "{} does not exist".format(dirname)
-    assert dirname.is_dir(), "{} is not dir".format(dirname)
+def assert_dir_accessible(dirname: str) -> None:
+    assert os.path.exists(dirname), "{} does not exist".format(dirname)
+    assert os.path.isdir(dirname), "{} is not dir".format(dirname)
     assert os.access(dirname, os.W_OK), "{} is not writeable".format(dirname)
 
 

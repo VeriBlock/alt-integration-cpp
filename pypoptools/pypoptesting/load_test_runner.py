@@ -1,6 +1,5 @@
 import argparse
 import os
-import pathlib
 import random
 import sys
 import time
@@ -40,7 +39,7 @@ def main():
     print('- Seed: {}'.format(seed))
 
     datadir = tempfile.mkdtemp()
-    node = VBitcoindNode(0, pathlib.Path(datadir))
+    node = VBitcoindNode(0, datadir)
     print('Node logs available at {}'.format(datadir))
 
     mock_miner = MockMiner()

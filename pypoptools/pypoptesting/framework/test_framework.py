@@ -1,11 +1,11 @@
 import datetime
 import logging
-import pathlib
 import shutil
 import subprocess
 import sys
 import tempfile
 import time
+import os
 from abc import abstractmethod
 from enum import Enum
 from typing import List
@@ -62,7 +62,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.success: bool = False
         self.nodes: List[Node] = []
         self.num_nodes: int = 0
-        self.dir: pathlib.Path = pathlib.Path()
+        self.dir: str = ""
         self.set_test_params()
 
     def name(self) -> str:
@@ -128,8 +128,9 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
 
     def _create_nodes(self, create_node: CreateNodeFunction):
         for i in range(self.num_nodes):
-            datadir = pathlib.Path(self.dir, "node" + str(i))
-            datadir.mkdir()
+            datadir = os.path.join(self.dir, "node" + str(i))
+            if not os.path.exists(datadir):
+              os.makedirs(datadir)
             self.nodes.append(create_node(i, datadir))
 
     def _start_logging(self):
@@ -137,7 +138,7 @@ class PopIntegrationTestFramework(metaclass=PopIntegrationTestMetaClass):
         self.log = logging.getLogger('TestFramework')
         self.log.setLevel(logging.DEBUG)
         # Create file handler to log all messages
-        fh = logging.FileHandler(pathlib.Path(self.dir, 'test_framework.log'), encoding='utf-8')
+        fh = logging.FileHandler(os.path.join(self.dir, 'test_framework.log'), encoding='utf-8')
         fh.setLevel(logging.DEBUG)
         # Create console handler to log messages to stderr.
         ch = logging.StreamHandler(sys.stdout)

@@ -1,14 +1,13 @@
 import os
-import pathlib
 import platform
-import re
 import subprocess
 import sys
+import multiprocessing
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 import distutils
 
-thisdir = pathlib.Path(__file__).parent.resolve().absolute()
+thisdir = os.path.abspath(os.path.dirname(__file__))
 cwd = os.getcwd()
 
 class CMakeExtension(Extension):
@@ -34,8 +33,7 @@ class CMakeBuild(build_ext):
             os.path.dirname(self.get_ext_fullpath(ext.name)))
         cfg = 'Debug' if self.debug else 'Release'
 
-        sodir = pathlib.Path(extdir, 'pypoptools')
-        sodir = pathlib.Path(sodir, 'pypopminer')
+        sodir = os.path.join(extdir, 'pypoptools', 'pypopminer')
         cmake_args = [
             '-DPYPOPMINER_OUTPUT_DIR=' + str(sodir),
             '-DCMAKE_BUILD_TYPE=' + cfg,
@@ -56,7 +54,7 @@ class CMakeBuild(build_ext):
             build_args += ['--', '/m']
         else:
             cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
-            build_args += ['--', '-j4']
+            build_args += ['--', '-j{}'.format(multiprocessing.cpu_count())]
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
@@ -100,25 +98,27 @@ packages = [
 
 setup(
     name='pypoptools',
-    version='0.0.1',
+    version='0.1',
     packages=packages,
     url='https://github.com/VeriBlock/alt-integration-cpp',
     license='MIT',
     author='warchant',
-    author_email='',
+    author_email='warchantua@gmail.com',
     description='POP-tools for testing',
     python_requires='>=3.6',
     install_requires=[
         'requests',
-        'dataclasses'
+        'dataclasses',
+        'cmake',
+        'wheel'
     ],
     ext_modules=[CMakeExtension('pypopminer', sourcedir=str(thisdir))],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     setup_requires=[
         'pytest-runner',
-        'pathlib',
-        'wheel'
+        'wheel',
+        'cmake'
     ],
     tests_require=[
         'pytest'

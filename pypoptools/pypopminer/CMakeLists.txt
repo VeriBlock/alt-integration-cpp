@@ -1,5 +1,14 @@
-find_package(Boost QUIET COMPONENTS python3)
-if(NOT ${Boost_FOUND})
+set(Boost_USE_DEBUG_PYTHON OFF)
+set(Boost_NO_WARN_NEW_VERSIONS TRUE)
+foreach(ver "" "3" "36" "37" "38" "39" "310")
+    find_package(Boost COMPONENTS python${ver})
+    if(${Boost_FOUND})
+        message(STATUS "Found boost-python${ver}")
+        break()
+    endif()
+endforeach()
+
+if (NOT ${Boost_FOUND})
     find_package(Boost REQUIRED COMPONENTS python)
 endif()
 
