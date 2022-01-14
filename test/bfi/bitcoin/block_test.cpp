@@ -274,3 +274,27 @@ TEST(Block, serde_test_with_pop_data) {
 
   ASSERT_EQ(block, decoded);
 }
+
+TEST(BlockLocator, serde_test) {
+  BlockLocator blockLocator{
+      {uint256::fromHex(
+           "d39f608a7775b537729884d4e6633bb2105e55a16a14d31b0000000000000000"),
+       uint256::fromHex("5c3e6403d40837110a2e8afb602b1c01714bda7ce23bea0a000000"
+                        "0000000000")}};
+  WriteStream writer;
+  writer.setVersion(70001);
+
+  Serialize(writer, blockLocator);
+
+  ASSERT_EQ(
+      writer.hex(),
+      "7111010002d39f608a7775b537729884d4e6633bb2105e55a16a14d31b00000000000000"
+      "005c3e6403d40837110a2e8afb602b1c01714bda7ce23bea0a0000000000000000");
+
+  BlockLocator decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(blockLocator, decoded);
+}

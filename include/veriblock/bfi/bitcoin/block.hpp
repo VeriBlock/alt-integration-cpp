@@ -72,6 +72,31 @@ struct Block : public BlockHeader {
   friend bool operator!=(const Block& a, const Block& b) { return !(a == b); }
 };
 
+struct BlockLocator {
+  std::vector<uint256> vHave;
+
+  BlockLocator() = default;
+
+  BlockLocator(const std::vector<uint256>& vHave) : vHave(vHave) {}
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    int nVersion = s.getVersion();
+    READWRITE(nVersion);
+    READWRITE(vHave);
+  }
+
+  friend bool operator==(const BlockLocator& a, const BlockLocator& b) {
+    return a.vHave == b.vHave;
+  }
+
+  friend bool operator!=(const BlockLocator& a, const BlockLocator& b) {
+    return !(a == b);
+  }
+};
+
 }  // namespace btc
 
 }  // namespace altintegration
