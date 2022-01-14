@@ -6,6 +6,5 @@ var structaltintegration_1_1btc_1_1Block =
     [ "operator!=", "structaltintegration_1_1btc_1_1Block.html#a65d5b78a9ae2afce1c3e503b343eb8b7", null ],
     [ "operator==", "structaltintegration_1_1btc_1_1Block.html#a22f3acf5a70205dfdf689ff77d1221bf", null ],
     [ "ADD_SERIALIZE_METHODS", "structaltintegration_1_1btc_1_1Block.html#a23ba7d8a11d5fda65de11859b6a7192f", null ],
-    [ "popData", "structaltintegration_1_1btc_1_1Block.html#a9237b82dc327686b9a08a17f4a17e737", null ],
     [ "vtx", "structaltintegration_1_1btc_1_1Block.html#ade971b714444ce7cb442fe7aadfe0aca", null ]
 ];

@@ -184,7 +184,6 @@ var namespacealtintegration =
       [ "WriteVarInt", "serialize_8hpp.html#afb8c7dac63deac614fddd30c01e0623e", null ],
       [ "deserialize", "serialize_8hpp.html#a5213db5ff15a2cdfae3130b84f5784d4", null ],
       [ "MAX_SIZE", "serialize_8hpp.html#ac35a878425e079dc736c006fd89af880", null ],
-      [ "POP_BLOCK_VERSION_BIT", "block_8hpp.html#a337458b5d29106927e28fc11851db56e", null ],
       [ "SERIALIZE_TRANSACTION_NO_WITNESS", "transaction_8hpp.html#aa186252c77bc872e5addfa70703634fc", null ]
     ] ],
     [ "cache", null, [
