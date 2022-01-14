@@ -58,6 +58,8 @@ var namespacealtintegration =
     ] ],
     [ "btc", null, [
       [ "BlockHeader", "structaltintegration_1_1btc_1_1BlockHeader.html", "structaltintegration_1_1btc_1_1BlockHeader" ],
+      [ "Block", "structaltintegration_1_1btc_1_1Block.html", "structaltintegration_1_1btc_1_1Block" ],
+      [ "BlockLocator", "structaltintegration_1_1btc_1_1BlockLocator.html", "structaltintegration_1_1btc_1_1BlockLocator" ],
       [ "deserialize_type", "structaltintegration_1_1btc_1_1deserialize__type.html", null ],
       [ "CheckVarIntMode", "structaltintegration_1_1btc_1_1CheckVarIntMode.html", "structaltintegration_1_1btc_1_1CheckVarIntMode" ],
       [ "CVarInt", "classaltintegration_1_1btc_1_1CVarInt.html", "classaltintegration_1_1btc_1_1CVarInt" ],
@@ -123,6 +125,7 @@ var namespacealtintegration =
       [ "Serialize", "serialize_8hpp.html#ae32bcf74542c71c12a2c38a77cab3cea", null ],
       [ "Serialize", "serialize_8hpp.html#a5585a37f1698cfa7427f6209f5db06d2", null ],
       [ "Serialize", "serialize_8hpp.html#a0f2a617c6514dcd6ce543a7844cf9ca2", null ],
+      [ "Serialize", "serialize_8hpp.html#ad104d7cdb3a7e74c11210cbb62052aa7", null ],
       [ "Serialize", "serialize_8hpp.html#aa7e9a97c3e648f653e725a5b78e8bcdc", null ],
       [ "Serialize", "serialize_8hpp.html#af47ab2a2ce3704b33cc69f856c39d7a1", null ],
       [ "Serialize", "serialize_8hpp.html#a7a7672036ea0fd63b088a582191fab39", null ],
@@ -161,6 +164,7 @@ var namespacealtintegration =
       [ "Unserialize", "serialize_8hpp.html#a46def663fed95efb39f34cc4f153cfb6", null ],
       [ "Unserialize", "serialize_8hpp.html#a6e769488b67b17fe4ce10c8e2aecf371", null ],
       [ "Unserialize", "serialize_8hpp.html#aa66b32c01d6c669e7582d3298570bbb0", null ],
+      [ "Unserialize", "serialize_8hpp.html#a89ab241889772dddfb1e48043c00ee26", null ],
       [ "Unserialize", "serialize_8hpp.html#afa09407267906721b5196bdedf9d9b6a", null ],
       [ "Unserialize", "serialize_8hpp.html#aac2e83f6c086a682c4b0223855457cfe", null ],
       [ "Unserialize", "serialize_8hpp.html#a1d9c3875e765749f0421f369ca6989b1", null ],
@@ -170,6 +174,7 @@ var namespacealtintegration =
       [ "Unserialize_impl", "serialize_8hpp.html#ab3134965610b6558893ea847becbccf6", null ],
       [ "UnserializeMany", "serialize_8hpp.html#a8dd1db55cb930e264351fb42f3f8590c", null ],
       [ "UnserializeMany", "serialize_8hpp.html#a840b1ecbe9c4a2b9cc16c94f24650802", null ],
+      [ "UnserializeOrThrow", "serialize_8hpp.html#a429bd2823a5e7fee650780949b0da7cd", null ],
       [ "UnserializeTransaction", "transaction_8hpp.html#a5494262712cb5d0a588200750a73a959", null ],
       [ "WrapBigEndian", "serialize_8hpp.html#a0b0bb66ef6a4b0f3225b0ec34c060d85", null ],
       [ "WrapVarInt", "serialize_8hpp.html#ae229dd960472b289870bbde8cd973776", null ],
@@ -179,6 +184,7 @@ var namespacealtintegration =
       [ "WriteVarInt", "serialize_8hpp.html#afb8c7dac63deac614fddd30c01e0623e", null ],
       [ "deserialize", "serialize_8hpp.html#a5213db5ff15a2cdfae3130b84f5784d4", null ],
       [ "MAX_SIZE", "serialize_8hpp.html#ac35a878425e079dc736c006fd89af880", null ],
+      [ "POP_BLOCK_VERSION_BIT", "block_8hpp.html#a337458b5d29106927e28fc11851db56e", null ],
       [ "SERIALIZE_TRANSACTION_NO_WITNESS", "transaction_8hpp.html#aa186252c77bc872e5addfa70703634fc", null ]
     ] ],
     [ "cache", null, [

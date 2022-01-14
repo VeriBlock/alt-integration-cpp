@@ -21,6 +21,8 @@ var annotated_dup =
       ] ],
       [ "btc", null, [
         [ "BlockHeader", "structaltintegration_1_1btc_1_1BlockHeader.html", "structaltintegration_1_1btc_1_1BlockHeader" ],
+        [ "Block", "structaltintegration_1_1btc_1_1Block.html", "structaltintegration_1_1btc_1_1Block" ],
+        [ "BlockLocator", "structaltintegration_1_1btc_1_1BlockLocator.html", "structaltintegration_1_1btc_1_1BlockLocator" ],
         [ "deserialize_type", "structaltintegration_1_1btc_1_1deserialize__type.html", null ],
         [ "CheckVarIntMode", "structaltintegration_1_1btc_1_1CheckVarIntMode.html", "structaltintegration_1_1btc_1_1CheckVarIntMode" ],
         [ "CVarInt", "classaltintegration_1_1btc_1_1CVarInt.html", "classaltintegration_1_1btc_1_1CVarInt" ],

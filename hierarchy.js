@@ -35,6 +35,7 @@ var hierarchy =
     [ "altintegration::BlockIterator< BlockT >", "structaltintegration_1_1BlockIterator.html", [
       [ "altintegration::adaptors::BlockIteratorImpl< BlockT >", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", null ]
     ] ],
+    [ "altintegration::btc::BlockLocator", "structaltintegration_1_1btc_1_1BlockLocator.html", null ],
     [ "altintegration::AltBlockTree::BlockPayloadMutator", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html", null ],
     [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", [
       [ "altintegration::adaptors::BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", null ]
@@ -43,7 +44,9 @@ var hierarchy =
     [ "altintegration::Config::Bootstrap< altintegration::BtcBlock, altintegration::BtcChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::VbkBlock, altintegration::VbkChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::BtcBlock", "structaltintegration_1_1BtcBlock.html", [
-      [ "altintegration::btc::BlockHeader", "structaltintegration_1_1btc_1_1BlockHeader.html", null ]
+      [ "altintegration::btc::BlockHeader", "structaltintegration_1_1btc_1_1BlockHeader.html", [
+        [ "altintegration::btc::Block", "structaltintegration_1_1btc_1_1Block.html", null ]
+      ] ]
     ] ],
     [ "altintegration::BtcChainParams", "structaltintegration_1_1BtcChainParams.html", [
       [ "altintegration::BtcChainParamsMain", "structaltintegration_1_1BtcChainParamsMain.html", null ],
