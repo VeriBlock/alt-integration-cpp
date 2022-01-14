@@ -327,22 +327,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
                                          ValidationState& state) override;
 
   /**
-   * Efficiently connect block loaded from disk as a root.
-   *
-   * It recovers all pointers (pprev, pnext, endorsedBy,
-   * blockOfProofEndorsements), validates block and endorsements, recovers
-   * validity index.
-   * @param[in] index block
-   * @param[out] state validation state
-   * @return true if block is valid
-   * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is
-   undefined
-   * and can not be used. Tip: ask user to run with '-reindex'.
-   */
-  VBK_CHECK_RETURN bool loadBlockBackward(const stored_index_t& index,
-                                          ValidationState& state) override;
-
-  /**
    * After all blocks loaded, efficiently set current tip.
    * @param[in] hash tip hash
    * @param[out] state validation state

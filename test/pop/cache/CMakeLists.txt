@@ -1,1 +1,1 @@
-addtest(static_lfu_cache small_lfru_cache.cpp)
+addtest(small_lfru_cache small_lfru_cache.cpp)

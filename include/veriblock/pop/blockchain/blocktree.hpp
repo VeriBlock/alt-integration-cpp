@@ -162,35 +162,6 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  //! @invariant NOT atomic
-  bool loadBlockBackward(const stored_index_t& index,
-                         ValidationState& state) override {
-    if (!checkBlock(*index.header, state, *param_)) {
-      return state.Invalid("bad-header");
-    }
-
-    const auto hash = index.header->getHash();
-    if (!base::loadBlockBackward(index, state)) {
-      return false;
-    }
-
-    auto* current = base::getBlockIndex(hash);
-    VBK_ASSERT(current);
-
-    VBK_ASSERT(current->pnext.size() == 1);
-    auto* next = *current->pnext.begin();
-
-    // recover chainwork
-    auto chainWork = getBlockProof(next->getHeader());
-    current->chainWork = next->chainWork - chainWork;
-
-    // clear blockOfProofEndorsements inmem field
-    current->clearBlockOfProofEndorsement();
-
-    current->raiseValidity(BLOCK_VALID_TREE);
-    return true;
-  }
-
   //! block is considered old if it is behind current tip further than 'old
   //! blocks window' blocks
   bool isBlockOld(height_t height) const {

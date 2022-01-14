@@ -381,15 +381,6 @@ bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
   return loadBlockInner(index, state);
 }
 
-bool VbkBlockTree::loadBlockBackward(const stored_index_t& index,
-                                     ValidationState& state) {
-  VBK_TRACE_ZONE_SCOPED;
-  if (!VbkTree::loadBlockBackward(index, state)) {
-    return false;
-  }
-  return loadBlockInner(index, state);
-}
-
 bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;

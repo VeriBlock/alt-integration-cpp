@@ -25,7 +25,7 @@ static void StaticCache(benchmark::State& state) {
   }
 }
 
-static void ThirdPartyCache(benchmark::State& state) {
+static void ThirdPartyLRUCacheWithMutex(benchmark::State& state) {
   srand(0);
   lru11::Cache<int, std::shared_ptr<int>, std::mutex> cache(SIZE);
 
@@ -39,7 +39,23 @@ static void ThirdPartyCache(benchmark::State& state) {
   }
 }
 
+
+static void ThirdPartyLRUCacheWithoutMutex(benchmark::State& state) {
+  srand(0);
+  lru11::Cache<int, std::shared_ptr<int>, lru11::NullLock> cache(SIZE);
+
+  for (auto _ : state) {
+    int key = rand() % K;
+    std::shared_ptr<int> value;
+    if (!cache.tryGet(key, value)) {
+      value = std::make_shared<int>(rand());
+      cache.insert(key, value);
+    }
+  }
+}
+
 BENCHMARK(StaticCache);
-BENCHMARK(ThirdPartyCache);
+BENCHMARK(ThirdPartyLRUCacheWithMutex);
+BENCHMARK(ThirdPartyLRUCacheWithoutMutex);
 // Run the benchmark
 BENCHMARK_MAIN();
