@@ -21,6 +21,7 @@
 #include <utility>
 #include <vector>
 #include <veriblock/pop/blob.hpp>
+#include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/read_stream.hpp>
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/write_stream.hpp>
@@ -911,6 +912,31 @@ void Serialize(Stream& os, const std::shared_ptr<const T>& p) {
 template <typename Stream, typename T>
 void Unserialize(Stream& is, std::shared_ptr<const T>& p) {
   p = std::make_shared<const T>(deserialize, is);
+}
+
+/**
+ * altintegration entities
+ */
+
+template <typename T>
+void UnserializeOrThrow(const std::vector<uint8_t>& in, T& out) {
+  ValidationState state;
+  ReadStream stream(in);
+  if (!DeserializeFromVbkEncoding(stream, out, state)) {
+    throw std::ios_base::failure(state.toString());
+  }
+}
+
+template <typename Stream>
+inline void Serialize(Stream& s, const PopData& popData) {
+  std::vector<uint8_t> bytes_data = popData.toVbkEncoding();
+  Serialize(s, bytes_data);
+}
+template <typename Stream>
+inline void Unserialize(Stream& s, PopData& popData) {
+  std::vector<uint8_t> bytes_data;
+  Unserialize(s, bytes_data);
+  UnserializeOrThrow(bytes_data, popData);
 }
 
 /**
