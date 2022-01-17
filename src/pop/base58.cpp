@@ -157,7 +157,7 @@ bool DecodeBase58(const std::string &str, std::vector<unsigned char> &out) {
 std::vector<uint8_t> AssertDecodeBase58(const std::string &str) {
   std::vector<uint8_t> vch;
   bool status = DecodeBase58(str, vch);
-  VBK_ASSERT_MSG(status, "Invalid input");
+  VBK_ASSERT_MSG(status, "Invalid input: %s", str);
   return vch;
 }
 
