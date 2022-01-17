@@ -37,19 +37,64 @@ struct SubNet {
   /// Is this value valid? (only used to signal parse errors)
   bool valid;
 
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->network);
+    READWRITE(this->netmask);
+    READWRITE(this->valid);
+  }
+
   friend bool operator==(const SubNet& a, const SubNet& b) {
     return a.valid == b.valid && a.network == b.network &&
            !memcmp(a.netmask, b.netmask, 16);
   }
   friend bool operator!=(const SubNet& a, const SubNet& b) { return !(a == b); }
+};
+
+/** A combination of a network address (CNetAddr) and a (TCP) port */
+struct Service : public NetAddr {
+  uint16_t port;  // host order
 
   ADD_SERIALIZE_METHODS;
 
   template <typename Stream, typename Operation>
   inline void SerializationOp(Stream& s, Operation ser_action) {
-    READWRITE(network);
-    READWRITE(netmask);
-    READWRITE(valid);
+    READWRITEAS(NetAddr, *this);
+    READWRITE(WrapBigEndian(this->port));
+  }
+
+  friend bool operator==(const Service& a, const Service& b) {
+    return a.port == b.port && (NetAddr)a == (NetAddr)b;
+  }
+  friend bool operator!=(const Service& a, const Service& b) {
+    return !(a == b);
+  }
+};
+
+struct BanEntry {
+  int32_t nVersion;
+  int64_t nCreateTime;
+  int64_t nBanUntil;
+  uint8_t banReason;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->nVersion);
+    READWRITE(this->nCreateTime);
+    READWRITE(this->nBanUntil);
+    READWRITE(this->banReason);
+  }
+
+  friend bool operator==(const BanEntry& a, const BanEntry& b) {
+    return a.nVersion == b.nVersion && a.nCreateTime == b.nCreateTime &&
+           a.nBanUntil == b.nBanUntil && a.banReason == b.banReason;
+  }
+  friend bool operator!=(const BanEntry& a, const BanEntry& b) {
+    return !(a == b);
   }
 };
 

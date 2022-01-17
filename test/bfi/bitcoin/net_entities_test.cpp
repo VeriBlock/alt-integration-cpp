@@ -47,3 +47,35 @@ TEST(SubNet, serde_test) {
 
   ASSERT_EQ(sub_net, decoded);
 }
+
+TEST(Service, serde_test) {
+  Service service{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, 255};
+  WriteStream writer;
+
+  Serialize(writer, service);
+
+  ASSERT_EQ(writer.hex(), "0102030405060708090a0b0c0d0e0f1000ff");
+
+  Service decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(service, decoded);
+}
+
+TEST(BanEntry, serde_test) {
+  BanEntry ban_entry{255, 01, 02, 255};
+  WriteStream writer;
+
+  Serialize(writer, ban_entry);
+
+  ASSERT_EQ(writer.hex(), "ff00000001000000000000000200000000000000ff");
+
+  BanEntry decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(ban_entry, decoded);
+}
