@@ -1,3 +1,4 @@
 addtest(serialize_test serialize_test.cpp)
 addtest(block_test block_test.cpp)
 addtest(transaction_test transaction_test.cpp)
+addtest(net_entities_test net_entities_test.cpp)
