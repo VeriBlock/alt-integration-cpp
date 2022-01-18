@@ -30,13 +30,9 @@ endif()
 set(LIB_NAME veriblock-pop-cpp)
 project(${LIB_NAME} LANGUAGES C CXX)
 
-<<<<<<< HEAD
 
 include(FetchContent)
 include(cmake/backward.cmake)
-=======
-include(FetchContent)
->>>>>>> cbbd8137 (Add grpc)
 include(cmake/GitVersion.cmake)
 include(GNUInstallDirs)
 include(CheckCCompilerFlag)
