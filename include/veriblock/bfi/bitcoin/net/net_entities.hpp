@@ -116,6 +116,19 @@ struct Inv {
   friend bool operator!=(const Inv& a, const Inv& b) { return !(a == b); }
 };
 
+struct BlockTransactionRequest {
+  uint256 blockhash;
+  std::vector<uint16_t> indexes;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->blockhash);
+    // uint64_t indexes_size = (uint64_t)indexes.size();
+  }
+};
+
 }  // namespace btc
 
 }  // namespace altintegration

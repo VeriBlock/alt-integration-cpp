@@ -76,11 +76,10 @@ TEST(GetDataMsg, serde_test) {
 
   Serialize(writer, msg);
 
-  ASSERT_EQ(
-      writer.hex(),
-      "7111010002d39f608a7775b537729884d4e6633bb2105e55a16a14d31b00000000000000"
-      "005c3e6403d40837110a2e8afb602b1c01714bda7ce23bea0a0000000000000000000000"
-      "0000000000000000000000000000000000000000000000000000000000");
+  ASSERT_EQ(writer.hex(),
+            "0201000000de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1"
+            "b621f55a0100000091d36d997037e08018262978766f24b8a055aaf1d872e94ae8"
+            "5e9817b2c68dc7");
 
   GetDataMsg decoded{};
   ReadStream reader{writer.data()};

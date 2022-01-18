@@ -65,6 +65,22 @@ struct GetDataMsg {
   }
 };
 
+// struct GetBlockTxnMsg {
+//   ADD_SERIALIZE_METHODS;
+
+//   template <typename Stream, typename Operation>
+//   inline void SerializationOp(Stream& s, Operation ser_action) {
+//     READWRITE(this->vInv);
+//   }
+
+//   friend bool operator==(const GetDataMsg& a, const GetDataMsg& b) {
+//     return a.vInv == b.vInv;
+//   }
+//   friend bool operator!=(const GetDataMsg& a, const GetDataMsg& b) {
+//     return !(a == b);
+//   }
+// };
+
 }  // namespace btc
 
 }  // namespace altintegration
