@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.12)
 
+if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     message(STATUS "Using vcpkg")
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 endif()
+
 
 if(WIN32)
     find_program(buildcache_program buildcache)
@@ -18,9 +24,13 @@ else()
     endif(CCACHE_FOUND)
 endif()
 
+
 set(LIB_NAME veriblock-pop-cpp)
 project(${LIB_NAME} LANGUAGES C CXX)
 
+
+include(FetchContent)
+include(cmake/backward.cmake)
 include(cmake/GitVersion.cmake)
 include(GNUInstallDirs)
 include(CheckCCompilerFlag)
@@ -49,10 +59,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
-
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    set(CMAKE_BUILD_TYPE Debug)
-endif()
 
 set(ALT_HASH_SIZE 32 CACHE STRING "Size of block hash in bytes in altchain block")
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
@@ -148,7 +154,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     endif()
 endif()
 
-include(FetchContent)
 if(NOT VERIBLOCK_POP_LOGGER_ENABLED)
     vbk_define(VERIBLOCK_POP_LOGGER_DISABLED=1)
 endif()
