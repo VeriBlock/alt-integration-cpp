@@ -9,7 +9,7 @@ namespace altintegration {
 
 namespace btc {
 
-/** IP address (IPv6, or IPv4 using mapped IPv6 range (::FFFF:0:0/96)) */
+/** IP address (IPv6, or IPv4 using mapped IPv6 range */
 struct NetAddr {
   // in network byte order
   uint8_t ip[16];
