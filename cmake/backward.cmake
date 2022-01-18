@@ -3,6 +3,11 @@ find_library(BFD bfd QUIET)
 find_library(DWARF dwarf QUIET)
 if (NOT DB AND NOT BFD AND NOT DWARF)
     message(STATUS "Adding stacktrace is not available because none of libdw/libbfd/libdwarf is installed.")
+
+    function(enable_stacktrace_on_target target)
+        # do nothing
+    endfunction()
+
     return()
 endif()
 
