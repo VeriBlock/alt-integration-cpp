@@ -10,7 +10,7 @@ namespace altintegration {
 
 namespace btc {
 
-struct GetBlocks {
+struct GetBlocksMsg {
   BlockLocator locator;
   uint256 hashStop;
 
@@ -22,10 +22,10 @@ struct GetBlocks {
     READWRITE(this->hashStop);
   }
 
-  friend bool operator==(const GetBlocks& a, const GetBlocks& b) {
+  friend bool operator==(const GetBlocksMsg& a, const GetBlocksMsg& b) {
     return a.locator == b.locator && a.hashStop == b.hashStop;
   }
-  friend bool operator!=(const GetBlocks& a, const GetBlocks& b) {
+  friend bool operator!=(const GetBlocksMsg& a, const GetBlocksMsg& b) {
     return !(a == b);
   }
 };

@@ -12,18 +12,30 @@
 using namespace altintegration;
 using namespace altintegration::btc;
 
-TEST(NetAddr, serde_test) {
-  NetAddr net_addr{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
+TEST(GetBlocksMsg, serde_test) {
+  GetBlocksMsg msg{
+      {{uint256::fromHex(
+            "d39f608a7775b537729884d4e6633bb2105e55a16a14d31b0000000000000000"),
+        uint256::fromHex(
+            "5c3e6403d40837110a2e8afb602b1c01714bda7ce23bea0a000000"
+            "0000000000")}},
+      uint256::fromHex(
+          "0000000000000000000000000000000000000000000000000000000000000000")};
   WriteStream writer;
+  writer.setVersion(70001);
 
-  Serialize(writer, net_addr);
+  Serialize(writer, msg);
 
-  ASSERT_EQ(writer.hex(), "0102030405060708090a0b0c0d0e0f10");
+  ASSERT_EQ(
+      writer.hex(),
+      "7111010002d39f608a7775b537729884d4e6633bb2105e55a16a14d31b00000000000000"
+      "005c3e6403d40837110a2e8afb602b1c01714bda7ce23bea0a0000000000000000000000"
+      "0000000000000000000000000000000000000000000000000000000000");
 
-  NetAddr decoded{};
+  GetBlocksMsg decoded{};
   ReadStream reader{writer.data()};
 
   Unserialize(reader, decoded);
 
-  ASSERT_EQ(net_addr, decoded);
+  ASSERT_EQ(msg, decoded);
 }
