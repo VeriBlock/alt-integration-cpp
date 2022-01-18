@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/bfi/bitcoin/block.hpp>
+#include <veriblock/bfi/bitcoin/net/net_entities.hpp>
 #include <veriblock/bfi/bitcoin/serialize.hpp>
 
 namespace altintegration {
@@ -28,6 +29,38 @@ struct GetBlocksMsg {
   friend bool operator!=(const GetBlocksMsg& a, const GetBlocksMsg& b) {
     return !(a == b);
   }
+};
+
+struct InvMsg {
+  std::vector<Inv> vInv;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->vInv);
+  }
+
+  friend bool operator==(const InvMsg& a, const InvMsg& b) {
+    return a.vInv == b.vInv;
+  }
+  friend bool operator!=(const InvMsg& a, const InvMsg& b) { return !(a == b); }
+};
+
+struct GetDataMsg {
+  std::vector<Inv> vInv;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->vInv);
+  }
+
+  friend bool operator==(const InvMsg& a, const InvMsg& b) {
+    return a.vInv == b.vInv;
+  }
+  friend bool operator!=(const InvMsg& a, const InvMsg& b) { return !(a == b); }
 };
 
 }  // namespace btc

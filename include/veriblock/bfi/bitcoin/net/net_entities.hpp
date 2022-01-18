@@ -98,6 +98,24 @@ struct BanEntry {
   }
 };
 
+struct Inv {
+  int32_t type;
+  uint256 hash;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->type);
+    READWRITE(this->hash);
+  }
+
+  friend bool operator==(const Inv& a, const Inv& b) {
+    return a.type == b.type && a.hash == b.hash;
+  }
+  friend bool operator!=(const Inv& a, const Inv& b) { return !(a == b); }
+};
+
 }  // namespace btc
 
 }  // namespace altintegration
