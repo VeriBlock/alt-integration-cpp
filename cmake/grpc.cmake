@@ -205,6 +205,3 @@ function(target_add_protobuf target)
         endif()
     endforeach()
 endfunction()
-
-# override
-set(CMAKE_DEBUG_POSTFIX "")
