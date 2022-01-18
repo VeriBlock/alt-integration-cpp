@@ -32,6 +32,7 @@ set(protobuf_BUILD_EXAMPLES OFF)
 set(protobuf_BUILD_PROTOC_BINARIES ON)
 set(protobuf_DISABLE_RTTI ON)
 set(protobuf_MSVC_STATIC_RUNTIME ON)
+set(protobuf_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 if(FIND_PROTOBUF)
     # search for protobuf in local OS
     find_package(Protobuf REQUIRED)
