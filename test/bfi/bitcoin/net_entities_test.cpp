@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "veriblock/bfi/bitcoin/net_entities.hpp"
+#include "veriblock/bfi/bitcoin/net/net_entities.hpp"
 #include "veriblock/pop/read_stream.hpp"
 #include "veriblock/pop/write_stream.hpp"
 
