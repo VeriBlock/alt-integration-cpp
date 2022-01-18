@@ -26,6 +26,7 @@ var NAVTREEINDEX1 =
 "dir_923528710592f5f54c90584462e308a4.html":[6,0,1,0,1,8,0],
 "dir_93c268aa47f4f847c999021b7dc26af0.html":[6,0,1,0,1,1],
 "dir_9c7d25ce294a018fe75625311e66edb4.html":[6,0,1,0],
+"dir_aa73037dbf7195cad0e1159da4b0650a.html":[6,0,1,0,0,0,0],
 "dir_b19a281bc7dc259eb6568822b5184d17.html":[6,0,1,0,1,3],
 "dir_c8fca49c6f641d5a8a52635c698d8470.html":[6,0,1,0,1,0],
 "dir_cb1c4f602a0ca49e0a2f72a8a98b9d33.html":[6,0,1,0,1,5],
@@ -241,13 +242,12 @@ var NAVTREEINDEX1 =
 "merkle__path_8h_source.html":[6,0,1,0,1,2,0,8],
 "merkle__path_8hpp_source.html":[6,0,1,0,1,5,10],
 "merkle__tree_8hpp_source.html":[6,0,1,0,1,5,11],
+"messages_8hpp_source.html":[6,0,1,0,0,0,0,0],
 "miner_8hpp_source.html":[6,0,1,0,1,1,19],
 "mock__miner_8h_source.html":[6,0,1,0,1,2,5],
 "mock__miner_8hpp_source.html":[6,0,1,0,1,31],
 "modules.html":[3],
 "modules_8hpp_source.html":[6,0,0,0],
 "namespacealtintegration.html":[4,0,0],
-"namespacealtintegration.html#a00f54cc63f2e894b82275c5261aa4ec3":[4,0,0,117],
-"namespacealtintegration.html#a0113326bdf77bb9899f62b959aad5bcd":[4,0,0,226],
-"namespacealtintegration.html#a0183db84bd101e201b9d1e1f672fe430":[4,0,0,220]
+"namespacealtintegration.html#a00f54cc63f2e894b82275c5261aa4ec3":[4,0,0,117]
 };
