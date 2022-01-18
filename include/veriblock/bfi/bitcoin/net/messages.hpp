@@ -57,10 +57,12 @@ struct GetDataMsg {
     READWRITE(this->vInv);
   }
 
-  friend bool operator==(const InvMsg& a, const InvMsg& b) {
+  friend bool operator==(const GetDataMsg& a, const GetDataMsg& b) {
     return a.vInv == b.vInv;
   }
-  friend bool operator!=(const InvMsg& a, const InvMsg& b) { return !(a == b); }
+  friend bool operator!=(const GetDataMsg& a, const GetDataMsg& b) {
+    return !(a == b);
+  }
 };
 
 }  // namespace btc
