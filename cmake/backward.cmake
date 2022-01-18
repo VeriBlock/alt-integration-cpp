@@ -1,3 +1,11 @@
+find_library(DW dw QUIET)
+find_library(BFD bfd QUIET)
+find_library(DWARF dwarf QUIET)
+if (NOT DB AND NOT BFD AND NOT DWARF)
+    message(STATUS "Adding stacktrace is not available because none of libdw/libbfd/libdwarf is installed.")
+    return()
+endif()
+
 FetchContent_Declare(
         backward
         GIT_REPOSITORY https://github.com/bombela/backward-cpp.git
@@ -21,7 +29,6 @@ endif()
 
 function(enable_stacktrace_on_target target)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        message(STATUS "Enable stacktrace on ${target}")
         target_sources(${target} PRIVATE
             ${BACKWARD_ENABLE}
         )
