@@ -5,3 +5,4 @@ configure_file(
 )
 
 add_subdirectory(pop)
+add_subdirectory(bfi)
