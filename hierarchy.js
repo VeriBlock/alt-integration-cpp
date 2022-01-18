@@ -13,6 +13,7 @@ var hierarchy =
     [ "altintegration::ATV", "structaltintegration_1_1ATV.html", null ],
     [ "altintegration::VbkPayloadsRelations::AtvCombinedComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html", null ],
     [ "altintegration::AuthenticatedContextInfoContainer", "structaltintegration_1_1AuthenticatedContextInfoContainer.html", null ],
+    [ "altintegration::btc::BanEntry", "structaltintegration_1_1btc_1_1BanEntry.html", null ],
     [ "altintegration::BaseBlockTree< Block >", "structaltintegration_1_1BaseBlockTree.html", [
       [ "altintegration::BlockTree< VbkBlock, VbkChainParams >", "structaltintegration_1_1BlockTree.html", [
         [ "altintegration::VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html", null ]
@@ -89,6 +90,9 @@ var hierarchy =
     [ "altintegration::MemPool", "structaltintegration_1_1MemPool.html", null ],
     [ "altintegration::MempoolResult", "namespacealtintegration.html#structaltintegration_1_1MempoolResult", null ],
     [ "altintegration::MerklePath", "structaltintegration_1_1MerklePath.html", null ],
+    [ "altintegration::btc::NetAddr", "structaltintegration_1_1btc_1_1NetAddr.html", [
+      [ "altintegration::btc::Service", "structaltintegration_1_1btc_1_1Service.html", null ]
+    ] ],
     [ "altintegration::NetworkBytePair", "namespacealtintegration.html#structaltintegration_1_1NetworkBytePair", null ],
     [ "altintegration::btc::OutPoint", "structaltintegration_1_1btc_1_1OutPoint.html", null ],
     [ "altintegration::Output", "structaltintegration_1_1Output.html", null ],
@@ -120,6 +124,7 @@ var hierarchy =
     ] ],
     [ "altintegration::StoredBlockIndex< Block >", "structaltintegration_1_1StoredBlockIndex.html", null ],
     [ "altintegration::MemPool::SubmitResult", "structaltintegration_1_1MemPool_1_1SubmitResult.html", null ],
+    [ "altintegration::btc::SubNet", "structaltintegration_1_1btc_1_1SubNet.html", null ],
     [ "altintegration::btc::Transaction", "structaltintegration_1_1btc_1_1Transaction.html", null ],
     [ "altintegration::VbkPayloadsRelations::TxFeeComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html", null ],
     [ "altintegration::btc::TxIn", "structaltintegration_1_1btc_1_1TxIn.html", null ],
