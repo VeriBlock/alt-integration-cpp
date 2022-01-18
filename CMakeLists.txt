@@ -30,10 +30,7 @@ project(${LIB_NAME} LANGUAGES C CXX)
 
 
 include(FetchContent)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    include(cmake/backward.cmake)
-endif()
-
+include(cmake/backward.cmake)
 include(cmake/GitVersion.cmake)
 include(GNUInstallDirs)
 include(CheckCCompilerFlag)

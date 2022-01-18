@@ -12,7 +12,7 @@ FetchContent_Declare(
 set(BACKWARD_TESTS OFF)
 
 FetchContent_GetProperties(backward)
-if(NOT backward_POPULATED)
+if(NOT backward_POPULATED AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Downloading 'backward'...")
     FetchContent_Populate(backward)
     add_subdirectory(${backward_SOURCE_DIR} ${backward_BINARY_DIR} EXCLUDE_FROM_ALL)
