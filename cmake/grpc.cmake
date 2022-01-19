@@ -12,8 +12,8 @@ if(ZLIB_FOUND)
 else()
     set(_protobuf_ZLIB OFF)
 endif()
-set(protobuf_WITH_ZLIB ${_protobuf_ZLIB})
 set(protobuf_WITH_ZLIB_DEFAULT  ${_protobuf_ZLIB})
+set(protobuf_WITH_ZLIB ${_protobuf_ZLIB} CACHE BOOL "" FORCE)
 
 
 if(CMAKE_CROSSCOMPILING)
@@ -30,7 +30,7 @@ set(protobuf_BUILD_CONFORMANCE OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
 set(protobuf_BUILD_PROTOC_BINARIES ON)
 set(protobuf_DISABLE_RTTI ON)
-# set(protobuf_MSVC_STATIC_RUNTIME ON)
+set(protobuf_MSVC_STATIC_RUNTIME ON CACHE BOOL "" FORCE)
 set(protobuf_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 if(FIND_PROTOBUF)
     # search for protobuf in local OS
