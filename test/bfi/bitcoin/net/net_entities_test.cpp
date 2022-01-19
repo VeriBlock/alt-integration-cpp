@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "veriblock/bfi/bitcoin/net_entities.hpp"
+#include "veriblock/bfi/bitcoin/net/net_entities.hpp"
 #include "veriblock/pop/read_stream.hpp"
 #include "veriblock/pop/write_stream.hpp"
 
@@ -78,4 +78,25 @@ TEST(BanEntry, serde_test) {
   Unserialize(reader, decoded);
 
   ASSERT_EQ(ban_entry, decoded);
+}
+
+TEST(Inv, serde_test) {
+  Inv inv{
+      1,
+      uint256::fromHex(
+          "de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1b621f55a")};
+  WriteStream writer;
+
+  Serialize(writer, inv);
+
+  ASSERT_EQ(writer.hex(),
+            "01000000de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1b6"
+            "21f55a");
+
+  Inv decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(inv, decoded);
 }
