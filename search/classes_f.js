@@ -1,12 +1,7 @@
 var searchData=
 [
-  ['service_583',['Service',['../structaltintegration_1_1btc_1_1Service.html',1,'altintegration::btc']]],
-  ['smalllfrucache_584',['SmallLFRUCache',['../structaltintegration_1_1cache_1_1SmallLFRUCache.html',1,'altintegration::cache']]],
-  ['statecorruptedexception_585',['StateCorruptedException',['../structaltintegration_1_1StateCorruptedException.html',1,'altintegration']]],
-  ['storage_586',['Storage',['../structaltintegration_1_1adaptors_1_1Storage.html',1,'altintegration::adaptors']]],
-  ['storageioexception_587',['StorageIOException',['../structaltintegration_1_1StorageIOException.html',1,'altintegration']]],
-  ['storageiterator_588',['StorageIterator',['../structaltintegration_1_1adaptors_1_1StorageIterator.html',1,'altintegration::adaptors']]],
-  ['storedblockindex_589',['StoredBlockIndex',['../structaltintegration_1_1StoredBlockIndex.html',1,'altintegration']]],
-  ['submitresult_590',['SubmitResult',['../structaltintegration_1_1MemPool_1_1SubmitResult.html',1,'altintegration::MemPool']]],
-  ['subnet_591',['SubNet',['../structaltintegration_1_1btc_1_1SubNet.html',1,'altintegration::btc']]]
+  ['transaction_581',['Transaction',['../structaltintegration_1_1btc_1_1Transaction.html',1,'altintegration::btc']]],
+  ['txfeecomparator_582',['TxFeeComparator',['../structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html',1,'altintegration::VbkPayloadsRelations']]],
+  ['txin_583',['TxIn',['../structaltintegration_1_1btc_1_1TxIn.html',1,'altintegration::btc']]],
+  ['txout_584',['TxOut',['../structaltintegration_1_1btc_1_1TxOut.html',1,'altintegration::btc']]]
 ];

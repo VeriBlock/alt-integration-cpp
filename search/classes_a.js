@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['mempool_561',['MemPool',['../structaltintegration_1_1MemPool.html',1,'altintegration']]],
-  ['mempoolresult_562',['MempoolResult',['../namespacealtintegration.html#structaltintegration_1_1MempoolResult',1,'altintegration']]],
-  ['merklepath_563',['MerklePath',['../structaltintegration_1_1MerklePath.html',1,'altintegration']]]
+  ['netaddr_553',['NetAddr',['../structaltintegration_1_1btc_1_1NetAddr.html',1,'altintegration::btc']]],
+  ['networkbytepair_554',['NetworkBytePair',['../namespacealtintegration.html#structaltintegration_1_1NetworkBytePair',1,'altintegration']]]
 ];

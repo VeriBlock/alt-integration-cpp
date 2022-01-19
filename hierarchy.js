@@ -41,7 +41,6 @@ var hierarchy =
     [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", [
       [ "altintegration::adaptors::BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", null ]
     ] ],
-    [ "altintegration::btc::BlockTransactionRequest", "structaltintegration_1_1btc_1_1BlockTransactionRequest.html", null ],
     [ "altintegration::Config::Bootstrap< Block, ChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::BtcBlock, altintegration::BtcChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::VbkBlock, altintegration::VbkChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
@@ -84,10 +83,6 @@ var hierarchy =
     ] ],
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
-    [ "altintegration::btc::GetBlocksMsg", "structaltintegration_1_1btc_1_1GetBlocksMsg.html", null ],
-    [ "altintegration::btc::GetDataMsg", "structaltintegration_1_1btc_1_1GetDataMsg.html", null ],
-    [ "altintegration::btc::Inv", "structaltintegration_1_1btc_1_1Inv.html", null ],
-    [ "altintegration::btc::InvMsg", "structaltintegration_1_1btc_1_1InvMsg.html", null ],
     [ "altintegration::IsPopPayload< T >", "structaltintegration_1_1IsPopPayload.html", null ],
     [ "altintegration::KeystoneContainer", "structaltintegration_1_1KeystoneContainer.html", null ],
     [ "altintegration::btc::LimitedString< Limit >", "classaltintegration_1_1btc_1_1LimitedString.html", null ],

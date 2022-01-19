@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>veriblock-pop-cpp: include/veriblock/bfi/bitcoin/net/net_entities.hpp Source File</title>
+<title>veriblock-pop-cpp: include/veriblock/bfi/bitcoin/net_entities.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -183,45 +183,11 @@ $(document).ready(function(){initNavTree('net__entities_8hpp_source.html',''); i
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;};</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="structaltintegration_1_1btc_1_1Inv.html">  101</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1btc_1_1Inv.html">Inv</a> {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  int32_t type;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <a class="code" href="structaltintegration_1_1Blob.html">uint256</a> hash;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  ADD_SERIALIZE_METHODS;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Stream, <span class="keyword">typename</span> Operation&gt;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> SerializationOp(Stream&amp; s, Operation ser_action) {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    READWRITE(this-&gt;type);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    READWRITE(this-&gt;hash);</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1btc_1_1Inv.html">Inv</a>&amp; a, <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1btc_1_1Inv.html">Inv</a>&amp; b) {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">return</span> a.type == b.type &amp;&amp; a.hash == b.hash;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  }</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> <a class="code" href="structaltintegration_1_1btc_1_1Inv.html">Inv</a>&amp; a, <span class="keyword">const</span> <a class="code" href="structaltintegration_1_1btc_1_1Inv.html">Inv</a>&amp; b) { <span class="keywordflow">return</span> !(a == b); }</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;};</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="structaltintegration_1_1btc_1_1BlockTransactionRequest.html">  119</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structaltintegration_1_1btc_1_1BlockTransactionRequest.html">BlockTransactionRequest</a> {</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <a class="code" href="structaltintegration_1_1Blob.html">uint256</a> blockhash;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  std::vector&lt;uint16_t&gt; indexes;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  ADD_SERIALIZE_METHODS;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Stream, <span class="keyword">typename</span> Operation&gt;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> SerializationOp(Stream&amp; s, Operation ser_action) {</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    READWRITE(this-&gt;blockhash);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="comment">// uint64_t indexes_size = (uint64_t)indexes.size();</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;};</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;}  <span class="comment">// namespace btc</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}  <span class="comment">// namespace btc</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}  <span class="comment">// namespace altintegration</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00010">block.hpp:10</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob&lt; SHA256_HASH_SIZE &gt;</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1btc_1_1BanEntry_html"><div class="ttname"><a href="structaltintegration_1_1btc_1_1BanEntry.html">altintegration::btc::BanEntry</a></div><div class="ttdef"><b>Definition:</b> <a href="net__entities_8hpp_source.html#l00076">net_entities.hpp:76</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1btc_1_1BlockTransactionRequest_html"><div class="ttname"><a href="structaltintegration_1_1btc_1_1BlockTransactionRequest.html">altintegration::btc::BlockTransactionRequest</a></div><div class="ttdef"><b>Definition:</b> <a href="net__entities_8hpp_source.html#l00119">net_entities.hpp:119</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1btc_1_1Inv_html"><div class="ttname"><a href="structaltintegration_1_1btc_1_1Inv.html">altintegration::btc::Inv</a></div><div class="ttdef"><b>Definition:</b> <a href="net__entities_8hpp_source.html#l00101">net_entities.hpp:101</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1btc_1_1NetAddr_html"><div class="ttname"><a href="structaltintegration_1_1btc_1_1NetAddr.html">altintegration::btc::NetAddr</a></div><div class="ttdoc">IP address (IPv6, or IPv4 using mapped IPv6 range.</div><div class="ttdef"><b>Definition:</b> <a href="net__entities_8hpp_source.html#l00013">net_entities.hpp:13</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1btc_1_1Service_html"><div class="ttname"><a href="structaltintegration_1_1btc_1_1Service.html">altintegration::btc::Service</a></div><div class="ttdoc">A combination of a network address (CNetAddr) and a (TCP) port.</div><div class="ttdef"><b>Definition:</b> <a href="net__entities_8hpp_source.html#l00057">net_entities.hpp:57</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1btc_1_1SubNet_html"><div class="ttname"><a href="structaltintegration_1_1btc_1_1SubNet.html">altintegration::btc::SubNet</a></div><div class="ttdef"><b>Definition:</b> <a href="net__entities_8hpp_source.html#l00032">net_entities.hpp:32</a></div></div>
