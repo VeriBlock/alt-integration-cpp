@@ -1,5 +1,4 @@
-
-add_library(tezt OBJECT tezt.cpp)
+add_executable(tezt tezt.cpp)
 target_add_protobuf(tezt
     veriblock.proto
 )
