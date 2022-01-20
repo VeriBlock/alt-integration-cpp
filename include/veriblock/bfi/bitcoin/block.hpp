@@ -3,6 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#ifndef BFI_BITCOIN_BLOCK_HPP
+#define BFI_BITCOIN_BLOCK_HPP
+
 #include <veriblock/bfi/bitcoin/serialize.hpp>
 #include <veriblock/bfi/bitcoin/transaction.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
@@ -92,3 +95,5 @@ struct BlockLocator {
 }  // namespace btc
 
 }  // namespace altintegration
+
+#endif

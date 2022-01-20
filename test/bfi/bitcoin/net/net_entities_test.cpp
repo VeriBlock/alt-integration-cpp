@@ -100,3 +100,80 @@ TEST(Inv, serde_test) {
 
   ASSERT_EQ(inv, decoded);
 }
+
+TEST(BlockTransactionsRequest, serde_test) {
+  BlockTransactionsRequest req{
+      uint256::fromHex(
+          "de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1b621f55a"),
+      {1, 2, 3, 4, 5}};
+  WriteStream writer;
+
+  Serialize(writer, req);
+
+  ASSERT_EQ(writer.hex(),
+            "de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1b621f55a05"
+            "0100000000");
+
+  BlockTransactionsRequest decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(req, decoded);
+}
+
+TEST(PrefilledTransaction, serde_test) {
+  PrefilledTransaction tx{15, {}};
+  WriteStream writer;
+
+  Serialize(writer, tx);
+
+  ASSERT_EQ(writer.hex(), "0f00000000000000000000");
+
+  PrefilledTransaction decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(tx, decoded);
+}
+
+TEST(BlockHeaderAndShortTxIDs, serde_test) {
+  BlockHeaderAndShortTxIDs block_header{{}, 15, {}, {}};
+  WriteStream writer;
+
+  Serialize(writer, block_header);
+
+  ASSERT_EQ(writer.hex(),
+            "000000000000000000000000000000000000000000000000000000000000000000"
+            "000000000000000000000000000000000000000000000000000000000000000000"
+            "00000000000000000000000000000f000000000000000000");
+
+  BlockHeaderAndShortTxIDs decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(block_header, decoded);
+}
+
+TEST(BlockTransactions, serde_test) {
+  BlockTransactions txs{
+      uint256::fromHex(
+          "de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1b621f55a"),
+      {}};
+  WriteStream writer;
+
+  Serialize(writer, txs);
+
+  ASSERT_EQ(
+      writer.hex(),
+      "de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1b621f55a00");
+
+  BlockTransactions decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(txs, decoded);
+}
