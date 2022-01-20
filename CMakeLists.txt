@@ -27,8 +27,7 @@ else()
 endif()
 
 
-set(LIB_NAME veriblock-pop-cpp)
-project(${LIB_NAME} LANGUAGES C CXX)
+project(veriblockpop LANGUAGES C CXX)
 
 
 include(FetchContent)
@@ -66,9 +65,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 
 set(ALT_HASH_SIZE 32 CACHE STRING "Size of block hash in bytes in altchain block")
-option(FIND_PROTOBUF "If ON, will search for protobuf in local filesystem, otherwise will download and build automatically" OFF)
-option(FIND_GRPC     "If ON, will search for grpc in local filesystem, otherwise will download and build automatically" OFF)
-option(FIND_ZLIB     "If ON, will search for zlib in local filesystem, otherwise will download and build automatically" OFF)
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
 option(ASAN         "Enable Address Sanitizer" OFF)
 option(TSAN         "Enable Thread Sanitizer" OFF)

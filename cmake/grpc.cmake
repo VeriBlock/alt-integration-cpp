@@ -12,7 +12,6 @@ set(ABSL_PROPAGATE_CXX_STD ON)
 set(ABSL_ENABLE_INSTALL ON)
 
 
-
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Architectures: ${CMAKE_OSX_ARCHITECTURES}")
     list(LENGTH CMAKE_OSX_ARCHITECTURES CMAKE_OSX_ARCHITECTURES_LENGTH)
@@ -21,8 +20,10 @@ if(CMAKE_CROSSCOMPILING)
     endif()
 endif()
 
-set(protobuf_WITH_ZLIB_DEFAULT  OFF)
-set(protobuf_WITH_ZLIB OFF CACHE BOOL "" FORCE)
+
+set(protobuf_WITH_ZLIB_DEFAULT  ON)
+set(protobuf_WITH_ZLIB ON CACHE BOOL "" FORCE)
+set(protobuf_WITH_ZLIB ON)
 set(protobuf_BUILD_TESTS OFF)
 set(protobuf_BUILD_CONFORMANCE OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
@@ -52,7 +53,7 @@ else()
         protobuf
         GIT_REPOSITORY https://github.com/google/protobuf.git
         GIT_TAG        v3.19.3
-        GIT_PROGRESS   TRUE
+        GIT_PROGRESS   FALSE
         GIT_SHALLOW    TRUE
         USES_TERMINAL_DOWNLOAD TRUE
         GIT_SUBMODULES_RECURSE FALSE
@@ -74,7 +75,7 @@ FetchContent_Declare(
         grpc
         GIT_REPOSITORY https://github.com/grpc/grpc.git
         GIT_TAG        v1.43.0
-        GIT_PROGRESS   TRUE
+        GIT_PROGRESS   FALSE
         GIT_SHALLOW    TRUE
         USES_TERMINAL_DOWNLOAD TRUE
         GIT_SUBMODULES_RECURSE FALSE
@@ -83,6 +84,7 @@ FetchContent_Declare(
             "third_party/boringssl-with-bazel"
             "third_party/re2"
             "third_party/abseil-cpp"
+            "third_party/zlib"
 )
 
 set(gRPC_INSTALL_default ON)
@@ -101,7 +103,6 @@ set(RE2_BUILD_TESTING OFF)
 set(ABSL_FIND_GOOGLETEST OFF)
 
 set(gRPC_BENCHMARK_PROVIDER "none" CACHE STRING "" FORCE)
-set(gRPC_ZLIB_PROVIDER "package" CACHE STRING "" FORCE)
 
 # we'd like to use lite version, but example project doesn't link
 set(gRPC_USE_PROTO_LITE OFF CACHE BOOL "" FORCE)
