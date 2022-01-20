@@ -107,16 +107,6 @@ set(gRPC_ZLIB_PROVIDER "package" CACHE STRING "" FORCE)
 set(gRPC_USE_PROTO_LITE OFF CACHE BOOL "" FORCE)
 
 
-function(get_all_targets _result _dir)
-    get_property(_subdirs DIRECTORY "${_dir}" PROPERTY SUBDIRECTORIES)
-    foreach(_subdir IN LISTS _subdirs)
-        get_all_targets(${_result} "${_subdir}")
-    endforeach()
-
-    get_directory_property(_sub_targets DIRECTORY "${_dir}" BUILDSYSTEM_TARGETS)
-    set(${_result} ${${_result}} ${_sub_targets} PARENT_SCOPE)
-endfunction()
-
 FetchContent_GetProperties(grpc)
 if(NOT grpc_POPULATED)
     FetchContent_Populate(grpc)
@@ -124,16 +114,6 @@ if(NOT grpc_POPULATED)
 
     set_target_properties(
         address_sorting
-        # absl_log_severity
-        # absl_raw_logging_internal
-        # absl_bad_optional_access
-        # upb
-        # absl_spinlock_wait
-        # absl_base
-        # absl_malloc_internal
-        # absl_throw_delegate
-        # absl_debugging_internal
-        # absl_stacktrace
         PROPERTIES
             EXCLUDE_FROM_ALL TRUE
     )
