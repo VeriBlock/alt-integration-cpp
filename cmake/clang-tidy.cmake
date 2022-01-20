@@ -1,17 +1,14 @@
-if(NOT CLANG_TIDY_BIN)
-    find_program(CLANG_TIDY_BIN clang-tidy)
-endif()
+function(enable_clang_tidy target)
+    if (CLANG_TIDY)
+        find_program(CLANG_TIDY_BIN clang-tidy REQUIRED)
+        set(__TIDY_CMD
+            ${CLANG_TIDY_BIN}
+            -p=${CMAKE_BINARY_DIR}
+            )
 
-if(NOT CLANG_TIDY_BIN)
-    message(FATAL_ERROR "clang-tidy is not installed. Aborting...")
-else()
-    message(STATUS "clang-tidy has been found: ${CLANG_TIDY_BIN}")
-endif()
-
-
-set(__TIDY_CMD
-        ${CLANG_TIDY_BIN}
-        -p=${CMAKE_BINARY_DIR}
+        set_target_properties(${target} PROPERTIES
+            C_CLANG_TIDY   ${__TIDY_CMD}
+            CXX_CLANG_TIDY ${__TIDY_CMD}
         )
-set(CMAKE_C_CLANG_TIDY   ${__TIDY_CMD})
-set(CMAKE_CXX_CLANG_TIDY ${__TIDY_CMD})
+    endif()
+endfunction()

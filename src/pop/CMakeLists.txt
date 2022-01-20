@@ -95,6 +95,7 @@ endif()
 message(STATUS "BUILD=${BUILD}")
 
 add_library(${LIB_NAME} ${BUILD} ${SOURCES})
+enable_clang_tidy(${LIB_NAME})
 
 if(WITH_TRACER)
     add_compile_definitions(TRACY_ON_DEMAND)
