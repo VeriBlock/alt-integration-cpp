@@ -142,7 +142,7 @@ struct BlockTransactionsRequest {
           if (index > std::numeric_limits<uint16_t>::max()) {
             throw std::ios_base::failure("index overflowed 16 bits");
           }
-          this->indexes[i] = index;
+          this->indexes[i] = (uint16_t)index;
         }
       }
 
@@ -151,7 +151,7 @@ struct BlockTransactionsRequest {
         if (int32_t(this->indexes[j]) + offset >
             std::numeric_limits<uint16_t>::max())
           throw std::ios_base::failure("indexes overflowed 16 bits");
-        this->indexes[j] = this->indexes[j] + offset;
+        this->indexes[j] = this->indexes[j] + (uint16_t)offset;
         offset = int32_t(this->indexes[j]) + 1;
       }
     } else {
@@ -190,7 +190,7 @@ struct PrefilledTransaction {
     if (idx > std::numeric_limits<uint16_t>::max()) {
       throw std::ios_base::failure("index overflowed 16-bits");
     }
-    index = idx;
+    index = (uint16_t)idx;
     READWRITE(this->tx);
   }
 
@@ -232,8 +232,6 @@ struct BlockHeaderAndShortTxIDs {
           READWRITE(lsb);
           READWRITE(msb);
           this->shorttxids[i] = (uint64_t(msb) << 32) | uint64_t(lsb);
-          VBK_ASSERT_MSG(SHORTTXIDS_LENGTH == 6,
-                         "shorttxids serialization assumes 6-byte shorttxids");
         }
       }
     } else {
