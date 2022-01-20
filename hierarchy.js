@@ -33,7 +33,6 @@ var hierarchy =
     [ "altintegration::BlockBatch", "structaltintegration_1_1BlockBatch.html", [
       [ "altintegration::adaptors::BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html", null ]
     ] ],
-    [ "altintegration::btc::BlockHeaderAndShortTxIDs", "structaltintegration_1_1btc_1_1BlockHeaderAndShortTxIDs.html", null ],
     [ "altintegration::BlockIterator< BlockT >", "structaltintegration_1_1BlockIterator.html", [
       [ "altintegration::adaptors::BlockIteratorImpl< BlockT >", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", null ]
     ] ],
@@ -42,9 +41,7 @@ var hierarchy =
     [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", [
       [ "altintegration::adaptors::BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", null ]
     ] ],
-    [ "altintegration::btc::BlockTransactions", "structaltintegration_1_1btc_1_1BlockTransactions.html", null ],
-    [ "altintegration::btc::BlockTransactionsRequest", "structaltintegration_1_1btc_1_1BlockTransactionsRequest.html", null ],
-    [ "altintegration::btc::BlockTxnMsg", "structaltintegration_1_1btc_1_1BlockTxnMsg.html", null ],
+    [ "altintegration::btc::BlockTransactionRequest", "structaltintegration_1_1btc_1_1BlockTransactionRequest.html", null ],
     [ "altintegration::Config::Bootstrap< Block, ChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::BtcBlock, altintegration::BtcChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::VbkBlock, altintegration::VbkChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
@@ -66,7 +63,6 @@ var hierarchy =
     [ "altintegration::ChainSlice< BlockIndexT >", "structaltintegration_1_1ChainSlice.html", null ],
     [ "altintegration::CheckPublicationData", "structaltintegration_1_1CheckPublicationData.html", null ],
     [ "altintegration::btc::CheckVarIntMode< Mode, I >", "structaltintegration_1_1btc_1_1CheckVarIntMode.html", null ],
-    [ "altintegration::btc::CmpctBlockMsg", "structaltintegration_1_1btc_1_1CmpctBlockMsg.html", null ],
     [ "altintegration::Coin", "structaltintegration_1_1Coin.html", null ],
     [ "altintegration::Config", "structaltintegration_1_1Config.html", null ],
     [ "altintegration::signals::Connection", "structaltintegration_1_1signals_1_1Connection.html", null ],
@@ -89,9 +85,7 @@ var hierarchy =
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
     [ "altintegration::btc::GetBlocksMsg", "structaltintegration_1_1btc_1_1GetBlocksMsg.html", null ],
-    [ "altintegration::btc::GetBlockTxnMsg", "structaltintegration_1_1btc_1_1GetBlockTxnMsg.html", null ],
     [ "altintegration::btc::GetDataMsg", "structaltintegration_1_1btc_1_1GetDataMsg.html", null ],
-    [ "altintegration::btc::GetHeadersMsg", "structaltintegration_1_1btc_1_1GetHeadersMsg.html", null ],
     [ "altintegration::btc::Inv", "structaltintegration_1_1btc_1_1Inv.html", null ],
     [ "altintegration::btc::InvMsg", "structaltintegration_1_1btc_1_1InvMsg.html", null ],
     [ "altintegration::IsPopPayload< T >", "structaltintegration_1_1IsPopPayload.html", null ],
@@ -119,7 +113,6 @@ var hierarchy =
     ] ],
     [ "altintegration::PopRewardsCurveParams", "structaltintegration_1_1PopRewardsCurveParams.html", null ],
     [ "altintegration::PopRewardsParams", "structaltintegration_1_1PopRewardsParams.html", null ],
-    [ "altintegration::btc::PrefilledTransaction", "structaltintegration_1_1btc_1_1PrefilledTransaction.html", null ],
     [ "altintegration::PublicationData", "structaltintegration_1_1PublicationData.html", null ],
     [ "altintegration::ReadStream", "structaltintegration_1_1ReadStream.html", null ],
     [ "altintegration::reverse_range< T >", "classaltintegration_1_1reverse__range.html", null ],
@@ -140,7 +133,6 @@ var hierarchy =
     [ "altintegration::btc::Transaction", "structaltintegration_1_1btc_1_1Transaction.html", null ],
     [ "altintegration::VbkPayloadsRelations::TxFeeComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html", null ],
     [ "altintegration::btc::TxIn", "structaltintegration_1_1btc_1_1TxIn.html", null ],
-    [ "altintegration::btc::TxMsg", "structaltintegration_1_1btc_1_1TxMsg.html", null ],
     [ "altintegration::btc::TxOut", "structaltintegration_1_1btc_1_1TxOut.html", null ],
     [ "altintegration::ValidationState", "classaltintegration_1_1ValidationState.html", null ],
     [ "altintegration::VbkBlock", "structaltintegration_1_1VbkBlock.html", null ],
