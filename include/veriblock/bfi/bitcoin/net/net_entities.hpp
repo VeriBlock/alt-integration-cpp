@@ -300,6 +300,31 @@ struct BlockTransactions {
   }
 };
 
+struct BloomFilter {
+  std::vector<uint8_t> vData;
+  uint32_t nHashFuncs;
+  uint32_t nTweak;
+  uint8_t nFlags;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->vData);
+    READWRITE(this->nHashFuncs);
+    READWRITE(this->nTweak);
+    READWRITE(this->nFlags);
+  }
+
+  friend bool operator==(const BloomFilter& a, const BloomFilter& b) {
+    return a.vData == b.vData && a.nHashFuncs == b.nHashFuncs &&
+           a.nTweak == b.nTweak && a.nFlags == b.nFlags;
+  }
+  friend bool operator!=(const BloomFilter& a, const BloomFilter& b) {
+    return !(a == b);
+  }
+};
+
 }  // namespace btc
 
 }  // namespace altintegration

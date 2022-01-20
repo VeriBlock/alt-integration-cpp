@@ -158,6 +158,78 @@ struct BlockTxnMsg {
   }
 };
 
+struct FilterLoadMsg {
+  BloomFilter filter;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->filter);
+  }
+
+  friend bool operator==(const FilterLoadMsg& a, const FilterLoadMsg& b) {
+    return a.filter == b.filter;
+  }
+  friend bool operator!=(const FilterLoadMsg& a, const FilterLoadMsg& b) {
+    return !(a == b);
+  }
+};
+
+struct FilterAddMsg {
+  std::vector<uint8_t> vData;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->vData);
+  }
+
+  friend bool operator==(const FilterAddMsg& a, const FilterAddMsg& b) {
+    return a.vData == b.vData;
+  }
+  friend bool operator!=(const FilterAddMsg& a, const FilterAddMsg& b) {
+    return !(a == b);
+  }
+};
+
+struct FeeFilterMsg {
+  Amount newFeeFilter;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->newFeeFilter);
+  }
+
+  friend bool operator==(const FeeFilterMsg& a, const FeeFilterMsg& b) {
+    return a.newFeeFilter == b.newFeeFilter;
+  }
+  friend bool operator!=(const FeeFilterMsg& a, const FeeFilterMsg& b) {
+    return !(a == b);
+  }
+};
+
+struct NotFoundMsg {
+  std::vector<Inv> vInv;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->vInv);
+  }
+
+  friend bool operator==(const NotFoundMsg& a, const NotFoundMsg& b) {
+    return a.vInv == b.vInv;
+  }
+  friend bool operator!=(const NotFoundMsg& a, const NotFoundMsg& b) {
+    return !(a == b);
+  }
+};
+
 }  // namespace btc
 
 }  // namespace altintegration
