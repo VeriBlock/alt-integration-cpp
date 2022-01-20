@@ -3,6 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#ifndef BFI_BITCOIN_NET_NET_ENTITIES_HPP
+#define BFI_BITCOIN_NET_NET_ENTITIES_HPP
+
+#include <veriblock/bfi/bitcoin/block.hpp>
 #include <veriblock/bfi/bitcoin/serialize.hpp>
 
 namespace altintegration {
@@ -116,7 +120,7 @@ struct Inv {
   friend bool operator!=(const Inv& a, const Inv& b) { return !(a == b); }
 };
 
-struct BlockTransactionRequest {
+struct BlockTransactionsRequest {
   uint256 blockhash;
   std::vector<uint16_t> indexes;
 
@@ -125,10 +129,179 @@ struct BlockTransactionRequest {
   template <typename Stream, typename Operation>
   inline void SerializationOp(Stream& s, Operation ser_action) {
     READWRITE(this->blockhash);
-    // uint64_t indexes_size = (uint64_t)indexes.size();
+    uint64_t indexes_size = (uint64_t)this->indexes.size();
+    READWRITE(COMPACTSIZE(indexes_size));
+    if (ser_action.ForRead()) {
+      size_t i = 0;
+      while (indexes.size() < indexes_size) {
+        this->indexes.resize(
+            std::min((uint64_t)(1000 + this->indexes.size()), indexes_size));
+        for (; i < this->indexes.size(); ++i) {
+          uint64_t index = 0;
+          READWRITE(COMPACTSIZE(index));
+          if (index > std::numeric_limits<uint16_t>::max()) {
+            throw std::ios_base::failure("index overflowed 16 bits");
+          }
+          this->indexes[i] = (uint16_t)index;
+        }
+      }
+
+      int32_t offset = 0;
+      for (size_t j = 0; j < this->indexes.size(); j++) {
+        if (int32_t(this->indexes[j]) + offset >
+            std::numeric_limits<uint16_t>::max())
+          throw std::ios_base::failure("indexes overflowed 16 bits");
+        this->indexes[j] = this->indexes[j] + (uint16_t)offset;
+        offset = int32_t(this->indexes[j]) + 1;
+      }
+    } else {
+      for (size_t i = 0; i < this->indexes.size(); i++) {
+        uint64_t index =
+            this->indexes[i] - (i == 0 ? 0 : (this->indexes[i - 1] + 1));
+        READWRITE(COMPACTSIZE(index));
+      }
+    }
+  }
+
+  friend bool operator==(const BlockTransactionsRequest& a,
+                         const BlockTransactionsRequest& b) {
+    return a.blockhash == b.blockhash && a.indexes == b.indexes;
+  }
+  friend bool operator!=(const BlockTransactionsRequest& a,
+                         const BlockTransactionsRequest& b) {
+    return !(a == b);
+  }
+};
+
+// Dumb serialization/storage-helper for CBlockHeaderAndShortTxIDs and
+// PartiallyDownloadedBlock
+struct PrefilledTransaction {
+  // Used as an offset since last prefilled tx in BlockHeaderAndShortTxIDs,
+  // as a proper transaction-in-block-index in PartiallyDownloadedBlock
+  uint16_t index;
+  Transaction tx;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    uint64_t idx = this->index;
+    READWRITE(COMPACTSIZE(idx));
+    if (idx > std::numeric_limits<uint16_t>::max()) {
+      throw std::ios_base::failure("index overflowed 16-bits");
+    }
+    index = (uint16_t)idx;
+    READWRITE(this->tx);
+  }
+
+  friend bool operator==(const PrefilledTransaction& a,
+                         const PrefilledTransaction& b) {
+    return a.index == b.index && a.tx == b.tx;
+  }
+  friend bool operator!=(const PrefilledTransaction& a,
+                         const PrefilledTransaction& b) {
+    return !(a == b);
+  }
+};
+
+struct BlockHeaderAndShortTxIDs {
+  static const uint32_t SHORTTXIDS_LENGTH = 6;
+
+  BlockHeader header;
+  uint64_t nonce;
+  std::vector<uint64_t> shorttxids;
+  std::vector<PrefilledTransaction> prefilledtxn;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->header);
+    READWRITE(this->nonce);
+
+    uint64_t shorttxids_size = (uint64_t)this->shorttxids.size();
+    READWRITE(COMPACTSIZE(shorttxids_size));
+    if (ser_action.ForRead()) {
+      size_t i = 0;
+      while (this->shorttxids.size() < shorttxids_size) {
+        this->shorttxids.resize(std::min(
+            (uint64_t)(1000 + this->shorttxids.size()), shorttxids_size));
+        for (; i < shorttxids.size(); i++) {
+          uint32_t lsb = 0;
+          uint16_t msb = 0;
+          READWRITE(lsb);
+          READWRITE(msb);
+          this->shorttxids[i] = (uint64_t(msb) << 32) | uint64_t(lsb);
+        }
+      }
+    } else {
+      for (size_t i = 0; i < this->shorttxids.size(); i++) {
+        uint32_t lsb = this->shorttxids[i] & 0xffffffff;
+        uint16_t msb = (this->shorttxids[i] >> 32) & 0xffff;
+        READWRITE(lsb);
+        READWRITE(msb);
+      }
+    }
+
+    READWRITE(this->prefilledtxn);
+
+    if (this->shorttxids.size() + this->prefilledtxn.size() >
+        std::numeric_limits<uint16_t>::max()) {
+      throw std::ios_base::failure("indexes overflowed 16 bits");
+    }
+  }
+
+  friend bool operator==(const BlockHeaderAndShortTxIDs& a,
+                         const BlockHeaderAndShortTxIDs& b) {
+    return a.header == b.header && a.nonce == b.nonce &&
+           a.shorttxids == b.shorttxids && a.prefilledtxn == b.prefilledtxn;
+  }
+  friend bool operator!=(const BlockHeaderAndShortTxIDs& a,
+                         const BlockHeaderAndShortTxIDs& b) {
+    return !(a == b);
+  }
+};
+
+struct BlockTransactions {
+  // A BlockTransactions message
+  uint256 blockhash;
+  std::vector<Transaction> txn;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->blockhash);
+    uint64_t txn_size = (uint64_t)this->txn.size();
+    READWRITE(COMPACTSIZE(txn_size));
+    if (ser_action.ForRead()) {
+      size_t i = 0;
+      while (this->txn.size() < txn_size) {
+        this->txn.resize(
+            std::min((uint64_t)(1000 + this->txn.size()), txn_size));
+        for (; i < this->txn.size(); i++) {
+          READWRITE(this->txn[i]);
+        }
+      }
+    } else {
+      for (size_t i = 0; i < txn.size(); i++) {
+        READWRITE(this->txn[i]);
+      }
+    }
+  }
+
+  friend bool operator==(const BlockTransactions& a,
+                         const BlockTransactions& b) {
+    return a.blockhash == b.blockhash && a.txn == b.txn;
+  }
+  friend bool operator!=(const BlockTransactions& a,
+                         const BlockTransactions& b) {
+    return !(a == b);
   }
 };
 
 }  // namespace btc
 
 }  // namespace altintegration
+
+#endif
