@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['defaultpoprewardscalculator_552',['DefaultPopRewardsCalculator',['../structaltintegration_1_1DefaultPopRewardsCalculator.html',1,'altintegration']]],
-  ['deserialize_5ftype_553',['deserialize_type',['../structaltintegration_1_1btc_1_1deserialize__type.html',1,'altintegration::btc']]]
+  ['defaultpoprewardscalculator_558',['DefaultPopRewardsCalculator',['../structaltintegration_1_1DefaultPopRewardsCalculator.html',1,'altintegration']]],
+  ['deserialize_5ftype_559',['deserialize_type',['../structaltintegration_1_1btc_1_1deserialize__type.html',1,'altintegration::btc']]]
 ];

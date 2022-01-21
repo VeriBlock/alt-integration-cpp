@@ -45,6 +45,7 @@ var hierarchy =
     [ "altintegration::btc::BlockTransactions", "structaltintegration_1_1btc_1_1BlockTransactions.html", null ],
     [ "altintegration::btc::BlockTransactionsRequest", "structaltintegration_1_1btc_1_1BlockTransactionsRequest.html", null ],
     [ "altintegration::btc::BlockTxnMsg", "structaltintegration_1_1btc_1_1BlockTxnMsg.html", null ],
+    [ "altintegration::btc::BloomFilter", "structaltintegration_1_1btc_1_1BloomFilter.html", null ],
     [ "altintegration::Config::Bootstrap< Block, ChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::BtcBlock, altintegration::BtcChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
     [ "altintegration::Config::Bootstrap< altintegration::VbkBlock, altintegration::VbkChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", null ],
@@ -86,6 +87,9 @@ var hierarchy =
         ] ]
       ] ]
     ] ],
+    [ "altintegration::btc::FeeFilterMsg", "structaltintegration_1_1btc_1_1FeeFilterMsg.html", null ],
+    [ "altintegration::btc::FilterAddMsg", "structaltintegration_1_1btc_1_1FilterAddMsg.html", null ],
+    [ "altintegration::btc::FilterLoadMsg", "structaltintegration_1_1btc_1_1FilterLoadMsg.html", null ],
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
     [ "altintegration::btc::GetBlocksMsg", "structaltintegration_1_1btc_1_1GetBlocksMsg.html", null ],
@@ -105,6 +109,7 @@ var hierarchy =
       [ "altintegration::btc::Service", "structaltintegration_1_1btc_1_1Service.html", null ]
     ] ],
     [ "altintegration::NetworkBytePair", "namespacealtintegration.html#structaltintegration_1_1NetworkBytePair", null ],
+    [ "altintegration::btc::NotFoundMsg", "structaltintegration_1_1btc_1_1NotFoundMsg.html", null ],
     [ "altintegration::btc::OutPoint", "structaltintegration_1_1btc_1_1OutPoint.html", null ],
     [ "altintegration::Output", "structaltintegration_1_1Output.html", null ],
     [ "altintegration::PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", [
