@@ -193,3 +193,81 @@ TEST(BlockTxnMsg, serde_test) {
 
   ASSERT_EQ(msg, decoded);
 }
+
+TEST(FilterLoadMsg, serde_test) {
+  FilterLoadMsg msg{{{0xb5, 0x0f}, 11, 0, 0}};
+  WriteStream writer;
+
+  Serialize(writer, msg);
+
+  ASSERT_EQ(writer.hex(), "02b50f0b0000000000000000");
+
+  FilterLoadMsg decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(msg, decoded);
+}
+
+TEST(FilterAddMsg, serde_test) {
+  FilterAddMsg msg{{0xfd, 0xac, 0xf9, 0xb3, 0xeb, 0x07, 0x74, 0x12,
+                    0xe7, 0xa9, 0x68, 0xd2, 0xe4, 0xf1, 0x1b, 0x9a,
+                    0x9d, 0xee, 0x31, 0x2d, 0x66, 0x61, 0x87, 0xed,
+                    0x77, 0xee, 0x7d, 0x26, 0xaf, 0x16, 0xcb, 0x0b}};
+  WriteStream writer;
+
+  Serialize(writer, msg);
+
+  ASSERT_EQ(
+      writer.hex(),
+      "20fdacf9b3eb077412e7a968d2e4f11b9a9dee312d666187ed77ee7d26af16cb0b");
+
+  FilterAddMsg decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(msg, decoded);
+}
+
+TEST(FeeFilterMsg, serde_test) {
+  FeeFilterMsg msg{48508};
+  WriteStream writer;
+
+  Serialize(writer, msg);
+
+  ASSERT_EQ(writer.hex(), "7cbd000000000000");
+
+  FeeFilterMsg decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(msg, decoded);
+}
+
+TEST(NotFoundMsg, serde_test) {
+  NotFoundMsg msg{
+      {{1,
+        uint256::fromHex("de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732"
+                         "e429081da1b621f55a")},
+       {1,
+        uint256::fromHex("91d36d997037e08018262978766f24b8a055aaf1d872e9"
+                         "4ae85e9817b2c68dc7")}}};
+  WriteStream writer;
+
+  Serialize(writer, msg);
+
+  ASSERT_EQ(writer.hex(),
+            "0201000000de55ffd709ac1f5dc509a0925d0b1fc442ca034f224732e429081da1"
+            "b621f55a0100000091d36d997037e08018262978766f24b8a055aaf1d872e94ae8"
+            "5e9817b2c68dc7");
+
+  NotFoundMsg decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(msg, decoded);
+}

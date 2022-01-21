@@ -177,3 +177,19 @@ TEST(BlockTransactions, serde_test) {
 
   ASSERT_EQ(txs, decoded);
 }
+
+TEST(BloomFilter, serde_test) {
+  BloomFilter filter{{0xb5, 0x0f}, 11, 0, 0};
+  WriteStream writer;
+
+  Serialize(writer, filter);
+
+  ASSERT_EQ(writer.hex(), "02b50f0b0000000000000000");
+
+  BloomFilter decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(filter, decoded);
+}
