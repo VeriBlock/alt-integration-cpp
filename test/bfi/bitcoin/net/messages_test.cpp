@@ -271,3 +271,54 @@ TEST(NotFoundMsg, serde_test) {
 
   ASSERT_EQ(msg, decoded);
 }
+
+TEST(AddrMsg, serde_test) {
+  AddrMsg msg{{{{{0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0x00,
+                  0xff,
+                  0xff,
+                  0xc0,
+                  0x00,
+                  0x02,
+                  0x33},
+                 8333},
+                ServiceFlags::NODE_NETWORK,
+                1414012889}}};
+  WriteStream writer;
+
+  Serialize(writer, msg);
+
+  ASSERT_EQ(writer.hex(),
+            "01d91f4854010000000000000000000000000000000000ffffc0000233208d");
+
+  AddrMsg decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(msg, decoded);
+}
+
+TEST(SendCmpctMsg, serde_test) {
+  SendCmpctMsg msg{true, 0x121521};
+  WriteStream writer;
+
+  Serialize(writer, msg);
+
+  ASSERT_EQ(writer.hex(), "012115120000000000");
+
+  SendCmpctMsg decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(msg, decoded);
+}
