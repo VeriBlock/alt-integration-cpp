@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['txtype_953',['TxType',['../namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737',1,'altintegration']]]
+  ['txtype_959',['TxType',['../namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737',1,'altintegration']]]
 ];

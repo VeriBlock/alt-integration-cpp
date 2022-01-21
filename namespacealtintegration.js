@@ -60,6 +60,8 @@ var namespacealtintegration =
       [ "BlockHeader", "structaltintegration_1_1btc_1_1BlockHeader.html", "structaltintegration_1_1btc_1_1BlockHeader" ],
       [ "Block", "structaltintegration_1_1btc_1_1Block.html", "structaltintegration_1_1btc_1_1Block" ],
       [ "BlockLocator", "structaltintegration_1_1btc_1_1BlockLocator.html", "structaltintegration_1_1btc_1_1BlockLocator" ],
+      [ "AddrMsg", "structaltintegration_1_1btc_1_1AddrMsg.html", "structaltintegration_1_1btc_1_1AddrMsg" ],
+      [ "SendCmpctMsg", "structaltintegration_1_1btc_1_1SendCmpctMsg.html", "structaltintegration_1_1btc_1_1SendCmpctMsg" ],
       [ "InvMsg", "structaltintegration_1_1btc_1_1InvMsg.html", "structaltintegration_1_1btc_1_1InvMsg" ],
       [ "GetDataMsg", "structaltintegration_1_1btc_1_1GetDataMsg.html", "structaltintegration_1_1btc_1_1GetDataMsg" ],
       [ "GetBlocksMsg", "structaltintegration_1_1btc_1_1GetBlocksMsg.html", "structaltintegration_1_1btc_1_1GetBlocksMsg" ],
@@ -72,9 +74,11 @@ var namespacealtintegration =
       [ "FilterAddMsg", "structaltintegration_1_1btc_1_1FilterAddMsg.html", "structaltintegration_1_1btc_1_1FilterAddMsg" ],
       [ "FeeFilterMsg", "structaltintegration_1_1btc_1_1FeeFilterMsg.html", "structaltintegration_1_1btc_1_1FeeFilterMsg" ],
       [ "NotFoundMsg", "structaltintegration_1_1btc_1_1NotFoundMsg.html", "structaltintegration_1_1btc_1_1NotFoundMsg" ],
+      [ "BlockMsg", "structaltintegration_1_1btc_1_1BlockMsg.html", "structaltintegration_1_1btc_1_1BlockMsg" ],
       [ "NetAddr", "structaltintegration_1_1btc_1_1NetAddr.html", "structaltintegration_1_1btc_1_1NetAddr" ],
       [ "SubNet", "structaltintegration_1_1btc_1_1SubNet.html", "structaltintegration_1_1btc_1_1SubNet" ],
       [ "Service", "structaltintegration_1_1btc_1_1Service.html", "structaltintegration_1_1btc_1_1Service" ],
+      [ "Address", "structaltintegration_1_1btc_1_1Address.html", "structaltintegration_1_1btc_1_1Address" ],
       [ "BanEntry", "structaltintegration_1_1btc_1_1BanEntry.html", "structaltintegration_1_1btc_1_1BanEntry" ],
       [ "Inv", "structaltintegration_1_1btc_1_1Inv.html", "structaltintegration_1_1btc_1_1Inv" ],
       [ "BlockTransactionsRequest", "structaltintegration_1_1btc_1_1BlockTransactionsRequest.html", "structaltintegration_1_1btc_1_1BlockTransactionsRequest" ],
@@ -98,6 +102,14 @@ var namespacealtintegration =
       [ "Amount", "transaction_8hpp.html#adc17e223604aa594b7b2760178af1938", null ],
       [ "Script", "transaction_8hpp.html#a0cad516b7c3a9c4269c48b6e760b0218", null ],
       [ "ScriptWitness", "transaction_8hpp.html#a67f1a289a7d6b5b162b452b429fde6de", null ],
+      [ "ServiceFlags", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616", [
+        [ "NODE_NONE", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616a72390c34a26594855338880aa54e5a7b", null ],
+        [ "NODE_NETWORK", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616a584b7f32cea2fd4208c24bc003355f60", null ],
+        [ "NODE_GETUTXO", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616af708a63a1aaf2d4c96a80642f6503bf6", null ],
+        [ "NODE_BLOOM", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616a81d81bc1d9414b195574fcc08250246f", null ],
+        [ "NODE_WITNESS", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616ae1e92d7b581011585336b9358ce11b6b", null ],
+        [ "NODE_NETWORK_LIMITED", "net__entities_8hpp.html#aefcfaa5f0ee2841bed33d575c559f616a6fd7ea895276fdc3751568a800e9deef", null ]
+      ] ],
       [ "VarIntMode", "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851", [
         [ "DEFAULT", "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851a5b39c8b553c821e7cddc6da64b5bd2ee", null ],
         [ "NONNEGATIVE_SIGNED", "serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851ad0ca2eaff396dc2fe510e3283f4ce626", null ]

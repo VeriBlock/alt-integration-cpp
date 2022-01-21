@@ -1,4 +1,5 @@
 <map id="altintegration::btc::Service" name="altintegration::btc::Service">
 <area shape="rect" id="node1" title="A combination of a network address (CNetAddr) and a (TCP) port." alt="" coords="5,160,212,267"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1btc_1_1Address.html" title=" " alt="" coords="5,315,212,436"/>
 <area shape="rect" id="node2" href="$structaltintegration_1_1btc_1_1NetAddr.html" title="IP address (IPv6, or IPv4 using mapped IPv6 range." alt="" coords="5,5,212,112"/>
 </map>

@@ -5,6 +5,7 @@ var hierarchy =
       [ "altintegration::BlockIndex< Block >", "structaltintegration_1_1BlockIndex.html", null ]
     ] ],
     [ "altintegration::Address", "structaltintegration_1_1Address.html", null ],
+    [ "altintegration::btc::AddrMsg", "structaltintegration_1_1btc_1_1AddrMsg.html", null ],
     [ "altintegration::AltBlock", "structaltintegration_1_1AltBlock.html", null ],
     [ "altintegration::AltChainParams", "structaltintegration_1_1AltChainParams.html", [
       [ "altintegration::AltChainParamsRegTest", "structaltintegration_1_1AltChainParamsRegTest.html", null ]
@@ -38,6 +39,7 @@ var hierarchy =
       [ "altintegration::adaptors::BlockIteratorImpl< BlockT >", "structaltintegration_1_1adaptors_1_1BlockIteratorImpl.html", null ]
     ] ],
     [ "altintegration::btc::BlockLocator", "structaltintegration_1_1btc_1_1BlockLocator.html", null ],
+    [ "altintegration::btc::BlockMsg", "structaltintegration_1_1btc_1_1BlockMsg.html", null ],
     [ "altintegration::AltBlockTree::BlockPayloadMutator", "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html", null ],
     [ "altintegration::BlockReader", "structaltintegration_1_1BlockReader.html", [
       [ "altintegration::adaptors::BlockReaderImpl", "structaltintegration_1_1adaptors_1_1BlockReaderImpl.html", null ]
@@ -106,7 +108,9 @@ var hierarchy =
     [ "altintegration::MempoolResult", "namespacealtintegration.html#structaltintegration_1_1MempoolResult", null ],
     [ "altintegration::MerklePath", "structaltintegration_1_1MerklePath.html", null ],
     [ "altintegration::btc::NetAddr", "structaltintegration_1_1btc_1_1NetAddr.html", [
-      [ "altintegration::btc::Service", "structaltintegration_1_1btc_1_1Service.html", null ]
+      [ "altintegration::btc::Service", "structaltintegration_1_1btc_1_1Service.html", [
+        [ "altintegration::btc::Address", "structaltintegration_1_1btc_1_1Address.html", null ]
+      ] ]
     ] ],
     [ "altintegration::NetworkBytePair", "namespacealtintegration.html#structaltintegration_1_1NetworkBytePair", null ],
     [ "altintegration::btc::NotFoundMsg", "structaltintegration_1_1btc_1_1NotFoundMsg.html", null ],
@@ -128,6 +132,7 @@ var hierarchy =
     [ "altintegration::PublicationData", "structaltintegration_1_1PublicationData.html", null ],
     [ "altintegration::ReadStream", "structaltintegration_1_1ReadStream.html", null ],
     [ "altintegration::reverse_range< T >", "classaltintegration_1_1reverse__range.html", null ],
+    [ "altintegration::btc::SendCmpctMsg", "structaltintegration_1_1btc_1_1SendCmpctMsg.html", null ],
     [ "altintegration::cache::SmallLFRUCache< Key, Value, Size, TimeWindow, typename >", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", null ],
     [ "altintegration::adaptors::Storage", "structaltintegration_1_1adaptors_1_1Storage.html", [
       [ "altintegration::adaptors::InmemStorageImpl", "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html", null ],

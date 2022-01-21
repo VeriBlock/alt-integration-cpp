@@ -64,17 +64,17 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"consts_8hpp.html#af5b0d16525b7f744c295d649063697e6",
-"namespacealtintegration.html#a0113326bdf77bb9899f62b959aad5bcd",
-"namespacealtintegration.html#aaf0abba5a855a75708e6969449839f7f",
-"serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851",
-"structaltintegration_1_1BaseBlockTree.html#a2a9090e335380b4d3aad38a515d2905a",
-"structaltintegration_1_1BtcChainParams.html#a6d0f1b0259c0126fb4b6e583c989de64",
-"structaltintegration_1_1MemPool.html#ae10e6a8ad87fb1617cc6fc2a4ae7d15b",
-"structaltintegration_1_1VbkBlock.html#ac7996772f90f9d759c947073329ae586",
-"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92",
-"transaction_8hpp.html#a67f1a289a7d6b5b162b452b429fde6de"
+"addblock_8hpp_source.html",
+"description.html#autotoc_md2",
+"namespacealtintegration.html#a06cb80ee6874760ad1f64747f7949200",
+"namespacealtintegration.html#ab5bdd8cb04087c393c4ffd4db9f625df",
+"serialize_8hpp.html#a5b75cf84341f316c0ea54c1d26726851ad0ca2eaff396dc2fe510e3283f4ce626",
+"structaltintegration_1_1BaseBlockTree.html#a3335b8f6fb410c4380dd1c877a505677",
+"structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2",
+"structaltintegration_1_1MemPool.html#afebd9b2a2157e626466a20ccb129e8eb",
+"structaltintegration_1_1VbkBlock.html#ad0ac4b3654c49c6cb96251406f4bfc23",
+"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ac840060ec50bfce6095189249459c93b",
+"structaltintegration_1_1btc_1_1TxOut.html#a20bfa3aec061a98dbe16babfb0738e63"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -12,10 +12,10 @@
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
-<g id="a_node1"><a xlink:href="structaltintegration_1_1btc_1_1FilterAddMsg.html" target="_top" xlink:title=" ">
+<g id="a_node1"><a xlink:href="structaltintegration_1_1btc_1_1deserialize__type.html" target="_top" xlink:title="Dummy data type to identify deserializing constructors.">
 <polygon fill="white" stroke="black" points="0,-0.5 0,-30.5 90,-30.5 90,-0.5 0,-0.5"/>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::btc</text>
-<text text-anchor="middle" x="45" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">::FilterAddMsg</text>
+<text text-anchor="middle" x="45" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">::deserialize_type</text>
 </a>
 </g>
 </g>
