@@ -14,6 +14,45 @@ namespace altintegration {
 
 namespace btc {
 
+struct AddrMsg {
+  std::vector<Address> vAddr;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->vAddr);
+  }
+
+  friend bool operator==(const AddrMsg& a, const AddrMsg& b) {
+    return a.vAddr == b.vAddr;
+  }
+  friend bool operator!=(const AddrMsg& a, const AddrMsg& b) {
+    return !(a == b);
+  }
+};
+
+struct SendCmpctMsg {
+  bool fAnnounceUsingCMPCTBLOCK;
+  uint64_t nCMPCTBLOCKVersion;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->fAnnounceUsingCMPCTBLOCK);
+    READWRITE(this->nCMPCTBLOCKVersion);
+  }
+
+  friend bool operator==(const SendCmpctMsg& a, const SendCmpctMsg& b) {
+    return a.fAnnounceUsingCMPCTBLOCK == b.fAnnounceUsingCMPCTBLOCK &&
+           a.nCMPCTBLOCKVersion == b.nCMPCTBLOCKVersion;
+  }
+  friend bool operator!=(const SendCmpctMsg& a, const SendCmpctMsg& b) {
+    return !(a == b);
+  }
+};
+
 struct InvMsg {
   std::vector<Inv> vInv;
 
@@ -226,6 +265,24 @@ struct NotFoundMsg {
     return a.vInv == b.vInv;
   }
   friend bool operator!=(const NotFoundMsg& a, const NotFoundMsg& b) {
+    return !(a == b);
+  }
+};
+
+struct BlockMsg {
+  Block block;
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream& s, Operation ser_action) {
+    READWRITE(this->block);
+  }
+
+  friend bool operator==(const BlockMsg& a, const BlockMsg& b) {
+    return a.block == b.block;
+  }
+  friend bool operator!=(const BlockMsg& a, const BlockMsg& b) {
     return !(a == b);
   }
 };

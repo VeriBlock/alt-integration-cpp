@@ -193,3 +193,38 @@ TEST(BloomFilter, serde_test) {
 
   ASSERT_EQ(filter, decoded);
 }
+
+TEST(Address, serde_test) {
+  btc::Address address{{{0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0x00,
+                         0xff,
+                         0xff,
+                         0xc0,
+                         0x00,
+                         0x02,
+                         0x33},
+                        8333},
+                       ServiceFlags::NODE_NETWORK,
+                       1414012889};
+  WriteStream writer;
+
+  Serialize(writer, address);
+
+  ASSERT_EQ(writer.hex(),
+            "d91f4854010000000000000000000000000000000000ffffc0000233208d");
+
+  btc::Address decoded{};
+  ReadStream reader{writer.data()};
+
+  Unserialize(reader, decoded);
+
+  ASSERT_EQ(address, decoded);
+}
