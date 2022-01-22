@@ -36,6 +36,7 @@ project(${LIB_NAME} LANGUAGES C CXX)
 
 include(FetchContent)
 include(cmake/backward.cmake)
+include(cmake/protobuf.cmake)
 include(cmake/GitVersion.cmake)
 include(GNUInstallDirs)
 include(CheckCCompilerFlag)
@@ -46,7 +47,6 @@ include(cmake/asan.cmake)
 include(cmake/tsan.cmake)
 include(cmake/ubsan.cmake)
 include(cmake/functions.cmake)
-include(cmake/protobuf.cmake)
 
 ProcessorCount(N_PROCESSORS)
 
