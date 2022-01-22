@@ -35,6 +35,7 @@
 #endif
 
 #define VBK_ASSERT_MSG(x, ...)                                               \
+  /* GCOVR_EXCL_START */                                                     \
   if (!VBK_LIKELY((x))) {                                                    \
     auto msg = fmt::format("Assertion failed at {}:{} inside {}:\n{}\n{}\n", \
                            __FILE__,                                         \
@@ -45,7 +46,7 @@
     /* print to log */ VBK_LOG_CRITICAL(msg);                                \
     /* print to stderr */ fmt::fprintf(stderr, msg);                         \
     /* die */ std::terminate();                                              \
-  }
+  } /* GCOVR_EXCL_STOP */
 
 #define VBK_ASSERT(x) VBK_ASSERT_MSG(x, " ");
 

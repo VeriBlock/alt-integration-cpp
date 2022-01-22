@@ -86,12 +86,13 @@ LogLevel StringToLevel(const std::string&);
 #else
 
 #define VBK_LOG(lvl, format, ...)                             \
+  /* GCOVR_EXCL_START */                                      \
   do {                                                        \
     auto& logger = altintegration::GetLogger();               \
     if (logger.level <= lvl) {                                \
       logger.log(lvl, VBK_LOG_FORMAT(format, ##__VA_ARGS__)); \
     }                                                         \
-  } while (false)
+  } while (false) /* GCOVR_EXCL_STOP */
 #endif
 
 // clang-format off
@@ -122,6 +123,7 @@ LogLevel StringToLevel(const std::string&);
 
 #endif  // VERIBLOCK_POP_LOGGER_DISABLED
 
+/* GCOVR_EXCL_START */
 template <typename S, typename... Args>
 inline std::string format(const S& format_str, Args&&... args) {
   try {
@@ -131,6 +133,7 @@ inline std::string format(const S& format_str, Args&&... args) {
   }
   return "";
 }
+/* GCOVR_EXCL_STOP */
 
 }  // namespace altintegration
 

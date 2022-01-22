@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0074 NEW)
+set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 
 if(NOT CMAKE_BUILD_TYPE)
     # if type is not provided, use release
@@ -33,10 +34,8 @@ endif()
 set(LIB_NAME veriblock-pop-cpp)
 project(${LIB_NAME} LANGUAGES C CXX)
 
-
 include(FetchContent)
 include(cmake/backward.cmake)
-include(cmake/protobuf.cmake)
 include(cmake/GitVersion.cmake)
 include(GNUInstallDirs)
 include(CheckCCompilerFlag)
@@ -47,6 +46,7 @@ include(cmake/asan.cmake)
 include(cmake/tsan.cmake)
 include(cmake/ubsan.cmake)
 include(cmake/functions.cmake)
+include(cmake/protobuf.cmake)
 
 ProcessorCount(N_PROCESSORS)
 
@@ -58,7 +58,6 @@ has_extrinsic("
     int main(){return 0;}
 " VBK_HAS_RESTRICT)
 
-set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
