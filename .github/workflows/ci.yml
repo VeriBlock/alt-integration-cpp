@@ -18,13 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         flags: [
-          "-DCLANG_TIDY=ON",
+          "-DCLANG_TIDY=ON -DCMAKE_BUILD_TYPE=Debug",
           # build fuzzers and run 1 iteration (with fixed corpus) during ctest
-          "-DASAN=ON -DFUZZING=ON",
-          "-DUBSAN=ON -DFUZZING=ON",
-          "-DVBK_NO_THREADS=ON",
-          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
-          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          "-DASAN=ON -DFUZZING=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DUBSAN=ON -DFUZZING=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DVBK_NO_THREADS=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DCMAKE_BUILD_TYPE=Debug",
           # release build with all dependencies with rocksdb
           "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
           # release build with all dependencies with leveldb

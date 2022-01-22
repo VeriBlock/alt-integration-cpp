@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0074 NEW)
 
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
+    # if type is not provided, use release
+    set(CMAKE_BUILD_TYPE "Release")
+elseif(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
