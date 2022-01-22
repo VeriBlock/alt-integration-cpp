@@ -43,7 +43,7 @@ include(cmake/asan.cmake)
 include(cmake/tsan.cmake)
 include(cmake/ubsan.cmake)
 include(cmake/functions.cmake)
-include(cmake/grpc.cmake)
+include(cmake/protobuf.cmake)
 
 ProcessorCount(N_PROCESSORS)
 
