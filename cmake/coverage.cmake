@@ -1,13 +1,15 @@
 set(CMAKE_BUILD_TYPE Debug)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Og")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -O0")
 
 include(${CMAKE_CURRENT_LIST_DIR}/third_party/CodeCoverage.cmake)
 
 append_coverage_compiler_flags()
 
 set(COVERAGE_EXCLUDES
+        '${PROJECT_BINARY_DIR}/_deps/*
+        '${PROJECT_BINARY_DIR}/gens/*
         '${CMAKE_SOURCE_DIR}/deps/*'
         '${CMAKE_SOURCE_DIR}/googletest-src/*'
         '${CMAKE_SOURCE_DIR}/googletest-build/*'
