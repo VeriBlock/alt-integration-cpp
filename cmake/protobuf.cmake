@@ -10,6 +10,7 @@ set(protobuf_BUILD_LIBPROTOC OFF)
 set(protobuf_BUILD_CONFORMANCE OFF)
 set(protobuf_BUILD_EXAMPLES OFF)
 if(CMAKE_CROSSCOMPILING)
+    # when cross-compiling do not build protoc
     set(protobuf_BUILD_PROTOC_BINARIES OFF)
 else()
     set(protobuf_BUILD_PROTOC_BINARIES ON)
@@ -22,7 +23,7 @@ FetchContent_Declare(
     protobuf
     GIT_REPOSITORY https://github.com/google/protobuf.git
     GIT_TAG        v3.19.3
-    GIT_PROGRESS   TRUE
+    GIT_PROGRESS   FALSE
     GIT_SHALLOW    TRUE
     USES_TERMINAL_DOWNLOAD TRUE
     GIT_SUBMODULES_RECURSE FALSE
@@ -40,6 +41,9 @@ endif()
 if(CMAKE_CROSSCOMPILING)
     find_program(_PROTOBUF_PROTOC_EXECUTABLE protoc REQUIRED)
 else()
+    if(NOT TARGET protoc)
+        message(FATAL_ERROR "Can not find target protoc")
+    endif()
     set(_PROTOBUF_PROTOC_EXECUTABLE $<TARGET_FILE:protoc>)
 endif()
 

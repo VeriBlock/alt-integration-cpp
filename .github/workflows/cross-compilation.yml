@@ -44,7 +44,7 @@ jobs:
           restore-keys: |
             mingw-ccache-
       - name: install build requirements
-        run: sudo apt-get install build-essential protobuf-compiler libtool autotools-dev automake pkg-config bsdmainutils curl git g++-mingw-w64-x86-64 libz-mingw-w64-dev ccache
+        run: sudo apt-get install build-essential libtool autotools-dev automake pkg-config bsdmainutils curl git g++-mingw-w64-x86-64 libz-mingw-w64-dev ccache
       - uses: actions/checkout@v2
         with:
           repository: 'protocolbuffers/protobuf'
@@ -191,7 +191,7 @@ jobs:
       - name: run apt update
         run: sudo apt-get update
       - name: install tools
-        run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5
+        run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5 ccache
       - uses: actions/checkout@v2
         with:
           repository: 'protocolbuffers/protobuf'
