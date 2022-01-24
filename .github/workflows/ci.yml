@@ -74,7 +74,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: sudo cmake --build build -- -j2 install
+        run: sudo cmake --install build --parallel 2
       - name: test
         run: cd build && ctest
 
@@ -134,7 +134,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --build build -- -j2 install
+        run: cmake --install build --parallel 2
       - name: test
         run: cd build && ctest
 
@@ -175,7 +175,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild -DCOVERAGE=ON
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build --parallel 1
       - name: test
         run: cmake --build build --target ctest_coverage
       - name: collect coverage
@@ -280,6 +280,6 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build --parallel 2
       - name: test
         run: cd build && ctest
