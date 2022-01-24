@@ -189,11 +189,10 @@ jobs:
       - name: install host protobuf
         run: |
           git clone -b v3.19.3 https://github.com/protocolbuffers/protobuf
-          cd protobuf
-          mkdir build
-          cd build
+          mkdir /tmp/protobuild
           # run cmake
-          cmake ../cmake \
+          cmake ../cmake -B/tmp/protobuild \
+            -DCMAKE_BUILD_TYPE=Release \
             -Dprotobuf_WITH_ZLIB_DEFAULT=OFF \
             -Dprotobuf_BUILD_TESTS=OFF \
             -Dprotobuf_BUILD_LIBPROTOC=ON \
@@ -202,9 +201,9 @@ jobs:
             -Dprotobuf_BUILD_PROTOC_BINARIES=ON \
             -Dprotobuf_DISABLE_RTTI=ON
           # build
-          cmake --build $pwd -- -j2
+          cmake --build /tmp/protobuild -- -j2
           # install
-          sudo cmake --install $pwd
+          sudo cmake --install /tmp/protobuild
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
