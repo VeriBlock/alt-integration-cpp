@@ -47,7 +47,7 @@ jobs:
         run: sudo apt-get install build-essential protobuf-compiler libtool autotools-dev automake pkg-config bsdmainutils curl git g++-mingw-w64-x86-64 libz-mingw-w64-dev ccache
       - uses: actions/checkout@v2
         with:
-          repository: 'https://github.com/protocolbuffers/protobuf'
+          repository: 'protocolbuffers/protobuf'
           ref: 'v3.19.3'
           path: 'protobuf'
       - name: install host protobuf
@@ -191,7 +191,7 @@ jobs:
         run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5
       - uses: actions/checkout@v2
         with:
-          repository: 'https://github.com/protocolbuffers/protobuf'
+          repository: 'protocolbuffers/protobuf'
           ref: 'v3.19.3'
           path: 'protobuf'
       - name: install host protobuf
