@@ -74,7 +74,9 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: sudo cmake --install build --parallel 2
+        run: cmake --build build --parallel 2
+      - name: install
+        run: sudo cmake --install build
       - name: test
         run: cd build && ctest
 
@@ -134,7 +136,9 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --install build --parallel 2
+        run: cmake --build build --parallel 2
+      - name: install
+        run: sudo cmake --install build
       - name: test
         run: cd build && ctest
 
