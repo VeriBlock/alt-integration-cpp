@@ -115,7 +115,7 @@ jobs:
       - name: update apt-get
         run: sudo apt-get update
       - name: install build requirements
-        run: sudo apt-get install libboost-python-dev ccache sud
+        run: sudo apt-get install libboost-python-dev ccache sudo
       - name: install new cmake
         run: |
           sudo apt-get install -y python3 python3-pip
