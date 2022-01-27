@@ -139,7 +139,7 @@ jobs:
       - name: build
         run: cmake --build build --parallel 2
       - name: install
-        run: cmake --install build
+        run: sudo cmake --install build
       - name: test
         run: cd build && ctest
 
