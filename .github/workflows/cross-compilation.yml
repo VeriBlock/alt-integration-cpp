@@ -11,49 +11,74 @@ on:
       - trunk/*
       - release/*
 
-# jobs:
-  # TODO(warchant): fix (fais on cmake step)
-  # ubuntu_x86_64-w64-mingw32:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       flags: [
-  #         "-DCMAKE_BUILD_TYPE=Release \
-  #         -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
-  #         -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ \
-  #         -DCMAKE_SYSTEM_NAME=Windows -DTESTING=OFF \
-  #         -DCMAKE_SYSTEM_PROCESSOR=x86_64 \
-  #         -DFIND_ZLIB=OFF"
-  #       ]
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #       name: checkout
-  #       with:
-  #         submodules: recursive
-  #         clean: true
-  #     - name: Prepare ccache timestamp
-  #       id: cache_timestamp
-  #       run: |
-  #         current_date=`date +%Y%m%d_%H%M%SZ`
-  #         echo "::set-output name=timestamp::${current_date}"
-  #     - name: ccache cache files
-  #       uses: actions/cache@v1.1.0
-  #       with:
-  #         path: ~/.ccache
-  #         key: mingw-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
-  #         restore-keys: |
-  #           mingw-ccache-
-  #     - name: install build requirements
-  #       run: sudo apt-get install build-essential libtool autotools-dev automake pkg-config bsdmainutils curl git g++-mingw-w64-x86-64 libz-mingw-w64-dev ccache
-  #     - name: set the default mingw32 g++ compiler option to posix
-  #       run: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
-  #     - name: cmake
-  #       run: cmake . -Bbuild ${{ matrix.flags }}
-  #     - name: build
-  #       run: cmake --build build -- -j2
+jobs:
+  ubuntu_x86_64-w64-mingw32:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flags: [
+          "-DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+          -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ \
+          -DCMAKE_SYSTEM_NAME=Windows -DTESTING=OFF \
+          -DCMAKE_SYSTEM_PROCESSOR=x86_64 \
+          -DFIND_ZLIB=OFF"
+        ]
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: recursive
+          clean: true
+      - name: Prepare ccache timestamp
+        id: cache_timestamp
+        run: |
+          current_date=`date +%Y%m%d_%H%M%SZ`
+          echo "::set-output name=timestamp::${current_date}"
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: mingw-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            mingw-ccache-
+      - name: install build requirements
+        run: sudo apt-get install build-essential libtool autotools-dev automake pkg-config bsdmainutils curl git g++-mingw-w64-x86-64 libz-mingw-w64-dev ccache
+      - uses: actions/checkout@v2
+        with:
+          repository: 'protocolbuffers/protobuf'
+          ref: 'v3.19.3'
+          path: 'protobuf'
+      - name: install host protobuf
+        env:
+          CC: gcc
+          CXX: g++
+        run: |
+          mkdir /tmp/protobuild
+          # run cmake
+          cmake protobuf/cmake -B/tmp/protobuild \
+            -DCMAKE_BUILD_TYPE=Release \
+            -Dprotobuf_WITH_ZLIB_DEFAULT=OFF \
+            -Dprotobuf_BUILD_TESTS=OFF \
+            -Dprotobuf_BUILD_LIBPROTOC=OFF \
+            -Dprotobuf_BUILD_EXAMPLES=OFF \
+            -Dprotobuf_BUILD_CONFORMANCE=OFF \
+            -Dprotobuf_BUILD_PROTOC_BINARIES=ON \
+            -Dprotobuf_DISABLE_RTTI=ON
+          # build
+          cmake --build /tmp/protobuild --parallel 2
+          # install
+          sudo cmake --install /tmp/protobuild
+      - name: set the default mingw32 g++ compiler option to posix
+        run: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+      - name: cmake
+        run: cmake . -Bbuild ${{ matrix.flags }}
+      - name: build
+        run: cmake --build build -- -j2
 
-  # TODO(warchant): fix ubuntu->macos crosscompilation. Fails on "cmake" step.
+  # TODO(warchant): fix build. fails during linking:
+  # ld: warning: ignoring file ../../../_deps/protobuf-build/libprotobuf.a, file was built for archive which is not the architecture being linked (x86_64): ../../../_deps/protobuf-build/libprotobuf.a
   # ubuntu_x86_64-apple-darwin16:
   #   runs-on: ubuntu-latest
   #   strategy:
@@ -168,7 +193,32 @@ on:
   #     - name: run apt update
   #       run: sudo apt-get update
   #     - name: install tools
-  #       run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5
+  #       run: sudo apt-get install curl librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python3-setuptools libtinfo5 ccache
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: 'protocolbuffers/protobuf'
+  #         ref: 'v3.19.3'
+  #         path: 'protobuf'
+  #     - name: install host protobuf
+  #       env:
+  #         CC: gcc
+  #         CXX: g++
+  #       run: |
+  #         mkdir /tmp/protobuild
+  #         # run cmake
+  #         cmake protobuf/cmake -B/tmp/protobuild \
+  #           -DCMAKE_BUILD_TYPE=Release \
+  #           -Dprotobuf_WITH_ZLIB_DEFAULT=OFF \
+  #           -Dprotobuf_BUILD_TESTS=OFF \
+  #           -Dprotobuf_BUILD_LIBPROTOC=OFF \
+  #           -Dprotobuf_BUILD_EXAMPLES=OFF \
+  #           -Dprotobuf_BUILD_CONFORMANCE=OFF \
+  #           -Dprotobuf_BUILD_PROTOC_BINARIES=ON \
+  #           -Dprotobuf_DISABLE_RTTI=ON
+  #         # build
+  #         cmake --build /tmp/protobuild --parallel 2
+  #         # install
+  #         sudo cmake --install /tmp/protobuild
   #     - name: cmake
   #       run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
   #     - name: build

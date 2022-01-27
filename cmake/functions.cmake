@@ -6,6 +6,18 @@ function(vbk_define def)
     endif()
 endfunction()
 
+
+function(enable_werror target)
+    if(WERROR)
+        if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
+            target_compile_options(${target} PRIVATE -Werror)
+        elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+            target_compile_options(${target} PRIVATE /WX)
+        endif()
+    endif()
+endfunction()
+
+
 function(disable_clang_tidy target)
     set_target_properties(${target} PROPERTIES
             C_CLANG_TIDY ""
@@ -53,6 +65,7 @@ function(addtest test_name)
     enable_tsan_on_target(${test_name})
     enable_ubsan_on_target(${test_name})
     enable_stacktrace_on_target(${test_name})
+    enable_werror(${test_name})
 endfunction()
 
 function(addtest_part test_name)
@@ -163,3 +176,5 @@ function(has_extrinsic code OUT)
         vbk_define(${OUT})
     endif()
 endfunction()
+
+

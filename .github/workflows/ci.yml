@@ -18,13 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         flags: [
-          "-DCLANG_TIDY=ON",
+          "-DCLANG_TIDY=ON -DCMAKE_BUILD_TYPE=Debug",
           # build fuzzers and run 1 iteration (with fixed corpus) during ctest
-          "-DASAN=ON -DFUZZING=ON",
-          "-DUBSAN=ON -DFUZZING=ON",
-          "-DVBK_NO_THREADS=ON",
-          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
-          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON",
+          "-DASAN=ON -DFUZZING=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DUBSAN=ON -DFUZZING=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DVBK_NO_THREADS=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DASAN=ON -DWITH_LEVELDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DCMAKE_BUILD_TYPE=Debug",
+          "-DASAN=ON -DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DCMAKE_BUILD_TYPE=Debug",
           # release build with all dependencies with rocksdb
           "-DWITH_ROCKSDB=ON -DWITH_C_WRAPPER=ON -DTESTING_GO=ON -DWITH_PYPOPTOOLS=ON -DCMAKE_BUILD_TYPE=Release",
           # release build with all dependencies with leveldb
@@ -52,10 +52,9 @@ jobs:
       - name: update apt-get
         run: sudo apt-get update
       - name: install build requirements
-        run: sudo apt-get install clang-tidy libboost-python-dev
+        run: sudo apt-get install -y python3 python3-pip clang-tidy libboost-python-dev
       - name: install new cmake
         run: |
-          sudo apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -74,13 +73,14 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: sudo cmake --build build -- -j2 install
+        run: cmake --build build --parallel 2
+      - name: install
+        run: sudo cmake --install build
       - name: test
-        run: cd build && ctest
+        run: cd build && ctest -j2
 
   linux-gcc:
     runs-on: ubuntu-latest
-    container: veriblock/alt-integration-cpp-dev:fix-ci-apple-macos
     strategy:
       fail-fast: false
       matrix:
@@ -112,10 +112,12 @@ jobs:
           repository: VeriBlock/fuzz-corpus
           path: ${{ github.workspace }}/fuzz-corpus
       - name: update apt-get
-        run: apt-get update
+        run: sudo apt-get update
+      - name: install build requirements
+        run: sudo apt-get install libboost-python-dev ccache sudo
       - name: install new cmake
         run: |
-          apt-get install -y python3 python3-pip
+          sudo apt-get install -y python3 python3-pip
           pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -134,9 +136,11 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
-        run: cmake --build build -- -j2 install
+        run: cmake --build build --parallel 2
+      - name: install
+        run: sudo cmake --install build
       - name: test
-        run: cd build && ctest
+        run: cd build && ctest -j2
 
   coverage:
     runs-on: ubuntu-latest
@@ -175,7 +179,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild -DCOVERAGE=ON
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build --parallel 2
       - name: test
         run: cmake --build build --target ctest_coverage
       - name: collect coverage
@@ -237,7 +241,7 @@ jobs:
       - name: cmake
         run: |
           $env:Path += ";c:\buildcache"
-          cmake . -Bbuild -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
+          cmake . -Bbuild -A x64 -Dprotobuf_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE
       - name: build
         run: |
           $env:Path += ";c:\buildcache"
@@ -280,6 +284,6 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
-        run: cmake --build build -- -j2
+        run: cmake --build build --parallel 2
       - name: test
-        run: cd build && ctest
+        run: cd build && ctest -j2

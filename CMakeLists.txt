@@ -1,9 +1,20 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0074 NEW)
+set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 
 if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+if(MSVC)
+    if(SHARED)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    endif()
 endif()
 
 
@@ -30,7 +41,6 @@ endif()
 set(LIB_NAME veriblock-pop-cpp)
 project(${LIB_NAME} LANGUAGES C CXX)
 
-
 include(FetchContent)
 include(cmake/backward.cmake)
 include(cmake/GitVersion.cmake)
@@ -43,7 +53,7 @@ include(cmake/asan.cmake)
 include(cmake/tsan.cmake)
 include(cmake/ubsan.cmake)
 include(cmake/functions.cmake)
-include(cmake/grpc.cmake)
+include(cmake/protobuf.cmake)
 
 ProcessorCount(N_PROCESSORS)
 
@@ -55,7 +65,6 @@ has_extrinsic("
     int main(){return 0;}
 " VBK_HAS_RESTRICT)
 
-set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -111,9 +120,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(Clang)$")
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
-    if(WERROR)
-        add_compile_options(-Werror)
-    endif()
     # enable those flags
     add_flag(-Wall)
     add_flag(-Wextra)
@@ -141,10 +147,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
         add_flag(-g)
     endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    if(WERROR)
-        add_compile_options(/WX)                      # treats all compiler warnings as errors.
-    endif()
-
     # using Visual Studio C++
     add_flag(/W4)                      # displays level 1, level 2, and level 3 warnings, and all level 4 (informational) warnings that are not turned off by default.
     add_flag(/permissive-)             # enforces standards conformance
