@@ -115,10 +115,10 @@ function(target_add_protobuf target)
             target_compile_options(${target} PRIVATE
                 -Wno-error
             )
-        # elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        #     target_compile_options(${target} PRIVATE
-        #         /WX:NO
-        #     )
+        elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+            target_compile_options(${target} PRIVATE
+                /WX:NO
+            )
         endif()
     endforeach()
 endfunction()

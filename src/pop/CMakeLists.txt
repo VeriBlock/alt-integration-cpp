@@ -175,3 +175,4 @@ install(FILES "${configured_pc}"
 enable_asan_on_target(${LIB_NAME})
 enable_tsan_on_target(${LIB_NAME})
 enable_ubsan_on_target(${LIB_NAME})
+enable_werror(${LIB_NAME})
