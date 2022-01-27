@@ -1,5 +1,14 @@
 var NAVTREEINDEX6 =
 {
+"structaltintegration_1_1BtcBlock.html#ae1482f4235c730c232f20c5780919431":[5,0,0,32,22],
+"structaltintegration_1_1BtcBlock.html#aec1b2c95ee60497ef47479fc58d64fff":[5,0,0,32,28],
+"structaltintegration_1_1BtcBlock.html#af4620a8a4fc95894535e1adb7d447a25":[5,0,0,32,25],
+"structaltintegration_1_1BtcChainParams.html":[5,0,0,13],
+"structaltintegration_1_1BtcChainParams.html#a48bd355f860d1d36b56892425a54c24c":[5,0,0,13,8],
+"structaltintegration_1_1BtcChainParams.html#a4e7db18ced976be2393b3e356981d4fb":[5,0,0,13,9],
+"structaltintegration_1_1BtcChainParams.html#a60d3e85978ed006cffbec66fad1c48c7":[5,0,0,13,2],
+"structaltintegration_1_1BtcChainParams.html#a6d0f1b0259c0126fb4b6e583c989de64":[5,0,0,13,3],
+"structaltintegration_1_1BtcChainParams.html#a781fc64922c2dd57baa3a481165f5b09":[5,0,0,13,4],
 "structaltintegration_1_1BtcChainParams.html#a7d4df222e25031954c6b0f5cba89abc2":[5,0,0,13,10],
 "structaltintegration_1_1BtcChainParams.html#a851fcab27434b19b4ad2ec71f4ec1de8":[5,0,0,13,5],
 "structaltintegration_1_1BtcChainParams.html#aa65ed2dcd6bec96c88ef07a36f9569c9":[5,0,0,13,1],
@@ -240,14 +249,5 @@ var NAVTREEINDEX6 =
 "structaltintegration_1_1MemPool.html#a857ee8d33550808b2034da04e4c1f175":[5,0,0,55,16],
 "structaltintegration_1_1MemPool.html#a87af523ce69a470b4470f76920724dfa":[5,0,0,55,23],
 "structaltintegration_1_1MemPool.html#a895eb27cc1690b9236d5edc906d69d26":[5,0,0,55,28],
-"structaltintegration_1_1MemPool.html#aa5c209a6b0dc722d3b844152cea835d6":[5,0,0,55,13],
-"structaltintegration_1_1MemPool.html#ab228292007c4d567a3e8800924069c99":[5,0,0,55,32],
-"structaltintegration_1_1MemPool.html#ab5afddd8678e2476c45644149c1ebc2f":[5,0,0,55,3],
-"structaltintegration_1_1MemPool.html#ab965446db0fde49fabfa2d4530256e1a":[5,0,0,55,21],
-"structaltintegration_1_1MemPool.html#abadad2120fbd969b2b2e5e6fa9c4239e":[5,0,0,55,14],
-"structaltintegration_1_1MemPool.html#abe66b62fdd1c46309150e0f8c8702936":[5,0,0,55,12],
-"structaltintegration_1_1MemPool.html#ac12ccabcc8eb02e59adfaa4d21e19d1b":[5,0,0,55,22],
-"structaltintegration_1_1MemPool.html#adb8a8c4c2bb8d4efd8fa1a3c8646baeb":[5,0,0,55,5],
-"structaltintegration_1_1MemPool.html#ae10e6a8ad87fb1617cc6fc2a4ae7d15b":[5,0,0,55,18],
-"structaltintegration_1_1MemPool.html#aee936f653e65f97996c2c91a14a7efa8":[5,0,0,55,29]
+"structaltintegration_1_1MemPool.html#aa5c209a6b0dc722d3b844152cea835d6":[5,0,0,55,13]
 };
