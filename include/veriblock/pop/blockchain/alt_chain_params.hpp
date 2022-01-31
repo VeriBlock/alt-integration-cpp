@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_ALT_CHAIN_PARAMS_HPP_
 
+#include <limits>
 #include <string>
 #include <vector>
 #include <veriblock/pop/blockchain/block_index.hpp>
@@ -259,7 +260,7 @@ struct AltChainParams {
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();
 
-  uint32_t mMaxReorgDistance = 50000;              // blocks
+  uint32_t mMaxReorgDistance = std::numeric_limits<int32_t>::max(); // blocks
   uint32_t mMaxAltchainFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
