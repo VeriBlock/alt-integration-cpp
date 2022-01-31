@@ -1,14 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a71fb00cdf8e5c592342d7c7743d2ee81":[5,0,0,0,10,6],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a7b9712cb3f7330423a02daafe276e927":[5,0,0,0,10,3],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a828e46b5ec47c9abd1949d5575dead87":[5,0,0,0,10,5],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#a884f77cb1d89c3c26143b2b71e952bd6":[5,0,0,0,10,4],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#ad28b062f55ab7134b96ac04c48a7f718":[5,0,0,0,10,7],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#ae132a312ea7c41b4b58691517dba957c":[5,0,0,0,10,2],
-"structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html#afe8cb837363d5c1b54a475e910d6316d":[5,0,0,0,10,0],
-"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html":[5,0,0,0,11],
-"structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a4ef718ad6110fd17783ca5a725d39e92":[5,0,0,0,11,1],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#a80d36319071b844f6fca6f0c668c6037":[5,0,0,0,11,0],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ac840060ec50bfce6095189249459c93b":[5,0,0,0,11,3],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html#ad24f64fc72379ac6ad3d26e11e3e475b":[5,0,0,0,11,2],
@@ -249,5 +240,14 @@ var NAVTREEINDEX9 =
 "structaltintegration_1_1btc_1_1TxIn.html#a25cd004813907ac2bea473b68c3bb0a9":[5,0,0,1,39,3],
 "structaltintegration_1_1btc_1_1TxIn.html#a5e978aec6d14c8df92733d3d0cd3650c":[5,0,0,1,39,2],
 "structaltintegration_1_1btc_1_1TxIn.html#a6fa7531911b9ecf2af12459be0243f1d":[5,0,0,1,39,4],
-"structaltintegration_1_1btc_1_1TxIn.html#a890882f8d854e86f16eedb4744da0502":[5,0,0,1,39,1]
+"structaltintegration_1_1btc_1_1TxIn.html#a890882f8d854e86f16eedb4744da0502":[5,0,0,1,39,1],
+"structaltintegration_1_1btc_1_1TxIn.html#a8c0ad8a1d0945280ba70ecf19b13862a":[5,0,0,1,39,5],
+"structaltintegration_1_1btc_1_1TxIn.html#aac6547d5b1196eb1334b97e396520e4a":[5,0,0,1,39,6],
+"structaltintegration_1_1btc_1_1TxIn.html#ad418f9edae7930f043ccdbcc2424e15b":[5,0,0,1,39,0],
+"structaltintegration_1_1btc_1_1TxMsg.html":[5,0,0,1,10],
+"structaltintegration_1_1btc_1_1TxMsg.html#a0ffde011aad1be40f4521818c98098ab":[5,0,0,1,10,1],
+"structaltintegration_1_1btc_1_1TxMsg.html#a3dd4d36e0813ebc9d9a3f668a1d8ffd2":[5,0,0,1,10,3],
+"structaltintegration_1_1btc_1_1TxMsg.html#a9808f88078e9d236a8e2a614f4241c3e":[5,0,0,1,10,4],
+"structaltintegration_1_1btc_1_1TxMsg.html#adae3f7e89b7efe4bb47f843b6c123d42":[5,0,0,1,10,2],
+"structaltintegration_1_1btc_1_1TxMsg.html#af5ad77022586a2592b9c2c4551c6c53e":[5,0,0,1,10,0]
 };
