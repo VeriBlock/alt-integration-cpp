@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltChainParams
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00278">278</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00279">279</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::AltChainParamsRegTest:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -188,7 +188,7 @@ int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> = 0</td></t
 <tr class="memitem:a00d8084e4d4358d60d79546d5e58501e inherit pub_attribs_structaltintegration_1_1AltChainParams"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PopPayoutsParams.html">PopPayoutsParams</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mPopPayoutsParams</b></td></tr>
 <tr class="separator:a00d8084e4d4358d60d79546d5e58501e inherit pub_attribs_structaltintegration_1_1AltChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6084de9a2ba5e8b34e8e24ef7b0ef76 inherit pub_attribs_structaltintegration_1_1AltChainParams"><td class="memItemLeft" align="right" valign="top"><a id="ae6084de9a2ba5e8b34e8e24ef7b0ef76"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxReorgDistance</b> = 50000</td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxReorgDistance</b> = std::numeric_limits&lt;int32_t&gt;::max()</td></tr>
 <tr class="separator:ae6084de9a2ba5e8b34e8e24ef7b0ef76 inherit pub_attribs_structaltintegration_1_1AltChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac024008469dc4d2b96c9926f7c2603a8 inherit pub_attribs_structaltintegration_1_1AltChainParams"><td class="memItemLeft" align="right" valign="top"><a id="ac024008469dc4d2b96c9926f7c2603a8"></a>
 uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxAltchainFutureBlockTime</b> = 10 * 60</td></tr>
@@ -278,11 +278,11 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 
 <p>Implements <a class="el" href="structaltintegration_1_1AltChainParams.html#af059cc8b6584a95b9ee270fb5f25b370">altintegration::AltChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00298">298</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                                                                        {</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    AltBlock block;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state);</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00299">299</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                                                                        {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    AltBlock block;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">return</span> DeserializeFromRaw&lt;AltBlock&gt;(bytes, block, state);</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -312,15 +312,15 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 
 <p>Implements <a class="el" href="structaltintegration_1_1AltChainParams.html#a6189f302f690ca4c6ca8490bed3ef3bf">altintegration::AltChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00282">282</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                                                       {</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    AltBlock b;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    b.hash = std::vector&lt;uint8_t&gt;(<a class="code" href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">SHA256_HASH_SIZE</a>, 1);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    b.previousBlock = std::vector&lt;uint8_t&gt;(<a class="code" href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">SHA256_HASH_SIZE</a>, 0);</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    b.height = 0;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    b.timestamp = 0;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="keywordflow">return</span> b;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00283">283</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                                                       {</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    AltBlock b;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    b.hash = std::vector&lt;uint8_t&gt;(<a class="code" href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">SHA256_HASH_SIZE</a>, 1);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    b.previousBlock = std::vector&lt;uint8_t&gt;(<a class="code" href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">SHA256_HASH_SIZE</a>, 0);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    b.height = 0;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    b.timestamp = 0;</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordflow">return</span> b;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a313d0d3306fa209414149266c6e87876"><div class="ttname"><a href="namespacealtintegration.html#a313d0d3306fa209414149266c6e87876">altintegration::SHA256_HASH_SIZE</a></div><div class="ttdeci">constexpr const auto SHA256_HASH_SIZE</div><div class="ttdoc">sha256 hash size</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00039">consts.hpp:39</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -360,10 +360,10 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>mMaxATVsInAltBlock<
 
 <p>Implements <a class="el" href="structaltintegration_1_1AltChainParams.html#af289390066132cf7bbb2845db047fa86">altintegration::AltChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00293">293</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                                                               {</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="keywordflow">return</span> AssertDeserializeFromRaw&lt;AltBlock&gt;(bytes).getHash();</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  }</div>
+<p class="definition">Definition at line <a class="el" href="alt__chain__params_8hpp_source.html#l00294">294</a> of file <a class="el" href="alt__chain__params_8hpp_source.html">alt_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                                                               {</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordflow">return</span> AssertDeserializeFromRaw&lt;AltBlock&gt;(bytes).getHash();</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  }</div>
 </div><!-- fragment -->
 </div>
 </div>
