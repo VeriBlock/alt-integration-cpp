@@ -59,7 +59,7 @@ bool IsHex(const std::string &str) {
 }
 
 std::vector<uint8_t> toBytes(const std::string &input) {
-  return std::vector<uint8_t>(input.begin(), input.end());
+  return {input.begin(), input.end()};
 }
 
 }  // namespace altintegration

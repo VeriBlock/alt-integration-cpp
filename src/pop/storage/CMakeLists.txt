@@ -16,6 +16,7 @@ if(WITH_LEVELDB)
 endif()
 
 add_library(storage OBJECT ${STORAGE_SOURCES})
+enable_clang_tidy(storage)
 
 if(WITH_ROCKSDB)
         target_link_libraries(storage rocksdb)

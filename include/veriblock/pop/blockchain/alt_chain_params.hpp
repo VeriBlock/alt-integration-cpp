@@ -202,8 +202,8 @@ struct AltChainParams {
   //!
   //! As implication, we store last N blocks in RAM and effectively
   //! `tip-maxReorgDistance` block is finalized.
-  uint32_t getMaxReorgDistance() const noexcept {
-    VBK_ASSERT(mMaxReorgDistance > mEndorsementSettlementInterval);
+  int32_t getMaxReorgDistance() const noexcept {
+    VBK_ASSERT(int64_t(mMaxReorgDistance) > int64_t(mEndorsementSettlementInterval));
     return mMaxReorgDistance;
   }
 
@@ -260,7 +260,7 @@ struct AltChainParams {
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();
 
-  uint32_t mMaxReorgDistance = std::numeric_limits<int32_t>::max(); // blocks
+  int32_t mMaxReorgDistance = std::numeric_limits<int32_t>::max(); // blocks
   uint32_t mMaxAltchainFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;

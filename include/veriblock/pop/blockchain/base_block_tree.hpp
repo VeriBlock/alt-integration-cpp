@@ -154,12 +154,24 @@ struct BaseBlockTree {
 
   virtual bool loadTip(const hash_t& hash, ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
+    VBK_ASSERT_MSG(this->isLoadingBlocks_,
+                   "%s tree must be in LoadingBlocks state!",
+                   block_t::name());
+    VBK_ASSERT_MSG(
+        !this->isLoaded_, "%s tree is already loaded!", block_t::name());
+
     auto* tip = getBlockIndex(hash);
     if (!tip) {
-      return state.Invalid(block_t::name() + "-no-tip");
+      return state.Invalid(
+          block_t::name() + "-no-tip",
+          format("tip {} doesn't exist in block tree", HexStr(hash)));
     }
 
     this->overrideTip(*tip);
+
+    // we no longer can execute loadTip/loadBlocks
+    this->isLoaded_ = true;
+    this->isLoadingBlocks_ = false;
     return true;
   }
 
@@ -189,69 +201,6 @@ struct BaseBlockTree {
   virtual bool loadBlockBackward(const stored_index_t& index,
                                  ValidationState& state) {
     return loadBlockInner(index, false, state);
-  }
-
-  bool restoreBlock(const typename block_t::hash_t& hash,
-                    ValidationState& state) {
-    VBK_TRACE_ZONE_SCOPED;
-
-    index_t* root = &this->getRoot();
-    auto oldHeight = root->getHeight();
-    std::vector<stored_index_t> tempChain;
-    auto restoringHash = this->makePrevHash(hash);
-    index_t* restoringIndex = this->getBlockIndex(restoringHash);
-
-    while (restoringIndex == nullptr) {
-      // load current block from storage
-      stored_index_t restoringBlock;
-      if (!this->blockProvider_.getBlock(restoringHash, restoringBlock)) {
-        return state.Invalid("can-not-find-block-in-storage");
-      }
-
-      // restore previous root blocks
-      while ((restoringBlock.height < root->getHeight()) &&
-             (root->getHeight() > 0)) {
-        stored_index_t tmpRoot;
-        auto rootPrevHash = root->getHeader().getPreviousBlock();
-        if (!this->blockProvider_.getBlock(rootPrevHash, tmpRoot)) {
-          VBK_ASSERT_MSG(false,
-                         "can not restore prev block for the block: %s",
-                         root->toPrettyString());
-        }
-
-        if (!loadBlockBackward(tmpRoot, state)) {
-          VBK_ASSERT_MSG(
-              false, "can not load block, state: %s", state.toString());
-        }
-
-        root = this->getBlockIndex(rootPrevHash);
-        VBK_ASSERT(root);
-      }
-
-      restoringIndex = getBlockIndex(restoringHash);
-      // add unconnected blocks to the temporary chain
-      if (restoringIndex == nullptr) {
-        // could not find the common block
-        if (restoringBlock.height == 0) {
-          return state.Invalid("restored-block-does-not-connect");
-        }
-
-        tempChain.push_back(restoringBlock);
-      }
-
-      // get the previous block hash
-      restoringHash = restoringBlock.header->getPreviousBlock();
-    }
-
-    for (const auto& b : reverse_iterate(tempChain)) {
-      if (!loadBlockForward(b, state)) {
-        return state.Invalid("load-block-forward-failed");
-      }
-    }
-
-    increaseAppliedBlockCount(oldHeight - this->getRoot().getHeight());
-
-    return true;
   }
 
   /**
@@ -472,7 +421,6 @@ struct BaseBlockTree {
 
   virtual void overrideTip(index_t& to) {
     VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
-
     activeChain_.setTip(&to);
   }
 
@@ -629,6 +577,11 @@ struct BaseBlockTree {
     VBK_TRACE_ZONE_SCOPED;
 
     VBK_ASSERT_MSG(isBootstrapped(), "should be bootstrapped");
+    VBK_ASSERT_MSG(
+        !this->isLoaded_, "%s tree must not be loaded", block_t::name());
+
+    // indicate that we're in "loadTree" state.
+    this->isLoadingBlocks_ = true;
 
     // quick check if given block is sane
     auto& root = getRoot();
@@ -853,7 +806,11 @@ struct BaseBlockTree {
   }
 
   inline void decreaseAppliedBlockCount(size_t erasedBlocks) {
-    VBK_ASSERT(appliedBlockCount >= erasedBlocks);
+    VBK_ASSERT_MSG(appliedBlockCount >= erasedBlocks,
+                   "Tree: %s, Applied: %d, erased: %d",
+                   block_t::name(),
+                   appliedBlockCount,
+                   erasedBlocks);
     appliedBlockCount -= erasedBlocks;
   }
 
@@ -876,7 +833,6 @@ struct BaseBlockTree {
   //! @warning This action is irreversible. You will need to reload the whole
   //! tree to recover in case if this func is called by mistake.
   //!
-  //! @returns false if block not found or prereq are not met
   //! @private
   virtual void finalizeBlockImpl(index_t& index,
                                  // see config.preserveBlocksBehindFinal()
@@ -885,9 +841,9 @@ struct BaseBlockTree {
     VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind",
                   index.toShortPrettyString(),
                   preserveBlocksBehindFinal);
+    VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
     index_t* finalizedBlock = &index;
-
     if (finalizedBlock == getRoot()) {
       return;
     }
@@ -1127,6 +1083,10 @@ struct BaseBlockTree {
   }
 
  protected:
+  //! if true, we're in "loading blocks" state
+  bool isLoadingBlocks_ = false;
+  //! if true, we can no longer execute loadBlock/loadTip on this tree.
+  bool isLoaded_ = false;
   //! stores ALL blocks, including valid and invalid
   block_index_t blocks_;
   //! stores ONLY VALID tips, including currently active tip

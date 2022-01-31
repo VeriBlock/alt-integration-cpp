@@ -13,3 +13,4 @@ add_library(blockchain OBJECT
         commands/check_pubdata.cpp
         commands/vbk_command_group_store.cpp
         )
+enable_clang_tidy(blockchain)

@@ -30,3 +30,4 @@ if(NOT WITH_ROCKSDB AND NOT WITH_LEVELDB)
 endif()
 
 add_library(veriblock-pop-c OBJECT ${C_SOURCES})
+enable_clang_tidy(veriblock-pop-c)

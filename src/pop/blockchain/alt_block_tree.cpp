@@ -583,6 +583,11 @@ void AltBlockTree::doFinalize() {
     return;
   }
 
+  if(tip->getHeight() < maxReorg) {
+    // skip finalization
+    return;
+  }
+
   auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
   auto* finalizedBlock = getBestChain()[finalh];
   VBK_ASSERT(finalizedBlock != nullptr);
@@ -592,7 +597,7 @@ void AltBlockTree::doFinalize() {
 
 void AltBlockTree::overrideTip(index_t& to) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_LOG_DEBUG("ALT=\"%s\", VBK=\"%s\", BTC=\"%s\"",
+  VBK_LOG_DEBUG("%s %s %s",
                 to.toShortPrettyString(),
                 (vbk().getBestChain().tip()
                      ? vbk().getBestChain().tip()->toShortPrettyString()
@@ -608,6 +613,12 @@ void AltBlockTree::overrideTip(index_t& to) {
   onBeforeOverrideTip.emit(to);
   activeChain_.setTip(&to);
 
+  if (!this->isLoaded_ || this->isLoadingBlocks_) {
+    // we're loading blocks, so we can not execute finalization
+    return;
+  }
+
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
   doFinalize();
 }
 
@@ -759,6 +770,12 @@ void AltBlockTree::finalizeBlockImpl(index_t& index,
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
   vbk().finalizeBlock(*finalizedIndex);
+
+  if(activeChain_.tip()->getHeight() < getParams().getMaxReorgDistance()) {
+    // skip finalization
+    return;
+  }
+
   base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
 }
 

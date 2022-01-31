@@ -87,10 +87,10 @@ size_t secp256k1_context_preallocated_size(unsigned int flags) {
             return 0;
     }
 
-    if (flags & SECP256K1_FLAGS_BIT_CONTEXT_SIGN) {
+    if ((flags & SECP256K1_FLAGS_BIT_CONTEXT_SIGN) != 0) {
         ret += SECP256K1_ECMULT_GEN_CONTEXT_PREALLOCATED_SIZE;
     }
-    if (flags & SECP256K1_FLAGS_BIT_CONTEXT_VERIFY) {
+    if ((flags & SECP256K1_FLAGS_BIT_CONTEXT_VERIFY) != 0) {
         ret += SECP256K1_ECMULT_CONTEXT_PREALLOCATED_SIZE;
     }
     return ret;
@@ -99,10 +99,10 @@ size_t secp256k1_context_preallocated_size(unsigned int flags) {
 size_t secp256k1_context_preallocated_clone_size(const secp256k1_context* ctx) {
     size_t ret = ROUND_TO_ALIGN(sizeof(secp256k1_context));
     VERIFY_CHECK(ctx != NULL);
-    if (secp256k1_ecmult_gen_context_is_built(&ctx->ecmult_gen_ctx)) {
+    if (0 != secp256k1_ecmult_gen_context_is_built(&ctx->ecmult_gen_ctx)) {
         ret += SECP256K1_ECMULT_GEN_CONTEXT_PREALLOCATED_SIZE;
     }
-    if (secp256k1_ecmult_context_is_built(&ctx->ecmult_ctx)) {
+    if (0 != secp256k1_ecmult_context_is_built(&ctx->ecmult_ctx)) {
         ret += SECP256K1_ECMULT_CONTEXT_PREALLOCATED_SIZE;
     }
     return ret;
@@ -110,8 +110,8 @@ size_t secp256k1_context_preallocated_clone_size(const secp256k1_context* ctx) {
 
 secp256k1_context* secp256k1_context_preallocated_create(void* prealloc, unsigned int flags) {
     void* const base = prealloc;
-    size_t prealloc_size;
-    secp256k1_context* ret;
+    size_t prealloc_size = 0;
+    secp256k1_context* ret = nullptr;
 
     VERIFY_CHECK(prealloc != NULL);
     prealloc_size = secp256k1_context_preallocated_size(flags);
@@ -128,10 +128,10 @@ secp256k1_context* secp256k1_context_preallocated_create(void* prealloc, unsigne
     secp256k1_ecmult_context_init(&ret->ecmult_ctx);
     secp256k1_ecmult_gen_context_init(&ret->ecmult_gen_ctx);
 
-    if (flags & SECP256K1_FLAGS_BIT_CONTEXT_SIGN) {
+    if ((flags & SECP256K1_FLAGS_BIT_CONTEXT_SIGN) != 0) {
         secp256k1_ecmult_gen_context_build(&ret->ecmult_gen_ctx, &prealloc);
     }
-    if (flags & SECP256K1_FLAGS_BIT_CONTEXT_VERIFY) {
+    if ((flags & SECP256K1_FLAGS_BIT_CONTEXT_VERIFY) != 0) {
         secp256k1_ecmult_context_build(&ret->ecmult_ctx, &prealloc);
     }
 
@@ -150,8 +150,8 @@ secp256k1_context* secp256k1_context_create(unsigned int flags) {
 }
 
 secp256k1_context* secp256k1_context_preallocated_clone(const secp256k1_context* ctx, void* prealloc) {
-    size_t prealloc_size;
-    secp256k1_context* ret;
+    size_t prealloc_size = 0;
+    secp256k1_context* ret = NULL;
     VERIFY_CHECK(ctx != NULL);
     ARG_CHECK(prealloc != NULL);
 
@@ -164,8 +164,8 @@ secp256k1_context* secp256k1_context_preallocated_clone(const secp256k1_context*
 }
 
 secp256k1_context* secp256k1_context_clone(const secp256k1_context* ctx) {
-    secp256k1_context* ret;
-    size_t prealloc_size;
+    secp256k1_context* ret = NULL;
+    size_t prealloc_size = 0;
 
     VERIFY_CHECK(ctx != NULL);
     prealloc_size = secp256k1_context_preallocated_clone_size(ctx);
@@ -271,7 +271,7 @@ int secp256k1_ec_pubkey_parse(const secp256k1_context* ctx, secp256k1_pubkey* pu
 
 int secp256k1_ec_pubkey_serialize(const secp256k1_context* ctx, unsigned char *output, size_t *outputlen, const secp256k1_pubkey* pubkey, unsigned int flags) {
     secp256k1_ge Q;
-    size_t len;
+    size_t len = 0;
     int ret = 0;
 
     VERIFY_CHECK(ctx != NULL);
@@ -283,9 +283,9 @@ int secp256k1_ec_pubkey_serialize(const secp256k1_context* ctx, unsigned char *o
     memset(output, 0, len);
     ARG_CHECK(pubkey != NULL);
     ARG_CHECK((flags & SECP256K1_FLAGS_TYPE_MASK) == SECP256K1_FLAGS_TYPE_COMPRESSION);
-    if (secp256k1_pubkey_load(ctx, &Q, pubkey)) {
+    if (0 != secp256k1_pubkey_load(ctx, &Q, pubkey)) {
         ret = secp256k1_eckey_pubkey_serialize(&Q, output, &len, flags & SECP256K1_FLAGS_BIT_COMPRESSION);
-        if (ret) {
+        if (ret != 0) {
             *outputlen = len;
         }
     }
@@ -328,7 +328,7 @@ int secp256k1_ecdsa_signature_parse_der(const secp256k1_context* ctx, secp256k1_
     ARG_CHECK(sig != NULL);
     ARG_CHECK(input != NULL);
 
-    if (secp256k1_ecdsa_sig_parse(&r, &s, input, inputlen)) {
+    if (0 != secp256k1_ecdsa_sig_parse(&r, &s, input, inputlen)) {
         secp256k1_ecdsa_signature_save(sig, &r, &s);
         return 1;
     } else {
