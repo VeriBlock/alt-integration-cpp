@@ -249,8 +249,8 @@ static const unsigned char sha2_padding[64] = {
  * SHA-256 final digest
  */
 void sha256_finish(sha256_context *ctx, unsigned char output[32]) {
-  unsigned long last, padn;
-  unsigned long high, low;
+  unsigned long last = 0, padn = 0;
+  unsigned long high = 0, low = 0;
   unsigned char msglen[8];
 
   high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);

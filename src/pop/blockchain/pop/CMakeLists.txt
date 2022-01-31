@@ -3,3 +3,4 @@ add_library(pop_utils OBJECT
         pop_state.cpp
         fork_resolution.cpp
         )
+enable_clang_tidy(pop_utils)

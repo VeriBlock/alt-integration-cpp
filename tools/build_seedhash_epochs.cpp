@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/crypto/progpow.hpp>
-#include <veriblock/crypto/progpow/ethash.hpp>
+#include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/crypto/progpow/ethash.hpp>
 
 using namespace altintegration;
 using namespace progpow;

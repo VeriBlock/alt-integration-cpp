@@ -200,7 +200,7 @@ Signature sign(Slice<const uint8_t> message, PrivateKey privateKey) {
   unsigned char sig[100]{};
   size_t outputlen = 100;
   secp256k1_ecdsa_signature_serialize_der(ctx, sig, &outputlen, &signature);
-  return Signature(sig, sig + outputlen);
+  return {sig, sig + outputlen};
 }
 
 bool verify(Slice<const uint8_t> message,

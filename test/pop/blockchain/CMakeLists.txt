@@ -69,9 +69,8 @@ addtest(alt_tree_bootstrap_test alt_tree_bootstrap_test.cpp)
 addtest(altblock_finalization_test altblock_finalization_test.cpp)
 addtest(altblock_finalization_test_2 altblock_finalization_test_2.cpp)
 addtest(altblock_finalization_test_3 altblock_finalization_test_3.cpp)
-# TODO(warchant): this test fails. expect it to fail until 
+# TODO(warchant): this test fails. expect it to fail until
 # https://github.com/VeriBlock/vbk-ri-btc/issues/593 is resolved
 set_tests_properties(altblock_finalization_test_3 PROPERTIES WILL_FAIL TRUE)
 
 addtest(vbkblock_finalization_test vbkblock_finalization_test.cpp)
-addtest(altblock_restoration_test altblock_restoration_test.cpp)

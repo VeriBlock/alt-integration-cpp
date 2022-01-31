@@ -5,3 +5,4 @@ add_library(progpow OBJECT
         progpow.cpp
         math.cpp
         )
+enable_clang_tidy(progpow)

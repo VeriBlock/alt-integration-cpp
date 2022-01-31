@@ -19,3 +19,4 @@ add_library(entities OBJECT
         pop_payouts.cpp
         context_info_container.cpp
         )
+enable_clang_tidy(entities)
