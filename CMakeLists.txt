@@ -110,12 +110,23 @@ endif()
 
 ## setup compilation flags
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(Clang)$")
-    # using clang
+    # Very fast linker:
+    # https://github.com/rui314/mold
+    find_program(MOLD ld.mold)
+    if(MOLD)
+        # try to use mold linker (it is faster)
+        message(STATUS "Using mold linker: ${MOLD}")
+        add_link_options(-fuse-ld=${MOLD})
+        return()
+    endif()
+
+    # installed as part of llvm
     find_program(LLD ld.lld)
     if(LLD)
         # try to use lld linker (it is faster)
         message(STATUS "Using lld linker: ${LLD}")
         add_link_options(-fuse-ld=${LLD})
+        return()
     endif()
 endif()
 
