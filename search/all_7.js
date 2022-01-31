@@ -32,7 +32,7 @@ var searchData=
   ['getmaxatvsinaltblock_223',['getMaxATVsInAltBlock',['../structaltintegration_1_1AltChainParams.html#a5825b30566316c42675e1254bea15fd5',1,'altintegration::AltChainParams']]],
   ['getmaxatvsinvbkblock_224',['getMaxAtvsInVbkBlock',['../namespacealtintegration.html#a6d614a878c31c63b6c9b39addba9a234',1,'altintegration']]],
   ['getmaxpopdatasize_225',['getMaxPopDataSize',['../structaltintegration_1_1AltChainParams.html#a3c460d50056c2a4f56a7cc93bdc11539',1,'altintegration::AltChainParams']]],
-  ['getmaxreorgdistance_226',['getMaxReorgDistance',['../structaltintegration_1_1AltChainParams.html#a8f88bb11b7724126121379c179c0a12f',1,'altintegration::AltChainParams']]],
+  ['getmaxreorgdistance_226',['getMaxReorgDistance',['../structaltintegration_1_1AltChainParams.html#aa063d90c1ed8c0800d7dabb49334a237',1,'altintegration::AltChainParams']]],
   ['getmaxvbkblocksinaltblock_227',['getMaxVbkBlocksInAltBlock',['../structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d',1,'altintegration::AltChainParams']]],
   ['getmaxvtbsinaltblock_228',['getMaxVTBsInAltBlock',['../structaltintegration_1_1AltChainParams.html#a30a17437d219fba10e84bb27814ffe35',1,'altintegration::AltChainParams']]],
   ['getmocktime_229',['getMockTime',['../namespacealtintegration.html#a445516438be046b56a9b7fd5140ae4bf',1,'altintegration']]],

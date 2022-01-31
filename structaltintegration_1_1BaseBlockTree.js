@@ -44,7 +44,6 @@ var structaltintegration_1_1BaseBlockTree =
     [ "removeLeaf", "structaltintegration_1_1BaseBlockTree.html#a56b1f7eea3027fe06f480f9e8bf675c0", null ],
     [ "removeSubtree", "structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610", null ],
     [ "removeSubtree", "structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24", null ],
-    [ "restoreBlock", "structaltintegration_1_1BaseBlockTree.html#a6e98d9d72a61310c5d41f99a6f0aca42", null ],
     [ "revalidateSubtree", "structaltintegration_1_1BaseBlockTree.html#a03b2be46dbadcc1b941385de7b9383c6", null ],
     [ "revalidateSubtree", "structaltintegration_1_1BaseBlockTree.html#a12c423f40e6071fa56d8aefcc704f6c8", null ],
     [ "setState", "structaltintegration_1_1BaseBlockTree.html#a73284affd575c2eafc54f7991078683a", null ],
@@ -53,6 +52,8 @@ var structaltintegration_1_1BaseBlockTree =
     [ "activeChain_", "structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69", null ],
     [ "blockProvider_", "structaltintegration_1_1BaseBlockTree.html#a4e8b3a7980e6750687a053ff9acf0084", null ],
     [ "blocks_", "structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51", null ],
+    [ "isLoaded_", "structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9", null ],
+    [ "isLoadingBlocks_", "structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901", null ],
     [ "tips_", "structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736", null ],
     [ "validity_sig_", "structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b", null ]
 ];

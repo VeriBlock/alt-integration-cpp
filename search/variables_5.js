@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['finalized_883',['finalized',['../structaltintegration_1_1BlockIndex.html#a6dea9f9ace13f885145d0a3585123858',1,'altintegration::BlockIndex']]]
+  ['finalized_885',['finalized',['../structaltintegration_1_1BlockIndex.html#a6dea9f9ace13f885145d0a3585123858',1,'altintegration::BlockIndex']]]
 ];
