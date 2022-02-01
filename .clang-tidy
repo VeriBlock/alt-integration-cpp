@@ -1,5 +1,5 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,-*,performance-*,clang-analyzer-*,portability-*,cert-*,concurrency-*,readability-implicit-bool-conversion,modernize-use-bool-literals,modernize-use-override,modernize-use-emplace,modernize-return-braced-init-list,modernize-deprecated-headers,modernize-pass-by-value,readability-else-after-return,cppcoreguidelines-init-variables,cppcoreguidelines-interfaces-global-init,cppcoreguidelines-special-member-functions,cppcoreguidelines-slicing,bugprone-parent-virtual-call,bugprone-virtual-near-miss,fuchsia-virtual-inheritance,clang-analyzer-optin.cplusplus.VirtualCall,-cert-err58-cpp'
+Checks:          '-*,clang-diagnostic-*,performance-*,clang-analyzer-*,portability-*,cert-*,concurrency-*,readability-implicit-bool-conversion,modernize-use-bool-literals,modernize-use-override,modernize-use-emplace,modernize-return-braced-init-list,modernize-deprecated-headers,modernize-pass-by-value,readability-else-after-return,cppcoreguidelines-init-variables,cppcoreguidelines-interfaces-global-init,cppcoreguidelines-special-member-functions,cppcoreguidelines-slicing,bugprone-parent-virtual-call,bugprone-virtual-near-miss,fuchsia-virtual-inheritance,clang-analyzer-optin.cplusplus.VirtualCall,-cert-err58-cpp'
 WarningsAsErrors: '*'
 # all but third_party headers
 HeaderFilterRegex: '((?!third_party).)*'
