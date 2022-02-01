@@ -70,6 +70,10 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
+      - uses: warchant/setup-mold@v1
+        with:
+          version: v1.0.3
+          default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
@@ -114,11 +118,9 @@ jobs:
       - name: update apt-get
         run: sudo apt-get update
       - name: install build requirements
-        run: sudo apt-get install libboost-python-dev ccache sudo
+        run: sudo apt-get install -y python3 python3-pip libboost-python-dev ccache sudo
       - name: install new cmake
-        run: |
-          sudo apt-get install -y python3 python3-pip
-          pip3 install cmake
+        run: pip3 install cmake
       - name: Prepare ccache timestamp
         if: github.event_name == 'push' || github.event_name == 'pull_request'
         id: ccache_cache_timestamp
@@ -133,6 +135,10 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
+      - uses: warchant/setup-mold@v1
+        with:
+          version: v1.0.3
+          default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
@@ -172,6 +178,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3 python3-pip gcovr ccache
           pip3 install cmake
+      - uses: warchant/setup-mold@v1
+        with:
+          version: v1.0.3
+          default: true
       - name: versions
         run: |
           $CC --version
@@ -281,6 +291,10 @@ jobs:
             macos-ccache-
       - name: install ccache
         run: brew install ccache
+      - uses: warchant/setup-mold@v1
+        with:
+          version: v1.0.3
+          default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
