@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['endorsedaltcomparator_567',['EndorsedAltComparator',['../structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html',1,'altintegration::VbkPayloadsRelations']]],
-  ['endorsement_568',['Endorsement',['../structaltintegration_1_1Endorsement.html',1,'altintegration']]]
+  ['endorsedaltcomparator_0',['EndorsedAltComparator',['../structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html',1,'altintegration::VbkPayloadsRelations']]],
+  ['endorsement_1',['Endorsement',['../structaltintegration_1_1Endorsement.html',1,'altintegration']]]
 ];

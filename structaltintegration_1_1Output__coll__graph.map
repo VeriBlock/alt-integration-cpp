@@ -1,5 +1,5 @@
 <map id="altintegration::Output" name="altintegration::Output">
-<area shape="rect" id="node1" title="Single spending output." alt="" coords="88,321,229,472"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Coin.html" title="represents VBK atomic units" alt="" coords="5,57,133,207"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Address.html" title="Represents address on VBK chain." alt="" coords="158,5,341,259"/>
+<area shape="rect" id="node1" title="Single spending output." alt="" coords="115,321,257,472"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Address.html" title="Represents address on VBK chain." alt="" coords="5,5,188,259"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Coin.html" title="represents VBK atomic units" alt="" coords="213,57,341,207"/>
 </map>

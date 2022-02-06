@@ -1,7 +1,5 @@
 var structaltintegration_1_1adaptors_1_1BlockBatchImpl =
 [
-    [ "~BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a93e7af4b98826fd912b75b81fa0329f3", null ],
-    [ "BlockBatchImpl", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a7d9fc0b3c5e429187c5ea6e441dd7aaa", null ],
     [ "writeBlock", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a34f34f615b867dc0c941d188998b10b2", null ],
     [ "writeBlock", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#a38dc8b7abb579f8b9616b25a1e5f8fd6", null ],
     [ "writeBlock", "structaltintegration_1_1adaptors_1_1BlockBatchImpl.html#ab93f7726736c13d03630c8abbc9ffd70", null ],

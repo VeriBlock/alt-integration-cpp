@@ -1,7 +1,7 @@
 <map id="altintegration::BtcBlock" name="altintegration::BtcBlock">
-<area shape="rect" id="node1" title="Bitcoin block." alt="" coords="132,725,287,1023"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="5,5,165,288"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="122,351,297,648"/>
-<area shape="rect" id="node4" title=" " alt="" coords="321,461,399,538"/>
-<area shape="rect" id="node5" title=" " alt="" coords="298,101,422,193"/>
+<area shape="rect" id="node1" title="Bitcoin block." alt="" coords="78,725,233,1023"/>
+<area shape="rect" id="node2" title=" " alt="" coords="28,461,107,538"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,101,129,193"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="225,351,400,648"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="193,5,353,288"/>
 </map>

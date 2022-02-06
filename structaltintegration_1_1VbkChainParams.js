@@ -1,28 +1,6 @@
 var structaltintegration_1_1VbkChainParams =
 [
-    [ "~VbkChainParams", "structaltintegration_1_1VbkChainParams.html#a26d4adacac3dc774683003bf2b9538ab", null ],
     [ "EnableTimeAdjustment", "structaltintegration_1_1VbkChainParams.html#add2841aef405740d3cb72937f35e8e94", null ],
-    [ "getEndorsementSettlementInterval", "structaltintegration_1_1VbkChainParams.html#a4cb58ed3c06e17d29714c0034e3d807d", null ],
-    [ "getFinalityDelay", "structaltintegration_1_1VbkChainParams.html#a9e5be95382333ffa0319da3fa55d3c37", null ],
-    [ "getForkResolutionLookUpTable", "structaltintegration_1_1VbkChainParams.html#ae9f65fc5fb7bc514a1d5f8a46a884e43", null ],
-    [ "getKeystoneInterval", "structaltintegration_1_1VbkChainParams.html#add95d77ca720bda96f88c4dd96305999", null ],
-    [ "getMaxReorgBlocks", "structaltintegration_1_1VbkChainParams.html#a1da72c2e4090b8269995c4bc3d8da834", null ],
-    [ "getMinimumDifficulty", "structaltintegration_1_1VbkChainParams.html#a0ecd5428a507344f184a6995111ac40d", null ],
     [ "getOldBlocksWindow", "structaltintegration_1_1VbkChainParams.html#abf2dbbf05276d23c2dc232ac7ce595ec", null ],
-    [ "getPowNoRetargeting", "structaltintegration_1_1VbkChainParams.html#a766b7332545c26fb38be6a5a67d1a033", null ],
-    [ "getProgPowForkHeight", "structaltintegration_1_1VbkChainParams.html#aea2724726bbfd518151a332f13b18d18", null ],
-    [ "getProgPowStartTimeEpoch", "structaltintegration_1_1VbkChainParams.html#abe0c362d91e499c991f4363eeadecb69", null ],
-    [ "getRetargetPeriod", "structaltintegration_1_1VbkChainParams.html#a39b15a47b0a6ddd53f270baeff96f80a", null ],
-    [ "getTargetBlockTime", "structaltintegration_1_1VbkChainParams.html#a0f7d6789ab277ab55ecdbe2055505065", null ],
-    [ "getTransactionMagicByte", "structaltintegration_1_1VbkChainParams.html#a915918004bcef96ca500b4e9c27ebcab", null ],
-    [ "isProgPowStartTimeEpochEnabled", "structaltintegration_1_1VbkChainParams.html#ad6bc3b67ded234ed34bda81845f09488", null ],
-    [ "maxFutureBlockTime", "structaltintegration_1_1VbkChainParams.html#aecb89911f8ae26b0077f2a292217a488", null ],
-    [ "networkName", "structaltintegration_1_1VbkChainParams.html#a841f25a4f18c13464b5bd2222e93486d", null ],
-    [ "numBlocksForBootstrap", "structaltintegration_1_1VbkChainParams.html#add46ddb4623900ade62aa823372305a7", null ],
-    [ "preserveBlocksBehindFinal", "structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3", null ],
-    [ "forkResolutionLookUpTable_", "structaltintegration_1_1VbkChainParams.html#a1043a920046e44330867eb552a90470e", null ],
-    [ "mEndorsementSettlementInterval", "structaltintegration_1_1VbkChainParams.html#a04eb68862d4ce8f8c71056670d0dd2c5", null ],
-    [ "mMaxFutureBlockTime", "structaltintegration_1_1VbkChainParams.html#ad6b531407322bb51c30aff50379bf280", null ],
-    [ "mOldBlocksWindow", "structaltintegration_1_1VbkChainParams.html#a8725ae6d823d775e14b7d77805b225f3", null ],
-    [ "mPreserveBlocksBehindFinal", "structaltintegration_1_1VbkChainParams.html#a8b6d2f85b80519becfd4eed68f15f885", null ]
+    [ "preserveBlocksBehindFinal", "structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3", null ]
 ];

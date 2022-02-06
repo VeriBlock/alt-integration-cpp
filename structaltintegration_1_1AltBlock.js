@@ -1,25 +1,8 @@
 var structaltintegration_1_1AltBlock =
 [
-    [ "addon_t", "structaltintegration_1_1AltBlock.html#a559deacffcfe3922440047a557c7431d", null ],
-    [ "hash_t", "structaltintegration_1_1AltBlock.html#a3971ffcd51baa22e508314139a396f18", null ],
-    [ "height_t", "structaltintegration_1_1AltBlock.html#abfa434dc2f0123fb045aa9471e659406", null ],
-    [ "prev_hash_t", "structaltintegration_1_1AltBlock.html#a948d14e51ff009f5f495340c70a0c45e", null ],
-    [ "stored_addon_t", "structaltintegration_1_1AltBlock.html#a6fccf4384a0e3a8444674a33481f7ca3", null ],
-    [ "estimateSize", "structaltintegration_1_1AltBlock.html#a36d07ce5935995da699903ac54c086df", null ],
-    [ "getBlockTime", "structaltintegration_1_1AltBlock.html#a55db1404185fb82e7574d2b91ac16bfb", null ],
-    [ "getDifficulty", "structaltintegration_1_1AltBlock.html#ab76ef56ae40d1d626d3eb3bd710ec2c2", null ],
-    [ "getHash", "structaltintegration_1_1AltBlock.html#a48f5fbbca53d7ce55c0eab59f4189786", null ],
-    [ "getHeight", "structaltintegration_1_1AltBlock.html#ad9af739d8c3adde1e1adb342a5444a45", null ],
-    [ "getPreviousBlock", "structaltintegration_1_1AltBlock.html#aa96ef6807565f1ea73d67fb1e0fbac6e", null ],
-    [ "getTimestamp", "structaltintegration_1_1AltBlock.html#a633373c3828f5a58e501068b7696123f", null ],
+    [ "getHash", "structaltintegration_1_1AltBlock.html#acc2509671bd926fc713d2c6b05615d13", null ],
     [ "toPrettyString", "structaltintegration_1_1AltBlock.html#aafd640ff55a2cc56f5d0297d3c73d093", null ],
-    [ "toRaw", "structaltintegration_1_1AltBlock.html#a46db512d5b57ec760614cf811f4937dd", null ],
+    [ "toRaw", "structaltintegration_1_1AltBlock.html#a9030c7304dd7b60c1d9a46179b44db5c", null ],
     [ "toRaw", "structaltintegration_1_1AltBlock.html#a9926fbcdd9acd71cf8c91e820f4c0011", null ],
-    [ "toVbkEncoding", "structaltintegration_1_1AltBlock.html#af9c78ed22e89f4083f29e65d33703f8c", null ],
-    [ "operator!=", "structaltintegration_1_1AltBlock.html#a9adf945971eaa59c56a915593c193f6c", null ],
-    [ "operator==", "structaltintegration_1_1AltBlock.html#aec8a92c9eed1696e6857f9e97acae016", null ],
-    [ "hash", "structaltintegration_1_1AltBlock.html#ace2e6c8c2406164e139fe572b2257244", null ],
-    [ "height", "structaltintegration_1_1AltBlock.html#ae423669ce38fd38bdc7aa3e253e20c19", null ],
-    [ "previousBlock", "structaltintegration_1_1AltBlock.html#aef7b9e45964ee0e303c68eb4e075d438", null ],
-    [ "timestamp", "structaltintegration_1_1AltBlock.html#a68776e3fea2e7af8928a164ad9754f84", null ]
+    [ "toVbkEncoding", "structaltintegration_1_1AltBlock.html#af9c78ed22e89f4083f29e65d33703f8c", null ]
 ];

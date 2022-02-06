@@ -1,8 +1,9 @@
 <map id="altintegration::BaseBlockTree&lt; Block &gt;" name="altintegration::BaseBlockTree&lt; Block &gt;">
-<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="77,5,280,420"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="5,960,213,1301"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="89,519,268,861"/>
-<area shape="rect" id="node5" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="292,483,495,897"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="17,1351,201,1575"/>
-<area shape="rect" id="node6" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="294,967,493,1294"/>
+<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="208,5,411,420"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="5,519,184,861"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="435,483,637,897"/>
+<area shape="rect" id="node7" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="208,483,411,897"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="99,960,307,1301"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="111,1351,295,1575"/>
+<area shape="rect" id="node6" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="437,967,635,1294"/>
 </map>

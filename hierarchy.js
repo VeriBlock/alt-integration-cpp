@@ -16,13 +16,15 @@ var hierarchy =
     [ "altintegration::AuthenticatedContextInfoContainer", "structaltintegration_1_1AuthenticatedContextInfoContainer.html", null ],
     [ "altintegration::btc::BanEntry", "structaltintegration_1_1btc_1_1BanEntry.html", null ],
     [ "altintegration::BaseBlockTree< Block >", "structaltintegration_1_1BaseBlockTree.html", [
-      [ "altintegration::BlockTree< VbkBlock, VbkChainParams >", "structaltintegration_1_1BlockTree.html", [
-        [ "altintegration::VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html", null ]
-      ] ],
       [ "altintegration::BlockTree< Block, ChainParams >", "structaltintegration_1_1BlockTree.html", null ]
     ] ],
     [ "altintegration::BaseBlockTree< AltBlock >", "structaltintegration_1_1BaseBlockTree.html", [
       [ "altintegration::AltBlockTree", "structaltintegration_1_1AltBlockTree.html", null ]
+    ] ],
+    [ "altintegration::BaseBlockTree< VbkBlock >", "structaltintegration_1_1BaseBlockTree.html", [
+      [ "altintegration::BlockTree< VbkBlock, VbkChainParams >", "structaltintegration_1_1BlockTree.html", [
+        [ "altintegration::VbkBlockTree", "structaltintegration_1_1VbkBlockTree.html", null ]
+      ] ]
     ] ],
     [ "altintegration::btc::BigEndian< I >", "classaltintegration_1_1btc_1_1BigEndian.html", null ],
     [ "altintegration::Blob< N >", "structaltintegration_1_1Blob.html", null ],
