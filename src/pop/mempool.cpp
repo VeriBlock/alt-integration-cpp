@@ -169,7 +169,6 @@ VbkPayloadsRelations& MemPool::getOrPutVbkRelation(
   auto& val = relations_[block_id];
   if (val == nullptr) {
     val = std::make_shared<VbkPayloadsRelations>(mempool_tree_.alt(), block);
-    on_vbkblock_accepted.emit(*block);
   }
 
   return *val;
@@ -208,7 +207,6 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
   // stateful validation
   if (!mempool_tree_.acceptATV(*atv, blockOfProof_ptr, state)) {
     atvs_in_flight_.insert(id, atv);
-    on_atv_accepted.emit(*atv);
     return {MemPool::FAILED_STATEFUL, state.Invalid("atv-stateful")};
   }
 
@@ -239,7 +237,6 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVTB(*vtb, containingBlock_ptr, state)) {
     vtbs_in_flight_.insert(id, vtb);
-    on_vtb_accepted.emit(*vtb);
     return {FAILED_STATEFUL, state.Invalid("vtb-stateful")};
   }
 
@@ -272,7 +269,6 @@ MemPool::SubmitResult MemPool::submit<VbkBlock>(
   // for the statefully invalid payloads we just save it for the future
   if (!mempool_tree_.acceptVbkBlock(blk, state)) {
     vbkblocks_in_flight_.insert(id, blk);
-    on_vbkblock_accepted.emit(*blk);
     return {FAILED_STATEFUL, state.Invalid("vbk-stateful")};
   }
 
@@ -345,21 +341,6 @@ const MemPool::atv_value_sorted_map_t& MemPool::getInFlightMap() const {
 template <>
 const MemPool::vtb_value_sorted_map_t& MemPool::getInFlightMap() const {
   return vtbs_in_flight_;
-}
-
-template <>
-signals::Signal<void(const ATV&)>& MemPool::getSignal() {
-  return on_atv_accepted;
-}
-
-template <>
-signals::Signal<void(const VTB&)>& MemPool::getSignal() {
-  return on_vtb_accepted;
-}
-
-template <>
-signals::Signal<void(const VbkBlock&)>& MemPool::getSignal() {
-  return on_vbkblock_accepted;
 }
 
 }  // namespace altintegration

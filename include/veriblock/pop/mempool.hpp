@@ -288,27 +288,6 @@ struct MemPool {
    */
   void clear();
 
-  /**
-   * Subscribe on "accepted" event - fires whenever new payload is added into
-   * mempool.
-   * @tparam Pop ATV, VTB or VbkBlock
-   * @param f callback
-   * @return subscription id
-   */
-  template <typename T,
-            typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  size_t onAccepted(std::function<void(const T& p)> f) {
-    auto& sig = getSignal<T>();
-    return sig.connect(f);
-  }
-
-  //! fires when new valid ATV is accepted to mempool
-  signals::Signal<void(const ATV& atv)> on_atv_accepted;
-  //! fires when new valid VTB is accepted to mempool
-  signals::Signal<void(const VTB& atv)> on_vtb_accepted;
-  //! fires when new valid VbkBlock is accepted to mempool
-  signals::Signal<void(const VbkBlock& atv)> on_vbkblock_accepted;
-
  private:
   MemPoolBlockTree mempool_tree_;
   // relations between VBK block and payloads
@@ -345,14 +324,12 @@ struct MemPool {
 
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {
-    auto& signal = getSignal<T>();
     auto& inflight = getInFlightMapMut<T>();
     auto& connected = getMapMut<T>();
 
     auto id = t->getId();
     connected[id] = t;
     inflight.erase(id);
-    signal.emit(*t);
   }
 
   template <typename POP>

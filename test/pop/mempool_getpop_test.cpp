@@ -498,10 +498,6 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
 }
 // This test scenrio tests filter payloads duplicates in the same altblock chain
 TEST_F(MemPoolFixture, getPop_scenario_9) {
-  size_t totalBlocks = 0, totalAtvs = 0, totalVtbs = 0;
-  mempool->onAccepted<VbkBlock>([&](const VbkBlock&) { totalBlocks++; });
-  mempool->onAccepted<VTB>([&](const VTB&) { totalVtbs++; });
-  mempool->onAccepted<ATV>([&](const ATV&) { totalAtvs++; });
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
 
   // mine 65 VBK blocks
@@ -553,10 +549,6 @@ TEST_F(MemPoolFixture, getPop_scenario_9) {
   EXPECT_EQ(v_popData.vtbs.size(), 0);
 
   applyInNextBlock(v_popData);
-
-  ASSERT_EQ(totalBlocks, 67);
-  ASSERT_EQ(totalVtbs, 0);
-  ASSERT_EQ(totalAtvs, 2);
 }
 
 // This test scenrio tests the possible context gap in case that all payloads
