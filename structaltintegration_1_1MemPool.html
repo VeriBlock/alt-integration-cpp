@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1MemPool.html',
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structaltintegration_1_1MemPool-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">altintegration::MemPool Struct Reference</div></div>
 </div><!--header-->
@@ -109,7 +110,7 @@ Those payloads that are not contextually valid <em>given current view</em> may b
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1MemPool__coll__graph.svg" width="175" height="235"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1MemPool__coll__graph.svg" width="178" height="264"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -194,6 +195,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>cleanUp</b> ()</td></
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="memdesc:a73d3419aa66d87e2b763f8ee1931987f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear mempool from all payloads. <br /></td></tr>
 <tr class="separator:a73d3419aa66d87e2b763f8ee1931987f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87af523ce69a470b4470f76920724dfa"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;T&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:a87af523ce69a470b4470f76920724dfa"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a87af523ce69a470b4470f76920724dfa">onAccepted</a> (std::function&lt; void(const T &amp;p)&gt; f)</td></tr>
+<tr class="memdesc:a87af523ce69a470b4470f76920724dfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribe on "accepted" event - fires whenever new payload is added into mempool.  <a href="structaltintegration_1_1MemPool.html#a87af523ce69a470b4470f76920724dfa">More...</a><br /></td></tr>
+<tr class="separator:a87af523ce69a470b4470f76920724dfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b83df1c20f27f50de559c94e03febcb"><td class="memItemLeft" align="right" valign="top"><a id="a7b83df1c20f27f50de559c94e03febcb" name="a7b83df1c20f27f50de559c94e03febcb"></a>
 template&lt;&gt; </td></tr>
 <tr class="memitem:a7b83df1c20f27f50de559c94e03febcb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1MemPool_1_1SubmitResult.html">MemPool::SubmitResult</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><b>submit</b> (const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1ATV.html">ATV</a> &gt; &amp;atv, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
@@ -219,6 +224,18 @@ template&lt;&gt; </td></tr>
 <tr class="memitem:a7ced15979f468651e878758b7159b1f9"><td class="memTemplItemLeft" align="right" valign="top">const MemPool::payload_value_sorted_map&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getInFlightMap</b> () const</td></tr>
 <tr class="memdesc:a7ced15979f468651e878758b7159b1f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a7ced15979f468651e878758b7159b1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:afebd9b2a2157e626466a20ccb129e8eb"><td class="memItemLeft" align="right" valign="top">signals::Signal&lt; void(const <a class="el" href="structaltintegration_1_1ATV.html">ATV</a> &amp;atv)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#afebd9b2a2157e626466a20ccb129e8eb">on_atv_accepted</a></td></tr>
+<tr class="memdesc:afebd9b2a2157e626466a20ccb129e8eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">fires when new valid <a class="el" href="structaltintegration_1_1ATV.html" title="Atlchain endorsement.">ATV</a> is accepted to mempool  <a href="structaltintegration_1_1MemPool.html#afebd9b2a2157e626466a20ccb129e8eb">More...</a><br /></td></tr>
+<tr class="separator:afebd9b2a2157e626466a20ccb129e8eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78a91cb09fd009bbf14da9bd639d2fe3"><td class="memItemLeft" align="right" valign="top">signals::Signal&lt; void(const <a class="el" href="structaltintegration_1_1VTB.html">VTB</a> &amp;atv)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a78a91cb09fd009bbf14da9bd639d2fe3">on_vtb_accepted</a></td></tr>
+<tr class="memdesc:a78a91cb09fd009bbf14da9bd639d2fe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">fires when new valid <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a> is accepted to mempool  <a href="structaltintegration_1_1MemPool.html#a78a91cb09fd009bbf14da9bd639d2fe3">More...</a><br /></td></tr>
+<tr class="separator:a78a91cb09fd009bbf14da9bd639d2fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab228292007c4d567a3e8800924069c99"><td class="memItemLeft" align="right" valign="top">signals::Signal&lt; void(const <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &amp;atv)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#ab228292007c4d567a3e8800924069c99">on_vbkblock_accepted</a></td></tr>
+<tr class="memdesc:ab228292007c4d567a3e8800924069c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">fires when new valid <a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a> is accepted to mempool  <a href="structaltintegration_1_1MemPool.html#ab228292007c4d567a3e8800924069c99">More...</a><br /></td></tr>
+<tr class="separator:ab228292007c4d567a3e8800924069c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a68272c48d3c90bba358b0dc41b95d839" name="a68272c48d3c90bba358b0dc41b95d839"></a>
@@ -584,6 +601,53 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </div><!-- fragment -->
 </div>
 </div>
+<a id="a87af523ce69a470b4470f76920724dfa" name="a87af523ce69a470b4470f76920724dfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87af523ce69a470b4470f76920724dfa">&#9670;&nbsp;</a></span>onAccepted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;T&gt;::value&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t altintegration::MemPool::onAccepted </td>
+          <td>(</td>
+          <td class="paramtype">std::function&lt; void(const T &amp;p)&gt;&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Pop</td><td><a class="el" href="structaltintegration_1_1ATV.html" title="Atlchain endorsement.">ATV</a>, <a class="el" href="structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock.">VTB</a> or <a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>callback </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>subscription id </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00300">300</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  300</span>                                                     {</div>
+<div class="line"><span class="lineno">  301</span>    <span class="keyword">auto</span>&amp; sig = getSignal&lt;T&gt;();</div>
+<div class="line"><span class="lineno">  302</span>    <span class="keywordflow">return</span> sig.connect(f);</div>
+<div class="line"><span class="lineno">  303</span>  }</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a0a338bda64c5577f8d346e02f941ebdc" name="a0a338bda64c5577f8d346e02f941ebdc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0a338bda64c5577f8d346e02f941ebdc">&#9670;&nbsp;</a></span>removeAll()</h2>
 
@@ -794,6 +858,55 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 <div class="line"><span class="lineno">  180</span>  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="afebd9b2a2157e626466a20ccb129e8eb" name="afebd9b2a2157e626466a20ccb129e8eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afebd9b2a2157e626466a20ccb129e8eb">&#9670;&nbsp;</a></span>on_atv_accepted</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">signals::Signal&lt;void(const <a class="el" href="structaltintegration_1_1ATV.html">ATV</a>&amp; atv)&gt; altintegration::MemPool::on_atv_accepted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00306">306</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab228292007c4d567a3e8800924069c99" name="ab228292007c4d567a3e8800924069c99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab228292007c4d567a3e8800924069c99">&#9670;&nbsp;</a></span>on_vbkblock_accepted</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">signals::Signal&lt;void(const <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&amp; atv)&gt; altintegration::MemPool::on_vbkblock_accepted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00310">310</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a78a91cb09fd009bbf14da9bd639d2fe3" name="a78a91cb09fd009bbf14da9bd639d2fe3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78a91cb09fd009bbf14da9bd639d2fe3">&#9670;&nbsp;</a></span>on_vtb_accepted</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">signals::Signal&lt;void(const <a class="el" href="structaltintegration_1_1VTB.html">VTB</a>&amp; atv)&gt; altintegration::MemPool::on_vtb_accepted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00308">308</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
