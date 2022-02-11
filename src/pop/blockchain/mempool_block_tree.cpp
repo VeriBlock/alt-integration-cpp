@@ -346,7 +346,9 @@ void MemPoolBlockTree::filterInvalidPayloads(
 
   // at this point `pop` contains only valid payloads
   tree_->removeSubtree(*tmpindex);
-  tree_->eraseBlock(*tmpindex);
+
+  tmpindex->disconnectFromPrev();
+  tree_->deallocateBlock(*tmpindex);
 
   guard.overrideDeferredForkResolution(originalTip);
 }

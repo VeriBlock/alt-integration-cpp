@@ -17,6 +17,14 @@ if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     return()
 endif()
 
+if(NOT WITH_BACKWARD)
+    message(STATUS "Stacktrace is disabled with WITH_BACKWARD=OFF")
+    function(enable_stacktrace_on_target target)
+        # do nothing
+    endfunction()
+    return()
+endif()
+
 FetchContent_Declare(
         backward
         GIT_REPOSITORY https://github.com/bombela/backward-cpp.git

@@ -468,7 +468,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   void onBeforeLeafRemoved(const index_t& block) override;
-
   //! @private
   void setPayloads(index_t& index, const PopData& payloads);
 

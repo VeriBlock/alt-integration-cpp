@@ -26,6 +26,7 @@ struct TempBlockTree {
       // `pprev` may point to deallocated block. to solve this, override
       // destructor of temp block index, as we don't care in which order temp
       // blocks are destroyed.
+      this->deleteTemporarily();
       this->pprev = nullptr;
       this->pnext.clear();
     }
@@ -143,15 +144,11 @@ struct TempBlockTree {
 
   index_t* doInsertBlockHeader(std::shared_ptr<block_t> header, index_t* prev) {
     VBK_ASSERT(header != nullptr);
+    VBK_ASSERT(prev != nullptr);
     index_t* current = touchBlockIndex(header->getHash());
     current->setHeader(std::move(header));
     current->pprev = prev;
-
-    if (current->isRoot()) {
-      current->setHeight(0);
-    } else {
-      current->setHeight(current->pprev->getHeight() + 1);
-    }
+    current->setHeight(current->pprev->getHeight() + 1);
 
     return current;
   }

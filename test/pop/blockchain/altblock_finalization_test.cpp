@@ -29,6 +29,7 @@ struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
   BlockIndex<AltBlock> *Z251 = nullptr;
 
   size_t totalBlocks = 0;
+  size_t deallocated = 0;
 
   void SetUp() override {
     altparam.mMaxReorgDistance = 500;
@@ -45,6 +46,20 @@ struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
     ASSERT_TRUE(alttree.setState(*A504, state)) << state.toString();
 
     totalBlocks = alttree.getBlocks().size();
+
+    alttree.onBlockBeforeDeallocated.connect(
+        [&](const BlockIndex<AltBlock> &) { deallocated++; });
+  }
+
+  void assertAllPreviousBlocksFinalized(const BlockIndex<AltBlock> *block) {
+    const auto *p = block;
+    size_t iter = 0;
+    while (p != nullptr) {
+      ASSERT_TRUE(p->finalized)
+          << "iteration: " << iter << ", block: " << p->toPrettyString();
+      p = p->getPrev();
+      iter++;
+    }
   }
 };
 
@@ -54,10 +69,13 @@ TEST_F(AltBlockFinalization, FinalizeRoot) {
 
   auto *bootstrap = alttree.getBestChain().first();
   alttree.finalizeBlock(*bootstrap);
+
   // unchanged
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
   assertTreeTips(alttree, {A504, B503, C502, D502, E503, Z251});
   assertTreesHaveNoOrphans(alttree);
+  ASSERT_EQ(deallocated, 0);
+  assertAllPreviousBlocksFinalized(bootstrap);
 }
 
 TEST_F(AltBlockFinalization, FinalizeTip0Window) {
@@ -68,10 +86,12 @@ TEST_F(AltBlockFinalization, FinalizeTip0Window) {
   altparam.mPreserveBlocksBehindFinal = 0;
   auto *tip = alttree.getBestChain().tip();
   alttree.finalizeBlock(*tip);
+  ASSERT_EQ(deallocated, totalBlocks - 1);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
   assertTreesHaveNoOrphans(alttree);
+  assertAllPreviousBlocksFinalized(tip);
 }
 
 TEST_F(AltBlockFinalization, FinalizeUnsavedBlocks) {
@@ -80,6 +100,8 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocks) {
 
   auto *tip = alttree.getBestChain().tip();
   alttree.finalizeBlock(*tip);
+  ASSERT_EQ(deallocated, 0);
+  ASSERT_FALSE(tip->finalized);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
 
@@ -87,10 +109,12 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocks) {
   save(alttree);
 
   alttree.finalizeBlock(*tip);
+  ASSERT_EQ(deallocated, totalBlocks - 1);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
   assertTreesHaveNoOrphans(alttree);
+  assertAllPreviousBlocksFinalized(tip);
 }
 
 TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
@@ -99,6 +123,8 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
 
   auto *tip = alttree.getBestChain().tip();
   alttree.finalizeBlock(*tip);
+  ASSERT_EQ(deallocated, 0);
+  ASSERT_FALSE(tip->finalized);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), totalBlocks);
 
@@ -113,8 +139,10 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
   }
 
   alttree.finalizeBlock(*tip);
+  ASSERT_EQ(deallocated, 250);
+  ASSERT_FALSE(tip->isDirty());
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
-  // do not finilize the whole tree
+  // do not finalize the whole tree
   ASSERT_LT(alttree.getBlocks().size(), totalBlocks);
   ASSERT_NE(alttree.getBlocks().size(), 1);
 
@@ -122,10 +150,13 @@ TEST_F(AltBlockFinalization, FinalizeUnsavedBlocksForks) {
   save(alttree);
 
   alttree.finalizeBlock(*tip);
+  ASSERT_EQ(deallocated, totalBlocks - 1);
+  ASSERT_TRUE(tip->finalized);
   ASSERT_TRUE(alttree.setState(tip->getHash(), state)) << state.toString();
   ASSERT_EQ(alttree.getBlocks().size(), 1);
   assertTreeTips(alttree, {tip});
   assertTreesHaveNoOrphans(alttree);
+  assertAllPreviousBlocksFinalized(tip);
 }
 
 // finalize a block A251, which has one parallel block Z251 (tip).
@@ -135,6 +166,8 @@ TEST_F(AltBlockFinalization, FinalizeA251) {
 
   auto *A251 = A504->getAncestor(251);
   alttree.finalizeBlock(*A251);
+  assertAllPreviousBlocksFinalized(A251);
+
   ASSERT_TRUE(alttree.setState(A251->getHash(), state)) << state.toString();
 
   auto *A201 = A251->getAncestor(201);
@@ -142,6 +175,7 @@ TEST_F(AltBlockFinalization, FinalizeA251) {
   ASSERT_FALSE(A201->pprev);
   // total - 201 - 1 (Z251 tip)
   ASSERT_EQ(alttree.getBlocks().size(), 311);
+  ASSERT_EQ(deallocated, 202);
   EXPECT_EQ(alttree.getRoot().getHash(), A201->getHash());
 
   assertTreeTips(alttree, {A504, B503, C502, D502, E503});
@@ -157,6 +191,7 @@ TEST_F(AltBlockFinalization, FinalizeA501) {
   auto *A501 = A504->getAncestor(501);
   alttree.finalizeBlock(*A501);
   ASSERT_TRUE(alttree.setState(A501->getHash(), state)) << state.toString();
+  assertAllPreviousBlocksFinalized(A501);
 
   // 501, 502, 503, 504 + 50 prev blocks
   EXPECT_EQ(alttree.getBlocks().size(), 4 + 50);
@@ -165,6 +200,7 @@ TEST_F(AltBlockFinalization, FinalizeA501) {
   auto *A451 = A501->getAncestor(451);
   ASSERT_TRUE(A451);
   ASSERT_FALSE(A451->pprev);
+  ASSERT_EQ(deallocated, 459);
   EXPECT_EQ(alttree.getRoot().getHash(), A451->getHash());
   assertTreeTips(alttree, {A504});
   assertTreesHaveNoOrphans(alttree);
@@ -177,6 +213,8 @@ TEST_F(AltBlockFinalization, FinalizeA500) {
 
   auto *A500 = A504->getAncestor(500);
   alttree.finalizeBlock(*A500);
+  assertAllPreviousBlocksFinalized(A500);
+  ASSERT_EQ(deallocated, 451);
   ASSERT_TRUE(alttree.setState(A500->getHash(), state)) << state.toString();
 
   // 50 prev blocks + 5 chain A + 2 chain C + 1 chain D + 3 chain B + 1 chain E
@@ -198,10 +236,12 @@ TEST_F(AltBlockFinalization, FinalizeActiveChainOneByOne) {
   Chain<BlockIndex<AltBlock>> chain = alttree.getBestChain();
   for (auto *index : chain) {
     alttree.finalizeBlock(*index);
+    assertAllPreviousBlocksFinalized(index);
   }
   ASSERT_TRUE(alttree.setState(alttree.getBestChain().tip()->getHash(), state))
       << state.toString();
 
   assertTreeTips(alttree, {alttree.getBestChain().tip()});
   assertTreesHaveNoOrphans(alttree);
+  ASSERT_EQ(deallocated, 462);
 }

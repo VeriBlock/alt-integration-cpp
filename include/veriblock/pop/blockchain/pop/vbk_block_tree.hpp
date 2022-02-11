@@ -190,8 +190,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void finalizeBlockImpl(index_t& index,
                          int32_t preserveBlocksBehindFinal) override;
 
-  void onBeforeLeafRemoved(const index_t& block) override;
-
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**
    * Add, apply and validate a payload to a block that's currently applied

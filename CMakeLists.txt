@@ -75,9 +75,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
 
 set(ALT_HASH_SIZE 32 CACHE STRING "Size of block hash in bytes in altchain block")
-option(FIND_PROTOBUF "If ON, will search for protobuf in local filesystem, otherwise will download and build automatically" OFF)
-option(FIND_GRPC     "If ON, will search for grpc in local filesystem, otherwise will download and build automatically" OFF)
-option(FIND_ZLIB     "If ON, will search for zlib in local filesystem, otherwise will download and build automatically" OFF)
 option(CLANG_TIDY   "Enable clang-tidy checks during compilation" OFF)
 option(ASAN         "Enable Address Sanitizer" OFF)
 option(TSAN         "Enable Thread Sanitizer" OFF)
@@ -97,6 +94,7 @@ option(WITH_C_WRAPPER  "Build the c wrapper" OFF)
 option(WITH_ROCKSDB   "Build with the rocksdb storage" OFF)
 option(WITH_LEVELDB  "Build with the leveldb storage" OFF)
 option(WITH_TRACER   "Build with `tracy` tracer enabled" OFF)
+option(WITH_BACKWARD "If ON, any failure will print stacktrace (only in Debug mode)" ON)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -130,6 +128,7 @@ endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     # enable those flags
+    add_flag(-fdiagnostics-color=always)
     add_flag(-Wall)
     add_flag(-Wextra)
     add_cxx_flag(-Woverloaded-virtual) # warn if you overload (not override) a virtual function
