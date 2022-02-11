@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BaseBlockTree.
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="structaltintegration_1_1BaseBlockTree-members.html">List of all members</a>  </div>
@@ -228,12 +229,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2a9090e335380b4d3aad38a515d2905a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c244540d5a6f7e6bbe2f2b4a1e0525c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a1c244540d5a6f7e6bbe2f2b4a1e0525c">overrideTip</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;to)</td></tr>
 <tr class="separator:a1c244540d5a6f7e6bbe2f2b4a1e0525c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3bc153df731167cab9dc8608ee6a207"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#aa3bc153df731167cab9dc8608ee6a207">connectOnValidityBlockChanged</a> (const std::function&lt; on_invalidate_t &gt; &amp;f)</td></tr>
-<tr class="memdesc:aa3bc153df731167cab9dc8608ee6a207"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects a handler to a signal 'On Invalidate Block'  <a href="structaltintegration_1_1BaseBlockTree.html#aa3bc153df731167cab9dc8608ee6a207">More...</a><br /></td></tr>
-<tr class="separator:aa3bc153df731167cab9dc8608ee6a207"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88004ad8992eefd68d064c377c079495"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a88004ad8992eefd68d064c377c079495">disconnectOnValidityBlockChanged</a> (size_t id)</td></tr>
-<tr class="memdesc:a88004ad8992eefd68d064c377c079495"><td class="mdescLeft">&#160;</td><td class="mdescRight">disconnects a handler to a signal 'On Invalidate Block'  <a href="structaltintegration_1_1BaseBlockTree.html#a88004ad8992eefd68d064c377c079495">More...</a><br /></td></tr>
-<tr class="separator:a88004ad8992eefd68d064c377c079495"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab151ed227704d42767ccd6ae383148bf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#ab151ed227704d42767ccd6ae383148bf">getRoot</a> () const</td></tr>
 <tr class="separator:ab151ed227704d42767ccd6ae383148bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60141d5f2848e9f91885fd9f412a20ce"><td class="memItemLeft" align="right" valign="top">DeferForkResolutionGuard&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a60141d5f2848e9f91885fd9f412a20ce">deferForkResolutionGuard</a> ()</td></tr>
@@ -242,11 +237,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ab758c9cc0595be4b6ea8093cdad35ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">HACK: getBlockIndex accepts either hash_t or prev_block_hash_t then, depending on what it received, it should do trim LE on full hash to receive short hash, which is stored inside a map.  <a href="structaltintegration_1_1BaseBlockTree.html#ab758c9cc0595be4b6ea8093cdad35ccb">More...</a><br /></td></tr>
 <tr class="separator:ab758c9cc0595be4b6ea8093cdad35ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a298de09c0940872bee6e7d6d743aca61"><td class="memItemLeft" align="right" valign="top">signals::Signal&lt; void(const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">onBlockBeforeDeallocated</a></td></tr>
+<tr class="memdesc:a298de09c0940872bee6e7d6d743aca61"><td class="mdescLeft">&#160;</td><td class="mdescRight">before we deallocate any block index we emit it to this signal  <a href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">More...</a><br /></td></tr>
+<tr class="separator:a298de09c0940872bee6e7d6d743aca61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44be8e5528b971d6ba9b800875448d3e"><td class="memItemLeft" align="right" valign="top">signals::Signal&lt; on_invalidate_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a></td></tr>
+<tr class="memdesc:a44be8e5528b971d6ba9b800875448d3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals to the end user that block have been invalidated  <a href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">More...</a><br /></td></tr>
+<tr class="separator:a44be8e5528b971d6ba9b800875448d3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a09b11b0e5e3fd03e322bd24942a6424e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e">eraseBlock</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;block)</td></tr>
-<tr class="memdesc:a09b11b0e5e3fd03e322bd24942a6424e"><td class="mdescLeft">&#160;</td><td class="mdescRight">dangerous! permanently drops the block from the tree  <a href="structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e">More...</a><br /></td></tr>
-<tr class="separator:a09b11b0e5e3fd03e322bd24942a6424e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a26a4462a19387064dd2534e0cf8179"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a2a26a4462a19387064dd2534e0cf8179">deallocateBlock</a> (<a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;block)</td></tr>
+<tr class="memdesc:a2a26a4462a19387064dd2534e0cf8179"><td class="mdescLeft">&#160;</td><td class="mdescRight">Permanently erases block from a block tree.  <a href="structaltintegration_1_1BaseBlockTree.html#a2a26a4462a19387064dd2534e0cf8179">More...</a><br /></td></tr>
+<tr class="separator:a2a26a4462a19387064dd2534e0cf8179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8a3d94836fcc712c6788d3e4a31234e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#ac8a3d94836fcc712c6788d3e4a31234e">toPrettyString</a> (size_t level=0) const</td></tr>
 <tr class="separator:ac8a3d94836fcc712c6788d3e4a31234e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a639b19e7d10bb96baa7e0375687c73c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a639b19e7d10bb96baa7e0375687c73c6">decreaseAppliedBlockCount</a> (size_t erasedBlocks)</td></tr>
@@ -275,9 +279,6 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a4bb681ace9153b3ed6258849a2e50c69"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1Chain.html">Chain</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a></td></tr>
 <tr class="memdesc:a4bb681ace9153b3ed6258849a2e50c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">currently applied chain  <a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">More...</a><br /></td></tr>
 <tr class="separator:a4bb681ace9153b3ed6258849a2e50c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0896f49a17767e5496f2fe3d56a4ae2b"><td class="memItemLeft" align="right" valign="top">signals::Signal&lt; on_invalidate_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b">validity_sig_</a></td></tr>
-<tr class="memdesc:a0896f49a17767e5496f2fe3d56a4ae2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals to the end user that block have been invalidated  <a href="structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b">More...</a><br /></td></tr>
-<tr class="separator:a0896f49a17767e5496f2fe3d56a4ae2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e8b3a7980e6750687a053ff9acf0084"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a4e8b3a7980e6750687a053ff9acf0084">blockProvider_</a></td></tr>
 <tr class="separator:a4e8b3a7980e6750687a053ff9acf0084"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -460,7 +461,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">   72</span> </div>
 <div class="line"><span class="lineno">   73</span>    deallocateTree(getRoot());</div>
 <div class="line"><span class="lineno">   74</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00392">base_block_tree.hpp:392</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00397">base_block_tree.hpp:397</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -496,8 +497,8 @@ template&lt;typename Block &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa3bc153df731167cab9dc8608ee6a207" name="aa3bc153df731167cab9dc8608ee6a207"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3bc153df731167cab9dc8608ee6a207">&#9670;&nbsp;</a></span>connectOnValidityBlockChanged()</h2>
+<a id="a2a26a4462a19387064dd2534e0cf8179" name="a2a26a4462a19387064dd2534e0cf8179"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a26a4462a19387064dd2534e0cf8179">&#9670;&nbsp;</a></span>deallocateBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -508,25 +509,48 @@ template&lt;typename Block &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::connectOnValidityBlockChanged </td>
+          <td class="memname">void <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::deallocateBlock </td>
           <td>(</td>
-          <td class="paramtype">const std::function&lt; on_invalidate_t &gt; &amp;&#160;</td>
-          <td class="paramname"><em>f</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;&#160;</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="section invariant"><dt>Invariant</dt><dd>should be the only function that deallocates blocks. </dd>
+<dd>
+erased block must be a tip. </dd>
+<dd>
+erased block must be "deleted". </dd>
+<dd>
+erased block must exist in block tree. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00428">428</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  429</span>                                             {</div>
-<div class="line"><span class="lineno">  430</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b">validity_sig_</a>.connect(f);</div>
-<div class="line"><span class="lineno">  431</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a0896f49a17767e5496f2fe3d56a4ae2b"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b">altintegration::BaseBlockTree::validity_sig_</a></div><div class="ttdeci">signals::Signal&lt; on_invalidate_t &gt; validity_sig_</div><div class="ttdoc">signals to the end user that block have been invalidated</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01097">base_block_tree.hpp:1097</a></div></div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00472">472</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  472</span>                                       {</div>
+<div class="line"><span class="lineno">  473</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><span class="lineno">  474</span>    VBK_ASSERT_MSG(block.isDeleted(),</div>
+<div class="line"><span class="lineno">  475</span>                   <span class="stringliteral">&quot;cannot erase a block that is not deleted %s&quot;</span>,</div>
+<div class="line"><span class="lineno">  476</span>                   block.toPrettyString());</div>
+<div class="line"><span class="lineno">  477</span>    VBK_ASSERT_MSG(</div>
+<div class="line"><span class="lineno">  478</span>        block.isTip(),</div>
+<div class="line"><span class="lineno">  479</span>        <span class="stringliteral">&quot;cannot erase a block that has ancestors as that would split &quot;</span></div>
+<div class="line"><span class="lineno">  480</span>        <span class="stringliteral">&quot;the tree: %s&quot;</span>,</div>
+<div class="line"><span class="lineno">  481</span>        block.toPrettyString());</div>
+<div class="line"><span class="lineno">  482</span> </div>
+<div class="line"><span class="lineno">  483</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">onBlockBeforeDeallocated</a>.emit(block);</div>
+<div class="line"><span class="lineno">  484</span>    <span class="keyword">auto</span> shortHash = makePrevHash(block.getHash());</div>
+<div class="line"><span class="lineno">  485</span>    <span class="keyword">auto</span> count = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>.erase(shortHash);</div>
+<div class="line"><span class="lineno">  486</span>    VBK_ASSERT_MSG(count == 1,</div>
+<div class="line"><span class="lineno">  487</span>                   <span class="stringliteral">&quot;state corruption: block %s is not in the store&quot;</span>,</div>
+<div class="line"><span class="lineno">  488</span>                   block.toPrettyString());</div>
+<div class="line"><span class="lineno">  489</span>  }</div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a298de09c0940872bee6e7d6d743aca61"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">altintegration::BaseBlockTree::onBlockBeforeDeallocated</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;)&gt; onBlockBeforeDeallocated</div><div class="ttdoc">before we deallocate any block index we emit it to this signal</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01086">base_block_tree.hpp:1086</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01096">base_block_tree.hpp:1096</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -556,15 +580,15 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00808">808</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  808</span>                                                             {</div>
-<div class="line"><span class="lineno">  809</span>    VBK_ASSERT_MSG(appliedBlockCount &gt;= erasedBlocks,</div>
-<div class="line"><span class="lineno">  810</span>                   <span class="stringliteral">&quot;Tree: %s, Applied: %d, erased: %d&quot;</span>,</div>
-<div class="line"><span class="lineno">  811</span>                   block_t::name(),</div>
-<div class="line"><span class="lineno">  812</span>                   appliedBlockCount,</div>
-<div class="line"><span class="lineno">  813</span>                   erasedBlocks);</div>
-<div class="line"><span class="lineno">  814</span>    appliedBlockCount -= erasedBlocks;</div>
-<div class="line"><span class="lineno">  815</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00814">814</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  814</span>                                                             {</div>
+<div class="line"><span class="lineno">  815</span>    VBK_ASSERT_MSG(appliedBlockCount &gt;= erasedBlocks,</div>
+<div class="line"><span class="lineno">  816</span>                   <span class="stringliteral">&quot;Tree: %s, Applied: %d, erased: %d&quot;</span>,</div>
+<div class="line"><span class="lineno">  817</span>                   block_t::name(),</div>
+<div class="line"><span class="lineno">  818</span>                   appliedBlockCount,</div>
+<div class="line"><span class="lineno">  819</span>                   erasedBlocks);</div>
+<div class="line"><span class="lineno">  820</span>    appliedBlockCount -= erasedBlocks;</div>
+<div class="line"><span class="lineno">  821</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -629,86 +653,6 @@ template&lt;typename Block &gt; </div>
 <div class="fragment"><div class="line"><span class="lineno">  773</span>                                                      {</div>
 <div class="line"><span class="lineno">  774</span>    <span class="keywordflow">return</span> DeferForkResolutionGuard(*<span class="keyword">this</span>);</div>
 <div class="line"><span class="lineno">  775</span>  }</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a88004ad8992eefd68d064c377c079495" name="a88004ad8992eefd68d064c377c079495"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88004ad8992eefd68d064c377c079495">&#9670;&nbsp;</a></span>disconnectOnValidityBlockChanged()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Block &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::disconnectOnValidityBlockChanged </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>id</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00434">434</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  434</span>                                                   {</div>
-<div class="line"><span class="lineno">  435</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a0896f49a17767e5496f2fe3d56a4ae2b">validity_sig_</a>.disconnect(<span class="keywordtype">id</span>);</div>
-<div class="line"><span class="lineno">  436</span>  }</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a09b11b0e5e3fd03e322bd24942a6424e" name="a09b11b0e5e3fd03e322bd24942a6424e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09b11b0e5e3fd03e322bd24942a6424e">&#9670;&nbsp;</a></span>eraseBlock()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Block &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::eraseBlock </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &amp;&#160;</td>
-          <td class="paramname"><em>block</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00474">474</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  474</span>                                  {</div>
-<div class="line"><span class="lineno">  475</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><span class="lineno">  476</span>    VBK_ASSERT_MSG(block.isDeleted(),</div>
-<div class="line"><span class="lineno">  477</span>                   <span class="stringliteral">&quot;cannot erase a block that is not deleted %s&quot;</span>,</div>
-<div class="line"><span class="lineno">  478</span>                   block.toPrettyString());</div>
-<div class="line"><span class="lineno">  479</span>    VBK_ASSERT_MSG(</div>
-<div class="line"><span class="lineno">  480</span>        block.pnext.empty(),</div>
-<div class="line"><span class="lineno">  481</span>        <span class="stringliteral">&quot;cannot erase a block that has ancestors as that would split &quot;</span></div>
-<div class="line"><span class="lineno">  482</span>        <span class="stringliteral">&quot;the tree: %s&quot;</span>,</div>
-<div class="line"><span class="lineno">  483</span>        block.toPrettyString());</div>
-<div class="line"><span class="lineno">  484</span>    <span class="keyword">auto</span> shortHash = makePrevHash(block.getHash());</div>
-<div class="line"><span class="lineno">  485</span>    <span class="keyword">auto</span> count = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>.erase(shortHash);</div>
-<div class="line"><span class="lineno">  486</span>    VBK_ASSERT_MSG(count == 1,</div>
-<div class="line"><span class="lineno">  487</span>                   <span class="stringliteral">&quot;state corruption: block %s is not in the store&quot;</span>,</div>
-<div class="line"><span class="lineno">  488</span>                   block.toPrettyString());</div>
-<div class="line"><span class="lineno">  489</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01091">base_block_tree.hpp:1091</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -864,7 +808,7 @@ template&lt;typename Block &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00093">93</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   93</span>{ <span class="keywordflow">return</span> this-&gt;<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>; }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01095">base_block_tree.hpp:1095</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01100">base_block_tree.hpp:1100</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1049,13 +993,13 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00438">438</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  438</span>                           {</div>
-<div class="line"><span class="lineno">  439</span>    VBK_ASSERT_MSG(<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">isBootstrapped</a>(), <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
-<div class="line"><span class="lineno">  440</span>    <span class="keyword">auto</span>* root = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">getBestChain</a>().first();</div>
-<div class="line"><span class="lineno">  441</span>    VBK_ASSERT_MSG(root, <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
-<div class="line"><span class="lineno">  442</span>    <span class="keywordflow">return</span> *root;</div>
-<div class="line"><span class="lineno">  443</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00432">432</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  432</span>                           {</div>
+<div class="line"><span class="lineno">  433</span>    VBK_ASSERT_MSG(<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">isBootstrapped</a>(), <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
+<div class="line"><span class="lineno">  434</span>    <span class="keyword">auto</span>* root = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">getBestChain</a>().first();</div>
+<div class="line"><span class="lineno">  435</span>    VBK_ASSERT_MSG(root, <span class="stringliteral">&quot;must be bootstrapped&quot;</span>);</div>
+<div class="line"><span class="lineno">  436</span>    <span class="keywordflow">return</span> *root;</div>
+<div class="line"><span class="lineno">  437</span>  }</div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00093">base_block_tree.hpp:93</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -1087,7 +1031,7 @@ template&lt;typename Block &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00045">45</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   45</span>{ <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>; }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4226fb8644befc047f78f38d88b7f736"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">altintegration::BaseBlockTree::tips_</a></div><div class="ttdeci">std::unordered_set&lt; index_t * &gt; tips_</div><div class="ttdoc">stores ONLY VALID tips, including currently active tip</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01093">base_block_tree.hpp:1093</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4226fb8644befc047f78f38d88b7f736"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">altintegration::BaseBlockTree::tips_</a></div><div class="ttdeci">std::unordered_set&lt; index_t * &gt; tips_</div><div class="ttdoc">stores ONLY VALID tips, including currently active tip</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01098">base_block_tree.hpp:1098</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1117,10 +1061,10 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00817">817</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  817</span>                                                              {</div>
-<div class="line"><span class="lineno">  818</span>    appliedBlockCount += appliedBlocks;</div>
-<div class="line"><span class="lineno">  819</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00823">823</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  823</span>                                                              {</div>
+<div class="line"><span class="lineno">  824</span>    appliedBlockCount += appliedBlocks;</div>
+<div class="line"><span class="lineno">  825</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1199,13 +1143,13 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <dl class="section invariant"><dt>Invariant</dt><dd>block must exist in a tree </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00326">326</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  328</span>                                                               {</div>
-<div class="line"><span class="lineno">  329</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(toBeInvalidated);</div>
-<div class="line"><span class="lineno">  330</span>    VBK_ASSERT(index &amp;&amp; <span class="stringliteral">&quot;cannot find the subtree to invalidate&quot;</span>);</div>
-<div class="line"><span class="lineno">  331</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#acfeccd19e4f853e9d959b29e9479ffe9">invalidateSubtree</a>(*index, reason, shouldDetermineBestChain);</div>
-<div class="line"><span class="lineno">  332</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acfeccd19e4f853e9d959b29e9479ffe9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acfeccd19e4f853e9d959b29e9479ffe9">altintegration::BaseBlockTree::invalidateSubtree</a></div><div class="ttdeci">void invalidateSubtree(index_t &amp;toBeInvalidated, enum BlockValidityStatus reason, bool shouldDetermineBestChain=true)</div><div class="ttdoc">Mark given block as invalid.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00271">base_block_tree.hpp:271</a></div></div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00331">331</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  333</span>                                                               {</div>
+<div class="line"><span class="lineno">  334</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(toBeInvalidated);</div>
+<div class="line"><span class="lineno">  335</span>    VBK_ASSERT(index &amp;&amp; <span class="stringliteral">&quot;cannot find the subtree to invalidate&quot;</span>);</div>
+<div class="line"><span class="lineno">  336</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#acfeccd19e4f853e9d959b29e9479ffe9">invalidateSubtree</a>(*index, reason, shouldDetermineBestChain);</div>
+<div class="line"><span class="lineno">  337</span>  }</div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acfeccd19e4f853e9d959b29e9479ffe9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acfeccd19e4f853e9d959b29e9479ffe9">altintegration::BaseBlockTree::invalidateSubtree</a></div><div class="ttdeci">void invalidateSubtree(index_t &amp;toBeInvalidated, enum BlockValidityStatus reason, bool shouldDetermineBestChain=true)</div><div class="ttdoc">Mark given block as invalid.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00276">base_block_tree.hpp:276</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ae516864aa99c0d64b1ed301b7e261687"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00112">base_block_tree.hpp:112</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -1260,57 +1204,57 @@ template&lt;typename Block &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00271">271</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  273</span>                                                               {</div>
-<div class="line"><span class="lineno">  274</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><span class="lineno">  275</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Invalidating %s subtree: reason=%d block=%s&quot;</span>,</div>
-<div class="line"><span class="lineno">  276</span>                  block_t::name(),</div>
-<div class="line"><span class="lineno">  277</span>                  (<span class="keywordtype">int</span>)reason,</div>
-<div class="line"><span class="lineno">  278</span>                  toBeInvalidated.toShortPrettyString());</div>
-<div class="line"><span class="lineno">  279</span> </div>
-<div class="line"><span class="lineno">  280</span>    VBK_ASSERT_MSG(!toBeInvalidated.isRoot(),</div>
-<div class="line"><span class="lineno">  281</span>                   <span class="stringliteral">&quot;cannot invalidate the root block&quot;</span>);</div>
-<div class="line"><span class="lineno">  282</span> </div>
-<div class="line"><span class="lineno">  283</span>    VBK_ASSERT(<a class="code hl_function" href="namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf">isValidInvalidationReason</a>(reason) &amp;&amp;</div>
-<div class="line"><span class="lineno">  284</span>               <span class="stringliteral">&quot;invalid invalidation reason&quot;</span>);</div>
-<div class="line"><span class="lineno">  285</span> </div>
-<div class="line"><span class="lineno">  286</span>    <span class="keywordflow">if</span> (toBeInvalidated.hasFlags(reason)) {</div>
-<div class="line"><span class="lineno">  287</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  288</span>    }</div>
-<div class="line"><span class="lineno">  289</span> </div>
-<div class="line"><span class="lineno">  290</span>    <span class="comment">// all descendants of an invalid block are already flagged as</span></div>
-<div class="line"><span class="lineno">  291</span>    <span class="comment">// BLOCK_FAILED_CHILD</span></div>
-<div class="line"><span class="lineno">  292</span>    <span class="keywordflow">if</span> (!toBeInvalidated.isValid()) {</div>
-<div class="line"><span class="lineno">  293</span>      doInvalidate(toBeInvalidated, reason);</div>
-<div class="line"><span class="lineno">  294</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  295</span>    }</div>
-<div class="line"><span class="lineno">  296</span> </div>
-<div class="line"><span class="lineno">  297</span>    <span class="keywordtype">bool</span> isOnMainChain = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(&amp;toBeInvalidated);</div>
-<div class="line"><span class="lineno">  298</span>    <span class="keywordflow">if</span> (isOnMainChain) {</div>
-<div class="line"><span class="lineno">  299</span>      ValidationState dummy;</div>
-<div class="line"><span class="lineno">  300</span>      <span class="keywordtype">bool</span> success = this-&gt;setState(*toBeInvalidated.pprev, dummy);</div>
-<div class="line"><span class="lineno">  301</span>      VBK_ASSERT(success);</div>
-<div class="line"><span class="lineno">  302</span>    }</div>
-<div class="line"><span class="lineno">  303</span> </div>
-<div class="line"><span class="lineno">  304</span>    doInvalidate(toBeInvalidated, reason);</div>
-<div class="line"><span class="lineno">  305</span> </div>
-<div class="line"><span class="lineno">  306</span>    <span class="comment">// flag the child subtrees (excluding current block) as BLOCK_FAILED_CHILD</span></div>
-<div class="line"><span class="lineno">  307</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* ptr : toBeInvalidated.pnext) {</div>
-<div class="line"><span class="lineno">  308</span>      <span class="keyword">auto</span>* pnext = ptr;</div>
-<div class="line"><span class="lineno">  309</span>      forEachNodePreorder&lt;block_t&gt;(*pnext, [&amp;](index_t&amp; index) {</div>
-<div class="line"><span class="lineno">  310</span>        <span class="keywordtype">bool</span> failed = index.isFailed();</div>
-<div class="line"><span class="lineno">  311</span>        doInvalidate(index, <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a>);</div>
-<div class="line"><span class="lineno">  312</span>        <span class="keywordflow">return</span> !failed;</div>
-<div class="line"><span class="lineno">  313</span>      });</div>
-<div class="line"><span class="lineno">  314</span>    }</div>
-<div class="line"><span class="lineno">  315</span> </div>
-<div class="line"><span class="lineno">  316</span>    <span class="comment">// after invalidation, the previous block might have become a tip</span></div>
-<div class="line"><span class="lineno">  317</span>    tryAddTip(toBeInvalidated.pprev);</div>
-<div class="line"><span class="lineno">  318</span> </div>
-<div class="line"><span class="lineno">  319</span>    <span class="keywordflow">if</span> (shouldDetermineBestChain) {</div>
-<div class="line"><span class="lineno">  320</span>      updateTips();</div>
-<div class="line"><span class="lineno">  321</span>    }</div>
-<div class="line"><span class="lineno">  322</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00276">276</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  278</span>                                                               {</div>
+<div class="line"><span class="lineno">  279</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><span class="lineno">  280</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Invalidating %s subtree: reason=%d block=%s&quot;</span>,</div>
+<div class="line"><span class="lineno">  281</span>                  block_t::name(),</div>
+<div class="line"><span class="lineno">  282</span>                  (<span class="keywordtype">int</span>)reason,</div>
+<div class="line"><span class="lineno">  283</span>                  toBeInvalidated.toShortPrettyString());</div>
+<div class="line"><span class="lineno">  284</span> </div>
+<div class="line"><span class="lineno">  285</span>    VBK_ASSERT_MSG(!toBeInvalidated.isRoot(),</div>
+<div class="line"><span class="lineno">  286</span>                   <span class="stringliteral">&quot;cannot invalidate the root block&quot;</span>);</div>
+<div class="line"><span class="lineno">  287</span> </div>
+<div class="line"><span class="lineno">  288</span>    VBK_ASSERT(<a class="code hl_function" href="namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf">isValidInvalidationReason</a>(reason) &amp;&amp;</div>
+<div class="line"><span class="lineno">  289</span>               <span class="stringliteral">&quot;invalid invalidation reason&quot;</span>);</div>
+<div class="line"><span class="lineno">  290</span> </div>
+<div class="line"><span class="lineno">  291</span>    <span class="keywordflow">if</span> (toBeInvalidated.hasFlags(reason)) {</div>
+<div class="line"><span class="lineno">  292</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  293</span>    }</div>
+<div class="line"><span class="lineno">  294</span> </div>
+<div class="line"><span class="lineno">  295</span>    <span class="comment">// all descendants of an invalid block are already flagged as</span></div>
+<div class="line"><span class="lineno">  296</span>    <span class="comment">// BLOCK_FAILED_CHILD</span></div>
+<div class="line"><span class="lineno">  297</span>    <span class="keywordflow">if</span> (!toBeInvalidated.isValid()) {</div>
+<div class="line"><span class="lineno">  298</span>      doInvalidate(toBeInvalidated, reason);</div>
+<div class="line"><span class="lineno">  299</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  300</span>    }</div>
+<div class="line"><span class="lineno">  301</span> </div>
+<div class="line"><span class="lineno">  302</span>    <span class="keywordtype">bool</span> isOnMainChain = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(&amp;toBeInvalidated);</div>
+<div class="line"><span class="lineno">  303</span>    <span class="keywordflow">if</span> (isOnMainChain) {</div>
+<div class="line"><span class="lineno">  304</span>      ValidationState dummy;</div>
+<div class="line"><span class="lineno">  305</span>      <span class="keywordtype">bool</span> success = this-&gt;setState(*toBeInvalidated.pprev, dummy);</div>
+<div class="line"><span class="lineno">  306</span>      VBK_ASSERT(success);</div>
+<div class="line"><span class="lineno">  307</span>    }</div>
+<div class="line"><span class="lineno">  308</span> </div>
+<div class="line"><span class="lineno">  309</span>    doInvalidate(toBeInvalidated, reason);</div>
+<div class="line"><span class="lineno">  310</span> </div>
+<div class="line"><span class="lineno">  311</span>    <span class="comment">// flag the child subtrees (excluding current block) as BLOCK_FAILED_CHILD</span></div>
+<div class="line"><span class="lineno">  312</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* ptr : toBeInvalidated.pnext) {</div>
+<div class="line"><span class="lineno">  313</span>      <span class="keyword">auto</span>* pnext = ptr;</div>
+<div class="line"><span class="lineno">  314</span>      forEachNodePreorder&lt;block_t&gt;(*pnext, [&amp;](index_t&amp; index) {</div>
+<div class="line"><span class="lineno">  315</span>        <span class="keywordtype">bool</span> failed = index.isFailed();</div>
+<div class="line"><span class="lineno">  316</span>        doInvalidate(index, <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a>);</div>
+<div class="line"><span class="lineno">  317</span>        <span class="keywordflow">return</span> !failed;</div>
+<div class="line"><span class="lineno">  318</span>      });</div>
+<div class="line"><span class="lineno">  319</span>    }</div>
+<div class="line"><span class="lineno">  320</span> </div>
+<div class="line"><span class="lineno">  321</span>    <span class="comment">// after invalidation, the previous block might have become a tip</span></div>
+<div class="line"><span class="lineno">  322</span>    tryAddTip(toBeInvalidated.pprev);</div>
+<div class="line"><span class="lineno">  323</span> </div>
+<div class="line"><span class="lineno">  324</span>    <span class="keywordflow">if</span> (shouldDetermineBestChain) {</div>
+<div class="line"><span class="lineno">  325</span>      updateTips();</div>
+<div class="line"><span class="lineno">  326</span>    }</div>
+<div class="line"><span class="lineno">  327</span>  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">altintegration::BLOCK_FAILED_CHILD</a></div><div class="ttdeci">@ BLOCK_FAILED_CHILD</div><div class="ttdoc">block is state{lessly,fully} valid and the altchain did not report it as invalid, but some of the anc...</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00054">block_status.hpp:54</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_aaec558ed72237f1ff885cdc83f43bdbf"><div class="ttname"><a href="namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf">altintegration::isValidInvalidationReason</a></div><div class="ttdeci">constexpr bool isValidInvalidationReason(const BlockValidityStatus &amp;reason)</div><div class="ttdoc">Check if the reason value can be used as the reason for invalidateSubtree and revalidateSubtree.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00071">block_status.hpp:71</a></div></div>
 </div><!-- fragment -->
@@ -1342,21 +1286,21 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>true if the blockchain is bootstrapped, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00392">392</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  392</span>                              {</div>
-<div class="line"><span class="lineno">  393</span>    <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>.empty() &amp;&amp; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip() != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  394</span>      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  395</span>    }</div>
-<div class="line"><span class="lineno">  396</span> </div>
-<div class="line"><span class="lineno">  397</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>.empty() &amp;&amp; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip() == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  398</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  399</span>    }</div>
-<div class="line"><span class="lineno">  400</span> </div>
-<div class="line"><span class="lineno">  401</span>    VBK_ASSERT_MSG(</div>
-<div class="line"><span class="lineno">  402</span>        <span class="keyword">false</span>,</div>
-<div class="line"><span class="lineno">  403</span>        <span class="stringliteral">&quot;state corruption: the blockchain is neither bootstrapped nor empty&quot;</span>);</div>
-<div class="line"><span class="lineno">  404</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  405</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00397">397</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  397</span>                              {</div>
+<div class="line"><span class="lineno">  398</span>    <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>.empty() &amp;&amp; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip() != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  399</span>      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  400</span>    }</div>
+<div class="line"><span class="lineno">  401</span> </div>
+<div class="line"><span class="lineno">  402</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>.empty() &amp;&amp; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip() == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  403</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  404</span>    }</div>
+<div class="line"><span class="lineno">  405</span> </div>
+<div class="line"><span class="lineno">  406</span>    VBK_ASSERT_MSG(</div>
+<div class="line"><span class="lineno">  407</span>        <span class="keyword">false</span>,</div>
+<div class="line"><span class="lineno">  408</span>        <span class="stringliteral">&quot;state corruption: the blockchain is neither bootstrapped nor empty&quot;</span>);</div>
+<div class="line"><span class="lineno">  409</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  410</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1526,8 +1470,8 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  175</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">  176</span>  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00033">strutil.hpp:33</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01087">base_block_tree.hpp:1087</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01089">base_block_tree.hpp:1089</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01092">base_block_tree.hpp:1092</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01094">base_block_tree.hpp:1094</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1557,11 +1501,11 @@ template&lt;typename Block &gt; </div>
 <p >In this weird case, when Block=<a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a>, we may call <code>getBlockIndex(block-&gt;previousBlock)</code>, it is a call <code>getBlockIndex(<a class="el" href="structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size.">Blob</a>&lt;12&gt;). But when</code>getBlockIndex` accepts it, it does an implicit cast to full hash (hash_t), adding zeroes in the end. Then, .trimLE returns 12 zeroes.</p>
 <p >This hack allows us to inject explicit conversion hash_t (Blob&lt;24&gt;) -&gt; prev_block_hash_t (Blob&lt;12&gt;). </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00314">314</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  316</span>                           {</div>
-<div class="line"><span class="lineno">  317</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><span class="lineno">  318</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><span class="lineno">  319</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00312">312</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  314</span>                           {</div>
+<div class="line"><span class="lineno">  315</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><span class="lineno">  316</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><span class="lineno">  317</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1627,11 +1571,11 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00422">422</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  422</span>                                        {</div>
-<div class="line"><span class="lineno">  423</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;SetTip=%s&quot;</span>, to.toPrettyString());</div>
-<div class="line"><span class="lineno">  424</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.setTip(&amp;to);</div>
-<div class="line"><span class="lineno">  425</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00427">427</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  427</span>                                        {</div>
+<div class="line"><span class="lineno">  428</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;SetTip=%s&quot;</span>, to.toPrettyString());</div>
+<div class="line"><span class="lineno">  429</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.setTip(&amp;to);</div>
+<div class="line"><span class="lineno">  430</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1661,16 +1605,16 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00249">249</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  249</span>                                     {</div>
-<div class="line"><span class="lineno">  250</span>    <span class="keyword">auto</span> nondeletedDescendantCount = toRemove.nondeletedDescendantCount();</div>
-<div class="line"><span class="lineno">  251</span> </div>
-<div class="line"><span class="lineno">  252</span>    VBK_ASSERT_MSG(nondeletedDescendantCount == 0,</div>
-<div class="line"><span class="lineno">  253</span>                   <span class="stringliteral">&quot;not a leaf block %s, has %d non-deleted descendants&quot;</span>,</div>
-<div class="line"><span class="lineno">  254</span>                   toRemove.toPrettyString(),</div>
-<div class="line"><span class="lineno">  255</span>                   nondeletedDescendantCount);</div>
-<div class="line"><span class="lineno">  256</span>    <span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24">removeSubtree</a>(toRemove);</div>
-<div class="line"><span class="lineno">  257</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00254">254</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  254</span>                                     {</div>
+<div class="line"><span class="lineno">  255</span>    <span class="keyword">auto</span> nondeletedDescendantCount = toRemove.nondeletedDescendantCount();</div>
+<div class="line"><span class="lineno">  256</span> </div>
+<div class="line"><span class="lineno">  257</span>    VBK_ASSERT_MSG(nondeletedDescendantCount == 0,</div>
+<div class="line"><span class="lineno">  258</span>                   <span class="stringliteral">&quot;not a leaf block %s, has %d non-deleted descendants&quot;</span>,</div>
+<div class="line"><span class="lineno">  259</span>                   toRemove.toPrettyString(),</div>
+<div class="line"><span class="lineno">  260</span>                   nondeletedDescendantCount);</div>
+<div class="line"><span class="lineno">  261</span>    <span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24">removeSubtree</a>(toRemove);</div>
+<div class="line"><span class="lineno">  262</span>  }</div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2548fa5b502b0b35fd7db22083d30b24"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24">altintegration::BaseBlockTree::removeSubtree</a></div><div class="ttdeci">void removeSubtree(index_t &amp;toRemove)</div><div class="ttdoc">Removes block and all its successors.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00211">base_block_tree.hpp:211</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -1702,13 +1646,13 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <dl class="section invariant"><dt>Invariant</dt><dd>block must exist in a tree </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00241">241</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  241</span>                                             {</div>
-<div class="line"><span class="lineno">  242</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(toRemove);</div>
-<div class="line"><span class="lineno">  243</span>    VBK_ASSERT_MSG(</div>
-<div class="line"><span class="lineno">  244</span>        index, <span class="stringliteral">&quot;cannot find the subtree to remove: %s&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(toRemove));</div>
-<div class="line"><span class="lineno">  245</span>    <span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24">removeSubtree</a>(*index);</div>
-<div class="line"><span class="lineno">  246</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00246">246</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  246</span>                                             {</div>
+<div class="line"><span class="lineno">  247</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(toRemove);</div>
+<div class="line"><span class="lineno">  248</span>    VBK_ASSERT_MSG(</div>
+<div class="line"><span class="lineno">  249</span>        index, <span class="stringliteral">&quot;cannot find the subtree to remove: %s&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(toRemove));</div>
+<div class="line"><span class="lineno">  250</span>    <span class="keywordflow">return</span> this-&gt;<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24">removeSubtree</a>(*index);</div>
+<div class="line"><span class="lineno">  251</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1763,16 +1707,21 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  225</span> </div>
 <div class="line"><span class="lineno">  226</span>    forEachNodePostorder&lt;block_t&gt;(</div>
 <div class="line"><span class="lineno">  227</span>        toRemove,</div>
-<div class="line"><span class="lineno">  228</span>        [&amp;](index_t&amp; next) { removeSingleBlock(next); },</div>
-<div class="line"><span class="lineno">  229</span>        [&amp;](index_t&amp; next) { <span class="keywordflow">return</span> !next.isDeleted(); });</div>
-<div class="line"><span class="lineno">  230</span> </div>
-<div class="line"><span class="lineno">  231</span>    <span class="comment">// after removal, try to add tip</span></div>
-<div class="line"><span class="lineno">  232</span>    tryAddTip(prev);</div>
-<div class="line"><span class="lineno">  233</span> </div>
-<div class="line"><span class="lineno">  234</span>    <span class="keywordflow">if</span> (isOnMainChain) {</div>
-<div class="line"><span class="lineno">  235</span>      updateTips();</div>
-<div class="line"><span class="lineno">  236</span>    }</div>
-<div class="line"><span class="lineno">  237</span>  }</div>
+<div class="line"><span class="lineno">  228</span>        [&amp;](index_t&amp; next) {</div>
+<div class="line"><span class="lineno">  229</span>          onBeforeLeafRemoved(next);</div>
+<div class="line"><span class="lineno">  230</span>          <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>.erase(&amp;next);</div>
+<div class="line"><span class="lineno">  231</span>          VBK_ASSERT(!next.isDeleted());</div>
+<div class="line"><span class="lineno">  232</span>          next.deleteTemporarily();</div>
+<div class="line"><span class="lineno">  233</span>        },</div>
+<div class="line"><span class="lineno">  234</span>        [&amp;](index_t&amp; next) { <span class="keywordflow">return</span> !next.isDeleted(); });</div>
+<div class="line"><span class="lineno">  235</span> </div>
+<div class="line"><span class="lineno">  236</span>    <span class="comment">// after removal, try to add tip</span></div>
+<div class="line"><span class="lineno">  237</span>    tryAddTip(prev);</div>
+<div class="line"><span class="lineno">  238</span> </div>
+<div class="line"><span class="lineno">  239</span>    <span class="keywordflow">if</span> (isOnMainChain) {</div>
+<div class="line"><span class="lineno">  240</span>      updateTips();</div>
+<div class="line"><span class="lineno">  241</span>    }</div>
+<div class="line"><span class="lineno">  242</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1818,12 +1767,12 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00334">334</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  336</span>                                                               {</div>
-<div class="line"><span class="lineno">  337</span>    <span class="keyword">auto</span>* index = this-&gt;<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(hash);</div>
-<div class="line"><span class="lineno">  338</span>    VBK_ASSERT(index &amp;&amp; <span class="stringliteral">&quot;cannot find the subtree to revalidate&quot;</span>);</div>
-<div class="line"><span class="lineno">  339</span>    revalidateSubtree(*index, reason, shouldDetermineBestChain);</div>
-<div class="line"><span class="lineno">  340</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00339">339</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  341</span>                                                               {</div>
+<div class="line"><span class="lineno">  342</span>    <span class="keyword">auto</span>* index = this-&gt;<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(hash);</div>
+<div class="line"><span class="lineno">  343</span>    VBK_ASSERT(index &amp;&amp; <span class="stringliteral">&quot;cannot find the subtree to revalidate&quot;</span>);</div>
+<div class="line"><span class="lineno">  344</span>    revalidateSubtree(*index, reason, shouldDetermineBestChain);</div>
+<div class="line"><span class="lineno">  345</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1869,45 +1818,45 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00346">346</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  348</span>                                                               {</div>
-<div class="line"><span class="lineno">  349</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><span class="lineno">  350</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Revalidating %s subtree: reason=%d block=%s&quot;</span>,</div>
-<div class="line"><span class="lineno">  351</span>                  block_t::name(),</div>
-<div class="line"><span class="lineno">  352</span>                  (<span class="keywordtype">int</span>)reason,</div>
-<div class="line"><span class="lineno">  353</span>                  toBeValidated.toShortPrettyString());</div>
-<div class="line"><span class="lineno">  354</span> </div>
-<div class="line"><span class="lineno">  355</span>    VBK_ASSERT_MSG(!toBeValidated.isRoot(), <span class="stringliteral">&quot;cannot revalidate the root block&quot;</span>);</div>
-<div class="line"><span class="lineno">  356</span> </div>
-<div class="line"><span class="lineno">  357</span>    VBK_ASSERT_MSG(<a class="code hl_function" href="namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf">isValidInvalidationReason</a>(reason),</div>
-<div class="line"><span class="lineno">  358</span>                   <span class="stringliteral">&quot;invalid revalidation reason&quot;</span>);</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00351">351</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  353</span>                                                               {</div>
+<div class="line"><span class="lineno">  354</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><span class="lineno">  355</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Revalidating %s subtree: reason=%d block=%s&quot;</span>,</div>
+<div class="line"><span class="lineno">  356</span>                  block_t::name(),</div>
+<div class="line"><span class="lineno">  357</span>                  (<span class="keywordtype">int</span>)reason,</div>
+<div class="line"><span class="lineno">  358</span>                  toBeValidated.toShortPrettyString());</div>
 <div class="line"><span class="lineno">  359</span> </div>
-<div class="line"><span class="lineno">  360</span>    <span class="keywordflow">if</span> (!toBeValidated.hasFlags(reason)) {</div>
-<div class="line"><span class="lineno">  361</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  362</span>    }</div>
-<div class="line"><span class="lineno">  363</span> </div>
-<div class="line"><span class="lineno">  364</span>    <span class="comment">// if the block has any invalidity flags other than `reason`, its</span></div>
-<div class="line"><span class="lineno">  365</span>    <span class="comment">// descendants are already flagged as BLOCK_FAILED_CHILD and should stay so</span></div>
-<div class="line"><span class="lineno">  366</span>    <span class="keywordflow">if</span> (toBeValidated.hasFlags(<span class="keyword">static_cast&lt;</span>enum <a class="code hl_enumeration" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a><span class="keyword">&gt;</span>(</div>
-<div class="line"><span class="lineno">  367</span>            <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c">BLOCK_FAILED_MASK</a> &amp; ~reason))) {</div>
-<div class="line"><span class="lineno">  368</span>      doReValidate(toBeValidated, reason);</div>
-<div class="line"><span class="lineno">  369</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  370</span>    }</div>
-<div class="line"><span class="lineno">  371</span> </div>
-<div class="line"><span class="lineno">  372</span>    doReValidate(toBeValidated, reason);</div>
-<div class="line"><span class="lineno">  373</span> </div>
-<div class="line"><span class="lineno">  374</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* pnext : toBeValidated.pnext) {</div>
-<div class="line"><span class="lineno">  375</span>      forEachNodePreorder&lt;block_t&gt;(*pnext, [&amp;](index_t&amp; index) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><span class="lineno">  376</span>        doReValidate(index, <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a>);</div>
-<div class="line"><span class="lineno">  377</span>        <span class="keywordtype">bool</span> failed = index.isFailed();</div>
-<div class="line"><span class="lineno">  378</span>        <span class="keywordflow">return</span> !failed;</div>
-<div class="line"><span class="lineno">  379</span>      });</div>
-<div class="line"><span class="lineno">  380</span>    }</div>
-<div class="line"><span class="lineno">  381</span> </div>
-<div class="line"><span class="lineno">  382</span>    <span class="keywordflow">if</span> (shouldDetermineBestChain) {</div>
-<div class="line"><span class="lineno">  383</span>      updateTips();</div>
-<div class="line"><span class="lineno">  384</span>    }</div>
-<div class="line"><span class="lineno">  385</span>  }</div>
+<div class="line"><span class="lineno">  360</span>    VBK_ASSERT_MSG(!toBeValidated.isRoot(), <span class="stringliteral">&quot;cannot revalidate the root block&quot;</span>);</div>
+<div class="line"><span class="lineno">  361</span> </div>
+<div class="line"><span class="lineno">  362</span>    VBK_ASSERT_MSG(<a class="code hl_function" href="namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf">isValidInvalidationReason</a>(reason),</div>
+<div class="line"><span class="lineno">  363</span>                   <span class="stringliteral">&quot;invalid revalidation reason&quot;</span>);</div>
+<div class="line"><span class="lineno">  364</span> </div>
+<div class="line"><span class="lineno">  365</span>    <span class="keywordflow">if</span> (!toBeValidated.hasFlags(reason)) {</div>
+<div class="line"><span class="lineno">  366</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  367</span>    }</div>
+<div class="line"><span class="lineno">  368</span> </div>
+<div class="line"><span class="lineno">  369</span>    <span class="comment">// if the block has any invalidity flags other than `reason`, its</span></div>
+<div class="line"><span class="lineno">  370</span>    <span class="comment">// descendants are already flagged as BLOCK_FAILED_CHILD and should stay so</span></div>
+<div class="line"><span class="lineno">  371</span>    <span class="keywordflow">if</span> (toBeValidated.hasFlags(<span class="keyword">static_cast&lt;</span>enum <a class="code hl_enumeration" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a><span class="keyword">&gt;</span>(</div>
+<div class="line"><span class="lineno">  372</span>            <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c">BLOCK_FAILED_MASK</a> &amp; ~reason))) {</div>
+<div class="line"><span class="lineno">  373</span>      doReValidate(toBeValidated, reason);</div>
+<div class="line"><span class="lineno">  374</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  375</span>    }</div>
+<div class="line"><span class="lineno">  376</span> </div>
+<div class="line"><span class="lineno">  377</span>    doReValidate(toBeValidated, reason);</div>
+<div class="line"><span class="lineno">  378</span> </div>
+<div class="line"><span class="lineno">  379</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* pnext : toBeValidated.pnext) {</div>
+<div class="line"><span class="lineno">  380</span>      forEachNodePreorder&lt;block_t&gt;(*pnext, [&amp;](index_t&amp; index) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><span class="lineno">  381</span>        doReValidate(index, <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aa5cb9d4324c455d44fedc98d9916cdd47">BLOCK_FAILED_CHILD</a>);</div>
+<div class="line"><span class="lineno">  382</span>        <span class="keywordtype">bool</span> failed = index.isFailed();</div>
+<div class="line"><span class="lineno">  383</span>        <span class="keywordflow">return</span> !failed;</div>
+<div class="line"><span class="lineno">  384</span>      });</div>
+<div class="line"><span class="lineno">  385</span>    }</div>
+<div class="line"><span class="lineno">  386</span> </div>
+<div class="line"><span class="lineno">  387</span>    <span class="keywordflow">if</span> (shouldDetermineBestChain) {</div>
+<div class="line"><span class="lineno">  388</span>      updateTips();</div>
+<div class="line"><span class="lineno">  389</span>    }</div>
+<div class="line"><span class="lineno">  390</span>  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736a"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">altintegration::BlockValidityStatus</a></div><div class="ttdeci">BlockValidityStatus</div><div class="ttdoc">Flags that describe block status.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00040">block_status.hpp:40</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c"><div class="ttname"><a href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aaa23dda4bbc14b35a4a0a7f1e7ddc184c">altintegration::BLOCK_FAILED_MASK</a></div><div class="ttdeci">@ BLOCK_FAILED_MASK</div><div class="ttdoc">all invalidity flags</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00057">block_status.hpp:56</a></div></div>
 </div><!-- fragment -->
@@ -1949,15 +1898,15 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00407">407</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  407</span>                                                                     {</div>
-<div class="line"><span class="lineno">  408</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(block);</div>
-<div class="line"><span class="lineno">  409</span>    <span class="keywordflow">if</span> (!index) {</div>
-<div class="line"><span class="lineno">  410</span>      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-setstate-unknown-block&quot;</span>,</div>
-<div class="line"><span class="lineno">  411</span>                           <span class="stringliteral">&quot;could not find the block to set the state to&quot;</span>);</div>
-<div class="line"><span class="lineno">  412</span>    }</div>
-<div class="line"><span class="lineno">  413</span>    <span class="keywordflow">return</span> setState(*index, state);</div>
-<div class="line"><span class="lineno">  414</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00412">412</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  412</span>                                                                     {</div>
+<div class="line"><span class="lineno">  413</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(block);</div>
+<div class="line"><span class="lineno">  414</span>    <span class="keywordflow">if</span> (!index) {</div>
+<div class="line"><span class="lineno">  415</span>      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-setstate-unknown-block&quot;</span>,</div>
+<div class="line"><span class="lineno">  416</span>                           <span class="stringliteral">&quot;could not find the block to set the state to&quot;</span>);</div>
+<div class="line"><span class="lineno">  417</span>    }</div>
+<div class="line"><span class="lineno">  418</span>    <span class="keywordflow">return</span> setState(*index, state);</div>
+<div class="line"><span class="lineno">  419</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1999,12 +1948,12 @@ template&lt;typename Block &gt; </div>
 
 <p>Reimplemented in <a class="el" href="structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd">altintegration::AltBlockTree</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00416">416</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  416</span>                                                          {</div>
-<div class="line"><span class="lineno">  417</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><span class="lineno">  418</span>    overrideTip(index);</div>
-<div class="line"><span class="lineno">  419</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  420</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00421">421</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  421</span>                                                          {</div>
+<div class="line"><span class="lineno">  422</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><span class="lineno">  423</span>    overrideTip(index);</div>
+<div class="line"><span class="lineno">  424</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  425</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2096,7 +2045,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01095">1095</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01100">1100</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2122,7 +2071,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01099">1099</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01102">1102</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2148,7 +2097,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01091">1091</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01096">1096</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2174,7 +2123,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01089">1089</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01094">1094</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2200,7 +2149,43 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01087">1087</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01092">1092</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a298de09c0940872bee6e7d6d743aca61" name="a298de09c0940872bee6e7d6d743aca61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a298de09c0940872bee6e7d6d743aca61">&#9670;&nbsp;</a></span>onBlockBeforeDeallocated</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Block &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">signals::Signal&lt;void(const <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp;)&gt; <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::onBlockBeforeDeallocated</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01086">1086</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a44be8e5528b971d6ba9b800875448d3e" name="a44be8e5528b971d6ba9b800875448d3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44be8e5528b971d6ba9b800875448d3e">&#9670;&nbsp;</a></span>onBlockValidityChanged</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Block &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">signals::Signal&lt;on_invalidate_t&gt; <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::onBlockValidityChanged</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01088">1088</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2226,33 +2211,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01093">1093</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a0896f49a17767e5496f2fe3d56a4ae2b" name="a0896f49a17767e5496f2fe3d56a4ae2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0896f49a17767e5496f2fe3d56a4ae2b">&#9670;&nbsp;</a></span>validity_sig_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Block &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">signals::Signal&lt;on_invalidate_t&gt; <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::validity_sig_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01097">1097</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01098">1098</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>

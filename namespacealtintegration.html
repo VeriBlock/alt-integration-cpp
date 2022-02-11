@@ -2514,7 +2514,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  117</span> </div>
 <div class="line"><span class="lineno">  118</span>  <span class="keywordflow">return</span> ret;</div>
 <div class="line"><span class="lineno">  119</span>}</div>
-<div class="ttc" id="astructaltintegration_1_1BlockIndex_html_ab002041be345a4e0d1de0066d65788be"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">altintegration::BlockIndex::getAncestor</a></div><div class="ttdeci">const BlockIndex * getAncestor(height_t _height) const</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00345">block_index.hpp:345</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BlockIndex_html_ab002041be345a4e0d1de0066d65788be"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">altintegration::BlockIndex::getAncestor</a></div><div class="ttdeci">const BlockIndex * getAncestor(height_t _height) const</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00347">block_index.hpp:347</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2887,22 +2887,22 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00423">423</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  424</span>                                                                  {</div>
-<div class="line"><span class="lineno">  425</span>  <span class="keyword">const</span> <span class="keyword">auto</span> initialHeight = std::min(a.getHeight(), b.getHeight());</div>
-<div class="line"><span class="lineno">  426</span> </div>
-<div class="line"><span class="lineno">  427</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> cursorA = a.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight),</div>
-<div class="line"><span class="lineno">  428</span>            cursorB = b.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight);</div>
-<div class="line"><span class="lineno">  429</span>       cursorA != <span class="keyword">nullptr</span> &amp;&amp; cursorB != <span class="keyword">nullptr</span>;</div>
-<div class="line"><span class="lineno">  430</span>       cursorA = cursorA-&gt;getPrev(), cursorB = cursorB-&gt;getPrev()) {</div>
-<div class="line"><span class="lineno">  431</span>    <span class="keywordflow">if</span> (cursorA == cursorB) {</div>
-<div class="line"><span class="lineno">  432</span>      <span class="keywordflow">return</span> cursorA;</div>
-<div class="line"><span class="lineno">  433</span>    }</div>
-<div class="line"><span class="lineno">  434</span>  }</div>
-<div class="line"><span class="lineno">  435</span> </div>
-<div class="line"><span class="lineno">  436</span>  <span class="comment">// chain `b` is not connected to `a`</span></div>
-<div class="line"><span class="lineno">  437</span>  <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><span class="lineno">  438</span>}</div>
+<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00426">426</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  427</span>                                                                  {</div>
+<div class="line"><span class="lineno">  428</span>  <span class="keyword">const</span> <span class="keyword">auto</span> initialHeight = std::min(a.getHeight(), b.getHeight());</div>
+<div class="line"><span class="lineno">  429</span> </div>
+<div class="line"><span class="lineno">  430</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> cursorA = a.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight),</div>
+<div class="line"><span class="lineno">  431</span>            cursorB = b.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight);</div>
+<div class="line"><span class="lineno">  432</span>       cursorA != <span class="keyword">nullptr</span> &amp;&amp; cursorB != <span class="keyword">nullptr</span>;</div>
+<div class="line"><span class="lineno">  433</span>       cursorA = cursorA-&gt;getPrev(), cursorB = cursorB-&gt;getPrev()) {</div>
+<div class="line"><span class="lineno">  434</span>    <span class="keywordflow">if</span> (cursorA == cursorB) {</div>
+<div class="line"><span class="lineno">  435</span>      <span class="keywordflow">return</span> cursorA;</div>
+<div class="line"><span class="lineno">  436</span>    }</div>
+<div class="line"><span class="lineno">  437</span>  }</div>
+<div class="line"><span class="lineno">  438</span> </div>
+<div class="line"><span class="lineno">  439</span>  <span class="comment">// chain `b` is not connected to `a`</span></div>
+<div class="line"><span class="lineno">  440</span>  <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><span class="lineno">  441</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3092,42 +3092,42 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00443">443</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  444</span>                                                         {</div>
-<div class="line"><span class="lineno">  445</span>  <span class="comment">// finalBlock is ancestor of candidate</span></div>
-<div class="line"><span class="lineno">  446</span>  <span class="keywordflow">if</span> (candidate.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(finalBlock.getHeight()) == &amp;finalBlock) {</div>
-<div class="line"><span class="lineno">  447</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  448</span>  }</div>
-<div class="line"><span class="lineno">  449</span> </div>
-<div class="line"><span class="lineno">  450</span>  <span class="comment">// all candidates behind final block are outdated</span></div>
-<div class="line"><span class="lineno">  451</span>  <span class="keywordflow">if</span> (candidate.getHeight() &lt; finalBlock.getHeight()) {</div>
-<div class="line"><span class="lineno">  452</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  453</span>  }</div>
-<div class="line"><span class="lineno">  454</span> </div>
-<div class="line"><span class="lineno">  455</span>  <span class="comment">// all parallel blocks (on same height as final, but not final) are outdated</span></div>
-<div class="line"><span class="lineno">  456</span>  <span class="keywordflow">if</span> (candidate.getHeight() == finalBlock.getHeight() &amp;&amp;</div>
-<div class="line"><span class="lineno">  457</span>      &amp;finalBlock != &amp;candidate) {</div>
-<div class="line"><span class="lineno">  458</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  459</span>  }</div>
-<div class="line"><span class="lineno">  460</span> </div>
-<div class="line"><span class="lineno">  461</span>  <span class="comment">// candidate is ancestor of finalBlock and within window</span></div>
-<div class="line"><span class="lineno">  462</span>  <span class="keywordflow">if</span> (finalBlock.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(candidate.getHeight()) == &amp;candidate) {</div>
-<div class="line"><span class="lineno">  463</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  464</span>  }</div>
-<div class="line"><span class="lineno">  465</span> </div>
-<div class="line"><span class="lineno">  466</span>  <span class="comment">// candidate is on a fork</span></div>
-<div class="line"><span class="lineno">  467</span>  <span class="keyword">auto</span>* fork = <a class="code hl_function" href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">getForkBlock</a>(finalBlock, candidate);</div>
+<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00446">446</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  447</span>                                                         {</div>
+<div class="line"><span class="lineno">  448</span>  <span class="comment">// finalBlock is ancestor of candidate</span></div>
+<div class="line"><span class="lineno">  449</span>  <span class="keywordflow">if</span> (candidate.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(finalBlock.getHeight()) == &amp;finalBlock) {</div>
+<div class="line"><span class="lineno">  450</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  451</span>  }</div>
+<div class="line"><span class="lineno">  452</span> </div>
+<div class="line"><span class="lineno">  453</span>  <span class="comment">// all candidates behind final block are outdated</span></div>
+<div class="line"><span class="lineno">  454</span>  <span class="keywordflow">if</span> (candidate.getHeight() &lt; finalBlock.getHeight()) {</div>
+<div class="line"><span class="lineno">  455</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  456</span>  }</div>
+<div class="line"><span class="lineno">  457</span> </div>
+<div class="line"><span class="lineno">  458</span>  <span class="comment">// all parallel blocks (on same height as final, but not final) are outdated</span></div>
+<div class="line"><span class="lineno">  459</span>  <span class="keywordflow">if</span> (candidate.getHeight() == finalBlock.getHeight() &amp;&amp;</div>
+<div class="line"><span class="lineno">  460</span>      &amp;finalBlock != &amp;candidate) {</div>
+<div class="line"><span class="lineno">  461</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  462</span>  }</div>
+<div class="line"><span class="lineno">  463</span> </div>
+<div class="line"><span class="lineno">  464</span>  <span class="comment">// candidate is ancestor of finalBlock and within window</span></div>
+<div class="line"><span class="lineno">  465</span>  <span class="keywordflow">if</span> (finalBlock.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(candidate.getHeight()) == &amp;candidate) {</div>
+<div class="line"><span class="lineno">  466</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  467</span>  }</div>
 <div class="line"><span class="lineno">  468</span> </div>
-<div class="line"><span class="lineno">  469</span>  <span class="comment">// candidate does not connect to finalBlock</span></div>
-<div class="line"><span class="lineno">  470</span>  <span class="keywordflow">if</span> (fork == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  471</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  472</span>  }</div>
-<div class="line"><span class="lineno">  473</span> </div>
-<div class="line"><span class="lineno">  474</span>  <span class="comment">// if fork block is outdated, then candidate is also outdated</span></div>
-<div class="line"><span class="lineno">  475</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a>(finalBlock, *fork);</div>
-<div class="line"><span class="lineno">  476</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_a80413c3ca23962b5afd87d8d9af42685"><div class="ttname"><a href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">altintegration::isBlockOutdated</a></div><div class="ttdeci">bool isBlockOutdated(const BlockIndex&lt; Block &gt; &amp;finalBlock, const BlockIndex&lt; Block &gt; &amp;candidate)</div><div class="ttdoc">a candidate is considered outdated if it is behind finalBlock, or on same height and not equal to fin...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00443">block_index.hpp:443</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_afba27a4e2e4fcf163ab4779ffddbfd4f"><div class="ttname"><a href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">altintegration::getForkBlock</a></div><div class="ttdeci">const BlockIndex&lt; Block &gt; * getForkBlock(const BlockIndex&lt; Block &gt; &amp;a, const BlockIndex&lt; Block &gt; &amp;b)</div><div class="ttdoc">getForkBlock assumes that: the block tree is not malformed the fork block(worst case: genesis/bootstr...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00423">block_index.hpp:423</a></div></div>
+<div class="line"><span class="lineno">  469</span>  <span class="comment">// candidate is on a fork</span></div>
+<div class="line"><span class="lineno">  470</span>  <span class="keyword">auto</span>* fork = <a class="code hl_function" href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">getForkBlock</a>(finalBlock, candidate);</div>
+<div class="line"><span class="lineno">  471</span> </div>
+<div class="line"><span class="lineno">  472</span>  <span class="comment">// candidate does not connect to finalBlock</span></div>
+<div class="line"><span class="lineno">  473</span>  <span class="keywordflow">if</span> (fork == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  474</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  475</span>  }</div>
+<div class="line"><span class="lineno">  476</span> </div>
+<div class="line"><span class="lineno">  477</span>  <span class="comment">// if fork block is outdated, then candidate is also outdated</span></div>
+<div class="line"><span class="lineno">  478</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a>(finalBlock, *fork);</div>
+<div class="line"><span class="lineno">  479</span>}</div>
+<div class="ttc" id="anamespacealtintegration_html_a80413c3ca23962b5afd87d8d9af42685"><div class="ttname"><a href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">altintegration::isBlockOutdated</a></div><div class="ttdeci">bool isBlockOutdated(const BlockIndex&lt; Block &gt; &amp;finalBlock, const BlockIndex&lt; Block &gt; &amp;candidate)</div><div class="ttdoc">a candidate is considered outdated if it is behind finalBlock, or on same height and not equal to fin...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00446">block_index.hpp:446</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_afba27a4e2e4fcf163ab4779ffddbfd4f"><div class="ttname"><a href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">altintegration::getForkBlock</a></div><div class="ttdeci">const BlockIndex&lt; Block &gt; * getForkBlock(const BlockIndex&lt; Block &gt; &amp;a, const BlockIndex&lt; Block &gt; &amp;b)</div><div class="ttdoc">getForkBlock assumes that: the block tree is not malformed the fork block(worst case: genesis/bootstr...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00426">block_index.hpp:426</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4384,26 +4384,26 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00281">281</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  281</span>                                                {</div>
-<div class="line"><span class="lineno">  282</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  283</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  284</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  285</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  286</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  287</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
-<div class="line"><span class="lineno">  288</span> </div>
-<div class="line"><span class="lineno">  289</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  290</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  291</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  292</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  293</span>    }</div>
-<div class="line"><span class="lineno">  294</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  295</span>  }</div>
-<div class="line"><span class="lineno">  296</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  297</span> </div>
-<div class="line"><span class="lineno">  298</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  299</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00279">279</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  279</span>                                                {</div>
+<div class="line"><span class="lineno">  280</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  281</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  282</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  283</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  284</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  285</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
+<div class="line"><span class="lineno">  286</span> </div>
+<div class="line"><span class="lineno">  287</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  288</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  289</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  290</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  291</span>    }</div>
+<div class="line"><span class="lineno">  292</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  293</span>  }</div>
+<div class="line"><span class="lineno">  294</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  295</span> </div>
+<div class="line"><span class="lineno">  296</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  297</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4425,42 +4425,42 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00243">243</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  243</span>                                                {</div>
-<div class="line"><span class="lineno">  244</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  245</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  246</span> </div>
-<div class="line"><span class="lineno">  247</span>  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><span class="lineno">  248</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><span class="lineno">  249</span>    endorsements.push_back(e.first);</div>
-<div class="line"><span class="lineno">  250</span>  }</div>
-<div class="line"><span class="lineno">  251</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
-<div class="line"><span class="lineno">  252</span> </div>
-<div class="line"><span class="lineno">  253</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><span class="lineno">  254</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><span class="lineno">  255</span>    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><span class="lineno">  256</span>  }</div>
-<div class="line"><span class="lineno">  257</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><span class="lineno">  258</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  259</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  260</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  261</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
-<div class="line"><span class="lineno">  262</span> </div>
-<div class="line"><span class="lineno">  263</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  264</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
-<div class="line"><span class="lineno">  265</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><span class="lineno">  266</span> </div>
-<div class="line"><span class="lineno">  267</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  268</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  269</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  270</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  271</span>    }</div>
-<div class="line"><span class="lineno">  272</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  273</span>  }</div>
-<div class="line"><span class="lineno">  274</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  275</span> </div>
-<div class="line"><span class="lineno">  276</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  277</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00241">241</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  241</span>                                                {</div>
+<div class="line"><span class="lineno">  242</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  243</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  244</span> </div>
+<div class="line"><span class="lineno">  245</span>  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><span class="lineno">  246</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><span class="lineno">  247</span>    endorsements.push_back(e.first);</div>
+<div class="line"><span class="lineno">  248</span>  }</div>
+<div class="line"><span class="lineno">  249</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><span class="lineno">  250</span> </div>
+<div class="line"><span class="lineno">  251</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><span class="lineno">  252</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><span class="lineno">  253</span>    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><span class="lineno">  254</span>  }</div>
+<div class="line"><span class="lineno">  255</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><span class="lineno">  256</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  257</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  258</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  259</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<div class="line"><span class="lineno">  260</span> </div>
+<div class="line"><span class="lineno">  261</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  262</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
+<div class="line"><span class="lineno">  263</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
+<div class="line"><span class="lineno">  264</span> </div>
+<div class="line"><span class="lineno">  265</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  266</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  267</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  268</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  269</span>    }</div>
+<div class="line"><span class="lineno">  270</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  271</span>  }</div>
+<div class="line"><span class="lineno">  272</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  273</span> </div>
+<div class="line"><span class="lineno">  274</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  275</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -1,8 +1,8 @@
 <map id="altintegration::AltBlockTree" name="altintegration::AltBlockTree">
-<area shape="rect" id="node1" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="509,2036,708,2363"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="507,1631,710,1987"/>
+<area shape="rect" id="node1" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="509,2065,708,2392"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="507,1645,710,2016"/>
 <area shape="rect" id="node3" title=" " alt="" coords="52,977,235,1083"/>
-<area shape="rect" id="node20" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="507,1212,710,1568"/>
+<area shape="rect" id="node20" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="507,1212,710,1583"/>
 <area shape="rect" id="node4" title=" " alt="" coords="5,449,175,527"/>
 <area shape="rect" id="node5" title=" " alt="" coords="51,247,187,324"/>
 <area shape="rect" id="node6" title=" " alt="" coords="201,5,240,83"/>

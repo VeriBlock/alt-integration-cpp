@@ -5,7 +5,6 @@ var searchData=
   ['encodebase59_2',['EncodeBase59',['../namespacealtintegration.html#a9f53544a6e6cc06290fbaea369142eb4',1,'altintegration::EncodeBase59(const unsigned char *pbegin, const unsigned char *pend)'],['../namespacealtintegration.html#ab90f5676d34463caeda17852d60405a7',1,'altintegration::EncodeBase59(const uint8_t *buf, size_t size)'],['../namespacealtintegration.html#a6f613f72831baf5c7a6507d9572d4e3b',1,'altintegration::EncodeBase59(const T &amp;container)']]],
   ['endorsedaltcomparator_3',['EndorsedAltComparator',['../structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html',1,'altintegration::VbkPayloadsRelations']]],
   ['endorsement_4',['Endorsement',['../structaltintegration_1_1Endorsement.html',1,'altintegration']]],
-  ['eraseblock_5',['eraseBlock',['../structaltintegration_1_1BaseBlockTree.html#a09b11b0e5e3fd03e322bd24942a6424e',1,'altintegration::BaseBlockTree']]],
-  ['estimatearraysizeof_6',['estimateArraySizeOf',['../namespacealtintegration.html#a801fe3e5bf2c352b5201918e8db2b5e5',1,'altintegration']]],
-  ['estimatesize_7',['estimateSize',['../structaltintegration_1_1ATV.html#a909492db5dce9c1af3f60e96530f2c01',1,'altintegration::ATV']]]
+  ['estimatearraysizeof_5',['estimateArraySizeOf',['../namespacealtintegration.html#a801fe3e5bf2c352b5201918e8db2b5e5',1,'altintegration']]],
+  ['estimatesize_6',['estimateSize',['../structaltintegration_1_1ATV.html#a909492db5dce9c1af3f60e96530f2c01',1,'altintegration::ATV']]]
 ];
