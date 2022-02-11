@@ -34,7 +34,7 @@ struct AltInvalidationTest : public ::testing::Test, public PopTestFixture {
                         /*setState=*/false);
     EXPECT_TRUE(tip->isValid(BLOCK_CONNECTED));
 
-    connId = alttree.connectOnValidityBlockChanged(
+    connId = alttree.onBlockValidityChanged.connect(
         [&](const BlockIndex<AltBlock>&) { totalInvalidations++; });
 
     // we are going to change the validity of 'earlier'/'latter'

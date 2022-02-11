@@ -17,11 +17,31 @@
 
 using namespace altintegration;
 
-static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
-    int32_t deltaTime,
-    int32_t deltaTime_change,
-    uint32_t difficulty,
-    uint32_t chainlength) {
+struct ChainOwner {
+  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
+
+  operator std::vector<std::shared_ptr<BlockIndex<VbkBlock>>>&() {
+    return chain;
+  }
+
+  ~ChainOwner() {
+    // deallocate blocks starting at tip, towards root
+    for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+      auto* b = (*it).get();
+      b->pnext.clear();
+      if (!b->isDeleted()) {
+        b->deleteTemporarily();
+      }
+      b->disconnectFromPrev();
+      it->reset();
+    }
+  }
+};
+
+static ChainOwner getChain(int32_t deltaTime,
+                           int32_t deltaTime_change,
+                           uint32_t difficulty,
+                           uint32_t chainlength) {
   assert(chainlength != 0);
 
   VbkBlock block{};
@@ -50,7 +70,7 @@ static std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> getChain(
     chain[i] = std::move(temp);
   }
 
-  return chain;
+  return ChainOwner{chain};
 }
 
 struct VbkBlockchainUtilTest {
@@ -150,20 +170,16 @@ static std::vector<GetNextWorkRequiredTestCases>
 TEST_P(GetNextWorkRequiredTest, getNextWorkRequired_test) {
   auto value = GetParam();
 
-  auto chain = getChain(value.deltaTime,
+  auto owner = getChain(value.deltaTime,
                         value.deltaTime_change,
                         value.chain_difficulty,
                         value.chainlength);
+  auto& chain = owner.chain;
 
   uint32_t result =
       getNextWorkRequired(*chain[chain.size() - 1], VbkBlock(), *chainparams);
 
   EXPECT_EQ(value.expected_difficulty, result);
-
-  // deallocate blocks starting at tip, towards root
-  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
-    it->reset();
-  }
 }
 
 INSTANTIATE_TEST_SUITE_P(GetNextWorkRequiredRegression,
@@ -173,7 +189,6 @@ struct SingleTest : public ::testing::Test, public VbkBlockchainUtilTest {};
 
 TEST_F(SingleTest, single_test) {
   uint32_t chainlength = chainparams->getRetargetPeriod();
-
   int32_t deltaTime = chainparams->getTargetBlockTime();
 
   VbkBlock block{};
@@ -183,8 +198,9 @@ TEST_F(SingleTest, single_test) {
   auto blockIndex = std::make_shared<BlockIndex<VbkBlock>>(block.getHeight());
   blockIndex->setHeader(block);
 
-  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain(chainlength);
-  chain[0] = std::move(blockIndex);
+  ChainOwner owner;
+  auto& chain = owner.chain;
+  chain.push_back(std::move(blockIndex));
 
   for (size_t i = 1; i < chainlength; ++i) {
     if (i >= 60) {
@@ -199,24 +215,20 @@ TEST_F(SingleTest, single_test) {
     temp->setHeader(blockTmp);
     ASSERT_EQ(temp->getHeight(), blockTmp.getHeight());
 
-    chain[i] = std::move(temp);
+    chain.push_back(std::move(temp));
   }
 
   uint32_t result =
       getNextWorkRequired(*chain.back(), VbkBlock(), *chainparams);
 
   EXPECT_EQ(ArithUint256::fromHex("0228C35294D0").toBits(), result);
-
-  // deallocate blocks starting at tip, towards root
-  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
-    it->reset();
-  }
 }
 
 TEST(Vbk, CheckBlockTime1) {
   ValidationState state;
   const auto startTime = 1'527'000'000;
-  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
+  ChainOwner owner;
+  auto& chain = owner.chain;
   for (int i = 0; i < 1000; i++) {
     auto b = i == 0
                  ? std::make_shared<BlockIndex<VbkBlock>>(
@@ -245,11 +257,6 @@ TEST(Vbk, CheckBlockTime1) {
   ASSERT_FALSE(r2) << state.GetPath();
   ASSERT_EQ(state.GetPathParts()[state.GetPathParts().size() - 1],
             "vbk-time-too-old");
-
-  // deallocate blocks starting at tip, towards root
-  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
-    it->reset();
-  }
 }
 
 TEST(Vbk, CheckBlockTime2) {
@@ -267,7 +274,9 @@ TEST(Vbk, CheckBlockTime2) {
   };
 
   ValidationState state;
-  std::vector<std::shared_ptr<BlockIndex<VbkBlock>>> chain;
+
+  ChainOwner owner;
+  auto& chain = owner.chain;
   chain.push_back(makeBlock(nullptr, 1527000000, 110000));
   chain.push_back(makeBlock(chain.back().get(), 1527500000, 110001));
   chain.push_back(makeBlock(chain.back().get(), 1528000000, 110002));
@@ -285,11 +294,6 @@ TEST(Vbk, CheckBlockTime2) {
   bool r2 = checkBlockTime<VbkBlock, VbkChainParams>(
       *chain[chain.size() - 1], block, state, params);
   ASSERT_TRUE(r2);
-
-  // deallocate blocks starting at tip, towards root
-  for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
-    it->reset();
-  }
 }
 
 template <typename T>

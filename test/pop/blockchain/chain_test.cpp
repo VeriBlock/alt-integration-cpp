@@ -32,12 +32,19 @@ struct MyDummyBlock {
   std::string toPrettyString() const { return "MyDummyBlock"; }
 };
 
+template <typename Block>
 struct BlocksOwner {
-  std::vector<std::shared_ptr<BlockIndex<MyDummyBlock>>> blocks;
+  std::vector<std::shared_ptr<BlockIndex<Block>>> blocks;
 
   ~BlocksOwner() {
     // destroy chain in reverse order (from tip to root)
     for (auto it = blocks.rbegin(); it != blocks.rend(); ++it) {
+      auto* blk = (*it).get();
+      if(!blk->isDeleted()) {
+        blk->deleteTemporarily();
+      }
+      blk->disconnectFromPrev();
+      blk->pnext.clear();
       it->reset();
     }
   }
@@ -51,7 +58,7 @@ struct TestCase {
 struct ChainTest : public ::testing::TestWithParam<TestCase> {
   Chain<BlockIndex<MyDummyBlock>> chain{};
 
-  static BlocksOwner makeBlocks(int startHeight, int size) {
+  static BlocksOwner<MyDummyBlock> makeBlocks(int startHeight, int size) {
     std::vector<std::shared_ptr<BlockIndex<MyDummyBlock>>> blocks;
 
     // bootstrap
@@ -197,15 +204,16 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
   using block_t = typename findEndorsement::block_t;
   using endorsement_t = typename findEndorsement::endorsement_t;
 
-  std::vector<std::shared_ptr<BlockIndex<block_t>>> indexes{
-      generateNextBlock<block_t>(nullptr)};
+  BlocksOwner<block_t> owner;
+  owner.blocks.push_back(generateNextBlock<block_t>(nullptr));
+  auto& indexes = owner.blocks;
 
   auto& bootstrapBlock = indexes.at(0);
   Chain<BlockIndex<block_t>> chain(bootstrapBlock->getHeight(),
                                    bootstrapBlock.get());
 
   for (int i = 0; i < 10; ++i) {
-    auto index = generateNextBlock(chain.tip());
+    auto index = generateNextBlock<block_t>(chain.tip());
     indexes.push_back(index);
     chain.setTip(index.get());
   }
@@ -256,12 +264,9 @@ TYPED_TEST_P(ChainTestFixture, findEndorsement) {
             endorsement3);
   EXPECT_EQ(findBlockContainingEndorsement(chain, endorsement4, 100), nullptr);
 
-  // deallocate blocks in reverse order (tip->root)
-  newIndex2.reset();
-  newIndex.reset();
-  for (auto it = indexes.rbegin(); it != indexes.rend(); ++it) {
-    it->reset();
-  }
+  // to deallocate blocks in reverse order (tip->root)
+  indexes.push_back(newIndex);
+  indexes.push_back(newIndex2);
 }
 
 // make sure to enumerate the test cases here

@@ -225,7 +225,12 @@ struct BaseBlockTree {
 
     forEachNodePostorder<block_t>(
         toRemove,
-        [&](index_t& next) { removeSingleBlock(next); },
+        [&](index_t& next) {
+          onBeforeLeafRemoved(next);
+          tips_.erase(&next);
+          VBK_ASSERT(!next.isDeleted());
+          next.deleteTemporarily();
+        },
         [&](index_t& next) { return !next.isDeleted(); });
 
     // after removal, try to add tip
@@ -424,17 +429,6 @@ struct BaseBlockTree {
     activeChain_.setTip(&to);
   }
 
-  //! connects a handler to a signal 'On Invalidate Block'
-  size_t connectOnValidityBlockChanged(
-      const std::function<on_invalidate_t>& f) {
-    return validity_sig_.connect(f);
-  }
-
-  //! disconnects a handler to a signal 'On Invalidate Block'
-  bool disconnectOnValidityBlockChanged(size_t id) {
-    return validity_sig_.disconnect(id);
-  }
-
   index_t& getRoot() const {
     VBK_ASSERT_MSG(isBootstrapped(), "must be bootstrapped");
     auto* root = getBestChain().first();
@@ -470,17 +464,23 @@ struct BaseBlockTree {
     tips_.insert(index);
   }
 
-  //! dangerous! permanently drops the block from the tree
-  void eraseBlock(index_t& block) {
+  //! Permanently erases block from a block tree.
+  //! @invariant should be the only function that deallocates blocks.
+  //! @invariant erased block must be a tip.
+  //! @invariant erased block must be "deleted".
+  //! @invariant erased block must exist in block tree.
+  void deallocateBlock(index_t& block) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT_MSG(block.isDeleted(),
                    "cannot erase a block that is not deleted %s",
                    block.toPrettyString());
     VBK_ASSERT_MSG(
-        block.pnext.empty(),
+        block.isTip(),
         "cannot erase a block that has ancestors as that would split "
         "the tree: %s",
         block.toPrettyString());
+
+    onBlockBeforeDeallocated.emit(block);
     auto shortHash = makePrevHash(block.getHash());
     auto count = blocks_.erase(shortHash);
     VBK_ASSERT_MSG(count == 1,
@@ -797,10 +797,16 @@ struct BaseBlockTree {
     forEachNodePostorder<block_t>(
         *index,
         [&](index_t& next) {
-          auto h = makePrevHash(next.getHash());
           //! @warning: do not use logger in destructor, as logger instance may
           //! be deallocated!
-          blocks_.erase(h);
+
+          if (!next.isDeleted()) {
+            onBeforeLeafRemoved(next);
+            next.deleteTemporarily();
+          }
+
+          next.disconnectFromPrev();
+          deallocateBlock(next);
         },
         [&](index_t&) { return true; });
   }
@@ -844,7 +850,9 @@ struct BaseBlockTree {
     VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
     index_t* finalizedBlock = &index;
-    if (finalizedBlock == getRoot()) {
+
+    if (finalizedBlock == &this->getRoot()) {
+      finalizedBlock->finalized = true;
       return;
     }
 
@@ -1052,15 +1060,6 @@ struct BaseBlockTree {
   //! @private
   virtual void onBeforeLeafRemoved(const index_t&) {}
 
-  void removeSingleBlock(index_t& block) {
-    onBeforeLeafRemoved(block);
-
-    // if it is a tip, we also remove it
-    tips_.erase(&block);
-
-    block.deleteTemporarily();
-  }
-
   void doInvalidate(index_t& block, enum BlockValidityStatus reason) {
     VBK_TRACE_ZONE_SCOPED;
     VBK_ASSERT_MSG(
@@ -1073,14 +1072,20 @@ struct BaseBlockTree {
     block.setFlag(reason);
     tips_.erase(&block);
 
-    validity_sig_.emit(block);
+    onBlockValidityChanged.emit(block);
   }
 
   void doReValidate(index_t& block, enum BlockValidityStatus reason) {
     block.unsetFlag(reason);
     tryAddTip(&block);
-    validity_sig_.emit(block);
+    onBlockValidityChanged.emit(block);
   }
+
+ public:
+  //! before we deallocate any block index we emit it to this signal
+  signals::Signal<void(const index_t&)> onBlockBeforeDeallocated;
+  //! signals to the end user that block have been invalidated
+  signals::Signal<on_invalidate_t> onBlockValidityChanged;
 
  protected:
   //! if true, we're in "loading blocks" state
@@ -1093,8 +1098,6 @@ struct BaseBlockTree {
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
-  //! signals to the end user that block have been invalidated
-  signals::Signal<on_invalidate_t> validity_sig_;
 
   const BlockReader& blockProvider_;
 };

@@ -583,7 +583,7 @@ void AltBlockTree::doFinalize() {
     return;
   }
 
-  if(tip->getHeight() < maxReorg) {
+  if (tip->getHeight() < maxReorg) {
     // skip finalization
     return;
   }
@@ -759,6 +759,11 @@ void AltBlockTree::finalizeBlock(index_t& index) {
 
 void AltBlockTree::finalizeBlockImpl(index_t& index,
                                      int32_t preserveBlocksBehindFinal) {
+  if (activeChain_.tip()->getHeight() < getParams().getMaxReorgDistance()) {
+    // skip finalization
+    return;
+  }
+
   VBK_TRACE_ZONE_SCOPED;
   auto* bestVbkTip = vbk().getBestChain().tip();
   VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
@@ -769,13 +774,8 @@ void AltBlockTree::finalizeBlockImpl(index_t& index,
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
   auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
   VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
+
   vbk().finalizeBlock(*finalizedIndex);
-
-  if(activeChain_.tip()->getHeight() < getParams().getMaxReorgDistance()) {
-    // skip finalization
-    return;
-  }
-
   base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
 }
 

@@ -64,22 +64,24 @@ struct BlockIndex : public Block::addon_t {
   explicit BlockIndex(height_t _height) : pprev(nullptr), height(_height) {}
 
   ~BlockIndex() {
-    // revert the block to the "just constructed" state
-    if (!isDeleted()) {
-      deleteTemporarily();
-    }
-
-    if (!isRoot()) {
-      pprev->pnext.erase(this);
-    }
-
-    // FIXME: ideally we want to assert(pnext.empty())
-    // disconnect from next blocks so that next blocks won't have invalid
-    // pointers
-    for (auto* it : pnext) {
-      it->pprev = nullptr;
-    }
+    // before block is deallocated it must be disconnected and deleted.
+    VBK_ASSERT(isTip());
+    VBK_ASSERT(isDeleted());
+    VBK_ASSERT_MSG(pprev == nullptr, pprev->toPrettyString());
   }
+
+  void disconnectFromPrev() {
+    if (pprev == nullptr) {
+      // this block is already root
+      return;
+    }
+
+    VBK_ASSERT_MSG(pprev->pnext.count(this) > 0, this->toPrettyString());
+    this->pprev->pnext.erase(this);
+    this->pprev = nullptr;
+  }
+
+  bool isTip() const { return pnext.empty(); }
 
   // BlockIndex is not copyable
   // BlockIndex is movable
@@ -272,7 +274,7 @@ struct BlockIndex : public Block::addon_t {
    */
   bool isValidTip() const {
     return canBeATip() &&
-           (pnext.empty() ||
+           (isTip() ||
             std::none_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
               return index->canBeATip();
             }));
@@ -282,7 +284,7 @@ struct BlockIndex : public Block::addon_t {
    *  Check if all immediate descendants of the block are unapplied
    */
   bool allDescendantsUnapplied() const {
-    return pnext.empty() ||
+    return isTip() ||
            std::none_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
              return index->hasFlags(BLOCK_ACTIVE);
            });
@@ -302,7 +304,7 @@ struct BlockIndex : public Block::addon_t {
    *  Check if all immediate descendants of the block are not connected
    */
   bool allDescendantsUnconnected() const {
-    return pnext.empty() ||
+    return isTip() ||
            std::none_of(pnext.begin(), pnext.end(), [](BlockIndex* index) {
              return index->isConnected();
            });
@@ -368,15 +370,16 @@ struct BlockIndex : public Block::addon_t {
 
   std::string toPrettyString(size_t level = 0) const {
     return format(
-        "{}{}BlockIndex(height={}, hash={}, next={}, status={}, "
-        "header={}, {})",
+        "{}{}BlockIndex(height={} hash={} prev={} next={} status={} {})",
         std::string(level, ' '),
         Block::name(),
         height,
         HexStr(getHash()),
+        (pprev == nullptr
+             ? "nullptr"
+             : format("{}:{}", pprev->getHeight(), HexStr(pprev->getHash()))),
         nondeletedDescendantCount(),
         status,
-        header->toPrettyString(),
         addon_t::toPrettyString());
   }
 
