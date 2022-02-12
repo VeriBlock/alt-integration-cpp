@@ -77,11 +77,6 @@ void VbkBlockTree::overrideTip(index_t& to) {
                  to.toPrettyString());
 }
 
-void VbkBlockTree::removePayloads(const block_t& block,
-                                  const std::vector<pid_t>& pids) {
-  return removePayloads(block.getHash(), pids);
-}
-
 void VbkBlockTree::removePayloads(const hash_t& hash,
                                   const std::vector<pid_t>& pids) {
   auto index = VbkTree::getBlockIndex(hash);
@@ -131,12 +126,7 @@ void VbkBlockTree::removePayloads(index_t& index,
   updateTips();
 }
 
-void VbkBlockTree::unsafelyRemovePayload(const block_t& block,
-                                         const pid_t& pid) {
-  return unsafelyRemovePayload(block.getHash(), pid);
-}
-
-void VbkBlockTree::unsafelyRemovePayload(const Blob<24>& hash,
+void VbkBlockTree::unsafelyRemovePayload(const hash_t& hash,
                                          const pid_t& pid) {
   auto index = VbkTree::getBlockIndex(hash);
   VBK_ASSERT(index != nullptr &&
@@ -407,20 +397,20 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
   return true;
 }
 
-void VbkBlockTree::finalizeBlockImpl(index_t& index,
-                                     int32_t preserveBlocksBehindFinal) {
-  VBK_TRACE_ZONE_SCOPED;
-  auto* bestBtcTip = btc().getBestChain().tip();
-  VBK_ASSERT(bestBtcTip && "BTC tree must be bootstrapped");
+void VbkBlockTree::finalizeBlocks() {
+  auto* tip = getBestChain().tip();
+  VBK_ASSERT(tip && "VBK tree must be bootstrapped");
 
   int32_t firstBlockHeight =
-      bestBtcTip->getHeight() - btc().getParams().getOldBlocksWindow();
-  int32_t bootstrapBlockHeight = btc().getRoot().getHeight();
+      tip->getHeight() - getParams().getOldBlocksWindow();
+  int32_t bootstrapBlockHeight = getRoot().getHeight();
   firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
-  auto* finalizedIndex = btc().getBestChain()[firstBlockHeight];
-  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
-  btc().finalizeBlock(*finalizedIndex);
-  base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
+  auto* finalizedIndex = getBestChain()[firstBlockHeight];
+  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
+
+  btc().finalizeBlocks();
+  this->finalizeBlockImpl(*finalizedIndex,
+                          getParams().preserveBlocksBehindFinal());
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

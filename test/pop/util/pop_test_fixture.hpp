@@ -29,6 +29,15 @@
 
 namespace altintegration {
 
+struct AltTreeUnderTest : public AltBlockTree {
+    size_t deallocatedAlt = 0;
+
+    using AltBlockTree::AltBlockTree;
+    void finalizeBlock(index_t& index) {
+      this->finalizeBlockImpl(index, getParams().preserveBlocksBehindFinal());
+    }
+};
+
 struct PopTestFixture {
   TestComparator cmp;
 
@@ -49,7 +58,7 @@ struct PopTestFixture {
   std::shared_ptr<MockMiner> popminer;
 
   // trees
-  AltBlockTree alttree;
+  AltTreeUnderTest alttree;
 
   ValidationState state;
 

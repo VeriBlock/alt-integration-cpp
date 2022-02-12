@@ -176,7 +176,7 @@ extern template struct BaseBlockTree<AltBlock>;
 //! @see BtcChainParams
 
 // clang-format on
-struct AltBlockTree final : public BaseBlockTree<AltBlock> {
+struct AltBlockTree : public BaseBlockTree<AltBlock> {
   using base = BaseBlockTree<AltBlock>;
   using alt_config_t = AltChainParams;
   using vbk_config_t = VbkChainParams;
@@ -404,7 +404,7 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   using base::setState;
 
   //! @private
-  void finalizeBlock(index_t& index);
+  void finalizeBlocks();
 
   /**
    * Removes all payloads from a block
@@ -471,10 +471,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
   //! @private
   void setPayloads(index_t& index, const PopData& payloads);
 
-  //! @private
-  void finalizeBlockImpl(index_t& index,
-                         int32_t preserveBlocksBehindFinal) override;
-
   /**
    * Connect the block to the tree, doing stateful validation(incomplete at this
    * moment)
@@ -485,9 +481,6 @@ struct AltBlockTree final : public BaseBlockTree<AltBlock> {
 
   //! @private
   void removeAllPayloads(index_t& index);
-
-  //! @private
-  void doFinalize();
 };
 
 //! @private

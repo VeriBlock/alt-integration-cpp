@@ -182,13 +182,19 @@ struct BlockTree : public BaseBlockTree<Block> {
     return isBlockOld(index->getHeight());
   }
 
-  void finalizeBlock(index_t& index) {
-    (void)index;
-    // TODO: currently can not procced finalization for the vbk and btc trees,
-    // need more investigation
+  void finalizeBlocks() {
+    auto* tip = this->getBestChain().tip();
+    VBK_ASSERT(tip && "BTC tree must be bootstrapped");
 
-    // return this->finalizeBlockImpl(
-    //     index, param_->preserveBlocksBehindFinal(), state);
+    int32_t firstBlockHeight =
+        tip->getHeight() - this->getParams().getOldBlocksWindow();
+    int32_t bootstrapBlockHeight = this->getRoot().getHeight();
+    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+    auto* finalizedIndex = this->getBestChain()[firstBlockHeight];
+    VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
+
+    this->finalizeBlockImpl(*finalizedIndex,
+                            this->getParams().preserveBlocksBehindFinal());
   }
 
  protected:

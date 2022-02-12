@@ -28,7 +28,7 @@ struct AddVTB : public Command {
   }
 
   void UnExecute() noexcept override {
-    return tree_.vbk().unsafelyRemovePayload(vtb_.containingBlock,
+    return tree_.vbk().unsafelyRemovePayload(vtb_.containingBlock.getHash(),
                                              vtb_.getId());
   }
 
