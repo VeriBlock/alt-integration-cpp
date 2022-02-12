@@ -30,7 +30,7 @@
 <text text-anchor="start" x="447.5" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="447.5" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="447.5" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="447.5" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
+<text text-anchor="start" x="447.5" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
 <text text-anchor="start" x="447.5" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
 <text text-anchor="start" x="447.5" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
 <text text-anchor="start" x="447.5" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>

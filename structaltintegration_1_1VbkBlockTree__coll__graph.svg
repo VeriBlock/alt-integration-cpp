@@ -74,7 +74,7 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="529.46" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPayloadsIndex()</text>
 <text text-anchor="start" x="529.46" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
 <text text-anchor="start" x="529.46" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
-<text text-anchor="start" x="529.46" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
+<text text-anchor="start" x="529.46" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 10 more...</text>
 </a>
 </g>
 </g>
@@ -99,7 +99,7 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="520.46" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="520.46" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="520.46" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="520.46" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
+<text text-anchor="start" x="520.46" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
 <text text-anchor="start" x="520.46" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
 <text text-anchor="start" x="520.46" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
 <text text-anchor="start" x="520.46" y="-245.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
@@ -818,7 +818,7 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="205.46" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="205.46" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="205.46" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="205.46" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
+<text text-anchor="start" x="205.46" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
 <text text-anchor="start" x="205.46" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
 <text text-anchor="start" x="205.46" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
 <text text-anchor="start" x="205.46" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>

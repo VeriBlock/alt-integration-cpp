@@ -127,7 +127,7 @@ $(document).ready(function(){initNavTree('alt__block__tree_8hpp_source.html','')
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">// clang-format off</span></div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="comment"></span> </div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span><span class="comment">// clang-format on</span></div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="structaltintegration_1_1AltBlockTree.html">  179</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> final : <span class="keyword">public</span> <a class="code hl_class" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree&lt;AltBlock&gt;</a> {</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="structaltintegration_1_1AltBlockTree.html">  179</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> : <span class="keyword">public</span> <a class="code hl_class" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree&lt;AltBlock&gt;</a> {</div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>  <span class="keyword">using</span> <a class="code hl_class" href="structaltintegration_1_1BaseBlockTree.html">base</a> = <a class="code hl_class" href="structaltintegration_1_1BaseBlockTree.html">BaseBlockTree&lt;AltBlock&gt;</a>;</div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  <span class="keyword">using</span> <a class="code hl_struct" href="structaltintegration_1_1AltChainParams.html">alt_config_t</a> = <a class="code hl_struct" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a>;</div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>  <span class="keyword">using</span> <a class="code hl_struct" href="structaltintegration_1_1VbkChainParams.html">vbk_config_t</a> = <a class="code hl_struct" href="structaltintegration_1_1VbkChainParams.html">VbkChainParams</a>;</div>
@@ -210,7 +210,7 @@ $(document).ready(function(){initNavTree('alt__block__tree_8hpp_source.html','')
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno"><a class="line" href="structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd">  402</a></span>  VBK_CHECK_RETURN <span class="keywordtype">bool</span> <a class="code hl_function" href="structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd">setState</a>(index_t&amp; to, <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>  <span class="keyword">using</span> base::setState;</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span> </div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>  <span class="keywordtype">void</span> finalizeBlock(index_t&amp; index);</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>  <span class="keywordtype">void</span> finalizeBlocks();</div>
 <div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span> </div>
 <div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>  <span class="keywordtype">void</span> removePayloads(<span class="keyword">const</span> hash_t&amp; hash);</div>
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span> </div>
@@ -252,49 +252,44 @@ $(document).ready(function(){initNavTree('alt__block__tree_8hpp_source.html','')
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>  <span class="keywordtype">void</span> onBeforeLeafRemoved(<span class="keyword">const</span> index_t&amp; block) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>  <span class="keywordtype">void</span> setPayloads(index_t&amp; index, <span class="keyword">const</span> PopData&amp; payloads);</div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span> </div>
-<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>  <span class="keywordtype">void</span> finalizeBlockImpl(index_t&amp; index,</div>
-<div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>                         int32_t preserveBlocksBehindFinal) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span> </div>
-<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>  <span class="keywordtype">bool</span> connectBlock(index_t&amp; index, ValidationState&amp; state);</div>
+<div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>  <span class="keywordtype">bool</span> connectBlock(index_t&amp; index, ValidationState&amp; state);</div>
+<div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span> </div>
+<div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>  <span class="keywordtype">void</span> removeAllPayloads(index_t&amp; index);</div>
+<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>};</div>
 <div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span> </div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>  <span class="keywordtype">void</span> removeAllPayloads(index_t&amp; index);</div>
-<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span> </div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>  <span class="keywordtype">void</span> doFinalize();</div>
-<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>};</div>
-<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span> </div>
-<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
-<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>JsonValue ToJSON(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; i) {</div>
-<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>    endorsements.push_back(e.first);</div>
-<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>  }</div>
-<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> JsonValue&gt;</div>
+<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>JsonValue ToJSON(<span class="keyword">const</span> BlockIndex&lt;AltBlock&gt;&amp; i) {</div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>    endorsements.push_back(e.first);</div>
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>  }</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span> </div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>  }</div>
+<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
 <div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span> </div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>  }</div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vbkblocks&quot;</span>, i.getPayloadIds&lt;VbkBlock&gt;());</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbs&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;atvs&quot;</span>, i.getPayloadIds&lt;ATV&gt;());</div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span> </div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span> </div>
-<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vbkblocks&quot;</span>, i.getPayloadIds&lt;VbkBlock&gt;());</div>
-<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbs&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;atvs&quot;</span>, i.getPayloadIds&lt;ATV&gt;());</div>
-<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span> </div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span> </div>
-<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>}</div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>}</div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span> </div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> AltBlockTree&amp; tree, std::ostream* os) {</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>  *os &lt;&lt; tree.toPrettyString();</div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>}</div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span> </div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>}  <span class="comment">// namespace altintegration</span></div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span> </div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> AltBlockTree&amp; tree, std::ostream* os) {</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>  *os &lt;&lt; tree.toPrettyString();</div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>}</div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span> </div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span> </div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span><span class="preprocessor">#endif  </span><span class="comment">// !</span></div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span><span class="preprocessor">#endif  </span><span class="comment">// !</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00013">block.hpp:13</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00294">arith_uint256.hpp:294</a></div></div>

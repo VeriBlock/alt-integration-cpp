@@ -67,7 +67,7 @@
 <text text-anchor="start" x="8" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="8" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="8" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="8" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
+<text text-anchor="start" x="8" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
 <text text-anchor="start" x="8" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
 <text text-anchor="start" x="8" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
 <text text-anchor="start" x="8" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
@@ -192,7 +192,7 @@
 <text text-anchor="start" x="78" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
 <text text-anchor="start" x="78" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
 <text text-anchor="start" x="78" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="78" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlock()</text>
+<text text-anchor="start" x="78" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
 <text text-anchor="start" x="78" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
 <text text-anchor="start" x="78" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
 <text text-anchor="start" x="78" y="-245.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
@@ -228,7 +228,7 @@
 <text text-anchor="start" x="87" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPayloadsIndex()</text>
 <text text-anchor="start" x="87" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
 <text text-anchor="start" x="87" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
-<text text-anchor="start" x="87" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 9 more...</text>
+<text text-anchor="start" x="87" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 10 more...</text>
 </a>
 </g>
 </g>
