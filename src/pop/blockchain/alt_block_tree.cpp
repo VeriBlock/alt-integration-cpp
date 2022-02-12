@@ -573,28 +573,6 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   return success;
 }
 
-void AltBlockTree::doFinalize() {
-  ValidationState state;
-  auto* tip = getBestChain().tip();
-  VBK_ASSERT(tip != nullptr && "must be bootstrapped");
-
-  int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
-  if (maxReorg > tip->getHeight()) {
-    return;
-  }
-
-  if (tip->getHeight() < maxReorg) {
-    // skip finalization
-    return;
-  }
-
-  auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
-  auto* finalizedBlock = getBestChain()[finalh];
-  VBK_ASSERT(finalizedBlock != nullptr);
-
-  finalizeBlock(*finalizedBlock);
-}
-
 void AltBlockTree::overrideTip(index_t& to) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("%s %s %s",
@@ -619,7 +597,7 @@ void AltBlockTree::overrideTip(index_t& to) {
   }
 
   VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
-  doFinalize();
+  finalizeBlocks();
 }
 
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,
@@ -752,31 +730,35 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
   return candidates;
 }
 
-void AltBlockTree::finalizeBlock(index_t& index) {
-  return this->finalizeBlockImpl(index,
-                                 getParams().preserveBlocksBehindFinal());
-}
+void AltBlockTree::finalizeBlocks() {
+  VBK_TRACE_ZONE_SCOPED;
 
-void AltBlockTree::finalizeBlockImpl(index_t& index,
-                                     int32_t preserveBlocksBehindFinal) {
+  auto* tip = getBestChain().tip();
+  VBK_ASSERT(tip != nullptr && "must be bootstrapped");
+
+  int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
+  if (maxReorg > tip->getHeight()) {
+    return;
+  }
+
+  if (tip->getHeight() < maxReorg) {
+    // skip finalization
+    return;
+  }
+
+  auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
+  auto* finalizedBlock = getBestChain()[finalh];
+  VBK_ASSERT(finalizedBlock != nullptr);
+
+
   if (activeChain_.tip()->getHeight() < getParams().getMaxReorgDistance()) {
     // skip finalization
     return;
   }
 
-  VBK_TRACE_ZONE_SCOPED;
-  auto* bestVbkTip = vbk().getBestChain().tip();
-  VBK_ASSERT(bestVbkTip && "VBK tree must be bootstrapped");
-
-  int32_t firstBlockHeight =
-      bestVbkTip->getHeight() - vbk().getParams().getOldBlocksWindow();
-  int32_t bootstrapBlockHeight = vbk().getRoot().getHeight();
-  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
-  auto* finalizedIndex = vbk().getBestChain()[firstBlockHeight];
-  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
-
-  vbk().finalizeBlock(*finalizedIndex);
-  base::finalizeBlockImpl(index, preserveBlocksBehindFinal);
+  vbk().finalizeBlocks();
+  return this->finalizeBlockImpl(*finalizedBlock,
+                                 getParams().preserveBlocksBehindFinal());
 }
 
 template <typename Payloads>
