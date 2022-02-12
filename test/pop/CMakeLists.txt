@@ -21,7 +21,7 @@ addtest(alt-util_test alt-util_test.cpp)
 addtest(mempool_test mempool_test.cpp)
 set_test_cost(mempool_test 25000) # 25 sec
 addtest(mempool_test_vtbs_contextgap mempool_test_vtbs_contextgap.cpp)
-set_test_cost(mempool_test_vtbs_contextgap 150000) # 150 sec
+set_test_cost(mempool_test_vtbs_contextgap 200000) # 200 sec
 addtest(mempool_getpop_test mempool_getpop_test.cpp)
 set_test_cost(mempool_getpop_test 42000) # 42 sec
 addtest(mempool_prioritization_test mempool_prioritization_test.cpp)

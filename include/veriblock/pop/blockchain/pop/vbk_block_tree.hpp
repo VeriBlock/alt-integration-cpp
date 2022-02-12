@@ -156,7 +156,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
                    ValidationState& state);
 
   void removePayloads(const hash_t& hash, const std::vector<pid_t>& pids);
-  void removePayloads(const block_t& block, const std::vector<pid_t>& pids);
   void removePayloads(index_t& index, const std::vector<pid_t>& pids);
 
   /**
@@ -172,7 +171,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
    * B2, A3, A1; or just B2.
    */
   void unsafelyRemovePayload(const Blob<24>& hash, const pid_t& pid);
-  void unsafelyRemovePayload(const block_t& block, const pid_t& pid);
   void unsafelyRemovePayload(index_t& index,
                              const pid_t& pid,
                              bool shouldDetermineBestChain = true);

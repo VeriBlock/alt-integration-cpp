@@ -77,11 +77,6 @@ void VbkBlockTree::overrideTip(index_t& to) {
                  to.toPrettyString());
 }
 
-void VbkBlockTree::removePayloads(const block_t& block,
-                                  const std::vector<pid_t>& pids) {
-  return removePayloads(block.getHash(), pids);
-}
-
 void VbkBlockTree::removePayloads(const hash_t& hash,
                                   const std::vector<pid_t>& pids) {
   auto index = VbkTree::getBlockIndex(hash);
@@ -131,12 +126,7 @@ void VbkBlockTree::removePayloads(index_t& index,
   updateTips();
 }
 
-void VbkBlockTree::unsafelyRemovePayload(const block_t& block,
-                                         const pid_t& pid) {
-  return unsafelyRemovePayload(block.getHash(), pid);
-}
-
-void VbkBlockTree::unsafelyRemovePayload(const Blob<24>& hash,
+void VbkBlockTree::unsafelyRemovePayload(const hash_t& hash,
                                          const pid_t& pid) {
   auto index = VbkTree::getBlockIndex(hash);
   VBK_ASSERT(index != nullptr &&
