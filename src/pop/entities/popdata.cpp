@@ -59,19 +59,27 @@ size_t PopData::estimateSize() const {
   return size;
 }
 uint256 PopData::getMerkleRoot() const {
+  return getMerkleRoot(this->version,
+                       map_get_id(this->atvs),
+                       map_get_id(this->vtbs),
+                       map_get_id(this->context));
+}
+
+uint256 PopData::getMerkleRoot(uint32_t version,
+                               const std::vector<ATV::id_t>& atvs,
+                               const std::vector<VTB::id_t>& vtbs,
+                               const std::vector<VbkBlock::id_t>& vbks) {
   WriteStream stream;
   stream.writeBE<uint32_t>(version);
 
   auto vbytes = sha256twice(stream.data());
-  auto atvMerkleRoot =
-      PayloadsMerkleTree<ATV>(map_get_id(atvs)).getMerkleRoot();
-  auto vtbMerkleRoot =
-      PayloadsMerkleTree<VTB>(map_get_id(vtbs)).getMerkleRoot();
-  auto vbkMerkleRoot =
-      PayloadsMerkleTree<VbkBlock>(map_get_id(context)).getMerkleRoot();
+  auto atvMerkleRoot = PayloadsMerkleTree<ATV>(atvs).getMerkleRoot();
+  auto vtbMerkleRoot = PayloadsMerkleTree<VTB>(vtbs).getMerkleRoot();
+  auto vbkMerkleRoot = PayloadsMerkleTree<VbkBlock>(vbks).getMerkleRoot();
 
   auto left = sha256twice(vbkMerkleRoot, vtbMerkleRoot);
   auto right = sha256twice(atvMerkleRoot, vbytes);
+
   return sha256twice(left, right);
 }
 

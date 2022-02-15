@@ -34,6 +34,11 @@ struct PopData {
 
   uint256 getMerkleRoot() const;
 
+  static uint256 getMerkleRoot(uint32_t version,
+                               const std::vector<ATV::id_t>& atvs,
+                               const std::vector<VTB::id_t>& vtbs,
+                               const std::vector<VbkBlock::id_t>& vbks);
+
   void mergeFrom(const PopData& p) {
     context.insert(context.end(), p.context.begin(), p.context.end());
     vtbs.insert(vtbs.end(), p.vtbs.begin(), p.vtbs.end());

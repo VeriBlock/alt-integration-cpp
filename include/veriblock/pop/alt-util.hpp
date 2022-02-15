@@ -98,6 +98,18 @@ PublicationData GeneratePublicationData(
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params);
 
+//! @overload
+PublicationData GeneratePublicationData(
+    const std::vector<uint8_t>& endorsedBlockHeader,
+    const BlockIndex<AltBlock>& endorsedBlock,
+    const std::vector<uint8_t>& txMerkleRoot,
+    uint32_t version,
+    const std::vector<ATV::id_t>& atv_ids,
+    const std::vector<VTB::id_t>& vtb_ids,
+    const std::vector<VbkBlock::id_t>& vbk_ids,
+    const std::vector<uint8_t>& payoutInfo,
+    const AltChainParams& params);
+
 //! calculates top level merkle root that cryptographically authenticates
 //! block content (transactions, PopData, context info) to a block
 uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
@@ -114,13 +126,14 @@ uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
                                     const BlockIndex<AltBlock>* prevBlock,
                                     const AltChainParams& params);
 
-//! The second to the last byte is used to determine the max number of occurrences
-//! The first 7 bits determine the base (1 is added to the first 7 bits interpreted as a number),
-//! and the last bit determines the exponent (0 = exponent of 1, 1 = exponent of 2)
-//! For example:
-//! 00000000 has a base of 1 (0+1) and an exponent of 1 for a maximum of 1 publication
-//! 00000110 has a base of 4 (3+1) and an exponent of 1 for a maximum of 4 publications
-//! 00000101 has a base of 3 (2+1) and an exponent of 2 for a maximum of 9 publications
+//! The second to the last byte is used to determine the max number of
+//! occurrences The first 7 bits determine the base (1 is added to the first 7
+//! bits interpreted as a number), and the last bit determines the exponent (0 =
+//! exponent of 1, 1 = exponent of 2) For example: 00000000 has a base of 1
+//! (0+1) and an exponent of 1 for a maximum of 1 publication 00000110 has a
+//! base of 4 (3+1) and an exponent of 1 for a maximum of 4 publications
+//! 00000101 has a base of 3 (2+1) and an exponent of 2 for a maximum of 9
+//! publications
 int getMaxAtvsInVbkBlock(uint64_t altchainId);
 
 }  // namespace altintegration
