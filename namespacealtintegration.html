@@ -417,6 +417,10 @@ Functions</h2></td></tr>
 <a class="el" href="structaltintegration_1_1PublicationData.html">PublicationData</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GeneratePublicationData</b> (const std::vector&lt; uint8_t &gt; &amp;endorsedBlockHeader, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;endorsedBlock, const std::vector&lt; uint8_t &gt; &amp;txMerkleRoot, const <a class="el" href="structaltintegration_1_1PopData.html">PopData</a> &amp;popData, const std::vector&lt; uint8_t &gt; &amp;payoutInfo, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
 <tr class="memdesc:ac88da7ab3bd8bc8959177081264dcdd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:ac88da7ab3bd8bc8959177081264dcdd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeddd787a4cbba6429d14633850b16b94"><td class="memItemLeft" align="right" valign="top"><a id="aeddd787a4cbba6429d14633850b16b94" name="aeddd787a4cbba6429d14633850b16b94"></a>
+<a class="el" href="structaltintegration_1_1PublicationData.html">PublicationData</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GeneratePublicationData</b> (const std::vector&lt; uint8_t &gt; &amp;endorsedBlockHeader, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;endorsedBlock, const std::vector&lt; uint8_t &gt; &amp;txMerkleRoot, uint32_t version, const std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">ATV::id_t</a> &gt; &amp;atv_ids, const std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">VTB::id_t</a> &gt; &amp;vtb_ids, const std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::id_t</a> &gt; &amp;vbk_ids, const std::vector&lt; uint8_t &gt; &amp;payoutInfo, const <a class="el" href="structaltintegration_1_1AltChainParams.html">AltChainParams</a> &amp;params)</td></tr>
+<tr class="memdesc:aeddd787a4cbba6429d14633850b16b94"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
+<tr class="separator:aeddd787a4cbba6429d14633850b16b94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00f54cc63f2e894b82275c5261aa4ec3"><td class="memItemLeft" align="right" valign="top"><a id="a00f54cc63f2e894b82275c5261aa4ec3" name="a00f54cc63f2e894b82275c5261aa4ec3"></a>
 <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CalculateTopLevelMerkleRoot</b> (const std::vector&lt; uint8_t &gt; &amp;txMerkleRoot, const <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> &amp;popDataMerkleRoot, const <a class="el" href="structaltintegration_1_1ContextInfoContainer.html">ContextInfoContainer</a> &amp;ctx)</td></tr>
 <tr class="memdesc:a00f54cc63f2e894b82275c5261aa4ec3"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates top level merkle root that cryptographically authenticates block content (transactions, <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">PopData</a>, context info) to a block <br /></td></tr>
@@ -4705,22 +4709,22 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00107">107</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  107</span>                                                         {</div>
-<div class="line"><span class="lineno">  108</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  109</span>  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, p.version);</div>
-<div class="line"><span class="lineno">  110</span>  <span class="keywordflow">if</span> (verbose) {</div>
-<div class="line"><span class="lineno">  111</span>    detail::putArrayKV(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
-<div class="line"><span class="lineno">  112</span>    detail::putArrayKV(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
-<div class="line"><span class="lineno">  113</span>    detail::putArrayKV(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
-<div class="line"><span class="lineno">  114</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  115</span>    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
-<div class="line"><span class="lineno">  116</span>    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
-<div class="line"><span class="lineno">  117</span>    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
-<div class="line"><span class="lineno">  118</span>  }</div>
-<div class="line"><span class="lineno">  119</span> </div>
-<div class="line"><span class="lineno">  120</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  121</span>}</div>
+<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00112">112</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  112</span>                                                         {</div>
+<div class="line"><span class="lineno">  113</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  114</span>  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, p.version);</div>
+<div class="line"><span class="lineno">  115</span>  <span class="keywordflow">if</span> (verbose) {</div>
+<div class="line"><span class="lineno">  116</span>    detail::putArrayKV(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
+<div class="line"><span class="lineno">  117</span>    detail::putArrayKV(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
+<div class="line"><span class="lineno">  118</span>    detail::putArrayKV(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
+<div class="line"><span class="lineno">  119</span>  } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">  120</span>    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vbkblocks&quot;</span>, p.context);</div>
+<div class="line"><span class="lineno">  121</span>    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;vtbs&quot;</span>, p.vtbs);</div>
+<div class="line"><span class="lineno">  122</span>    detail::putArrayOfIds(obj, <span class="stringliteral">&quot;atvs&quot;</span>, p.atvs);</div>
+<div class="line"><span class="lineno">  123</span>  }</div>
+<div class="line"><span class="lineno">  124</span> </div>
+<div class="line"><span class="lineno">  125</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  126</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

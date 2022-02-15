@@ -1,5 +1,5 @@
 <map id="altintegration::PopData" name="altintegration::PopData">
-<area shape="rect" id="node1" title="Represents ALT block body of POP&#45;related info." alt="" coords="433,2119,585,2313"/>
+<area shape="rect" id="node1" title="Represents ALT block body of POP&#45;related info." alt="" coords="433,2119,585,2328"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,1545,172,1637"/>
 <area shape="rect" id="node3" href="$structaltintegration_1_1VbkBlock.html" title="Veriblock block." alt="" coords="201,1115,360,1353"/>
 <area shape="rect" id="node7" href="$structaltintegration_1_1VTB.html" title="Veriblock to Bitcoin publication, committed to Veriblock blockchain in containingBlock." alt="" coords="433,1721,584,1901"/>

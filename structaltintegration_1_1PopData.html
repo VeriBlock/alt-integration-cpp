@@ -88,6 +88,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1PopData.html',
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="structaltintegration_1_1PopData-members.html">List of all members</a>  </div>
@@ -140,6 +141,12 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toPrettyString
 <tr class="separator:a33488f7c3af7d0b45f8a65a4406e385e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7969623da54ead48c5017fda912bb67f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopData.html#a7969623da54ead48c5017fda912bb67f">empty</a> () const</td></tr>
 <tr class="separator:a7969623da54ead48c5017fda912bb67f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a97a96432193aa3c8f933444390c2140d"><td class="memItemLeft" align="right" valign="top"><a id="a97a96432193aa3c8f933444390c2140d" name="a97a96432193aa3c8f933444390c2140d"></a>
+static <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getMerkleRoot</b> (uint32_t version, const std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">ATV::id_t</a> &gt; &amp;atvs, const std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">VTB::id_t</a> &gt; &amp;vtbs, const std::vector&lt; <a class="el" href="structaltintegration_1_1Blob.html">VbkBlock::id_t</a> &gt; &amp;vbks)</td></tr>
+<tr class="separator:a97a96432193aa3c8f933444390c2140d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -200,12 +207,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00043">43</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   43</span>               {</div>
-<div class="line"><span class="lineno">   44</span>    context.clear();</div>
-<div class="line"><span class="lineno">   45</span>    vtbs.clear();</div>
-<div class="line"><span class="lineno">   46</span>    atvs.clear();</div>
-<div class="line"><span class="lineno">   47</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00048">48</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   48</span>               {</div>
+<div class="line"><span class="lineno">   49</span>    context.clear();</div>
+<div class="line"><span class="lineno">   50</span>    vtbs.clear();</div>
+<div class="line"><span class="lineno">   51</span>    atvs.clear();</div>
+<div class="line"><span class="lineno">   52</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -232,8 +239,8 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00065">65</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   65</span>{ <span class="keywordflow">return</span> context.empty() &amp;&amp; atvs.empty() &amp;&amp; vtbs.empty(); }</div>
+<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00070">70</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   70</span>{ <span class="keywordflow">return</span> context.empty() &amp;&amp; atvs.empty() &amp;&amp; vtbs.empty(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -261,12 +268,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00037">37</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   37</span>                                   {</div>
-<div class="line"><span class="lineno">   38</span>    context.insert(context.end(), p.context.begin(), p.context.end());</div>
-<div class="line"><span class="lineno">   39</span>    vtbs.insert(vtbs.end(), p.vtbs.begin(), p.vtbs.end());</div>
-<div class="line"><span class="lineno">   40</span>    atvs.insert(atvs.end(), p.atvs.begin(), p.atvs.end());</div>
-<div class="line"><span class="lineno">   41</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00042">42</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   42</span>                                   {</div>
+<div class="line"><span class="lineno">   43</span>    context.insert(context.end(), p.context.begin(), p.context.end());</div>
+<div class="line"><span class="lineno">   44</span>    vtbs.insert(vtbs.end(), p.vtbs.begin(), p.vtbs.end());</div>
+<div class="line"><span class="lineno">   45</span>    atvs.insert(atvs.end(), p.atvs.begin(), p.atvs.end());</div>
+<div class="line"><span class="lineno">   46</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -347,12 +354,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00067">67</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   67</span>                                                             {</div>
-<div class="line"><span class="lineno">   68</span>    <span class="comment">// clang-format off</span></div>
-<div class="line"><span class="lineno">   69</span>    <span class="keywordflow">return</span> a.toVbkEncoding() == b.toVbkEncoding();</div>
-<div class="line"><span class="lineno">   70</span>    <span class="comment">// clang-format on</span></div>
-<div class="line"><span class="lineno">   71</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00072">72</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   72</span>                                                             {</div>
+<div class="line"><span class="lineno">   73</span>    <span class="comment">// clang-format off</span></div>
+<div class="line"><span class="lineno">   74</span>    <span class="keywordflow">return</span> a.toVbkEncoding() == b.toVbkEncoding();</div>
+<div class="line"><span class="lineno">   75</span>    <span class="comment">// clang-format on</span></div>
+<div class="line"><span class="lineno">   76</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -393,7 +400,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00075">75</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="popdata_8hpp_source.html#l00080">80</a> of file <a class="el" href="popdata_8hpp_source.html">popdata.hpp</a>.</p>
 
 </div>
 </div>

@@ -254,6 +254,7 @@ var namespacealtintegration =
     [ "forEachNodePostorder", "namespacealtintegration.html#a1f4a8d5bd53e800b4a5c5a1fa45462e4", null ],
     [ "forEachNodePreorder", "namespacealtintegration.html#a869a4359297806bc6fc2821a67e7dadd", null ],
     [ "GeneratePublicationData", "namespacealtintegration.html#ac88da7ab3bd8bc8959177081264dcdd5", null ],
+    [ "GeneratePublicationData", "namespacealtintegration.html#aeddd787a4cbba6429d14633850b16b94", null ],
     [ "GeneratePublicationData", "namespacealtintegration.html#a66083a017e21bbf1d2bd4034c1b784eb", null ],
     [ "getContext", "namespacealtintegration.html#acc9f193542aa57dac9a8ab2595c2de26", null ],
     [ "getForkBlock", "namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f", null ],

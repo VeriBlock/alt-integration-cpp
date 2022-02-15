@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html":[4,0,0,7,0],
 "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc":[4,0,0,7,0,0],
 "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a7750263ceaa0bbf32e8b09becd2dbecc":[5,0,0,6,0,0],
 "structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa278942a6bc04fef8e003f64ee95d772":[4,0,0,7,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "structaltintegration_1_1Config.html#a350a3b951170c7a9502289f2ad5c4ca4":[4,0,0,31,3],
 "structaltintegration_1_1Config.html#a37c65b03dc521c49196aeb251a4b114f":[4,0,0,31,2],
 "structaltintegration_1_1Config.html#a37c65b03dc521c49196aeb251a4b114f":[5,0,0,30,2],
-"structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b":[4,0,0,31,1],
-"structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b":[5,0,0,30,1]
+"structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b":[4,0,0,31,1]
 };

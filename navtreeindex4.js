@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1Config.html#a6ba99b57193351d4ae46ded4d6f2e78b":[5,0,0,30,1],
 "structaltintegration_1_1Config_1_1Bootstrap.html":[4,0,0,31,0],
 "structaltintegration_1_1Config_1_1Bootstrap.html":[5,0,0,30,0],
 "structaltintegration_1_1Config_1_1Bootstrap.html#a067afda8589eb095f3382781b700bbb4":[4,0,0,31,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1VbkBlockTree.html#a91716b55e733d16cadb8fafe23094a50":[5,0,0,59,2],
 "structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411":[4,0,0,60,0],
 "structaltintegration_1_1VbkBlockTree.html#ab64217bb562a06ad92963d005baca411":[5,0,0,59,0],
-"structaltintegration_1_1VbkChainParams.html":[4,0,0,61],
-"structaltintegration_1_1VbkChainParams.html":[5,0,0,60]
+"structaltintegration_1_1VbkChainParams.html":[4,0,0,61]
 };
