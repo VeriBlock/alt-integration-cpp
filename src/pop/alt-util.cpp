@@ -37,7 +37,31 @@ PublicationData GeneratePublicationData(
     const PopData& popData,
     const std::vector<uint8_t>& payoutInfo,
     const AltChainParams& params) {
-  auto popDataRoot = popData.getMerkleRoot();
+  auto atv_ids = map_get_id(popData.atvs);
+  auto vtb_ids = map_get_id(popData.vtbs);
+  auto vbk_ids = map_get_id(popData.context);
+  return GeneratePublicationData(endorsedBlockHeader,
+                                 endorsedBlock,
+                                 txMerkleRoot,
+                                 popData.version,
+                                 atv_ids,
+                                 vtb_ids,
+                                 vbk_ids,
+                                 payoutInfo,
+                                 params);
+}
+
+PublicationData GeneratePublicationData(
+    const std::vector<uint8_t>& endorsedBlockHeader,
+    const BlockIndex<AltBlock>& endorsedBlock,
+    const std::vector<uint8_t>& txMerkleRoot,
+    uint32_t version,
+    const std::vector<ATV::id_t>& atv_ids,
+    const std::vector<VTB::id_t>& vtb_ids,
+    const std::vector<VbkBlock::id_t>& vbk_ids,
+    const std::vector<uint8_t>& payoutInfo,
+    const AltChainParams& params) {
+  auto popDataRoot = PopData::getMerkleRoot(version, atv_ids, vtb_ids, vbk_ids);
   auto ctx = AuthenticatedContextInfoContainer::createFromPrevious(
       sha256twice(txMerkleRoot, popDataRoot), endorsedBlock.pprev, params);
 
@@ -75,7 +99,7 @@ uint256 CalculateTopLevelMerkleRoot(const std::vector<uint8_t>& txMerkleRoot,
 
 int getMaxAtvsInVbkBlock(uint64_t altchainId) {
   uint8_t last = altchainId & 0xFFu;
-  if(last != 0xff) {
+  if (last != 0xff) {
     return std::numeric_limits<int>::max();
   }
 
