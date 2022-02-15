@@ -7,3 +7,4 @@ target_link_libraries(test_main PUBLIC gtest)
 
 add_subdirectory(pop)
 add_subdirectory(bfi)
+add_subdirectory(e2e)
