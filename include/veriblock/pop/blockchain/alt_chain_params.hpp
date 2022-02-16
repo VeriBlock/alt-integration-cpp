@@ -201,7 +201,7 @@ struct AltChainParams {
   //! Max number of blocks that can be reorganized in altchain.
   //!
   //! As implication, we store last N blocks in RAM and effectively
-  //! `tip-maxReorgDistance` block is finalized.
+  //! `tip-maxReorgBlocks` block is finalized.
   int32_t getMaxReorgDistance() const noexcept {
     VBK_ASSERT(int64_t(mMaxReorgDistance) > int64_t(mEndorsementSettlementInterval));
     return mMaxReorgDistance;
@@ -316,7 +316,7 @@ JsonValue ToJSON(const AltChainParams& p, bool reverseAltHashes = true) {
   json::putIntKV(obj, "maxVbkBlocksInAltBlock", p.getMaxVbkBlocksInAltBlock());
   json::putIntKV(obj, "maxVTBsInAltBlock", p.getMaxVTBsInAltBlock());
   json::putIntKV(obj, "maxATVsInAltBlock", p.getMaxATVsInAltBlock());
-  json::putIntKV(obj, "maxReorgDistance", p.getMaxReorgDistance());
+  json::putIntKV(obj, "maxReorgBlocks", p.getMaxReorgDistance());
   json::putIntKV(obj,
                  "endorsementSettlementInterval",
                  p.getEndorsementSettlementInterval());

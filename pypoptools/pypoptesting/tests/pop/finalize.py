@@ -23,7 +23,7 @@ class PopFinalizationTest(PopIntegrationTestFramework):
 
         popparams = self.nodes[0].getpopparams()
 
-        self.max_reorg = popparams.maxReorgDistance
+        self.max_reorg = popparams.maxReorgBlocks
         self.endorsement_settlement = popparams.endorsementSettlementInterval
 
     def run_test(self):

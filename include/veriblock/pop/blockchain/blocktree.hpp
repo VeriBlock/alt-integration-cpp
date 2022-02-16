@@ -244,6 +244,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     base::activeChain_ = Chain<index_t>(height, index);
     index->setIsBootstrap(true);
 
+    VBK_ASSERT(index->finalized);
     VBK_ASSERT(base::isBootstrapped());
     VBK_ASSERT(base::getBlockIndex(index->getHash()) != nullptr &&
                "getBlockIndex must be able to find the block added by "

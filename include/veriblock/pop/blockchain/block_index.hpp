@@ -370,7 +370,7 @@ struct BlockIndex : public Block::addon_t {
 
   std::string toPrettyString(size_t level = 0) const {
     return format(
-        "{}{}BlockIndex(height={} hash={} prev={} next={} status={} {})",
+        "{}{}BlockIndex(height={} hash={} prev={} next={} final={} status={} {})",
         std::string(level, ' '),
         Block::name(),
         height,
@@ -379,6 +379,7 @@ struct BlockIndex : public Block::addon_t {
              ? "nullptr"
              : format("{}:{}", pprev->getHeight(), HexStr(pprev->getHash()))),
         nondeletedDescendantCount(),
+        finalized,
         status,
         addon_t::toPrettyString());
   }

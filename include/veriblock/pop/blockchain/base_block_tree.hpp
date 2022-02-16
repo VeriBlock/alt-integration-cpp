@@ -512,7 +512,10 @@ struct BaseBlockTree {
     VBK_ASSERT_MSG(inserted.second,
                    "attempted to create a blockindex with duplicate hash %s",
                    HexStr(shortHash));
-    return inserted.first->second.get();
+    auto* index = inserted.first->second.get();
+    // bootstrap blocks are finalized by default
+    index->finalized = true;
+    return index;
   }
 
   //! the block header is created in a deleted state
