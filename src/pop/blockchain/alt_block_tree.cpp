@@ -561,7 +561,7 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_ASSERT(to.isConnected());
+  VBK_ASSERT_MSG(to.isConnected(), "must be connected");
   VBK_ASSERT(!this->isLoadingBlocks_);
 
   bool success = cmp_.setState(to, state);
