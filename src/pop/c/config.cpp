@@ -245,7 +245,7 @@ POP_ENTITY_SETTER_FUNCTION(config, uint32_t, pop_payout_delay) {
 
 POP_ENTITY_SETTER_FUNCTION(config, uint32_t, max_reorg_distance) {
   VBK_ASSERT(self);
-  self->ref->alt->mMaxReorgDistance = val;
+  self->ref->alt->mMaxReorgBlocks = val;
 }
 
 POP_ENTITY_GETTER_FUNCTION(config, double, start_of_slope) {
@@ -399,7 +399,7 @@ POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_altchain_future_block_time) {
 
 POP_ENTITY_GETTER_FUNCTION(config, uint32_t, max_reorg_distance) {
   VBK_ASSERT(self);
-  return self->ref->alt->mMaxReorgDistance;
+  return self->ref->alt->mMaxReorgBlocks;
 }
 
 POP_ENTITY_GETTER_FUNCTION(config,

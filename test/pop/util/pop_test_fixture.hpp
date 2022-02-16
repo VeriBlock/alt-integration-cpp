@@ -8,12 +8,12 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/pop/ct_params.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/config.hpp>
+#include <veriblock/pop/ct_params.hpp>
 #include <veriblock/pop/entities/merkle_tree.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/mempool.hpp>
@@ -30,12 +30,12 @@
 namespace altintegration {
 
 struct AltTreeUnderTest : public AltBlockTree {
-    size_t deallocatedAlt = 0;
+  size_t deallocatedAlt = 0;
 
-    using AltBlockTree::AltBlockTree;
-    void finalizeBlock(index_t& index) {
-      this->finalizeBlockImpl(index, getParams().preserveBlocksBehindFinal());
-    }
+  using AltBlockTree::AltBlockTree;
+  void finalizeBlock(index_t& index) {
+    this->finalizeBlockImpl(index, getParams().preserveBlocksBehindFinal());
+  }
 };
 
 struct PopTestFixture {
@@ -455,6 +455,24 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
   EXPECT_EQ(commands->size() == popData.context.size() + popData.atvs.size() +
                                     popData.vtbs.size(),
             payloads_existance);
+}
+
+template <typename Payload, typename Tree>
+std::set<typename Payload::id_t> getAllPayloadIdsInTree(
+    Tree& tree, bool skipFinal = false) {
+  std::set<typename Payload::id_t> ids;
+  for (auto* index : tree.getAllBlocks()) {
+    VBK_ASSERT(index != nullptr);
+    if (skipFinal && index->finalized) {
+      continue;
+    }
+
+    for (const auto& id : index->template getPayloadIds<Payload>()) {
+      ids.insert(id);
+    }
+  }
+
+  return ids;
 }
 
 }  // namespace altintegration
