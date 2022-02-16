@@ -17,6 +17,7 @@ var structaltintegration_1_1BaseBlockTree =
     [ "removeSubtree", "structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24", null ],
     [ "activeChain_", "structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69", null ],
     [ "blocks_", "structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51", null ],
+    [ "finalizedPayloadsIndex_", "structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d", null ],
     [ "isLoaded_", "structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9", null ],
     [ "isLoadingBlocks_", "structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901", null ],
     [ "onBlockBeforeDeallocated", "structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61", null ],

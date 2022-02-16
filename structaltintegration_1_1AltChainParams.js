@@ -10,7 +10,7 @@ var structaltintegration_1_1AltChainParams =
     [ "getKeystoneInterval", "structaltintegration_1_1AltChainParams.html#a0d153f5cdaa0e9448f7ea0cc6a1aaeae", null ],
     [ "getMaxATVsInAltBlock", "structaltintegration_1_1AltChainParams.html#a5825b30566316c42675e1254bea15fd5", null ],
     [ "getMaxPopDataSize", "structaltintegration_1_1AltChainParams.html#a3c460d50056c2a4f56a7cc93bdc11539", null ],
-    [ "getMaxReorgDistance", "structaltintegration_1_1AltChainParams.html#aa063d90c1ed8c0800d7dabb49334a237", null ],
+    [ "getMaxReorgBlocks", "structaltintegration_1_1AltChainParams.html#accade3baef4a5a310ac1e3b01d95437e", null ],
     [ "getMaxVbkBlocksInAltBlock", "structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d", null ],
     [ "getMaxVTBsInAltBlock", "structaltintegration_1_1AltChainParams.html#a30a17437d219fba10e84bb27814ffe35", null ],
     [ "getPayoutParams", "structaltintegration_1_1AltChainParams.html#a766ff175efa5494bdabab773e30e802c", null ],

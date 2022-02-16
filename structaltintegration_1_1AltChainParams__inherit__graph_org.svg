@@ -18,7 +18,7 @@
 <text text-anchor="middle" x="85" y="-447.5" font-family="Helvetica,sans-Serif" font-size="10.00">Params</text>
 <polyline fill="none" stroke="black" points="0,-440.5 170,-440.5 "/>
 <text text-anchor="start" x="8" y="-428.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mPopPayoutsParams</text>
-<text text-anchor="start" x="8" y="-417.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mMaxReorgDistance</text>
+<text text-anchor="start" x="8" y="-417.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mMaxReorgBlocks</text>
 <text text-anchor="start" x="8" y="-406.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mMaxAltchainFutureBlockTime</text>
 <text text-anchor="start" x="8" y="-395.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mKeystoneInterval</text>
 <text text-anchor="start" x="8" y="-384.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mFinalityDelay</text>

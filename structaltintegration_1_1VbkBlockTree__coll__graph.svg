@@ -46,7 +46,7 @@ if (edges && edges.length) {
         </defs>
 
 <script type="text/javascript">
-var viewWidth = 1034;
+var viewWidth = 1264;
 var viewHeight = 2214;
 var sectionId = 'dynsection-1';
 </script>
@@ -54,27 +54,27 @@ var sectionId = 'dynsection-1';
 <svg id="graph" class="graph">
 <g id="viewport">
 <title>altintegration::VbkBlockTree</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-2210 1030.46,-2210 1030.46,4 -4,4"/>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-2210 1259.5,-2210 1259.5,4 -4,4"/>
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
 <g id="a_node1"><a xlink:title="Veriblock block tree.">
-<polygon fill="#bfbfbf" stroke="black" points="521.46,-0.5 521.46,-167.5 659.46,-167.5 659.46,-0.5 521.46,-0.5"/>
-<text text-anchor="middle" x="590.46" y="-155.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkBlockTree</text>
-<polyline fill="none" stroke="black" points="521.46,-148.5 659.46,-148.5 "/>
-<text text-anchor="middle" x="590.46" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="521.46,-129.5 659.46,-129.5 "/>
-<text text-anchor="start" x="529.46" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~VbkBlockTree()</text>
-<text text-anchor="start" x="529.46" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ VbkBlockTree()</text>
-<text text-anchor="start" x="529.46" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
-<text text-anchor="start" x="529.46" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
-<text text-anchor="start" x="529.46" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
-<text text-anchor="start" x="529.46" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
-<text text-anchor="start" x="529.46" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
-<text text-anchor="start" x="529.46" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPayloadsIndex()</text>
-<text text-anchor="start" x="529.46" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
-<text text-anchor="start" x="529.46" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
-<text text-anchor="start" x="529.46" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 8 more...</text>
+<polygon fill="#bfbfbf" stroke="black" points="908.5,-0.5 908.5,-167.5 1046.5,-167.5 1046.5,-0.5 908.5,-0.5"/>
+<text text-anchor="middle" x="977.5" y="-155.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkBlockTree</text>
+<polyline fill="none" stroke="black" points="908.5,-148.5 1046.5,-148.5 "/>
+<text text-anchor="middle" x="977.5" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="908.5,-129.5 1046.5,-129.5 "/>
+<text text-anchor="start" x="916.5" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~VbkBlockTree()</text>
+<text text-anchor="start" x="916.5" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ VbkBlockTree()</text>
+<text text-anchor="start" x="916.5" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="916.5" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
+<text text-anchor="start" x="916.5" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
+<text text-anchor="start" x="916.5" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
+<text text-anchor="start" x="916.5" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
+<text text-anchor="start" x="916.5" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPayloadsIndex()</text>
+<text text-anchor="start" x="916.5" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
+<text text-anchor="start" x="916.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
+<text text-anchor="start" x="916.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 8 more...</text>
 </a>
 </g>
 </g>
@@ -82,764 +82,829 @@ var sectionId = 'dynsection-1';
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a xlink:href="structaltintegration_1_1BlockTree.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="black" points="512.46,-205.5 512.46,-460.5 668.46,-460.5 668.46,-205.5 512.46,-205.5"/>
-<text text-anchor="start" x="520.46" y="-448.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockTree</text>
-<text text-anchor="middle" x="590.46" y="-437.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; VbkBlock, VbkChainParams &gt;</text>
-<polyline fill="none" stroke="black" points="512.46,-430.5 668.46,-430.5 "/>
-<text text-anchor="middle" x="590.46" y="-418.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="512.46,-411.5 668.46,-411.5 "/>
-<text text-anchor="start" x="520.46" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockTree()</text>
-<text text-anchor="start" x="520.46" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockTree()</text>
-<text text-anchor="start" x="520.46" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getParams()</text>
-<text text-anchor="start" x="520.46" y="-366.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithGenesis()</text>
-<text text-anchor="start" x="520.46" y="-355.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithChain()</text>
-<text text-anchor="start" x="520.46" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
-<text text-anchor="start" x="520.46" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
-<text text-anchor="start" x="520.46" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
-<text text-anchor="start" x="520.46" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
-<text text-anchor="start" x="520.46" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="520.46" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="520.46" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
-<text text-anchor="start" x="520.46" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
-<text text-anchor="start" x="520.46" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
-<text text-anchor="start" x="520.46" y="-245.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
-<text text-anchor="start" x="520.46" y="-234.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validateAndAddBlock()</text>
-<text text-anchor="start" x="520.46" y="-223.5" font-family="Helvetica,sans-Serif" font-size="10.00"># determineBestChain()</text>
-<text text-anchor="start" x="520.46" y="-212.5" font-family="Helvetica,sans-Serif" font-size="10.00"># onBlockInserted()</text>
+<polygon fill="white" stroke="black" points="899.5,-205.5 899.5,-460.5 1055.5,-460.5 1055.5,-205.5 899.5,-205.5"/>
+<text text-anchor="start" x="907.5" y="-448.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockTree</text>
+<text text-anchor="middle" x="977.5" y="-437.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; VbkBlock, VbkChainParams &gt;</text>
+<polyline fill="none" stroke="black" points="899.5,-430.5 1055.5,-430.5 "/>
+<text text-anchor="middle" x="977.5" y="-418.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="899.5,-411.5 1055.5,-411.5 "/>
+<text text-anchor="start" x="907.5" y="-399.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockTree()</text>
+<text text-anchor="start" x="907.5" y="-388.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockTree()</text>
+<text text-anchor="start" x="907.5" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getParams()</text>
+<text text-anchor="start" x="907.5" y="-366.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithGenesis()</text>
+<text text-anchor="start" x="907.5" y="-355.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithChain()</text>
+<text text-anchor="start" x="907.5" y="-344.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
+<text text-anchor="start" x="907.5" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
+<text text-anchor="start" x="907.5" y="-322.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
+<text text-anchor="start" x="907.5" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="907.5" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
+<text text-anchor="start" x="907.5" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
+<text text-anchor="start" x="907.5" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
+<text text-anchor="start" x="907.5" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
+<text text-anchor="start" x="907.5" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
+<text text-anchor="start" x="907.5" y="-245.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
+<text text-anchor="start" x="907.5" y="-234.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validateAndAddBlock()</text>
+<text text-anchor="start" x="907.5" y="-223.5" font-family="Helvetica,sans-Serif" font-size="10.00"># determineBestChain()</text>
+<text text-anchor="start" x="907.5" y="-212.5" font-family="Helvetica,sans-Serif" font-size="10.00"># onBlockInserted()</text>
 </a>
 </g>
 </g>
 <!-- Node2&#45;&gt;Node1 -->
 <g id="edge1" class="edge">
 <title>Node2&#45;&gt;Node1</title>
-<path fill="none" stroke="midnightblue" d="M590.46,-195.07C590.46,-185.72 590.46,-176.48 590.46,-167.56"/>
-<polygon fill="none" stroke="midnightblue" points="586.96,-195.24 590.46,-205.24 593.96,-195.24 586.96,-195.24"/>
+<path fill="none" stroke="midnightblue" d="M977.5,-195.07C977.5,-185.72 977.5,-176.48 977.5,-167.56"/>
+<polygon fill="none" stroke="midnightblue" points="974,-195.24 977.5,-205.24 981,-195.24 974,-195.24"/>
 </g>
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
 <g id="a_node3"><a xlink:href="structaltintegration_1_1BaseBlockTree.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="black" points="514.46,-508.5 514.46,-785.5 666.46,-785.5 666.46,-508.5 514.46,-508.5"/>
-<text text-anchor="start" x="522.46" y="-773.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
-<text text-anchor="middle" x="590.46" y="-762.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; VbkBlock &gt;</text>
-<polyline fill="none" stroke="black" points="514.46,-755.5 666.46,-755.5 "/>
-<text text-anchor="start" x="522.46" y="-743.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockBeforeDeallocated</text>
-<text text-anchor="start" x="522.46" y="-732.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockValidityChanged</text>
-<text text-anchor="start" x="522.46" y="-721.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoadingBlocks_</text>
-<text text-anchor="start" x="522.46" y="-710.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoaded_</text>
-<polyline fill="none" stroke="black" points="514.46,-703.5 666.46,-703.5 "/>
-<text text-anchor="start" x="522.46" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="522.46" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="522.46" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
-<text text-anchor="start" x="522.46" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
-<text text-anchor="start" x="522.46" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="522.46" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="522.46" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 23 more...</text>
-<text text-anchor="start" x="522.46" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
-<text text-anchor="start" x="522.46" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
-<text text-anchor="start" x="522.46" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
-<text text-anchor="start" x="522.46" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
-<text text-anchor="start" x="522.46" y="-526.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
-<text text-anchor="start" x="522.46" y="-515.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
+<polygon fill="white" stroke="black" points="616.5,-508.5 616.5,-785.5 768.5,-785.5 768.5,-508.5 616.5,-508.5"/>
+<text text-anchor="start" x="624.5" y="-773.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
+<text text-anchor="middle" x="692.5" y="-762.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; VbkBlock &gt;</text>
+<polyline fill="none" stroke="black" points="616.5,-755.5 768.5,-755.5 "/>
+<text text-anchor="start" x="624.5" y="-743.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockBeforeDeallocated</text>
+<text text-anchor="start" x="624.5" y="-732.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockValidityChanged</text>
+<text text-anchor="start" x="624.5" y="-721.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoadingBlocks_</text>
+<text text-anchor="start" x="624.5" y="-710.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoaded_</text>
+<polyline fill="none" stroke="black" points="616.5,-703.5 768.5,-703.5 "/>
+<text text-anchor="start" x="624.5" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="624.5" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="624.5" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
+<text text-anchor="start" x="624.5" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
+<text text-anchor="start" x="624.5" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="624.5" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="624.5" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="624.5" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="624.5" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="624.5" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="624.5" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="624.5" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
+<text text-anchor="start" x="624.5" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
+<text text-anchor="start" x="624.5" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
+<text text-anchor="start" x="624.5" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
+<text text-anchor="start" x="624.5" y="-526.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
+<text text-anchor="start" x="624.5" y="-515.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
 </a>
 </g>
 </g>
 <!-- Node3&#45;&gt;Node2 -->
 <g id="edge2" class="edge">
 <title>Node3&#45;&gt;Node2</title>
-<path fill="none" stroke="midnightblue" d="M590.46,-498.2C590.46,-485.64 590.46,-473.01 590.46,-460.64"/>
-<polygon fill="none" stroke="midnightblue" points="586.96,-498.24 590.46,-508.24 593.96,-498.24 586.96,-498.24"/>
+<path fill="none" stroke="midnightblue" d="M775.46,-555.18C814.59,-512.35 861,-461.53 899.48,-419.41"/>
+<polygon fill="none" stroke="midnightblue" points="772.66,-553.06 768.5,-562.8 777.83,-557.78 772.66,-553.06"/>
 </g>
 <!-- Node4 -->
 <g id="node4" class="node">
 <title>Node4</title>
 <g id="a_node4"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="82.96,-1208 82.96,-1287 219.96,-1287 219.96,-1208 82.96,-1208"/>
-<text text-anchor="start" x="90.96" y="-1275" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_map</text>
-<text text-anchor="start" x="90.96" y="-1264" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; prev_block_hash_t,</text>
-<text text-anchor="middle" x="151.46" y="-1253" font-family="Helvetica,sans-Serif" font-size="10.00"> std::unique_ptr&lt; index_t &gt; &gt;</text>
-<polyline fill="none" stroke="black" points="82.96,-1246 219.96,-1246 "/>
-<text text-anchor="start" x="90.96" y="-1234" font-family="Helvetica,sans-Serif" font-size="10.00">+ keys</text>
-<polyline fill="none" stroke="black" points="82.96,-1227 219.96,-1227 "/>
-<text text-anchor="middle" x="151.46" y="-1215" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="black" points="48,-1208 48,-1287 185,-1287 185,-1208 48,-1208"/>
+<text text-anchor="start" x="56" y="-1275" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_map</text>
+<text text-anchor="start" x="56" y="-1264" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; prev_block_hash_t,</text>
+<text text-anchor="middle" x="116.5" y="-1253" font-family="Helvetica,sans-Serif" font-size="10.00"> std::unique_ptr&lt; index_t &gt; &gt;</text>
+<polyline fill="none" stroke="black" points="48,-1246 185,-1246 "/>
+<text text-anchor="start" x="56" y="-1234" font-family="Helvetica,sans-Serif" font-size="10.00">+ keys</text>
+<polyline fill="none" stroke="black" points="48,-1227 185,-1227 "/>
+<text text-anchor="middle" x="116.5" y="-1215" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node4&#45;&gt;Node3 -->
 <g id="edge3" class="edge">
 <title>Node4&#45;&gt;Node3</title>
-<path fill="none" stroke="#404040" d="M133.39,-1207.71C99.14,-1127.79 35.76,-943.07 124.46,-833 186.1,-756.5 248.49,-820.55 340.46,-786 397.41,-764.61 457.21,-732.01 504.04,-703.87"/>
-<polygon fill="none" stroke="#404040" points="504.18,-703.79 507.23,-697.26 514.44,-697.57 511.38,-704.1 504.18,-703.79"/>
-<text text-anchor="middle" x="145.46" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
+<path fill="none" stroke="#404040" d="M95.57,-1207.71C56.04,-1128.61 -18.34,-946.53 66.5,-833 131.29,-746.29 447.94,-685.98 604.51,-660.95"/>
+<polygon fill="none" stroke="#404040" points="604.56,-660.94 609.86,-656.05 616.41,-659.06 611.11,-663.95 604.56,-660.94"/>
+<text text-anchor="middle" x="87.5" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
 </g>
-<!-- Node21 -->
-<g id="node21" class="node">
-<title>Node21</title>
-<g id="a_node21"><a xlink:href="structaltintegration_1_1BaseBlockTree.html" target="_top" xlink:title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">
-<polygon fill="white" stroke="black" points="514.46,-833.5 514.46,-1110.5 666.46,-1110.5 666.46,-833.5 514.46,-833.5"/>
-<text text-anchor="start" x="522.46" y="-1098.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
-<text text-anchor="middle" x="590.46" y="-1087.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
-<polyline fill="none" stroke="black" points="514.46,-1080.5 666.46,-1080.5 "/>
-<text text-anchor="start" x="522.46" y="-1068.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockBeforeDeallocated</text>
-<text text-anchor="start" x="522.46" y="-1057.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockValidityChanged</text>
-<text text-anchor="start" x="522.46" y="-1046.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoadingBlocks_</text>
-<text text-anchor="start" x="522.46" y="-1035.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoaded_</text>
-<polyline fill="none" stroke="black" points="514.46,-1028.5 666.46,-1028.5 "/>
-<text text-anchor="start" x="522.46" y="-1016.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="522.46" y="-1005.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="522.46" y="-994.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
-<text text-anchor="start" x="522.46" y="-983.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
-<text text-anchor="start" x="522.46" y="-972.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-961.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-950.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-939.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="522.46" y="-928.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="522.46" y="-917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="522.46" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 23 more...</text>
-<text text-anchor="start" x="522.46" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
-<text text-anchor="start" x="522.46" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
-<text text-anchor="start" x="522.46" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
-<text text-anchor="start" x="522.46" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
-<text text-anchor="start" x="522.46" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
-<text text-anchor="start" x="522.46" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
+<!-- Node23 -->
+<g id="node23" class="node">
+<title>Node23</title>
+<g id="a_node23"><a xlink:href="structaltintegration_1_1BaseBlockTree.html" target="_top" xlink:title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">
+<polygon fill="white" stroke="black" points="303.5,-833.5 303.5,-1110.5 455.5,-1110.5 455.5,-833.5 303.5,-833.5"/>
+<text text-anchor="start" x="311.5" y="-1098.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
+<text text-anchor="middle" x="379.5" y="-1087.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
+<polyline fill="none" stroke="black" points="303.5,-1080.5 455.5,-1080.5 "/>
+<text text-anchor="start" x="311.5" y="-1068.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockBeforeDeallocated</text>
+<text text-anchor="start" x="311.5" y="-1057.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockValidityChanged</text>
+<text text-anchor="start" x="311.5" y="-1046.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoadingBlocks_</text>
+<text text-anchor="start" x="311.5" y="-1035.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoaded_</text>
+<polyline fill="none" stroke="black" points="303.5,-1028.5 455.5,-1028.5 "/>
+<text text-anchor="start" x="311.5" y="-1016.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="311.5" y="-1005.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="311.5" y="-994.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
+<text text-anchor="start" x="311.5" y="-983.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
+<text text-anchor="start" x="311.5" y="-972.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="311.5" y="-961.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="311.5" y="-950.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="311.5" y="-939.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="311.5" y="-928.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="311.5" y="-917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="311.5" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="311.5" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
+<text text-anchor="start" x="311.5" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
+<text text-anchor="start" x="311.5" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
+<text text-anchor="start" x="311.5" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
+<text text-anchor="start" x="311.5" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
+<text text-anchor="start" x="311.5" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
 </a>
 </g>
 </g>
-<!-- Node4&#45;&gt;Node21 -->
-<g id="edge27" class="edge">
-<title>Node4&#45;&gt;Node21</title>
-<path fill="none" stroke="#404040" d="M175.31,-1207.85C188.63,-1189.67 206.9,-1169.5 228.46,-1158 284.98,-1127.85 312.17,-1164.26 371.46,-1140 400.29,-1128.2 456.52,-1085.14 504.78,-1045.71"/>
-<polygon fill="none" stroke="#404040" points="505.04,-1045.49 507.14,-1038.59 514.31,-1037.88 512.21,-1044.78 505.04,-1045.49"/>
-<text text-anchor="middle" x="412.46" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
+<!-- Node4&#45;&gt;Node23 -->
+<g id="edge29" class="edge">
+<title>Node4&#45;&gt;Node23</title>
+<path fill="none" stroke="#404040" d="M125.85,-1207.99C134.03,-1182.14 148.48,-1149.24 172.5,-1129 195.1,-1109.96 210.87,-1125.7 236.5,-1111 256.76,-1099.38 276.3,-1084.25 294.1,-1068.29"/>
+<polygon fill="none" stroke="#404040" points="294.4,-1068 296.11,-1060.99 303.23,-1059.87 301.53,-1066.88 294.4,-1068"/>
+<text text-anchor="middle" x="193.5" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
 </g>
-<!-- Node26 -->
-<g id="node26" class="node">
-<title>Node26</title>
-<g id="a_node26"><a xlink:href="structaltintegration_1_1BaseBlockTree.html" target="_top" xlink:title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">
-<polygon fill="white" stroke="black" points="175.46,-833.5 175.46,-1110.5 327.46,-1110.5 327.46,-833.5 175.46,-833.5"/>
-<text text-anchor="start" x="183.46" y="-1098.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
-<text text-anchor="middle" x="251.46" y="-1087.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
-<polyline fill="none" stroke="black" points="175.46,-1080.5 327.46,-1080.5 "/>
-<text text-anchor="start" x="183.46" y="-1068.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockBeforeDeallocated</text>
-<text text-anchor="start" x="183.46" y="-1057.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockValidityChanged</text>
-<text text-anchor="start" x="183.46" y="-1046.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoadingBlocks_</text>
-<text text-anchor="start" x="183.46" y="-1035.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoaded_</text>
-<polyline fill="none" stroke="black" points="175.46,-1028.5 327.46,-1028.5 "/>
-<text text-anchor="start" x="183.46" y="-1016.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
-<text text-anchor="start" x="183.46" y="-1005.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
-<text text-anchor="start" x="183.46" y="-994.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
-<text text-anchor="start" x="183.46" y="-983.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
-<text text-anchor="start" x="183.46" y="-972.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
-<text text-anchor="start" x="183.46" y="-961.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="183.46" y="-950.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="183.46" y="-939.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="183.46" y="-928.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
-<text text-anchor="start" x="183.46" y="-917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="183.46" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 23 more...</text>
-<text text-anchor="start" x="183.46" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
-<text text-anchor="start" x="183.46" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
-<text text-anchor="start" x="183.46" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
-<text text-anchor="start" x="183.46" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
-<text text-anchor="start" x="183.46" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
-<text text-anchor="start" x="183.46" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
+<!-- Node28 -->
+<g id="node28" class="node">
+<title>Node28</title>
+<g id="a_node28"><a xlink:href="structaltintegration_1_1BaseBlockTree.html" target="_top" xlink:title="Base block tree that stores all blocks, maintains tree tips, maintains active chain.">
+<polygon fill="white" stroke="black" points="739.5,-833.5 739.5,-1110.5 891.5,-1110.5 891.5,-833.5 739.5,-833.5"/>
+<text text-anchor="start" x="747.5" y="-1098.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BaseBlock</text>
+<text text-anchor="middle" x="815.5" y="-1087.5" font-family="Helvetica,sans-Serif" font-size="10.00">Tree&lt; Block &gt;</text>
+<polyline fill="none" stroke="black" points="739.5,-1080.5 891.5,-1080.5 "/>
+<text text-anchor="start" x="747.5" y="-1068.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockBeforeDeallocated</text>
+<text text-anchor="start" x="747.5" y="-1057.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockValidityChanged</text>
+<text text-anchor="start" x="747.5" y="-1046.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoadingBlocks_</text>
+<text text-anchor="start" x="747.5" y="-1035.5" font-family="Helvetica,sans-Serif" font-size="10.00"># isLoaded_</text>
+<polyline fill="none" stroke="black" points="739.5,-1028.5 891.5,-1028.5 "/>
+<text text-anchor="start" x="747.5" y="-1016.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTips()</text>
+<text text-anchor="start" x="747.5" y="-1005.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlocks()</text>
+<text text-anchor="start" x="747.5" y="-994.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllBlocks()</text>
+<text text-anchor="start" x="747.5" y="-983.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlockProvider()</text>
+<text text-anchor="start" x="747.5" y="-972.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BaseBlockTree()</text>
+<text text-anchor="start" x="747.5" y="-961.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="747.5" y="-950.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="747.5" y="-939.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="747.5" y="-928.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
+<text text-anchor="start" x="747.5" y="-917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="747.5" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
+<text text-anchor="start" x="747.5" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
+<text text-anchor="start" x="747.5" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
+<text text-anchor="start" x="747.5" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
+<text text-anchor="start" x="747.5" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
+<text text-anchor="start" x="747.5" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
+<text text-anchor="start" x="747.5" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00"># increaseAppliedBlockCount()</text>
 </a>
 </g>
 </g>
-<!-- Node4&#45;&gt;Node26 -->
-<g id="edge37" class="edge">
-<title>Node4&#45;&gt;Node26</title>
-<path fill="none" stroke="#404040" d="M155.91,-1207.98C159.28,-1184.7 164.83,-1154.67 173.46,-1129 174.22,-1126.74 175.01,-1124.47 175.82,-1122.2"/>
-<polygon fill="none" stroke="#404040" points="175.88,-1122.03 174.23,-1115.01 180.07,-1110.79 181.72,-1117.81 175.88,-1122.03"/>
-<text text-anchor="middle" x="194.46" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
+<!-- Node4&#45;&gt;Node28 -->
+<g id="edge40" class="edge">
+<title>Node4&#45;&gt;Node28</title>
+<path fill="none" stroke="#404040" d="M139.72,-1207.73C153,-1189.28 171.41,-1168.91 193.5,-1158 250.6,-1129.8 418.55,-1158.44 479.5,-1140 488.84,-1137.17 489.18,-1131.9 498.5,-1129 546.81,-1113.95 681.99,-1136.84 725.5,-1111 726.85,-1110.2 728.18,-1109.37 729.5,-1108.51"/>
+<polygon fill="none" stroke="#404040" points="729.55,-1108.47 732.06,-1101.71 739.26,-1101.43 736.76,-1108.19 729.55,-1108.47"/>
+<text text-anchor="middle" x="519.5" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blocks_</text>
 </g>
 <!-- Node5 -->
 <g id="node5" class="node">
 <title>Node5</title>
 <g id="a_node5"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="133.96,-1815.5 133.96,-1872.5 260.96,-1872.5 260.96,-1815.5 133.96,-1815.5"/>
-<text text-anchor="middle" x="197.46" y="-1860.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unique_ptr&lt; index_t &gt;</text>
-<polyline fill="none" stroke="black" points="133.96,-1853.5 260.96,-1853.5 "/>
-<text text-anchor="start" x="141.96" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ptr</text>
-<polyline fill="none" stroke="black" points="133.96,-1834.5 260.96,-1834.5 "/>
-<text text-anchor="start" x="141.96" y="-1822.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
+<polygon fill="white" stroke="black" points="0,-1815.5 0,-1872.5 127,-1872.5 127,-1815.5 0,-1815.5"/>
+<text text-anchor="middle" x="63.5" y="-1860.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unique_ptr&lt; index_t &gt;</text>
+<polyline fill="none" stroke="black" points="0,-1853.5 127,-1853.5 "/>
+<text text-anchor="start" x="8" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ptr</text>
+<polyline fill="none" stroke="black" points="0,-1834.5 127,-1834.5 "/>
+<text text-anchor="start" x="8" y="-1822.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
 </a>
 </g>
 </g>
 <!-- Node5&#45;&gt;Node4 -->
 <g id="edge4" class="edge">
 <title>Node5&#45;&gt;Node4</title>
-<path fill="none" stroke="#404040" d="M173.64,-1815.27C169.9,-1809.55 166.58,-1803.34 164.46,-1797 133.94,-1705.82 143.47,-1417.31 148.87,-1299.43"/>
-<polygon fill="none" stroke="#404040" points="148.88,-1299.23 145.16,-1293.05 149.44,-1287.24 153.15,-1293.42 148.88,-1299.23"/>
-<text text-anchor="middle" x="188.96" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +elements</text>
+<path fill="none" stroke="#404040" d="M46.28,-1815.14C43.48,-1809.34 41,-1803.12 39.5,-1797 17.06,-1705.49 28.92,-1678.63 39.5,-1585 51.17,-1481.71 82.37,-1363.91 101.28,-1298.68"/>
+<polygon fill="none" stroke="#404040" points="101.3,-1298.64 99.14,-1291.76 104.67,-1287.13 106.82,-1294.01 101.3,-1298.64"/>
+<text text-anchor="middle" x="64" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +elements</text>
 </g>
 <!-- Node6 -->
 <g id="node6" class="node">
 <title>Node6</title>
 <g id="a_node6"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="171.46,-1967.5 171.46,-2024.5 273.46,-2024.5 273.46,-1967.5 171.46,-1967.5"/>
-<text text-anchor="middle" x="222.46" y="-2012.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unique_ptr&lt; T &gt;</text>
-<polyline fill="none" stroke="black" points="171.46,-2005.5 273.46,-2005.5 "/>
-<text text-anchor="middle" x="222.46" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="171.46,-1986.5 273.46,-1986.5 "/>
-<text text-anchor="start" x="179.46" y="-1974.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
+<polygon fill="white" stroke="black" points="145.5,-1967.5 145.5,-2024.5 247.5,-2024.5 247.5,-1967.5 145.5,-1967.5"/>
+<text text-anchor="middle" x="196.5" y="-2012.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unique_ptr&lt; T &gt;</text>
+<polyline fill="none" stroke="black" points="145.5,-2005.5 247.5,-2005.5 "/>
+<text text-anchor="middle" x="196.5" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="145.5,-1986.5 247.5,-1986.5 "/>
+<text text-anchor="start" x="153.5" y="-1974.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
 </a>
 </g>
 </g>
 <!-- Node6&#45;&gt;Node5 -->
 <g id="edge5" class="edge">
 <title>Node6&#45;&gt;Node5</title>
-<path fill="none" stroke="orange" d="M212.27,-1957.61C211.61,-1954.71 211,-1951.81 210.46,-1949 205.52,-1923.27 202.02,-1893.58 199.91,-1872.53"/>
-<polygon fill="orange" stroke="orange" points="208.89,-1958.5 214.64,-1967.4 215.69,-1956.86 208.89,-1958.5"/>
-<text text-anchor="middle" x="235.46" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; index_t &gt;</text>
+<path fill="none" stroke="orange" d="M165.38,-1959.9C141.77,-1933.27 109.76,-1897.17 87.96,-1872.59"/>
+<polygon fill="orange" stroke="orange" points="162.85,-1962.33 172.11,-1967.49 168.09,-1957.68 162.85,-1962.33"/>
+<text text-anchor="middle" x="178.5" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; index_t &gt;</text>
 </g>
 <!-- Node7 -->
 <g id="node7" class="node">
 <title>Node7</title>
 <g id="a_node7"><a xlink:title=" ">
-<polygon fill="white" stroke="#bfbfbf" points="247.96,-2148.5 247.96,-2205.5 276.96,-2205.5 276.96,-2148.5 247.96,-2148.5"/>
-<text text-anchor="middle" x="262.46" y="-2193.5" font-family="Helvetica,sans-Serif" font-size="10.00">T</text>
-<polyline fill="none" stroke="#bfbfbf" points="247.96,-2186.5 276.96,-2186.5 "/>
-<text text-anchor="middle" x="262.46" y="-2174.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="#bfbfbf" points="247.96,-2167.5 276.96,-2167.5 "/>
-<text text-anchor="middle" x="262.46" y="-2155.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="#bfbfbf" points="274,-2148.5 274,-2205.5 303,-2205.5 303,-2148.5 274,-2148.5"/>
+<text text-anchor="middle" x="288.5" y="-2193.5" font-family="Helvetica,sans-Serif" font-size="10.00">T</text>
+<polyline fill="none" stroke="#bfbfbf" points="274,-2186.5 303,-2186.5 "/>
+<text text-anchor="middle" x="288.5" y="-2174.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="#bfbfbf" points="274,-2167.5 303,-2167.5 "/>
+<text text-anchor="middle" x="288.5" y="-2155.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node7&#45;&gt;Node6 -->
 <g id="edge6" class="edge">
 <title>Node7&#45;&gt;Node6</title>
-<path fill="none" stroke="#404040" d="M256.3,-2148.42C249.6,-2118.47 238.85,-2070.35 231.27,-2036.41"/>
-<polygon fill="none" stroke="#404040" points="231.25,-2036.32 226.03,-2031.34 228.63,-2024.61 233.84,-2029.59 231.25,-2036.32"/>
-<text text-anchor="middle" x="262.46" y="-2122" font-family="Helvetica,sans-Serif" font-size="10.00"> +ptr</text>
+<path fill="none" stroke="#404040" d="M273.86,-2165.87C262.7,-2157.45 247.74,-2144.53 238.5,-2130 220.3,-2101.38 209.44,-2064.27 203.34,-2036.53"/>
+<polygon fill="none" stroke="#404040" points="203.29,-2036.25 198.16,-2031.18 200.87,-2024.5 205.99,-2029.57 203.29,-2036.25"/>
+<text text-anchor="middle" x="248.5" y="-2122" font-family="Helvetica,sans-Serif" font-size="10.00"> +ptr</text>
 </g>
 <!-- Node8 -->
 <g id="node8" class="node">
 <title>Node8</title>
 <g id="a_node8"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="15.96,-1657 15.96,-1725 116.96,-1725 116.96,-1657 15.96,-1657"/>
-<text text-anchor="start" x="23.96" y="-1713" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_map</text>
-<text text-anchor="middle" x="66.46" y="-1702" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; K, T &gt;</text>
-<polyline fill="none" stroke="black" points="15.96,-1695 116.96,-1695 "/>
-<text text-anchor="middle" x="66.46" y="-1683" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="15.96,-1676 116.96,-1676 "/>
-<text text-anchor="middle" x="66.46" y="-1664" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="black" points="98,-1657 98,-1725 199,-1725 199,-1657 98,-1657"/>
+<text text-anchor="start" x="106" y="-1713" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_map</text>
+<text text-anchor="middle" x="148.5" y="-1702" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; K, T &gt;</text>
+<polyline fill="none" stroke="black" points="98,-1695 199,-1695 "/>
+<text text-anchor="middle" x="148.5" y="-1683" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="98,-1676 199,-1676 "/>
+<text text-anchor="middle" x="148.5" y="-1664" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node7&#45;&gt;Node8 -->
 <g id="edge9" class="edge">
 <title>Node7&#45;&gt;Node8</title>
-<path fill="none" stroke="#404040" d="M247.87,-2165.8C217.62,-2143.83 148.01,-2088.8 113.46,-2025 63.19,-1932.15 60.49,-1804.3 63.24,-1737.24"/>
-<polygon fill="none" stroke="#404040" points="63.24,-1737.04 59.54,-1730.86 63.82,-1725.06 67.53,-1731.24 63.24,-1737.04"/>
-<text text-anchor="middle" x="137.96" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +elements</text>
+<path fill="none" stroke="#404040" d="M285.04,-2148.27C279.64,-2107.91 268,-2030.84 250.5,-1967 227.68,-1883.73 190.34,-1790.13 167.73,-1736.41"/>
+<polygon fill="none" stroke="#404040" points="167.68,-1736.29 161.66,-1732.33 163,-1725.25 169.02,-1729.21 167.68,-1736.29"/>
+<text text-anchor="middle" x="289" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +elements</text>
 </g>
 <!-- Node16 -->
 <g id="node16" class="node">
 <title>Node16</title>
 <g id="a_node16"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="287.96,-2043.5 287.96,-2100.5 390.96,-2100.5 390.96,-2043.5 287.96,-2043.5"/>
-<text text-anchor="middle" x="339.46" y="-2088.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::shared_ptr&lt; T &gt;</text>
-<polyline fill="none" stroke="black" points="287.96,-2081.5 390.96,-2081.5 "/>
-<text text-anchor="middle" x="339.46" y="-2069.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="287.96,-2062.5 390.96,-2062.5 "/>
-<text text-anchor="start" x="295.96" y="-2050.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
+<polygon fill="white" stroke="black" points="399,-2043.5 399,-2100.5 502,-2100.5 502,-2043.5 399,-2043.5"/>
+<text text-anchor="middle" x="450.5" y="-2088.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::shared_ptr&lt; T &gt;</text>
+<polyline fill="none" stroke="black" points="399,-2081.5 502,-2081.5 "/>
+<text text-anchor="middle" x="450.5" y="-2069.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="399,-2062.5 502,-2062.5 "/>
+<text text-anchor="start" x="407" y="-2050.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
 </a>
 </g>
 </g>
 <!-- Node7&#45;&gt;Node16 -->
 <g id="edge20" class="edge">
 <title>Node7&#45;&gt;Node16</title>
-<path fill="none" stroke="#404040" d="M277.31,-2156.14C286.99,-2143.19 299.92,-2125.89 311.49,-2110.42"/>
-<polygon fill="none" stroke="#404040" points="311.65,-2110.2 312.04,-2103 318.84,-2100.59 318.45,-2107.79 311.65,-2110.2"/>
-<text text-anchor="middle" x="313.46" y="-2122" font-family="Helvetica,sans-Serif" font-size="10.00"> +ptr</text>
+<path fill="none" stroke="#404040" d="M303.19,-2166.18C320.42,-2154.72 349.88,-2135.24 375.5,-2119 381.76,-2115.03 388.35,-2110.91 394.91,-2106.84"/>
+<polygon fill="none" stroke="#404040" points="394.94,-2106.82 397.95,-2100.26 405.15,-2100.51 402.15,-2107.07 394.94,-2106.82"/>
+<text text-anchor="middle" x="385.5" y="-2122" font-family="Helvetica,sans-Serif" font-size="10.00"> +ptr</text>
 </g>
-<!-- Node24 -->
-<g id="node24" class="node">
-<title>Node24</title>
-<g id="a_node24"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="418.46,-2043.5 418.46,-2100.5 502.46,-2100.5 502.46,-2043.5 418.46,-2043.5"/>
-<text text-anchor="middle" x="460.46" y="-2088.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; T &gt;</text>
-<polyline fill="none" stroke="black" points="418.46,-2081.5 502.46,-2081.5 "/>
-<text text-anchor="middle" x="460.46" y="-2069.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="418.46,-2062.5 502.46,-2062.5 "/>
-<text text-anchor="middle" x="460.46" y="-2050.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<!-- Node26 -->
+<g id="node26" class="node">
+<title>Node26</title>
+<g id="a_node26"><a xlink:title=" ">
+<polygon fill="white" stroke="black" points="569.5,-2043.5 569.5,-2100.5 653.5,-2100.5 653.5,-2043.5 569.5,-2043.5"/>
+<text text-anchor="middle" x="611.5" y="-2088.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; T &gt;</text>
+<polyline fill="none" stroke="black" points="569.5,-2081.5 653.5,-2081.5 "/>
+<text text-anchor="middle" x="611.5" y="-2069.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="569.5,-2062.5 653.5,-2062.5 "/>
+<text text-anchor="middle" x="611.5" y="-2050.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
-<!-- Node7&#45;&gt;Node24 -->
-<g id="edge34" class="edge">
-<title>Node7&#45;&gt;Node24</title>
-<path fill="none" stroke="#404040" d="M277.02,-2168.43C304.11,-2154.34 363.47,-2123.45 407.37,-2100.62"/>
-<polygon fill="none" stroke="#404040" points="407.52,-2100.54 411,-2094.22 418.17,-2095 414.69,-2101.32 407.52,-2100.54"/>
-<text text-anchor="middle" x="391.96" y="-2122" font-family="Helvetica,sans-Serif" font-size="10.00"> +elements</text>
+<!-- Node7&#45;&gt;Node26 -->
+<g id="edge37" class="edge">
+<title>Node7&#45;&gt;Node26</title>
+<path fill="none" stroke="#404040" d="M303.22,-2171.31C347.62,-2157.15 481.82,-2114.35 557.71,-2090.15"/>
+<polygon fill="none" stroke="#404040" points="557.94,-2090.08 562.44,-2084.45 569.37,-2086.43 564.87,-2092.07 557.94,-2090.08"/>
+<text text-anchor="middle" x="485" y="-2122" font-family="Helvetica,sans-Serif" font-size="10.00"> +elements</text>
 </g>
 <!-- Node8&#45;&gt;Node4 -->
 <g id="edge7" class="edge">
 <title>Node8&#45;&gt;Node4</title>
-<path fill="none" stroke="orange" d="M46.11,-1647.48C17.64,-1581.51 -25.7,-1452.01 20.46,-1355 33.75,-1327.08 58.33,-1304.08 82.64,-1286.69"/>
-<polygon fill="orange" stroke="orange" points="42.96,-1649 50.19,-1656.74 49.36,-1646.18 42.96,-1649"/>
-<text text-anchor="start" x="20.46" y="-1464" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; prev_block_hash_t,</text>
-<text text-anchor="middle" x="80.96" y="-1453" font-family="Helvetica,sans-Serif" font-size="10.00"> std::unique_ptr&lt; index_t &gt; &gt;</text>
+<path fill="none" stroke="orange" d="M145.35,-1646.6C139.11,-1560.45 125.24,-1369.08 119.29,-1287.05"/>
+<polygon fill="orange" stroke="orange" points="141.88,-1647.09 146.09,-1656.82 148.86,-1646.59 141.88,-1647.09"/>
+<text text-anchor="start" x="139.5" y="-1464" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; prev_block_hash_t,</text>
+<text text-anchor="middle" x="200" y="-1453" font-family="Helvetica,sans-Serif" font-size="10.00"> std::unique_ptr&lt; index_t &gt; &gt;</text>
 </g>
 <!-- Node9 -->
 <g id="node9" class="node">
 <title>Node9</title>
 <g id="a_node9"><a xlink:title=" ">
-<polygon fill="white" stroke="#bfbfbf" points="269.96,-1891.5 269.96,-1948.5 298.96,-1948.5 298.96,-1891.5 269.96,-1891.5"/>
-<text text-anchor="middle" x="284.46" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">K</text>
-<polyline fill="none" stroke="#bfbfbf" points="269.96,-1929.5 298.96,-1929.5 "/>
-<text text-anchor="middle" x="284.46" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="#bfbfbf" points="269.96,-1910.5 298.96,-1910.5 "/>
-<text text-anchor="middle" x="284.46" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="#bfbfbf" points="441,-1891.5 441,-1948.5 470,-1948.5 470,-1891.5 441,-1891.5"/>
+<text text-anchor="middle" x="455.5" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">K</text>
+<polyline fill="none" stroke="#bfbfbf" points="441,-1929.5 470,-1929.5 "/>
+<text text-anchor="middle" x="455.5" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="#bfbfbf" points="441,-1910.5 470,-1910.5 "/>
+<text text-anchor="middle" x="455.5" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node9&#45;&gt;Node8 -->
 <g id="edge8" class="edge">
 <title>Node9&#45;&gt;Node8</title>
-<path fill="none" stroke="#404040" d="M269.92,-1895.16C268.24,-1893.57 266.42,-1892.14 264.46,-1891 231.84,-1871.96 122.86,-1898.99 95.46,-1873 85.72,-1863.76 76.22,-1788.1 70.88,-1737.57"/>
-<polygon fill="none" stroke="#404040" points="70.85,-1737.25 66.25,-1731.7 69.61,-1725.32 74.21,-1730.87 70.85,-1737.25"/>
-<text text-anchor="middle" x="109.96" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
+<path fill="none" stroke="#404040" d="M440.57,-1907.44C412.18,-1886.01 347.73,-1840.02 286.5,-1815 253.16,-1801.38 236.35,-1818.55 207.5,-1797 187.33,-1781.94 173.09,-1757.83 163.65,-1736.51"/>
+<polygon fill="none" stroke="#404040" points="163.62,-1736.44 157.63,-1732.43 159.03,-1725.35 165.02,-1729.36 163.62,-1736.44"/>
+<text text-anchor="middle" x="405" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
 </g>
 <!-- Node14 -->
 <g id="node14" class="node">
 <title>Node14</title>
 <g id="a_node14"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="359.96,-1662.5 359.96,-1719.5 430.96,-1719.5 430.96,-1662.5 359.96,-1662.5"/>
-<text text-anchor="middle" x="395.46" y="-1707.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::set&lt; K &gt;</text>
-<polyline fill="none" stroke="black" points="359.96,-1700.5 430.96,-1700.5 "/>
-<text text-anchor="middle" x="395.46" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="359.96,-1681.5 430.96,-1681.5 "/>
-<text text-anchor="middle" x="395.46" y="-1669.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="black" points="574,-1662.5 574,-1719.5 645,-1719.5 645,-1662.5 574,-1662.5"/>
+<text text-anchor="middle" x="609.5" y="-1707.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::set&lt; K &gt;</text>
+<polyline fill="none" stroke="black" points="574,-1700.5 645,-1700.5 "/>
+<text text-anchor="middle" x="609.5" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="574,-1681.5 645,-1681.5 "/>
+<text text-anchor="middle" x="609.5" y="-1669.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node9&#45;&gt;Node14 -->
 <g id="edge17" class="edge">
 <title>Node9&#45;&gt;Node14</title>
-<path fill="none" stroke="#404040" d="M299.21,-1900.36C305.28,-1892.22 312.13,-1882.4 317.46,-1873 344.04,-1826.14 367.43,-1768.45 381.5,-1730.98"/>
-<polygon fill="none" stroke="#404040" points="381.56,-1730.81 379.9,-1723.8 385.73,-1719.56 387.4,-1726.58 381.56,-1730.81"/>
-<text text-anchor="middle" x="361.96" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
+<path fill="none" stroke="#404040" d="M470.1,-1898.95C475.89,-1890.92 482.57,-1881.56 488.5,-1873 522.39,-1824.07 560.37,-1766.86 584.58,-1730.06"/>
+<polygon fill="none" stroke="#404040" points="584.74,-1729.82 584.69,-1722.61 591.33,-1719.79 591.38,-1727 584.74,-1729.82"/>
+<text text-anchor="middle" x="541" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
 </g>
 <!-- Node17 -->
 <g id="node17" class="node">
 <title>Node17</title>
 <g id="a_node17"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="222.96,-1662.5 222.96,-1719.5 341.96,-1719.5 341.96,-1662.5 222.96,-1662.5"/>
-<text text-anchor="middle" x="282.46" y="-1707.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_set&lt; K &gt;</text>
-<polyline fill="none" stroke="black" points="222.96,-1700.5 341.96,-1700.5 "/>
-<text text-anchor="middle" x="282.46" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="222.96,-1681.5 341.96,-1681.5 "/>
-<text text-anchor="middle" x="282.46" y="-1669.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="black" points="396,-1662.5 396,-1719.5 515,-1719.5 515,-1662.5 396,-1662.5"/>
+<text text-anchor="middle" x="455.5" y="-1707.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_set&lt; K &gt;</text>
+<polyline fill="none" stroke="black" points="396,-1700.5 515,-1700.5 "/>
+<text text-anchor="middle" x="455.5" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="396,-1681.5 515,-1681.5 "/>
+<text text-anchor="middle" x="455.5" y="-1669.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node9&#45;&gt;Node17 -->
 <g id="edge22" class="edge">
 <title>Node9&#45;&gt;Node17</title>
-<path fill="none" stroke="#404040" d="M284.21,-1891.17C283.86,-1851.23 283.21,-1777.48 282.81,-1731.8"/>
-<polygon fill="none" stroke="#404040" points="282.81,-1731.71 278.76,-1725.74 282.7,-1719.71 286.76,-1725.67 282.81,-1731.71"/>
-<text text-anchor="middle" x="298.96" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
+<path fill="none" stroke="#404040" d="M455.5,-1891.17C455.5,-1851.23 455.5,-1777.48 455.5,-1731.8"/>
+<polygon fill="none" stroke="#404040" points="455.5,-1731.71 451.5,-1725.71 455.5,-1719.71 459.5,-1725.71 455.5,-1731.71"/>
+<text text-anchor="middle" x="470" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
 </g>
 <!-- Node10 -->
 <g id="node10" class="node">
 <title>Node10</title>
 <g id="a_node10"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="237.96,-1213.5 237.96,-1281.5 384.96,-1281.5 384.96,-1213.5 237.96,-1213.5"/>
-<text text-anchor="start" x="245.96" y="-1269.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_set</text>
-<text text-anchor="middle" x="311.46" y="-1258.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; altintegration::BlockIndex * &gt;</text>
-<polyline fill="none" stroke="black" points="237.96,-1251.5 384.96,-1251.5 "/>
-<text text-anchor="middle" x="311.46" y="-1239.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="237.96,-1232.5 384.96,-1232.5 "/>
-<text text-anchor="middle" x="311.46" y="-1220.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="black" points="469,-1213.5 469,-1281.5 616,-1281.5 616,-1213.5 469,-1213.5"/>
+<text text-anchor="start" x="477" y="-1269.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::unordered_set</text>
+<text text-anchor="middle" x="542.5" y="-1258.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; altintegration::BlockIndex * &gt;</text>
+<polyline fill="none" stroke="black" points="469,-1251.5 616,-1251.5 "/>
+<text text-anchor="middle" x="542.5" y="-1239.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="469,-1232.5 616,-1232.5 "/>
+<text text-anchor="middle" x="542.5" y="-1220.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node10&#45;&gt;Node3 -->
 <g id="edge10" class="edge">
 <title>Node10&#45;&gt;Node3</title>
-<path fill="none" stroke="#404040" d="M322.44,-1213.5C346.6,-1142.31 407.7,-969.72 476.46,-833 486.04,-813.95 496.95,-794.29 508.13,-775.22"/>
-<polygon fill="none" stroke="#404040" points="508.25,-775.02 507.87,-767.82 514.37,-764.69 514.75,-771.89 508.25,-775.02"/>
-<text text-anchor="middle" x="490.96" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
+<path fill="none" stroke="#404040" d="M567,-1213.2C582.09,-1194.73 602.84,-1172.6 625.5,-1158 646.41,-1144.52 663.73,-1160.01 678.5,-1140 698.51,-1112.89 699.18,-932.39 696.74,-797.83"/>
+<polygon fill="none" stroke="#404040" points="696.74,-797.77 692.63,-791.85 696.51,-785.77 700.63,-791.7 696.74,-797.77"/>
+<text text-anchor="middle" x="712" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
 </g>
-<!-- Node10&#45;&gt;Node21 -->
-<g id="edge28" class="edge">
-<title>Node10&#45;&gt;Node21</title>
-<path fill="none" stroke="#404040" d="M333.64,-1213.33C348.48,-1193.92 369.77,-1170.79 394.46,-1158 445.86,-1131.37 477.87,-1175.67 523.46,-1140 530.65,-1134.38 537.07,-1127.86 542.8,-1120.73"/>
-<polygon fill="none" stroke="#404040" points="543.1,-1120.32 543.43,-1113.12 550.2,-1110.65 549.88,-1117.85 543.1,-1120.32"/>
-<text text-anchor="middle" x="548.96" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
+<!-- Node10&#45;&gt;Node23 -->
+<g id="edge30" class="edge">
+<title>Node10&#45;&gt;Node23</title>
+<path fill="none" stroke="#404040" d="M468.55,-1225.12C427.15,-1208.94 379.06,-1182.13 354.5,-1140 351.26,-1134.44 348.76,-1128.61 346.9,-1122.6"/>
+<polygon fill="none" stroke="#404040" points="346.87,-1122.49 341.58,-1117.59 344.07,-1110.82 349.36,-1115.72 346.87,-1122.49"/>
+<text text-anchor="middle" x="369" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
 </g>
-<!-- Node10&#45;&gt;Node26 -->
-<g id="edge38" class="edge">
-<title>Node10&#45;&gt;Node26</title>
-<path fill="none" stroke="#404040" d="M272.58,-1213.24C253.21,-1194.06 231.78,-1168.19 221.46,-1140 219.42,-1134.42 217.88,-1128.67 216.79,-1122.83"/>
-<polygon fill="none" stroke="#404040" points="216.76,-1122.62 211.99,-1117.21 215.14,-1110.73 219.91,-1116.13 216.76,-1122.62"/>
-<text text-anchor="middle" x="235.96" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
+<!-- Node10&#45;&gt;Node28 -->
+<g id="edge41" class="edge">
+<title>Node10&#45;&gt;Node28</title>
+<path fill="none" stroke="#404040" d="M565.78,-1213.21C580.73,-1194.27 601.76,-1171.66 625.5,-1158 656.34,-1140.26 673.63,-1159.33 703.5,-1140 717.08,-1131.21 716.19,-1124.23 725.5,-1111 727.81,-1107.73 730.13,-1104.4 732.46,-1101.03"/>
+<polygon fill="none" stroke="#404040" points="732.67,-1100.72 732.77,-1093.51 739.47,-1090.83 739.37,-1098.04 732.67,-1100.72"/>
+<text text-anchor="middle" x="729" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #tips_</text>
 </g>
 <!-- Node11 -->
 <g id="node11" class="node">
 <title>Node11</title>
 <g id="a_node11"><a xlink:href="structaltintegration_1_1BlockIndex.html" target="_top" xlink:title="A node in a block tree.">
-<polygon fill="white" stroke="black" points="461.96,-1585.5 461.96,-1796.5 586.96,-1796.5 586.96,-1585.5 461.96,-1585.5"/>
-<text text-anchor="start" x="469.96" y="-1784.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockIndex</text>
-<text text-anchor="middle" x="524.46" y="-1773.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; Block &gt;</text>
-<polyline fill="none" stroke="black" points="461.96,-1766.5 586.96,-1766.5 "/>
-<text text-anchor="start" x="469.96" y="-1754.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalized</text>
-<text text-anchor="start" x="469.96" y="-1743.5" font-family="Helvetica,sans-Serif" font-size="10.00"># height</text>
-<text text-anchor="start" x="469.96" y="-1732.5" font-family="Helvetica,sans-Serif" font-size="10.00"># status</text>
-<text text-anchor="start" x="469.96" y="-1721.5" font-family="Helvetica,sans-Serif" font-size="10.00"># dirty</text>
-<polyline fill="none" stroke="black" points="461.96,-1714.5 586.96,-1714.5 "/>
-<text text-anchor="start" x="469.96" y="-1702.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
-<text text-anchor="start" x="469.96" y="-1691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
-<text text-anchor="start" x="469.96" y="-1680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockIndex()</text>
-<text text-anchor="start" x="469.96" y="-1669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ disconnectFromPrev()</text>
-<text text-anchor="start" x="469.96" y="-1658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isTip()</text>
-<text text-anchor="start" x="469.96" y="-1647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
-<text text-anchor="start" x="469.96" y="-1636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="469.96" y="-1625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isDeleted()</text>
-<text text-anchor="start" x="469.96" y="-1614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isRoot()</text>
-<text text-anchor="start" x="469.96" y="-1603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ restore()</text>
-<text text-anchor="start" x="469.96" y="-1592.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 42 more...</text>
+<polygon fill="white" stroke="black" points="683,-1585.5 683,-1796.5 808,-1796.5 808,-1585.5 683,-1585.5"/>
+<text text-anchor="start" x="691" y="-1784.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockIndex</text>
+<text text-anchor="middle" x="745.5" y="-1773.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; Block &gt;</text>
+<polyline fill="none" stroke="black" points="683,-1766.5 808,-1766.5 "/>
+<text text-anchor="start" x="691" y="-1754.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalized</text>
+<text text-anchor="start" x="691" y="-1743.5" font-family="Helvetica,sans-Serif" font-size="10.00"># height</text>
+<text text-anchor="start" x="691" y="-1732.5" font-family="Helvetica,sans-Serif" font-size="10.00"># status</text>
+<text text-anchor="start" x="691" y="-1721.5" font-family="Helvetica,sans-Serif" font-size="10.00"># dirty</text>
+<polyline fill="none" stroke="black" points="683,-1714.5 808,-1714.5 "/>
+<text text-anchor="start" x="691" y="-1702.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
+<text text-anchor="start" x="691" y="-1691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
+<text text-anchor="start" x="691" y="-1680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockIndex()</text>
+<text text-anchor="start" x="691" y="-1669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ disconnectFromPrev()</text>
+<text text-anchor="start" x="691" y="-1658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isTip()</text>
+<text text-anchor="start" x="691" y="-1647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockIndex()</text>
+<text text-anchor="start" x="691" y="-1636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
+<text text-anchor="start" x="691" y="-1625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isDeleted()</text>
+<text text-anchor="start" x="691" y="-1614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isRoot()</text>
+<text text-anchor="start" x="691" y="-1603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ restore()</text>
+<text text-anchor="start" x="691" y="-1592.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 42 more...</text>
 </a>
 </g>
 </g>
 <!-- Node11&#45;&gt;Node10 -->
 <g id="edge11" class="edge">
 <title>Node11&#45;&gt;Node10</title>
-<path fill="none" stroke="#404040" d="M461.94,-1601.98C454.91,-1595.58 447.4,-1589.78 439.46,-1585 403.76,-1563.52 375.71,-1597.62 347.46,-1567 345.16,-1564.51 325.49,-1381.18 316.24,-1293.82"/>
-<polygon fill="none" stroke="#404040" points="316.21,-1293.6 311.61,-1288.05 314.95,-1281.67 319.56,-1287.21 316.21,-1293.6"/>
-<text text-anchor="middle" x="361.96" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
+<path fill="none" stroke="#404040" d="M682.81,-1607.62C673.7,-1599.09 663.87,-1591.27 653.5,-1585 624.16,-1567.28 600.97,-1592.89 578.5,-1567 547.49,-1531.26 564.24,-1401.97 558.5,-1355 556.03,-1334.75 552.75,-1312.42 549.81,-1293.46"/>
+<polygon fill="none" stroke="#404040" points="549.8,-1293.39 544.92,-1288.08 547.94,-1281.54 552.83,-1286.84 549.8,-1293.39"/>
+<text text-anchor="middle" x="593" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
 </g>
 <!-- Node11&#45;&gt;Node11 -->
 <g id="edge13" class="edge">
 <title>Node11&#45;&gt;Node11</title>
-<path fill="none" stroke="#404040" d="M587.24,-1717.49C597.72,-1713.78 604.96,-1704.95 604.96,-1691 604.96,-1682.28 602.13,-1675.56 597.45,-1670.84"/>
-<polygon fill="none" stroke="#404040" points="597.44,-1670.83 590.23,-1671.07 587.24,-1664.51 594.45,-1664.27 597.44,-1670.83"/>
-<text text-anchor="middle" x="621.46" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +pprev</text>
+<path fill="none" stroke="#404040" d="M808.28,-1717.49C818.76,-1713.78 826,-1704.95 826,-1691 826,-1682.28 823.17,-1675.56 818.49,-1670.84"/>
+<polygon fill="none" stroke="#404040" points="818.48,-1670.83 811.27,-1671.07 808.28,-1664.51 815.49,-1664.27 818.48,-1670.83"/>
+<text text-anchor="middle" x="842.5" y="-1688.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +pprev</text>
 </g>
 <!-- Node13 -->
 <g id="node13" class="node">
 <title>Node13</title>
 <g id="a_node13"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="403.46,-1213.5 403.46,-1281.5 515.46,-1281.5 515.46,-1213.5 403.46,-1213.5"/>
-<text text-anchor="start" x="411.46" y="-1269.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::set&lt; altintegration</text>
-<text text-anchor="middle" x="459.46" y="-1258.5" font-family="Helvetica,sans-Serif" font-size="10.00">::BlockIndex * &gt;</text>
-<polyline fill="none" stroke="black" points="403.46,-1251.5 515.46,-1251.5 "/>
-<text text-anchor="middle" x="459.46" y="-1239.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="403.46,-1232.5 515.46,-1232.5 "/>
-<text text-anchor="middle" x="459.46" y="-1220.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="black" points="634.5,-1213.5 634.5,-1281.5 746.5,-1281.5 746.5,-1213.5 634.5,-1213.5"/>
+<text text-anchor="start" x="642.5" y="-1269.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::set&lt; altintegration</text>
+<text text-anchor="middle" x="690.5" y="-1258.5" font-family="Helvetica,sans-Serif" font-size="10.00">::BlockIndex * &gt;</text>
+<polyline fill="none" stroke="black" points="634.5,-1251.5 746.5,-1251.5 "/>
+<text text-anchor="middle" x="690.5" y="-1239.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="634.5,-1232.5 746.5,-1232.5 "/>
+<text text-anchor="middle" x="690.5" y="-1220.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node11&#45;&gt;Node13 -->
 <g id="edge15" class="edge">
 <title>Node11&#45;&gt;Node13</title>
-<path fill="none" stroke="#404040" d="M581.32,-1585.33C611.58,-1513.99 633.49,-1420.89 584.46,-1355 567.84,-1332.66 547.21,-1353.05 524.46,-1337 507.98,-1325.37 494.01,-1308.23 483.3,-1292.13"/>
-<polygon fill="none" stroke="#404040" points="483.16,-1291.9 476.57,-1288.97 476.74,-1281.76 483.33,-1284.7 483.16,-1291.9"/>
-<text text-anchor="middle" x="626.96" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
+<path fill="none" stroke="#404040" d="M808.01,-1593.72C811.81,-1584.93 815.07,-1575.96 817.5,-1567 842.16,-1476.06 874.08,-1430.34 817.5,-1355 800.27,-1332.06 779.02,-1353.44 755.5,-1337 738.96,-1325.44 724.99,-1308.32 714.29,-1292.21"/>
+<polygon fill="none" stroke="#404040" points="714.15,-1291.98 707.56,-1289.04 707.74,-1281.83 714.32,-1284.77 714.15,-1291.98"/>
+<text text-anchor="middle" x="863" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +keys</text>
 </g>
 <!-- Node12 -->
 <g id="node12" class="node">
 <title>Node12</title>
 <g id="a_node12"><a xlink:title=" ">
-<polygon fill="white" stroke="#bfbfbf" points="484.46,-1891.5 484.46,-1948.5 564.46,-1948.5 564.46,-1891.5 484.46,-1891.5"/>
-<text text-anchor="middle" x="524.46" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">Block::addon_t</text>
-<polyline fill="none" stroke="#bfbfbf" points="484.46,-1929.5 564.46,-1929.5 "/>
-<text text-anchor="middle" x="524.46" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="#bfbfbf" points="484.46,-1910.5 564.46,-1910.5 "/>
-<text text-anchor="middle" x="524.46" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polygon fill="white" stroke="#bfbfbf" points="583.5,-1891.5 583.5,-1948.5 663.5,-1948.5 663.5,-1891.5 583.5,-1891.5"/>
+<text text-anchor="middle" x="623.5" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">Block::addon_t</text>
+<polyline fill="none" stroke="#bfbfbf" points="583.5,-1929.5 663.5,-1929.5 "/>
+<text text-anchor="middle" x="623.5" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="#bfbfbf" points="583.5,-1910.5 663.5,-1910.5 "/>
+<text text-anchor="middle" x="623.5" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
 <!-- Node12&#45;&gt;Node11 -->
 <g id="edge12" class="edge">
 <title>Node12&#45;&gt;Node11</title>
-<path fill="none" stroke="midnightblue" d="M524.46,-1881.05C524.46,-1857.79 524.46,-1826.76 524.46,-1796.58"/>
-<polygon fill="none" stroke="midnightblue" points="520.96,-1881.17 524.46,-1891.17 527.96,-1881.17 520.96,-1881.17"/>
+<path fill="none" stroke="midnightblue" d="M643.22,-1882.3C655.8,-1858.91 672.78,-1827.31 689.29,-1796.58"/>
+<polygon fill="none" stroke="midnightblue" points="640.11,-1880.7 638.46,-1891.17 646.28,-1884.01 640.11,-1880.7"/>
 </g>
 <!-- Node13&#45;&gt;Node11 -->
 <g id="edge14" class="edge">
 <title>Node13&#45;&gt;Node11</title>
-<path fill="none" stroke="#404040" d="M489.15,-1281.8C504.74,-1301.57 522.28,-1327.99 530.46,-1355 551.76,-1425.36 550.57,-1507.9 543.9,-1573.44"/>
-<polygon fill="none" stroke="#404040" points="543.89,-1573.54 547.22,-1579.94 542.6,-1585.47 539.27,-1579.08 543.89,-1573.54"/>
-<text text-anchor="middle" x="564.46" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +pnext</text>
+<path fill="none" stroke="#404040" d="M714.99,-1281.78C736.68,-1311.41 765.14,-1350.74 766.5,-1355 788.96,-1425.14 784.13,-1507.67 773.47,-1573.27"/>
+<polygon fill="none" stroke="#404040" points="773.44,-1573.48 776.37,-1580.07 771.42,-1585.31 768.48,-1578.73 773.44,-1573.48"/>
+<text text-anchor="middle" x="797.5" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +pnext</text>
 </g>
 <!-- Node14&#45;&gt;Node13 -->
 <g id="edge16" class="edge">
 <title>Node14&#45;&gt;Node13</title>
-<path fill="none" stroke="orange" d="M389.47,-1652.19C380.85,-1589.23 368.93,-1459.48 397.46,-1355 404.67,-1328.58 420.17,-1301.96 433.87,-1281.94"/>
-<polygon fill="orange" stroke="orange" points="386.05,-1653.02 390.92,-1662.43 392.98,-1652.04 386.05,-1653.02"/>
-<text text-anchor="middle" x="463.96" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex * &gt;</text>
+<path fill="none" stroke="orange" d="M609.59,-1652.47C610.12,-1577.07 613.18,-1409.72 629.5,-1355 637.36,-1328.66 652.78,-1301.82 666.16,-1281.68"/>
+<polygon fill="orange" stroke="orange" points="606.09,-1652.46 609.53,-1662.48 613.09,-1652.5 606.09,-1652.46"/>
+<text text-anchor="middle" x="696" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex * &gt;</text>
 </g>
 <!-- Node15 -->
 <g id="node15" class="node">
 <title>Node15</title>
 <g id="a_node15"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="335.46,-1891.5 335.46,-1948.5 463.46,-1948.5 463.46,-1891.5 335.46,-1891.5"/>
-<text text-anchor="middle" x="399.46" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::shared_ptr&lt; block_t &gt;</text>
-<polyline fill="none" stroke="black" points="335.46,-1929.5 463.46,-1929.5 "/>
-<text text-anchor="start" x="343.46" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ptr</text>
-<polyline fill="none" stroke="black" points="335.46,-1910.5 463.46,-1910.5 "/>
-<text text-anchor="start" x="343.46" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
+<polygon fill="white" stroke="black" points="681.5,-1891.5 681.5,-1948.5 809.5,-1948.5 809.5,-1891.5 681.5,-1891.5"/>
+<text text-anchor="middle" x="745.5" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::shared_ptr&lt; block_t &gt;</text>
+<polyline fill="none" stroke="black" points="681.5,-1929.5 809.5,-1929.5 "/>
+<text text-anchor="start" x="689.5" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ptr</text>
+<polyline fill="none" stroke="black" points="681.5,-1910.5 809.5,-1910.5 "/>
+<text text-anchor="start" x="689.5" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator&#45;&gt;()</text>
 </a>
 </g>
 </g>
 <!-- Node15&#45;&gt;Node11 -->
 <g id="edge18" class="edge">
 <title>Node15&#45;&gt;Node11</title>
-<path fill="none" stroke="#404040" d="M414.79,-1891.17C426.59,-1869.73 443.76,-1838.56 461.02,-1807.21"/>
-<polygon fill="none" stroke="#404040" points="461.08,-1807.09 460.47,-1799.91 466.87,-1796.58 467.48,-1803.77 461.08,-1807.09"/>
-<text text-anchor="middle" x="473.96" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #header</text>
+<path fill="none" stroke="#404040" d="M745.5,-1891.17C745.5,-1870.11 745.5,-1839.64 745.5,-1808.84"/>
+<polygon fill="none" stroke="#404040" points="745.5,-1808.58 741.5,-1802.58 745.5,-1796.58 749.5,-1802.58 745.5,-1808.58"/>
+<text text-anchor="middle" x="764" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #header</text>
 </g>
 <!-- Node16&#45;&gt;Node15 -->
 <g id="edge19" class="edge">
 <title>Node16&#45;&gt;Node15</title>
-<path fill="none" stroke="orange" d="M354.19,-2034.17C364.77,-2007.72 378.8,-1972.64 388.42,-1948.59"/>
-<polygon fill="orange" stroke="orange" points="350.93,-2032.9 350.47,-2043.49 357.43,-2035.5 350.93,-2032.9"/>
-<text text-anchor="middle" x="405.96" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; block_t &gt;</text>
+<path fill="none" stroke="orange" d="M511.18,-2040.15C564.17,-2013.2 640.37,-1974.46 691.34,-1948.54"/>
+<polygon fill="orange" stroke="orange" points="509.55,-2037.05 502.22,-2044.7 512.72,-2043.29 509.55,-2037.05"/>
+<text text-anchor="middle" x="676" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; block_t &gt;</text>
 </g>
 <!-- Node17&#45;&gt;Node10 -->
 <g id="edge21" class="edge">
 <title>Node17&#45;&gt;Node10</title>
-<path fill="none" stroke="orange" d="M259.39,-1653.57C245.56,-1632.74 227.1,-1606.55 208.46,-1585 200.85,-1576.2 194.06,-1577.69 189.46,-1567 170.85,-1523.72 164.07,-1394.68 189.46,-1355 199.75,-1338.92 212.98,-1348.17 228.46,-1337 249.99,-1321.47 270.43,-1299.79 285.64,-1281.77"/>
-<polygon fill="orange" stroke="orange" points="256.6,-1655.7 265.01,-1662.14 262.45,-1651.86 256.6,-1655.7"/>
-<text text-anchor="middle" x="255.96" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex * &gt;</text>
+<path fill="none" stroke="orange" d="M440.86,-1652.84C418.08,-1588.93 381.13,-1455.38 425.5,-1355 438.71,-1325.1 464.92,-1299.99 489.19,-1281.67"/>
+<polygon fill="orange" stroke="orange" points="437.66,-1654.3 444.38,-1662.49 444.24,-1651.9 437.66,-1654.3"/>
+<text text-anchor="middle" x="492" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex * &gt;</text>
 </g>
 <!-- Node18 -->
 <g id="node18" class="node">
 <title>Node18</title>
 <g id="a_node18"><a xlink:href="structaltintegration_1_1Chain.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="black" points="683.96,-1158.5 683.96,-1336.5 824.96,-1336.5 824.96,-1158.5 683.96,-1158.5"/>
-<text text-anchor="start" x="691.96" y="-1324.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::Chain</text>
-<text text-anchor="middle" x="754.46" y="-1313.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; altintegration::BlockIndex &gt;</text>
-<polyline fill="none" stroke="black" points="683.96,-1306.5 824.96,-1306.5 "/>
-<text text-anchor="middle" x="754.46" y="-1294.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="683.96,-1287.5 824.96,-1287.5 "/>
-<text text-anchor="start" x="691.96" y="-1275.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
-<text text-anchor="start" x="691.96" y="-1264.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
-<text text-anchor="start" x="691.96" y="-1253.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
-<text text-anchor="start" x="691.96" y="-1242.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getStartHeight()</text>
-<text text-anchor="start" x="691.96" y="-1231.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ firstHeight()</text>
-<text text-anchor="start" x="691.96" y="-1220.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ contains()</text>
-<text text-anchor="start" x="691.96" y="-1209.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
-<text text-anchor="start" x="691.96" y="-1198.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ next()</text>
-<text text-anchor="start" x="691.96" y="-1187.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ chainHeight()</text>
-<text text-anchor="start" x="691.96" y="-1176.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ empty()</text>
-<text text-anchor="start" x="691.96" y="-1165.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 15 more...</text>
+<polygon fill="white" stroke="black" points="915,-1158.5 915,-1336.5 1056,-1336.5 1056,-1158.5 915,-1158.5"/>
+<text text-anchor="start" x="923" y="-1324.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::Chain</text>
+<text text-anchor="middle" x="985.5" y="-1313.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; altintegration::BlockIndex &gt;</text>
+<polyline fill="none" stroke="black" points="915,-1306.5 1056,-1306.5 "/>
+<text text-anchor="middle" x="985.5" y="-1294.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="915,-1287.5 1056,-1287.5 "/>
+<text text-anchor="start" x="923" y="-1275.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
+<text text-anchor="start" x="923" y="-1264.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
+<text text-anchor="start" x="923" y="-1253.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
+<text text-anchor="start" x="923" y="-1242.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getStartHeight()</text>
+<text text-anchor="start" x="923" y="-1231.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ firstHeight()</text>
+<text text-anchor="start" x="923" y="-1220.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ contains()</text>
+<text text-anchor="start" x="923" y="-1209.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="923" y="-1198.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ next()</text>
+<text text-anchor="start" x="923" y="-1187.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ chainHeight()</text>
+<text text-anchor="start" x="923" y="-1176.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ empty()</text>
+<text text-anchor="start" x="923" y="-1165.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 15 more...</text>
 </a>
 </g>
 </g>
 <!-- Node18&#45;&gt;Node3 -->
 <g id="edge23" class="edge">
 <title>Node18&#45;&gt;Node3</title>
-<path fill="none" stroke="#404040" d="M799.02,-1158.19C805,-1142.81 810.19,-1126.7 813.46,-1111 838.65,-990.04 865.99,-944.83 813.46,-833 785.2,-772.83 726.69,-725.49 676.7,-693.76"/>
-<polygon fill="none" stroke="#404040" points="676.69,-693.75 669.49,-693.99 666.5,-687.42 673.71,-687.19 676.69,-693.75"/>
-<text text-anchor="middle" x="874.46" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
+<path fill="none" stroke="#404040" d="M1025.98,-1158.17C1060.56,-1068.19 1095.1,-928.66 1028.5,-833 994.11,-783.61 955.19,-813.2 901.5,-786 859.49,-764.71 815.61,-736.73 778.97,-711.54"/>
+<polygon fill="none" stroke="#404040" points="778.7,-711.35 771.49,-711.22 768.84,-704.51 776.05,-704.64 778.7,-711.35"/>
+<text text-anchor="middle" x="1097.5" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
 </g>
-<!-- Node18&#45;&gt;Node21 -->
-<g id="edge29" class="edge">
-<title>Node18&#45;&gt;Node21</title>
-<path fill="none" stroke="#404040" d="M701.67,-1158.46C692.53,-1143.21 682.83,-1127.04 673.12,-1110.85"/>
-<polygon fill="none" stroke="#404040" points="672.91,-1110.51 666.4,-1107.42 666.74,-1100.21 673.26,-1103.3 672.91,-1110.51"/>
-<text text-anchor="middle" x="718.46" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
+<!-- Node18&#45;&gt;Node23 -->
+<g id="edge31" class="edge">
+<title>Node18&#45;&gt;Node23</title>
+<path fill="none" stroke="#404040" d="M914.72,-1165.63C911.68,-1162.98 908.6,-1160.43 905.5,-1158 902.82,-1155.9 854.76,-1129.99 851.5,-1129 774.17,-1105.42 748.39,-1132.64 670.5,-1111 598.63,-1091.03 522.64,-1054.4 466.35,-1023.9"/>
+<polygon fill="none" stroke="#404040" points="466.24,-1023.84 459.06,-1024.47 455.71,-1018.08 462.9,-1017.45 466.24,-1023.84"/>
+<text text-anchor="middle" x="904.5" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
 </g>
-<!-- Node18&#45;&gt;Node26 -->
-<g id="edge39" class="edge">
-<title>Node18&#45;&gt;Node26</title>
-<path fill="none" stroke="#404040" d="M683.73,-1163.2C680.71,-1161.3 677.62,-1159.56 674.46,-1158 586.9,-1114.74 548.66,-1169.18 455.46,-1140 446.15,-1137.08 445.61,-1132.4 436.46,-1129 396.18,-1114.02 377.17,-1134.91 341.46,-1111 340.12,-1110.1 338.8,-1109.18 337.5,-1108.23"/>
-<polygon fill="none" stroke="#404040" points="337.16,-1107.97 329.98,-1107.36 327.78,-1100.49 334.96,-1101.1 337.16,-1107.97"/>
-<text text-anchor="middle" x="487.46" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
+<!-- Node18&#45;&gt;Node28 -->
+<g id="edge42" class="edge">
+<title>Node18&#45;&gt;Node28</title>
+<path fill="none" stroke="#404040" d="M956.1,-1158.45C951.67,-1148.29 946.79,-1138.27 941.5,-1129 934.18,-1116.18 917.88,-1094.73 899.35,-1071.78"/>
+<polygon fill="none" stroke="#404040" points="899.16,-1071.54 892.27,-1069.4 891.59,-1062.22 898.47,-1064.36 899.16,-1071.54"/>
+<text text-anchor="middle" x="977.5" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #activeChain_</text>
 </g>
 <!-- Node19 -->
 <g id="node19" class="node">
 <title>Node19</title>
 <g id="a_node19"><a xlink:href="structaltintegration_1_1Chain.html" target="_top" xlink:title="Fully in&#45;memory chain representation.">
-<polygon fill="white" stroke="black" points="661.96,-1602 661.96,-1780 762.96,-1780 762.96,-1602 661.96,-1602"/>
-<text text-anchor="start" x="669.96" y="-1768" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::Chain</text>
-<text text-anchor="middle" x="712.46" y="-1757" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; BlockIndexT &gt;</text>
-<polyline fill="none" stroke="black" points="661.96,-1750 762.96,-1750 "/>
-<text text-anchor="middle" x="712.46" y="-1738" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="661.96,-1731 762.96,-1731 "/>
-<text text-anchor="start" x="669.96" y="-1719" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
-<text text-anchor="start" x="669.96" y="-1708" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
-<text text-anchor="start" x="669.96" y="-1697" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
-<text text-anchor="start" x="669.96" y="-1686" font-family="Helvetica,sans-Serif" font-size="10.00">+ getStartHeight()</text>
-<text text-anchor="start" x="669.96" y="-1675" font-family="Helvetica,sans-Serif" font-size="10.00">+ firstHeight()</text>
-<text text-anchor="start" x="669.96" y="-1664" font-family="Helvetica,sans-Serif" font-size="10.00">+ contains()</text>
-<text text-anchor="start" x="669.96" y="-1653" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
-<text text-anchor="start" x="669.96" y="-1642" font-family="Helvetica,sans-Serif" font-size="10.00">+ next()</text>
-<text text-anchor="start" x="669.96" y="-1631" font-family="Helvetica,sans-Serif" font-size="10.00">+ chainHeight()</text>
-<text text-anchor="start" x="669.96" y="-1620" font-family="Helvetica,sans-Serif" font-size="10.00">+ empty()</text>
-<text text-anchor="start" x="669.96" y="-1609" font-family="Helvetica,sans-Serif" font-size="10.00">and 15 more...</text>
+<polygon fill="white" stroke="black" points="891,-1602 891,-1780 992,-1780 992,-1602 891,-1602"/>
+<text text-anchor="start" x="899" y="-1768" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::Chain</text>
+<text text-anchor="middle" x="941.5" y="-1757" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; BlockIndexT &gt;</text>
+<polyline fill="none" stroke="black" points="891,-1750 992,-1750 "/>
+<text text-anchor="middle" x="941.5" y="-1738" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="891,-1731 992,-1731 "/>
+<text text-anchor="start" x="899" y="-1719" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
+<text text-anchor="start" x="899" y="-1708" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
+<text text-anchor="start" x="899" y="-1697" font-family="Helvetica,sans-Serif" font-size="10.00">+ Chain()</text>
+<text text-anchor="start" x="899" y="-1686" font-family="Helvetica,sans-Serif" font-size="10.00">+ getStartHeight()</text>
+<text text-anchor="start" x="899" y="-1675" font-family="Helvetica,sans-Serif" font-size="10.00">+ firstHeight()</text>
+<text text-anchor="start" x="899" y="-1664" font-family="Helvetica,sans-Serif" font-size="10.00">+ contains()</text>
+<text text-anchor="start" x="899" y="-1653" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator[]()</text>
+<text text-anchor="start" x="899" y="-1642" font-family="Helvetica,sans-Serif" font-size="10.00">+ next()</text>
+<text text-anchor="start" x="899" y="-1631" font-family="Helvetica,sans-Serif" font-size="10.00">+ chainHeight()</text>
+<text text-anchor="start" x="899" y="-1620" font-family="Helvetica,sans-Serif" font-size="10.00">+ empty()</text>
+<text text-anchor="start" x="899" y="-1609" font-family="Helvetica,sans-Serif" font-size="10.00">and 15 more...</text>
 </a>
 </g>
 </g>
 <!-- Node19&#45;&gt;Node18 -->
 <g id="edge24" class="edge">
 <title>Node19&#45;&gt;Node18</title>
-<path fill="none" stroke="orange" d="M700.3,-1591.72C694.63,-1524.39 692.25,-1433.42 708.46,-1355 709.72,-1348.89 711.36,-1342.69 713.25,-1336.52"/>
-<polygon fill="orange" stroke="orange" points="696.83,-1592.25 701.19,-1601.9 703.8,-1591.63 696.83,-1592.25"/>
-<text text-anchor="middle" x="771.96" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex &gt;</text>
+<path fill="none" stroke="orange" d="M928.94,-1591.64C923.1,-1524.27 920.67,-1433.29 937.5,-1355 938.8,-1348.95 940.47,-1342.83 942.41,-1336.75"/>
+<polygon fill="orange" stroke="orange" points="925.48,-1592.18 929.87,-1601.83 932.45,-1591.55 925.48,-1592.18"/>
+<text text-anchor="middle" x="1001" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex &gt;</text>
 </g>
 <!-- Node20 -->
 <g id="node20" class="node">
 <title>Node20</title>
-<g id="a_node20"><a xlink:href="structaltintegration_1_1BlockReader.html" target="_top" xlink:title="An abstraction over on&#45;disk storage iterator.">
-<polygon fill="white" stroke="black" points="533.46,-1164 533.46,-1331 665.46,-1331 665.46,-1164 533.46,-1164"/>
-<text text-anchor="middle" x="599.46" y="-1319" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockReader</text>
-<polyline fill="none" stroke="black" points="533.46,-1312 665.46,-1312 "/>
-<text text-anchor="middle" x="599.46" y="-1300" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="533.46,-1293 665.46,-1293 "/>
-<text text-anchor="start" x="541.46" y="-1281" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockReader()</text>
-<text text-anchor="start" x="541.46" y="-1270" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAltTip()</text>
-<text text-anchor="start" x="541.46" y="-1259" font-family="Helvetica,sans-Serif" font-size="10.00">+ getVbkTip()</text>
-<text text-anchor="start" x="541.46" y="-1248" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBtcTip()</text>
-<text text-anchor="start" x="541.46" y="-1237" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlock()</text>
-<text text-anchor="start" x="541.46" y="-1226" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlock()</text>
-<text text-anchor="start" x="541.46" y="-1215" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlock()</text>
-<text text-anchor="start" x="541.46" y="-1204" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAltBlockIterator()</text>
-<text text-anchor="start" x="541.46" y="-1193" font-family="Helvetica,sans-Serif" font-size="10.00">+ getVbkBlockIterator()</text>
-<text text-anchor="start" x="541.46" y="-1182" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBtcBlockIterator()</text>
-<text text-anchor="start" x="541.46" y="-1171" font-family="Helvetica,sans-Serif" font-size="10.00">and 6 more...</text>
+<g id="a_node20"><a xlink:href="structaltintegration_1_1FinalizedPayloadsIndex.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="black" points="203,-1186 203,-1309 346,-1309 346,-1186 203,-1186"/>
+<text text-anchor="start" x="211" y="-1297" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::Finalized</text>
+<text text-anchor="start" x="211" y="-1286" font-family="Helvetica,sans-Serif" font-size="10.00">PayloadsIndex&lt; altintegration</text>
+<text text-anchor="middle" x="274.5" y="-1275" font-family="Helvetica,sans-Serif" font-size="10.00">::BlockIndex &gt;</text>
+<polyline fill="none" stroke="black" points="203,-1268 346,-1268 "/>
+<text text-anchor="middle" x="274.5" y="-1256" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="203,-1249 346,-1249 "/>
+<text text-anchor="start" x="211" y="-1237" font-family="Helvetica,sans-Serif" font-size="10.00">+ find()</text>
+<text text-anchor="start" x="211" y="-1226" font-family="Helvetica,sans-Serif" font-size="10.00">+ empty()</text>
+<text text-anchor="start" x="211" y="-1215" font-family="Helvetica,sans-Serif" font-size="10.00">+ size()</text>
+<text text-anchor="start" x="211" y="-1204" font-family="Helvetica,sans-Serif" font-size="10.00">+ add()</text>
+<text text-anchor="start" x="211" y="-1193" font-family="Helvetica,sans-Serif" font-size="10.00">+ remove()</text>
 </a>
 </g>
 </g>
 <!-- Node20&#45;&gt;Node3 -->
 <g id="edge25" class="edge">
 <title>Node20&#45;&gt;Node3</title>
-<path fill="none" stroke="#404040" d="M665.79,-1164.5C668.94,-1162.17 672.16,-1159.99 675.46,-1158 707.49,-1138.69 766.6,-1164.38 754.46,-1129 751.17,-1119.41 744.83,-1120.15 740.46,-1111 685.8,-996.49 716.6,-953.03 675.46,-833 671.38,-821.1 666.79,-808.93 661.91,-796.79"/>
-<polygon fill="none" stroke="#404040" points="661.91,-796.77 655.93,-792.74 657.36,-785.67 663.33,-789.71 661.91,-796.77"/>
-<text text-anchor="middle" x="776.96" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #blockProvider_</text>
+<path fill="none" stroke="#404040" d="M224.48,-1185.94C214.78,-1175.97 204.26,-1166.22 193.5,-1158 179.6,-1147.38 167.61,-1154.93 158.5,-1140 87.19,-1023.14 100.3,-941.71 183.5,-833 284.08,-701.57 486.99,-663.42 603.95,-652.4"/>
+<polygon fill="none" stroke="#404040" points="604.08,-652.39 609.71,-647.88 616.04,-651.33 610.41,-655.85 604.08,-652.39"/>
+<text text-anchor="middle" x="239" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #finalizedPayloadsIndex_</text>
 </g>
-<!-- Node20&#45;&gt;Node21 -->
-<g id="edge30" class="edge">
-<title>Node20&#45;&gt;Node21</title>
-<path fill="none" stroke="#404040" d="M596.74,-1163.7C596.31,-1150.69 595.85,-1136.9 595.39,-1122.93"/>
-<polygon fill="none" stroke="#404040" points="595.38,-1122.61 591.19,-1116.74 594.99,-1110.62 599.18,-1116.48 595.38,-1122.61"/>
-<text text-anchor="middle" x="631.96" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blockProvider_</text>
+<!-- Node20&#45;&gt;Node23 -->
+<g id="edge32" class="edge">
+<title>Node20&#45;&gt;Node23</title>
+<path fill="none" stroke="#404040" d="M225.96,-1185.86C217.03,-1167.68 212.68,-1147.63 220.5,-1129 221.63,-1126.31 257.11,-1091.41 294.26,-1055.31"/>
+<polygon fill="none" stroke="#404040" points="294.6,-1054.98 296.12,-1047.93 303.21,-1046.62 301.69,-1053.67 294.6,-1054.98"/>
+<text text-anchor="middle" x="276" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #finalizedPayloadsIndex_</text>
 </g>
-<!-- Node20&#45;&gt;Node26 -->
-<g id="edge40" class="edge">
-<title>Node20&#45;&gt;Node26</title>
-<path fill="none" stroke="#404040" d="M534.39,-1163.88C531.18,-1161.72 527.87,-1159.75 524.46,-1158 479.62,-1135.02 337.38,-1171.99 298.46,-1140 291.82,-1134.54 286.07,-1128.22 281.1,-1121.3"/>
-<polygon fill="none" stroke="#404040" points="280.83,-1120.87 274.23,-1117.97 274.37,-1110.76 280.97,-1113.66 280.83,-1120.87"/>
-<text text-anchor="middle" x="334.96" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blockProvider_</text>
+<!-- Node20&#45;&gt;Node28 -->
+<g id="edge43" class="edge">
+<title>Node20&#45;&gt;Node28</title>
+<path fill="none" stroke="#404040" d="M346.2,-1207.29C379.82,-1190.2 420.9,-1171.11 459.5,-1158 496.06,-1145.58 506.87,-1148.68 544.5,-1140 564.14,-1135.47 568.7,-1132.76 588.5,-1129 648.83,-1117.53 673.53,-1143.71 725.5,-1111 726.86,-1110.14 728.21,-1109.26 729.54,-1108.34"/>
+<polygon fill="none" stroke="#404040" points="729.86,-1108.1 732.21,-1101.28 739.41,-1100.84 737.05,-1107.65 729.86,-1108.1"/>
+<text text-anchor="middle" x="644" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #finalizedPayloadsIndex_</text>
 </g>
-<!-- Node21&#45;&gt;Node3 -->
+<!-- Node21 -->
+<g id="node21" class="node">
+<title>Node21</title>
+<g id="a_node21"><a xlink:href="structaltintegration_1_1FinalizedPayloadsIndex.html" target="_top" xlink:title="Stores a mapping payload id &#45;&gt; containing block hash of payloads that are stored in finalized blocks.">
+<polygon fill="white" stroke="black" points="217,-1635 217,-1747 378,-1747 378,-1635 217,-1635"/>
+<text text-anchor="start" x="225" y="-1735" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::Finalized</text>
+<text text-anchor="middle" x="297.5" y="-1724" font-family="Helvetica,sans-Serif" font-size="10.00">PayloadsIndex&lt; ContainerIndex &gt;</text>
+<polyline fill="none" stroke="black" points="217,-1717 378,-1717 "/>
+<text text-anchor="middle" x="297.5" y="-1705" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="217,-1698 378,-1698 "/>
+<text text-anchor="start" x="225" y="-1686" font-family="Helvetica,sans-Serif" font-size="10.00">+ find()</text>
+<text text-anchor="start" x="225" y="-1675" font-family="Helvetica,sans-Serif" font-size="10.00">+ empty()</text>
+<text text-anchor="start" x="225" y="-1664" font-family="Helvetica,sans-Serif" font-size="10.00">+ size()</text>
+<text text-anchor="start" x="225" y="-1653" font-family="Helvetica,sans-Serif" font-size="10.00">+ add()</text>
+<text text-anchor="start" x="225" y="-1642" font-family="Helvetica,sans-Serif" font-size="10.00">+ remove()</text>
+</a>
+</g>
+</g>
+<!-- Node21&#45;&gt;Node20 -->
 <g id="edge26" class="edge">
-<title>Node21&#45;&gt;Node3</title>
-<path fill="none" stroke="orange" d="M590.46,-822.75C590.46,-810.41 590.46,-797.97 590.46,-785.71"/>
-<polygon fill="orange" stroke="orange" points="586.96,-823.08 590.46,-833.08 593.96,-823.08 586.96,-823.08"/>
-<text text-anchor="middle" x="620.96" y="-807" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; VbkBlock &gt;</text>
+<title>Node21&#45;&gt;Node20</title>
+<path fill="none" stroke="orange" d="M283.7,-1625C280.33,-1606.36 277.21,-1585.95 275.5,-1567 267.42,-1477.51 269.19,-1373.3 271.57,-1309.11"/>
+<polygon fill="orange" stroke="orange" points="280.26,-1625.67 285.53,-1634.86 287.15,-1624.39 280.26,-1625.67"/>
+<text text-anchor="middle" x="339" y="-1458.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; altintegration::BlockIndex &gt;</text>
 </g>
 <!-- Node22 -->
 <g id="node22" class="node">
 <title>Node22</title>
-<g id="a_node22"><a xlink:href="structaltintegration_1_1VbkChainParams.html" target="_top" xlink:title="VeriBlock chain parameters.">
-<polygon fill="white" stroke="black" points="844.46,-1355.5 844.46,-1566.5 1026.46,-1566.5 1026.46,-1355.5 844.46,-1355.5"/>
-<text text-anchor="start" x="852.46" y="-1554.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkChain</text>
-<text text-anchor="middle" x="935.46" y="-1543.5" font-family="Helvetica,sans-Serif" font-size="10.00">Params</text>
-<polyline fill="none" stroke="black" points="844.46,-1536.5 1026.46,-1536.5 "/>
-<text text-anchor="start" x="852.46" y="-1524.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mOldBlocksWindow</text>
-<text text-anchor="start" x="852.46" y="-1513.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mEndorsementSettlementInterval</text>
-<text text-anchor="start" x="852.46" y="-1502.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mPreserveBlocksBehindFinal</text>
-<text text-anchor="start" x="852.46" y="-1491.5" font-family="Helvetica,sans-Serif" font-size="10.00"># mMaxFutureBlockTime</text>
-<polyline fill="none" stroke="black" points="844.46,-1484.5 1026.46,-1484.5 "/>
-<text text-anchor="start" x="852.46" y="-1472.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~VbkChainParams()</text>
-<text text-anchor="start" x="852.46" y="-1461.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getProgPowForkHeight()</text>
-<text text-anchor="start" x="852.46" y="-1450.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getProgPowStartTimeEpoch()</text>
-<text text-anchor="start" x="852.46" y="-1439.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isProgPowStartTimeEpochEnabled()</text>
-<text text-anchor="start" x="852.46" y="-1428.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ networkName()</text>
-<text text-anchor="start" x="852.46" y="-1417.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getMinimumDifficulty()</text>
-<text text-anchor="start" x="852.46" y="-1406.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTransactionMagicByte()</text>
-<text text-anchor="start" x="852.46" y="-1395.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowNoRetargeting()</text>
-<text text-anchor="start" x="852.46" y="-1384.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getRetargetPeriod()</text>
-<text text-anchor="start" x="852.46" y="-1373.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTargetBlockTime()</text>
-<text text-anchor="start" x="852.46" y="-1362.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 10 more...</text>
+<g id="a_node22"><a xlink:href="structaltintegration_1_1BlockReader.html" target="_top" xlink:title="An abstraction over on&#45;disk storage iterator.">
+<polygon fill="white" stroke="black" points="764.5,-1164 764.5,-1331 896.5,-1331 896.5,-1164 764.5,-1164"/>
+<text text-anchor="middle" x="830.5" y="-1319" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockReader</text>
+<polyline fill="none" stroke="black" points="764.5,-1312 896.5,-1312 "/>
+<text text-anchor="middle" x="830.5" y="-1300" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
+<polyline fill="none" stroke="black" points="764.5,-1293 896.5,-1293 "/>
+<text text-anchor="start" x="772.5" y="-1281" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockReader()</text>
+<text text-anchor="start" x="772.5" y="-1270" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAltTip()</text>
+<text text-anchor="start" x="772.5" y="-1259" font-family="Helvetica,sans-Serif" font-size="10.00">+ getVbkTip()</text>
+<text text-anchor="start" x="772.5" y="-1248" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBtcTip()</text>
+<text text-anchor="start" x="772.5" y="-1237" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlock()</text>
+<text text-anchor="start" x="772.5" y="-1226" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlock()</text>
+<text text-anchor="start" x="772.5" y="-1215" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBlock()</text>
+<text text-anchor="start" x="772.5" y="-1204" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAltBlockIterator()</text>
+<text text-anchor="start" x="772.5" y="-1193" font-family="Helvetica,sans-Serif" font-size="10.00">+ getVbkBlockIterator()</text>
+<text text-anchor="start" x="772.5" y="-1182" font-family="Helvetica,sans-Serif" font-size="10.00">+ getBtcBlockIterator()</text>
+<text text-anchor="start" x="772.5" y="-1171" font-family="Helvetica,sans-Serif" font-size="10.00">and 6 more...</text>
 </a>
 </g>
 </g>
-<!-- Node22&#45;&gt;Node2 -->
-<g id="edge31" class="edge">
-<title>Node22&#45;&gt;Node2</title>
-<path fill="none" stroke="#404040" d="M935.46,-1355.14C935.46,-1291.59 935.46,-1208.88 935.46,-1135.5 935.46,-1135.5 935.46,-1135.5 935.46,-646 935.46,-508.09 781.93,-415.33 679.71,-368.86"/>
-<polygon fill="none" stroke="#404040" points="679.7,-368.86 672.59,-370.06 668.75,-363.96 675.86,-362.76 679.7,-368.86"/>
-<text text-anchor="middle" x="955.46" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #param_</text>
+<!-- Node22&#45;&gt;Node3 -->
+<g id="edge27" class="edge">
+<title>Node22&#45;&gt;Node3</title>
+<path fill="none" stroke="#404040" d="M896.74,-1166.51C899.95,-1163.55 903.21,-1160.7 906.5,-1158 919.12,-1147.65 930.26,-1154.09 938.5,-1140 973.2,-1080.66 932.6,-893.79 900.5,-833 872.39,-779.76 822.38,-734.53 778.45,-702.11"/>
+<polygon fill="none" stroke="#404040" points="778.31,-702.02 771.11,-701.74 768.59,-694.98 775.8,-695.26 778.31,-702.02"/>
+<text text-anchor="middle" x="988" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #blockProvider_</text>
 </g>
-<!-- Node23 -->
-<g id="node23" class="node">
-<title>Node23</title>
-<g id="a_node23"><a xlink:title=" ">
-<polygon fill="white" stroke="black" points="694.96,-1891.5 694.96,-1948.5 807.96,-1948.5 807.96,-1891.5 694.96,-1891.5"/>
-<text text-anchor="middle" x="751.46" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; uint32_t &gt;</text>
-<polyline fill="none" stroke="black" points="694.96,-1929.5 807.96,-1929.5 "/>
-<text text-anchor="start" x="702.96" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ elements</text>
-<polyline fill="none" stroke="black" points="694.96,-1910.5 807.96,-1910.5 "/>
-<text text-anchor="middle" x="751.46" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-</a>
-</g>
-</g>
-<!-- Node23&#45;&gt;Node22 -->
-<g id="edge32" class="edge">
-<title>Node23&#45;&gt;Node22</title>
-<path fill="none" stroke="#404040" d="M762.56,-1891.44C786.92,-1830.93 846.3,-1683.46 888.66,-1578.24"/>
-<polygon fill="none" stroke="#404040" points="888.74,-1578.04 887.27,-1570.99 893.22,-1566.91 894.69,-1573.97 888.74,-1578.04"/>
-<text text-anchor="middle" x="857.46" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #forkResolutionLookUpTable_</text>
-</g>
-<!-- Node24&#45;&gt;Node23 -->
+<!-- Node22&#45;&gt;Node23 -->
 <g id="edge33" class="edge">
-<title>Node24&#45;&gt;Node23</title>
-<path fill="none" stroke="orange" d="M511.57,-2044.65C563.92,-2017.67 644.95,-1975.9 698.1,-1948.5"/>
-<polygon fill="orange" stroke="orange" points="509.75,-2041.66 502.46,-2049.35 512.96,-2047.88 509.75,-2041.66"/>
-<text text-anchor="middle" x="683.46" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; uint32_t &gt;</text>
+<title>Node22&#45;&gt;Node23</title>
+<path fill="none" stroke="#404040" d="M765.75,-1163.92C762.44,-1161.73 759.02,-1159.74 755.5,-1158 720.7,-1140.77 435.41,-1165.92 406.5,-1140 400.47,-1134.6 395.43,-1128.42 391.23,-1121.7"/>
+<polygon fill="none" stroke="#404040" points="391.01,-1121.28 384.64,-1117.91 385.31,-1110.73 391.68,-1114.1 391.01,-1121.28"/>
+<text text-anchor="middle" x="443" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blockProvider_</text>
+</g>
+<!-- Node22&#45;&gt;Node28 -->
+<g id="edge44" class="edge">
+<title>Node22&#45;&gt;Node28</title>
+<path fill="none" stroke="#404040" d="M785.76,-1163.81C782.83,-1155.93 780.33,-1147.92 778.5,-1140 777.19,-1134.33 776.3,-1128.55 775.77,-1122.71"/>
+<polygon fill="none" stroke="#404040" points="775.76,-1122.64 771.47,-1116.85 775.16,-1110.66 779.46,-1116.45 775.76,-1122.64"/>
+<text text-anchor="middle" x="815" y="-1132" font-family="Helvetica,sans-Serif" font-size="10.00"> #blockProvider_</text>
+</g>
+<!-- Node23&#45;&gt;Node3 -->
+<g id="edge28" class="edge">
+<title>Node23&#45;&gt;Node3</title>
+<path fill="none" stroke="orange" d="M462.91,-884.92C510.56,-835.75 569.86,-774.56 616.26,-726.67"/>
+<polygon fill="orange" stroke="orange" points="460.11,-882.78 455.67,-892.4 465.14,-887.65 460.11,-882.78"/>
+<text text-anchor="middle" x="567" y="-807" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; VbkBlock &gt;</text>
+</g>
+<!-- Node24 -->
+<g id="node24" class="node">
+<title>Node24</title>
+<g id="a_node24"><a xlink:href="structaltintegration_1_1VbkChainParams.html" target="_top" xlink:title="VeriBlock chain parameters.">
+<polygon fill="white" stroke="black" points="1073.5,-1355.5 1073.5,-1566.5 1255.5,-1566.5 1255.5,-1355.5 1073.5,-1355.5"/>
+<text text-anchor="start" x="1081.5" y="-1554.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkChain</text>
+<text text-anchor="middle" x="1164.5" y="-1543.5" font-family="Helvetica,sans-Serif" font-size="10.00">Params</text>
+<polyline fill="none" stroke="black" points="1073.5,-1536.5 1255.5,-1536.5 "/>
+<text text-anchor="start" x="1081.5" y="-1524.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mOldBlocksWindow</text>
+<text text-anchor="start" x="1081.5" y="-1513.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mEndorsementSettlementInterval</text>
+<text text-anchor="start" x="1081.5" y="-1502.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mPreserveBlocksBehindFinal</text>
+<text text-anchor="start" x="1081.5" y="-1491.5" font-family="Helvetica,sans-Serif" font-size="10.00"># mMaxFutureBlockTime</text>
+<polyline fill="none" stroke="black" points="1073.5,-1484.5 1255.5,-1484.5 "/>
+<text text-anchor="start" x="1081.5" y="-1472.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~VbkChainParams()</text>
+<text text-anchor="start" x="1081.5" y="-1461.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getProgPowForkHeight()</text>
+<text text-anchor="start" x="1081.5" y="-1450.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getProgPowStartTimeEpoch()</text>
+<text text-anchor="start" x="1081.5" y="-1439.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isProgPowStartTimeEpochEnabled()</text>
+<text text-anchor="start" x="1081.5" y="-1428.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ networkName()</text>
+<text text-anchor="start" x="1081.5" y="-1417.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getMinimumDifficulty()</text>
+<text text-anchor="start" x="1081.5" y="-1406.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTransactionMagicByte()</text>
+<text text-anchor="start" x="1081.5" y="-1395.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowNoRetargeting()</text>
+<text text-anchor="start" x="1081.5" y="-1384.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getRetargetPeriod()</text>
+<text text-anchor="start" x="1081.5" y="-1373.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTargetBlockTime()</text>
+<text text-anchor="start" x="1081.5" y="-1362.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 10 more...</text>
+</a>
+</g>
+</g>
+<!-- Node24&#45;&gt;Node2 -->
+<g id="edge34" class="edge">
+<title>Node24&#45;&gt;Node2</title>
+<path fill="none" stroke="#404040" d="M1164.5,-1355.14C1164.5,-1291.59 1164.5,-1208.88 1164.5,-1135.5 1164.5,-1135.5 1164.5,-1135.5 1164.5,-646 1164.5,-569.57 1161.13,-545.52 1123.5,-479 1108.21,-451.96 1086.46,-426.56 1064.4,-404.81"/>
+<polygon fill="none" stroke="#404040" points="1064.26,-404.67 1057.16,-403.38 1055.62,-396.34 1062.71,-397.62 1064.26,-404.67"/>
+<text text-anchor="middle" x="1184.5" y="-969.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #param_</text>
 </g>
 <!-- Node25 -->
 <g id="node25" class="node">
 <title>Node25</title>
-<g id="a_node25"><a xlink:href="structaltintegration_1_1BlockTree.html" target="_top" xlink:title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root.">
-<polygon fill="white" stroke="black" points="197.46,-519.5 197.46,-774.5 331.46,-774.5 331.46,-519.5 197.46,-519.5"/>
-<text text-anchor="start" x="205.46" y="-762.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockTree</text>
-<text text-anchor="middle" x="264.46" y="-751.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; Block, ChainParams &gt;</text>
-<polyline fill="none" stroke="black" points="197.46,-744.5 331.46,-744.5 "/>
-<text text-anchor="start" x="205.46" y="-732.5" font-family="Helvetica,sans-Serif" font-size="10.00"># param_</text>
-<polyline fill="none" stroke="black" points="197.46,-725.5 331.46,-725.5 "/>
-<text text-anchor="start" x="205.46" y="-713.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockTree()</text>
-<text text-anchor="start" x="205.46" y="-702.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockTree()</text>
-<text text-anchor="start" x="205.46" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getParams()</text>
-<text text-anchor="start" x="205.46" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithGenesis()</text>
-<text text-anchor="start" x="205.46" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithChain()</text>
-<text text-anchor="start" x="205.46" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
-<text text-anchor="start" x="205.46" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
-<text text-anchor="start" x="205.46" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
-<text text-anchor="start" x="205.46" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
-<text text-anchor="start" x="205.46" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="205.46" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
-<text text-anchor="start" x="205.46" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
-<text text-anchor="start" x="205.46" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
-<text text-anchor="start" x="205.46" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
-<text text-anchor="start" x="205.46" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
-<text text-anchor="start" x="205.46" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validateAndAddBlock()</text>
-<text text-anchor="start" x="205.46" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00"># determineBestChain()</text>
-<text text-anchor="start" x="205.46" y="-526.5" font-family="Helvetica,sans-Serif" font-size="10.00"># onBlockInserted()</text>
+<g id="a_node25"><a xlink:title=" ">
+<polygon fill="white" stroke="black" points="889,-1891.5 889,-1948.5 1002,-1948.5 1002,-1891.5 889,-1891.5"/>
+<text text-anchor="middle" x="945.5" y="-1936.5" font-family="Helvetica,sans-Serif" font-size="10.00">std::vector&lt; uint32_t &gt;</text>
+<polyline fill="none" stroke="black" points="889,-1929.5 1002,-1929.5 "/>
+<text text-anchor="start" x="897" y="-1917.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ elements</text>
+<polyline fill="none" stroke="black" points="889,-1910.5 1002,-1910.5 "/>
+<text text-anchor="middle" x="945.5" y="-1898.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
 </a>
 </g>
 </g>
-<!-- Node25&#45;&gt;Node2 -->
+<!-- Node25&#45;&gt;Node24 -->
 <g id="edge35" class="edge">
-<title>Node25&#45;&gt;Node2</title>
-<path fill="none" stroke="orange" d="M339.12,-574.54C390.89,-525 459.68,-459.16 512.21,-408.89"/>
-<polygon fill="orange" stroke="orange" points="336.42,-572.29 331.61,-581.73 341.26,-577.35 336.42,-572.29"/>
-<text text-anchor="middle" x="508.46" y="-482" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; VbkBlock, VbkChainParams &gt;</text>
+<title>Node25&#45;&gt;Node24</title>
+<path fill="none" stroke="#404040" d="M958.71,-1891.44C987.73,-1830.87 1058.52,-1683.16 1108.95,-1577.92"/>
+<polygon fill="none" stroke="#404040" points="1109.04,-1577.73 1108.02,-1570.6 1114.22,-1566.91 1115.24,-1574.05 1109.04,-1577.73"/>
+<text text-anchor="middle" x="1059.5" y="-1841.5" font-family="Helvetica,sans-Serif" font-size="10.00"> #forkResolutionLookUpTable_</text>
 </g>
 <!-- Node26&#45;&gt;Node25 -->
 <g id="edge36" class="edge">
 <title>Node26&#45;&gt;Node25</title>
-<path fill="none" stroke="midnightblue" d="M257.41,-823.06C258.06,-806.91 258.72,-790.58 259.36,-774.71"/>
-<polygon fill="none" stroke="midnightblue" points="253.92,-822.95 257.01,-833.08 260.91,-823.23 253.92,-822.95"/>
+<path fill="none" stroke="orange" d="M663.25,-2047.76C724.34,-2020.32 825.59,-1974.85 888.77,-1946.48"/>
+<polygon fill="orange" stroke="orange" points="661.49,-2044.71 653.8,-2052 664.36,-2051.1 661.49,-2044.71"/>
+<text text-anchor="middle" x="863.5" y="-1993.5" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; uint32_t &gt;</text>
+</g>
+<!-- Node27 -->
+<g id="node27" class="node">
+<title>Node27</title>
+<g id="a_node27"><a xlink:href="structaltintegration_1_1BlockTree.html" target="_top" xlink:title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root.">
+<polygon fill="white" stroke="black" points="910.5,-519.5 910.5,-774.5 1044.5,-774.5 1044.5,-519.5 910.5,-519.5"/>
+<text text-anchor="start" x="918.5" y="-762.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BlockTree</text>
+<text text-anchor="middle" x="977.5" y="-751.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; Block, ChainParams &gt;</text>
+<polyline fill="none" stroke="black" points="910.5,-744.5 1044.5,-744.5 "/>
+<text text-anchor="start" x="918.5" y="-732.5" font-family="Helvetica,sans-Serif" font-size="10.00"># param_</text>
+<polyline fill="none" stroke="black" points="910.5,-725.5 1044.5,-725.5 "/>
+<text text-anchor="start" x="918.5" y="-713.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BlockTree()</text>
+<text text-anchor="start" x="918.5" y="-702.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BlockTree()</text>
+<text text-anchor="start" x="918.5" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getParams()</text>
+<text text-anchor="start" x="918.5" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithGenesis()</text>
+<text text-anchor="start" x="918.5" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrapWithChain()</text>
+<text text-anchor="start" x="918.5" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
+<text text-anchor="start" x="918.5" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
+<text text-anchor="start" x="918.5" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toPrettyString()</text>
+<text text-anchor="start" x="918.5" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="918.5" y="-614.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
+<text text-anchor="start" x="918.5" y="-603.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isBlockOld()</text>
+<text text-anchor="start" x="918.5" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ finalizeBlocks()</text>
+<text text-anchor="start" x="918.5" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00"># acceptBlockHeaderImpl()</text>
+<text text-anchor="start" x="918.5" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
+<text text-anchor="start" x="918.5" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00"># bootstrap()</text>
+<text text-anchor="start" x="918.5" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># validateAndAddBlock()</text>
+<text text-anchor="start" x="918.5" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00"># determineBestChain()</text>
+<text text-anchor="start" x="918.5" y="-526.5" font-family="Helvetica,sans-Serif" font-size="10.00"># onBlockInserted()</text>
+</a>
+</g>
+</g>
+<!-- Node27&#45;&gt;Node2 -->
+<g id="edge38" class="edge">
+<title>Node27&#45;&gt;Node2</title>
+<path fill="none" stroke="orange" d="M977.5,-509.09C977.5,-492.95 977.5,-476.53 977.5,-460.54"/>
+<polygon fill="orange" stroke="orange" points="974,-509.1 977.5,-519.1 981,-509.1 974,-509.1"/>
+<text text-anchor="middle" x="1048.5" y="-482" font-family="Helvetica,sans-Serif" font-size="10.00"> &lt; VbkBlock, VbkChainParams &gt;</text>
+</g>
+<!-- Node28&#45;&gt;Node27 -->
+<g id="edge39" class="edge">
+<title>Node28&#45;&gt;Node27</title>
+<path fill="none" stroke="midnightblue" d="M889.24,-823.97C897.49,-807.52 905.84,-790.88 913.95,-774.71"/>
+<polygon fill="none" stroke="midnightblue" points="886.03,-822.57 884.67,-833.08 892.28,-825.71 886.03,-822.57"/>
 </g>
 </g>
 </svg>
