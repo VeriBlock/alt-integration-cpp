@@ -111,7 +111,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltBlockTree.h
 <div class="line">AltBlockTree tree(altp, vbkp, btcp, provider, blockProvider);</div>
 </div><!-- fragment --><p >After initialization <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a> does not contain any blocks. <b>Users MUST bootstrap <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a></b> - add initial/genesis/root block of Altchain.</p>
 <p >We will refer to this block as <b>bootstrap block</b>. Bootstrap block is a first block in Altchain that can be endorsed, but can not contain POP body (<a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">PopData</a>).</p>
-<p >If <code>bootstrap()</code> fails, your block provided in struct <a class="el" href="structaltintegration_1_1AltChainParams.html#a6189f302f690ca4c6ca8490bed3ef3bf" title="&quot;genesis&quot; block for POP mining.">AltChainParams::getBootstrapBlock()</a> is invalid.</p>
+<p >If <code><a class="el" href="structaltintegration_1_1AltBlockTree.html#a190511ebc64d89ebe6bbd0f657aaceb2" title="Set the very first (bootstrap) altchain block with POP enabled.">bootstrap()</a></code> fails, your block provided in struct <a class="el" href="structaltintegration_1_1AltChainParams.html#a6189f302f690ca4c6ca8490bed3ef3bf" title="&quot;genesis&quot; block for POP mining.">AltChainParams::getBootstrapBlock()</a> is invalid.</p>
 <p ><a class="el" href="classaltintegration_1_1ValidationState.html" title="Class that is used for storing validation state.">ValidationState</a> will contain detailed info about failure reason, if any.</p>
 <div class="fragment"><div class="line">ValidationState state;</div>
 <div class="line"><span class="keywordtype">bool</span> ret = tree.bootstrap(state);</div>
@@ -272,6 +272,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a61baa26057064e2315a9ad5d9ea4a9e7"><td class="memItemLeft" align="right" valign="top"><a id="a61baa26057064e2315a9ad5d9ea4a9e7" name="a61baa26057064e2315a9ad5d9ea4a9e7"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>AltBlockTree</b> (const <a class="el" href="structaltintegration_1_1AltChainParams.html">alt_config_t</a> &amp;alt_config, const <a class="el" href="structaltintegration_1_1VbkChainParams.html">vbk_config_t</a> &amp;vbk_config, const <a class="el" href="structaltintegration_1_1BtcChainParams.html">btc_config_t</a> &amp;btc_config, <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &amp;payloadsProvider, <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;blockProvider)</td></tr>
 <tr class="separator:a61baa26057064e2315a9ad5d9ea4a9e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a190511ebc64d89ebe6bbd0f657aaceb2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree.html#a190511ebc64d89ebe6bbd0f657aaceb2">bootstrap</a> ()</td></tr>
+<tr class="memdesc:a190511ebc64d89ebe6bbd0f657aaceb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the very first (bootstrap) altchain block with POP enabled.  <a href="structaltintegration_1_1AltBlockTree.html#a190511ebc64d89ebe6bbd0f657aaceb2">More...</a><br /></td></tr>
+<tr class="separator:a190511ebc64d89ebe6bbd0f657aaceb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac651b438442dd31ff8fdb99eeb3ded0c"><td class="memItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c">acceptBlockHeader</a> (const <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &amp;block, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:ac651b438442dd31ff8fdb99eeb3ded0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate and add ALT block header to <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a>.  <a href="structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c">More...</a><br /></td></tr>
 <tr class="separator:ac651b438442dd31ff8fdb99eeb3ded0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -719,6 +722,24 @@ must not be executed on bootstrap block </dd>
 
 </div>
 </div>
+<a id="a190511ebc64d89ebe6bbd0f657aaceb2" name="a190511ebc64d89ebe6bbd0f657aaceb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a190511ebc64d89ebe6bbd0f657aaceb2">&#9670;&nbsp;</a></span>bootstrap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void altintegration::AltBlockTree::bootstrap </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Call this method before any use of <a class="el" href="structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">AltBlockTree</a>. </p>
+
+</div>
+</div>
 <a id="aa9c323caa87d73063c2a4ffb8146cf61" name="aa9c323caa87d73063c2a4ffb8146cf61"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa9c323caa87d73063c2a4ffb8146cf61">&#9670;&nbsp;</a></span>btc()</h2>
 
@@ -742,8 +763,8 @@ must not be executed on bootstrap block </dd>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00424">424</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  424</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree().btc(); }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00420">420</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  420</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree().btc(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -857,8 +878,8 @@ if return value is more or equal to 0, tree state is unchanged.</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00428">428</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  428</span>{ <span class="keywordflow">return</span> *alt_config_; }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00424">424</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  424</span>{ <span class="keywordflow">return</span> *alt_config_; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1059,8 +1080,8 @@ both the current and new chains are fully valid; full validation of [genesis .. 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00420">420</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  420</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00416">416</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  416</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1085,7 +1106,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00451">451</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00447">447</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1102,7 +1123,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00312">312</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00308">308</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1118,7 +1139,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00309">309</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00305">305</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1134,7 +1155,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00306">306</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00302">302</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>

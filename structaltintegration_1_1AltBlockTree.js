@@ -5,6 +5,7 @@ var structaltintegration_1_1AltBlockTree =
     [ "acceptBlock", "structaltintegration_1_1AltBlockTree.html#abc288c022579a8760f7712e12578d921", null ],
     [ "acceptBlock", "structaltintegration_1_1AltBlockTree.html#a4d07706b2eaae1c83a1c4a0baca9bfa1", null ],
     [ "acceptBlockHeader", "structaltintegration_1_1AltBlockTree.html#ac651b438442dd31ff8fdb99eeb3ded0c", null ],
+    [ "bootstrap", "structaltintegration_1_1AltBlockTree.html#a190511ebc64d89ebe6bbd0f657aaceb2", null ],
     [ "btc", "structaltintegration_1_1AltBlockTree.html#aa9c323caa87d73063c2a4ffb8146cf61", null ],
     [ "comparePopScore", "structaltintegration_1_1AltBlockTree.html#a29da03ce1981be457281181a5ad23e24", null ],
     [ "getConnectedTipsAfter", "structaltintegration_1_1AltBlockTree.html#acd7def299b44484a0656a3ed56617a75", null ],

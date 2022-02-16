@@ -242,36 +242,32 @@
 <g id="node6" class="node">
 <title>Node6</title>
 <g id="a_node6"><a xlink:href="structaltintegration_1_1AltBlockTree.html" target="_top" xlink:title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree.">
-<polygon fill="white" stroke="black" points="323.5,-211 323.5,-455 472.5,-455 472.5,-211 323.5,-211"/>
-<text text-anchor="middle" x="398" y="-443" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::AltBlockTree</text>
-<polyline fill="none" stroke="black" points="323.5,-436 472.5,-436 "/>
-<text text-anchor="start" x="331.5" y="-424" font-family="Helvetica,sans-Serif" font-size="10.00">+ onInvalidBlockConnected</text>
-<text text-anchor="start" x="331.5" y="-413" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockConnected</text>
-<text text-anchor="start" x="331.5" y="-402" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBeforeOverrideTip</text>
-<polyline fill="none" stroke="black" points="323.5,-395 472.5,-395 "/>
-<text text-anchor="start" x="331.5" y="-383" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~AltBlockTree()</text>
-<text text-anchor="start" x="331.5" y="-372" font-family="Helvetica,sans-Serif" font-size="10.00">+ AltBlockTree()</text>
-<text text-anchor="start" x="331.5" y="-361" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
-<text text-anchor="start" x="331.5" y="-350" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlock()</text>
-<text text-anchor="start" x="331.5" y="-339" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlock()</text>
-<text text-anchor="start" x="331.5" y="-328" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlock()</text>
-<text text-anchor="start" x="331.5" y="-317" font-family="Helvetica,sans-Serif" font-size="10.00">+ makeConnectedLeafPayload</text>
-<text text-anchor="start" x="331.5" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">Mutator()</text>
-<text text-anchor="start" x="331.5" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">+ getConnectedTipsAfter()</text>
-<text text-anchor="start" x="331.5" y="-284" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
-<text text-anchor="start" x="331.5" y="-273" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
-<text text-anchor="start" x="331.5" y="-262" font-family="Helvetica,sans-Serif" font-size="10.00">+ comparePopScore()</text>
-<text text-anchor="start" x="331.5" y="-251" font-family="Helvetica,sans-Serif" font-size="10.00">+ setState()</text>
-<text text-anchor="start" x="331.5" y="-240" font-family="Helvetica,sans-Serif" font-size="10.00">+ vbk()</text>
-<text text-anchor="start" x="331.5" y="-229" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
-<text text-anchor="start" x="331.5" y="-218" font-family="Helvetica,sans-Serif" font-size="10.00">+ getParams()</text>
+<polygon fill="white" stroke="black" points="323.5,-233 323.5,-433 472.5,-433 472.5,-233 323.5,-233"/>
+<text text-anchor="middle" x="398" y="-421" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::AltBlockTree</text>
+<polyline fill="none" stroke="black" points="323.5,-414 472.5,-414 "/>
+<text text-anchor="start" x="331.5" y="-402" font-family="Helvetica,sans-Serif" font-size="10.00">+ onInvalidBlockConnected</text>
+<text text-anchor="start" x="331.5" y="-391" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBlockConnected</text>
+<text text-anchor="start" x="331.5" y="-380" font-family="Helvetica,sans-Serif" font-size="10.00">+ onBeforeOverrideTip</text>
+<polyline fill="none" stroke="black" points="323.5,-373 472.5,-373 "/>
+<text text-anchor="start" x="331.5" y="-361" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~AltBlockTree()</text>
+<text text-anchor="start" x="331.5" y="-350" font-family="Helvetica,sans-Serif" font-size="10.00">+ AltBlockTree()</text>
+<text text-anchor="start" x="331.5" y="-339" font-family="Helvetica,sans-Serif" font-size="10.00">+ bootstrap()</text>
+<text text-anchor="start" x="331.5" y="-328" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlockHeader()</text>
+<text text-anchor="start" x="331.5" y="-317" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlock()</text>
+<text text-anchor="start" x="331.5" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlock()</text>
+<text text-anchor="start" x="331.5" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">+ acceptBlock()</text>
+<text text-anchor="start" x="331.5" y="-284" font-family="Helvetica,sans-Serif" font-size="10.00">+ makeConnectedLeafPayload</text>
+<text text-anchor="start" x="331.5" y="-273" font-family="Helvetica,sans-Serif" font-size="10.00">Mutator()</text>
+<text text-anchor="start" x="331.5" y="-262" font-family="Helvetica,sans-Serif" font-size="10.00">+ getConnectedTipsAfter()</text>
+<text text-anchor="start" x="331.5" y="-251" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="331.5" y="-240" font-family="Helvetica,sans-Serif" font-size="10.00">and 6 more...</text>
 </a>
 </g>
 </g>
 <!-- Node5&#45;&gt;Node6 -->
 <g id="edge5" class="edge">
 <title>Node5&#45;&gt;Node6</title>
-<path fill="none" stroke="midnightblue" d="M398,-498.33C398,-483.87 398,-469.45 398,-455.48"/>
+<path fill="none" stroke="midnightblue" d="M398,-498.11C398,-475.84 398,-453.64 398,-433.09"/>
 <polygon fill="none" stroke="midnightblue" points="394.5,-498.34 398,-508.34 401.5,-498.34 394.5,-498.34"/>
 </g>
 <!-- Node7&#45;&gt;Node3 -->
