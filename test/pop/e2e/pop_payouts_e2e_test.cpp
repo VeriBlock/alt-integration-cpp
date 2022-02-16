@@ -106,7 +106,8 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   for (size_t i = 0; i < 10000; i++) {
     PopPayouts payouts{};
     ASSERT_TRUE(SetState(alttree, chain[i].getHash()));
-    ASSERT_NO_FATAL_FAILURE(calculator_.getPopPayout(chain[i].getHash(), payouts, state));
+    ASSERT_NO_FATAL_FAILURE(
+        calculator_.getPopPayout(chain[i].getHash(), payouts, state));
     // no endorsements = no payouts
     ASSERT_TRUE(payouts.empty());
 
@@ -200,10 +201,11 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
-  EXPECT_TRUE(
-      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-  EXPECT_TRUE(alttree2.bootstrap(state));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(alttree2.bootstrap());
 
   mineEndorsements(
       alttree2, altparam.getPayoutParams().getPopPayoutDelay(), chain2);
@@ -265,10 +267,11 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
-  EXPECT_TRUE(
-      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-  EXPECT_TRUE(alttree2.bootstrap(state));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(alttree2.bootstrap());
 
   mineEndorsements(
       alttree2, altparam.getPayoutParams().getPopPayoutDelay() + 2, chain2);

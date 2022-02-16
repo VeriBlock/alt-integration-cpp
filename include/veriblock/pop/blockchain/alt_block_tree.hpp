@@ -205,12 +205,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * Set the very first (bootstrap) altchain block with POP enabled.
    *
    * Call this method before any use of AltBlockTree.
-   *
-   * @param[out] state validation state
-   * @return true if success, false if the block is invalid.
-   * @private
    */
-  VBK_CHECK_RETURN bool bootstrap(ValidationState& state);
+  void bootstrap();
 
   /**
    * Validate and add ALT block header to AltBlockTree.

@@ -120,11 +120,8 @@ class MockMiner {
   const BtcChainParams& btcParams() const { return btc_params_; }
 
   MockMiner() {
-    ValidationState state;
-    bool ret = btc_tree_.bootstrapWithGenesis(GetRegTestBtcBlock(), state);
-    VBK_ASSERT(ret);
-    ret = vbk_tree_.bootstrapWithGenesis(GetRegTestVbkBlock(), state);
-    VBK_ASSERT_MSG(ret, state.toString());
+    btc_tree_.bootstrapWithGenesis(GetRegTestBtcBlock());
+    vbk_tree_.bootstrapWithGenesis(GetRegTestVbkBlock());
   }
 
   adaptors::InmemStorageImpl& getStorage() { return storage_; }

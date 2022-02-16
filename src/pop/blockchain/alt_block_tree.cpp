@@ -35,10 +35,8 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
   return true;
 }
 
-bool AltBlockTree::bootstrap(ValidationState& state) {
-  if (base::isBootstrapped()) {
-    return state.Invalid("already bootstrapped");
-  }
+void AltBlockTree::bootstrap() {
+  VBK_ASSERT_MSG(!base::isBootstrapped(), "tree is already bootstrapped");
 
   auto block = alt_config_->getBootstrapBlock();
   auto height = block.getHeight();
@@ -73,8 +71,6 @@ bool AltBlockTree::bootstrap(ValidationState& state) {
              "insertBlockHeader");
 
   tryAddTip(index);
-
-  return true;
 }
 
 template <typename Pop>

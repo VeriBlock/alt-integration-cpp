@@ -35,9 +35,9 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
 
   // do not bootstrap VBK
-  ASSERT_TRUE(test_alttree.bootstrap(state));
-  ASSERT_TRUE(
-      test_alttree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  EXPECT_NO_FATAL_FAILURE(test_alttree.bootstrap());
+  EXPECT_NO_FATAL_FAILURE(
+      test_alttree.btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
 
   // Step1
   // mine 10 Vbk blocks in the pop miner
@@ -60,8 +60,8 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // Step 2
   // bootsrap with the non genesis block
-  EXPECT_TRUE(test_alttree.vbk().bootstrapWithChain(
-      vbkTip->getHeight(), {vbkTip->getHeader()}, state));
+  EXPECT_NO_FATAL_FAILURE(test_alttree.vbk().bootstrapWithChain(
+      vbkTip->getHeight(), {vbkTip->getHeader()}));
 
   VbkTx tx =
       popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));

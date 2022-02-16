@@ -34,8 +34,8 @@ struct PopContextFixture : public ::testing::Test {
   ValidationState state;
 
   PopContextFixture() {
-    EXPECT_TRUE(local.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-    EXPECT_TRUE(local.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+    local.bootstrapWithGenesis(GetRegTestVbkBlock());
+    local.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
   }
 
   void SetUp() override {

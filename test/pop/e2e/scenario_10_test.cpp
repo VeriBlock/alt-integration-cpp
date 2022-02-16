@@ -84,11 +84,11 @@ TEST_F(Scenario10, scenario_10) {
                                payloadsProvider,
                                blockProvider};
 
-  ASSERT_TRUE(reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(),
-                                                         this->state));
-  ASSERT_TRUE(reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(),
-                                                         this->state));
-  ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
+  EXPECT_NO_FATAL_FAILURE(
+      reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(reloadedAltTree.bootstrap());
 
   ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 

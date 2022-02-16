@@ -132,9 +132,11 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
 TEST_F(AltTreeFixture, compareTrees) {
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
-  EXPECT_TRUE(alttree2.bootstrap(state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-  EXPECT_TRUE(alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  EXPECT_NO_FATAL_FAILURE(alttree2.bootstrap());
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
   EXPECT_TRUE(cmp(alttree, alttree2));
   EXPECT_TRUE(cmp(alttree.vbk(), alttree2.vbk()));
   EXPECT_TRUE(cmp(alttree.vbk().btc(), alttree2.vbk().btc()));

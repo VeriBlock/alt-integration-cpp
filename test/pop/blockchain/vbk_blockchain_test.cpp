@@ -340,8 +340,7 @@ TEST(VbkBlocksTest, basic_test1) {
 
   ASSERT_EQ(bootstrap_chain.size(), 100);
 
-  ASSERT_TRUE(tree.bootstrapWithChain(starting_height, bootstrap_chain, state))
-      << state.toString();
+  tree.bootstrapWithChain(starting_height, bootstrap_chain);
 
   for (size_t i = 100; i < blocks.size(); ++i) {
     ASSERT_TRUE(tree.acceptBlockHeader(blocks[i], state))
@@ -615,8 +614,7 @@ TEST(VbkBlocksTest, basic_test2) {
 
   ASSERT_EQ(bootstrap_chain.size(), 100);
 
-  ASSERT_TRUE(tree.bootstrapWithChain(starting_height, bootstrap_chain, state))
-      << state.toString();
+  tree.bootstrapWithChain(starting_height, bootstrap_chain);
 
   for (size_t i = 100; i < blocks.size(); ++i) {
     ASSERT_TRUE(tree.acceptBlockHeader(blocks[i], state))
@@ -697,9 +695,7 @@ TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
   VbkBlockTree tree(
       *value.params, btcparam, payloadsProvider, blockProvider, payloadsIndex);
 
-  ASSERT_TRUE(tree.bootstrapWithChain(
-      bootstrapChain[0].getHeight(), bootstrapChain, state))
-      << state.GetPath();
+  tree.bootstrapWithChain(bootstrapChain[0].getHeight(), bootstrapChain);
   EXPECT_TRUE(state.IsValid());
   size_t totalBlocks = bootstrapChain.size();
 

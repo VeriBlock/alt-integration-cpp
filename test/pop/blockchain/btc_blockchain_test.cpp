@@ -121,9 +121,7 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.end()};
 
   BlockTree<BtcBlock, BtcChainParams> tree(*value.params, blockProvider);
-  ASSERT_TRUE(tree.bootstrapWithChain(value.startHeight, bootstrapChain, state))
-      << state.GetDebugMessage();
-  EXPECT_TRUE(state.IsValid());
+  ASSERT_NO_FATAL_FAILURE(tree.bootstrapWithChain(value.startHeight, bootstrapChain));
   size_t totalBlocks = bootstrapChain.size();
 
   EXPECT_EQ(tree.getBestChain().tip()->getHeader(),

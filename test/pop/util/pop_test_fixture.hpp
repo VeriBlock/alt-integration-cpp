@@ -73,9 +73,9 @@ struct PopTestFixture {
                           VBKgenesis.getTimestamp()});
     setMockTime(time + 1);
 
-    EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(BTCgenesis, state));
-    EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(VBKgenesis, state));
-    EXPECT_TRUE(alttree.bootstrap(state));
+    EXPECT_NO_FATAL_FAILURE(alttree.btc().bootstrapWithGenesis(BTCgenesis));
+    EXPECT_NO_FATAL_FAILURE(alttree.vbk().bootstrapWithGenesis(VBKgenesis));
+    EXPECT_NO_FATAL_FAILURE(alttree.bootstrap());
 
     popminer = std::make_shared<MockMiner>();
     mempool = std::make_shared<MemPool>(alttree);

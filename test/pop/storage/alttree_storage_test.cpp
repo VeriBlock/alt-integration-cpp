@@ -54,10 +54,9 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
                                this->payloadsProvider,
                                this->blockProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  bool bootstrapped = reloadedAltTree.bootstrap(this->state);
-  ASSERT_TRUE(bootstrapped);
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
+  reloadedAltTree.bootstrap();
 
   ASSERT_TRUE(loadTrees(reloadedAltTree, state));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk().btc(), this->alttree.btc()))
@@ -120,9 +119,9 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
                                this->payloadsProvider,
                                this->blockProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
+  reloadedAltTree.bootstrap();
 
   ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
@@ -197,9 +196,9 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
                                this->payloadsProvider,
                                this->blockProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  ASSERT_TRUE(reloadedAltTree.bootstrap(this->state));
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
+  reloadedAltTree.bootstrap();
 
   ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 
@@ -259,10 +258,9 @@ TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
                                this->payloadsProvider,
                                this->blockProvider};
 
-  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), this->state);
-  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), this->state);
-  bool bootstrapped = reloadedAltTree.bootstrap(this->state);
-  ASSERT_TRUE(bootstrapped);
+  reloadedAltTree.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
+  reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
+  reloadedAltTree.bootstrap();
 
   ASSERT_TRUE(loadTrees(reloadedAltTree, state));
 }

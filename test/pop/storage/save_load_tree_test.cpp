@@ -11,10 +11,9 @@ using namespace altintegration;
 
 struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
   SaveLoadTreeTest() {
-    alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);
-    alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state);
-    bool ok = alttree2.bootstrap(state);
-    VBK_ASSERT_MSG(ok, "Can not bootstrap ALT tree: %s", state.toString());
+    alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
+    alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
+    alttree2.bootstrap();
 
     chain.push_back(altparam.getBootstrapBlock());
     createEndorsedAltChain(20, 3);

@@ -63,9 +63,7 @@ struct BlockchainTest : public ::testing::Test {
         *chainparam, blockProvider);
 
     // @when
-    EXPECT_TRUE(blockchain->bootstrapWithGenesis(getGenesisBlock(), state))
-        << "bootstrap: " << state.GetPath() << ", " << state.GetDebugMessage();
-    EXPECT_TRUE(state.IsValid());
+    EXPECT_NO_FATAL_FAILURE(blockchain->bootstrapWithGenesis(getGenesisBlock()));
   };
 
   void addToFork(std::vector<block_t>& fork, int size) {
