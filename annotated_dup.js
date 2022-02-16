@@ -99,7 +99,6 @@ var annotated_dup =
       [ "ContextInfoContainer", "structaltintegration_1_1ContextInfoContainer.html", "structaltintegration_1_1ContextInfoContainer" ],
       [ "DefaultPopRewardsCalculator", "structaltintegration_1_1DefaultPopRewardsCalculator.html", "structaltintegration_1_1DefaultPopRewardsCalculator" ],
       [ "Endorsement", "structaltintegration_1_1Endorsement.html", null ],
-      [ "FinalizedPayloadsIndex", "structaltintegration_1_1FinalizedPayloadsIndex.html", null ],
       [ "Finalizer", "structaltintegration_1_1Finalizer.html", null ],
       [ "IsPopPayload", "structaltintegration_1_1IsPopPayload.html", null ],
       [ "KeystoneContainer", "structaltintegration_1_1KeystoneContainer.html", null ],

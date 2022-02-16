@@ -18,7 +18,6 @@ var dir_93c268aa47f4f847c999021b7dc26af0 =
     [ "chain_slice.hpp", "chain__slice_8hpp_source.html", null ],
     [ "command.hpp", "command_8hpp_source.html", null ],
     [ "command_group.hpp", "command__group_8hpp_source.html", null ],
-    [ "finalized_payloads_index.hpp", "finalized__payloads__index_8hpp_source.html", null ],
     [ "mempool_block_tree.hpp", "mempool__block__tree_8hpp_source.html", null ],
     [ "miner.hpp", "miner_8hpp_source.html", null ],
     [ "temp_block_tree.hpp", "temp__block__tree_8hpp_source.html", null ],

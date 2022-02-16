@@ -1,22 +1,20 @@
 <map id="altintegration::BaseBlockTree&lt; Block &gt;" name="altintegration::BaseBlockTree&lt; Block &gt;">
-<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="869,1212,1071,1583"/>
-<area shape="rect" id="node2" title=" " alt="" coords="60,977,243,1083"/>
+<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="579,1212,782,1583"/>
+<area shape="rect" id="node2" title=" " alt="" coords="16,977,199,1083"/>
 <area shape="rect" id="node3" title=" " alt="" coords="5,449,175,527"/>
 <area shape="rect" id="node4" title=" " alt="" coords="51,247,187,324"/>
 <area shape="rect" id="node5" title=" " alt="" coords="201,5,240,83"/>
 <area shape="rect" id="node6" title=" " alt="" coords="153,646,288,738"/>
-<area shape="rect" id="node14" title=" " alt="" coords="279,145,416,223"/>
-<area shape="rect" id="node7" title=" " alt="" coords="292,348,331,425"/>
-<area shape="rect" id="node12" title=" " alt="" coords="312,653,407,731"/>
-<area shape="rect" id="node15" title=" " alt="" coords="727,653,885,731"/>
-<area shape="rect" id="node8" title=" " alt="" coords="656,984,852,1076"/>
-<area shape="rect" id="node9" href="$structaltintegration_1_1BlockIndex.html" title="A node in a block tree." alt="" coords="468,551,635,833"/>
-<area shape="rect" id="node11" title=" " alt="" coords="477,984,626,1076"/>
-<area shape="rect" id="node10" title=" " alt="" coords="550,348,657,425"/>
-<area shape="rect" id="node13" title=" " alt="" coords="355,348,526,425"/>
-<area shape="rect" id="node16" href="$structaltintegration_1_1Chain.html" title=" " alt="" coords="876,911,1064,1149"/>
-<area shape="rect" id="node17" href="$structaltintegration_1_1Chain.html" title="Fully in&#45;memory chain representation." alt="" coords="909,573,1044,811"/>
-<area shape="rect" id="node18" href="$structaltintegration_1_1FinalizedPayloadsIndex.html" title=" " alt="" coords="1289,947,1480,1113"/>
-<area shape="rect" id="node19" href="$structaltintegration_1_1FinalizedPayloadsIndex.html" title="Stores a mapping payload id &#45;&gt; containing block hash of payloads that are stored in finalized blocks." alt="" coords="1277,617,1492,767"/>
-<area shape="rect" id="node20" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="1089,918,1265,1142"/>
+<area shape="rect" id="node14" title=" " alt="" coords="317,145,455,223"/>
+<area shape="rect" id="node7" title=" " alt="" coords="372,348,411,425"/>
+<area shape="rect" id="node12" title=" " alt="" coords="516,653,611,731"/>
+<area shape="rect" id="node15" title=" " alt="" coords="312,653,471,731"/>
+<area shape="rect" id="node8" title=" " alt="" coords="295,984,491,1076"/>
+<area shape="rect" id="node9" href="$structaltintegration_1_1BlockIndex.html" title="A node in a block tree." alt="" coords="649,551,816,833"/>
+<area shape="rect" id="node11" title=" " alt="" coords="515,984,665,1076"/>
+<area shape="rect" id="node10" title=" " alt="" coords="679,348,786,425"/>
+<area shape="rect" id="node13" title=" " alt="" coords="463,348,634,425"/>
+<area shape="rect" id="node16" href="$structaltintegration_1_1Chain.html" title=" " alt="" coords="889,911,1077,1149"/>
+<area shape="rect" id="node17" href="$structaltintegration_1_1Chain.html" title="Fully in&#45;memory chain representation." alt="" coords="916,573,1051,811"/>
+<area shape="rect" id="node18" href="$structaltintegration_1_1BlockReader.html" title="An abstraction over on&#45;disk storage iterator." alt="" coords="689,918,865,1142"/>
 </map>

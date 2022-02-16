@@ -82,7 +82,7 @@ var sectionId = 'dynsection-1';
 <text text-anchor="start" x="8" y="-437.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::AltChain</text>
 <text text-anchor="middle" x="85" y="-426.5" font-family="Helvetica,sans-Serif" font-size="10.00">Params</text>
 <polyline fill="none" stroke="black" points="0,-419.5 170,-419.5 "/>
-<text text-anchor="start" x="8" y="-407.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mMaxReorgBlocks</text>
+<text text-anchor="start" x="8" y="-407.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mMaxReorgDistance</text>
 <text text-anchor="start" x="8" y="-396.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mMaxAltchainFutureBlockTime</text>
 <text text-anchor="start" x="8" y="-385.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mKeystoneInterval</text>
 <text text-anchor="start" x="8" y="-374.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mFinalityDelay</text>
