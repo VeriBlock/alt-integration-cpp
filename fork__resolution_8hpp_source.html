@@ -606,7 +606,7 @@ $(document).ready(function(){initNavTree('fork__resolution_8hpp_source.html','')
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>    }</div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span> </div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>    <span class="keyword">auto</span> guard = ing_-&gt;deferForkResolutionGuard();</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>    <span class="keyword">auto</span> originalTip = ing_-&gt;getBestChain().tip();</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>    <span class="keyword">auto</span>* originalTip = ing_-&gt;getBestChain().tip();</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span> </div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>    <span class="keywordflow">if</span> (sm_.setState(*currentActive, to, state)) {</div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
