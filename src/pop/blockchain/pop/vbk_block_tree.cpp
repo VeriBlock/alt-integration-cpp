@@ -408,19 +408,17 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 }
 
 void VbkBlockTree::finalizeBlocks() {
-  auto* tip = getBestChain().tip();
-  VBK_ASSERT(tip && "VBK tree must be bootstrapped");
+  VBK_ASSERT(!this->isLoadingBlocks_);
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
-  int32_t firstBlockHeight =
-      tip->getHeight() - getParams().getOldBlocksWindow();
-  int32_t bootstrapBlockHeight = getRoot().getHeight();
-  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
-  auto* finalizedIndex = getBestChain()[firstBlockHeight];
-  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
+  // first, finalize VBK
+  base::finalizeBlocks(this->getParams().getMaxReorgBlocks(),
+                       this->getParams().preserveBlocksBehindFinal());
 
+  // then, finalize BTC
   btc().finalizeBlocks();
-  this->finalizeBlockImpl(*finalizedIndex,
-                          getParams().preserveBlocksBehindFinal());
+
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,

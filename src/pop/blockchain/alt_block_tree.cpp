@@ -604,7 +604,6 @@ void AltBlockTree::overrideTip(index_t& to) {
     return;
   }
 
-  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
   finalizeBlocks();
 }
 
@@ -751,33 +750,17 @@ std::vector<const AltBlockTree::index_t*> AltBlockTree::getConnectedTipsAfter(
 }
 
 void AltBlockTree::finalizeBlocks() {
-  VBK_TRACE_ZONE_SCOPED;
+  VBK_ASSERT(!this->isLoadingBlocks_);
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
-  auto* tip = getBestChain().tip();
-  VBK_ASSERT(tip != nullptr && "must be bootstrapped");
+  // first, finalize ALT
+  base::finalizeBlocks(this->getParams().getMaxReorgBlocks(),
+                       this->getParams().preserveBlocksBehindFinal());
 
-  int32_t maxReorg = (int32_t)getParams().getMaxReorgDistance();
-  if (maxReorg > tip->getHeight()) {
-    return;
-  }
-
-  if (tip->getHeight() < maxReorg) {
-    // skip finalization
-    return;
-  }
-
-  auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
-  auto* finalizedBlock = getBestChain()[finalh];
-  VBK_ASSERT(finalizedBlock != nullptr);
-
-  if (activeChain_.tip()->getHeight() < getParams().getMaxReorgDistance()) {
-    // skip finalization
-    return;
-  }
-
+  // then, VBK
   vbk().finalizeBlocks();
-  return this->finalizeBlockImpl(*finalizedBlock,
-                                 getParams().preserveBlocksBehindFinal());
+
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 }
 
 template <typename Payloads>

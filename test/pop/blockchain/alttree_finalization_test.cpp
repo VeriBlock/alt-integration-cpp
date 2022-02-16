@@ -32,7 +32,7 @@ struct AltBlockFinalization : public ::testing::Test, public PopTestFixture {
   size_t deallocated = 0;
 
   void SetUp() override {
-    altparam.mMaxReorgDistance = 500;
+    altparam.mMaxReorgBlocks = 500;
     altparam.mEndorsementSettlementInterval = 50;
     altparam.mPreserveBlocksBehindFinal = 50;
 
