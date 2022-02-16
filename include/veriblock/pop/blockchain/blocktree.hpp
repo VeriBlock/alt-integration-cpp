@@ -49,8 +49,11 @@ struct BlockTree : public BaseBlockTree<Block> {
    */
   virtual void bootstrapWithGenesis(const block_t& block) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
+    VBK_ASSERT(!this->isLoaded_);
+    VBK_ASSERT(!this->isLoadingBlocks_);
     ValidationState state;
     this->bootstrap(0, block, state);
+    this->isLoadingBlocks_ = false;
   }
 
   /**
@@ -65,13 +68,16 @@ struct BlockTree : public BaseBlockTree<Block> {
   virtual void bootstrapWithChain(height_t startHeight,
                                   const std::vector<block_t>& chain) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    ValidationState state;
+    VBK_ASSERT(!this->isLoadingBlocks_);
+    VBK_ASSERT(!this->isLoaded_);
     VBK_ASSERT_MSG(!chain.empty(), "bootstrap chain must not be empty");
     VBK_ASSERT_MSG(
         chain.size() >= param_->numBlocksForBootstrap(),
         "bootstrap chain is too small (%d) expected at least %d blocks",
         chain.size(),
         param_->numBlocksForBootstrap());
+
+    ValidationState state;
 
     // pick first block from the chain, bootstrap with a single block
     auto genesis = chain[0];
@@ -127,6 +133,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto* current = base::getBlockIndex(hash);
     VBK_ASSERT(current);
+    VBK_ASSERT(!this->isLoaded_);
+    VBK_ASSERT(this->isLoadingBlocks_);
 
     // we only check blocks contextually if they are not bootstrap blocks, and
     // previous block exists
@@ -309,7 +317,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! whenever new block is inserted, BlockTree has to update its ChainWork
-  void onBlockInserted(index_t* newIndex) override final {
+  void onBlockInserted(index_t* newIndex) final {
     newIndex->chainWork = getBlockProof(newIndex->getHeader());
     if (!newIndex->isRoot()) {
       newIndex->chainWork += newIndex->pprev->chainWork;

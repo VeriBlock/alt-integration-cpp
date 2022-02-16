@@ -524,7 +524,7 @@ struct PopAwareForkResolutionComparator {
     }
 
     auto guard = ing_->deferForkResolutionGuard();
-    auto originalTip = ing_->getBestChain().tip();
+    auto* originalTip = ing_->getBestChain().tip();
 
     if (sm_.setState(*currentActive, to, state)) {
       return true;

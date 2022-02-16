@@ -37,6 +37,8 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
 
 void AltBlockTree::bootstrap() {
   VBK_ASSERT_MSG(!base::isBootstrapped(), "tree is already bootstrapped");
+  VBK_ASSERT(!this->isLoadingBlocks_);
+  VBK_ASSERT(!this->isLoaded_);
 
   auto block = alt_config_->getBootstrapBlock();
   auto height = block.getHeight();
@@ -207,6 +209,7 @@ bool hasStatefulDuplicates(AltBlockTree::BlockPayloadMutator& mutator,
 
 bool AltBlockTree::connectBlock(index_t& index, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_ASSERT(!this->isLoadingBlocks_);
   VBK_ASSERT_MSG(index.hasFlags(BLOCK_HAS_PAYLOADS),
                  "block %s must have payloads added",
                  index.toPrettyString());
@@ -255,6 +258,7 @@ bool AltBlockTree::acceptBlockHeader(const AltBlock& block,
                                      ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG("Accept new header: %s ", block.toPrettyString());
+  VBK_ASSERT(!this->isLoadingBlocks_);
 
   // We don't calculate hash of AltBlock, thus users may call acceptBlockHeader
   // with AltBlock, where hash == previousHash. If so, fail loudly.
@@ -328,6 +332,8 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
   VBK_TRACE_ZONE_SCOPED;
   VBK_LOG_DEBUG(
       "Compare two chains. chain A: %s, chain B: %s", HexStr(A), HexStr(B));
+
+  VBK_ASSERT(!this->isLoadingBlocks_);
 
   auto* left = getBlockIndex(A);
   auto* right = getBlockIndex(B);
@@ -555,8 +561,8 @@ AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  VBK_ASSERT_MSG(
-      to.isConnected(), "block %s must be connected", to.toPrettyString());
+  VBK_ASSERT(to.isConnected());
+  VBK_ASSERT(!this->isLoadingBlocks_);
 
   bool success = cmp_.setState(to, state);
   if (success) {
@@ -566,6 +572,12 @@ bool AltBlockTree::setState(index_t& to, ValidationState& state) {
                    "if setState failed, then '%s must be invalid",
                    to.toShortPrettyString());
   }
+
+  VBK_ASSERT_MSG(appliedBlockCount == activeChain_.blocksCount(),
+                 "applied: %d active: %d",
+                 appliedBlockCount,
+                 activeChain_.blocksCount());
+
   return success;
 }
 
@@ -618,12 +630,17 @@ bool hasDuplicateIds(const AltBlockTree::index_t& index,
 
 bool AltBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
+  VBK_ASSERT(!this->isLoaded_);
+  this->isLoadingBlocks_ = true;
+
   // load endorsements
   const auto& containingHash = index.header->getHash();
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  if (hasDuplicateIds(*current, state)) return false;
+  if (hasDuplicateIds(*current, state)) {
+    return false;
+  }
 
   if (!current->isRoot()) {
     // if the block is not yet connected, defer the stateful duplicate check to
@@ -683,6 +700,8 @@ void AltBlockTree::onBeforeLeafRemoved(const index_t& block) {
 bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
                            ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_ASSERT(this->isLoadingBlocks_);
+  VBK_ASSERT(!this->isLoaded_);
   if (!base::loadTip(hash, state)) {
     return false;
   }
@@ -696,6 +715,11 @@ bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,
     tip->raiseValidity(BLOCK_CAN_BE_APPLIED);
     tip = tip->pprev;
   }
+
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
+
+  this->isLoaded_ = true;
+  this->isLoadingBlocks_ = false;
 
   return true;
 }
@@ -745,7 +769,6 @@ void AltBlockTree::finalizeBlocks() {
   auto finalh = std::max((tip->getHeight() - maxReorg), getRoot().getHeight());
   auto* finalizedBlock = getBestChain()[finalh];
   VBK_ASSERT(finalizedBlock != nullptr);
-
 
   if (activeChain_.tip()->getHeight() < getParams().getMaxReorgDistance()) {
     // skip finalization

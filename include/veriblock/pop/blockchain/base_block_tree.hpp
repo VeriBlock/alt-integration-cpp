@@ -855,6 +855,11 @@ struct BaseBlockTree {
     index_t* finalizedBlock = &index;
 
     if (finalizedBlock == &this->getRoot()) {
+      if (finalizedBlock->finalized) {
+        // block is already finalized
+        return;
+      }
+
       finalizedBlock->finalized = true;
       return;
     }
@@ -928,10 +933,7 @@ struct BaseBlockTree {
         parallelBlocks.erase(finalizedBlock);
         for (auto* par : parallelBlocks) {
           // disconnect `par` from prev block
-          if (par->pprev != nullptr) {
-            par->pprev->pnext.erase(par);
-            par->pprev = nullptr;
-          }
+          par->disconnectFromPrev();
           deallocateTree(*par);
         }
       }
@@ -940,6 +942,10 @@ struct BaseBlockTree {
     // update active chain
     VBK_ASSERT(firstBlockHeight >= rootBlockHeight);
     size_t deallocatedBlocks = firstBlockHeight - rootBlockHeight;
+    if (deallocatedBlocks > 0) {
+      VBK_LOG_WARN(
+          "%s tree deallocated blocks: %d", block_t::name(), deallocatedBlocks);
+    }
     decreaseAppliedBlockCount(deallocatedBlocks);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 

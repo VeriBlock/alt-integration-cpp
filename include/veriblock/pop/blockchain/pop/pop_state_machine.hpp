@@ -184,6 +184,7 @@ struct PopStateMachine {
     }
 
     index.unsetFlag(BLOCK_ACTIVE);
+    VBK_ASSERT(ed_.getBestChain().blocksCount() > 0);
     VBK_ASSERT(ed_.appliedBlockCount > 0);
     --ed_.appliedBlockCount;
   }
