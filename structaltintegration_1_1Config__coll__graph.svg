@@ -679,34 +679,35 @@ var sectionId = 'dynsection-0';
 <g id="node19" class="node">
 <title>Node19</title>
 <g id="a_node19"><a xlink:href="structaltintegration_1_1BtcChainParams.html" target="_top" xlink:title="base class for BTC params">
-<polygon fill="white" stroke="black" points="1121.05,-1183 1121.05,-1394 1283.05,-1394 1283.05,-1183 1121.05,-1183"/>
-<text text-anchor="start" x="1129.05" y="-1382" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BtcChain</text>
-<text text-anchor="middle" x="1202.05" y="-1371" font-family="Helvetica,sans-Serif" font-size="10.00">Params</text>
-<polyline fill="none" stroke="black" points="1121.05,-1364 1283.05,-1364 "/>
-<text text-anchor="start" x="1129.05" y="-1352" font-family="Helvetica,sans-Serif" font-size="10.00">+ mOldBlocksWindow</text>
-<text text-anchor="start" x="1129.05" y="-1341" font-family="Helvetica,sans-Serif" font-size="10.00"># mMaxFutureBlockTime</text>
-<polyline fill="none" stroke="black" points="1121.05,-1334 1283.05,-1334 "/>
-<text text-anchor="start" x="1129.05" y="-1322" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BtcChainParams()</text>
-<text text-anchor="start" x="1129.05" y="-1311" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowLimit()</text>
-<text text-anchor="start" x="1129.05" y="-1300" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowTargetTimespan()</text>
-<text text-anchor="start" x="1129.05" y="-1289" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowTargetSpacing()</text>
-<text text-anchor="start" x="1129.05" y="-1278" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllowMinDifficultyBlocks()</text>
-<text text-anchor="start" x="1129.05" y="-1267" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowNoRetargeting()</text>
-<text text-anchor="start" x="1129.05" y="-1256" font-family="Helvetica,sans-Serif" font-size="10.00">+ EnableTimeAdjustment()</text>
-<text text-anchor="start" x="1129.05" y="-1245" font-family="Helvetica,sans-Serif" font-size="10.00">+ getDifficultyAdjustmentInterval()</text>
-<text text-anchor="start" x="1129.05" y="-1234" font-family="Helvetica,sans-Serif" font-size="10.00">+ numBlocksForBootstrap()</text>
-<text text-anchor="start" x="1129.05" y="-1223" font-family="Helvetica,sans-Serif" font-size="10.00">+ networkName()</text>
-<text text-anchor="start" x="1129.05" y="-1212" font-family="Helvetica,sans-Serif" font-size="10.00">+ maxFutureBlockTime()</text>
-<text text-anchor="start" x="1129.05" y="-1201" font-family="Helvetica,sans-Serif" font-size="10.00">+ preserveBlocksBehindFinal()</text>
-<text text-anchor="start" x="1129.05" y="-1190" font-family="Helvetica,sans-Serif" font-size="10.00">+ getOldBlocksWindow()</text>
+<polygon fill="white" stroke="black" points="1121.05,-1177.5 1121.05,-1399.5 1283.05,-1399.5 1283.05,-1177.5 1121.05,-1177.5"/>
+<text text-anchor="start" x="1129.05" y="-1387.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::BtcChain</text>
+<text text-anchor="middle" x="1202.05" y="-1376.5" font-family="Helvetica,sans-Serif" font-size="10.00">Params</text>
+<polyline fill="none" stroke="black" points="1121.05,-1369.5 1283.05,-1369.5 "/>
+<text text-anchor="start" x="1129.05" y="-1357.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ mOldBlocksWindow</text>
+<text text-anchor="start" x="1129.05" y="-1346.5" font-family="Helvetica,sans-Serif" font-size="10.00"># mMaxFutureBlockTime</text>
+<polyline fill="none" stroke="black" points="1121.05,-1339.5 1283.05,-1339.5 "/>
+<text text-anchor="start" x="1129.05" y="-1327.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~BtcChainParams()</text>
+<text text-anchor="start" x="1129.05" y="-1316.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowLimit()</text>
+<text text-anchor="start" x="1129.05" y="-1305.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowTargetTimespan()</text>
+<text text-anchor="start" x="1129.05" y="-1294.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowTargetSpacing()</text>
+<text text-anchor="start" x="1129.05" y="-1283.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getAllowMinDifficultyBlocks()</text>
+<text text-anchor="start" x="1129.05" y="-1272.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getPowNoRetargeting()</text>
+<text text-anchor="start" x="1129.05" y="-1261.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ EnableTimeAdjustment()</text>
+<text text-anchor="start" x="1129.05" y="-1250.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getDifficultyAdjustmentInterval()</text>
+<text text-anchor="start" x="1129.05" y="-1239.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ numBlocksForBootstrap()</text>
+<text text-anchor="start" x="1129.05" y="-1228.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ networkName()</text>
+<text text-anchor="start" x="1129.05" y="-1217.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ maxFutureBlockTime()</text>
+<text text-anchor="start" x="1129.05" y="-1206.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getMaxReorgBlocks()</text>
+<text text-anchor="start" x="1129.05" y="-1195.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ preserveBlocksBehindFinal()</text>
+<text text-anchor="start" x="1129.05" y="-1184.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getOldBlocksWindow()</text>
 </a>
 </g>
 </g>
 <!-- Node19&#45;&gt;Node18 -->
 <g id="edge23" class="edge">
 <title>Node19&#45;&gt;Node18</title>
-<path fill="none" stroke="#404040" d="M1204.68,-1182.7C1206.41,-1113.48 1208.6,-1026.24 1209.91,-974.04"/>
-<polygon fill="none" stroke="#404040" points="1209.91,-973.87 1206.06,-967.78 1210.21,-961.88 1214.06,-967.98 1209.91,-973.87"/>
+<path fill="none" stroke="#404040" d="M1204.81,-1177.35C1206.53,-1108.94 1208.64,-1024.66 1209.91,-973.83"/>
+<polygon fill="none" stroke="#404040" points="1209.92,-973.65 1206.07,-967.55 1210.22,-961.66 1214.07,-967.75 1209.92,-973.65"/>
 <text text-anchor="middle" x="1216.05" y="-1127.5" font-family="Helvetica,sans-Serif" font-size="10.00"> +ptr</text>
 </g>
 <!-- Node20 -->

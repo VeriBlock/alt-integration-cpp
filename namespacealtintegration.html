@@ -2891,22 +2891,22 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00426">426</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  427</span>                                                                  {</div>
-<div class="line"><span class="lineno">  428</span>  <span class="keyword">const</span> <span class="keyword">auto</span> initialHeight = std::min(a.getHeight(), b.getHeight());</div>
-<div class="line"><span class="lineno">  429</span> </div>
-<div class="line"><span class="lineno">  430</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> cursorA = a.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight),</div>
-<div class="line"><span class="lineno">  431</span>            cursorB = b.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight);</div>
-<div class="line"><span class="lineno">  432</span>       cursorA != <span class="keyword">nullptr</span> &amp;&amp; cursorB != <span class="keyword">nullptr</span>;</div>
-<div class="line"><span class="lineno">  433</span>       cursorA = cursorA-&gt;getPrev(), cursorB = cursorB-&gt;getPrev()) {</div>
-<div class="line"><span class="lineno">  434</span>    <span class="keywordflow">if</span> (cursorA == cursorB) {</div>
-<div class="line"><span class="lineno">  435</span>      <span class="keywordflow">return</span> cursorA;</div>
-<div class="line"><span class="lineno">  436</span>    }</div>
-<div class="line"><span class="lineno">  437</span>  }</div>
-<div class="line"><span class="lineno">  438</span> </div>
-<div class="line"><span class="lineno">  439</span>  <span class="comment">// chain `b` is not connected to `a`</span></div>
-<div class="line"><span class="lineno">  440</span>  <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><span class="lineno">  441</span>}</div>
+<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00427">427</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  428</span>                                                                  {</div>
+<div class="line"><span class="lineno">  429</span>  <span class="keyword">const</span> <span class="keyword">auto</span> initialHeight = std::min(a.getHeight(), b.getHeight());</div>
+<div class="line"><span class="lineno">  430</span> </div>
+<div class="line"><span class="lineno">  431</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> cursorA = a.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight),</div>
+<div class="line"><span class="lineno">  432</span>            cursorB = b.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(initialHeight);</div>
+<div class="line"><span class="lineno">  433</span>       cursorA != <span class="keyword">nullptr</span> &amp;&amp; cursorB != <span class="keyword">nullptr</span>;</div>
+<div class="line"><span class="lineno">  434</span>       cursorA = cursorA-&gt;getPrev(), cursorB = cursorB-&gt;getPrev()) {</div>
+<div class="line"><span class="lineno">  435</span>    <span class="keywordflow">if</span> (cursorA == cursorB) {</div>
+<div class="line"><span class="lineno">  436</span>      <span class="keywordflow">return</span> cursorA;</div>
+<div class="line"><span class="lineno">  437</span>    }</div>
+<div class="line"><span class="lineno">  438</span>  }</div>
+<div class="line"><span class="lineno">  439</span> </div>
+<div class="line"><span class="lineno">  440</span>  <span class="comment">// chain `b` is not connected to `a`</span></div>
+<div class="line"><span class="lineno">  441</span>  <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><span class="lineno">  442</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3096,42 +3096,42 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00446">446</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  447</span>                                                         {</div>
-<div class="line"><span class="lineno">  448</span>  <span class="comment">// finalBlock is ancestor of candidate</span></div>
-<div class="line"><span class="lineno">  449</span>  <span class="keywordflow">if</span> (candidate.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(finalBlock.getHeight()) == &amp;finalBlock) {</div>
-<div class="line"><span class="lineno">  450</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  451</span>  }</div>
-<div class="line"><span class="lineno">  452</span> </div>
-<div class="line"><span class="lineno">  453</span>  <span class="comment">// all candidates behind final block are outdated</span></div>
-<div class="line"><span class="lineno">  454</span>  <span class="keywordflow">if</span> (candidate.getHeight() &lt; finalBlock.getHeight()) {</div>
-<div class="line"><span class="lineno">  455</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  456</span>  }</div>
-<div class="line"><span class="lineno">  457</span> </div>
-<div class="line"><span class="lineno">  458</span>  <span class="comment">// all parallel blocks (on same height as final, but not final) are outdated</span></div>
-<div class="line"><span class="lineno">  459</span>  <span class="keywordflow">if</span> (candidate.getHeight() == finalBlock.getHeight() &amp;&amp;</div>
-<div class="line"><span class="lineno">  460</span>      &amp;finalBlock != &amp;candidate) {</div>
-<div class="line"><span class="lineno">  461</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  462</span>  }</div>
-<div class="line"><span class="lineno">  463</span> </div>
-<div class="line"><span class="lineno">  464</span>  <span class="comment">// candidate is ancestor of finalBlock and within window</span></div>
-<div class="line"><span class="lineno">  465</span>  <span class="keywordflow">if</span> (finalBlock.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(candidate.getHeight()) == &amp;candidate) {</div>
-<div class="line"><span class="lineno">  466</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  467</span>  }</div>
-<div class="line"><span class="lineno">  468</span> </div>
-<div class="line"><span class="lineno">  469</span>  <span class="comment">// candidate is on a fork</span></div>
-<div class="line"><span class="lineno">  470</span>  <span class="keyword">auto</span>* fork = <a class="code hl_function" href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">getForkBlock</a>(finalBlock, candidate);</div>
-<div class="line"><span class="lineno">  471</span> </div>
-<div class="line"><span class="lineno">  472</span>  <span class="comment">// candidate does not connect to finalBlock</span></div>
-<div class="line"><span class="lineno">  473</span>  <span class="keywordflow">if</span> (fork == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  474</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  475</span>  }</div>
-<div class="line"><span class="lineno">  476</span> </div>
-<div class="line"><span class="lineno">  477</span>  <span class="comment">// if fork block is outdated, then candidate is also outdated</span></div>
-<div class="line"><span class="lineno">  478</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a>(finalBlock, *fork);</div>
-<div class="line"><span class="lineno">  479</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_a80413c3ca23962b5afd87d8d9af42685"><div class="ttname"><a href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">altintegration::isBlockOutdated</a></div><div class="ttdeci">bool isBlockOutdated(const BlockIndex&lt; Block &gt; &amp;finalBlock, const BlockIndex&lt; Block &gt; &amp;candidate)</div><div class="ttdoc">a candidate is considered outdated if it is behind finalBlock, or on same height and not equal to fin...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00446">block_index.hpp:446</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_afba27a4e2e4fcf163ab4779ffddbfd4f"><div class="ttname"><a href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">altintegration::getForkBlock</a></div><div class="ttdeci">const BlockIndex&lt; Block &gt; * getForkBlock(const BlockIndex&lt; Block &gt; &amp;a, const BlockIndex&lt; Block &gt; &amp;b)</div><div class="ttdoc">getForkBlock assumes that: the block tree is not malformed the fork block(worst case: genesis/bootstr...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00426">block_index.hpp:426</a></div></div>
+<p class="definition">Definition at line <a class="el" href="block__index_8hpp_source.html#l00447">447</a> of file <a class="el" href="block__index_8hpp_source.html">block_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  448</span>                                                         {</div>
+<div class="line"><span class="lineno">  449</span>  <span class="comment">// finalBlock is ancestor of candidate</span></div>
+<div class="line"><span class="lineno">  450</span>  <span class="keywordflow">if</span> (candidate.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(finalBlock.getHeight()) == &amp;finalBlock) {</div>
+<div class="line"><span class="lineno">  451</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  452</span>  }</div>
+<div class="line"><span class="lineno">  453</span> </div>
+<div class="line"><span class="lineno">  454</span>  <span class="comment">// all candidates behind final block are outdated</span></div>
+<div class="line"><span class="lineno">  455</span>  <span class="keywordflow">if</span> (candidate.getHeight() &lt; finalBlock.getHeight()) {</div>
+<div class="line"><span class="lineno">  456</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  457</span>  }</div>
+<div class="line"><span class="lineno">  458</span> </div>
+<div class="line"><span class="lineno">  459</span>  <span class="comment">// all parallel blocks (on same height as final, but not final) are outdated</span></div>
+<div class="line"><span class="lineno">  460</span>  <span class="keywordflow">if</span> (candidate.getHeight() == finalBlock.getHeight() &amp;&amp;</div>
+<div class="line"><span class="lineno">  461</span>      &amp;finalBlock != &amp;candidate) {</div>
+<div class="line"><span class="lineno">  462</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  463</span>  }</div>
+<div class="line"><span class="lineno">  464</span> </div>
+<div class="line"><span class="lineno">  465</span>  <span class="comment">// candidate is ancestor of finalBlock and within window</span></div>
+<div class="line"><span class="lineno">  466</span>  <span class="keywordflow">if</span> (finalBlock.<a class="code hl_function" href="structaltintegration_1_1BlockIndex.html#ab002041be345a4e0d1de0066d65788be">getAncestor</a>(candidate.getHeight()) == &amp;candidate) {</div>
+<div class="line"><span class="lineno">  467</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  468</span>  }</div>
+<div class="line"><span class="lineno">  469</span> </div>
+<div class="line"><span class="lineno">  470</span>  <span class="comment">// candidate is on a fork</span></div>
+<div class="line"><span class="lineno">  471</span>  <span class="keyword">auto</span>* fork = <a class="code hl_function" href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">getForkBlock</a>(finalBlock, candidate);</div>
+<div class="line"><span class="lineno">  472</span> </div>
+<div class="line"><span class="lineno">  473</span>  <span class="comment">// candidate does not connect to finalBlock</span></div>
+<div class="line"><span class="lineno">  474</span>  <span class="keywordflow">if</span> (fork == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  475</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  476</span>  }</div>
+<div class="line"><span class="lineno">  477</span> </div>
+<div class="line"><span class="lineno">  478</span>  <span class="comment">// if fork block is outdated, then candidate is also outdated</span></div>
+<div class="line"><span class="lineno">  479</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a>(finalBlock, *fork);</div>
+<div class="line"><span class="lineno">  480</span>}</div>
+<div class="ttc" id="anamespacealtintegration_html_a80413c3ca23962b5afd87d8d9af42685"><div class="ttname"><a href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">altintegration::isBlockOutdated</a></div><div class="ttdeci">bool isBlockOutdated(const BlockIndex&lt; Block &gt; &amp;finalBlock, const BlockIndex&lt; Block &gt; &amp;candidate)</div><div class="ttdoc">a candidate is considered outdated if it is behind finalBlock, or on same height and not equal to fin...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00447">block_index.hpp:447</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_afba27a4e2e4fcf163ab4779ffddbfd4f"><div class="ttname"><a href="namespacealtintegration.html#afba27a4e2e4fcf163ab4779ffddbfd4f">altintegration::getForkBlock</a></div><div class="ttdeci">const BlockIndex&lt; Block &gt; * getForkBlock(const BlockIndex&lt; Block &gt; &amp;a, const BlockIndex&lt; Block &gt; &amp;b)</div><div class="ttdoc">getForkBlock assumes that: the block tree is not malformed the fork block(worst case: genesis/bootstr...</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00427">block_index.hpp:427</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4234,7 +4234,7 @@ template&lt;typename JsonValue &gt; </div>
 <div class="line"><span class="lineno">  316</span>  json::putIntKV(obj, <span class="stringliteral">&quot;maxVbkBlocksInAltBlock&quot;</span>, p.<a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d">getMaxVbkBlocksInAltBlock</a>());</div>
 <div class="line"><span class="lineno">  317</span>  json::putIntKV(obj, <span class="stringliteral">&quot;maxVTBsInAltBlock&quot;</span>, p.<a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#a30a17437d219fba10e84bb27814ffe35">getMaxVTBsInAltBlock</a>());</div>
 <div class="line"><span class="lineno">  318</span>  json::putIntKV(obj, <span class="stringliteral">&quot;maxATVsInAltBlock&quot;</span>, p.<a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#a5825b30566316c42675e1254bea15fd5">getMaxATVsInAltBlock</a>());</div>
-<div class="line"><span class="lineno">  319</span>  json::putIntKV(obj, <span class="stringliteral">&quot;maxReorgDistance&quot;</span>, p.<a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#aa063d90c1ed8c0800d7dabb49334a237">getMaxReorgDistance</a>());</div>
+<div class="line"><span class="lineno">  319</span>  json::putIntKV(obj, <span class="stringliteral">&quot;maxReorgBlocks&quot;</span>, p.<a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#aa063d90c1ed8c0800d7dabb49334a237">getMaxReorgDistance</a>());</div>
 <div class="line"><span class="lineno">  320</span>  json::putIntKV(obj,</div>
 <div class="line"><span class="lineno">  321</span>                 <span class="stringliteral">&quot;endorsementSettlementInterval&quot;</span>,</div>
 <div class="line"><span class="lineno">  322</span>                 p.<a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#adeadf36cdbd2e7e3713064bbb56b42cc">getEndorsementSettlementInterval</a>());</div>

@@ -106,7 +106,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__inherit__graph.svg" width="659" height="551"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__inherit__graph.svg" width="659" height="566"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
 <div id="dynsection-1-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__coll__graph.svg" width="227" height="294"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__coll__graph.svg" width="227" height="308"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -147,6 +147,9 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>netwo
 <tr class="separator:ac6d50aacc6ce2d8f593516b9c0185e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e7db18ced976be2393b3e356981d4fb"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#a4e7db18ced976be2393b3e356981d4fb">maxFutureBlockTime</a> () const noexcept</td></tr>
 <tr class="separator:a4e7db18ced976be2393b3e356981d4fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fa4c2c82d4fbbe0d234542b936fef30"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#a8fa4c2c82d4fbbe0d234542b936fef30">getMaxReorgBlocks</a> () const noexcept</td></tr>
+<tr class="memdesc:a8fa4c2c82d4fbbe0d234542b936fef30"><td class="mdescLeft">&#160;</td><td class="mdescRight">by default we store this many last BTC blocks in RAM  <a href="structaltintegration_1_1BtcChainParams.html#a8fa4c2c82d4fbbe0d234542b936fef30">More...</a><br /></td></tr>
+<tr class="separator:a8fa4c2c82d4fbbe0d234542b936fef30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfa9c9946eaf2d5e277c4f7fd2360110"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110">preserveBlocksBehindFinal</a> () const noexcept</td></tr>
 <tr class="memdesc:acfa9c9946eaf2d5e277c4f7fd2360110"><td class="mdescLeft">&#160;</td><td class="mdescRight">when finalizeBlockImpl is called, this many blocks behind final block will be preserved in RAM.  <a href="structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110">More...</a><br /></td></tr>
 <tr class="separator:acfa9c9946eaf2d5e277c4f7fd2360110"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -222,6 +225,34 @@ Protected Attributes</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
+<a id="a8fa4c2c82d4fbbe0d234542b936fef30" name="a8fa4c2c82d4fbbe0d234542b936fef30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fa4c2c82d4fbbe0d234542b936fef30">&#9670;&nbsp;</a></span>getMaxReorgBlocks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t altintegration::BtcChainParams::getMaxReorgBlocks </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00038">38</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   38</span>{ <span class="keywordflow">return</span> 1000; }</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a781fc64922c2dd57baa3a481165f5b09" name="a781fc64922c2dd57baa3a481165f5b09"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a781fc64922c2dd57baa3a481165f5b09">&#9670;&nbsp;</a></span>getOldBlocksWindow()</h2>
 
@@ -245,8 +276,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00042">42</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   42</span>{ <span class="keywordflow">return</span> mOldBlocksWindow; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00045">45</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   45</span>{ <span class="keywordflow">return</span> mOldBlocksWindow; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -331,8 +362,8 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p >In BTC we can deallocate all blocks past final block. </p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00039">39</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   39</span>{ <span class="keywordflow">return</span> 0; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00042">42</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   42</span>{ <span class="keywordflow">return</span> 0; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -357,7 +388,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00047">47</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00050">50</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
 
 </div>
 </div>
@@ -373,7 +404,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00044">44</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00047">47</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
 
 </div>
 </div>

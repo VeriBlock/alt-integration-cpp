@@ -1,4 +1,4 @@
 <map id="altintegration::BtcChainParamsTest" name="altintegration::BtcChainParamsTest">
-<area shape="rect" id="node1" title="testnet3 network params in Bitcoin chain." alt="" coords="13,336,213,545"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BtcChainParams.html" title="base class for BTC params" alt="" coords="5,5,221,288"/>
+<area shape="rect" id="node1" title="testnet3 network params in Bitcoin chain." alt="" coords="13,351,213,560"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BtcChainParams.html" title="base class for BTC params" alt="" coords="5,5,221,303"/>
 </map>

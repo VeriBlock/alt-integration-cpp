@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
  <a href="structaltintegration_1_1BtcChainParamsRegTest.html#details">More...</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00148">148</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00151">151</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParamsRegTest__inherit__graph.svg" width="227" height="551"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParamsRegTest__inherit__graph.svg" width="227" height="566"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -112,7 +112,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
 <div id="dynsection-1-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParamsRegTest__coll__graph.svg" width="227" height="551"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParamsRegTest__coll__graph.svg" width="227" height="566"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -164,6 +164,9 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>netwo
 <tr class="separator:ac6d50aacc6ce2d8f593516b9c0185e9f inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e7db18ced976be2393b3e356981d4fb inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memItemLeft" align="right" valign="top">virtual uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#a4e7db18ced976be2393b3e356981d4fb">maxFutureBlockTime</a> () const noexcept</td></tr>
 <tr class="separator:a4e7db18ced976be2393b3e356981d4fb inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fa4c2c82d4fbbe0d234542b936fef30 inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#a8fa4c2c82d4fbbe0d234542b936fef30">getMaxReorgBlocks</a> () const noexcept</td></tr>
+<tr class="memdesc:a8fa4c2c82d4fbbe0d234542b936fef30 inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="mdescLeft">&#160;</td><td class="mdescRight">by default we store this many last BTC blocks in RAM  <a href="structaltintegration_1_1BtcChainParams.html#a8fa4c2c82d4fbbe0d234542b936fef30">More...</a><br /></td></tr>
+<tr class="separator:a8fa4c2c82d4fbbe0d234542b936fef30 inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfa9c9946eaf2d5e277c4f7fd2360110 inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110">preserveBlocksBehindFinal</a> () const noexcept</td></tr>
 <tr class="memdesc:acfa9c9946eaf2d5e277c4f7fd2360110 inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="mdescLeft">&#160;</td><td class="mdescRight">when finalizeBlockImpl is called, this many blocks behind final block will be preserved in RAM.  <a href="structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110">More...</a><br /></td></tr>
 <tr class="separator:acfa9c9946eaf2d5e277c4f7fd2360110 inherit pub_methods_structaltintegration_1_1BtcChainParams"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -206,8 +209,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00152">152</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  152</span>{ <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00155">155</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  155</span>{ <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -236,8 +239,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00167">167</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  167</span>{ <span class="keywordflow">return</span> <span class="keyword">true</span>; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00170">170</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  170</span>{ <span class="keywordflow">return</span> <span class="keyword">true</span>; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -266,11 +269,11 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00158">158</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  158</span>                                       {</div>
-<div class="line"><span class="lineno">  159</span>    <span class="keywordflow">return</span> uint256::fromHex(</div>
-<div class="line"><span class="lineno">  160</span>        <span class="stringliteral">&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f&quot;</span>);</div>
-<div class="line"><span class="lineno">  161</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00161">161</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  161</span>                                       {</div>
+<div class="line"><span class="lineno">  162</span>    <span class="keywordflow">return</span> uint256::fromHex(</div>
+<div class="line"><span class="lineno">  163</span>        <span class="stringliteral">&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f&quot;</span>);</div>
+<div class="line"><span class="lineno">  164</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -299,8 +302,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00168">168</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  168</span>{ <span class="keywordflow">return</span> <span class="keyword">true</span>; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00171">171</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  171</span>{ <span class="keywordflow">return</span> <span class="keyword">true</span>; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -329,8 +332,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00166">166</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  166</span>{ <span class="keywordflow">return</span> 10 * 60; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00169">169</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  169</span>{ <span class="keywordflow">return</span> 10 * 60; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -359,10 +362,10 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00163">163</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  163</span>                                                          {</div>
-<div class="line"><span class="lineno">  164</span>    <span class="keywordflow">return</span> 14 * 24 * 60 * 60;</div>
-<div class="line"><span class="lineno">  165</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00166">166</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  166</span>                                                          {</div>
+<div class="line"><span class="lineno">  167</span>    <span class="keywordflow">return</span> 14 * 24 * 60 * 60;</div>
+<div class="line"><span class="lineno">  168</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -391,8 +394,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00154">154</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  154</span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;regtest&quot;</span>; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00157">157</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  157</span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;regtest&quot;</span>; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -421,8 +424,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1BtcChainParams.html#aad38f3f1118c6234925dbd1805206a95">altintegration::BtcChainParams</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00156">156</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  156</span>{ <span class="keywordflow">return</span> 1; };</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00159">159</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  159</span>{ <span class="keywordflow">return</span> 1; };</div>
 </div><!-- fragment -->
 </div>
 </div>
