@@ -22,4 +22,5 @@ comment:
 
 ignore:
   - "build"
+  - "tools"
   - "include/veriblock/pop/third_party"
