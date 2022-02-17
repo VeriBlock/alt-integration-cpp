@@ -11,6 +11,7 @@ set(COVERAGE_EXCLUDES
         '${PROJECT_BINARY_DIR}/gens/*'
         '${CMAKE_SOURCE_DIR}/build/*'
         '${CMAKE_SOURCE_DIR}/cmake-build-*/*'
+        '${CMAKE_SOURCE_DIR}/include/veriblock/pop/third_party'
         '/usr/include/*'
         )
 
