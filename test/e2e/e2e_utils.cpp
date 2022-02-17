@@ -50,30 +50,43 @@ BtcBlock generateRandomNextBlock(const BlockIndex<BtcBlock>& previous,
 
 void E2EState::applyAction(ActionOption action,
                            ForkOption fork,
-                           const AltBlockTree& state) {
+                           AltBlockTree& tree,
+                           MemPool& mempool) {
+  ValidationState state;
+
   switch (action) {
-    case ActionOption::MINE_ALT: {
-      auto& block = getBlock(fork, state);
-      auto new_block = generateRandomNextBlock(block, state.getParams());
+    case ActionOption::CREATE_ALT: {
+      // generate new block
+      auto& block = *getBlock(fork, tree);
+      auto new_block = generateRandomNextBlock(block, tree.getParams());
+
       break;
     }
-    case ActionOption::MINE_VBK: {
-      auto& block = getBlock(fork, state.vbk());
-      auto new_block = generateRandomNextBlock(block, state.vbk().getParams());
+    case ActionOption::CREATE_VBK: {
+      // generate new block
+      auto& block = *getBlock(fork, tree.vbk());
+      auto new_block = generateRandomNextBlock(block, tree.vbk().getParams());
+
+      mempool.submit(new_block, state);
       break;
     }
-    case ActionOption::MINE_BTC: {
-      auto& block = getBlock(fork, state.btc());
-      auto new_block = generateRandomNextBlock(block, state.btc().getParams());
+    case ActionOption::CREATE_BTC: {
+      // generate new block
+      auto& block = *getBlock(fork, tree.btc());
+      auto new_block = generateRandomNextBlock(block, tree.btc().getParams());
+
+      this->btc_blocks.push_back(new_block);
       break;
     }
     case ActionOption::CREATE_BTC_TX: {
-      auto& block = getBlock(fork, state.vbk());
+      auto& block = *getBlock(fork, tree.vbk());
       auto tx = mock_miner.createBtcTxEndorsingVbkBlock(block.getHeader());
+
+      this->btc_txs.push_back({tx, block.getHeader()});
       break;
     }
     case ActionOption::CREATE_VBK_TX: {
-      auto& block = getBlock(fork, state);
+      auto& block = *getBlock(fork, tree);
 
       auto& atvs = block.getPayloadIds<ATV>();
       auto& vtbs = block.getPayloadIds<VTB>();
@@ -87,18 +100,34 @@ void E2EState::applyAction(ActionOption action,
                                                    vtbs,
                                                    vbks,
                                                    {1, 2, 3, 4, 5},
-                                                   state.getParams());
+                                                   tree.getParams());
 
       auto tx = mock_miner.createVbkTxEndorsingAltBlock(pd);
+
+      this->vbk_txs.push_back(tx);
       break;
     }
     case ActionOption::CREATE_VBK_POP_TX: {
-      auto& block = getBlock(fork, state.vbk());
-      auto tx = mock_miner.createVbkPopTxEndorsingVbkBlock(
-          block.getHeader(), state.btc().getBestChain().tip()->getHash());
+      // need an existing btc tx
+      if (!this->btc_txs.empty()) {
+        auto btc_tx = this->btc_txs.back();
+        this->btc_txs.pop_back();
+
+        auto& block = *getBlock(fork, tree.btc());
+
+        auto* block_of_proof =
+            mock_miner.mineBtcBlocks(1, block, {btc_tx.first});
+
+        auto tx = mock_miner.createVbkPopTxEndorsingVbkBlock(
+            block_of_proof->getHeader(),
+            btc_tx.first,
+            btc_tx.second,
+            tree.btc().getBestChain().tip()->getHash());
+
+        this->vbk_pop_txs.push_back(tx);
+      }
       break;
     }
-
     default:
       break;
   }

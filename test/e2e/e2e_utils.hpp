@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
+#include <veriblock/pop/mempool.hpp>
 #include <veriblock/pop/mock_miner.hpp>
 
 #include "rand.hpp"
@@ -16,12 +17,14 @@ namespace altintegration {
 namespace testing_utils {
 
 enum class ActionOption : uint8_t {
-  MINE_ALT,
-  MINE_VBK,
-  MINE_BTC,
+  CREATE_ALT,
+  CREATE_VBK,
+  CREATE_BTC,
   CREATE_BTC_TX,
   CREATE_VBK_TX,
   CREATE_VBK_POP_TX,
+  CREATE_VTB,
+  CREATE_ATV,
 
   kMaxValue = CREATE_VBK_POP_TX
 };
@@ -54,10 +57,10 @@ BtcBlock generateRandomNextBlock(const BlockIndex<BtcBlock>&,
                                  const BtcChainParams&);
 
 template <typename tree_t>
-const typename tree_t::index_t& getBlock(ForkOption fork, const tree_t& tree) {
+const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
   switch (fork) {
     case ForkOption::NEXT_AFTER_CURRENT_TIP: {
-      return *tree.getBestChain().tip();
+      return tree.getBestChain().tip();
       break;
     }
     case ForkOption::NEXT_AFTER_ANY_TIP: {
@@ -74,11 +77,18 @@ const typename tree_t::index_t& getBlock(ForkOption fork, const tree_t& tree) {
 }
 
 struct E2EState {
-  MockMiner mock_miner;
-
   void applyAction(ActionOption action,
                    ForkOption fork,
-                   const AltBlockTree& current_state);
+                   AltBlockTree& current_state,
+                   MemPool& mempool);
+
+ private:
+  MockMiner mock_miner;
+
+  std::vector<VbkTx> vbk_txs;
+  std::vector<VbkPopTx> vbk_pop_txs;
+  std::vector<std::pair<BtcTx, VbkBlock>> btc_txs;
+  std::vector<BtcBlock> btc_blocks;
 };
 
 }  // namespace testing_utils
