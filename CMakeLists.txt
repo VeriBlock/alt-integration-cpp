@@ -55,7 +55,7 @@ include(cmake/ubsan.cmake)
 include(cmake/functions.cmake)
 include(cmake/protobuf.cmake)
 
-ProcessorCount(N_PROCESSORS)
+ProcessorCount(PROCESSOR_COUNT)
 
 has_extrinsic("int main(){__builtin_expect(0, 1);return 0;}"  VBK_HAS_BUILTIN_EXPECT)
 has_extrinsic("int main(){__builtin_clz(5);      return 0;}"  VBK_HAS_BUILTIN_CLZ)
