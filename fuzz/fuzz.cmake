@@ -55,7 +55,7 @@ function(add_fuzz FUZZ_TARGET)
     if(NOT FUZZ_MAX_LEN)
         set(FUZZ_MAX_LEN 4096)
     endif()
-    if(NOT FUZZ_PROCESSORS AND (N_PROCESSORS EQUAL 0 OR NOT N_PROCESSORS))
+    if(NOT FUZZ_PROCESSORS AND (PROCESSOR_COUNT EQUAL 0 OR NOT PROCESSOR_COUNT))
         set(FUZZ_PROCESSORS 1)
     endif()
     if(FUZZ_CORPUS_DIR)
@@ -100,7 +100,7 @@ function(add_fuzz FUZZ_TARGET)
                 ${FUZZ_TIMEOUT}
                 -max_len=${FUZZ_MAX_LEN}
                 -print_final_stats=1
-                -fork=${N_PROCESSORS}
+                -fork=${PROCESSOR_COUNT}
                 ${FUZZ_ONCE}
                 ${ARGS}
                 $ENV{VBK_FUZZ_CORPUS_DIR}/${FUZZ_TARGET}
