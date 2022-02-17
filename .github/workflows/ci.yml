@@ -168,16 +168,19 @@ jobs:
       - name: install new cmake
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3 python3-pip ccache lcov
+          sudo apt-get install -y python3 python3-pip ccache lcov golang
           pip3 install -U cmake gcovr fastcov
       - name: versions
         run: |
           $CC --version
           gcov --version
       - name: cmake
-        run: cmake . -Bbuild -DCOVERAGE=ON -DCODE_COVERAGE_VERBOSE=ON
-      - name: build
-        run: cmake --build build --parallel 2
+        run: cmake . -Bbuild \
+          -DCOVERAGE=ON \
+          -DCODE_COVERAGE_VERBOSE=ON \
+          -DWITH_C_WRAPPER=ON \
+          -DWITH_ROCKSDB=ON \
+          -DTESTING_GO=ON
       - name: test
         run: cmake --build build --target ctest_coverage_lcov
       - uses: codecov/codecov-action@v2
