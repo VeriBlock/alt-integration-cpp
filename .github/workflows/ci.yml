@@ -177,7 +177,7 @@ jobs:
       - name: cmake
         run: cmake . -Bbuild -DCOVERAGE=ON -DCODE_COVERAGE_VERBOSE=ON -DWITH_C_WRAPPER=ON -DWITH_ROCKSDB=ON -DTESTING_GO=ON
       - name: test
-        run: cmake --build build --target ctest_coverage_lcov
+        run: cmake --build build --parallel 2 --target ctest_coverage_lcov
       - uses: codecov/codecov-action@v2
         with:
           directory: build
