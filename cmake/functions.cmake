@@ -31,6 +31,8 @@ function(set_test_cost target cost)
             )
 endfunction()
 
+add_custom_target(all_tests)
+
 function(addtest test_name)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads REQUIRED)
@@ -60,7 +62,7 @@ function(addtest test_name)
                 -Wno-null-dereference
                 )
     endif()
-
+    add_dependencies(all_tests ${test_name})
     enable_asan_on_target(${test_name})
     enable_tsan_on_target(${test_name})
     enable_ubsan_on_target(${test_name})

@@ -17,13 +17,23 @@ set(COVERAGE_EXCLUDES
 setup_target_for_coverage_gcovr_xml(
         NAME ctest_coverage
         EXECUTABLE ctest -j ${PROCESSOR_COUNT}
-        DEPENDENCIES ${LIB_NAME}
+        DEPENDENCIES all_test
         BASE_DIRECTORY ${PROJECT_BINARY_DIR}
+        EXCLUDE ${COVERAGE_EXCLUDES}
+)
+
+setup_target_for_coverage_lcov(
+        NAME ctest_coverage_lcov
+        EXECUTABLE ctest -j ${PROCESSOR_COUNT}
+        DEPENDENCIES all_tests
+        BASE_DIRECTORY ${PROJECT_BINARY_DIR}
+        EXCLUDE ${COVERAGE_EXCLUDES}
 )
 
 setup_target_for_coverage_gcovr_html(
         NAME ctest_coverage_html
         EXECUTABLE ctest -j ${PROCESSOR_COUNT}
-        DEPENDENCIES ${LIB_NAME}
+        DEPENDENCIES all_tests
         BASE_DIRECTORY ${PROJECT_BINARY_DIR}
+        EXCLUDE ${COVERAGE_EXCLUDES}
 )
