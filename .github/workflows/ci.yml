@@ -176,10 +176,8 @@ jobs:
           gcov --version
       - name: cmake
         run: cmake . -Bbuild -DCOVERAGE=ON -DCODE_COVERAGE_VERBOSE=ON
-      - name: build
-        run: cmake --build build --parallel 2
       - name: test
-        run: cmake --build build --target ctest_coverage_lcov
+        run: cmake --build build --parallel 2 --target ctest_coverage_lcov
       - uses: codecov/codecov-action@v2
         with:
           directory: build

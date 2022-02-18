@@ -19,3 +19,8 @@ comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: no
+
+ignore:
+  - "build"
+  - "tools"
+  - "include/veriblock/pop/third_party"
