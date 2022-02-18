@@ -130,6 +130,7 @@ TEST_F(PopContextFixture, A) {
             remote.btc().getBestChain().tip()->getHash());
 
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
+    VBK_ASSERT(containing != nullptr);
     auto vtbs = remote.getVTBs(containing->getHeader());
 
     ASSERT_TRUE(local.acceptBlockHeader(containing->getHeader(), state));
