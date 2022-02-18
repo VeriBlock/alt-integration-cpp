@@ -185,14 +185,15 @@ jobs:
           flags: unittests # optional
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
-# TODO: figure out why this takes 2h to run
-#      - name: Setup sonarqube
-#        uses: warchant/setup-sonar-scanner@v1
-#      - name: Run sonarqube
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: sonar-scanner
-#          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+        with:
+          version: 4.6.2.2472
+      - name: Run sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: sonar-scanner
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   windows:
     runs-on: windows-latest
