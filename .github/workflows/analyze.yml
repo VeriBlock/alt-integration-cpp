@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.sqcache
+            /tmp/.sqcache
           key: linux-sqcache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
           restore-keys: |
             linux-sqcache-
