@@ -93,7 +93,7 @@ struct SubNet {
 
   friend bool operator==(const SubNet& a, const SubNet& b) {
     return a.valid == b.valid && a.network == b.network &&
-           !memcmp(a.netmask, b.netmask, 16);
+           0 == memcmp(a.netmask, b.netmask, 16);
   }
   friend bool operator!=(const SubNet& a, const SubNet& b) { return !(a == b); }
 };
@@ -111,7 +111,7 @@ struct Service : public NetAddr {
   }
 
   friend bool operator==(const Service& a, const Service& b) {
-    return a.port == b.port && (NetAddr)a == (NetAddr)b;
+    return a.port == b.port && ((NetAddr&)a == (NetAddr&)b);
   }
   friend bool operator!=(const Service& a, const Service& b) {
     return !(a == b);
@@ -135,7 +135,8 @@ struct Address : public Service {
   }
 
   friend bool operator==(const Address& a, const Address& b) {
-    return a.nTime == b.nTime && a.nTime == b.nTime && (Service)a == (Service)b;
+    return (a.nTime == b.nTime) &&
+           ((Service&)a == (Service&)b);
   }
   friend bool operator!=(const Address& a, const Address& b) {
     return !(a == b);

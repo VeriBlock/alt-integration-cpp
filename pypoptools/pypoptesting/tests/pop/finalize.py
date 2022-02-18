@@ -34,9 +34,6 @@ class PopFinalizationTest(PopIntegrationTestFramework):
 
     def _basic_finalization_test(self, apm):
         self.log.info("starting _basic_finalization_test()")
-        from pypoptools.pypopminer import MockMiner
-        apm = MockMiner()
-
         last_block = self.nodes[0].getblockcount()
         self.nodes[0].generate(nblocks=5)
 

@@ -70,10 +70,9 @@ uint32_t merge(uint32_t a, uint32_t b, uint32_t r) {
     case 3: {
       return (a ^ b) * 33;
     }
+    default:
+      VBK_ASSERT(false);
   }
-
-  VBK_ASSERT(false);
-  return 0;
 }
 
 uint32_t math(uint32_t a, uint32_t b, uint32_t r) {
@@ -90,11 +89,9 @@ uint32_t math(uint32_t a, uint32_t b, uint32_t r) {
     case 8: return a * b;
     case 9: return a ^ b;
     case 10: return std::min(a,b);
+    default: VBK_ASSERT(false);
   }
   // clang-format on
-
-  VBK_ASSERT(false);
-  return 0;
 }
 
 static uint64_t getVbkBlockNonce(Slice<const uint8_t> header) {

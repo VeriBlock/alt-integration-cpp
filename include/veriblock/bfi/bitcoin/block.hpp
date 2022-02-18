@@ -6,6 +6,7 @@
 #ifndef BFI_BITCOIN_BLOCK_HPP
 #define BFI_BITCOIN_BLOCK_HPP
 
+#include <utility>
 #include <veriblock/bfi/bitcoin/serialize.hpp>
 #include <veriblock/bfi/bitcoin/transaction.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
@@ -23,7 +24,7 @@ struct BlockHeader : public BtcBlock {
               uint32_t timestamp,
               uint32_t bits,
               uint32_t nonce)
-      : BtcBlock(version, previousBlock, merkleRoot, timestamp, bits, nonce) {}
+      : BtcBlock(version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}
 
   ADD_SERIALIZE_METHODS;
 
@@ -50,7 +51,7 @@ struct Block : public BlockHeader {
         uint32_t bits,
         uint32_t nonce)
       : BlockHeader(
-            version, previousBlock, merkleRoot, timestamp, bits, nonce) {}
+            version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}
 
   ADD_SERIALIZE_METHODS;
 
@@ -61,7 +62,9 @@ struct Block : public BlockHeader {
   }
 
   friend bool operator==(const Block& a, const Block& b) {
-    return (BlockHeader)a == (BlockHeader)b && a.vtx == b.vtx;
+    const BlockHeader &A = a;
+    const BlockHeader &B = b;
+    return A == B && a.vtx == b.vtx;
   }
 
   friend bool operator!=(const Block& a, const Block& b) { return !(a == b); }
