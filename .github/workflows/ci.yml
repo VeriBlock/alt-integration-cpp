@@ -159,7 +159,7 @@ jobs:
           echo "::set-output name=timestamp::`date +%s`}"
       - name: ccache cache files
         if: github.event_name == 'push' || github.event_name == 'pull_request'
-        uses: actions/cache@v1.1.0
+        uses: actions/cache@v2
         with:
           path: ~/.ccache
           key: linux-ccache-coverage-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
@@ -185,14 +185,7 @@ jobs:
           flags: unittests # optional
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
-# TODO: figure out why this takes 2h to run
-#      - name: Setup sonarqube
-#        uses: warchant/setup-sonar-scanner@v1
-#      - name: Run sonarqube
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: sonar-scanner
-#          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
 
   windows:
     runs-on: windows-latest

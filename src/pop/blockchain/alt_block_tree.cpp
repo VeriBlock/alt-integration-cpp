@@ -763,38 +763,4 @@ void AltBlockTree::finalizeBlocks() {
   VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 }
 
-template <typename Payloads>
-void removeId(PayloadsIndex& storage,
-              BlockIndex<AltBlock>& index,
-              const typename Payloads::id_t& pid) {
-  auto& payloads = index.template getPayloadIds<Payloads>();
-  auto it = std::find(payloads.rbegin(), payloads.rend(), pid);
-  VBK_ASSERT(it != payloads.rend());
-  index.removePayloadId<Payloads>(pid);
-  storage.removeAltPayloadIndex(index.getHash(), pid.asVector());
-}
-
-template <>
-void removePayloadsFromIndex(PayloadsIndex& storage,
-                             BlockIndex<AltBlock>& index,
-                             const CommandGroup& cg) {
-  // TODO: can we do better?
-  if (cg.payload_type_name == &VTB::name()) {
-    removeId<VTB>(storage, index, cg.id);
-    return;
-  }
-
-  if (cg.payload_type_name == &ATV::name()) {
-    removeId<ATV>(storage, index, cg.id);
-    return;
-  }
-
-  if (cg.payload_type_name == &VbkBlock::name()) {
-    removeId<VbkBlock>(storage, index, cg.id);
-    return;
-  }
-
-  VBK_ASSERT_MSG(false, "should not reach here");
-}
-
 }  // namespace altintegration
