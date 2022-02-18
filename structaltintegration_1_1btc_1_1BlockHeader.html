@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1btc_1_1BlockHe
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00017">17</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00018">18</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::btc::BlockHeader:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -278,8 +278,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00020">20</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   26</span>      : BtcBlock(version, previousBlock, merkleRoot, timestamp, bits, nonce) {}</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00021">21</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   27</span>      : BtcBlock(version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -320,15 +320,15 @@ template&lt;typename Stream , typename Operation &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00031">31</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   31</span>                                                               {</div>
-<div class="line"><span class="lineno">   32</span>    READWRITE(this-&gt;version);</div>
-<div class="line"><span class="lineno">   33</span>    READWRITE(this-&gt;previousBlock);</div>
-<div class="line"><span class="lineno">   34</span>    READWRITE(this-&gt;merkleRoot);</div>
-<div class="line"><span class="lineno">   35</span>    READWRITE(this-&gt;timestamp);</div>
-<div class="line"><span class="lineno">   36</span>    READWRITE(this-&gt;bits);</div>
-<div class="line"><span class="lineno">   37</span>    READWRITE(this-&gt;nonce);</div>
-<div class="line"><span class="lineno">   38</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00032">32</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   32</span>                                                               {</div>
+<div class="line"><span class="lineno">   33</span>    READWRITE(this-&gt;version);</div>
+<div class="line"><span class="lineno">   34</span>    READWRITE(this-&gt;previousBlock);</div>
+<div class="line"><span class="lineno">   35</span>    READWRITE(this-&gt;merkleRoot);</div>
+<div class="line"><span class="lineno">   36</span>    READWRITE(this-&gt;timestamp);</div>
+<div class="line"><span class="lineno">   37</span>    READWRITE(this-&gt;bits);</div>
+<div class="line"><span class="lineno">   38</span>    READWRITE(this-&gt;nonce);</div>
+<div class="line"><span class="lineno">   39</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -345,7 +345,7 @@ template&lt;typename Stream , typename Operation &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00028">28</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00029">29</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
 
 </div>
 </div>

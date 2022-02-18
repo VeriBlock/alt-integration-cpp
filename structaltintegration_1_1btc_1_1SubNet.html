@@ -258,7 +258,7 @@ template&lt;typename Stream , typename Operation &gt; </div>
 <p class="definition">Definition at line <a class="el" href="net__entities_8hpp_source.html#l00094">94</a> of file <a class="el" href="net__entities_8hpp_source.html">net_entities.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   94</span>                                                           {</div>
 <div class="line"><span class="lineno">   95</span>    <span class="keywordflow">return</span> a.valid == b.valid &amp;&amp; a.network == b.network &amp;&amp;</div>
-<div class="line"><span class="lineno">   96</span>           !memcmp(a.netmask, b.netmask, 16);</div>
+<div class="line"><span class="lineno">   96</span>           0 == memcmp(a.netmask, b.netmask, 16);</div>
 <div class="line"><span class="lineno">   97</span>  }</div>
 </div><!-- fragment -->
 </div>
