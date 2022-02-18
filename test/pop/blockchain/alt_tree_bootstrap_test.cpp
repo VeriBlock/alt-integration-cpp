@@ -104,16 +104,11 @@ TEST_F(AltBlockTreeTest, AssureBootstrapBtcBlockHasRefs_test) {
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloads_provider{storage};
   adaptors::BlockReaderImpl block_provider{storage, altparam};
-  PayloadsIndex payloads_index;
 
-  Miner<BtcBlock, BtcChainParams> btc_miner =
-      Miner<BtcBlock, BtcChainParams>(btc_params);
+  Miner<BtcBlock, BtcChainParams> btc_miner{btc_params};
 
-  vbk_block_tree vbk_tree{vbk_params,
-                          btc_params,
-                          payloads_provider,
-                          block_provider,
-                          payloads_index};
+  vbk_block_tree vbk_tree{
+      vbk_params, btc_params, payloads_provider, block_provider};
   btc_block_tree& btc_tree = vbk_tree.btc();
 
   btc_tree.bootstrapWithGenesis(GetRegTestBtcBlock());

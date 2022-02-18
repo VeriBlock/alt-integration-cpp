@@ -21,7 +21,7 @@
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
 #include "chain.hpp"
-#include "finalized_payloads_index.hpp"
+#include "payloads_index.hpp"
 #include "tree_algo.hpp"
 
 namespace altintegration {
@@ -769,6 +769,10 @@ struct BaseBlockTree {
     return finalizedPayloadsIndex_;
   }
 
+  const PayloadsIndex<index_t>& getPayloadsIndex() const {
+    return payloadsIndex_;
+  }
+
   //! @private
   class DeferForkResolutionGuard {
     BaseBlockTree<Block>& tree_;
@@ -890,7 +894,7 @@ struct BaseBlockTree {
       }
 
       finalizedBlock->finalized = true;
-      FinalizedPayloadsAddBlock(finalizedPayloadsIndex_, *finalizedBlock);
+      finalizedPayloadsIndex_.addBlock(*finalizedBlock);
       return;
     }
 
@@ -983,7 +987,7 @@ struct BaseBlockTree {
     index_t* ptr = finalizedBlock;
     while (ptr != nullptr && !ptr->finalized) {
       ptr->finalized = true;
-      FinalizedPayloadsAddBlock(finalizedPayloadsIndex_, *ptr);
+      finalizedPayloadsIndex_.addBlock(*ptr);
       ptr = ptr->pprev;
     }
   }
@@ -1138,9 +1142,13 @@ struct BaseBlockTree {
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
-  //! stores mapping of payload id -> its containing ALT/VBK block. For BTC tree
-  //! does nothing. stores payloads only from finalized blocks.
+  //! stores mapping of payload id -> its containing ALT/VBK block which are
+  //! already finalized. For BTC tree does nothing. stores payloads only from
+  //! finalized blocks.
   FinalizedPayloadsIndex<index_t> finalizedPayloadsIndex_;
+  //! stores mapping of payload id -> its containing ALT/VBK blocks which are
+  //! not yet finalized. For BTC tree does nothing.
+  PayloadsIndex<index_t> payloadsIndex_;
 
   const BlockReader& blockProvider_;
 };

@@ -1,5 +1,4 @@
 set(STORAGE_SOURCES
-        payloads_index.cpp
         util.cpp
         payloads_provider.cpp
         stored_btc_block_addon.cpp

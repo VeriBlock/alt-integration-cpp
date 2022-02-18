@@ -78,13 +78,14 @@ void AltBlockTree::bootstrap() {
 template <typename Pop>
 void commitPayloadsIds(BlockIndex<AltBlock>& index,
                        const std::vector<Pop>& pop,
-                       PayloadsIndex& storage) {
+                       PayloadsIndex<BlockIndex<AltBlock>>& pl) {
   auto pids = map_get_id(pop);
   index.template setPayloads<Pop>(pids);
 
+  VBK_ASSERT(!index.finalized);
   auto containing = index.getHash();
   for (const auto& pid : pids) {
-    storage.addAltPayloadIndex(containing, pid.asVector());
+    pl.add(pid.asVector(), containing);
   }
 }
 
@@ -388,12 +389,12 @@ int AltBlockTree::comparePopScore(const AltBlock::hash_t& A,
 }
 
 template <typename Pop, typename Index>
-static void clearSideEffects(Index& index, PayloadsIndex& storage) {
+static void clearSideEffects(Index& index, PayloadsIndex<Index>& storage) {
   VBK_TRACE_ZONE_SCOPED;
   const auto& containingHash = index.getHash();
   auto& payloadIds = index.template getPayloadIds<Pop>();
   for (const auto& pid : payloadIds) {
-    storage.removeAltPayloadIndex(containingHash, pid.asVector());
+    storage.remove(pid.asVector(), containingHash);
   }
 }
 
@@ -449,13 +450,17 @@ void appendIds(std::unordered_set<std::vector<uint8_t>>& ids,
   }
 }
 
-AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(tree_t& tree,
-                                                       block_index_t& block)
+AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(
+    tree_t& tree,
+    block_index_t& block,
+    PayloadsIndex<block_index_t>& pl,
+    FinalizedPayloadsIndex<block_index_t>& fpl)
     : tree_(tree),
       block_(block),
-      payload_index_(tree.getPayloadsIndex()),
       // don't look for duplicates in the block itself
-      chain_(tree.getParams().getBootstrapBlock().height, block_.pprev) {
+      chain_(tree.getParams().getBootstrapBlock().height, block_.pprev),
+      pl_(pl),
+      fpl_(fpl) {
   VBK_ASSERT_MSG(!block_.isRoot(),
                  "Adding payloads to the root block is not allowed");
   VBK_ASSERT_MSG(block_.isValidUpTo(BLOCK_VALID_TREE),
@@ -478,15 +483,24 @@ AltBlockTree::BlockPayloadMutator::BlockPayloadMutator(tree_t& tree,
 
 bool AltBlockTree::BlockPayloadMutator::isStatefulDuplicate(
     const id_vector_t& payload_id) {
-  // make sure existing blocks do not contain this id
-  for (const auto& hash : payload_index_.getContainingAltBlocks(payload_id)) {
-    const auto* candidate = tree_.getBlockIndex(hash);
+  // check if payload id is in PayloadsIndex
+  const auto& set = pl_.find(payload_id);
+  for (const auto& blockhash : set) {
+    const auto* candidate = tree_.getBlockIndex(blockhash);
     if (chain_.contains(candidate)) {
-      // duplicate found in 'candidate'
+      // found duplicate
       return true;
     }
   }
 
+  // check if payload id is in FinalizedPayloadsIndex
+  const auto* blockhash = fpl_.find(payload_id);
+  if (blockhash != nullptr) {
+    // found duplicate in finalized block
+    return true;
+  }
+
+  // this payload is not stateful duplicate
   return false;
 }
 
@@ -519,7 +533,7 @@ bool AltBlockTree::BlockPayloadMutator::add(const Payload& payload,
   }
 
   block_.insertPayloadIds<Payload>({pid});
-  payload_index_.addAltPayloadIndex(block_.getHash(), pid.asVector());
+  pl_.add(pid.asVector(), block_.getHash());
 
   bool inserted = ids_.insert(pid.asVector()).second;
   VBK_ASSERT(inserted);
@@ -537,7 +551,7 @@ bool AltBlockTree::BlockPayloadMutator::add(const Payload& payload,
 
     // remove the failed payload
     block_.removePayloadId<Payload>(pid);
-    payload_index_.removeAltPayloadIndex(block_.getHash(), pid.asVector());
+    pl_.remove(pid.asVector(), block_.getHash());
 
     return false;
   }
@@ -556,7 +570,7 @@ template bool AltBlockTree::BlockPayloadMutator::add(const VbkBlock& payload,
 
 AltBlockTree::BlockPayloadMutator AltBlockTree::makeConnectedLeafPayloadMutator(
     index_t& block) {
-  return {*this, block};
+  return {*this, block, payloadsIndex_, finalizedPayloadsIndex_};
 }
 
 bool AltBlockTree::setState(index_t& to, ValidationState& state) {
@@ -669,7 +683,7 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
     return state.Invalid("bad-endorsements");
   }
 
-  payloadsIndex_.addBlockToIndex(*current);
+  payloadsIndex_.addBlock(*current);
 
   return true;
 }
@@ -682,19 +696,15 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
     : base(blockProvider),
       alt_config_(alt_config),
       cmp_(*this,
-           std::make_shared<VbkBlockTree>(vbk_config,
-                                          btc_config,
-                                          payloadsProvider,
-                                          blockProvider,
-                                          payloadsIndex_),
+           std::make_shared<VbkBlockTree>(
+               vbk_config, btc_config, payloadsProvider, blockProvider),
            alt_config,
-           payloadsProvider,
-           payloadsIndex_),
+           payloadsProvider),
       payloadsProvider_(payloadsProvider),
       commandGroupStore_(*this, payloadsProvider_) {}
 
 void AltBlockTree::onBeforeLeafRemoved(const index_t& block) {
-  payloadsIndex_.removePayloadsIndex(block);
+  payloadsIndex_.removeBlock(block);
 }
 
 bool AltBlockTree::loadTip(const AltBlockTree::hash_t& hash,

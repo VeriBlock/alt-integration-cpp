@@ -387,12 +387,12 @@ struct PopTestFixture {
 };
 
 template <typename pop_t>
-void validatePayloadsIndexState(PayloadsIndex& storage,
+void validatePayloadsIndexState(const PayloadsIndex<BlockIndex<AltBlock>>& storage,
                                 const AltBlock::hash_t& containingHash,
                                 const std::vector<pop_t>& payloads,
                                 bool payloads_existance) {
   for (const auto& data : payloads) {
-    auto alt_set = storage.getContainingAltBlocks(data.getId().asVector());
+    auto alt_set = storage.find(data.getId().asVector());
     EXPECT_EQ(alt_set.find(containingHash) != alt_set.end(),
               payloads_existance);
   }
@@ -431,7 +431,7 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
                                       const AltBlock& containing,
                                       const PopData& popData,
                                       bool payloads_existance = true) {
-  auto& payloadsIndex = tree.getPayloadsIndex();
+  const auto& payloadsIndex = tree.getPayloadsIndex();
   auto& commandGroupStore = tree.getCommandGroupStore();
   const auto& containingHash = containing.getHash();
 

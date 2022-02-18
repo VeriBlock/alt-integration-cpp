@@ -325,11 +325,10 @@ TEST_F(AltTreeFixture, cleanupPayloadsIndex_test) {
   ASSERT_NE(vtb_id_1, vtb_id_2);
 
   // validate payloads index
-  auto set =
-      alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_1.asVector());
+  auto set = alttree.getPayloadsIndex().find(vtb_id_1.asVector());
   ASSERT_EQ(set.size(), 1);
   ASSERT_TRUE(set.count(containing_block_1.getHash()));
-  set = alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_2.asVector());
+  set = alttree.getPayloadsIndex().find(vtb_id_2.asVector());
   ASSERT_EQ(set.size(), 1);
   ASSERT_TRUE(set.count(containing_block_2.getHash()));
 
@@ -337,8 +336,8 @@ TEST_F(AltTreeFixture, cleanupPayloadsIndex_test) {
   alttree.removeSubtree(containing_block_1.getHash());
 
   // validate payloads index
-  set = alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_1.asVector());
+  set = alttree.getPayloadsIndex().find(vtb_id_1.asVector());
   ASSERT_EQ(set.size(), 0);
-  set = alttree.getPayloadsIndex().getContainingAltBlocks(vtb_id_2.asVector());
+  set = alttree.getPayloadsIndex().find(vtb_id_2.asVector());
   ASSERT_EQ(set.size(), 0);
 }

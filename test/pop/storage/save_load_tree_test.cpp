@@ -124,9 +124,10 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   containingIndex->template insertPayloadIds<VbkBlock>(
       map_get_id(popData.context));
 
+  const auto& pl = alttree.getPayloadsIndex();
+  auto& plmut = as_mut(pl);
   for (const auto& b : popData.context) {
-    alttree.getPayloadsIndex().addAltPayloadIndex(containingBlock.getHash(),
-                                                  b.getId().asVector());
+    plmut.add(b.getId().asVector(), containingBlock.getHash());
   }
 
   save(alttree);
@@ -165,8 +166,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
       map_get_id(popData.context));
 
   for (const auto& b : popData.context) {
-    alttree.getPayloadsIndex().addAltPayloadIndex(containingBlock.getHash(),
-                                                  b.getId().asVector());
+    as_mut(alttree.getPayloadsIndex())
+        .add(b.getId().asVector(), containingBlock.getHash());
   }
 
   save(alttree);
@@ -208,8 +209,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 
   // add duplicates
   // add duplicate atv
-  alttree.getPayloadsIndex().addAltPayloadIndex(
-      containingBlock.getHash(), popData.atvs[0].getId().asVector());
+  as_mut(alttree.getPayloadsIndex())
+      .add(popData.atvs[0].getId().asVector(), containingBlock.getHash());
 
   save(alttree);
 
@@ -252,8 +253,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
   auto* containingVbkBlock_index =
       alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
   containingVbkBlock_index->insertPayloadId<VTB>(vtb1.getId());
-  alttree.getPayloadsIndex().addVbkPayloadIndex(
-      containingVbkBlock_index->getHash(), vtb1.getId().asVector());
+  as_mut(alttree.vbk().getPayloadsIndex())
+      .add(vtb1.getId().asVector(), containingVbkBlock_index->getHash());
 
   ASSERT_DEATH(save(alttree), "");
 }
@@ -292,8 +293,8 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   auto* containingVbkBlock_index =
       alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
   containingVbkBlock_index->insertPayloadId<VTB>(vtb1.getId());
-  alttree.getPayloadsIndex().addVbkPayloadIndex(
-      containingVbkBlock_index->getHash(), vtb1.getId().asVector());
+  as_mut(alttree.vbk().getPayloadsIndex())
+      .add(vtb1.getId().asVector(), containingVbkBlock_index->getHash());
 
   auto batch = storage.generateWriteBatch();
   auto writer = adaptors::BlockBatchImpl(*batch);
