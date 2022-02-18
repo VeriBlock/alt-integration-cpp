@@ -73,7 +73,8 @@ TEST_F(Scenario8, scenario_8) {
   vtb1.containingBlock = containingVbkBlock;
 
   ASSERT_TRUE(checkVTB(
-      vtb1, state, popminer->btc().getParams(), popminer->vbk().getParams())) << state.toString();
+      vtb1, state, popminer->btc().getParams(), popminer->vbk().getParams()))
+      << state.toString();
 
   // Create VTB
   VTB vtb2;

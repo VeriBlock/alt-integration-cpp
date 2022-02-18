@@ -162,19 +162,21 @@ bool checkBitcoinTransactionForPoPData(const VbkPopTx& tx,
                                 stream.data().size()));
   }
 
-  // finding that stream data contains in the tx.bitcoinTransaction
-  for (size_t i = 0, j = 0;
-       i < tx.bitcoinTransaction.tx.size() - stream.data().size() + 1;
-       ++i) {
-    bool found = true;
-    for (; j < stream.data().size(); ++j) {
-      if (tx.bitcoinTransaction.tx[i + j] != stream.data()[j]) {
-        found = false;
-        break;
+  if (tx.bitcoinTransaction.tx.size() >= stream.data().size()) {
+    // finding that stream data contains in the tx.bitcoinTransaction
+    for (size_t i = 0, j = 0;
+         i < tx.bitcoinTransaction.tx.size() - stream.data().size() + 1;
+         ++i) {
+      bool found = true;
+      for (; j < stream.data().size(); ++j) {
+        if (tx.bitcoinTransaction.tx[i + j] != stream.data()[j]) {
+          found = false;
+          break;
+        }
       }
-    }
-    if (found) {
-      return true;
+      if (found) {
+        return true;
+      }
     }
   }
 
