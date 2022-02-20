@@ -70,6 +70,10 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
+      - uses: warchant/setup-mold@v1
+        with:
+          version: v1.0.3
+          make_default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
@@ -131,6 +135,10 @@ jobs:
           restore-keys: |
             linux-ccache-matrix-${{ matrix.flags }}-
             linux-ccache-matrix-
+      - uses: warchant/setup-mold@v1
+        with:
+          version: v1.0.3
+          make_default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
       - name: build
