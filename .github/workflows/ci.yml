@@ -72,7 +72,6 @@ jobs:
             linux-ccache-matrix-
       - uses: warchant/setup-mold@v1
         with:
-          version: v1.0.3
           make_default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
@@ -137,7 +136,6 @@ jobs:
             linux-ccache-matrix-
       - uses: warchant/setup-mold@v1
         with:
-          version: v1.0.3
           make_default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }}
@@ -284,8 +282,7 @@ jobs:
         run: brew install ccache
       - uses: warchant/setup-mold@v1
         with:
-          version: v1.0.3
-          default: true
+          make_default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
