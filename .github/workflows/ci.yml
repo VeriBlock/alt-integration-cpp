@@ -280,9 +280,6 @@ jobs:
             macos-ccache-
       - name: install ccache
         run: brew install ccache
-      - uses: warchant/setup-mold@v1
-        with:
-          make_default: true
       - name: cmake
         run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
       - name: build
