@@ -26,8 +26,8 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
     // hardcode keystone interval since reward algorithm is dependent
     // on it and is hard to recalculate for test
     altparam.mKeystoneInterval = 5;
-    btctip = popminer->mineBtcBlocks(10);
-    vbktip = popminer->mineVbkBlocks(10);
+    btctip = popminer.mineBtcBlocks(10);
+    vbktip = popminer.mineVbkBlocks(10);
 
     altchain = {altparam.getBootstrapBlock()};
     mineAltBlocks(10, altchain);
@@ -46,19 +46,19 @@ struct RewardsTestFixture : public testing::TestWithParam<int>,
       for (const auto& b : endorsedBlocks) {
         uint256 stateRoot = generateRandomBytesVector(32);
         auto pubdata = generatePublicationData(b, stateRoot);
-        VbkTx tx = popminer->createVbkTxEndorsingAltBlock(pubdata);
+        VbkTx tx = popminer.createVbkTxEndorsingAltBlock(pubdata);
         popTxs.push_back(tx);
       }
     }
-    auto* block = popminer->mineVbkBlocks(1, popTxs);
+    auto* block = popminer.mineVbkBlocks(1, popTxs);
 
     PopData popData;
     for (const auto& popTx : popTxs) {
-      popData.atvs.push_back(popminer->createATV(block->getHeader(), popTx));
+      popData.atvs.push_back(popminer.createATV(block->getHeader(), popTx));
     }
     fillVbkContext(popData.context,
                    alttree.vbk().getBestChain().tip()->getHash(),
-                   popminer->vbk());
+                   popminer.vbk());
 
     auto* altTip = alttree.getBestChain().tip();
     auto nextBlock = generateNextBlock(altTip->getHeader());

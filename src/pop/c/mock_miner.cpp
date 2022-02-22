@@ -18,7 +18,7 @@ POP_ENTITY_FREE_SIGNATURE(mock_miner) {
   }
 }
 
-POP_ENTITY_NEW_FUNCTION(mock_miner) { return new POP_ENTITY_NAME(mock_miner); }
+POP_ENTITY_NEW_FUNCTION(mock_miner) { return nullptr; }
 
 POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
                            POP_ENTITY_NAME(btc_block) *,

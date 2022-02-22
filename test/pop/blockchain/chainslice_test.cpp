@@ -25,11 +25,11 @@ struct ChainSliceTestFixture : public ::testing::Test, public PopTestFixture {
   chain_t fork;
 
   ChainSliceTestFixture() {
-    popminer->mineVbkBlocks(30);
+    popminer.mineVbkBlocks(30);
 
-    forkPoint = popminer->vbk().getBestChain().tip()->getAncestor(forkHeight);
-    forkTip = popminer->mineVbkBlocks(10, *forkPoint);
-    chain = Chain(5, popminer->vbk().getBestChain().tip()->getAncestor(25));
+    forkPoint = popminer.vbk().getBestChain().tip()->getAncestor(forkHeight);
+    forkTip = popminer.mineVbkBlocks(10, *forkPoint);
+    chain = Chain(5, popminer.vbk().getBestChain().tip()->getAncestor(25));
     fork = Chain(forkHeight, forkTip);
   }
 };

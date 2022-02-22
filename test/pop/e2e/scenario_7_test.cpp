@@ -22,7 +22,7 @@ TEST_F(Scenario7, scenario_7) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+  auto* vbkTip = popminer.mineVbkBlocks(65);
 
   // mine 10 blocks
   mineAltBlocks(10, chain, /*connectBlocks=*/true);
@@ -33,38 +33,38 @@ TEST_F(Scenario7, scenario_7) {
 
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
 
-  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
-  auto vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
+  auto* containingVbkBlock1 = popminer.mineVbkBlocks(1, {vbkPopTx1});
+  auto vtb1 = popminer.createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
 
-  popminer->mineBtcBlocks(100);
-  popminer->mineVbkBlocks(54);
+  popminer.mineBtcBlocks(100);
+  popminer.mineVbkBlocks(54);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
-  auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
+  auto* block1 = popminer.mineVbkBlocks(1, {tx1});
+  ATV atv1 = popminer.createATV(block1->getHeader(), tx1);
 
-  popminer->mineBtcBlocks(100);
-  popminer->mineVbkBlocks(54);
+  popminer.mineBtcBlocks(100);
+  popminer.mineVbkBlocks(54);
 
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
-  auto vtb2 = popminer->createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
+  auto* containingVbkBlock2 = popminer.mineVbkBlocks(1, {vbkPopTx2});
+  auto vtb2 = popminer.createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
 
   AltBlock endorsedBlock2 = chain[5];
-  VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock2));
-  auto* block2 = popminer->mineVbkBlocks(1, {tx2});
-  ATV atv2 = popminer->createATV(block2->getHeader(), tx2);
+  auto* block2 = popminer.mineVbkBlocks(1, {tx2});
+  ATV atv2 = popminer.createATV(block2->getHeader(), tx2);
 
   PopData popData;
   popData.atvs = {atv1, atv2};
   popData.vtbs = {vtb1, vtb2};
 
   fillVbkContext(
-      popData.context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+      popData.context, GetRegTestVbkBlock().getHash(), popminer.vbk());
 
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);

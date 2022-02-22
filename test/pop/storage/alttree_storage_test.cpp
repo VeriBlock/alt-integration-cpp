@@ -29,7 +29,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
 
   AltBlock endorsedBlock = chain[2];
 
-  VbkTx tx = this->popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = this->popminer.createVbkTxEndorsingAltBlock(
       this->generatePublicationData(endorsedBlock));
   AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -38,8 +38,8 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
       this->generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
-  this->popminer->mineVbkBlocks(1);
-  this->popminer->mineBtcBlocks(1);
+  this->popminer.mineVbkBlocks(1);
+  this->popminer.mineBtcBlocks(1);
 
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
   EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), altPayloads1));
@@ -92,9 +92,9 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   AltBlock endorsedBlock1 = chain[1];
   AltBlock endorsedBlock2 = chain[2];
 
-  VbkTx tx1 = this->popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx1 = this->popminer.createVbkTxEndorsingAltBlock(
       this->generatePublicationData(endorsedBlock1));
-  VbkTx tx2 = this->popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx2 = this->popminer.createVbkTxEndorsingAltBlock(
       this->generatePublicationData(endorsedBlock2));
   AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -103,8 +103,8 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
       this->generateAltPayloads({tx1, tx2}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
-  this->popminer->mineVbkBlocks(1);
-  this->popminer->mineBtcBlocks(1);
+  this->popminer.mineVbkBlocks(1);
+  this->popminer.mineBtcBlocks(1);
 
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
   EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), altPayloads1));
@@ -137,29 +137,29 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   VBK_LOG_DEBUG("mine 20 alt blocks");
   this->mineAltBlocks(20, chain);
 
-  auto* vbkTip = this->popminer->mineVbkBlocks(1);
+  auto* vbkTip = this->popminer.mineVbkBlocks(1);
   VBK_LOG_DEBUG("create an endorsement of VBKTIP in BTC_1");
   auto btctx =
-      this->popminer->createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
+      this->popminer.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
   VBK_LOG_DEBUG("add a BTC tx endorsing VBKTIP to the next block");
-  auto* chainAtip = this->popminer->mineBtcBlocks(1, {btctx});
+  auto* chainAtip = this->popminer.mineBtcBlocks(1, {btctx});
 
   VBK_LOG_DEBUG("create a VBK PoP tx that has 'block of proof=CHAIN A'");
-  auto vbkpoptx = this->popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkpoptx = this->popminer.createVbkPopTxEndorsingVbkBlock(
       chainAtip->getHeader(),
       btctx,
       vbkTip->getHeader(),
-      lastKnownLocalBtcBlock(*this->popminer));
+      lastKnownLocalBtcBlock(this->popminer));
 
   // mine txA into VBK 2nd block
-  vbkTip = this->popminer->mineVbkBlocks(1, {vbkpoptx});
+  vbkTip = this->popminer.mineVbkBlocks(1, {vbkpoptx});
 
-  auto vtb = this->popminer->createVTB(vbkTip->getHeader(), vbkpoptx);
+  auto vtb = this->popminer.createVTB(vbkTip->getHeader(), vbkpoptx);
 
   PopData popData;
   popData.vtbs = {vtb};
   this->fillVbkContext(
-      popData.context, GetRegTestVbkBlock().getHash(), this->popminer->vbk());
+      popData.context, GetRegTestVbkBlock().getHash(), this->popminer.vbk());
   auto containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
 
@@ -227,7 +227,7 @@ TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
 
   AltBlock endorsedBlock = chain[2];
 
-  VbkTx tx = this->popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = this->popminer.createVbkTxEndorsingAltBlock(
       this->generatePublicationData(endorsedBlock));
   AltBlock containingBlock = this->generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -236,8 +236,8 @@ TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
       this->generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // mine 1 VBK blocks
-  this->popminer->mineVbkBlocks(1);
-  this->popminer->mineBtcBlocks(1);
+  this->popminer.mineVbkBlocks(1);
+  this->popminer.mineBtcBlocks(1);
 
   EXPECT_TRUE(this->alttree.acceptBlockHeader(containingBlock, this->state));
   EXPECT_TRUE(this->AddPayloads(containingBlock.getHash(), altPayloads1));

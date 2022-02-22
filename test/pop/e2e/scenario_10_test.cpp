@@ -18,20 +18,20 @@ TEST_F(Scenario10, scenario_10) {
   mineAltBlocks(10, chainA, /*connectBlocks=*/true, /*setState=*/false);
 
   // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+  auto* vbkTip = popminer.mineVbkBlocks(65);
   // mine 50 BTC blocks
-  popminer->mineBtcBlocks(50);
+  popminer.mineBtcBlocks(50);
 
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
-  popminer->mineBtcBlocks(100);
+  popminer.mineBtcBlocks(100);
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
+  vbkTip = popminer.mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx2);
 
   auto E1 = VbkEndorsement::fromContainer(vtb1);
   auto E2 = VbkEndorsement::fromContainer(vtb2);

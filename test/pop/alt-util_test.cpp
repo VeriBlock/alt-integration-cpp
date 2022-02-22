@@ -12,7 +12,11 @@
 using namespace altintegration;
 
 struct AltUtilTest : public ::testing::Test {
-  MockMiner popminer;
+  BtcChainParamsRegTest btc_params;
+  VbkChainParamsRegTest vbk_params;
+  AltChainParamsRegTest alt_params;
+
+  MockMiner popminer{alt_params, vbk_params, btc_params};
 };
 
 TEST(AltUtil, MaxAtvsInVbk) {
@@ -20,9 +24,9 @@ TEST(AltUtil, MaxAtvsInVbk) {
   EXPECT_EQ(getMaxAtvsInVbkBlock(0xFF), 1);
   EXPECT_EQ(getMaxAtvsInVbkBlock(0x06FF), 4);
   EXPECT_EQ(getMaxAtvsInVbkBlock(0x05FF), 9);
-  EXPECT_EQ(getMaxAtvsInVbkBlock((0b10011 << 8) + 0xff), 100); // (9+1)*(9+1)
-  EXPECT_EQ(getMaxAtvsInVbkBlock((0b101000 << 8) + 0xff), 21); // 20+1
-  EXPECT_EQ(getMaxAtvsInVbkBlock((0b100110 << 8) + 0xff), 20); // 19+1
+  EXPECT_EQ(getMaxAtvsInVbkBlock((0b10011 << 8) + 0xff), 100);  // (9+1)*(9+1)
+  EXPECT_EQ(getMaxAtvsInVbkBlock((0b101000 << 8) + 0xff), 21);  // 20+1
+  EXPECT_EQ(getMaxAtvsInVbkBlock((0b100110 << 8) + 0xff), 20);  // 19+1
   EXPECT_EQ(getMaxAtvsInVbkBlock(0x26ff), 20);
 }
 
