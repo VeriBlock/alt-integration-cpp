@@ -88,7 +88,8 @@ struct E2EState {
   std::vector<VbkTx> vbk_txs;
   std::vector<VbkPopTx> vbk_pop_txs;
   std::vector<std::pair<BtcTx, VbkBlock>> btc_txs;
-  std::vector<BtcBlock> btc_blocks;
+  std::vector<std::pair<BtcBlock, std::vector<std::pair<BtcTx, VbkBlock>>>>
+      btc_blocks;
 };
 
 }  // namespace testing_utils

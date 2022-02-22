@@ -73,9 +73,16 @@ void E2EState::applyAction(ActionOption action,
     case ActionOption::CREATE_BTC: {
       // generate new block
       auto& block = *getBlock(fork, tree.btc());
-      auto new_block = generateRandomNextBlock(block, tree.btc().getParams());
 
-      this->btc_blocks.push_back(new_block);
+      std::vector<BtcTx> txs;
+      for (const auto& el : this->btc_txs) {
+        txs.push_back(el.first);
+      }
+
+      auto new_block = mock_miner.mineBtcBlocks(1, block, txs);
+
+      this->btc_blocks.push_back({new_block->getHeader(), btc_txs});
+      btc_txs.clear();
       break;
     }
     case ActionOption::CREATE_BTC_TX: {
@@ -110,21 +117,20 @@ void E2EState::applyAction(ActionOption action,
     case ActionOption::CREATE_VBK_POP_TX: {
       // need an existing btc tx
       if (!this->btc_txs.empty()) {
-        auto btc_tx = this->btc_txs.back();
-        this->btc_txs.pop_back();
-
-        auto& block = *getBlock(fork, tree.btc());
-
-        auto* block_of_proof =
-            mock_miner.mineBtcBlocks(1, block, {btc_tx.first});
+        auto& btc_block = this->btc_blocks.front();
+        auto btc_tx = btc_block.second.front();
 
         auto tx = mock_miner.createVbkPopTxEndorsingVbkBlock(
-            block_of_proof->getHeader(),
+            btc_block.first,
             btc_tx.first,
             btc_tx.second,
             tree.btc().getBestChain().tip()->getHash());
-
         this->vbk_pop_txs.push_back(tx);
+
+        btc_block.second.erase(btc_block.second.begin());
+        if (btc_block.second.empty()) {
+          this->btc_blocks.erase(this->btc_blocks.begin());
+        }
       }
       break;
     }
