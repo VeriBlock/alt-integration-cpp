@@ -83,12 +83,23 @@ struct E2EState {
                    MemPool& mempool);
 
  private:
+
+ struct BtcTxRelation {
+   BtcTx btc_tx;
+   VbkBlock endorsed_block;
+ };
+
+ struct BtcBlockRelation {
+   BtcBlock btc_block;
+   std::vector<BtcTxRelation> txs;
+ };
+
   MockMiner mock_miner;
 
   std::vector<VbkTx> vbk_txs;
   std::vector<VbkPopTx> vbk_pop_txs;
-  std::vector<std::pair<BtcTx, VbkBlock>> btc_txs;
-  std::vector<BtcBlock> btc_blocks;
+  std::vector<BtcTxRelation> btc_txs;
+  std::vector<BtcBlockRelation> btc_blocks;
 };
 
 }  // namespace testing_utils
