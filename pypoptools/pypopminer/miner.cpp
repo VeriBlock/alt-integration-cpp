@@ -22,6 +22,12 @@ inline std::vector<T> to_vector(const list& list) {
 struct MockMinerProxy : private MockMiner {
   using base = MockMiner;
 
+  AltChainParamsRegTest alt_param{};
+  VbkChainParamsRegTest vbk_param{};
+  BtcChainParamsRegTest btc_param{};
+
+  MockMinerProxy() : MockMiner(alt_param, vbk_param, btc_param) {}
+
   std::string toPrettyString() {
     std::ostringstream ss;
     ss << "MockMiner(btc=" << this->btcTip().toPrettyString();
