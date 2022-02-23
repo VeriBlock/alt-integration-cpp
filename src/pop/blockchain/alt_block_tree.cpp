@@ -40,7 +40,7 @@ void AltBlockTree::bootstrap() {
   VBK_ASSERT(!this->isLoadingBlocks_);
   VBK_ASSERT(!this->isLoaded_);
 
-  auto block = alt_config_->getBootstrapBlock();
+  auto block = alt_config_.getBootstrapBlock();
   auto height = block.getHeight();
   VBK_ASSERT_MSG(
       height >= 0,
@@ -679,7 +679,7 @@ AltBlockTree::AltBlockTree(const AltBlockTree::alt_config_t& alt_config,
                            PayloadsStorage& payloadsProvider,
                            BlockReader& blockProvider)
     : base(blockProvider),
-      alt_config_(&alt_config),
+      alt_config_(alt_config),
       cmp_(*this,
            std::make_shared<VbkBlockTree>(vbk_config,
                                           btc_config,
