@@ -421,7 +421,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @private
   const PopForkComparator& getComparator() const { return cmp_; }
   //! Accessor for Network Parameters stored in this tree
-  const AltChainParams& getParams() const { return *alt_config_; }
+  const AltChainParams& getParams() const { return alt_config_; }
   //! @private
   PayloadsIndex& getPayloadsIndex()  { return payloadsIndex_; }
   //! @private
@@ -450,7 +450,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   using base::removeLeaf;
 
  private:
-  const alt_config_t* alt_config_;
+  const alt_config_t& alt_config_;
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
