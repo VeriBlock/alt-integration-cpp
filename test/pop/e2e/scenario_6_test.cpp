@@ -41,18 +41,18 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
 
   // Step1
   // mine 10 Vbk blocks in the pop miner
-  auto* vbkTip = popminer->mineVbkBlocks(10);
+  auto* vbkTip = popminer.mineVbkBlocks(10);
 
-  ASSERT_TRUE(cmp(*popminer->vbk().getBestChain().tip(), *vbkTip));
-  auto* btcTip = popminer->mineBtcBlocks(40);
+  ASSERT_TRUE(cmp(*popminer.vbk().getBestChain().tip(), *vbkTip));
+  auto* btcTip = popminer.mineBtcBlocks(40);
 
-  ASSERT_TRUE(cmp(*popminer->btc().getBestChain().tip(), *btcTip));
+  ASSERT_TRUE(cmp(*popminer.btc().getBestChain().tip(), *btcTip));
 
   // endorsed vbk block
   auto* endorsedBlock = vbkTip->getAncestor(vbkTip->getHeight() - 5);
   auto vbkPopTx = generatePopTx(endorsedBlock->getHeader());
-  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx});
-  auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+  vbkTip = popminer.mineVbkBlocks(1, {vbkPopTx});
+  auto vtb = popminer.createVTB(vbkTip->getHeader(), vbkPopTx);
 
   // corrupt vtb
   std::vector<uint8_t> new_hash = {1, 2, 3, 9, 8, 2};
@@ -64,7 +64,7 @@ TEST_F(Scenario6, AddPayloadsToGenesisBlock) {
       vbkTip->getHeight(), {vbkTip->getHeader()}));
 
   VbkTx tx =
-      popminer->createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));
+      popminer.createVbkTxEndorsingAltBlock(generatePublicationData(chain[0]));
   AltBlock containingAltBlock = generateNextBlock(chain.back());
   chain.push_back(containingAltBlock);
   PopData altPayloads =

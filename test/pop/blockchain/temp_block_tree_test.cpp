@@ -94,7 +94,7 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_1) {
   EXPECT_EQ(this->tmp.getBlockIndex(gen_block.getHash()),
             this->tmp.getStableTree().getBlockIndex(gen_block.getHash()));
 
-  auto block = mineBlock<block_t>(*this->popminer);
+  auto block = mineBlock<block_t>(this->popminer);
 
   EXPECT_EQ(this->tmp.getBlockIndex(block->getHash()), nullptr);
   EXPECT_EQ(this->tmp.getStableTree().getBlockIndex(block->getHash()), nullptr);
@@ -110,8 +110,8 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_1) {
   EXPECT_TRUE(areOnSameChain(*block, gen_block, this->tmp));
   EXPECT_TRUE(areOnSameChain(gen_block, *block, this->tmp));
 
-  mineBlock<block_t>(*this->popminer);
-  block = mineBlock<block_t>(*this->popminer);
+  mineBlock<block_t>(this->popminer);
+  block = mineBlock<block_t>(this->popminer);
 
   EXPECT_FALSE(this->tmp.acceptBlockHeader(block, this->state));
 
@@ -125,17 +125,17 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_2) {
   // mine 5 blocks
   std::shared_ptr<block_t> fork_point;
   for (int i = 0; i < 5; ++i) {
-    fork_point = mineBlock<block_t>(*this->popminer);
+    fork_point = mineBlock<block_t>(this->popminer);
     EXPECT_TRUE(this->tmp.acceptBlockHeader(fork_point, this->state));
     EXPECT_NE(this->tmp.getBlockIndex(fork_point->getHash()), nullptr);
     EXPECT_EQ(this->tmp.getStableTree().getBlockIndex(fork_point->getHash()),
               nullptr);
   }
 
-  auto fork1 = mineBlock<block_t>(fork_point->getHash(), *this->popminer);
+  auto fork1 = mineBlock<block_t>(fork_point->getHash(), this->popminer);
   EXPECT_TRUE(this->tmp.acceptBlockHeader(fork1, this->state));
 
-  auto fork2 = mineBlock<block_t>(fork_point->getHash(), *this->popminer);
+  auto fork2 = mineBlock<block_t>(fork_point->getHash(), this->popminer);
   EXPECT_TRUE(this->tmp.acceptBlockHeader(fork2, this->state));
 
   EXPECT_FALSE(areOnSameChain(*fork1, *fork2, this->tmp));
@@ -155,7 +155,7 @@ TYPED_TEST_P(TempBlockTreeTest, scenario_3) {
   EXPECT_EQ(this->tmp.getBlockIndex(gen_block.getHash()),
             this->tmp.getStableTree().getBlockIndex(gen_block.getHash()));
 
-  auto block = mineBlock<block_t>(*this->popminer);
+  auto block = mineBlock<block_t>(this->popminer);
 
   EXPECT_EQ(this->tmp.getBlockIndex(block->getHash()), nullptr);
   EXPECT_EQ(this->tmp.getStableTree().getBlockIndex(block->getHash()), nullptr);
@@ -193,11 +193,11 @@ TYPED_TEST_P(TempBlockTreeTest, TempTreeDoesNotAffectRealTree) {
   EXPECT_EQ(tmp.getBlockIndex(gb.getHash()), orig.getBlockIndex(gb.getHash()));
 
   // accept to real tree block 1
-  auto b1 = mineBlock<block_t>(*this->popminer);
+  auto b1 = mineBlock<block_t>(this->popminer);
   ASSERT_TRUE(orig.acceptBlockHeader(*b1, state));
 
   // accept to tmp tree block 2
-  auto b2 = mineBlock<block_t>(*this->popminer);
+  auto b2 = mineBlock<block_t>(this->popminer);
   ASSERT_TRUE(tmp.acceptBlockHeader(b2, state));
 
   // check that b1 does not have b2 in pnext

@@ -15,21 +15,21 @@ TEST_F(Scenario4, scenario_4) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+  auto* vbkTip = popminer.mineVbkBlocks(65);
 
   // endorse VBK blocks
   auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
-  auto* containingVbkBlock1 = popminer->mineVbkBlocks(1, {vbkPopTx1});
-  vbkTip = popminer->mineVbkBlocks(50);
+  auto* containingVbkBlock1 = popminer.mineVbkBlocks(1, {vbkPopTx1});
+  vbkTip = popminer.mineVbkBlocks(50);
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
 
-  auto* containingVbkBlock2 = popminer->mineVbkBlocks(1, {vbkPopTx2});
+  auto* containingVbkBlock2 = popminer.mineVbkBlocks(1, {vbkPopTx2});
   vbkTip = containingVbkBlock2;
 
-  auto vtb1 = popminer->createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
-  auto vtb2 = popminer->createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
+  auto vtb1 = popminer.createVTB(containingVbkBlock1->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer.createVTB(containingVbkBlock2->getHeader(), vbkPopTx2);
 
   ASSERT_NE(VbkEndorsement::fromContainer(vtb1).id,
             VbkEndorsement::fromContainer(vtb2).id);
@@ -37,7 +37,7 @@ TEST_F(Scenario4, scenario_4) {
   // mine 10 blocks
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
   AltBlock endorsedBlock = chain[5];
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
 
   AltBlock containingBlock = generateNextBlock(chain.back());
@@ -46,9 +46,9 @@ TEST_F(Scenario4, scenario_4) {
       generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // new tip is the next block after vbkTip
-  ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->pprev->getHash(),
             vbkTip->getHash());
-  vbkTip = popminer->vbk().getBestChain().tip();
+  vbkTip = popminer.vbk().getBestChain().tip();
 
   altPayloads1.vtbs = {vtb1};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -68,9 +68,9 @@ TEST_F(Scenario4, scenario_4) {
       generateAltPayloads({tx}, alttree.vbk().getBestChain().tip()->getHash());
 
   // new tip is the next block after vbkTip
-  ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->pprev->getHash(),
             vbkTip->getHash());
-  vbkTip = popminer->vbk().getBestChain().tip();
+  vbkTip = popminer.vbk().getBestChain().tip();
 
   altPayloads2.vtbs = {vtb2};
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
@@ -92,9 +92,9 @@ TEST_F(Scenario4, scenario_4) {
       {tx}, alttree.vbk().getBestChain().tip()->pprev->getHash());
 
   // new tip is the next block after vbkTip
-  ASSERT_EQ(popminer->vbk().getBestChain().tip()->pprev->getHash(),
+  ASSERT_EQ(popminer.vbk().getBestChain().tip()->pprev->getHash(),
             vbkTip->getHash());
-  vbkTip = popminer->vbk().getBestChain().tip();
+  vbkTip = popminer.vbk().getBestChain().tip();
 
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));
   EXPECT_TRUE(AddPayloads(containingBlock.getHash(), altPayloads3));

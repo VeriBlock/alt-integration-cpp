@@ -44,7 +44,7 @@ TEST_F(SetStateAtomicity, setStateAtomicity) {
   std::vector<uint8_t> invalid_hash = {1, 2, 3, 9, 8, 2};
   corruptedVtb.transaction.blockOfProof.setPreviousBlock(invalid_hash);
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(altForkPoint));
   AltBlock corruptedAltBlock = generateNextBlock(altForkPoint);
   PopData corruptedPayloads =

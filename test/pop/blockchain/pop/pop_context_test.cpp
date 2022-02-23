@@ -24,7 +24,7 @@ struct PopContextFixture : public ::testing::Test {
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
       VbkBlockTree(vbkp, btcp, payloadsProvider, blockProvider, payloadsIndex);
-  MockMiner remote;
+  MockMiner remote{altparam, vbkp, btcp};
 
   BlockIndex<BtcBlock>* forkPoint;
   BlockIndex<BtcBlock>* chainAtip;

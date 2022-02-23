@@ -46,8 +46,8 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     // change reward recipient so we can get distinct rewards
     data.payoutInfo.push_back((uint8_t)(num >> 8));
     data.payoutInfo.push_back((uint8_t)num);
-    auto vbktx = popminer->createVbkTxEndorsingAltBlock(data);
-    popminer->mineVbkBlocks(1);
+    auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
+    popminer.mineVbkBlocks(1);
     auto containing = generateNextBlock(chain.back());
     chain.push_back(containing);
     auto payloads = generateAltPayloads(
@@ -77,15 +77,15 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       // change reward recipient so we can get distinct rewards
       data.payoutInfo.push_back((uint8_t)(i >> 8));
       data.payoutInfo.push_back((uint8_t)i);
-      auto vbktx1 = popminer->createVbkTxEndorsingAltBlock(data);
+      auto vbktx1 = popminer.createVbkTxEndorsingAltBlock(data);
 
       data = generatePublicationData(tree, endorsed);
       // change reward recipient so we can get distinct rewards
       data.payoutInfo.push_back((uint8_t)(i >> 8) + 10);
       data.payoutInfo.push_back((uint8_t)i);
-      auto vbktx2 = popminer->createVbkTxEndorsingAltBlock(data);
+      auto vbktx2 = popminer.createVbkTxEndorsingAltBlock(data);
 
-      popminer->mineVbkBlocks(1);
+      popminer.mineVbkBlocks(1);
       auto containing = generateNextBlock(chain.back());
       chain.push_back(containing);
       auto payloads1 = generateAltPayloads(
@@ -196,7 +196,6 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   state = ValidationState();
-  popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
@@ -262,7 +261,6 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   state = ValidationState();
-  popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);

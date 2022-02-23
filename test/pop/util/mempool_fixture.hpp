@@ -32,7 +32,7 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
 
   PopData checkedGetPop() {
     auto before = alttree.toPrettyString();
-    auto ret = mempool->generatePopData();
+    auto ret = mempool.generatePopData();
     auto after = alttree.toPrettyString();
     EXPECT_EQ(before, after);
     return ret;
@@ -46,19 +46,19 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void submitATV(const ATV& atv) {
-    auto res = mempool->submit(atv, state);
+    auto res = mempool.submit(atv, state);
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }
 
   void submitVTB(const VTB& vtb) {
-    auto res = mempool->submit(vtb, state);
+    auto res = mempool.submit(vtb, state);
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }
 
   void submitVBK(const VbkBlock& vbk) {
-    auto res = mempool->submit(vbk, state);
+    auto res = mempool.submit(vbk, state);
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }

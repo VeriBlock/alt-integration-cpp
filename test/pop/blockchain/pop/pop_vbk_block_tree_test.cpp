@@ -14,7 +14,11 @@
 using namespace altintegration;
 
 struct VbkBlockTreeTestFixture : public ::testing::Test {
-  MockMiner popminer;
+  AltChainParamsRegTest alt_params{};
+  VbkChainParamsRegTest vbk_params{};
+  BtcChainParamsRegTest btc_params{};
+
+  MockMiner popminer{alt_params, vbk_params, btc_params};
 
   void endorseVBK(size_t height) {
     auto* endorsedIndex = popminer.vbk().getBestChain()[(int32_t)height];

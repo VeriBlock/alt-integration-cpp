@@ -14,8 +14,8 @@ using namespace altintegration;
 struct AtomicityTestFixture : public ::testing::Test, public PopTestFixture {};
 
 TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
-  popminer->mineBtcBlocks(10);
-  auto vbktip = popminer->mineVbkBlocks(10);
+  popminer.mineBtcBlocks(10);
+  auto vbktip = popminer.mineVbkBlocks(10);
   // endorsed
   auto vbk5 = vbktip->getAncestor(5);
   ASSERT_TRUE(vbk5);
@@ -25,12 +25,12 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
 
   auto e = std::make_shared<VbkEndorsement>();
   e->id = uint256::fromHex("1");
-  e->blockOfProof = popminer->btc().getBestChain().tip()->getHash();
+  e->blockOfProof = popminer.btc().getBestChain().tip()->getHash();
   e->endorsedHash = vbk5->getHash();
   e->containingHash = vbk10->getHash();
 
   auto cmd =
-      std::make_shared<AddVbkEndorsement>(popminer->btc(), popminer->vbk(), e);
+      std::make_shared<AddVbkEndorsement>(popminer.btc(), popminer.vbk(), e);
 
   // before cmd execution we have 0 endorsements
   ASSERT_EQ(vbk5->getContainingEndorsements().size(), 0);
@@ -76,8 +76,8 @@ TEST_F(AtomicityTestFixture, AddVbkEndorsement) {
 }
 
 TEST_F(AtomicityTestFixture, AddAltEndorsement) {
-  popminer->mineBtcBlocks(10);
-  popminer->mineVbkBlocks(10);
+  popminer.mineBtcBlocks(10);
+  popminer.mineVbkBlocks(10);
   std::vector<AltBlock> chain{altparam.getBootstrapBlock()};
   mineAltBlocks(10, chain);
 
@@ -93,11 +93,11 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
 
   auto e = std::make_shared<AltEndorsement>();
   e->id = uint256::fromHex("1");
-  e->blockOfProof = popminer->vbk().getBestChain().tip()->getHash();
+  e->blockOfProof = popminer.vbk().getBestChain().tip()->getHash();
   e->endorsedHash = alt5->getHash();
   e->containingHash = alt10->getHash();
 
-  auto cmd = std::make_shared<AddAltEndorsement>(popminer->vbk(), alttree, e);
+  auto cmd = std::make_shared<AddAltEndorsement>(popminer.vbk(), alttree, e);
 
   // before cmd execution we have 0 endorsements
   ASSERT_EQ(alt5->getContainingEndorsements().size(), 0);
@@ -146,22 +146,22 @@ TEST_F(AtomicityTestFixture, AddAltEndorsement) {
 }
 
 TEST_F(AtomicityTestFixture, AddVTB) {
-  popminer->mineBtcBlocks(10);
-  popminer->mineVbkBlocks(10);
+  popminer.mineBtcBlocks(10);
+  popminer.mineVbkBlocks(10);
 
   // create a single VTB which has endorsed VBK5, containing - VBK11
   // endorsed
-  auto vbk5 = popminer->vbk().getBestChain().tip()->getAncestor(5);
+  auto vbk5 = popminer.vbk().getBestChain().tip()->getAncestor(5);
   ASSERT_TRUE(vbk5);
-  auto vbkpoptx1 = popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkpoptx1 = popminer.createVbkPopTxEndorsingVbkBlock(
       vbk5->getHeader(), getLastKnownBtcBlock());
-  auto vbkpoptx2 = popminer->createVbkPopTxEndorsingVbkBlock(
+  auto vbkpoptx2 = popminer.createVbkPopTxEndorsingVbkBlock(
       vbk5->getHeader(), getLastKnownBtcBlock());
-  auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx1, vbkpoptx2});
+  auto vbkcontaining = popminer.mineVbkBlocks(1, {vbkpoptx1, vbkpoptx2});
 
   // now we have 2 valid VTBs endorsing VBK5
-  VTB vtb1 = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx1);
-  VTB vtb2 = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx2);
+  VTB vtb1 = popminer.createVTB(vbkcontaining->getHeader(), vbkpoptx1);
+  VTB vtb2 = popminer.createVTB(vbkcontaining->getHeader(), vbkpoptx2);
 
   PopData pd;
   pd.vtbs = {vtb1, vtb2};
@@ -171,7 +171,7 @@ TEST_F(AtomicityTestFixture, AddVTB) {
 
   // before execution, we have to supply VBK blocks context to ALT tree...
   // bypass all AltPayloads, and add them directly
-  for (auto* block : popminer->vbk().getBestChain()) {
+  for (auto* block : popminer.vbk().getBestChain()) {
     if (block->pprev == nullptr) {
       // skip genesis block
       continue;
