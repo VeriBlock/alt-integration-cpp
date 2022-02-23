@@ -22,9 +22,9 @@ inline std::vector<T> to_vector(const list& list) {
 struct MockMinerProxy : private MockMiner {
   using base = MockMiner;
 
-  AltChainParamsRegTest alt_param{};
-  VbkChainParamsRegTest vbk_param{};
-  BtcChainParamsRegTest btc_param{};
+  inline static AltChainParamsRegTest alt_param{};
+  inline static VbkChainParamsRegTest vbk_param{};
+  inline static BtcChainParamsRegTest btc_param{};
 
   MockMinerProxy() : MockMiner(alt_param, vbk_param, btc_param) {}
 
