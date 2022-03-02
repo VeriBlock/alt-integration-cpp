@@ -41,12 +41,11 @@ BtcBlock generateRandomNextBlock(const BlockIndex<BtcBlock>& previous,
   return miner.createNextBlock(previous);
 }
 
-void E2EState::createAction(CreateOption action,
+void E2EState::createAction(CreateOption create,
                             ForkOption fork,
-                            AltBlockTree& tree,
-                            MemPool& mempool) {
+                            AltBlockTree& tree) {
   ValidationState state;
-  switch (action) {
+  switch (create) {
     case CreateOption::CREATE_ALT: {
       // generate new block
       auto& block = *getBlock(fork, tree);
@@ -58,8 +57,6 @@ void E2EState::createAction(CreateOption action,
       // generate new block
       auto& block = *getBlock(fork, tree.vbk());
       auto new_block = generateRandomNextBlock(block, tree.vbk().getParams());
-
-      mempool.submit(new_block, state);
       break;
     }
     case CreateOption::CREATE_BTC: {
@@ -124,6 +121,26 @@ void E2EState::createAction(CreateOption action,
         this->vbk_pop_txs.push_back(tx);
         this->btc_blocks.erase(this->btc_blocks.begin());
       }
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+void E2EState::submitAction(SubmitOption submit, MemPool& mempool) {
+  ValidationState state;
+  switch (submit) {
+    case SubmitOption::SUBMIT_VBK: {
+      // TODO
+      break;
+    }
+    case SubmitOption::SUBMIT_VTB: {
+      // TODO
+      break;
+    }
+    case SubmitOption::SUBMIT_ATV: {
+      // TODO
       break;
     }
     default:

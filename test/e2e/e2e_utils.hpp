@@ -86,10 +86,16 @@ const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
 }
 
 struct E2EState {
-  void createAction(CreateOption action,
+  E2EState(const AltChainParams& alt_config,
+           const VbkChainParams& vbk_config,
+           const BtcChainParams& btc_config)
+      : mock_miner(alt_config, vbk_config, btc_config) {}
+
+  void createAction(CreateOption create,
                     ForkOption fork,
-                    AltBlockTree& current_state,
-                    MemPool& mempool);
+                    AltBlockTree& current_state);
+
+  void submitAction(SubmitOption submit, MemPool& mempool);
 
  private:
   struct BtcTxRelation {
