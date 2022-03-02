@@ -117,8 +117,6 @@ void E2EState::applyAction(ActionOption action,
     }
     case ActionOption::CREATE_VBK_POP_TX: {
       if (!this->btc_blocks.empty()) {
-        
-
       }
 
       // // need an existing btc tx
