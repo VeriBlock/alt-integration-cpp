@@ -54,7 +54,7 @@ TEST_F(Scenario2, scenario_2) {
 
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -63,21 +63,21 @@ TEST_F(Scenario2, scenario_2) {
       generateAltPayloads({tx}, GetRegTestVbkBlock().getHash());
 
   // mine 65 VBK blocks
-  auto* vbkTip = popminer->mineVbkBlocks(65);
+  auto* vbkTip = popminer.mineVbkBlocks(65);
 
   // endorse VBK blocks
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
-  auto* btcBlockTip1 = popminer->btc().getBestChain().tip();
-  popminer->mineBtcBlocks(100);
+  auto* btcBlockTip1 = popminer.btc().getBestChain().tip();
+  popminer.mineBtcBlocks(100);
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
-  auto* btcBlockTip2 = popminer->btc().getBestChain().tip();
+  auto* btcBlockTip2 = popminer.btc().getBestChain().tip();
 
-  vbkTip = popminer->mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
+  vbkTip = popminer.mineVbkBlocks(1, {vbkPopTx1, vbkPopTx2});
 
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx2);
 
   ASSERT_NE(VbkEndorsement::fromContainer(vtb1).id,
             VbkEndorsement::fromContainer(vtb2).id);
@@ -87,7 +87,7 @@ TEST_F(Scenario2, scenario_2) {
   fillVbkContext(altPayloads1.context,
                  GetRegTestVbkBlock().getHash(),
                  vtb1.containingBlock.getHash(),
-                 popminer->vbk());
+                 popminer.vbk());
 
   VBK_LOG_DEBUG("Step 1");
   EXPECT_TRUE(alttree.acceptBlockHeader(containingBlock, state));

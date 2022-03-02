@@ -48,12 +48,6 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
                             bool shouldVerifyNextWork = true);
 
 //! @private
-template <typename Block, typename Storage>
-void removePayloadsFromIndex(Storage& storage,
-                             BlockIndex<Block>& index,
-                             const CommandGroup& cg);
-
-//! @private
 template <typename ProtectedBlockTree>
 bool recoverEndorsements(ProtectedBlockTree& ed_,
                          Chain<typename ProtectedBlockTree::index_t>& chain,

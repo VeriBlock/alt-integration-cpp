@@ -330,10 +330,8 @@ struct BlockchainTest : public ::testing::Test {
     miner = std::make_shared<Miner<block_t, params_base_t>>(*chainparam);
 
     // @when
-    EXPECT_TRUE(blockchain->bootstrapWithGenesis(
-        getGenesisBlockHelper<block_t>(), state))
-        << "bootstrap: " << state.GetPath() << ", " << state.GetDebugMessage();
-    EXPECT_TRUE(state.IsValid());
+    EXPECT_NO_FATAL_FAILURE(
+        blockchain->bootstrapWithGenesis(getGenesisBlockHelper<block_t>()));
   };
 };
 

@@ -8,12 +8,12 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/pop/ct_params.hpp>
 #include <veriblock/pop/alt-util.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/config.hpp>
+#include <veriblock/pop/ct_params.hpp>
 #include <veriblock/pop/entities/merkle_tree.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/mempool.hpp>
@@ -30,12 +30,12 @@
 namespace altintegration {
 
 struct AltTreeUnderTest : public AltBlockTree {
-    size_t deallocatedAlt = 0;
+  size_t deallocatedAlt = 0;
 
-    using AltBlockTree::AltBlockTree;
-    void finalizeBlock(index_t& index) {
-      this->finalizeBlockImpl(index, getParams().preserveBlocksBehindFinal());
-    }
+  using AltBlockTree::AltBlockTree;
+  void finalizeBlock(index_t& index) {
+    this->finalizeBlockImpl(index, getParams().preserveBlocksBehindFinal());
+  }
 };
 
 struct PopTestFixture {
@@ -45,25 +45,25 @@ struct PopTestFixture {
     return {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   }
 
-  std::shared_ptr<MemPool> mempool;
-
-  BtcChainParamsRegTest btcparam{};
-  VbkChainParamsRegTest vbkparam{};
   AltChainParamsRegTest altparam{};
+  VbkChainParamsRegTest vbkparam{};
+  BtcChainParamsRegTest btcparam{};
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
   adaptors::BlockReaderImpl blockProvider{storage, altparam};
 
   // miners
-  std::shared_ptr<MockMiner> popminer;
+  MockMiner popminer{altparam, vbkparam, btcparam};
 
   // trees
-  AltTreeUnderTest alttree;
+  AltTreeUnderTest alttree{
+      altparam, vbkparam, btcparam, payloadsProvider, blockProvider};
+
+  MemPool mempool{alttree};
 
   ValidationState state;
 
-  PopTestFixture()
-      : alttree(altparam, vbkparam, btcparam, payloadsProvider, blockProvider) {
+  PopTestFixture() {
     auto BTCgenesis = GetRegTestBtcBlock();
     auto VBKgenesis = GetRegTestVbkBlock();
 
@@ -73,12 +73,9 @@ struct PopTestFixture {
                           VBKgenesis.getTimestamp()});
     setMockTime(time + 1);
 
-    EXPECT_TRUE(alttree.btc().bootstrapWithGenesis(BTCgenesis, state));
-    EXPECT_TRUE(alttree.vbk().bootstrapWithGenesis(VBKgenesis, state));
-    EXPECT_TRUE(alttree.bootstrap(state));
-
-    popminer = std::make_shared<MockMiner>();
-    mempool = std::make_shared<MemPool>(alttree);
+    EXPECT_NO_FATAL_FAILURE(alttree.btc().bootstrapWithGenesis(BTCgenesis));
+    EXPECT_NO_FATAL_FAILURE(alttree.vbk().bootstrapWithGenesis(VBKgenesis));
+    EXPECT_NO_FATAL_FAILURE(alttree.bootstrap());
   }
 
   // T = tree
@@ -260,7 +257,7 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock::hash_t& endorsedBlock) {
-    auto index = popminer->vbk().getBlockIndex(endorsedBlock);
+    auto index = popminer.vbk().getBlockIndex(endorsedBlock);
     if (index == nullptr) {
       throw std::logic_error("can't find endorsed block");
     }
@@ -269,9 +266,9 @@ struct PopTestFixture {
   }
 
   VbkPopTx generatePopTx(const VbkBlock& endorsedBlock) {
-    auto btctx = popminer->createBtcTxEndorsingVbkBlock(endorsedBlock);
-    auto* btcblock = popminer->mineBtcBlocks(1, {btctx});
-    return popminer->createVbkPopTxEndorsingVbkBlock(
+    auto btctx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock);
+    auto* btcblock = popminer.mineBtcBlocks(1, {btctx});
+    return popminer.createVbkPopTxEndorsingVbkBlock(
         btcblock->getHeader(), btctx, endorsedBlock, getLastKnownBtcBlock());
   }
 
@@ -317,18 +314,18 @@ struct PopTestFixture {
 
     for (size_t i = 0; i < VTBs; i++) {
       auto vbkpoptx = generatePopTx(getLastKnownVbkBlock());
-      auto vbkcontaining = popminer->mineVbkBlocks(1, {vbkpoptx});
-      auto newvtb = popminer->createVTB(vbkcontaining->getHeader(), vbkpoptx);
+      auto vbkcontaining = popminer.mineVbkBlocks(1, {vbkpoptx});
+      auto newvtb = popminer.createVTB(vbkcontaining->getHeader(), vbkpoptx);
       popData.vtbs.push_back(newvtb);
     }
 
     for (const auto& tx : transactions) {
-      auto* block = popminer->mineVbkBlocks(1, {tx});
-      ATV atv = popminer->createATV(block->getHeader(), tx);
+      auto* block = popminer.mineVbkBlocks(1, {tx});
+      ATV atv = popminer.createATV(block->getHeader(), tx);
       popData.atvs.push_back(atv);
     }
 
-    fillVbkContext(popData.context, lastVbk, popminer->vbk());
+    fillVbkContext(popData.context, lastVbk, popminer.vbk());
 
     return popData;
   }
@@ -338,7 +335,7 @@ struct PopTestFixture {
     std::vector<VbkTx> transactions(endorsed.size());
     for (size_t i = 0; i < endorsed.size(); ++i) {
       auto data = generatePublicationData(endorsed[i]);
-      transactions[i] = popminer->createVbkTxEndorsingAltBlock(data);
+      transactions[i] = popminer.createVbkTxEndorsingAltBlock(data);
     }
     return generateAltPayloads(transactions, getLastKnownVbkBlock(), VTBs);
   }
@@ -352,10 +349,10 @@ struct PopTestFixture {
   }
 
   VbkPopTx endorseVbkTip() {
-    auto* tip = popminer->vbk().getBestChain().tip();
+    auto* tip = popminer.vbk().getBestChain().tip();
     VBK_ASSERT(tip);
-    return popminer->createVbkPopTxEndorsingVbkBlock(tip->getHeader(),
-                                                     getLastKnownBtcBlock());
+    return popminer.createVbkPopTxEndorsingVbkBlock(tip->getHeader(),
+                                                    getLastKnownBtcBlock());
   }
 
   void createEndorsedAltChain(size_t blocks, size_t vtbs = 1) {
@@ -363,7 +360,7 @@ struct PopTestFixture {
     for (size_t i = 0; i < vtbs; i++) {
       transactions[i] = endorseVbkTip();
     }
-    popminer->mineVbkBlocks(1, transactions);
+    popminer.mineVbkBlocks(1, transactions);
 
     auto* altTip = alttree.getBestChain().tip();
     VBK_ASSERT(altTip);
@@ -455,6 +452,24 @@ inline void validateAlttreeIndexState(AltBlockTree& tree,
   EXPECT_EQ(commands->size() == popData.context.size() + popData.atvs.size() +
                                     popData.vtbs.size(),
             payloads_existance);
+}
+
+template <typename Payload, typename Tree>
+std::set<typename Payload::id_t> getAllPayloadIdsInTree(
+    Tree& tree, bool skipFinal = false) {
+  std::set<typename Payload::id_t> ids;
+  for (auto* index : tree.getAllBlocks()) {
+    VBK_ASSERT(index != nullptr);
+    if (skipFinal && index->finalized) {
+      continue;
+    }
+
+    for (const auto& id : index->template getPayloadIds<Payload>()) {
+      ids.insert(id);
+    }
+  }
+
+  return ids;
 }
 
 }  // namespace altintegration

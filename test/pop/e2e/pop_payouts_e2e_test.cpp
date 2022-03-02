@@ -46,8 +46,8 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
     // change reward recipient so we can get distinct rewards
     data.payoutInfo.push_back((uint8_t)(num >> 8));
     data.payoutInfo.push_back((uint8_t)num);
-    auto vbktx = popminer->createVbkTxEndorsingAltBlock(data);
-    popminer->mineVbkBlocks(1);
+    auto vbktx = popminer.createVbkTxEndorsingAltBlock(data);
+    popminer.mineVbkBlocks(1);
     auto containing = generateNextBlock(chain.back());
     chain.push_back(containing);
     auto payloads = generateAltPayloads(
@@ -77,15 +77,15 @@ struct PopPayoutsE2Etest : public ::testing::Test, public PopTestFixture {
       // change reward recipient so we can get distinct rewards
       data.payoutInfo.push_back((uint8_t)(i >> 8));
       data.payoutInfo.push_back((uint8_t)i);
-      auto vbktx1 = popminer->createVbkTxEndorsingAltBlock(data);
+      auto vbktx1 = popminer.createVbkTxEndorsingAltBlock(data);
 
       data = generatePublicationData(tree, endorsed);
       // change reward recipient so we can get distinct rewards
       data.payoutInfo.push_back((uint8_t)(i >> 8) + 10);
       data.payoutInfo.push_back((uint8_t)i);
-      auto vbktx2 = popminer->createVbkTxEndorsingAltBlock(data);
+      auto vbktx2 = popminer.createVbkTxEndorsingAltBlock(data);
 
-      popminer->mineVbkBlocks(1);
+      popminer.mineVbkBlocks(1);
       auto containing = generateNextBlock(chain.back());
       chain.push_back(containing);
       auto payloads1 = generateAltPayloads(
@@ -106,7 +106,8 @@ TEST_F(PopPayoutsE2Etest, AnyBlockCanBeAccepted_NoEndorsements) {
   for (size_t i = 0; i < 10000; i++) {
     PopPayouts payouts{};
     ASSERT_TRUE(SetState(alttree, chain[i].getHash()));
-    ASSERT_NO_FATAL_FAILURE(calculator_.getPopPayout(chain[i].getHash(), payouts, state));
+    ASSERT_NO_FATAL_FAILURE(
+        calculator_.getPopPayout(chain[i].getHash(), payouts, state));
     // no endorsements = no payouts
     ASSERT_TRUE(payouts.empty());
 
@@ -195,15 +196,15 @@ TEST_F(PopPayoutsE2Etest, SameRewardWhenNoEndorsements) {
                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   state = ValidationState();
-  popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
-  EXPECT_TRUE(
-      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-  EXPECT_TRUE(alttree2.bootstrap(state));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(alttree2.bootstrap());
 
   mineEndorsements(
       alttree2, altparam.getPayoutParams().getPopPayoutDelay(), chain2);
@@ -260,15 +261,15 @@ TEST_F(PopPayoutsE2Etest, GrowingRewardWhenLessMiners) {
                             altparam.getPayoutParams().getPopPayoutDelay() - 1);
 
   state = ValidationState();
-  popminer = std::make_shared<MockMiner>();
   std::vector<AltBlock> chain2{altparam.getBootstrapBlock()};
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
   auto calculator2 = DefaultPopRewardsCalculator(alttree2);
-  EXPECT_TRUE(
-      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-  EXPECT_TRUE(alttree2.bootstrap(state));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(alttree2.bootstrap());
 
   mineEndorsements(
       alttree2, altparam.getPayoutParams().getPopPayoutDelay() + 2, chain2);

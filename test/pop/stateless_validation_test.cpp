@@ -147,7 +147,9 @@ struct StatelessValidationTest : public ::testing::Test, public PopTestFixture {
 };
 
 TEST(VbkBlockPOW, ValidMainNet) {
-  auto block = AssertDeserializeFromRawHex<VbkBlock>("00277B9100025FD49543BA74A429AC48A3F2297D2CC1E0244EC22EDE46D061CEFED1E35C0AA208EC867AD999CA78861706B6FE606163022A0528F21755576DF2F3");
+  auto block = AssertDeserializeFromRawHex<VbkBlock>(
+      "00277B9100025FD49543BA74A429AC48A3F2297D2CC1E0244EC22EDE46D061CEFED1E35C"
+      "0AA208EC867AD999CA78861706B6FE606163022A0528F21755576DF2F3");
   auto P = VbkChainParamsMain();
   ASSERT_TRUE(checkProofOfWork(block, P));
 }
@@ -257,6 +259,16 @@ TEST_F(StatelessValidationTest, checkBitcoinTransactionForPoPData_invalid) {
   VbkPopTx tx = validVTB.transaction;
   tx.publishedBlock = AssertDeserializeFromRaw<VbkBlock>(
       "00001388000294E7DC3E3BE21A96ECCF0FBDF5F62A3331DC995C36B0935637860679DDD5DB0F135312B2C27867C9A83EF1B99B985C9B949307023AD672BAFD7700"_unhex);
+  ASSERT_FALSE(checkBitcoinTransactionForPoPData(tx, state));
+}
+
+TEST_F(StatelessValidationTest,
+       checkBitcoinTransactionForPoPData_empty_btctx_invalid) {
+  VbkPopTx tx = validVTB.transaction;
+  tx.bitcoinTransaction.tx.clear();
+  WriteStream w_stream;
+  tx.toVbkEncoding(w_stream);
+  tx = AssertDeserializeFromVbkEncoding<VbkPopTx>(w_stream.data());
   ASSERT_FALSE(checkBitcoinTransactionForPoPData(tx, state));
 }
 

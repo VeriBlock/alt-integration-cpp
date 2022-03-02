@@ -1,0 +1,55 @@
+name: Analyze
+
+on:
+  push:
+    branches:
+      - master
+      - release/*
+  pull_request:
+    branches:
+      - master
+      - trunk/*
+      - release/*
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
+      CXX: g++
+    steps:
+      - uses: actions/checkout@v1
+        name: checkout
+        with:
+          submodules: recursive
+          clean: true
+      - name: Prepare ccache timestamp
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        id: ccache_cache_timestamp
+        run: |
+          echo "::set-output name=timestamp::`date +%s`}"
+      - name: ccache cache files
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        uses: actions/cache@v2
+        with:
+          path: |
+            /tmp/.sqcache
+          key: linux-sqcache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            linux-sqcache-
+      - name: install new cmake
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip ccache
+          pip3 install -U cmake
+      - name: cmake
+        run: cmake . -Bbuild -DWITH_C_BINDINGS=ON -DWITH_ROCKSDB=ON
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+        with:
+          version: 4.6.2.2472
+      - name: Run sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: sonar-scanner
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}

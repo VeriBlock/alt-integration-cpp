@@ -37,10 +37,10 @@ void validityFlagCheck(const BlockIndex<VbkBlock>& blockIndex, bool expected) {
 TEST_F(Scenario8, scenario_8) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
-  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer->vbk().getParams());
+  Miner<VbkBlock, VbkChainParams> vbk_miner(popminer.vbk().getParams());
 
   // mine 500 vbk blocks
-  auto* vbkTip = popminer->mineVbkBlocks(
+  auto* vbkTip = popminer.mineVbkBlocks(
       vbkparam.getEndorsementSettlementInterval() + 100);
 
   // endorse block 490
@@ -60,7 +60,7 @@ TEST_F(Scenario8, scenario_8) {
 
   // create containing block
   auto containingVbkBlock = vbk_miner.createNextBlock(
-      *popminer->vbk().getBestChain().tip(),
+      *popminer.vbk().getBestChain().tip(),
       mtree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>());
 
   // Create VTB
@@ -73,7 +73,8 @@ TEST_F(Scenario8, scenario_8) {
   vtb1.containingBlock = containingVbkBlock;
 
   ASSERT_TRUE(checkVTB(
-      vtb1, state, popminer->btc().getParams(), popminer->vbk().getParams())) << state.toString();
+      vtb1, state, popminer.btc().getParams(), popminer.vbk().getParams()))
+      << state.toString();
 
   // Create VTB
   VTB vtb2;
@@ -85,25 +86,25 @@ TEST_F(Scenario8, scenario_8) {
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer->btc().getParams(), popminer->vbk().getParams()));
+      vtb2, state, popminer.btc().getParams(), popminer.vbk().getParams()));
 
-  EXPECT_TRUE(popminer->vbk().acceptBlockHeader(containingVbkBlock, state));
+  EXPECT_TRUE(popminer.vbk().acceptBlockHeader(containingVbkBlock, state));
 
   // mine 10 blocks
   mineAltBlocks(10, chain, /*connectBlocks=*/true, /*setState=*/false);
 
   AltBlock endorsedBlock = chain[5];
-  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  auto* block1 = popminer->mineVbkBlocks(1, {tx1});
-  ATV atv1 = popminer->createATV(block1->getHeader(), tx1);
+  auto* block1 = popminer.mineVbkBlocks(1, {tx1});
+  ATV atv1 = popminer.createATV(block1->getHeader(), tx1);
 
   PopData popData1;
   popData1.atvs = {atv1};
   popData1.vtbs = {vtb1};
 
   fillVbkContext(
-      popData1.context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+      popData1.context, GetRegTestVbkBlock().getHash(), popminer.vbk());
 
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -116,23 +117,23 @@ TEST_F(Scenario8, scenario_8) {
   validateAlttreeIndexState(alttree, containingBlock, popData1);
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
-            popminer->vbk().getBestChain().tip()->getHash());
+            popminer.vbk().getBestChain().tip()->getHash());
 
   auto* vbkBlock = alttree.vbk().getBlockIndex(containingVbkBlock.getHash());
   EXPECT_NE(vbkBlock, nullptr);
   validityFlagCheck(*vbkBlock, true);
 
-  VbkTx tx2 = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx2 = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
-  auto* block2 = popminer->mineVbkBlocks(1, {tx2});
-  ATV atv2 = popminer->createATV(block2->getHeader(), tx2);
+  auto* block2 = popminer.mineVbkBlocks(1, {tx2});
+  ATV atv2 = popminer.createATV(block2->getHeader(), tx2);
 
   PopData popData2;
   popData2.atvs = {atv2};
   popData2.vtbs = {vtb2};
 
   fillVbkContext(
-      popData2.context, GetRegTestVbkBlock().getHash(), popminer->vbk());
+      popData2.context, GetRegTestVbkBlock().getHash(), popminer.vbk());
 
   containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);

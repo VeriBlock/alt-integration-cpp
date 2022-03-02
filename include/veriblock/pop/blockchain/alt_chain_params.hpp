@@ -201,10 +201,10 @@ struct AltChainParams {
   //! Max number of blocks that can be reorganized in altchain.
   //!
   //! As implication, we store last N blocks in RAM and effectively
-  //! `tip-maxReorgDistance` block is finalized.
-  int32_t getMaxReorgDistance() const noexcept {
-    VBK_ASSERT(int64_t(mMaxReorgDistance) > int64_t(mEndorsementSettlementInterval));
-    return mMaxReorgDistance;
+  //! `tip-maxReorgBlocks` block is finalized.
+  int32_t getMaxReorgBlocks() const noexcept {
+    VBK_ASSERT(int64_t(mMaxReorgBlocks) > int64_t(mEndorsementSettlementInterval));
+    return mMaxReorgBlocks;
   }
 
   //! when finalizeBlockImpl is called, this many blocks behind final block will
@@ -260,7 +260,7 @@ struct AltChainParams {
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();
 
-  int32_t mMaxReorgDistance = std::numeric_limits<int32_t>::max(); // blocks
+  int32_t mMaxReorgBlocks = std::numeric_limits<int32_t>::max(); // blocks
   uint32_t mMaxAltchainFutureBlockTime = 10 * 60;  // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
@@ -316,7 +316,7 @@ JsonValue ToJSON(const AltChainParams& p, bool reverseAltHashes = true) {
   json::putIntKV(obj, "maxVbkBlocksInAltBlock", p.getMaxVbkBlocksInAltBlock());
   json::putIntKV(obj, "maxVTBsInAltBlock", p.getMaxVTBsInAltBlock());
   json::putIntKV(obj, "maxATVsInAltBlock", p.getMaxATVsInAltBlock());
-  json::putIntKV(obj, "maxReorgDistance", p.getMaxReorgDistance());
+  json::putIntKV(obj, "maxReorgBlocks", p.getMaxReorgBlocks());
   json::putIntKV(obj,
                  "endorsementSettlementInterval",
                  p.getEndorsementSettlementInterval());

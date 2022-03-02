@@ -119,12 +119,14 @@ class MockMiner {
   const VbkChainParams& vbkParams() const { return vbk_params_; }
   const BtcChainParams& btcParams() const { return btc_params_; }
 
-  MockMiner() {
-    ValidationState state;
-    bool ret = btc_tree_.bootstrapWithGenesis(GetRegTestBtcBlock(), state);
-    VBK_ASSERT(ret);
-    ret = vbk_tree_.bootstrapWithGenesis(GetRegTestVbkBlock(), state);
-    VBK_ASSERT_MSG(ret, state.toString());
+  MockMiner(const AltChainParams& alt_config,
+            const VbkChainParams& vbk_config,
+            const BtcChainParams& btc_config)
+      : alt_params_(alt_config),
+        vbk_params_(vbk_config),
+        btc_params_(btc_config) {
+    btc_tree_.bootstrapWithGenesis(GetRegTestBtcBlock());
+    vbk_tree_.bootstrapWithGenesis(GetRegTestVbkBlock());
   }
 
   adaptors::InmemStorageImpl& getStorage() { return storage_; }
@@ -160,18 +162,16 @@ class MockMiner {
                               const uint256& txHash) const;
   MerklePath getMerklePath(const BtcBlock& block, const uint256& txHash) const;
 
-  BtcChainParamsRegTest btc_params_{};
-  VbkChainParamsRegTest vbk_params_{};
-  AltChainParamsRegTest alt_params_{};
+  const AltChainParams& alt_params_;
+  const VbkChainParams& vbk_params_;
+  const BtcChainParams& btc_params_;
   adaptors::InmemStorageImpl storage_{};
   adaptors::PayloadsStorageImpl payloads_provider_{storage_};
   adaptors::BlockReaderImpl block_provider_{storage_, alt_params_};
   PayloadsIndex payloads_index_;
 
-  Miner<BtcBlock, BtcChainParams> btc_miner_ =
-      Miner<BtcBlock, BtcChainParams>(btc_params_);
-  Miner<VbkBlock, VbkChainParams> vbk_miner_ =
-      Miner<VbkBlock, VbkChainParams>(vbk_params_);
+  Miner<BtcBlock, BtcChainParams> btc_miner_{btc_params_};
+  Miner<VbkBlock, VbkChainParams> vbk_miner_{vbk_params_};
 
   vbk_block_tree vbk_tree_{vbk_params_,
                            btc_params_,

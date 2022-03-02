@@ -46,14 +46,14 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   /**
    * Bootstrap blockchain with a single genesis block.
-   *
-   * @return true if bootstrap was successful, false otherwise
    */
-  virtual bool bootstrapWithGenesis(const block_t& block,
-                                    ValidationState& state) {
+  virtual void bootstrapWithGenesis(const block_t& block) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    return this->bootstrap(0, block, state) ||
-           state.Invalid(block_t::name() + "-bootstrap-genesis");
+    VBK_ASSERT(!this->isLoaded_);
+    VBK_ASSERT(!this->isLoadingBlocks_);
+    ValidationState state;
+    this->bootstrap(0, block, state);
+    this->isLoadingBlocks_ = false;
   }
 
   /**
@@ -64,47 +64,40 @@ struct BlockTree : public BaseBlockTree<Block> {
    *
    * @param[in] startHeight start height of the chain
    * @param[in] chain bootstrap chain
-   * @param[out] state validation result
-   * @return true if bootstrap was successful, false otherwise
    */
-  virtual bool bootstrapWithChain(height_t startHeight,
-                                  const std::vector<block_t>& chain,
-                                  ValidationState& state) {
+  virtual void bootstrapWithChain(height_t startHeight,
+                                  const std::vector<block_t>& chain) {
     VBK_ASSERT(!base::isBootstrapped() && "already bootstrapped");
-    if (chain.empty()) {
-      return state.Invalid(block_t::name() + "-bootstrap-empty-chain",
-                           "provided bootstrap chain is empty");
-    }
+    VBK_ASSERT(!this->isLoadingBlocks_);
+    VBK_ASSERT(!this->isLoaded_);
+    VBK_ASSERT_MSG(!chain.empty(), "bootstrap chain must not be empty");
+    VBK_ASSERT_MSG(
+        chain.size() >= param_->numBlocksForBootstrap(),
+        "bootstrap chain is too small (%d) expected at least %d blocks",
+        chain.size(),
+        param_->numBlocksForBootstrap());
 
-    if (chain.size() < param_->numBlocksForBootstrap()) {
-      return state.Invalid(
-          block_t::name() + "-bootstrap-small-chain",
-          "number of blocks in the provided chain is too small: " +
-              std::to_string(chain.size()) + ", expected at least " +
-              std::to_string(param_->numBlocksForBootstrap()));
-    }
+    ValidationState state;
 
     // pick first block from the chain, bootstrap with a single block
     auto genesis = chain[0];
-    if (!this->bootstrap(startHeight, genesis, state)) {
-      return state.Invalid(block_t::name() + "-blocktree-bootstrap");
-    }
+    this->bootstrap(startHeight, genesis, state);
 
     // apply the rest of the blocks from the chain on top of our bootstrap
     // block. disable difficulty checks, because we have not enough blocks in
     // our store (yet) to check it correctly
     for (size_t i = 1, size = chain.size(); i < size; i++) {
       auto& block = chain[i];
-      if (!this->acceptBlockHeaderImpl(
-              std::make_shared<block_t>(block), state, false)) {
-        return state.Invalid(block_t::name() + "-blocktree-accept");
-      }
+      bool ok = this->acceptBlockHeaderImpl(
+          std::make_shared<block_t>(block), state, false);
+      VBK_ASSERT_MSG(ok,
+                     "found statelssly invalid bootstrap block: %d, %s",
+                     i,
+                     state.toString());
       auto* index = base::getBlockIndex(block.getHash());
       VBK_ASSERT(index);
       index->setIsBootstrap(true);
     }
-
-    return true;
   }
 
   bool acceptBlockHeader(const block_t& block, ValidationState& state) {
@@ -140,6 +133,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     auto* current = base::getBlockIndex(hash);
     VBK_ASSERT(current);
+    VBK_ASSERT(!this->isLoaded_);
+    VBK_ASSERT(this->isLoadingBlocks_);
 
     // we only check blocks contextually if they are not bootstrap blocks, and
     // previous block exists
@@ -183,18 +178,9 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   void finalizeBlocks() {
-    auto* tip = this->getBestChain().tip();
-    VBK_ASSERT(tip && "BTC tree must be bootstrapped");
-
-    int32_t firstBlockHeight =
-        tip->getHeight() - this->getParams().getOldBlocksWindow();
-    int32_t bootstrapBlockHeight = this->getRoot().getHeight();
-    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
-    auto* finalizedIndex = this->getBestChain()[firstBlockHeight];
-    VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid BTC tree state");
-
-    this->finalizeBlockImpl(*finalizedIndex,
-                            this->getParams().preserveBlocksBehindFinal());
+    VBK_ASSERT(!this->isLoadingBlocks_);
+    base::finalizeBlocks(this->getParams().getMaxReorgBlocks(),
+                         this->getParams().preserveBlocksBehindFinal());
   }
 
  protected:
@@ -223,18 +209,20 @@ struct BlockTree : public BaseBlockTree<Block> {
     return true;
   }
 
-  bool bootstrap(height_t height,
+  void bootstrap(height_t height,
                  const block_t& block,
                  ValidationState& state) {
-    return bootstrap(height, std::make_shared<block_t>(block), state);
+    bootstrap(height, std::make_shared<block_t>(block), state);
   }
 
-  bool bootstrap(height_t height,
+  void bootstrap(height_t height,
                  std::shared_ptr<block_t> block,
                  ValidationState& state) {
-    if (!checkBlock(*block, state, *param_)) {
-      return state.Invalid(block_t::name() + "-bootstrap");
-    }
+    bool ok = checkBlock(*block, state, *param_);
+    VBK_ASSERT_MSG(ok,
+                   "found statelessly invalid bootstrap block in %s tree: %s",
+                   block_t::name(),
+                   state.toString());
 
     auto* index = base::insertBlockHeader(block, height);
     VBK_ASSERT(index != nullptr &&
@@ -244,6 +232,7 @@ struct BlockTree : public BaseBlockTree<Block> {
     base::activeChain_ = Chain<index_t>(height, index);
     index->setIsBootstrap(true);
 
+    VBK_ASSERT(index->finalized);
     VBK_ASSERT(base::isBootstrapped());
     VBK_ASSERT(base::getBlockIndex(index->getHash()) != nullptr &&
                "getBlockIndex must be able to find the block added by "
@@ -255,7 +244,6 @@ struct BlockTree : public BaseBlockTree<Block> {
     VBK_ASSERT(success);
     index->setFlag(BLOCK_BOOTSTRAP);
     base::appliedBlockCount = 1;
-    return true;
   }
 
   bool validateAndAddBlock(const std::shared_ptr<block_t>& block,
@@ -320,7 +308,7 @@ struct BlockTree : public BaseBlockTree<Block> {
   }
 
   //! whenever new block is inserted, BlockTree has to update its ChainWork
-  void onBlockInserted(index_t* newIndex) override final {
+  void onBlockInserted(index_t* newIndex) final {
     newIndex->chainWork = getBlockProof(newIndex->getHeader());
     if (!newIndex->isRoot()) {
       newIndex->chainWork += newIndex->pprev->chainWork;

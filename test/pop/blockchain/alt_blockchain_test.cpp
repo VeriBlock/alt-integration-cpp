@@ -29,7 +29,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   AltBlock endorsedBlock = chain[5];
 
   // generate endorsements
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -56,7 +56,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_EQ(endorsedBlockIndex->getEndorsedBy().size(), 1);
 
   // generate endorsements
-  tx = popminer->createVbkTxEndorsingAltBlock(
+  tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   containingBlock = generateNextBlock(forkchain1.back());
   forkchain1.push_back(containingBlock);
@@ -83,7 +83,7 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
               containingEndorsements2.end());
   EXPECT_EQ(endorsedBlockIndex->getEndorsedBy().size(), 1);
 
-  tx = popminer->createVbkTxEndorsingAltBlock(
+  tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   containingBlock = generateNextBlock(forkchain2.back());
   forkchain2.push_back(containingBlock);
@@ -126,15 +126,17 @@ TEST_F(AltTreeFixture, invalidate_block_test1) {
   EXPECT_TRUE(state.IsValid());
 
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
-            popminer->vbk().getBestChain().tip()->getHash());
+            popminer.vbk().getBestChain().tip()->getHash());
 }
 
 TEST_F(AltTreeFixture, compareTrees) {
   AltBlockTree alttree2(
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider);
-  EXPECT_TRUE(alttree2.bootstrap(state));
-  EXPECT_TRUE(alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-  EXPECT_TRUE(alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  EXPECT_NO_FATAL_FAILURE(alttree2.bootstrap());
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
+  EXPECT_NO_FATAL_FAILURE(
+      alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock()));
   EXPECT_TRUE(cmp(alttree, alttree2));
   EXPECT_TRUE(cmp(alttree.vbk(), alttree2.vbk()));
   EXPECT_TRUE(cmp(alttree.vbk().btc(), alttree2.vbk().btc()));
@@ -152,13 +154,13 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   std::vector<AltBlock> chain = {altparam.getBootstrapBlock()};
 
   // mine 65 VBK blocks
-  popminer->mineVbkBlocks(65);
+  popminer.mineVbkBlocks(65);
 
   // mine 10 blocks
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock1 = chain[5];
-  VbkTx tx1 = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx1 = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock1));
   auto containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -172,7 +174,7 @@ TEST_F(AltTreeFixture, validatePayloads_test) {
   auto* containingIndex = alttree.getBlockIndex(containingBlock.getHash());
   EXPECT_TRUE(containingIndex->isValid());
   EXPECT_EQ(alttree.vbk().getBestChain().tip()->getHash(),
-            popminer->vbk().getBestChain().tip()->getHash());
+            popminer.vbk().getBestChain().tip()->getHash());
 
   ASSERT_DEATH(validatePayloads(containingBlock.getHash(), payloads1),
 

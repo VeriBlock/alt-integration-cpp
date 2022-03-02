@@ -18,10 +18,10 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
   BlockIndex<BtcBlock>* mineBtcBlocks(const BlockIndex<BtcBlock>& tip,
                                       size_t amount) {
     EXPECT_NE(amount, 0);
-    BlockIndex<BtcBlock>* blk = popminer->mineBtcBlocks(1, tip);
+    BlockIndex<BtcBlock>* blk = popminer.mineBtcBlocks(1, tip);
     EXPECT_TRUE(alttree.btc().acceptBlockHeader(blk->getHeader(), state));
     for (size_t i = 1; i < amount; ++i) {
-      blk = popminer->mineBtcBlocks(1, *blk);
+      blk = popminer.mineBtcBlocks(1, *blk);
       EXPECT_TRUE(alttree.btc().acceptBlockHeader(blk->getHeader(), state));
     }
     return blk;
@@ -38,12 +38,12 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
       const BlockIndex<VbkBlock>& tip,
       const std::vector<VbkPopTx>& transactions = {}) {
     EXPECT_NE(amount, 0);
-    BlockIndex<VbkBlock>* blk = popminer->mineVbkBlocks(1, tip, transactions);
+    BlockIndex<VbkBlock>* blk = popminer.mineVbkBlocks(1, tip, transactions);
     EXPECT_TRUE(alttree.vbk().acceptBlockHeader(blk->getHeader(), state));
     EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
               GetRegTestVbkBlock().getHeight());
     for (size_t i = 1; i < amount; ++i) {
-      blk = popminer->mineVbkBlocks(1, *blk);
+      blk = popminer.mineVbkBlocks(1, *blk);
       EXPECT_TRUE(alttree.vbk().acceptBlockHeader(blk->getHeader(), state));
       EXPECT_GE(alttree.vbk().getBestChain().tip()->getHeight(),
                 GetRegTestVbkBlock().getHeight());
@@ -78,7 +78,7 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario1_test) {
   const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto vbkPopTx = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx});
-  auto vtb = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+  auto vtb = popminer.createVTB(vbkTip->getHeader(), vbkPopTx);
 
   ASSERT_EQ(vtb.transaction.getHash(), vbkPopTx.getHash());
 
@@ -96,11 +96,11 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario2_test) {
   const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto vbkPopTx = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx});
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx);
   ASSERT_EQ(vtb1.transaction.getHash(), vbkPopTx.getHash());
 
   vbkTip = mineVbkBlocks(1, {vbkPopTx});
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx);
   ASSERT_EQ(vtb2.transaction.getHash(), vbkPopTx.getHash());
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
@@ -120,14 +120,14 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario3_test) {
   const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto vbkPopTx = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx});
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx);
   ASSERT_EQ(vtb1.transaction.getHash(), vbkPopTx.getHash());
 
   auto* vbkForkTip = mineVbkBlocks(1, *vbkFork, {vbkPopTx});
   ASSERT_EQ(vbkForkTip->getHeight(), vbkFork->getHeight() + 1);
   ASSERT_NE(vbkForkTip->getHash(),
-            popminer->vbk().getBestChain().tip()->getHash());
-  auto vtb2 = popminer->createVTB(vbkForkTip->getHeader(), vbkPopTx);
+            popminer.vbk().getBestChain().tip()->getHash());
+  auto vtb2 = popminer.createVTB(vbkForkTip->getHeader(), vbkPopTx);
   ASSERT_EQ(vtb2.transaction.getHash(), vbkPopTx.getHash());
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
@@ -147,12 +147,12 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areStronglyEquivalent_scenario4_test) {
   const auto* endorsedVbkBlock2 = vbkTip->getAncestor(vbkTip->getHeight() - 11);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx1});
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx1);
   ASSERT_EQ(vtb1.transaction.getHash(), vbkPopTx1.getHash());
 
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx2});
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx2);
   ASSERT_EQ(vtb2.transaction.getHash(), vbkPopTx2.getHash());
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
@@ -175,14 +175,14 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario1_test) {
   const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx1});
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx1);
 
   ASSERT_EQ(vtb1.transaction.getHash(), vbkPopTx1.getHash());
 
   mineBtcBlocks(1);
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx2});
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx2);
 
   ASSERT_EQ(vtb2.transaction.getHash(), vbkPopTx2.getHash());
 
@@ -207,14 +207,14 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario2_test) {
   const auto* endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx1});
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx1);
   ASSERT_EQ(vtb1.transaction.getHash(), vbkPopTx1.getHash());
 
   // mine btc fork
   mineBtcBlocks(*btcFork, 10);
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx2});
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx2);
   ASSERT_EQ(vtb2.transaction.getHash(), vbkPopTx2.getHash());
 
   EXPECT_FALSE(mempool_tree.areStronglyEquivalent(vtb1, vtb2));
@@ -232,23 +232,23 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario2_test) {
 TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario3_test) {
   // mine 65 vbk blocks
   auto* vbkTip =
-      mineVbkBlocks(popminer->vbk().getParams().getKeystoneInterval() * 3);
+      mineVbkBlocks(popminer.vbk().getParams().getKeystoneInterval() * 3);
 
   // endorse VBK blocks
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(
-      vbkTip->getHeight() - popminer->vbk().getParams().getKeystoneInterval() +
+      vbkTip->getHeight() - popminer.vbk().getParams().getKeystoneInterval() +
       1);
   const auto* endorsedVbkBlock2 =
-      vbkTip->getAncestor(popminer->vbk().getParams().getKeystoneInterval());
+      vbkTip->getAncestor(popminer.vbk().getParams().getKeystoneInterval());
 
   auto vbkPopTx1 = generatePopTx(endorsedVbkBlock1->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx1});
-  auto vtb1 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx1);
+  auto vtb1 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx1);
   ASSERT_EQ(vtb1.transaction.getHash(), vbkPopTx1.getHash());
 
   auto vbkPopTx2 = generatePopTx(endorsedVbkBlock2->getHeader());
   vbkTip = mineVbkBlocks(1, {vbkPopTx2});
-  auto vtb2 = popminer->createVTB(vbkTip->getHeader(), vbkPopTx2);
+  auto vtb2 = popminer.createVTB(vbkTip->getHeader(), vbkPopTx2);
   ASSERT_EQ(vtb2.transaction.getHash(), vbkPopTx2.getHash());
 
   ASSERT_NE(vtb1.getId(), vtb2.getId());
@@ -272,7 +272,7 @@ TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario1_test) {
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock = chain[5];
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
 
   AltBlock containingBlock = generateNextBlock(chain.back());
@@ -297,7 +297,7 @@ TEST_F(MemPoolPrioritizationFixture, atv_areStronglyEquivalent_scenario2_test) {
   mineAltBlocks(10, chain);
 
   AltBlock endorsedBlock = chain[5];
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
 
   AltBlock containingBlock = generateNextBlock(chain.back());

@@ -205,12 +205,8 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * Set the very first (bootstrap) altchain block with POP enabled.
    *
    * Call this method before any use of AltBlockTree.
-   *
-   * @param[out] state validation state
-   * @return true if success, false if the block is invalid.
-   * @private
    */
-  VBK_CHECK_RETURN bool bootstrap(ValidationState& state);
+  void bootstrap();
 
   /**
    * Validate and add ALT block header to AltBlockTree.
@@ -425,7 +421,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @private
   const PopForkComparator& getComparator() const { return cmp_; }
   //! Accessor for Network Parameters stored in this tree
-  const AltChainParams& getParams() const { return *alt_config_; }
+  const AltChainParams& getParams() const { return alt_config_; }
   //! @private
   PayloadsIndex& getPayloadsIndex()  { return payloadsIndex_; }
   //! @private
@@ -454,7 +450,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   using base::removeLeaf;
 
  private:
-  const alt_config_t* alt_config_;
+  const alt_config_t& alt_config_;
   PopForkComparator cmp_;
   PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;

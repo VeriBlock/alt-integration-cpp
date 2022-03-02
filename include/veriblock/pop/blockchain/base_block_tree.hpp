@@ -21,6 +21,7 @@
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
 #include "chain.hpp"
+#include "finalized_payloads_index.hpp"
 #include "tree_algo.hpp"
 
 namespace altintegration {
@@ -425,8 +426,8 @@ struct BaseBlockTree {
   }
 
   virtual void overrideTip(index_t& to) {
-    VBK_LOG_DEBUG("SetTip=%s", to.toPrettyString());
     activeChain_.setTip(&to);
+    appliedBlockCount = activeChain_.blocksCount();
   }
 
   index_t& getRoot() const {
@@ -441,6 +442,26 @@ struct BaseBlockTree {
   size_t appliedBlockCount = 0;
 
  protected:
+  //! @private
+  void finalizeBlocks(int32_t maxReorgBlocks,
+                      int32_t preserveBlocksBehindFinal) {
+    auto* tip = this->getBestChain().tip();
+    VBK_ASSERT_MSG(tip, "%s tree must be bootstrapped", block_t::name());
+    VBK_ASSERT(!this->isLoadingBlocks_);
+
+    if (tip->getHeight() < maxReorgBlocks) {
+      // skip finalization
+      return;
+    }
+
+    int32_t firstBlockHeight = tip->getHeight() - maxReorgBlocks;
+    int32_t bootstrapBlockHeight = this->getRoot().getHeight();
+    firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
+    auto* finalizedIndex = this->getBestChain()[firstBlockHeight];
+    VBK_ASSERT(finalizedIndex != nullptr);
+    this->finalizeBlockImpl(*finalizedIndex, preserveBlocksBehindFinal);
+  }
+
   //! @private
   virtual void determineBestChain(index_t& candidate,
                                   ValidationState& state) = 0;
@@ -512,7 +533,10 @@ struct BaseBlockTree {
     VBK_ASSERT_MSG(inserted.second,
                    "attempted to create a blockindex with duplicate hash %s",
                    HexStr(shortHash));
-    return inserted.first->second.get();
+    auto* index = inserted.first->second.get();
+    // bootstrap blocks are finalized by default
+    index->finalized = true;
+    return index;
   }
 
   //! the block header is created in a deleted state
@@ -741,6 +765,10 @@ struct BaseBlockTree {
   }
 
  public:
+  const FinalizedPayloadsIndex<index_t>& getFinalizedPayloadsIndex() const {
+    return finalizedPayloadsIndex_;
+  }
+
   //! @private
   class DeferForkResolutionGuard {
     BaseBlockTree<Block>& tree_;
@@ -847,12 +875,22 @@ struct BaseBlockTree {
     VBK_LOG_DEBUG("Finalize %s, preserve %d blocks behind",
                   index.toShortPrettyString(),
                   preserveBlocksBehindFinal);
-    VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
+    VBK_ASSERT_MSG(appliedBlockCount == activeChain_.blocksCount(),
+                   "Tree=%s Applied=%d active chain=%d",
+                   block_t::name(),
+                   appliedBlockCount,
+                   activeChain_.blocksCount());
 
     index_t* finalizedBlock = &index;
 
     if (finalizedBlock == &this->getRoot()) {
+      if (finalizedBlock->finalized) {
+        // block is already finalized
+        return;
+      }
+
       finalizedBlock->finalized = true;
+      FinalizedPayloadsAddBlock(finalizedPayloadsIndex_, *finalizedBlock);
       return;
     }
 
@@ -925,10 +963,7 @@ struct BaseBlockTree {
         parallelBlocks.erase(finalizedBlock);
         for (auto* par : parallelBlocks) {
           // disconnect `par` from prev block
-          if (par->pprev != nullptr) {
-            par->pprev->pnext.erase(par);
-            par->pprev = nullptr;
-          }
+          par->disconnectFromPrev();
           deallocateTree(*par);
         }
       }
@@ -937,6 +972,10 @@ struct BaseBlockTree {
     // update active chain
     VBK_ASSERT(firstBlockHeight >= rootBlockHeight);
     size_t deallocatedBlocks = firstBlockHeight - rootBlockHeight;
+    if (deallocatedBlocks > 0) {
+      VBK_LOG_WARN(
+          "%s tree deallocated blocks: %d", block_t::name(), deallocatedBlocks);
+    }
     decreaseAppliedBlockCount(deallocatedBlocks);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
 
@@ -944,6 +983,7 @@ struct BaseBlockTree {
     index_t* ptr = finalizedBlock;
     while (ptr != nullptr && !ptr->finalized) {
       ptr->finalized = true;
+      FinalizedPayloadsAddBlock(finalizedPayloadsIndex_, *ptr);
       ptr = ptr->pprev;
     }
   }
@@ -1098,6 +1138,9 @@ struct BaseBlockTree {
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
+  //! stores mapping of payload id -> its containing ALT/VBK block. For BTC tree
+  //! does nothing. stores payloads only from finalized blocks.
+  FinalizedPayloadsIndex<index_t> finalizedPayloadsIndex_;
 
   const BlockReader& blockProvider_;
 };

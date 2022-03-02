@@ -26,40 +26,29 @@ std::shared_ptr<PopContext> PopContext::create(
                                                       *ctx->config_->btc.params,
                                                       *ctx->config_->alt,
                                                       validatorWorkers);
-  ValidationState state;
 
   // first, bootstrap BTC
   if (ctx->config_->btc.blocks.size() == 0) {
-    ctx->altTree_->btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);
+    ctx->altTree_->btc().bootstrapWithGenesis(GetRegTestBtcBlock());
   } else if (ctx->config_->btc.blocks.size() == 1) {
-    ctx->altTree_->btc().bootstrapWithGenesis(ctx->config_->btc.blocks[0],
-                                              state);
+    ctx->altTree_->btc().bootstrapWithGenesis(ctx->config_->btc.blocks[0]);
   } else {
     ctx->altTree_->btc().bootstrapWithChain(
-        ctx->config_->btc.startHeight, ctx->config_->btc.blocks, state);
+        ctx->config_->btc.startHeight, ctx->config_->btc.blocks);
   }
-  VBK_ASSERT_MSG(
-      state.IsValid(), "BTC bootstrap block is invalid: %s", state.toString());
 
   // then, bootstrap VBK
   if (ctx->config_->vbk.blocks.size() == 0) {
-    ctx->altTree_->vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state);
+    ctx->altTree_->vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
   } else if (ctx->config_->vbk.blocks.size() == 1) {
-    ctx->altTree_->vbk().bootstrapWithGenesis(ctx->config_->vbk.blocks[0],
-                                              state);
+    ctx->altTree_->vbk().bootstrapWithGenesis(ctx->config_->vbk.blocks[0]);
   } else {
     ctx->altTree_->vbk().bootstrapWithChain(
-        ctx->config_->vbk.startHeight, ctx->config_->vbk.blocks, state);
+        ctx->config_->vbk.startHeight, ctx->config_->vbk.blocks);
   }
-  VBK_ASSERT_MSG(
-      state.IsValid(), "VBK bootstrap block is invalid: %s", state.toString());
 
   // then, bootstrap ALT
-  bool bootstrapped = ctx->altTree_->bootstrap(state);
-  VBK_ASSERT_MSG(
-      bootstrapped, "Can not bootstrap Alt Tree: %s", state.toString());
-  VBK_ASSERT_MSG(
-      state.IsValid(), "ALT bootstrap block is invalid: %s", state.toString());
+ ctx->altTree_->bootstrap();
   return ctx;
 }
 

@@ -57,7 +57,7 @@ TEST_P(PositiveTest, BootstrapSuccess) {
 
   AltBlockTree tree(alt, vbk, btc, pp, bp);
   ValidationState state;
-  ASSERT_TRUE(tree.bootstrap(state));
+  tree.bootstrap();
 
   auto* tip = tree.getBestChain().tip();
   ASSERT_TRUE(tip);
@@ -82,12 +82,7 @@ TEST_P(NegativeTest, BootstrapFail) {
 
   AltBlockTree tree(alt, vbk, btc, pp, bp);
   ValidationState state;
-  ASSERT_DEATH(
-      {
-        bool success = tree.bootstrap(state);
-        (void)success;
-      },
-      "");
+  ASSERT_DEATH({ tree.bootstrap(); }, "");
 }
 
 INSTANTIATE_TEST_SUITE_P(AltBlockTree,
@@ -121,7 +116,7 @@ TEST_F(AltBlockTreeTest, AssureBootstrapBtcBlockHasRefs_test) {
                           payloads_index};
   btc_block_tree& btc_tree = vbk_tree.btc();
 
-  ASSERT_TRUE(btc_tree.bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+  btc_tree.bootstrapWithGenesis(GetRegTestBtcBlock());
   auto* tip = btc_tree.getBestChain().tip();
   // bootstrap blocks have one ref always set
   ASSERT_GT(tip->getRefs().size(), 0);

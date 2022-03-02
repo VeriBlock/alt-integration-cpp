@@ -23,9 +23,9 @@ template struct BaseBlockTree<VbkBlock>;
 void VbkBlockTree::determineBestChain(index_t& candidate,
                                       ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  auto bestTip = getBestChain().tip();
-  VBK_ASSERT(bestTip != nullptr && "must be bootstrapped");
+  VBK_ASSERT(isBootstrapped());
 
+  auto bestTip = getBestChain().tip();
   if (bestTip->getHeight() >
       candidate.getHeight() + param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate: %s is behind tip more than %d blocks",
@@ -35,6 +35,8 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
     return;
   }
 
+  // POP FR must not be executed during block loading
+  VBK_ASSERT(!this->isLoadingBlocks_);
   auto p = cmp_.comparePopScore(candidate, state);
   auto result = p.first;
   auto reason = p.second;
@@ -59,6 +61,8 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
 
 bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_ASSERT(!this->isLoadingBlocks_);
+
   bool success = cmp_.setState(to, state);
   if (success) {
     overrideTip(to);
@@ -66,6 +70,8 @@ bool VbkBlockTree::setState(index_t& to, ValidationState& state) {
     // if setState failed, then 'to' must be invalid
     VBK_ASSERT(!to.isValid());
   }
+
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
   return success;
 }
 
@@ -126,8 +132,7 @@ void VbkBlockTree::removePayloads(index_t& index,
   updateTips();
 }
 
-void VbkBlockTree::unsafelyRemovePayload(const hash_t& hash,
-                                         const pid_t& pid) {
+void VbkBlockTree::unsafelyRemovePayload(const hash_t& hash, const pid_t& pid) {
   auto index = VbkTree::getBlockIndex(hash);
   VBK_ASSERT(index != nullptr &&
              "state corruption: the containing block is not found");
@@ -276,6 +281,8 @@ bool VbkBlockTree::addPayloads(const VbkBlock::hash_t& hash,
                 block_t::name(),
                 payloads.size(),
                 HexStr(hash));
+  VBK_ASSERT(!this->isLoadingBlocks_);
+
   if (payloads.empty()) {
     return true;
   }
@@ -374,6 +381,9 @@ bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
 bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
                                   ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
+  VBK_ASSERT(!this->isLoaded_);
+  this->isLoadingBlocks_ = true;
+
   auto hash = index.header->getHash();
   auto height = index.height;
 
@@ -398,19 +408,17 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 }
 
 void VbkBlockTree::finalizeBlocks() {
-  auto* tip = getBestChain().tip();
-  VBK_ASSERT(tip && "VBK tree must be bootstrapped");
+  VBK_ASSERT(!this->isLoadingBlocks_);
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
-  int32_t firstBlockHeight =
-      tip->getHeight() - getParams().getOldBlocksWindow();
-  int32_t bootstrapBlockHeight = getRoot().getHeight();
-  firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
-  auto* finalizedIndex = getBestChain()[firstBlockHeight];
-  VBK_ASSERT_MSG(finalizedIndex != nullptr, "Invalid VBK tree state");
+  // first, finalize VBK
+  base::finalizeBlocks(this->getParams().getMaxReorgBlocks(),
+                       this->getParams().preserveBlocksBehindFinal());
 
+  // then, finalize BTC
   btc().finalizeBlocks();
-  this->finalizeBlockImpl(*finalizedIndex,
-                          getParams().preserveBlocksBehindFinal());
+
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 }
 
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
@@ -444,6 +452,8 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
     tip = tip->pprev;
   }
 
+  VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
+
   return true;
 }
 
@@ -474,18 +484,6 @@ void assertBlockSanity(const VbkBlock& block) {
                  "Block hash and previous hash are equal = %s. A collision in "
                  "altchain hash?",
                  HexStr(block.getShortHash()));
-}
-
-template <>
-void removePayloadsFromIndex(PayloadsIndex& storage,
-                             BlockIndex<VbkBlock>& index,
-                             const CommandGroup& cg) {
-  VBK_ASSERT(cg.payload_type_name == &VTB::name());
-  auto& payloads = index.template getPayloadIds<VTB>();
-  auto it = std::find(payloads.rbegin(), payloads.rend(), cg.id);
-  VBK_ASSERT(it != payloads.rend());
-  index.removePayloadId<VTB>(cg.id);
-  storage.removeVbkPayloadIndex(index.getHash(), cg.id);
 }
 
 }  // namespace altintegration

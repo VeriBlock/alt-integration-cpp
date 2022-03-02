@@ -620,7 +620,9 @@ TEST(ToJson, ATV) {
 }
 
 TEST(ToJson, VbkBlockIndex) {
-  MockMiner m;
+  MockMiner m{AltChainParamsRegTest{},
+              VbkChainParamsRegTest{},
+              BtcChainParamsRegTest{}};
   picojson::value block =
       ToJSON<picojson::value>(*m.vbk().getBestChain().tip());
   std::string actual = block.serialize(true);
@@ -657,7 +659,9 @@ TEST(ToJson, VbkBlockIndex) {
 }
 
 TEST(ToJson, BtcBlockIndex) {
-  MockMiner m;
+  MockMiner m{AltChainParamsRegTest{},
+              VbkChainParamsRegTest{},
+              BtcChainParamsRegTest{}};
   auto* index = m.btc().getBestChain().tip();
   picojson::value block = ToJSON<picojson::value>(*index);
   std::string actual = block.serialize(true);
@@ -715,7 +719,7 @@ TEST(ToJson, AltParams) {
   "keystoneInterval": 5,
   "maxATVsInAltBlock": 1000,
   "maxAltchainFutureBlockTime": 600,
-  "maxReorgDistance": 2147483647,
+  "maxReorgBlocks": 2147483647,
   "maxVTBsInAltBlock": 200,
   "maxVbkBlocksInAltBlock": 200,
   "networkId": 0,

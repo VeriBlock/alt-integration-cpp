@@ -24,7 +24,7 @@ struct PopContextFixture : public ::testing::Test {
   PayloadsIndex payloadsIndex;
   VbkBlockTree local =
       VbkBlockTree(vbkp, btcp, payloadsProvider, blockProvider, payloadsIndex);
-  MockMiner remote;
+  MockMiner remote{altparam, vbkp, btcp};
 
   BlockIndex<BtcBlock>* forkPoint;
   BlockIndex<BtcBlock>* chainAtip;
@@ -34,8 +34,8 @@ struct PopContextFixture : public ::testing::Test {
   ValidationState state;
 
   PopContextFixture() {
-    EXPECT_TRUE(local.bootstrapWithGenesis(GetRegTestVbkBlock(), state));
-    EXPECT_TRUE(local.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state));
+    local.bootstrapWithGenesis(GetRegTestVbkBlock());
+    local.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
   }
 
   void SetUp() override {
@@ -130,6 +130,7 @@ TEST_F(PopContextFixture, A) {
             remote.btc().getBestChain().tip()->getHash());
 
   auto acceptAllVtbsFromVBKblock = [&](const BlockIndex<VbkBlock>* containing) {
+    VBK_ASSERT(containing != nullptr);
     auto vtbs = remote.getVTBs(containing->getHeader());
 
     ASSERT_TRUE(local.acceptBlockHeader(containing->getHeader(), state));

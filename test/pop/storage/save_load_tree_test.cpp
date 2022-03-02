@@ -11,10 +11,9 @@ using namespace altintegration;
 
 struct SaveLoadTreeTest : public PopTestFixture, public testing::Test {
   SaveLoadTreeTest() {
-    alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock(), state);
-    alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock(), state);
-    bool ok = alttree2.bootstrap(state);
-    VBK_ASSERT_MSG(ok, "Can not bootstrap ALT tree: %s", state.toString());
+    alttree2.btc().bootstrapWithGenesis(GetRegTestBtcBlock());
+    alttree2.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
+    alttree2.bootstrap();
 
     chain.push_back(altparam.getBootstrapBlock());
     createEndorsedAltChain(20, 3);
@@ -54,7 +53,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_NoUnconnectedBlockCheck) {
   mineAltBlocks(20, chain);
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -99,7 +98,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test) {
   mineAltBlocks(20, chain);
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -144,7 +143,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test2) {
   mineAltBlocks(20, chain);
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -182,7 +181,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
   mineAltBlocks(20, chain);
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -224,19 +223,19 @@ TEST_F(SaveLoadTreeTest, ReloadWithoutDuplicates_test3) {
 TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
   PopData popData;
 
-  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
+  auto vbkPopTx1 = popminer.createVbkPopTxEndorsingVbkBlock(
+      popminer.vbkTip()->getHeader(), popminer.btcTip()->getHash());
 
   // both VTBs should be contained in the same block
   BlockIndex<VbkBlock>* containingVbkBlock =
-      popminer->mineVbkBlocks(1, {vbkPopTx1});
+      popminer.mineVbkBlocks(1, {vbkPopTx1});
 
-  auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  auto vtb1 = popminer.createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
   popData.vtbs = {vtb1};
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
                  containingVbkBlock->getHash(),
-                 popminer->vbk());
+                 popminer.vbk());
   payloadsProvider.writePayloads(popData);
 
   // manually add the VBK context to alttree
@@ -264,19 +263,19 @@ void emptyValidator(const BlockIndex<VbkBlock>&) {}
 TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   PopData popData;
 
-  auto vbkPopTx1 = popminer->createVbkPopTxEndorsingVbkBlock(
-      popminer->vbkTip()->getHeader(), popminer->btcTip()->getHash());
+  auto vbkPopTx1 = popminer.createVbkPopTxEndorsingVbkBlock(
+      popminer.vbkTip()->getHeader(), popminer.btcTip()->getHash());
 
   // both VTBs should be contained in the same block
   BlockIndex<VbkBlock>* containingVbkBlock =
-      popminer->mineVbkBlocks(1, {vbkPopTx1});
+      popminer.mineVbkBlocks(1, {vbkPopTx1});
 
-  auto vtb1 = popminer->createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
+  auto vtb1 = popminer.createVTB(containingVbkBlock->getHeader(), vbkPopTx1);
   popData.vtbs = {vtb1};
   fillVbkContext(popData.context,
                  alttree.vbk().getBestChain().tip()->getHash(),
                  containingVbkBlock->getHash(),
-                 popminer->vbk());
+                 popminer.vbk());
   payloadsProvider.writePayloads(popData);
 
   // manually add the VBK context to alttree
@@ -321,7 +320,7 @@ TEST_F(SaveLoadTreeTest, SaveUpdatedBlock_test) {
   endorsedIndex = alttree.getBlockIndex(endorsedBlock.getHash());
   ASSERT_FALSE(endorsedIndex->isDirty());
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);
@@ -380,7 +379,7 @@ TEST_F(SaveLoadTreeTest, CheckForDirtyEndorsedBlocks_test) {
   mineAltBlocks(20, chain);
   AltBlock endorsedBlock = chain[5];
 
-  VbkTx tx = popminer->createVbkTxEndorsingAltBlock(
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
       generatePublicationData(endorsedBlock));
   AltBlock containingBlock = generateNextBlock(chain.back());
   chain.push_back(containingBlock);

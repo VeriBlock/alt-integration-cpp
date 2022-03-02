@@ -89,7 +89,7 @@ class PopParamsResponse:
     finalityDelay: int
     keystoneInterval: int
     maxAltchainFutureBlockTime: int
-    maxReorgDistance: int
+    maxReorgBlocks: int
 
 
 @dataclass

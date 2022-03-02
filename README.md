@@ -1,5 +1,6 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alt-integration-cpp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alt-integration-cpp)
 ![CI](https://github.com/VeriBlock/alt-integration-cpp/workflows/CI/badge.svg)
-![Coverage](https://codecov.io/gh/veriblock/alt-integration-cpp/branch/master/graphs/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/VeriBlock/alt-integration-cpp/branch/master/graph/badge.svg?token=jMNSLO1LCr)](https://codecov.io/gh/VeriBlock/alt-integration-cpp)
 
 This repository contains a C++11 `veriblock-pop-cpp` library - an implementation of VeriBlock Proof-of-Proof ("POP") consensus protocol for prevention of 51% attacks.
 

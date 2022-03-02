@@ -46,7 +46,12 @@ VbkBlock::hash_t VbkBlock::calculateHash() const {
   WriteStream stream;
   toRaw(stream);
   auto& header = stream.data();
+  #if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
+  // use single sha instead of progpow hash in fuzzing
+  return sha256(header).trim<hash_t::size()>();
+  #else
   return progPowHash(header);
+  #endif
 }
 
 const VbkBlock::hash_t& VbkBlock::getHash() const {
