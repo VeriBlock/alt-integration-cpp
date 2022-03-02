@@ -90,8 +90,8 @@ struct E2EState {
  };
 
  struct BtcBlockRelation {
+   BtcTxRelation tx;
    BtcBlock btc_block;
-   std::vector<BtcTxRelation> txs;
  };
 
   MockMiner mock_miner;
