@@ -12,14 +12,6 @@
 namespace altintegration {
 namespace testing_utils {
 
-ActionOption GetRandomAction() {
-  return (ActionOption)(rand() % (uint8_t)ActionOption::kMaxValue);
-}
-
-ForkOption GetRandomFork() {
-  return (ForkOption)(rand() % (uint8_t)ForkOption::kMaxValue);
-}
-
 template <>
 AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>& previous,
                                  const AltChainParams&) {
@@ -49,21 +41,20 @@ BtcBlock generateRandomNextBlock(const BlockIndex<BtcBlock>& previous,
   return miner.createNextBlock(previous);
 }
 
-void E2EState::applyAction(ActionOption action,
-                           ForkOption fork,
-                           AltBlockTree& tree,
-                           MemPool& mempool) {
+void E2EState::createAction(CreateOption action,
+                            ForkOption fork,
+                            AltBlockTree& tree,
+                            MemPool& mempool) {
   ValidationState state;
-
   switch (action) {
-    case ActionOption::CREATE_ALT: {
+    case CreateOption::CREATE_ALT: {
       // generate new block
       auto& block = *getBlock(fork, tree);
       auto new_block = generateRandomNextBlock(block, tree.getParams());
 
       break;
     }
-    case ActionOption::CREATE_VBK: {
+    case CreateOption::CREATE_VBK: {
       // generate new block
       auto& block = *getBlock(fork, tree.vbk());
       auto new_block = generateRandomNextBlock(block, tree.vbk().getParams());
@@ -71,7 +62,7 @@ void E2EState::applyAction(ActionOption action,
       mempool.submit(new_block, state);
       break;
     }
-    case ActionOption::CREATE_BTC: {
+    case CreateOption::CREATE_BTC: {
       // generate new block
       auto& block = *getBlock(fork, tree.btc());
 
@@ -92,14 +83,14 @@ void E2EState::applyAction(ActionOption action,
       this->btc_txs.clear();
       break;
     }
-    case ActionOption::CREATE_BTC_TX: {
+    case CreateOption::CREATE_BTC_TX: {
       auto& block = *getBlock(fork, tree.vbk());
       auto tx = mock_miner.createBtcTxEndorsingVbkBlock(block.getHeader());
 
       this->btc_txs.push_back({tx, block.getHeader()});
       break;
     }
-    case ActionOption::CREATE_VBK_TX: {
+    case CreateOption::CREATE_VBK_TX: {
       auto& block = *getBlock(fork, tree);
 
       auto& atvs = block.getPayloadIds<ATV>();
@@ -121,7 +112,7 @@ void E2EState::applyAction(ActionOption action,
       this->vbk_txs.push_back(tx);
       break;
     }
-    case ActionOption::CREATE_VBK_POP_TX: {
+    case CreateOption::CREATE_VBK_POP_TX: {
       if (!this->btc_blocks.empty()) {
         auto& block = this->btc_blocks.front();
         auto tx = mock_miner.createVbkPopTxEndorsingVbkBlock(

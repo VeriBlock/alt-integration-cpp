@@ -16,7 +16,7 @@
 namespace altintegration {
 namespace testing_utils {
 
-enum class ActionOption : uint8_t {
+enum class CreateOption : uint8_t {
   CREATE_ALT,
   CREATE_VBK,
   CREATE_BTC,
@@ -29,6 +29,14 @@ enum class ActionOption : uint8_t {
   kMaxValue = CREATE_VBK_POP_TX
 };
 
+enum class SubmitOption : uint8_t {
+  SUBMIT_ATV,
+  SUBMIT_VTB,
+  SUBMIT_VBK,
+
+  kMaxValue = SUBMIT_VBK
+};
+
 enum class ForkOption : uint8_t {
   NEXT_AFTER_CURRENT_TIP,
   NEXT_AFTER_ANY_TIP,
@@ -37,9 +45,10 @@ enum class ForkOption : uint8_t {
   kMaxValue = RANDOM_BLOCK
 };
 
-ActionOption GetRandomAction();
-
-ForkOption GetRandomFork();
+template <typename OptionT>
+OptionT GetRandomOption() {
+  return (OptionT)(rand() % (uint8_t)OptionT::kMaxValue);
+}
 
 template <typename block_t, typename params_t>
 block_t generateRandomNextBlock(const BlockIndex<block_t>&, const params_t&);
@@ -77,22 +86,21 @@ const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
 }
 
 struct E2EState {
-  void applyAction(ActionOption action,
-                   ForkOption fork,
-                   AltBlockTree& current_state,
-                   MemPool& mempool);
+  void createAction(CreateOption action,
+                    ForkOption fork,
+                    AltBlockTree& current_state,
+                    MemPool& mempool);
 
  private:
+  struct BtcTxRelation {
+    BtcTx btc_tx;
+    VbkBlock endorsed_block;
+  };
 
- struct BtcTxRelation {
-   BtcTx btc_tx;
-   VbkBlock endorsed_block;
- };
-
- struct BtcBlockRelation {
-   BtcTxRelation tx;
-   BtcBlock btc_block;
- };
+  struct BtcBlockRelation {
+    BtcTxRelation tx;
+    BtcBlock btc_block;
+  };
 
   MockMiner mock_miner;
 
