@@ -176,34 +176,31 @@ struct VbkMerkleTree {
   }
 
   VbkMerklePath getMerklePath(const hash_t& hash, TreeIndex treeIndex) const {
+    VbkMerklePath merklePath;
+    merklePath.subject = hash;
+    merklePath.treeIndex = (int32_t)treeIndex;
     switch (treeIndex) {
       case TreeIndex::POP: {
         auto it = this->pop_tree.getHashIndices().find(hash);
         VBK_ASSERT(it != this->pop_tree.getHashIndices().end());
-        size_t index = it->second;
+        int32_t index = it->second;
 
-        VbkMerklePath merklePath;
-        merklePath.treeIndex = (int32_t)treeIndex;
         merklePath.index = index;
-        merklePath.subject = hash;
         merklePath.layers = this->pop_tree.getMerklePathLayers(index);
-        return merklePath;
+        break;
       }
       case TreeIndex::NORMAL: {
         auto it = this->normal_tree.getHashIndices().find(hash);
         VBK_ASSERT(it != this->normal_tree.getHashIndices().end());
-        size_t index = it->second;
+        int32_t index = it->second;
 
-        VbkMerklePath merklePath;
-        merklePath.treeIndex = (int32_t)treeIndex;
         merklePath.index = index;
-        merklePath.subject = hash;
         merklePath.layers = this->normal_tree.getMerklePathLayers(index);
-        return merklePath;
-      }
-      default:
         break;
+      }
     }
+
+    return merklePath;
   }
 
  private:
