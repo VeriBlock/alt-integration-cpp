@@ -65,7 +65,8 @@ ATV MockMiner::createATV(const VbkBlock& blockOfProof,
                          const VbkTx& transaction) const {
   ATV atv;
   atv.transaction = transaction;
-  atv.merklePath = getMerklePath(blockOfProof, transaction.getHash());
+  atv.merklePath = getMerklePath(
+      blockOfProof, transaction.getHash(), VbkMerkleTree::TreeIndex::NORMAL);
   atv.blockOfProof = blockOfProof;
   return atv;
 }
@@ -98,7 +99,8 @@ VTB MockMiner::createVTB(const VbkBlock& containingBlock,
                          const VbkPopTx& transaction) const {
   VTB vtb;
   vtb.transaction = transaction;
-  vtb.merklePath = getMerklePath(containingBlock, transaction.getHash());
+  vtb.merklePath = getMerklePath(
+      containingBlock, transaction.getHash(), VbkMerkleTree::TreeIndex::POP);
   vtb.containingBlock = containingBlock;
   return vtb;
 }
@@ -283,9 +285,9 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(
     return acceptBlock(vbk_tree_, block);
   }
 
-  VbkMerkleTree merkleTree(hashAll(transactions), 1);  // this is NORMAL tx
+  VbkMerkleTree merkleTree(hashAll(transactions), {});
   const auto& merkleRoot =
-      merkleTree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+      merkleTree.getMerkleRoot().template trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 
   VbkBlock block = vbk_miner_.createNextBlock(tip, merkleRoot);
   BlockIndex<VbkBlock>* blockIndex = acceptBlock(vbk_tree_, block);
@@ -303,9 +305,9 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(
     return acceptBlock(vbk_tree_, block);
   }
 
-  VbkMerkleTree merkleTree(hashAll(transactions), 0);  // this is POP tx
+  VbkMerkleTree merkleTree({}, hashAll(transactions));
   const auto& merkleRoot =
-      merkleTree.getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+      merkleTree.getMerkleRoot().template trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 
   VbkBlock block = vbk_miner_.createNextBlock(tip, merkleRoot);
   BlockIndex<VbkBlock>* blockIndex = acceptBlock(vbk_tree_, block);
@@ -316,6 +318,24 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(
   }
 
   return blockIndex;
+}
+
+BlockIndex<VbkBlock>* MockMiner::mineBlock(
+    const BlockIndex<VbkBlock>& tip,
+    const std::vector<VbkTx>& txs,
+    const std::vector<VbkPopTx>& pop_txs) {
+  if (txs.empty() && pop_txs.empty()) {
+    VbkBlock block = vbk_miner_.createNextBlock(tip);
+    return acceptBlock(vbk_tree_, block);
+  }
+
+  auto txs_hash = hashAll(txs);
+  auto pop_txs_hash = hashAll(pop_txs);
+
+  VbkMerkleTree tx_merkleTree(hashAll(txs), {});
+  VbkMerkleTree pop_tx_merkleTree({}, hashAll(pop_txs));
+
+  return nullptr;
 }
 
 BlockIndex<BtcBlock>* MockMiner::mineBlock(
@@ -360,12 +380,14 @@ bool MockMiner::saveVTBs(BlockIndex<VbkBlock>* blockIndex,
   return true;
 }
 
-VbkMerklePath MockMiner::getMerklePath(const VbkBlock& block,
-                                       const uint256& txHash) const {
+VbkMerklePath MockMiner::getMerklePath(
+    const VbkBlock& block,
+    const uint256& txHash,
+    VbkMerkleTree::TreeIndex treeIndex) const {
   auto it = vbk_merkle_trees_.find(block.getHash());
   VBK_ASSERT(it != vbk_merkle_trees_.end());
   const auto& merkleTree = it->second;
-  return merkleTree.getMerklePath(txHash);
+  return merkleTree.getMerklePath(txHash, treeIndex);
 }
 
 MerklePath MockMiner::getMerklePath(const BtcBlock& block,

@@ -40,8 +40,8 @@ TEST_F(Scenario8, scenario_8) {
   Miner<VbkBlock, VbkChainParams> vbk_miner(popminer.vbk().getParams());
 
   // mine 500 vbk blocks
-  auto* vbkTip = popminer.mineVbkBlocks(
-      vbkparam.getEndorsementSettlementInterval() + 100);
+  auto* vbkTip =
+      popminer.mineVbkBlocks(vbkparam.getEndorsementSettlementInterval() + 100);
 
   // endorse block 490
   const auto* endorsedVbkBlock1 = vbkTip->getAncestor(vbkTip->getHeight() - 10);
@@ -55,8 +55,7 @@ TEST_F(Scenario8, scenario_8) {
   // generate invalid VTB
   // build merkle tree
   auto hashes = hashAll<VbkPopTx>({popTx1, popTx2});
-  const int32_t treeIndex = 0;  // this is POP tx
-  VbkMerkleTree mtree(hashes, treeIndex);
+  VbkMerkleTree mtree({}, hashes);
 
   // create containing block
   auto containingVbkBlock = vbk_miner.createNextBlock(
@@ -66,10 +65,11 @@ TEST_F(Scenario8, scenario_8) {
   // Create VTB
   VTB vtb1;
   vtb1.transaction = popTx1;
-  vtb1.merklePath.treeIndex = treeIndex;
+  vtb1.merklePath.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
   vtb1.merklePath.index = 0;
   vtb1.merklePath.subject = hashes[0];
-  vtb1.merklePath.layers = mtree.getMerklePathLayers(0);
+  vtb1.merklePath.layers =
+      mtree.getMerklePathLayers(0, VbkMerkleTree::TreeIndex::POP);
   vtb1.containingBlock = containingVbkBlock;
 
   ASSERT_TRUE(checkVTB(
@@ -79,10 +79,11 @@ TEST_F(Scenario8, scenario_8) {
   // Create VTB
   VTB vtb2;
   vtb2.transaction = popTx2;
-  vtb2.merklePath.treeIndex = treeIndex;
+  vtb2.merklePath.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
   vtb2.merklePath.index = 1;
   vtb2.merklePath.subject = hashes[1];
-  vtb2.merklePath.layers = mtree.getMerklePathLayers(1);
+  vtb2.merklePath.layers =
+      mtree.getMerklePathLayers(1, VbkMerkleTree::TreeIndex::POP);
   vtb2.containingBlock = containingVbkBlock;
 
   EXPECT_TRUE(checkVTB(

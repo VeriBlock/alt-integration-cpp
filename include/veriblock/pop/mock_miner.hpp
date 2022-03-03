@@ -152,6 +152,10 @@ class MockMiner {
   BlockIndex<VbkBlock>* mineBlock(const BlockIndex<VbkBlock>& tip,
                                   const std::vector<VbkPopTx>& transactions);
 
+  BlockIndex<VbkBlock>* mineBlock(const BlockIndex<VbkBlock>& tip,
+                                  const std::vector<VbkTx>& txs,
+                                  const std::vector<VbkPopTx>& pop_txs);
+
   BlockIndex<BtcBlock>* mineBlock(const BlockIndex<BtcBlock>& tip,
                                   const std::vector<BtcTx>& transactions);
 
@@ -159,7 +163,8 @@ class MockMiner {
                 const std::vector<VbkPopTx>& transactions);
 
   VbkMerklePath getMerklePath(const VbkBlock& block,
-                              const uint256& txHash) const;
+                              const uint256& txHash,
+                              VbkMerkleTree::TreeIndex treeIndex) const;
   MerklePath getMerklePath(const BtcBlock& block, const uint256& txHash) const;
 
   const AltChainParams& alt_params_;

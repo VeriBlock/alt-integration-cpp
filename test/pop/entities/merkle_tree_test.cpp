@@ -6,14 +6,12 @@
 #include <gtest/gtest.h>
 
 #include <veriblock/pop/entities/merkle_tree.hpp>
-#include <veriblock/pop/stateless_validation.hpp>
-
 #include <veriblock/pop/literals.hpp>
+#include <veriblock/pop/stateless_validation.hpp>
 
 using namespace altintegration;
 
 struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
-  int32_t treeIndex = 0;  // only POP
   std::vector<VbkPopTx::hash_t> txes;
   std::shared_ptr<VbkMerkleTree> mtree;
 
@@ -22,14 +20,15 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
     txes.clear();
     std::generate_n(
         std::back_inserter(txes), n, [&]() { return ArithUint256(i++); });
-    mtree = std::make_shared<VbkMerkleTree>(txes, treeIndex);
+    mtree = std::make_shared<VbkMerkleTree>(
+        std::vector<typename VbkPopTx::hash_t>{}, txes);
   }
 
   VbkMerklePath makePath(int n) {
     VbkMerklePath path;
-    path.layers = mtree->getMerklePathLayers(n);
+    path.layers = mtree->getMerklePathLayers(n, VbkMerkleTree::TreeIndex::POP);
     path.subject = txes[n];
-    path.treeIndex = treeIndex;
+    path.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
     path.index = n;
     return path;
   }
