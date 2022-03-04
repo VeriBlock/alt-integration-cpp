@@ -8,8 +8,8 @@
 
 #include <algorithm>
 #include <deque>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/entities/merkle_path.hpp>
@@ -24,7 +24,7 @@ struct MerkleTree {
   MerkleTree(Specific& instance, const std::vector<hash_t>& hashes)
       : instance(instance) {
     buildTree(hashes);
-    for (size_t i = 0; i < hashes.size(); i++) {
+    for (int32_t i = 0; i < (int32_t)hashes.size(); i++) {
       hash_indices[hashes[i]] = i;
     }
   }
@@ -67,6 +67,10 @@ struct MerkleTree {
 
   const std::vector<std::vector<hash_t>>& getLayers() const { return layers; }
 
+  const std::unordered_map<hash_t, int32_t>& getHashIndices() const {
+    return hash_indices;
+  }
+
  protected:
   void buildTree(std::vector<hash_t> layer) {
     size_t n = layer.size();
@@ -94,18 +98,23 @@ struct MerkleTree {
     }
   }
 
- protected:
   Specific& instance;
   std::vector<std::vector<hash_t>> layers;
-  std::unordered_map<hash_t, size_t> hash_indices;
+  std::unordered_map<hash_t, int32_t> hash_indices;
 };
 
 //! @private
-struct VbkMerkleTree : public MerkleTree<VbkMerkleTree, uint256> {
-  using base = MerkleTree<VbkMerkleTree, uint256>;
+struct VbkMerkleTree {
+  using hash_t = typename MerkleTree<VbkMerkleTree, uint256>::hash_t;
 
-  explicit VbkMerkleTree(const std::vector<hash_t>& txes, int treeIndex)
-      : base(*this, txes), treeIndex(treeIndex) {}
+  enum class TreeIndex : int32_t {
+    POP = 0,
+    NORMAL = 1,
+  };
+
+  explicit VbkMerkleTree(const std::vector<hash_t>& normal_hashes,
+                         const std::vector<hash_t>& pop_hashes)
+      : pop_tree(*this, pop_hashes), normal_tree(*this, normal_hashes) {}
 
   hash_t hash(const hash_t& a, const hash_t& b) { return sha256(a, b); }
 
@@ -119,48 +128,85 @@ struct VbkMerkleTree : public MerkleTree<VbkMerkleTree, uint256> {
   }
 
   hash_t finalizeRoot() {
-    if (layers.empty()) {
+    if (this->pop_tree.getLayers().empty() &&
+        this->normal_tree.getLayers().empty()) {
       return hash_t{};
     }
 
-    if (layers.size() == 1) {
+    if (this->pop_tree.getLayers().size() == 1 &&
+        this->normal_tree.getLayers().empty()) {
       // the only layer
-      VBK_ASSERT(layers[0].size() == 1);
-      return layers[0][0];
+      VBK_ASSERT(this->pop_tree.getLayers()[0].size() == 1);
+      return this->pop_tree.getLayers()[0][0];
     }
 
-    auto& normalMerkleRoot = layers.back()[0];
-    auto cursor = hash_t();
-    VBK_ASSERT_MSG(treeIndex >= 0 && treeIndex <= 1,
-                   "tree index can be either 0 or 1");
-    if (treeIndex == 0) {
-      // POP TXes: zeroes are on the left subtree
-      cursor = hash(normalMerkleRoot, cursor);
-    } else if (treeIndex == 1) {
-      // NORMAL TXes: zeroes are on the right subtree
-      cursor = hash(cursor, normalMerkleRoot);
+    if (this->normal_tree.getLayers().size() == 1 &&
+        this->pop_tree.getLayers().empty()) {
+      // the only layer
+      VBK_ASSERT(this->normal_tree.getLayers()[0].size() == 1);
+      return this->normal_tree.getLayers()[0][0];
+    }
+
+    auto pop_hash = hash_t{};
+    auto normal_hash = hash_t{};
+
+    if (!this->pop_tree.getLayers().empty()) {
+      pop_hash = this->pop_tree.getLayers().back()[0];
+    }
+
+    if (!this->normal_tree.getLayers().empty()) {
+      normal_hash = this->normal_tree.getLayers().back()[0];
     }
 
     // add metapackage hash (also all zeroes) to the left subtree
     auto metapackageHash = hash_t();
-    return hash(metapackageHash, cursor);
+    return hash(metapackageHash, hash(pop_hash, normal_hash));
   }
 
-  VbkMerklePath getMerklePath(const hash_t& hash) const {
-    auto it = hash_indices.find(hash);
-    VBK_ASSERT(it != hash_indices.end());
-    size_t index = it->second;
+  hash_t getMerkleRoot() { return this->finalizeRoot(); }
 
+  std::vector<hash_t> getMerklePathLayers(size_t index,
+                                          TreeIndex treeIndex) const {
+    switch (treeIndex) {
+      case TreeIndex::POP:
+        return this->pop_tree.getMerklePathLayers(index);
+      case TreeIndex::NORMAL:
+        return this->normal_tree.getMerklePathLayers(index);
+    }
+    return {};
+  }
+
+  VbkMerklePath getMerklePath(const hash_t& hash, TreeIndex treeIndex) const {
     VbkMerklePath merklePath;
-    merklePath.treeIndex = treeIndex;
-    merklePath.index = (int32_t)index;
     merklePath.subject = hash;
-    merklePath.layers = getMerklePathLayers(index);
+    merklePath.treeIndex = (int32_t)treeIndex;
+    switch (treeIndex) {
+      case TreeIndex::POP: {
+        auto it = this->pop_tree.getHashIndices().find(hash);
+        VBK_ASSERT(it != this->pop_tree.getHashIndices().end());
+        int32_t index = it->second;
+
+        merklePath.index = index;
+        merklePath.layers = this->pop_tree.getMerklePathLayers(index);
+        break;
+      }
+      case TreeIndex::NORMAL: {
+        auto it = this->normal_tree.getHashIndices().find(hash);
+        VBK_ASSERT(it != this->normal_tree.getHashIndices().end());
+        int32_t index = it->second;
+
+        merklePath.index = index;
+        merklePath.layers = this->normal_tree.getMerklePathLayers(index);
+        break;
+      }
+    }
+
     return merklePath;
   }
 
  private:
-  int treeIndex = 0;
+  MerkleTree<VbkMerkleTree, uint256> pop_tree;
+  MerkleTree<VbkMerkleTree, uint256> normal_tree;
 };
 
 //! @private
