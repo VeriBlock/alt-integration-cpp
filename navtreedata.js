@@ -65,12 +65,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
-"integration_12_rpc.html#autotoc_md21",
+"integration_12_rpc.html#autotoc_md20",
 "namespacealtintegration.html#a934d4fb44481484f81964f7ecc89efc4",
 "structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a",
-"structaltintegration_1_1Coin.html#acd1cd059720716c3a264e15bc2680939",
-"structaltintegration_1_1VbkBlock.html#a7e393edfc53708a06a1fdb60794c5512",
-""
+"structaltintegration_1_1Config.html",
+"structaltintegration_1_1VbkBlockTree.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

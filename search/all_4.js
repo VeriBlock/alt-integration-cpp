@@ -1,8 +1,8 @@
 var searchData=
 [
   ['deallocateblock_0',['deallocateBlock',['../structaltintegration_1_1BaseBlockTree.html#a2a26a4462a19387064dd2534e0cf8179',1,'altintegration::BaseBlockTree']]],
-  ['decodebase58_1',['DecodeBase58',['../namespacealtintegration.html#a87333c556657fb6dd7704dc53e104dee',1,'altintegration']]],
-  ['decodebase59_2',['DecodeBase59',['../namespacealtintegration.html#aa2af867cfdfbd0090920bb493abe64b6',1,'altintegration']]],
+  ['decodebase58_1',['DecodeBase58',['../namespacealtintegration.html#a54f2eee9f431d8283398fc6fd1eb201c',1,'altintegration']]],
+  ['decodebase59_2',['DecodeBase59',['../namespacealtintegration.html#aca21a066380109aad425d7e0f3397694',1,'altintegration']]],
   ['defaultpoprewardscalculator_3',['DefaultPopRewardsCalculator',['../structaltintegration_1_1DefaultPopRewardsCalculator.html',1,'altintegration']]],
   ['deserialize_5ftype_4',['deserialize_type',['../structaltintegration_1_1btc_1_1deserialize__type.html',1,'altintegration::btc']]],
   ['deserializefromhex_5',['DeserializeFromHex',['../namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa',1,'altintegration']]],

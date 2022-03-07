@@ -96,7 +96,6 @@ var hierarchy =
     [ "altintegration::btc::FilterLoadMsg", "structaltintegration_1_1btc_1_1FilterLoadMsg.html", null ],
     [ "altintegration::FinalizedPayloadsIndex< ContainerIndex >", "structaltintegration_1_1FinalizedPayloadsIndex.html", null ],
     [ "altintegration::FinalizedPayloadsIndex< altintegration::BlockIndex >", "structaltintegration_1_1FinalizedPayloadsIndex.html", null ],
-    [ "altintegration::FinalizedPayloadsIndex< block_index_t >", "structaltintegration_1_1FinalizedPayloadsIndex.html", null ],
     [ "altintegration::Finalizer", "structaltintegration_1_1Finalizer.html", null ],
     [ "fmt::formatter< altintegration::Blob< N > >", "structfmt_1_1formatter_3_01altintegration_1_1Blob_3_01N_01_4_01_4.html", null ],
     [ "altintegration::btc::GetBlocksMsg", "structaltintegration_1_1btc_1_1GetBlocksMsg.html", null ],
@@ -121,9 +120,6 @@ var hierarchy =
     [ "altintegration::btc::NotFoundMsg", "structaltintegration_1_1btc_1_1NotFoundMsg.html", null ],
     [ "altintegration::btc::OutPoint", "structaltintegration_1_1btc_1_1OutPoint.html", null ],
     [ "altintegration::Output", "structaltintegration_1_1Output.html", null ],
-    [ "altintegration::PayloadsIndex< IndexT >", "structaltintegration_1_1PayloadsIndex.html", null ],
-    [ "altintegration::PayloadsIndex< altintegration::BlockIndex >", "structaltintegration_1_1PayloadsIndex.html", null ],
-    [ "altintegration::PayloadsIndex< block_index_t >", "structaltintegration_1_1PayloadsIndex.html", null ],
     [ "altintegration::PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", [
       [ "altintegration::adaptors::PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", null ]
     ] ],

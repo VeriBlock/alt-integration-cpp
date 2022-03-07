@@ -16,12 +16,13 @@ var searchData=
   ['isconnected_13',['isConnected',['../structaltintegration_1_1BlockIndex.html#ae52c40ac66b169d4e9d48c4640d84acb',1,'altintegration::BlockIndex']]],
   ['isderivedfrompublickey_14',['isDerivedFromPublicKey',['../structaltintegration_1_1Address.html#a04792bc59635322927aa0ab505b95391',1,'altintegration::Address']]],
   ['iskeystone_15',['isKeystone',['../namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba',1,'altintegration']]],
-  ['isknown_16',['isKnown',['../structaltintegration_1_1MemPool.html#a35e5280186e7b9474bd15a47041b0caf',1,'altintegration::MemPool']]],
+  ['isknown_16',['isKnown',['../structaltintegration_1_1MemPool.html#ac12ccabcc8eb02e59adfaa4d21e19d1b',1,'altintegration::MemPool']]],
   ['isloaded_5f_17',['isLoaded_',['../structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9',1,'altintegration::BaseBlockTree']]],
   ['isloadingblocks_5f_18',['isLoadingBlocks_',['../structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901',1,'altintegration::BaseBlockTree']]],
   ['ispoppayload_19',['IsPopPayload',['../structaltintegration_1_1IsPopPayload.html',1,'altintegration']]],
-  ['isstatefulduplicate_20',['isStatefulDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa278942a6bc04fef8e003f64ee95d772',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
-  ['isstatelessduplicate_21',['isStatelessDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae5fe69d99955528958cab66206d9c57d',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
-  ['isvalidinvalidationreason_22',['isValidInvalidationReason',['../namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf',1,'altintegration']]],
-  ['isvalidtip_23',['isValidTip',['../structaltintegration_1_1BlockIndex.html#afbf74ee9971633b0b8e62dc07fbd1b0d',1,'altintegration::BlockIndex']]]
+  ['isspace_20',['IsSpace',['../namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40',1,'altintegration']]],
+  ['isstatefulduplicate_21',['isStatefulDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa278942a6bc04fef8e003f64ee95d772',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
+  ['isstatelessduplicate_22',['isStatelessDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae5fe69d99955528958cab66206d9c57d',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
+  ['isvalidinvalidationreason_23',['isValidInvalidationReason',['../namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf',1,'altintegration']]],
+  ['isvalidtip_24',['isValidTip',['../structaltintegration_1_1BlockIndex.html#afbf74ee9971633b0b8e62dc07fbd1b0d',1,'altintegration::BlockIndex']]]
 ];

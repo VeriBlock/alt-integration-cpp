@@ -98,7 +98,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltBlockTree_1
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section invariant"><dt>Invariant</dt><dd>the tree must not be modified during the lifetime of the object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00248">248</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00249">249</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -114,6 +114,8 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1AltBlockTree_1
 Public Types</h2></td></tr>
 <tr class="memitem:a546b2814b34625dade37694ba4881b62"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a546b2814b34625dade37694ba4881b62">tree_t</a> = <a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a></td></tr>
 <tr class="separator:a546b2814b34625dade37694ba4881b62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a117d0792b35ac17ffc403dfe62d09603"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a117d0792b35ac17ffc403dfe62d09603">payload_index_t</a> = PayloadsIndex</td></tr>
+<tr class="separator:a117d0792b35ac17ffc403dfe62d09603"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c395c67ad93891f5bb52f50fc13f72f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a6c395c67ad93891f5bb52f50fc13f72f">block_index_t</a> = typename <a class="el" href="structaltintegration_1_1BlockIndex.html">tree_t::index_t</a></td></tr>
 <tr class="separator:a6c395c67ad93891f5bb52f50fc13f72f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b93191f1489c599cc65d0dcb4a100ce"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#a1b93191f1489c599cc65d0dcb4a100ce">id_vector_t</a> = std::vector&lt; uint8_t &gt;</td></tr>
@@ -121,9 +123,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abd76b257715574d72a0b268c46d511bf"><td class="memItemLeft" align="right" valign="top"><a id="abd76b257715574d72a0b268c46d511bf" name="abd76b257715574d72a0b268c46d511bf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BlockPayloadMutator</b> (<a class="el" href="structaltintegration_1_1AltBlockTree.html">tree_t</a> &amp;tree, block_index_t &amp;block, <a class="el" href="structaltintegration_1_1PayloadsIndex.html">PayloadsIndex</a>&lt; block_index_t &gt; &amp;pl, <a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a>&lt; block_index_t &gt; &amp;fpl)</td></tr>
-<tr class="separator:abd76b257715574d72a0b268c46d511bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae59e83342c29902232b0669da19bbd13"><td class="memItemLeft" align="right" valign="top"><a id="ae59e83342c29902232b0669da19bbd13" name="ae59e83342c29902232b0669da19bbd13"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BlockPayloadMutator</b> (<a class="el" href="structaltintegration_1_1AltBlockTree.html">tree_t</a> &amp;tree, block_index_t &amp;block)</td></tr>
+<tr class="separator:ae59e83342c29902232b0669da19bbd13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa278942a6bc04fef8e003f64ee95d772"><td class="memItemLeft" align="right" valign="top"><a id="aa278942a6bc04fef8e003f64ee95d772" name="aa278942a6bc04fef8e003f64ee95d772"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isStatefulDuplicate</b> (const id_vector_t &amp;payload_id)</td></tr>
 <tr class="memdesc:aa278942a6bc04fef8e003f64ee95d772"><td class="mdescLeft">&#160;</td><td class="mdescRight">stateful duplicate payload check as performed by connectBlock() <br /></td></tr>
@@ -152,7 +154,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isStatelessDuplicate<
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00250">250</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00252">252</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -164,6 +166,22 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isStatelessDuplicate<
       <table class="memname">
         <tr>
           <td class="memname">using altintegration::AltBlockTree::BlockPayloadMutator::id_vector_t =  std::vector&lt;uint8_t&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00253">253</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a117d0792b35ac17ffc403dfe62d09603" name="a117d0792b35ac17ffc403dfe62d09603"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a117d0792b35ac17ffc403dfe62d09603">&#9670;&nbsp;</a></span>payload_index_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using altintegration::AltBlockTree::BlockPayloadMutator::payload_index_t =  PayloadsIndex</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -184,7 +202,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isStatelessDuplicate<
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00249">249</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00250">250</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -246,8 +264,8 @@ atomic: either adds and applies the payload or returns false and leaves the tree
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00276">276</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  276</span>{ <span class="keywordflow">return</span> block_; }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00274">274</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  274</span>{ <span class="keywordflow">return</span> block_; }</div>
 </div><!-- fragment -->
 </div>
 </div>

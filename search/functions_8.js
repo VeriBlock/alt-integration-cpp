@@ -8,9 +8,10 @@ var searchData=
   ['isconnected_5',['isConnected',['../structaltintegration_1_1BlockIndex.html#ae52c40ac66b169d4e9d48c4640d84acb',1,'altintegration::BlockIndex']]],
   ['isderivedfrompublickey_6',['isDerivedFromPublicKey',['../structaltintegration_1_1Address.html#a04792bc59635322927aa0ab505b95391',1,'altintegration::Address']]],
   ['iskeystone_7',['isKeystone',['../namespacealtintegration.html#aa8b105f3d96feb6bf461bdd11ce8c7ba',1,'altintegration']]],
-  ['isknown_8',['isKnown',['../structaltintegration_1_1MemPool.html#a35e5280186e7b9474bd15a47041b0caf',1,'altintegration::MemPool']]],
-  ['isstatefulduplicate_9',['isStatefulDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa278942a6bc04fef8e003f64ee95d772',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
-  ['isstatelessduplicate_10',['isStatelessDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae5fe69d99955528958cab66206d9c57d',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
-  ['isvalidinvalidationreason_11',['isValidInvalidationReason',['../namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf',1,'altintegration']]],
-  ['isvalidtip_12',['isValidTip',['../structaltintegration_1_1BlockIndex.html#afbf74ee9971633b0b8e62dc07fbd1b0d',1,'altintegration::BlockIndex']]]
+  ['isknown_8',['isKnown',['../structaltintegration_1_1MemPool.html#ac12ccabcc8eb02e59adfaa4d21e19d1b',1,'altintegration::MemPool']]],
+  ['isspace_9',['IsSpace',['../namespacealtintegration.html#a22ea211a4429fe1ab3471b6fe90f6e40',1,'altintegration']]],
+  ['isstatefulduplicate_10',['isStatefulDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#aa278942a6bc04fef8e003f64ee95d772',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
+  ['isstatelessduplicate_11',['isStatelessDuplicate',['../structaltintegration_1_1AltBlockTree_1_1BlockPayloadMutator.html#ae5fe69d99955528958cab66206d9c57d',1,'altintegration::AltBlockTree::BlockPayloadMutator']]],
+  ['isvalidinvalidationreason_12',['isValidInvalidationReason',['../namespacealtintegration.html#aaec558ed72237f1ff885cdc83f43bdbf',1,'altintegration']]],
+  ['isvalidtip_13',['isValidTip',['../structaltintegration_1_1BlockIndex.html#afbf74ee9971633b0b8e62dc07fbd1b0d',1,'altintegration::BlockIndex']]]
 ];
