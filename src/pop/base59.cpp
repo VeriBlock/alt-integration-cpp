@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <veriblock/pop/assert.hpp>
+#include <veriblock/pop/base59.hpp>
 
 namespace altintegration {
 
@@ -94,7 +95,9 @@ std::string EncodeBase59(const unsigned char *pbegin,
   return EncodeBase59(pbegin, pend - pbegin);
 };
 
-bool DecodeBase59(const std::string &input, std::vector<uint8_t> &out) {
+bool DecodeBase59(const std::string &input,
+                  std::vector<uint8_t> &out,
+                  ValidationState &state) {
   if (input.empty()) {
     // empty input is a valid base59
     return true;
@@ -106,7 +109,7 @@ bool DecodeBase59(const std::string &input, std::vector<uint8_t> &out) {
   for (size_t i = 0; i < input.size(); ++i) {
     int8_t digit59 = g_Indexes[input[i]];
     if (digit59 < 0) {
-      return false;
+      return state.Invalid("decode-base-59", "invalid b59 character");
     }
 
     input59[i] = digit59;
@@ -139,13 +142,6 @@ bool DecodeBase59(const std::string &input, std::vector<uint8_t> &out) {
 
   out = std::vector<uint8_t>{temp.begin() + j - zeroCount, temp.end()};
   return true;
-}
-
-std::vector<uint8_t> AssertDecodeBase59(const std::string &str) {
-  std::vector<uint8_t> out;
-  bool success = DecodeBase59(str, out);
-  VBK_ASSERT_MSG(success, "Invalid input: %s", str);
-  return out;
 }
 
 }  // namespace altintegration

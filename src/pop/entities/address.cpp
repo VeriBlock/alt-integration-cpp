@@ -50,9 +50,9 @@ static bool isBase58String(const std::string& input, ValidationState& state) {
   return DecodeBase58(input, out, state);
 }
 
-static bool isBase59String(const std::string& input) {
+static bool isBase59String(const std::string& input, ValidationState& state) {
   std::vector<uint8_t> out;
-  return DecodeBase59(input, out);
+  return DecodeBase59(input, out, state);
 }
 
 static std::string calculateChecksum(const std::string& data, bool multisig) {
@@ -107,8 +107,8 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
   std::string checksum = getChecksumPortionFromAddress(input, multisig);
 
   if (multisig) {
-    if (!isBase59String(input)) {
-      return state.Invalid("addr-bad-multisig-content", "Not a base59 string.");
+    if (!isBase59String(input, state)) {
+      return state.Invalid("addr-bad-multisig-content");
     }
 
     /* To make the addresses 'human-readable' we add 1 to the decoded value (1
@@ -187,15 +187,18 @@ void Address::toVbkEncoding(WriteStream& stream) const {
       DecodeBase58(toString(), decoded, state);
       break;
     case AddressType ::MULTISIG:
-      decoded = AssertDecodeBase59(toString());
+      DecodeBase59(toString(), decoded, state);
       break;
     default:
       // if we don't know address type, do not encode anything
       return;
   }
 
-  VBK_ASSERT_MSG(
-      state.IsValid(), "cannot decode address, err: %s", state.toString());
+  VBK_ASSERT_MSG(state.IsValid(),
+                 "cannot decode address, err: %s, address: %s, hex address: %s",
+                 state.toString(),
+                 toString(),
+                 HexStr(toString().begin(), toString().end()));
 
   writeSingleByteLenValue(stream, decoded);
 }
@@ -210,15 +213,18 @@ size_t Address::estimateSize() const {
       DecodeBase58(toString(), decoded, state);
       break;
     case AddressType ::MULTISIG:
-      decoded = AssertDecodeBase59(toString());
+      DecodeBase59(toString(), decoded, state);
       break;
     default:
       // if we don't know address type, do not encode anything
       return size;
   }
 
-  VBK_ASSERT_MSG(
-      state.IsValid(), "cannot decode address, err: %s", state.toString());
+  VBK_ASSERT_MSG(state.IsValid(),
+                 "cannot decode address, err: %s, address: %s, hex address: %s",
+                 state.toString(),
+                 toString(),
+                 HexStr(toString().begin(), toString().end()));
 
   size += singleByteLenValueSize(decoded);
   return size;
@@ -234,7 +240,7 @@ void Address::getPopBytes(WriteStream& stream) const {
       break;
     }
     case AddressType::MULTISIG: {
-      bytes = AssertDecodeBase59(data);
+      DecodeBase59(data, bytes, state);
       break;
     }
     default:
@@ -242,8 +248,11 @@ void Address::getPopBytes(WriteStream& stream) const {
                      "Address have been constructed with an invalid type");
   }
 
-  VBK_ASSERT_MSG(
-      state.IsValid(), "cannot decode address, err: %s", state.toString());
+  VBK_ASSERT_MSG(state.IsValid(),
+                 "cannot decode address, err: %s, address: %s, hex address: %s",
+                 state.toString(),
+                 data,
+                 HexStr(data.begin(), data.end()));
 
   stream.write(bytes.data(), ADDRESS_POP_DATA_SIZE_PROGPOW);
 }
