@@ -109,6 +109,7 @@ var namespacealtintegration =
     [ "MerklePath", "structaltintegration_1_1MerklePath.html", "structaltintegration_1_1MerklePath" ],
     [ "NetworkBytePair", "namespacealtintegration.html#structaltintegration_1_1NetworkBytePair", "namespacealtintegration_structaltintegration_1_1NetworkBytePair_dup" ],
     [ "Output", "structaltintegration_1_1Output.html", "structaltintegration_1_1Output" ],
+    [ "PayloadsIndex", "structaltintegration_1_1PayloadsIndex.html", null ],
     [ "PayloadsStorage", "structaltintegration_1_1PayloadsStorage.html", "structaltintegration_1_1PayloadsStorage" ],
     [ "PopContext", "structaltintegration_1_1PopContext.html", "structaltintegration_1_1PopContext" ],
     [ "PopData", "structaltintegration_1_1PopData.html", "structaltintegration_1_1PopData" ],

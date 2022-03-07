@@ -1,9 +1,9 @@
 <map id="altintegration::BaseBlockTree&lt; Block &gt;" name="altintegration::BaseBlockTree&lt; Block &gt;">
-<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="208,5,411,449"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="5,563,184,905"/>
-<area shape="rect" id="node5" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="435,512,637,956"/>
-<area shape="rect" id="node7" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="208,512,411,956"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="99,1019,307,1360"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="111,1409,295,1633"/>
-<area shape="rect" id="node6" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="437,1055,635,1323"/>
+<area shape="rect" id="node1" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="208,5,411,464"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="5,585,184,927"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="435,527,637,985"/>
+<area shape="rect" id="node7" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="208,527,411,985"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="99,1048,307,1389"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="111,1439,295,1663"/>
+<area shape="rect" id="node6" href="$structaltintegration_1_1AltBlockTree.html" title="Represents simplified view on Altchain&#39;s block tree, maintains VBK tree and BTC tree." alt="" coords="437,1085,635,1353"/>
 </map>

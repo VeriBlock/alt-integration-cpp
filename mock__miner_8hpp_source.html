@@ -269,26 +269,24 @@ $(document).ready(function(){initNavTree('mock__miner_8hpp_source.html',''); ini
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  adaptors::InmemStorageImpl storage_{};</div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>  adaptors::PayloadsStorageImpl payloads_provider_{storage_};</div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>  adaptors::BlockReaderImpl block_provider_{storage_, alt_params_};</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>  PayloadsIndex payloads_index_;</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>  Miner&lt;BtcBlock, BtcChainParams&gt; btc_miner_{btc_params_};</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  Miner&lt;VbkBlock, VbkChainParams&gt; vbk_miner_{vbk_params_};</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>  vbk_block_tree vbk_tree_{vbk_params_,</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                           btc_params_,</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                           payloads_provider_,</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                           block_provider_,</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                           payloads_index_};</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>  btc_block_tree&amp; btc_tree_ = vbk_tree_.btc();</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>  std::unordered_map&lt;VbkBlock::hash_t, std::vector&lt;VTB&gt;&gt; vtbs_;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  std::unordered_map&lt;VbkBlock::hash_t, VbkMerkleTree&gt; vbk_merkle_trees_;</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>  std::unordered_map&lt;BtcBlock::hash_t, BtcMerkleTree&gt; btc_merkle_trees_;</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>};</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>  Miner&lt;BtcBlock, BtcChainParams&gt; btc_miner_{btc_params_};</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>  Miner&lt;VbkBlock, VbkChainParams&gt; vbk_miner_{vbk_params_};</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span> </div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  vbk_block_tree vbk_tree_{vbk_params_,</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                           btc_params_,</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                           payloads_provider_,</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                           block_provider_};</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>  btc_block_tree&amp; btc_tree_ = vbk_tree_.btc();</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>  std::unordered_map&lt;VbkBlock::hash_t, std::vector&lt;VTB&gt;&gt; vtbs_;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>  std::unordered_map&lt;VbkBlock::hash_t, VbkMerkleTree&gt; vbk_merkle_trees_;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>  std::unordered_map&lt;BtcBlock::hash_t, BtcMerkleTree&gt; btc_merkle_trees_;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>};</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>}  <span class="comment">// namespace altintegration</span></div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a0113326bdf77bb9899f62b959aad5bcd"><div class="ttname"><a href="namespacealtintegration.html#a0113326bdf77bb9899f62b959aad5bcd">altintegration::GetRegTestBtcBlock</a></div><div class="ttdeci">BtcBlock GetRegTestBtcBlock()</div><div class="ttdoc">Getter for regtest BTC network genesis block.</div></div>
 <div class="ttc" id="anamespacealtintegration_html_ab2edf8bfcba7d373340b6bac3f80bf14"><div class="ttname"><a href="namespacealtintegration.html#ab2edf8bfcba7d373340b6bac3f80bf14">altintegration::GetRegTestVbkBlock</a></div><div class="ttdeci">VbkBlock GetRegTestVbkBlock()</div><div class="ttdoc">Getter for regtest_progpow VBK network genesis block.</div></div>

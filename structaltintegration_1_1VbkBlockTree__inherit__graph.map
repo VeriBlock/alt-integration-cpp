@@ -1,8 +1,8 @@
 <map id="altintegration::VbkBlockTree" name="altintegration::VbkBlockTree">
-<area shape="rect" id="node1" title="Veriblock block tree." alt="" coords="125,1409,309,1633"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="113,1019,321,1360"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="9,512,212,956"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="5,5,208,449"/>
-<area shape="rect" id="node5" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="241,563,420,905"/>
-<area shape="rect" id="node6" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="232,5,435,449"/>
+<area shape="rect" id="node1" title="Veriblock block tree." alt="" coords="125,1439,309,1663"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="113,1048,321,1389"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1BaseBlockTree.html" title=" " alt="" coords="9,527,212,985"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="5,5,208,464"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="241,585,420,927"/>
+<area shape="rect" id="node6" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="232,5,435,464"/>
 </map>

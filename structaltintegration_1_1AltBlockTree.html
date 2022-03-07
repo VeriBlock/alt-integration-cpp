@@ -199,7 +199,7 @@ Current active chain of <a class="el" href="structaltintegration_1_1AltBlockTree
 <dd>
 <a class="el" href="structaltintegration_1_1BtcChainParams.html" title="base class for BTC params">BtcChainParams</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00179">179</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00178">178</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -399,6 +399,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>acceptBlock</b> (inde
 <tr class="separator:ab151ed227704d42767ccd6ae383148bf inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aead816db9ef6aad994fa4497d3ae40e1 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#aead816db9ef6aad994fa4497d3ae40e1">getFinalizedPayloadsIndex</a> () const</td></tr>
 <tr class="separator:aead816db9ef6aad994fa4497d3ae40e1 inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8ee143a0665b303ac67b640dae42bae inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1PayloadsIndex.html">PayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#ad8ee143a0665b303ac67b640dae42bae">getPayloadsIndex</a> () const</td></tr>
+<tr class="separator:ad8ee143a0665b303ac67b640dae42bae inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60141d5f2848e9f91885fd9f412a20ce inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">DeferForkResolutionGuard&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a60141d5f2848e9f91885fd9f412a20ce">deferForkResolutionGuard</a> ()</td></tr>
 <tr class="separator:a60141d5f2848e9f91885fd9f412a20ce inherit pub_methods_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -459,8 +461,11 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memdesc:a4bb681ace9153b3ed6258849a2e50c69 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">currently applied chain  <a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">More...</a><br /></td></tr>
 <tr class="separator:a4bb681ace9153b3ed6258849a2e50c69 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf4d9734048cd8bedb69d86d830f513d inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a></td></tr>
-<tr class="memdesc:adf4d9734048cd8bedb69d86d830f513d inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores mapping of payload id -&gt; its containing ALT/VBK block.  <a href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">More...</a><br /></td></tr>
+<tr class="memdesc:adf4d9734048cd8bedb69d86d830f513d inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores mapping of payload id -&gt; its containing ALT/VBK block which are already finalized.  <a href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">More...</a><br /></td></tr>
 <tr class="separator:adf4d9734048cd8bedb69d86d830f513d inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef352a5df8dc58d866fb33feb63b1c86 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structaltintegration_1_1PayloadsIndex.html">PayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">index_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">payloadsIndex_</a></td></tr>
+<tr class="memdesc:aef352a5df8dc58d866fb33feb63b1c86 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores mapping of payload id -&gt; its containing ALT/VBK blocks which are not yet finalized.  <a href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">More...</a><br /></td></tr>
+<tr class="separator:aef352a5df8dc58d866fb33feb63b1c86 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e8b3a7980e6750687a053ff9acf0084 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a4e8b3a7980e6750687a053ff9acf0084">blockProvider_</a></td></tr>
 <tr class="separator:a4e8b3a7980e6750687a053ff9acf0084 inherit pro_attribs_structaltintegration_1_1BaseBlockTree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -477,7 +482,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00181">181</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00180">180</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -493,7 +498,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00180">180</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00179">179</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -509,7 +514,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00183">183</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00182">182</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -525,7 +530,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00189">189</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00188">188</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -541,7 +546,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00187">187</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00186">186</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -557,7 +562,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00186">186</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00185">185</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -573,7 +578,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00188">188</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00187">187</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -589,7 +594,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00184">184</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00183">183</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -605,7 +610,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00191">191</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00190">190</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -621,7 +626,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00185">185</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00184">184</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -637,7 +642,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00182">182</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00181">181</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -768,8 +773,8 @@ must not be executed on bootstrap block </dd>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00420">420</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  420</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree().btc(); }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00423">423</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  423</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree().btc(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -883,8 +888,8 @@ if return value is more or equal to 0, tree state is unchanged.</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00424">424</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  424</span>{ <span class="keywordflow">return</span> alt_config_; }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00427">427</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  427</span>{ <span class="keywordflow">return</span> alt_config_; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1085,8 +1090,8 @@ both the current and new chains are fully valid; full validation of [genesis .. 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00416">416</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  416</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00419">419</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  419</span>{ <span class="keywordflow">return</span> cmp_.getProtectingBlockTree(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1111,7 +1116,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00447">447</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00446">446</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1128,7 +1133,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00308">308</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00311">311</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1144,7 +1149,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00305">305</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00308">308</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1160,7 +1165,7 @@ both the current and new chains are fully valid; full validation of [genesis .. 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00302">302</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="alt__block__tree_8hpp_source.html#l00305">305</a> of file <a class="el" href="alt__block__tree_8hpp_source.html">alt_block_tree.hpp</a>.</p>
 
 </div>
 </div>

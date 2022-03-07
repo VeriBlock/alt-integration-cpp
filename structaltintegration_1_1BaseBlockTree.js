@@ -22,5 +22,6 @@ var structaltintegration_1_1BaseBlockTree =
     [ "isLoadingBlocks_", "structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901", null ],
     [ "onBlockBeforeDeallocated", "structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61", null ],
     [ "onBlockValidityChanged", "structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e", null ],
+    [ "payloadsIndex_", "structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86", null ],
     [ "tips_", "structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736", null ]
 ];

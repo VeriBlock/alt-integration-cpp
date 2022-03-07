@@ -111,7 +111,7 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;block_index.hpp&quot;</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;blockchain_util.hpp&quot;</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;chain.hpp&quot;</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;finalized_payloads_index.hpp&quot;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;payloads_index.hpp&quot;</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &quot;tree_algo.hpp&quot;</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
@@ -773,329 +773,334 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>;</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  }</div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span> </div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>  <span class="keyword">class </span>DeferForkResolutionGuard {</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>    BaseBlockTree&lt;Block&gt;&amp; tree_;</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>  <span class="keyword">const</span> PayloadsIndex&lt;index_t&gt;&amp; getPayloadsIndex()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">payloadsIndex_</a>;</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>  }</div>
 <div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>   <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    DeferForkResolutionGuard(BaseBlockTree&lt;Block&gt;&amp; tree) : tree_(tree) {</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>      tree_.deferForkResolution();</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    }</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span> </div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    <span class="comment">// non-copyable</span></div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    DeferForkResolutionGuard(<span class="keyword">const</span> DeferForkResolutionGuard&amp; other) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    DeferForkResolutionGuard&amp; operator=(<span class="keyword">const</span> DeferForkResolutionGuard&amp; other) =</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>    <span class="comment">// movable</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>    DeferForkResolutionGuard(DeferForkResolutionGuard&amp;&amp; o) <span class="keyword">noexcept</span> = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    DeferForkResolutionGuard&amp; operator=(DeferForkResolutionGuard&amp;&amp; o) <span class="keyword">noexcept</span> =</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>    <span class="keywordtype">void</span> overrideDeferredForkResolution(index_t* bestChain) {</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>      <span class="comment">// there&#39;s no obvious way to go back to having no best chain, so we</span></div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>      <span class="comment">// just have to let fork resolution run its course</span></div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>      <span class="keywordflow">if</span> (bestChain != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>        <span class="keywordflow">return</span> tree_.overrideDeferredForkResolution(*bestChain);</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>      }</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>    }</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span> </div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>    ~DeferForkResolutionGuard() { tree_.continueForkResolution(); }</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>  };</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span> </div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>  DeferForkResolutionGuard deferForkResolutionGuard() {</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>    <span class="keywordflow">return</span> DeferForkResolutionGuard(*<span class="keyword">this</span>);</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>  }</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>  <span class="keyword">class </span>DeferForkResolutionGuard {</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    BaseBlockTree&lt;Block&gt;&amp; tree_;</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span> </div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>   <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    DeferForkResolutionGuard(BaseBlockTree&lt;Block&gt;&amp; tree) : tree_(tree) {</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>      tree_.deferForkResolution();</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    }</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>    <span class="comment">// non-copyable</span></div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>    DeferForkResolutionGuard(<span class="keyword">const</span> DeferForkResolutionGuard&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    DeferForkResolutionGuard&amp; operator=(<span class="keyword">const</span> DeferForkResolutionGuard&amp; other) =</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>    <span class="comment">// movable</span></div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>    DeferForkResolutionGuard(DeferForkResolutionGuard&amp;&amp; o) <span class="keyword">noexcept</span> = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>    DeferForkResolutionGuard&amp; operator=(DeferForkResolutionGuard&amp;&amp; o) <span class="keyword">noexcept</span> =</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>        <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span> </div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    <span class="keywordtype">void</span> overrideDeferredForkResolution(index_t* bestChain) {</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>      <span class="comment">// there&#39;s no obvious way to go back to having no best chain, so we</span></div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>      <span class="comment">// just have to let fork resolution run its course</span></div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>      <span class="keywordflow">if</span> (bestChain != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>        <span class="keywordflow">return</span> tree_.overrideDeferredForkResolution(*bestChain);</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>      }</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    }</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span> </div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>    ~DeferForkResolutionGuard() { tree_.continueForkResolution(); }</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>  };</div>
 <div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span> </div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span> <span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>  <span class="keywordtype">void</span> deallocateTree(index_t&amp; toDelete) {</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>    <span class="keyword">auto</span>* index = &amp;toDelete;</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span> </div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>    <span class="comment">// find oldest ancestor</span></div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    <span class="keywordflow">while</span> (index != <span class="keyword">nullptr</span> &amp;&amp; !index-&gt;isRoot()) {</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>      index = index-&gt;pprev;</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>    }</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span> </div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    <span class="comment">// starting at oldest ancestor, remove all blocks during post-order tree</span></div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    <span class="comment">// traversal</span></div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    forEachNodePostorder&lt;block_t&gt;(</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>        *index,</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>        [&amp;](index_t&amp; next) {</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>          <span class="keywordflow">if</span> (!next.isDeleted()) {</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>            onBeforeLeafRemoved(next);</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>            next.deleteTemporarily();</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>          }</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span> </div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>          next.disconnectFromPrev();</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>          <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2a26a4462a19387064dd2534e0cf8179">deallocateBlock</a>(next);</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>        },</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        [&amp;](index_t&amp;) { <span class="keywordflow">return</span> <span class="keyword">true</span>; });</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>  }</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span> </div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> decreaseAppliedBlockCount(<span class="keywordtype">size_t</span> erasedBlocks) {</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>    VBK_ASSERT_MSG(appliedBlockCount &gt;= erasedBlocks,</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>                   <span class="stringliteral">&quot;Tree: %s, Applied: %d, erased: %d&quot;</span>,</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>                   block_t::name(),</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>                   appliedBlockCount,</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>                   erasedBlocks);</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>    appliedBlockCount -= erasedBlocks;</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>  }</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span> </div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> increaseAppliedBlockCount(<span class="keywordtype">size_t</span> appliedBlocks) {</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>    appliedBlockCount += appliedBlocks;</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>  DeferForkResolutionGuard deferForkResolutionGuard() {</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    <span class="keywordflow">return</span> DeferForkResolutionGuard(*<span class="keyword">this</span>);</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>  }</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span> </div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span> <span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>  <span class="keywordtype">void</span> deallocateTree(index_t&amp; toDelete) {</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>    <span class="keyword">auto</span>* index = &amp;toDelete;</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span> </div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>    <span class="comment">// find oldest ancestor</span></div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    <span class="keywordflow">while</span> (index != <span class="keyword">nullptr</span> &amp;&amp; !index-&gt;isRoot()) {</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>      index = index-&gt;pprev;</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    }</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    <span class="comment">// starting at oldest ancestor, remove all blocks during post-order tree</span></div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>    <span class="comment">// traversal</span></div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    forEachNodePostorder&lt;block_t&gt;(</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>        *index,</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        [&amp;](index_t&amp; next) {</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span> </div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>          <span class="keywordflow">if</span> (!next.isDeleted()) {</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>            onBeforeLeafRemoved(next);</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>            next.deleteTemporarily();</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>          }</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span> </div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>          next.disconnectFromPrev();</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>          <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2a26a4462a19387064dd2534e0cf8179">deallocateBlock</a>(next);</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>        },</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>        [&amp;](index_t&amp;) { <span class="keywordflow">return</span> <span class="keyword">true</span>; });</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>  }</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span> </div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> decreaseAppliedBlockCount(<span class="keywordtype">size_t</span> erasedBlocks) {</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>    VBK_ASSERT_MSG(appliedBlockCount &gt;= erasedBlocks,</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>                   <span class="stringliteral">&quot;Tree: %s, Applied: %d, erased: %d&quot;</span>,</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>                   block_t::name(),</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>                   appliedBlockCount,</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>                   erasedBlocks);</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>    appliedBlockCount -= erasedBlocks;</div>
 <div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>  }</div>
 <div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span> </div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> finalizeBlockImpl(index_t&amp; index,</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>                                 <span class="comment">// see config.preserveBlocksBehindFinal()</span></div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>                                 int32_t preserveBlocksBehindFinal) {</div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Finalize %s, preserve %d blocks behind&quot;</span>,</div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>                  index.toShortPrettyString(),</div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>                  preserveBlocksBehindFinal);</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>    VBK_ASSERT_MSG(appliedBlockCount == <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.blocksCount(),</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>                   <span class="stringliteral">&quot;Tree=%s Applied=%d active chain=%d&quot;</span>,</div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>                   block_t::name(),</div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>                   appliedBlockCount,</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>                   <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.blocksCount());</div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span> </div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>    index_t* finalizedBlock = &amp;index;</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span> </div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>    <span class="keywordflow">if</span> (finalizedBlock == &amp;this-&gt;getRoot()) {</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>      <span class="keywordflow">if</span> (finalizedBlock-&gt;finalized) {</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>        <span class="comment">// block is already finalized</span></div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>      }</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span> </div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>      finalizedBlock-&gt;finalized = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>      FinalizedPayloadsAddBlock(<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>, *finalizedBlock);</div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>    }</div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span> </div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>    VBK_ASSERT(<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(finalizedBlock));</div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span> </div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>    <span class="comment">// we need to clarify which block will be final. we can not remove blocks</span></div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>    <span class="comment">// which have not been saved into the storage</span></div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* walkBlock = finalizedBlock; walkBlock != <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>         walkBlock = walkBlock-&gt;pprev) {</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>      <span class="keywordflow">if</span> (walkBlock-&gt;isDirty()) {</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>        finalizedBlock = walkBlock;</div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>      }</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>    }</div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span> </div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    <span class="comment">// first, erase candidates from tips_ that will never be activated</span></div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    erase_if&lt;decltype(tips_), index_t*&gt;(</div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>        <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>, [<span class="keyword">this</span>, &amp;finalizedBlock](index_t* tip) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>          VBK_ASSERT(tip);</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span> </div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>          <span class="comment">// tip from active chain can not be outdated</span></div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>          <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(tip) &amp;&amp;</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>              <a class="code hl_function" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a>(*finalizedBlock, *tip)) {</div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>            <span class="comment">// we need to clarify which block will be final. we can not remove</span></div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>            <span class="comment">// blocks which have not been saved into the storage</span></div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>            <span class="keywordtype">bool</span> newFinalized = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>            <span class="keyword">auto</span>* walkBlock = tip;</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>            <span class="keywordflow">for</span> (; tip != <span class="keyword">nullptr</span> &amp;&amp; !<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(walkBlock);</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>                 walkBlock = walkBlock-&gt;pprev) {</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>              <span class="keywordflow">if</span> (walkBlock-&gt;isDirty()) {</div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>                newFinalized = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>              }</div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>            }</div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span> </div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>            <span class="keywordflow">if</span> (newFinalized) {</div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>              finalizedBlock = walkBlock;</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> increaseAppliedBlockCount(<span class="keywordtype">size_t</span> appliedBlocks) {</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    appliedBlockCount += appliedBlocks;</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>  }</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span> </div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> finalizeBlockImpl(index_t&amp; index,</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>                                 <span class="comment">// see config.preserveBlocksBehindFinal()</span></div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>                                 int32_t preserveBlocksBehindFinal) {</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>    VBK_LOG_DEBUG(<span class="stringliteral">&quot;Finalize %s, preserve %d blocks behind&quot;</span>,</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>                  index.toShortPrettyString(),</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>                  preserveBlocksBehindFinal);</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>    VBK_ASSERT_MSG(appliedBlockCount == <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.blocksCount(),</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>                   <span class="stringliteral">&quot;Tree=%s Applied=%d active chain=%d&quot;</span>,</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>                   block_t::name(),</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>                   appliedBlockCount,</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>                   <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.blocksCount());</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span> </div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>    index_t* finalizedBlock = &amp;index;</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span> </div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>    <span class="keywordflow">if</span> (finalizedBlock == &amp;this-&gt;getRoot()) {</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>      <span class="keywordflow">if</span> (finalizedBlock-&gt;finalized) {</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>        <span class="comment">// block is already finalized</span></div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>      }</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span> </div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>      finalizedBlock-&gt;finalized = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>      <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>.addBlock(*finalizedBlock);</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>    }</div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span> </div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>    VBK_ASSERT(<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(finalizedBlock));</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span> </div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>    <span class="comment">// we need to clarify which block will be final. we can not remove blocks</span></div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>    <span class="comment">// which have not been saved into the storage</span></div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* walkBlock = finalizedBlock; walkBlock != <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>         walkBlock = walkBlock-&gt;pprev) {</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>      <span class="keywordflow">if</span> (walkBlock-&gt;isDirty()) {</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        finalizedBlock = walkBlock;</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>      }</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    }</div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span> </div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>    <span class="comment">// first, erase candidates from tips_ that will never be activated</span></div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>    erase_if&lt;decltype(tips_), index_t*&gt;(</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>        <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>, [<span class="keyword">this</span>, &amp;finalizedBlock](index_t* tip) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>          VBK_ASSERT(tip);</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span> </div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>          <span class="comment">// tip from active chain can not be outdated</span></div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>          <span class="keywordflow">if</span> (!<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(tip) &amp;&amp;</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>              <a class="code hl_function" href="namespacealtintegration.html#a80413c3ca23962b5afd87d8d9af42685">isBlockOutdated</a>(*finalizedBlock, *tip)) {</div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>            <span class="comment">// we need to clarify which block will be final. we can not remove</span></div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>            <span class="comment">// blocks which have not been saved into the storage</span></div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>            <span class="keywordtype">bool</span> newFinalized = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>            <span class="keyword">auto</span>* walkBlock = tip;</div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>            <span class="keywordflow">for</span> (; tip != <span class="keyword">nullptr</span> &amp;&amp; !<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.contains(walkBlock);</div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>                 walkBlock = walkBlock-&gt;pprev) {</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>              <span class="keywordflow">if</span> (walkBlock-&gt;isDirty()) {</div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>                newFinalized = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>              }</div>
 <div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>            }</div>
 <div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span> </div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>          }</div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span> </div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>          <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>        });</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span> </div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>    <span class="comment">// second, update active chain (it should start with</span></div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>    <span class="comment">// &#39;finalizedBlock&#39; but we also need to preserve `preserveBlocksBehindFinal`</span></div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>    <span class="comment">// blocks before it). all outdated blocks behind `finalizedBlock` block will</span></div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>    <span class="comment">// be deallocated</span></div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>    int32_t firstBlockHeight =</div>
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>        finalizedBlock-&gt;getHeight() - preserveBlocksBehindFinal;</div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>    int32_t rootBlockHeight = getRoot().getHeight();</div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>    firstBlockHeight = std::max(rootBlockHeight, firstBlockHeight);</div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span> </div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>    <span class="comment">// before we deallocate subtree, disconnect &quot;new root block&quot; from previous</span></div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>    <span class="comment">// tree</span></div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>    <span class="keyword">auto</span>* newRoot = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>[firstBlockHeight];</div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>    VBK_ASSERT(newRoot);</div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span> </div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>    <span class="keyword">auto</span>* rootPrev = newRoot-&gt;pprev;</div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>    <span class="keywordflow">if</span> (newRoot-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>      newRoot-&gt;pprev-&gt;pnext.erase(newRoot);</div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>      newRoot-&gt;pprev = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span> </div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>      <span class="comment">// do deallocate</span></div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>      deallocateTree(*rootPrev);</div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span> </div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>      <span class="comment">// erase &quot;parallel&quot; blocks - blocks that are on same height as `index`,</span></div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>      <span class="comment">// but since `index` is final, will never be active.</span></div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>      <span class="keywordflow">if</span> (finalizedBlock-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>        <span class="keyword">auto</span> parallelBlocks = finalizedBlock-&gt;pprev-&gt;pnext;</div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>        parallelBlocks.erase(finalizedBlock);</div>
-<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* par : parallelBlocks) {</div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>          <span class="comment">// disconnect `par` from prev block</span></div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>          par-&gt;disconnectFromPrev();</div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>          deallocateTree(*par);</div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>        }</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>      }</div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>    }</div>
-<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span> </div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>    <span class="comment">// update active chain</span></div>
-<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>    VBK_ASSERT(firstBlockHeight &gt;= rootBlockHeight);</div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>    <span class="keywordtype">size_t</span> deallocatedBlocks = firstBlockHeight - rootBlockHeight;</div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>    <span class="keywordflow">if</span> (deallocatedBlocks &gt; 0) {</div>
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>      VBK_LOG_WARN(</div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>          <span class="stringliteral">&quot;%s tree deallocated blocks: %d&quot;</span>, block_t::name(), deallocatedBlocks);</div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>    }</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>    decreaseAppliedBlockCount(deallocatedBlocks);</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a> = Chain&lt;index_t&gt;(firstBlockHeight, <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip());</div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span> </div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>    <span class="comment">// fourth, mark `index` and all predecessors as finalized</span></div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>    index_t* ptr = finalizedBlock;</div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>    <span class="keywordflow">while</span> (ptr != <span class="keyword">nullptr</span> &amp;&amp; !ptr-&gt;finalized) {</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>      ptr-&gt;finalized = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>      FinalizedPayloadsAddBlock(<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>, *ptr);</div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>      ptr = ptr-&gt;pprev;</div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>    }</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>  }</div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span> </div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> onBlockInserted(index_t* <span class="comment">/*ignore*/</span>) {</div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>    <span class="comment">/* do nothing in base tree */</span></div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>  }</div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span> </div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>  <span class="keywordtype">void</span> updateAffectedTips(index_t&amp; modifiedBlock) {</div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>    <span class="keywordflow">if</span> (deferForkResolutionDepth == 0) {</div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>      ValidationState dummy;</div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>      <span class="keywordflow">return</span> doUpdateAffectedTips(modifiedBlock, dummy);</div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>    }</div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span> </div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>    <span class="keywordflow">if</span> (!isUpdateTipsDeferred) {</div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>      <span class="keywordflow">if</span> (lastModifiedBlock == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>        lastModifiedBlock = &amp;modifiedBlock;</div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>        isUpdateTipsDeferred = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>        lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span>      }</div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span>    }</div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>  }</div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span> </div>
-<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span>  <span class="keywordtype">void</span> doUpdateAffectedTips(index_t&amp; modifiedBlock, ValidationState&amp; state) {</div>
-<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span>    <span class="keyword">auto</span> tips = findValidTips&lt;block_t&gt;(this-&gt;getTips(), modifiedBlock);</div>
-<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span>    VBK_LOG_DEBUG(</div>
-<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>        <span class="stringliteral">&quot;Found %d affected valid tips in %s&quot;</span>, tips.size(), block_t::name());</div>
-<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* tip : tips) {</div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>      determineBestChain(*tip, state);</div>
-<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>    }</div>
-<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>  }</div>
-<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span> </div>
-<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>  <span class="keywordtype">void</span> updateTips() {</div>
-<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>    <span class="keywordflow">if</span> (deferForkResolutionDepth == 0) {</div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>      <span class="keywordflow">return</span> doUpdateTips();</div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>    }</div>
-<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>    isUpdateTipsDeferred = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>    lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>  }</div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span> </div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span> <span class="keyword">private</span>:</div>
-<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>  <span class="keywordtype">int</span> deferForkResolutionDepth = 0;</div>
-<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>  <span class="keywordtype">bool</span> isUpdateTipsDeferred = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span>  index_t* lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span> </div>
-<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>  <span class="keywordtype">void</span> doUpdateTips() {</div>
-<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* tip : <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>) {</div>
-<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span>      VBK_ASSERT_MSG(tip-&gt;isValidTip(),</div>
-<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>                     <span class="stringliteral">&quot;found block %s in tips_ which is not a valid tip&quot;</span>,</div>
-<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>                     tip-&gt;toPrettyString());</div>
-<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span> </div>
-<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span>      ValidationState state;</div>
-<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span>      determineBestChain(*tip, state);</div>
-<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span>    }</div>
-<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>  }</div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span> </div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>  <span class="keywordtype">void</span> overrideDeferredForkResolution(index_t&amp; bestChain) {</div>
-<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>    lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>    isUpdateTipsDeferred = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span> </div>
-<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>    ValidationState dummy;</div>
-<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>    <span class="keywordtype">bool</span> success = setState(bestChain, dummy);</div>
-<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>    VBK_ASSERT_MSG(</div>
-<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>        success,</div>
-<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>        <span class="stringliteral">&quot;state corruption: could not revert to the saved best chain tip: %s&quot;</span>,</div>
-<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>        dummy.toString());</div>
-<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>  }</div>
-<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span> </div>
-<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>  <span class="keywordtype">void</span> deferForkResolution() { ++deferForkResolutionDepth; }</div>
-<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span> </div>
-<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span>  <span class="keywordtype">void</span> continueForkResolution() {</div>
-<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span>    VBK_ASSERT(deferForkResolutionDepth &gt; 0);</div>
-<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>    --deferForkResolutionDepth;</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>            <span class="keywordflow">if</span> (newFinalized) {</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>              finalizedBlock = walkBlock;</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>            }</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span> </div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>          }</div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span> </div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>          <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>        });</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span> </div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>    <span class="comment">// second, update active chain (it should start with</span></div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>    <span class="comment">// &#39;finalizedBlock&#39; but we also need to preserve `preserveBlocksBehindFinal`</span></div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>    <span class="comment">// blocks before it). all outdated blocks behind `finalizedBlock` block will</span></div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>    <span class="comment">// be deallocated</span></div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>    int32_t firstBlockHeight =</div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>        finalizedBlock-&gt;getHeight() - preserveBlocksBehindFinal;</div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>    int32_t rootBlockHeight = getRoot().getHeight();</div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>    firstBlockHeight = std::max(rootBlockHeight, firstBlockHeight);</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span> </div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span>    <span class="comment">// before we deallocate subtree, disconnect &quot;new root block&quot; from previous</span></div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>    <span class="comment">// tree</span></div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>    <span class="keyword">auto</span>* newRoot = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>[firstBlockHeight];</div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>    VBK_ASSERT(newRoot);</div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span> </div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>    <span class="keyword">auto</span>* rootPrev = newRoot-&gt;pprev;</div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>    <span class="keywordflow">if</span> (newRoot-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>      newRoot-&gt;pprev-&gt;pnext.erase(newRoot);</div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>      newRoot-&gt;pprev = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span> </div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>      <span class="comment">// do deallocate</span></div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>      deallocateTree(*rootPrev);</div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span> </div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>      <span class="comment">// erase &quot;parallel&quot; blocks - blocks that are on same height as `index`,</span></div>
+<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>      <span class="comment">// but since `index` is final, will never be active.</span></div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>      <span class="keywordflow">if</span> (finalizedBlock-&gt;pprev != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>        <span class="keyword">auto</span> parallelBlocks = finalizedBlock-&gt;pprev-&gt;pnext;</div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>        parallelBlocks.erase(finalizedBlock);</div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* par : parallelBlocks) {</div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>          <span class="comment">// disconnect `par` from prev block</span></div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>          par-&gt;disconnectFromPrev();</div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>          deallocateTree(*par);</div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>        }</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>      }</div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>    }</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span> </div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>    <span class="comment">// update active chain</span></div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>    VBK_ASSERT(firstBlockHeight &gt;= rootBlockHeight);</div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>    <span class="keywordtype">size_t</span> deallocatedBlocks = firstBlockHeight - rootBlockHeight;</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>    <span class="keywordflow">if</span> (deallocatedBlocks &gt; 0) {</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>      VBK_LOG_WARN(</div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>          <span class="stringliteral">&quot;%s tree deallocated blocks: %d&quot;</span>, block_t::name(), deallocatedBlocks);</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>    }</div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>    decreaseAppliedBlockCount(deallocatedBlocks);</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a> = Chain&lt;index_t&gt;(firstBlockHeight, <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.tip());</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span> </div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>    <span class="comment">// fourth, mark `index` and all predecessors as finalized</span></div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>    index_t* ptr = finalizedBlock;</div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>    <span class="keywordflow">while</span> (ptr != <span class="keyword">nullptr</span> &amp;&amp; !ptr-&gt;finalized) {</div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>      ptr-&gt;finalized = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>      <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>.addBlock(*ptr);</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>      ptr = ptr-&gt;pprev;</div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>    }</div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>  }</div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span> </div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> onBlockInserted(index_t* <span class="comment">/*ignore*/</span>) {</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>    <span class="comment">/* do nothing in base tree */</span></div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>  }</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span> </div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>  <span class="keywordtype">void</span> updateAffectedTips(index_t&amp; modifiedBlock) {</div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>    <span class="keywordflow">if</span> (deferForkResolutionDepth == 0) {</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>      ValidationState dummy;</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>      <span class="keywordflow">return</span> doUpdateAffectedTips(modifiedBlock, dummy);</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>    }</div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span> </div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>    <span class="keywordflow">if</span> (!isUpdateTipsDeferred) {</div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>      <span class="keywordflow">if</span> (lastModifiedBlock == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span>        lastModifiedBlock = &amp;modifiedBlock;</div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>        isUpdateTipsDeferred = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>        lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>      }</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>    }</div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>  }</div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span> </div>
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>  <span class="keywordtype">void</span> doUpdateAffectedTips(index_t&amp; modifiedBlock, ValidationState&amp; state) {</div>
+<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>    <span class="keyword">auto</span> tips = findValidTips&lt;block_t&gt;(this-&gt;getTips(), modifiedBlock);</div>
+<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>    VBK_LOG_DEBUG(</div>
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>        <span class="stringliteral">&quot;Found %d affected valid tips in %s&quot;</span>, tips.size(), block_t::name());</div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* tip : tips) {</div>
+<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>      determineBestChain(*tip, state);</div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>    }</div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>  }</div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span> </div>
+<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>  <span class="keywordtype">void</span> updateTips() {</div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>    <span class="keywordflow">if</span> (deferForkResolutionDepth == 0) {</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>      <span class="keywordflow">return</span> doUpdateTips();</div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>    }</div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>    isUpdateTipsDeferred = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>    lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>  }</div>
+<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span> </div>
+<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span> <span class="keyword">private</span>:</div>
+<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>  <span class="keywordtype">int</span> deferForkResolutionDepth = 0;</div>
+<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>  <span class="keywordtype">bool</span> isUpdateTipsDeferred = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>  index_t* lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span> </div>
+<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>  <span class="keywordtype">void</span> doUpdateTips() {</div>
+<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>* tip : <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>) {</div>
+<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span>      VBK_ASSERT_MSG(tip-&gt;isValidTip(),</div>
+<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span>                     <span class="stringliteral">&quot;found block %s in tips_ which is not a valid tip&quot;</span>,</div>
+<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span>                     tip-&gt;toPrettyString());</div>
+<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span> </div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>      ValidationState state;</div>
+<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span>      determineBestChain(*tip, state);</div>
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>    }</div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>  }</div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span> </div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>  <span class="keywordtype">void</span> overrideDeferredForkResolution(index_t&amp; bestChain) {</div>
+<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>    lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>    isUpdateTipsDeferred = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span> </div>
+<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>    ValidationState dummy;</div>
+<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>    <span class="keywordtype">bool</span> success = setState(bestChain, dummy);</div>
+<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>    VBK_ASSERT_MSG(</div>
+<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span>        success,</div>
+<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>        <span class="stringliteral">&quot;state corruption: could not revert to the saved best chain tip: %s&quot;</span>,</div>
+<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>        dummy.toString());</div>
+<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span>  }</div>
+<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span> </div>
+<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>  <span class="keywordtype">void</span> deferForkResolution() { ++deferForkResolutionDepth; }</div>
 <div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span> </div>
-<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>    <span class="keywordflow">if</span> (deferForkResolutionDepth &gt; 0) {</div>
-<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span>    }</div>
+<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>  <span class="keywordtype">void</span> continueForkResolution() {</div>
+<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>    VBK_ASSERT(deferForkResolutionDepth &gt; 0);</div>
+<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span>    --deferForkResolutionDepth;</div>
 <div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span> </div>
-<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span>    <span class="keywordflow">if</span> (lastModifiedBlock != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span>      VBK_ASSERT(!isUpdateTipsDeferred);</div>
-<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>      ValidationState dummy;</div>
-<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>      doUpdateAffectedTips(*lastModifiedBlock, dummy);</div>
-<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>      lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span>    }</div>
-<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span> </div>
-<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>    <span class="keywordflow">if</span> (isUpdateTipsDeferred) {</div>
-<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>      doUpdateTips();</div>
-<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>      isUpdateTipsDeferred = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span>    }</div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>  }</div>
-<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span> </div>
-<div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> onBeforeLeafRemoved(<span class="keyword">const</span> index_t&amp;) {}</div>
+<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span>    <span class="keywordflow">if</span> (deferForkResolutionDepth &gt; 0) {</div>
+<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>    }</div>
+<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span> </div>
+<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>    <span class="keywordflow">if</span> (lastModifiedBlock != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span>      VBK_ASSERT(!isUpdateTipsDeferred);</div>
+<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span>      ValidationState dummy;</div>
+<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>      doUpdateAffectedTips(*lastModifiedBlock, dummy);</div>
+<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>      lastModifiedBlock = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>    }</div>
+<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span> </div>
+<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>    <span class="keywordflow">if</span> (isUpdateTipsDeferred) {</div>
+<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span>      doUpdateTips();</div>
+<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span>      isUpdateTipsDeferred = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span>    }</div>
+<div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span>  }</div>
 <div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span> </div>
-<div class="line"><a id="l01103" name="l01103"></a><span class="lineno"> 1103</span>  <span class="keywordtype">void</span> doInvalidate(index_t&amp; block, <span class="keyword">enum</span> <a class="code hl_enumeration" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a> reason) {</div>
-<div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span>    VBK_TRACE_ZONE_SCOPED;</div>
-<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span>    VBK_ASSERT_MSG(</div>
-<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span>        !block.isValidUpTo(<a class="code hl_enumvalue" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">BLOCK_CAN_BE_APPLIED</a>) ||</div>
-<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>            (reason &amp; <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7">BLOCK_FAILED_POP</a>) == 0u,</div>
-<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>        <span class="stringliteral">&quot;attempted to set mutually exclusive flags BLOCK_CAN_BE_APPLIED &quot;</span></div>
-<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>        <span class="stringliteral">&quot;and BLOCK_FAILED_POP for block %s&quot;</span>,</div>
-<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>        block.toPrettyString());</div>
-<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span> </div>
-<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>    block.setFlag(reason);</div>
-<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>.erase(&amp;block);</div>
-<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span> </div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a>.emit(block);</div>
-<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>  }</div>
-<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span> </div>
-<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span>  <span class="keywordtype">void</span> doReValidate(index_t&amp; block, <span class="keyword">enum</span> <a class="code hl_enumeration" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a> reason) {</div>
-<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span>    block.unsetFlag(reason);</div>
-<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span>    tryAddTip(&amp;block);</div>
-<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a>.emit(block);</div>
-<div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>  }</div>
-<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span> </div>
-<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span> <span class="keyword">public</span>:</div>
-<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61"> 1126</a></span>  signals::Signal&lt;void(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp;)&gt; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">onBlockBeforeDeallocated</a>;</div>
-<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e"> 1128</a></span>  signals::Signal&lt;on_invalidate_t&gt; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a>;</div>
-<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span> </div>
-<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span> <span class="keyword">protected</span>:</div>
-<div class="line"><a id="l01132" name="l01132"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901"> 1132</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">isLoadingBlocks_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01134" name="l01134"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9"> 1134</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">isLoaded_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01136" name="l01136"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51"> 1136</a></span>  block_index_t <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>;</div>
-<div class="line"><a id="l01138" name="l01138"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736"> 1138</a></span>  std::unordered_set&lt;index_t*&gt; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>;</div>
-<div class="line"><a id="l01140" name="l01140"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69"> 1140</a></span>  <a class="code hl_struct" href="structaltintegration_1_1Chain.html">Chain&lt;index_t&gt;</a> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>;</div>
-<div class="line"><a id="l01143" name="l01143"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d"> 1143</a></span>  <a class="code hl_struct" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex&lt;index_t&gt;</a> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>;</div>
-<div class="line"><a id="l01144" name="l01144"></a><span class="lineno"> 1144</span> </div>
-<div class="line"><a id="l01145" name="l01145"></a><span class="lineno"> 1145</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1BlockReader.html">BlockReader</a>&amp; blockProvider_;</div>
-<div class="line"><a id="l01146" name="l01146"></a><span class="lineno"> 1146</span>};</div>
-<div class="line"><a id="l01147" name="l01147"></a><span class="lineno"> 1147</span> </div>
-<div class="line"><a id="l01148" name="l01148"></a><span class="lineno"> 1148</span>}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span><span class="preprocessor">#endif  </span><span class="comment">// ALTINTEGRATION_BASE_BLOCK_TREE_HPP</span></div>
+<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> onBeforeLeafRemoved(<span class="keyword">const</span> index_t&amp;) {}</div>
+<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span> </div>
+<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>  <span class="keywordtype">void</span> doInvalidate(index_t&amp; block, <span class="keyword">enum</span> <a class="code hl_enumeration" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a> reason) {</div>
+<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>    VBK_TRACE_ZONE_SCOPED;</div>
+<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>    VBK_ASSERT_MSG(</div>
+<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>        !block.isValidUpTo(<a class="code hl_enumvalue" href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634abf5135973cf643fa3a14d875a7d3a8df">BLOCK_CAN_BE_APPLIED</a>) ||</div>
+<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span>            (reason &amp; <a class="code hl_enumvalue" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736aacbeb8beff09b680fc056b93e764535d7">BLOCK_FAILED_POP</a>) == 0u,</div>
+<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>        <span class="stringliteral">&quot;attempted to set mutually exclusive flags BLOCK_CAN_BE_APPLIED &quot;</span></div>
+<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>        <span class="stringliteral">&quot;and BLOCK_FAILED_POP for block %s&quot;</span>,</div>
+<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>        block.toPrettyString());</div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span> </div>
+<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>    block.setFlag(reason);</div>
+<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>.erase(&amp;block);</div>
+<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span> </div>
+<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a>.emit(block);</div>
+<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span>  }</div>
+<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span> </div>
+<div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>  <span class="keywordtype">void</span> doReValidate(index_t&amp; block, <span class="keyword">enum</span> <a class="code hl_enumeration" href="namespacealtintegration.html#a798d9fc435a987ae04ecc3ef4f5e736a">BlockValidityStatus</a> reason) {</div>
+<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>    block.unsetFlag(reason);</div>
+<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span>    tryAddTip(&amp;block);</div>
+<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a>.emit(block);</div>
+<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span>  }</div>
+<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span> </div>
+<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span> <span class="keyword">public</span>:</div>
+<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61"> 1130</a></span>  signals::Signal&lt;void(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1BlockIndex.html">index_t</a>&amp;)&gt; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">onBlockBeforeDeallocated</a>;</div>
+<div class="line"><a id="l01132" name="l01132"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e"> 1132</a></span>  signals::Signal&lt;on_invalidate_t&gt; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">onBlockValidityChanged</a>;</div>
+<div class="line"><a id="l01133" name="l01133"></a><span class="lineno"> 1133</span> </div>
+<div class="line"><a id="l01134" name="l01134"></a><span class="lineno"> 1134</span> <span class="keyword">protected</span>:</div>
+<div class="line"><a id="l01136" name="l01136"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901"> 1136</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">isLoadingBlocks_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01138" name="l01138"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9"> 1138</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">isLoaded_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01140" name="l01140"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51"> 1140</a></span>  block_index_t <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">blocks_</a>;</div>
+<div class="line"><a id="l01142" name="l01142"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736"> 1142</a></span>  std::unordered_set&lt;index_t*&gt; <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>;</div>
+<div class="line"><a id="l01144" name="l01144"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69"> 1144</a></span>  <a class="code hl_struct" href="structaltintegration_1_1Chain.html">Chain&lt;index_t&gt;</a> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>;</div>
+<div class="line"><a id="l01148" name="l01148"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d"> 1148</a></span>  <a class="code hl_struct" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex&lt;index_t&gt;</a> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>;</div>
+<div class="line"><a id="l01151" name="l01151"></a><span class="lineno"><a class="line" href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86"> 1151</a></span>  <a class="code hl_struct" href="structaltintegration_1_1PayloadsIndex.html">PayloadsIndex&lt;index_t&gt;</a> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">payloadsIndex_</a>;</div>
+<div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span> </div>
+<div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span>  <span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1BlockReader.html">BlockReader</a>&amp; blockProvider_;</div>
+<div class="line"><a id="l01154" name="l01154"></a><span class="lineno"> 1154</span>};</div>
+<div class="line"><a id="l01155" name="l01155"></a><span class="lineno"> 1155</span> </div>
+<div class="line"><a id="l01156" name="l01156"></a><span class="lineno"> 1156</span>}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a id="l01157" name="l01157"></a><span class="lineno"> 1157</span><span class="preprocessor">#endif  </span><span class="comment">// ALTINTEGRATION_BASE_BLOCK_TREE_HPP</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1"><div class="ttname"><a href="namespacealtintegration.html#a630b90bf15b09e62aa4a8d02d45d3634a4a6b4cd95c6bd377c33293cf30fda8a1">altintegration::BLOCK_VALID_TREE</a></div><div class="ttdeci">@ BLOCK_VALID_TREE</div><div class="ttdoc">acceptBlockHeader succeded.</div><div class="ttdef"><b>Definition:</b> <a href="block__status_8hpp_source.html#l00017">block_status.hpp:17</a></div></div>
@@ -1112,32 +1117,34 @@ $(document).ready(function(){initNavTree('base__block__tree_8hpp_source.html',''
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a066ff76575eaea27374b1dac26860610"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a066ff76575eaea27374b1dac26860610">altintegration::BaseBlockTree::removeSubtree</a></div><div class="ttdeci">void removeSubtree(const hash_t &amp;toRemove)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00247">base_block_tree.hpp:247</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a10612862539d7faa6495827a4315005b"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a10612862539d7faa6495827a4315005b">altintegration::BaseBlockTree::findBlockIndex</a></div><div class="ttdeci">index_t * findBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00139">base_block_tree.hpp:139</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2548fa5b502b0b35fd7db22083d30b24"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2548fa5b502b0b35fd7db22083d30b24">altintegration::BaseBlockTree::removeSubtree</a></div><div class="ttdeci">void removeSubtree(index_t &amp;toRemove)</div><div class="ttdoc">Removes block and all its successors.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00212">base_block_tree.hpp:212</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a298de09c0940872bee6e7d6d743aca61"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">altintegration::BaseBlockTree::onBlockBeforeDeallocated</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;)&gt; onBlockBeforeDeallocated</div><div class="ttdoc">before we deallocate any block index we emit it to this signal</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01126">base_block_tree.hpp:1126</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a298de09c0940872bee6e7d6d743aca61"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">altintegration::BaseBlockTree::onBlockBeforeDeallocated</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;)&gt; onBlockBeforeDeallocated</div><div class="ttdoc">before we deallocate any block index we emit it to this signal</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01130">base_block_tree.hpp:1130</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2a26a4462a19387064dd2534e0cf8179"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2a26a4462a19387064dd2534e0cf8179">altintegration::BaseBlockTree::deallocateBlock</a></div><div class="ttdeci">void deallocateBlock(index_t &amp;block)</div><div class="ttdoc">Permanently erases block from a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00493">base_block_tree.hpp:493</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00094">base_block_tree.hpp:94</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4226fb8644befc047f78f38d88b7f736"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">altintegration::BaseBlockTree::tips_</a></div><div class="ttdeci">std::unordered_set&lt; index_t * &gt; tips_</div><div class="ttdoc">stores ONLY VALID tips, including currently active tip</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01138">base_block_tree.hpp:1138</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a44be8e5528b971d6ba9b800875448d3e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">altintegration::BaseBlockTree::onBlockValidityChanged</a></div><div class="ttdeci">signals::Signal&lt; on_invalidate_t &gt; onBlockValidityChanged</div><div class="ttdoc">signals to the end user that block have been invalidated</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01128">base_block_tree.hpp:1128</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4226fb8644befc047f78f38d88b7f736"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">altintegration::BaseBlockTree::tips_</a></div><div class="ttdeci">std::unordered_set&lt; index_t * &gt; tips_</div><div class="ttdoc">stores ONLY VALID tips, including currently active tip</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01142">base_block_tree.hpp:1142</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a44be8e5528b971d6ba9b800875448d3e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a44be8e5528b971d6ba9b800875448d3e">altintegration::BaseBlockTree::onBlockValidityChanged</a></div><div class="ttdeci">signals::Signal&lt; on_invalidate_t &gt; onBlockValidityChanged</div><div class="ttdoc">signals to the end user that block have been invalidated</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01132">base_block_tree.hpp:1132</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a48c1ac8d9b8139e000c439898b2c587e"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a48c1ac8d9b8139e000c439898b2c587e">altintegration::BaseBlockTree::loadBlockForward</a></div><div class="ttdeci">virtual bool loadBlockForward(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree as a leaf, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00188">base_block_tree.hpp:188</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01140">base_block_tree.hpp:1140</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01144">base_block_tree.hpp:1144</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a56b1f7eea3027fe06f480f9e8bf675c0"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a56b1f7eea3027fe06f480f9e8bf675c0">altintegration::BaseBlockTree::removeLeaf</a></div><div class="ttdeci">void removeLeaf(index_t &amp;toRemove)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00255">base_block_tree.hpp:255</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01132">base_block_tree.hpp:1132</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01136">base_block_tree.hpp:1136</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a92bea7a560edcd4531e90e81a75821b1"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a92bea7a560edcd4531e90e81a75821b1">altintegration::BaseBlockTree::invalidateSubtree</a></div><div class="ttdeci">void invalidateSubtree(const hash_t &amp;toBeInvalidated, enum BlockValidityStatus reason, bool shouldDetermineBestChain=true)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00332">base_block_tree.hpp:332</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01136">base_block_tree.hpp:1136</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01140">base_block_tree.hpp:1140</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ab9c8e5e91a8bf0c67a41db06ff61f48c"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ab9c8e5e91a8bf0c67a41db06ff61f48c">altintegration::BaseBlockTree::loadBlockBackward</a></div><div class="ttdeci">virtual bool loadBlockBackward(const stored_index_t &amp;index, ValidationState &amp;state)</div><div class="ttdoc">Efficiently connects BlockIndex to this tree as a new root, when it is loaded from disk.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00202">base_block_tree.hpp:202</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01134">base_block_tree.hpp:1134</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01138">base_block_tree.hpp:1138</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acfeccd19e4f853e9d959b29e9479ffe9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acfeccd19e4f853e9d959b29e9479ffe9">altintegration::BaseBlockTree::invalidateSubtree</a></div><div class="ttdeci">void invalidateSubtree(index_t &amp;toBeInvalidated, enum BlockValidityStatus reason, bool shouldDetermineBestChain=true)</div><div class="ttdoc">Mark given block as invalid.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00277">base_block_tree.hpp:277</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad6875b36b78c402d46e7c7d705312359"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad6875b36b78c402d46e7c7d705312359">altintegration::BaseBlockTree::isBootstrapped</a></div><div class="ttdeci">bool isBootstrapped() const</div><div class="ttdoc">Check if the blockchain is bootstrapped.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00398">base_block_tree.hpp:398</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ad9b94b099f5fadbc138e0ceb72043c6f"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ad9b94b099f5fadbc138e0ceb72043c6f">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">const index_t * getBlockIndex(const T &amp;hash) const</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00123">base_block_tree.hpp:123</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_adc757d7c7665303acf67c26f9fa0694f"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#adc757d7c7665303acf67c26f9fa0694f">altintegration::BaseBlockTree::findBlockIndex</a></div><div class="ttdeci">const index_t * findBlockIndex(const T &amp;hash) const</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00149">base_block_tree.hpp:149</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_adf4d9734048cd8bedb69d86d830f513d"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">altintegration::BaseBlockTree::finalizedPayloadsIndex_</a></div><div class="ttdeci">FinalizedPayloadsIndex&lt; index_t &gt; finalizedPayloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK block.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01143">base_block_tree.hpp:1143</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_adf4d9734048cd8bedb69d86d830f513d"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">altintegration::BaseBlockTree::finalizedPayloadsIndex_</a></div><div class="ttdeci">FinalizedPayloadsIndex&lt; index_t &gt; finalizedPayloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK block which are already finalized.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01148">base_block_tree.hpp:1148</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_ae516864aa99c0d64b1ed301b7e261687"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">altintegration::BaseBlockTree::getBlockIndex</a></div><div class="ttdeci">index_t * getBlockIndex(const T &amp;hash)</div><div class="ttdoc">Get BlockIndex by block hash.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00113">base_block_tree.hpp:113</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aef352a5df8dc58d866fb33feb63b1c86"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">altintegration::BaseBlockTree::payloadsIndex_</a></div><div class="ttdeci">PayloadsIndex&lt; index_t &gt; payloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK blocks which are not yet finalized.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01151">base_block_tree.hpp:1151</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html">altintegration::BlockIndex</a></div><div class="ttdoc">A node in a block tree.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00031">block_index.hpp:31</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_a259599e92dc2aab08620341c011e10c4"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#a259599e92dc2aab08620341c011e10c4">altintegration::BlockIndex::nondeletedDescendantCount</a></div><div class="ttdeci">size_t nondeletedDescendantCount() const</div><div class="ttdoc">Count the descendants that are not deleted.</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00296">block_index.hpp:296</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_a26c5aa8d8b55e9c01b3b05bf270faa27"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#a26c5aa8d8b55e9c01b3b05bf270faa27">altintegration::BlockIndex::pprev</a></div><div class="ttdeci">BlockIndex * pprev</div><div class="ttdoc">(memory only) pointer to the previous block</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00039">block_index.hpp:39</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockIndex_html_a478bf2ce1222d7d550cd4d83f8dce162"><div class="ttname"><a href="structaltintegration_1_1BlockIndex.html#a478bf2ce1222d7d550cd4d83f8dce162">altintegration::BlockIndex::pnext</a></div><div class="ttdeci">std::set&lt; BlockIndex * &gt; pnext</div><div class="ttdoc">(memory only) a set of pointers for forward iteration</div><div class="ttdef"><b>Definition:</b> <a href="block__index_8hpp_source.html#l00042">block_index.hpp:42</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BlockReader_html"><div class="ttname"><a href="structaltintegration_1_1BlockReader.html">altintegration::BlockReader</a></div><div class="ttdoc">An abstraction over on-disk storage iterator.</div><div class="ttdef"><b>Definition:</b> <a href="block__reader_8hpp_source.html#l00026">block_reader.hpp:26</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1Chain_html"><div class="ttname"><a href="structaltintegration_1_1Chain.html">altintegration::Chain</a></div><div class="ttdoc">Fully in-memory chain representation.</div><div class="ttdef"><b>Definition:</b> <a href="chain_8hpp_source.html#l00025">chain.hpp:25</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1FinalizedPayloadsIndex_html"><div class="ttname"><a href="structaltintegration_1_1FinalizedPayloadsIndex.html">altintegration::FinalizedPayloadsIndex</a></div><div class="ttdoc">Stores a mapping payload id -&gt; containing block hash of payloads that are stored in finalized blocks.</div><div class="ttdef"><b>Definition:</b> <a href="finalized__payloads__index_8hpp_source.html#l00019">finalized_payloads_index.hpp:19</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1FinalizedPayloadsIndex_html"><div class="ttname"><a href="structaltintegration_1_1FinalizedPayloadsIndex.html">altintegration::FinalizedPayloadsIndex</a></div><div class="ttdoc">Stores a mapping &quot;payload id -&gt; containing block&quot; hash of payloads that are stored in finalized block...</div><div class="ttdef"><b>Definition:</b> <a href="payloads__index_8hpp_source.html#l00017">payloads_index.hpp:17</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1PayloadsIndex_html"><div class="ttname"><a href="structaltintegration_1_1PayloadsIndex.html">altintegration::PayloadsIndex</a></div><div class="ttdoc">Payloads index that stores mapping &quot;payload id -&gt; set of containing blocks&quot; from all NON-FINALIZED bl...</div><div class="ttdef"><b>Definition:</b> <a href="payloads__index_8hpp_source.html#l00063">payloads_index.hpp:63</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1StoredBlockIndex_html"><div class="ttname"><a href="structaltintegration_1_1StoredBlockIndex.html">altintegration::StoredBlockIndex</a></div><div class="ttdef"><b>Definition:</b> <a href="stored__block__index_8hpp_source.html#l00018">stored_block_index.hpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
