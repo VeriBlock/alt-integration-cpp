@@ -48,7 +48,13 @@ static bool DecodeBase58(const char *psz,
   size_t length = 0;
   while (*psz == '1') {
     zeroes++;
-    if (zeroes > max_ret_len) return false;
+    if (zeroes > max_ret_len) {
+      return state.Invalid(
+          "decode-base-58",
+          format("zeros more than max_ret_len, zeros: {}, max_ret_len: {}",
+                 zeroes,
+                 max_ret_len));
+    }
     psz++;
   }
   // Allocate enough space in big-endian base256 representation.
@@ -76,12 +82,21 @@ static bool DecodeBase58(const char *psz,
     }
     VBK_ASSERT(carry == 0);
     length = i;
-    if (length + zeroes > max_ret_len) return false;
+    if (length + zeroes > max_ret_len) {
+      return state.Invalid("decode-base-58",
+                           format("(zeros + length) more than max_ret_len, "
+                                  "(zeros + length): {}, max_ret_len: {}",
+                                  (length + zeroes),
+                                  max_ret_len));
+    }
     psz++;
   }
   // Skip trailing spaces.
   while (IsSpace(*psz)) psz++;
-  if (*psz != 0) return false;
+  if (*psz != 0) {
+    return state.Invalid("decode-base-58",
+                         format("psz not equal to zero, psz: {}", *psz));
+  }
   // Skip leading zeroes in b256.
   auto it = b256.begin() + (size - length);
   // Copy result into output vector.
