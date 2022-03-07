@@ -4,34 +4,17 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/base58.hpp>
-
 #include <cstring>
 #include <stdexcept>
 #include <vector>
 #include <veriblock/pop/assert.hpp>
+#include <veriblock/pop/base58.hpp>
+#include <veriblock/pop/strutil.hpp>
 
 namespace altintegration {
 
 inline bool ValidAsCString(const std::string &str) noexcept {
   return str.size() == strlen(str.c_str());
-}
-
-/**
- * Tests if the given character is a whitespace character. The whitespace
- * characters are: space, form-feed ('\\f'), newline ('\\n'), carriage return
- * ('\\r'), horizontal tab ('\\t'), and vertical tab ('\\v').
- *
- * This function is locale independent. Under the C locale this function gives
- * the same result as std::isspace.
- *
- * @param[in] c     character to test
- * @return          true if the argument is a whitespace character; otherwise
- * false
- */
-constexpr inline bool IsSpace(char c) noexcept {
-  return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
-         c == '\v';
 }
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
@@ -56,7 +39,8 @@ static const int8_t mapBase58[256] = {
 
 static bool DecodeBase58(const char *psz,
                          std::vector<unsigned char> &vch,
-                         size_t max_ret_len) {
+                         size_t max_ret_len,
+                         ValidationState &state) {
   // Skip leading spaces.
   while ((*psz != 0) && IsSpace(*psz)) psz++;
   // Skip and count leading '1's.
@@ -79,8 +63,9 @@ static bool DecodeBase58(const char *psz,
     // Decode base58 character
     // NOLINTNEXTLINE(cert-str34-c)
     int carry = static_cast<int>(mapBase58[uint8_t(*psz)]);
-    if (carry == -1)  // Invalid b58 character
-      return false;
+    if (carry == -1) {
+      return state.Invalid("decode-base-58", "invalid b58 character");
+    }
     size_t i = 0;
     for (auto it = b256.rbegin();
          (carry != 0 || i < length) && (it != b256.rend());
@@ -147,18 +132,13 @@ std::string EncodeBase58(const unsigned char *pbegin,
   return str;
 }
 
-bool DecodeBase58(const std::string &str, std::vector<unsigned char> &out) {
+bool DecodeBase58(const std::string &str,
+                  std::vector<unsigned char> &out,
+                  ValidationState &state) {
   if (!ValidAsCString(str)) {
-    return false;
+    return state.Invalid("decode-base-58", "invalid C sting");
   }
-  return DecodeBase58(str.c_str(), out, str.size() + 1);
-}
-
-std::vector<uint8_t> AssertDecodeBase58(const std::string &str) {
-  std::vector<uint8_t> vch;
-  bool status = DecodeBase58(str, vch);
-  VBK_ASSERT_MSG(status, "Invalid input: %s", str);
-  return vch;
+  return DecodeBase58(str.c_str(), out, str.size() + 1, state);
 }
 
 }  // namespace altintegration
