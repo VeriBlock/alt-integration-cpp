@@ -618,8 +618,7 @@ void AltBlockTree::overrideTip(index_t& to) {
     return;
   }
 
-  // TODO: enable it after finalization will complete
-  // finalizeBlocks();
+  finalizeBlocks();
 }
 
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,

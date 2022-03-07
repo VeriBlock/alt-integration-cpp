@@ -72,7 +72,9 @@ struct PayloadsIndex {
   }
 
   void removeBlock(const index_t& block) {
-    VBK_ASSERT_MSG(!block.finalized, block.toPrettyString());
+    // when blocks are removed from PayloadsIndex they are mostly non finalized.
+    // but there's an edge case: when we deallocate entire Tree (in destructor)
+    // we can remove finalized blocks.
     detail::PLIRemoveBlock(*this, block);
   }
 
@@ -82,7 +84,11 @@ struct PayloadsIndex {
 
   void remove(const payload_id& id, const hash_t& block) {
     auto it = map_.find(id);
-    VBK_ASSERT(it != map_.end());
+    VBK_ASSERT_MSG(it != map_.end(),
+                   "Can not remove payload %s from %s block %s",
+                   HexStr(id),
+                   index_t::block_t::name(),
+                   HexStr(block));
     auto& set = it->second;
     size_t erased = set.erase(block);
     VBK_ASSERT(erased == 1);
