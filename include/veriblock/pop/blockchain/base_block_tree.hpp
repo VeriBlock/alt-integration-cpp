@@ -426,6 +426,7 @@ struct BaseBlockTree {
   }
 
   virtual void overrideTip(index_t& to) {
+    onBeforeOverrideTip.emit(to);
     activeChain_.setTip(&to);
     appliedBlockCount = activeChain_.blocksCount();
   }
@@ -1130,6 +1131,8 @@ struct BaseBlockTree {
   signals::Signal<void(const index_t&)> onBlockBeforeDeallocated;
   //! signals to the end user that block have been invalidated
   signals::Signal<on_invalidate_t> onBlockValidityChanged;
+  //! chain reorg signal - the tip is being changed
+  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
 
  protected:
   //! if true, we're in "loading blocks" state

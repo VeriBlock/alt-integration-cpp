@@ -610,8 +610,7 @@ void AltBlockTree::overrideTip(index_t& to) {
                  "the active chain tip(%s) must be fully valid",
                  to.toPrettyString());
 
-  onBeforeOverrideTip.emit(to);
-  activeChain_.setTip(&to);
+  base::overrideTip(to);
 
   if (!this->isLoaded_ || this->isLoadingBlocks_) {
     // we're loading blocks, so we can not execute finalization

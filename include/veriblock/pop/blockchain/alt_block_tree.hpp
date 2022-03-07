@@ -307,9 +307,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! a block has been successfully handed over to the underlying tree
   signals::Signal<void(index_t& index)> onBlockConnected;
 
-  //! chain reorg signal - the tip is being changed
-  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
-
   /**
    * Efficiently connect block loaded from disk as a leaf.
    *
