@@ -94,6 +94,7 @@ struct MemPool {
    * known to active chain.
    * @tparam T ATV or VTB or VbkBlock
    * @param[in] id payload id
+   * @param[in] onlyInMempool if true, blockchain won't be searched for "known" payloads.
    * @return true if payload exists in mempool or active chain, false otherwise.
    */
   template <typename T,
