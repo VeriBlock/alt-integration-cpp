@@ -20,9 +20,10 @@ struct AtvCandidate {
 };
 
 struct FuzzState {
-  ai::MockMiner mm{ai::AltChainParamsRegTest{},
-                   ai::VbkChainParamsRegTest{},
-                   ai::BtcChainParamsRegTest{}};
+  ai::AltChainParamsRegTest altparam;
+  ai::VbkChainParamsRegTest vbkparam;
+  ai::BtcChainParamsRegTest btcparam;
+  ai::MockMiner mm{altparam, vbkparam, btcparam};
   fuzz::Tree tree;
   std::list<ai::VTB> vtbs;
   std::list<ai::ATV> atvs;
