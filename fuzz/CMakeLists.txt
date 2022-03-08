@@ -12,7 +12,7 @@ add_fuzz(address_deserialization_fuzz
         ARGS
             -malloc_limit_mb=1
             -rss_limit_mb=1
-            -max_len=40
+            -max_len=25
         WEIGHT 3
         )
 add_fuzz(deserialization_fuzz
