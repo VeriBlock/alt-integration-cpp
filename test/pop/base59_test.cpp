@@ -3,14 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/base59.hpp>
-
 #include <gtest/gtest.h>
 
 #include <ostream>
 #include <string>
 #include <vector>
-
+#include <veriblock/pop/base59.hpp>
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;
@@ -71,7 +69,11 @@ TEST_P(Base59Test, Encode) {
 
 TEST_P(Base59Test, Decode) {
   auto tc = GetParam();
-  EXPECT_EQ(altintegration::AssertDecodeBase59(tc.baseData), tc.binData);
+  std::vector<uint8_t> decoded;
+  altintegration::ValidationState state;
+  EXPECT_TRUE(altintegration::DecodeBase59(tc.baseData, decoded, state))
+      << state.toString();
+  EXPECT_EQ(decoded, tc.binData);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base59Regression,

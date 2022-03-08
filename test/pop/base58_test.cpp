@@ -8,7 +8,6 @@
 #include <ostream>
 #include <string>
 #include <vector>
-
 #include <veriblock/pop/strutil.hpp>
 
 struct TestCase {
@@ -50,7 +49,11 @@ TEST_P(Base58Test, Encode) {
 
 TEST_P(Base58Test, Decode) {
   auto tc = GetParam();
-  EXPECT_EQ(altintegration::AssertDecodeBase58(tc.baseData), tc.binData);
+  std::vector<uint8_t> decoded;
+  altintegration::ValidationState state;
+  EXPECT_TRUE(altintegration::DecodeBase58(tc.baseData, decoded, state))
+      << state.toString();
+  EXPECT_EQ(decoded, tc.binData);
 }
 
 INSTANTIATE_TEST_SUITE_P(Base58Regression,
