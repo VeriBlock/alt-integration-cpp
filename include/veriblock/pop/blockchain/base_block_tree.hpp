@@ -853,10 +853,6 @@ struct BaseBlockTree {
     appliedBlockCount -= erasedBlocks;
   }
 
-  inline void increaseAppliedBlockCount(size_t appliedBlocks) {
-    appliedBlockCount += appliedBlocks;
-  }
-
   //! Marks `block` as finalized.
   //!
   //! Final blocks can not be reorganized, thus we can remove outdated blocks
@@ -981,8 +977,8 @@ struct BaseBlockTree {
       VBK_LOG_WARN(
           "%s tree deallocated blocks: %d", block_t::name(), deallocatedBlocks);
     }
-    decreaseAppliedBlockCount(deallocatedBlocks);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
+    appliedBlockCount = activeChain_.blocksCount();
 
     // fourth, mark `index` and all predecessors as finalized
     index_t* ptr = finalizedBlock;
