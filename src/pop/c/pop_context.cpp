@@ -3,13 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "pop_context.hpp"
+
 #include "adaptors/logger.hpp"
 #include "config.hpp"
 #include "entities/altblock.hpp"
 #include "entities/block_index.hpp"
 #include "entities/pop_payouts.hpp"
 #include "entities/popdata.hpp"
-#include "pop_context.hpp"
 #include "storage.hpp"
 #include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
@@ -341,12 +342,18 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,
                            POP_ARRAY_NAME(array_u8),
                            get_payload_containing_blocks,
-                           POP_ARRAY_NAME(u8) id) {
+                           POP_ARRAY_NAME(u8) _id) {
   VBK_ASSERT(self);
 
-  auto alt_hashes =
-      self->ref->getAltBlockTree().getPayloadsIndex().getContainingAltBlocks(
-          std::vector<uint8_t>(id.data, id.data + id.size));
+  std::vector<uint8_t> id(_id.data, _id.data + _id.size);
+  auto alt_hashes = self->ref->getAltBlockTree().getPayloadsIndex().find(id);
+
+  // also include finalized block
+  auto* fhash =
+      self->ref->getAltBlockTree().getFinalizedPayloadsIndex().find(id);
+  if (fhash != nullptr) {
+    alt_hashes.insert(*fhash);
+  }
 
   POP_ARRAY_NAME(array_u8) res;
   res.size = alt_hashes.size();
