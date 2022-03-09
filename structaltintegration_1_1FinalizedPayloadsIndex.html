@@ -93,20 +93,21 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1FinalizedPaylo
 </div><!--header-->
 <div class="contents">
 
-<p>Stores a mapping payload id -&gt; containing block hash of payloads that are stored in <b>finalized</b> blocks.  
+<p>Stores a mapping "payload id -&gt; containing block" hash of payloads that are stored in <b>finalized</b> blocks.  
  <a href="structaltintegration_1_1FinalizedPayloadsIndex.html#details">More...</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename ContainerIndex&gt;<br />
-struct altintegration::FinalizedPayloadsIndex&lt; ContainerIndex &gt;</div>
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00019">19</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
+struct altintegration::FinalizedPayloadsIndex&lt; ContainerIndex &gt;</div><dl class="section invariant"><dt>Invariant</dt><dd>KV are never removed from this index. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00017">17</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
 </div>
-<p><code>#include &lt;<a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::FinalizedPayloadsIndex&lt; ContainerIndex &gt;:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1FinalizedPayloadsIndex__inherit__graph.svg" width="288" height="390"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1FinalizedPayloadsIndex__inherit__graph.svg" width="432" height="448"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -114,12 +115,14 @@ struct altintegration::FinalizedPayloadsIndex&lt; ContainerIndex &gt;</div>
 <div id="dynsection-1-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1FinalizedPayloadsIndex__coll__graph.svg" width="226" height="162"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1FinalizedPayloadsIndex__coll__graph.svg" width="226" height="191"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:abe2ef4906cdb164c4c9391a92c0f8b4b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html#abe2ef4906cdb164c4c9391a92c0f8b4b">index_t</a> = ContainerIndex</td></tr>
+<tr class="separator:abe2ef4906cdb164c4c9391a92c0f8b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79866c0266ce42e04e65ee7e720c1ab1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html#a79866c0266ce42e04e65ee7e720c1ab1">hash_t</a> = typename ContainerIndex::hash_t</td></tr>
 <tr class="separator:a79866c0266ce42e04e65ee7e720c1ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9cb2a964d070aa41dbb6fa599facb45"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html#aa9cb2a964d070aa41dbb6fa599facb45">payload_id</a> = std::vector&lt; uint8_t &gt;</td></tr>
@@ -137,6 +140,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab5871adc749a92a99e1c65127f01dfee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a567bd67454f9c90010ed3493055d6485"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html#a567bd67454f9c90010ed3493055d6485">remove</a> (const payload_id &amp;pid)</td></tr>
 <tr class="separator:a567bd67454f9c90010ed3493055d6485"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8d11984fc487e58840476ee53578041"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html#ad8d11984fc487e58840476ee53578041">addBlock</a> (const index_t &amp;block)</td></tr>
+<tr class="separator:ad8d11984fc487e58840476ee53578041"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4540ced8e7b5ce3df6c40db8bd764699"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; payload_id, hash_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html#a4540ced8e7b5ce3df6c40db8bd764699">getAll</a> () const</td></tr>
+<tr class="separator:a4540ced8e7b5ce3df6c40db8bd764699"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a79866c0266ce42e04e65ee7e720c1ab1" name="a79866c0266ce42e04e65ee7e720c1ab1"></a>
@@ -153,7 +160,25 @@ template&lt;typename ContainerIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00020">20</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00019">19</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abe2ef4906cdb164c4c9391a92c0f8b4b" name="abe2ef4906cdb164c4c9391a92c0f8b4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe2ef4906cdb164c4c9391a92c0f8b4b">&#9670;&nbsp;</a></span>index_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ContainerIndex &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">altintegration::FinalizedPayloadsIndex</a>&lt; ContainerIndex &gt;::index_t =  ContainerIndex</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00018">18</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
 
 </div>
 </div>
@@ -171,7 +196,7 @@ template&lt;typename ContainerIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00021">21</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00020">20</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
 
 </div>
 </div>
@@ -212,12 +237,47 @@ template&lt;typename ContainerIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00036">36</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   36</span>                                                      {</div>
-<div class="line"><span class="lineno">   37</span>    <span class="keyword">auto</span> it = map_.find(pid);</div>
-<div class="line"><span class="lineno">   38</span>    VBK_ASSERT(it == map_.end());</div>
-<div class="line"><span class="lineno">   39</span>    map_.insert(std::make_pair(pid, hash));</div>
-<div class="line"><span class="lineno">   40</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00035">35</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   35</span>                                                      {</div>
+<div class="line"><span class="lineno">   36</span>    <span class="keyword">auto</span> it = map_.find(pid);</div>
+<div class="line"><span class="lineno">   37</span>    VBK_ASSERT(it == map_.end());</div>
+<div class="line"><span class="lineno">   38</span>    map_.insert(std::make_pair(pid, hash));</div>
+<div class="line"><span class="lineno">   39</span>  }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="ad8d11984fc487e58840476ee53578041" name="ad8d11984fc487e58840476ee53578041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8d11984fc487e58840476ee53578041">&#9670;&nbsp;</a></span>addBlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ContainerIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">altintegration::FinalizedPayloadsIndex</a>&lt; ContainerIndex &gt;::addBlock </td>
+          <td>(</td>
+          <td class="paramtype">const index_t &amp;&#160;</td>
+          <td class="paramname"><em>block</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00047">47</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   47</span>                                      {</div>
+<div class="line"><span class="lineno">   48</span>    <span class="comment">// in FinalizedPayloadsIndex we can add only finalized payloads!</span></div>
+<div class="line"><span class="lineno">   49</span>    VBK_ASSERT_MSG(block.finalized, block.toPrettyString());</div>
+<div class="line"><span class="lineno">   50</span>    detail::PLIAddBlock(*<span class="keyword">this</span>, block);</div>
+<div class="line"><span class="lineno">   51</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -246,8 +306,8 @@ template&lt;typename ContainerIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00032">32</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   32</span>{ <span class="keywordflow">return</span> map_.empty(); }</div>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00031">31</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   31</span>{ <span class="keywordflow">return</span> map_.empty(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -277,15 +337,45 @@ template&lt;typename ContainerIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00023">23</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   23</span>                                                  {</div>
-<div class="line"><span class="lineno">   24</span>    <span class="keyword">auto</span> it = map_.find(pid);</div>
-<div class="line"><span class="lineno">   25</span>    <span class="keywordflow">if</span> (it == map_.end()) {</div>
-<div class="line"><span class="lineno">   26</span>      <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><span class="lineno">   27</span>    }</div>
-<div class="line"><span class="lineno">   28</span> </div>
-<div class="line"><span class="lineno">   29</span>    <span class="keywordflow">return</span> &amp;it-&gt;second;</div>
-<div class="line"><span class="lineno">   30</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00022">22</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   22</span>                                                  {</div>
+<div class="line"><span class="lineno">   23</span>    <span class="keyword">auto</span> it = map_.find(pid);</div>
+<div class="line"><span class="lineno">   24</span>    <span class="keywordflow">if</span> (it == map_.end()) {</div>
+<div class="line"><span class="lineno">   25</span>      <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
+<div class="line"><span class="lineno">   26</span>    }</div>
+<div class="line"><span class="lineno">   27</span> </div>
+<div class="line"><span class="lineno">   28</span>    <span class="keywordflow">return</span> &amp;it-&gt;second;</div>
+<div class="line"><span class="lineno">   29</span>  }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a4540ced8e7b5ce3df6c40db8bd764699" name="a4540ced8e7b5ce3df6c40db8bd764699"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4540ced8e7b5ce3df6c40db8bd764699">&#9670;&nbsp;</a></span>getAll()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ContainerIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::unordered_map&lt; payload_id, hash_t &gt; &amp; <a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">altintegration::FinalizedPayloadsIndex</a>&lt; ContainerIndex &gt;::getAll </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00053">53</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   53</span>{ <span class="keywordflow">return</span> map_; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -315,12 +405,12 @@ template&lt;typename ContainerIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00042">42</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   42</span>                                     {</div>
-<div class="line"><span class="lineno">   43</span>    <span class="keyword">auto</span> it = map_.find(pid);</div>
-<div class="line"><span class="lineno">   44</span>    VBK_ASSERT(it != map_.end());</div>
-<div class="line"><span class="lineno">   45</span>    map_.erase(pid);</div>
-<div class="line"><span class="lineno">   46</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00041">41</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   41</span>                                     {</div>
+<div class="line"><span class="lineno">   42</span>    <span class="keyword">auto</span> it = map_.find(pid);</div>
+<div class="line"><span class="lineno">   43</span>    VBK_ASSERT(it != map_.end());</div>
+<div class="line"><span class="lineno">   44</span>    map_.erase(pid);</div>
+<div class="line"><span class="lineno">   45</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -349,13 +439,13 @@ template&lt;typename ContainerIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="finalized__payloads__index_8hpp_source.html#l00034">34</a> of file <a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   34</span>{ <span class="keywordflow">return</span> map_.size(); }</div>
+<p class="definition">Definition at line <a class="el" href="payloads__index_8hpp_source.html#l00033">33</a> of file <a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   33</span>{ <span class="keywordflow">return</span> map_.size(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>include/veriblock/pop/blockchain/<a class="el" href="finalized__payloads__index_8hpp_source.html">finalized_payloads_index.hpp</a></li>
+<li>include/veriblock/pop/blockchain/<a class="el" href="payloads__index_8hpp_source.html">payloads_index.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

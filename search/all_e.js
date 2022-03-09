@@ -4,7 +4,7 @@ var searchData=
   ['on_5fvbkblock_5faccepted_1',['on_vbkblock_accepted',['../structaltintegration_1_1MemPool.html#ab228292007c4d567a3e8800924069c99',1,'altintegration::MemPool']]],
   ['on_5fvtb_5faccepted_2',['on_vtb_accepted',['../structaltintegration_1_1MemPool.html#a78a91cb09fd009bbf14da9bd639d2fe3',1,'altintegration::MemPool']]],
   ['onaccepted_3',['onAccepted',['../structaltintegration_1_1MemPool.html#a87af523ce69a470b4470f76920724dfa',1,'altintegration::MemPool']]],
-  ['onbeforeoverridetip_4',['onBeforeOverrideTip',['../structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a',1,'altintegration::AltBlockTree']]],
+  ['onbeforeoverridetip_4',['onBeforeOverrideTip',['../structaltintegration_1_1BaseBlockTree.html#a25d47da621c58eb4af01f5e1039e1354',1,'altintegration::BaseBlockTree']]],
   ['onblockbeforedeallocated_5',['onBlockBeforeDeallocated',['../structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61',1,'altintegration::BaseBlockTree']]],
   ['onblockconnected_6',['onBlockConnected',['../structaltintegration_1_1AltBlockTree.html#a2702e94f571026684e4b5968ce1e3c25',1,'altintegration::AltBlockTree']]],
   ['onblockinserted_7',['onBlockInserted',['../structaltintegration_1_1BlockTree.html#aa6327433a1fe0669c295711fd1d9b3cb',1,'altintegration::BlockTree']]],

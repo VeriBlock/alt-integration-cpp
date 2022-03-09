@@ -15,7 +15,6 @@ var structaltintegration_1_1AltBlockTree =
     [ "makeConnectedLeafPayloadMutator", "structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d", null ],
     [ "setState", "structaltintegration_1_1AltBlockTree.html#a2faac9fb0fbd0168b2c0061c124f7acd", null ],
     [ "vbk", "structaltintegration_1_1AltBlockTree.html#a3ddb4049bc9c6812e51c09666d4a4b6d", null ],
-    [ "onBeforeOverrideTip", "structaltintegration_1_1AltBlockTree.html#ae4623f945c4cde9f3f010f341bf5691a", null ],
     [ "onBlockConnected", "structaltintegration_1_1AltBlockTree.html#a2702e94f571026684e4b5968ce1e3c25", null ],
     [ "onInvalidBlockConnected", "structaltintegration_1_1AltBlockTree.html#a1d42aa835fa1d2f37edffc2ae06b2bc8", null ]
 ];

@@ -195,7 +195,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1Endorsement.html">Endorsement</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a mapping payload id -&gt; containing block hash of payloads that are stored in <b>finalized</b> blocks.  <a href="structaltintegration_1_1FinalizedPayloadsIndex.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores a mapping "payload id -&gt; containing block" hash of payloads that are stored in <b>finalized</b> blocks.  <a href="structaltintegration_1_1FinalizedPayloadsIndex.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1Finalizer.html">Finalizer</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structaltintegration_1_1Finalizer.html" title="Finalizer holds a function that is executed on Finalizer destruction.">Finalizer</a> holds a function that is executed on <a class="el" href="structaltintegration_1_1Finalizer.html" title="Finalizer holds a function that is executed on Finalizer destruction.">Finalizer</a> destruction.  <a href="structaltintegration_1_1Finalizer.html#details">More...</a><br /></td></tr>
@@ -223,6 +223,9 @@ Classes</h2></td></tr>
 <tr class="separator:structaltintegration_1_1NetworkBytePair"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1Output.html">Output</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single spending output.  <a href="structaltintegration_1_1Output.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PayloadsIndex.html">PayloadsIndex</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Payloads index that stores mapping "payload id -&gt; set of containing blocks" from all NON-FINALIZED blocks.  <a href="structaltintegration_1_1PayloadsIndex.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accessor for ATV/VTB/VbkBlock bodies given hash.  <a href="structaltintegration_1_1PayloadsStorage.html#details">More...</a><br /></td></tr>
@@ -506,15 +509,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 <tr class="memitem:a9ec679a1e32962a9032df4e7677eaf2c"><td class="memTemplItemLeft" align="right" valign="top">C::index_t *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a9ec679a1e32962a9032df4e7677eaf2c">findFork</a> (const C &amp;chain, const typename C::index_t *pindex)</td></tr>
 <tr class="memdesc:a9ec679a1e32962a9032df4e7677eaf2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find fork between <code>chain</code> and <code>pindex</code>.  <a href="namespacealtintegration.html#a9ec679a1e32962a9032df4e7677eaf2c">More...</a><br /></td></tr>
 <tr class="separator:a9ec679a1e32962a9032df4e7677eaf2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a69704097bf55e2cc0846dd7b853d16"><td class="memItemLeft" align="right" valign="top"><a id="a7a69704097bf55e2cc0846dd7b853d16" name="a7a69704097bf55e2cc0846dd7b853d16"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>FinalizedPayloadsAddBlock</b> (<a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &gt; &amp;pl, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1AltBlock.html">AltBlock</a> &gt; &amp;index)</td></tr>
-<tr class="separator:a7a69704097bf55e2cc0846dd7b853d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7660503ee7ec63b83dc8217f0b3bc7ea"><td class="memItemLeft" align="right" valign="top"><a id="a7660503ee7ec63b83dc8217f0b3bc7ea" name="a7660503ee7ec63b83dc8217f0b3bc7ea"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>FinalizedPayloadsAddBlock</b> (<a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &gt; &amp;pl, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a> &gt; &amp;index)</td></tr>
-<tr class="separator:a7660503ee7ec63b83dc8217f0b3bc7ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81b90196da279ea94474aed652aece63"><td class="memItemLeft" align="right" valign="top"><a id="a81b90196da279ea94474aed652aece63" name="a81b90196da279ea94474aed652aece63"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>FinalizedPayloadsAddBlock</b> (<a class="el" href="structaltintegration_1_1FinalizedPayloadsIndex.html">FinalizedPayloadsIndex</a>&lt; <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &gt; &amp;pl, const <a class="el" href="structaltintegration_1_1BlockIndex.html">BlockIndex</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt; &amp;index)</td></tr>
-<tr class="separator:a81b90196da279ea94474aed652aece63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a349970becac458d830887651431cca31"><td class="memItemLeft" align="right" valign="top"><a id="a349970becac458d830887651431cca31" name="a349970becac458d830887651431cca31"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>popFrOutcomeToString</b> (PopFrOutcome value, const <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a349970becac458d830887651431cca31"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1308,7 +1302,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00046">46</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00045">45</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1574,19 +1568,19 @@ chained state </td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fork__resolution_8hpp_source.html#l00446">446</a> of file <a class="el" href="fork__resolution_8hpp_source.html">fork_resolution.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  446</span>                        {</div>
-<div class="line"><span class="lineno">  447</span>  UNKNOWN,</div>
-<div class="line"><span class="lineno">  448</span>  CANDIDATE_IS_TIP,</div>
-<div class="line"><span class="lineno">  449</span>  CANDIDATE_INVALID_CHAIN,</div>
-<div class="line"><span class="lineno">  450</span>  CANDIDATE_INVALID_PAYLOADS,</div>
-<div class="line"><span class="lineno">  451</span>  CANDIDATE_PART_OF_ACTIVE_CHAIN,</div>
-<div class="line"><span class="lineno">  452</span>  CANDIDATE_IS_TIP_SUCCESSOR,</div>
-<div class="line"><span class="lineno">  453</span>  TIP_IS_FINAL,</div>
-<div class="line"><span class="lineno">  454</span>  BOTH_DONT_CROSS_KEYSTONE_BOUNDARY,</div>
-<div class="line"><span class="lineno">  455</span>  CANDIDATE_INVALID_INDEPENDENTLY,</div>
-<div class="line"><span class="lineno">  456</span>  HIGHER_POP_SCORE,</div>
-<div class="line"><span class="lineno">  457</span>};</div>
+<p class="definition">Definition at line <a class="el" href="fork__resolution_8hpp_source.html#l00445">445</a> of file <a class="el" href="fork__resolution_8hpp_source.html">fork_resolution.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  445</span>                        {</div>
+<div class="line"><span class="lineno">  446</span>  UNKNOWN,</div>
+<div class="line"><span class="lineno">  447</span>  CANDIDATE_IS_TIP,</div>
+<div class="line"><span class="lineno">  448</span>  CANDIDATE_INVALID_CHAIN,</div>
+<div class="line"><span class="lineno">  449</span>  CANDIDATE_INVALID_PAYLOADS,</div>
+<div class="line"><span class="lineno">  450</span>  CANDIDATE_PART_OF_ACTIVE_CHAIN,</div>
+<div class="line"><span class="lineno">  451</span>  CANDIDATE_IS_TIP_SUCCESSOR,</div>
+<div class="line"><span class="lineno">  452</span>  TIP_IS_FINAL,</div>
+<div class="line"><span class="lineno">  453</span>  BOTH_DONT_CROSS_KEYSTONE_BOUNDARY,</div>
+<div class="line"><span class="lineno">  454</span>  CANDIDATE_INVALID_INDEPENDENTLY,</div>
+<div class="line"><span class="lineno">  455</span>  HIGHER_POP_SCORE,</div>
+<div class="line"><span class="lineno">  456</span>};</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4400,26 +4394,26 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00276">276</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  276</span>                                                {</div>
-<div class="line"><span class="lineno">  277</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  278</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  279</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  280</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  281</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  282</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
-<div class="line"><span class="lineno">  283</span> </div>
-<div class="line"><span class="lineno">  284</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  285</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  286</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  287</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  288</span>    }</div>
-<div class="line"><span class="lineno">  289</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  290</span>  }</div>
-<div class="line"><span class="lineno">  291</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  292</span> </div>
-<div class="line"><span class="lineno">  293</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  294</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00272">272</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  272</span>                                                {</div>
+<div class="line"><span class="lineno">  273</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  274</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  275</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  276</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  277</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  278</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
+<div class="line"><span class="lineno">  279</span> </div>
+<div class="line"><span class="lineno">  280</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  281</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  282</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  283</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  284</span>    }</div>
+<div class="line"><span class="lineno">  285</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  286</span>  }</div>
+<div class="line"><span class="lineno">  287</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  288</span> </div>
+<div class="line"><span class="lineno">  289</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  290</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4441,42 +4435,42 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00238">238</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  238</span>                                                {</div>
-<div class="line"><span class="lineno">  239</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  240</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  241</span> </div>
-<div class="line"><span class="lineno">  242</span>  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><span class="lineno">  243</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><span class="lineno">  244</span>    endorsements.push_back(e.first);</div>
-<div class="line"><span class="lineno">  245</span>  }</div>
-<div class="line"><span class="lineno">  246</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
-<div class="line"><span class="lineno">  247</span> </div>
-<div class="line"><span class="lineno">  248</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><span class="lineno">  249</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><span class="lineno">  250</span>    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><span class="lineno">  251</span>  }</div>
-<div class="line"><span class="lineno">  252</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><span class="lineno">  253</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  254</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  255</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  256</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00234">234</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  234</span>                                                {</div>
+<div class="line"><span class="lineno">  235</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  236</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  237</span> </div>
+<div class="line"><span class="lineno">  238</span>  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><span class="lineno">  239</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><span class="lineno">  240</span>    endorsements.push_back(e.first);</div>
+<div class="line"><span class="lineno">  241</span>  }</div>
+<div class="line"><span class="lineno">  242</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><span class="lineno">  243</span> </div>
+<div class="line"><span class="lineno">  244</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><span class="lineno">  245</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><span class="lineno">  246</span>    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><span class="lineno">  247</span>  }</div>
+<div class="line"><span class="lineno">  248</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><span class="lineno">  249</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  250</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  251</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  252</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<div class="line"><span class="lineno">  253</span> </div>
+<div class="line"><span class="lineno">  254</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  255</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
+<div class="line"><span class="lineno">  256</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
 <div class="line"><span class="lineno">  257</span> </div>
-<div class="line"><span class="lineno">  258</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  259</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
-<div class="line"><span class="lineno">  260</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><span class="lineno">  261</span> </div>
-<div class="line"><span class="lineno">  262</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  263</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  264</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  265</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  266</span>    }</div>
-<div class="line"><span class="lineno">  267</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  268</span>  }</div>
-<div class="line"><span class="lineno">  269</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  270</span> </div>
-<div class="line"><span class="lineno">  271</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  272</span>}</div>
+<div class="line"><span class="lineno">  258</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  259</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  260</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  261</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  262</span>    }</div>
+<div class="line"><span class="lineno">  263</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  264</span>  }</div>
+<div class="line"><span class="lineno">  265</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  266</span> </div>
+<div class="line"><span class="lineno">  267</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  268</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -5517,7 +5511,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00427">427</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00438">438</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 
 </div>
 </div>
@@ -5535,7 +5529,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00427">427</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00438">438</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 
 </div>
 </div>
@@ -5553,7 +5547,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00427">427</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00438">438</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 
 </div>
 </div>
