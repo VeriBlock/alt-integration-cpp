@@ -68,6 +68,12 @@ struct AltBlockAddon : public PopState<AltEndorsement> {
   // VbkBlock::id_t
   std::vector<uint96> _vbkblockids;
 
+  //! (memory only) contains a minimal height of VBK block stored in ALT block.
+  //! for VTB we take "endorsed block", for ATV we take "block of proof".
+  //! max value means that this block does not have payloads that bring VBK
+  //! blocks.
+  int32_t minContainingVbkBlockHeight = std::numeric_limits<int32_t>::max();
+
   void setDirty();
 
   void setNull();

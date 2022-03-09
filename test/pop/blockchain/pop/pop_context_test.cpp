@@ -16,20 +16,18 @@ using namespace altintegration;
 
 struct PopContextFixture : public ::testing::Test {
   AltChainParamsRegTest altparam{};
-  VbkChainParamsRegTest vbkp;
-  BtcChainParamsRegTest btcp;
+  VbkChainParamsRegTest vbkparam{};
+  BtcChainParamsRegTest btcparam{};
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
   adaptors::BlockReaderImpl blockProvider{storage, altparam};
-  PayloadsIndex payloadsIndex;
-  VbkBlockTree local =
-      VbkBlockTree(vbkp, btcp, payloadsProvider, blockProvider, payloadsIndex);
-  MockMiner remote{altparam, vbkp, btcp};
+  VbkBlockTree local{vbkparam, btcparam, payloadsProvider, blockProvider};
+  MockMiner remote{altparam, vbkparam, btcparam};
 
-  BlockIndex<BtcBlock>* forkPoint;
-  BlockIndex<BtcBlock>* chainAtip;
-  BlockIndex<BtcBlock>* chainBtip;
-  BlockIndex<VbkBlock>* vbkTip;
+  BlockIndex<BtcBlock>* forkPoint = nullptr;
+  BlockIndex<BtcBlock>* chainAtip = nullptr;
+  BlockIndex<BtcBlock>* chainBtip = nullptr;
+  BlockIndex<VbkBlock>* vbkTip = nullptr;
 
   ValidationState state;
 
@@ -111,7 +109,7 @@ TEST_F(PopContextFixture, A) {
   // all blocks excluding genesis block
   std::vector<VbkBlock> vbkblocks;
   auto current = vbkTip;
-  while (current && current->pprev) {
+  while (current != nullptr && current->pprev != nullptr) {
     vbkblocks.push_back(current->getHeader());
     current = current->pprev;
   }

@@ -181,7 +181,6 @@ class MockMiner {
   adaptors::InmemStorageImpl storage_{};
   adaptors::PayloadsStorageImpl payloads_provider_{storage_};
   adaptors::BlockReaderImpl block_provider_{storage_, alt_params_};
-  PayloadsIndex payloads_index_;
 
   Miner<BtcBlock, BtcChainParams> btc_miner_{btc_params_};
   Miner<VbkBlock, VbkChainParams> vbk_miner_{vbk_params_};
@@ -189,8 +188,7 @@ class MockMiner {
   vbk_block_tree vbk_tree_{vbk_params_,
                            btc_params_,
                            payloads_provider_,
-                           block_provider_,
-                           payloads_index_};
+                           block_provider_};
   btc_block_tree& btc_tree_ = vbk_tree_.btc();
 
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vtbs_;
