@@ -681,7 +681,11 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
     return state.Invalid("bad-endorsements");
   }
 
-  payloadsIndex_.addBlock(*current);
+  if (!current->finalized) {
+    payloadsIndex_.addBlock(*current);
+  } else {
+    finalizedPayloadsIndex_.addBlock(*current);
+  }
 
   return true;
 }
