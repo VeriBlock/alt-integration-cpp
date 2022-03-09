@@ -262,12 +262,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:ac8a3d94836fcc712c6788d3e4a31234e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a639b19e7d10bb96baa7e0375687c73c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#a639b19e7d10bb96baa7e0375687c73c6">decreaseAppliedBlockCount</a> (size_t erasedBlocks)</td></tr>
 <tr class="separator:a639b19e7d10bb96baa7e0375687c73c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5452e3aafe2b892bb12cf21705a1695"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#ae5452e3aafe2b892bb12cf21705a1695">increaseAppliedBlockCount</a> (size_t appliedBlocks)</td></tr>
-<tr class="separator:ae5452e3aafe2b892bb12cf21705a1695"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe8da57b5a472a19499f808a0968f25a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#afe8da57b5a472a19499f808a0968f25a">decreaseAppliedBlockCount</a> (size_t)</td></tr>
 <tr class="separator:afe8da57b5a472a19499f808a0968f25a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab15f5804337b0e92d5bbbe765556af17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BaseBlockTree.html#ab15f5804337b0e92d5bbbe765556af17">increaseAppliedBlockCount</a> (size_t)</td></tr>
-<tr class="separator:ab15f5804337b0e92d5bbbe765556af17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -562,8 +558,8 @@ erased block must exist in block tree. </dd></dl>
 <div class="line"><span class="lineno">  509</span>                   <span class="stringliteral">&quot;state corruption: block %s is not in the store&quot;</span>,</div>
 <div class="line"><span class="lineno">  510</span>                   block.toPrettyString());</div>
 <div class="line"><span class="lineno">  511</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a298de09c0940872bee6e7d6d743aca61"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">altintegration::BaseBlockTree::onBlockBeforeDeallocated</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;)&gt; onBlockBeforeDeallocated</div><div class="ttdoc">before we deallocate any block index we emit it to this signal</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01131">base_block_tree.hpp:1131</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01143">base_block_tree.hpp:1143</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a298de09c0940872bee6e7d6d743aca61"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a298de09c0940872bee6e7d6d743aca61">altintegration::BaseBlockTree::onBlockBeforeDeallocated</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;)&gt; onBlockBeforeDeallocated</div><div class="ttdoc">before we deallocate any block index we emit it to this signal</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01127">base_block_tree.hpp:1127</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a93f2c656424f783f65c8d5527e115a51"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51">altintegration::BaseBlockTree::blocks_</a></div><div class="ttdeci">block_index_t blocks_</div><div class="ttdoc">stores ALL blocks, including valid and invalid</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01139">base_block_tree.hpp:1139</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -821,7 +817,7 @@ template&lt;typename Block &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00094">94</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   94</span>{ <span class="keywordflow">return</span> this-&gt;<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>; }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01147">base_block_tree.hpp:1147</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4bb681ace9153b3ed6258849a2e50c69"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">altintegration::BaseBlockTree::activeChain_</a></div><div class="ttdeci">Chain&lt; index_t &gt; activeChain_</div><div class="ttdoc">currently applied chain</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01143">base_block_tree.hpp:1143</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1010,7 +1006,7 @@ template&lt;typename Block &gt; </div>
 <div class="fragment"><div class="line"><span class="lineno">  769</span>                                                                           {</div>
 <div class="line"><span class="lineno">  770</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">finalizedPayloadsIndex_</a>;</div>
 <div class="line"><span class="lineno">  771</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_adf4d9734048cd8bedb69d86d830f513d"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">altintegration::BaseBlockTree::finalizedPayloadsIndex_</a></div><div class="ttdeci">FinalizedPayloadsIndex&lt; index_t &gt; finalizedPayloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK block which are already finalized.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01151">base_block_tree.hpp:1151</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_adf4d9734048cd8bedb69d86d830f513d"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d">altintegration::BaseBlockTree::finalizedPayloadsIndex_</a></div><div class="ttdeci">FinalizedPayloadsIndex&lt; index_t &gt; finalizedPayloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK block which are already finalized.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01147">base_block_tree.hpp:1147</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1043,7 +1039,7 @@ template&lt;typename Block &gt; </div>
 <div class="fragment"><div class="line"><span class="lineno">  773</span>                                                         {</div>
 <div class="line"><span class="lineno">  774</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">payloadsIndex_</a>;</div>
 <div class="line"><span class="lineno">  775</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aef352a5df8dc58d866fb33feb63b1c86"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">altintegration::BaseBlockTree::payloadsIndex_</a></div><div class="ttdeci">PayloadsIndex&lt; index_t &gt; payloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK blocks which are not yet finalized.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01154">base_block_tree.hpp:1154</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_aef352a5df8dc58d866fb33feb63b1c86"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#aef352a5df8dc58d866fb33feb63b1c86">altintegration::BaseBlockTree::payloadsIndex_</a></div><div class="ttdeci">PayloadsIndex&lt; index_t &gt; payloadsIndex_</div><div class="ttdoc">stores mapping of payload id -&gt; its containing ALT/VBK blocks which are not yet finalized.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01150">base_block_tree.hpp:1150</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1110,72 +1106,7 @@ template&lt;typename Block &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00046">46</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   46</span>{ <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">tips_</a>; }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4226fb8644befc047f78f38d88b7f736"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">altintegration::BaseBlockTree::tips_</a></div><div class="ttdeci">std::unordered_set&lt; index_t * &gt; tips_</div><div class="ttdoc">stores ONLY VALID tips, including currently active tip</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01145">base_block_tree.hpp:1145</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="ae5452e3aafe2b892bb12cf21705a1695" name="ae5452e3aafe2b892bb12cf21705a1695"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5452e3aafe2b892bb12cf21705a1695">&#9670;&nbsp;</a></span>increaseAppliedBlockCount() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Block &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; Block &gt;::increaseAppliedBlockCount </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>appliedBlocks</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00856">856</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  856</span>                                                              {</div>
-<div class="line"><span class="lineno">  857</span>    appliedBlockCount += appliedBlocks;</div>
-<div class="line"><span class="lineno">  858</span>  }</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="ab15f5804337b0e92d5bbbe765556af17" name="ab15f5804337b0e92d5bbbe765556af17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab15f5804337b0e92d5bbbe765556af17">&#9670;&nbsp;</a></span>increaseAppliedBlockCount() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="structaltintegration_1_1BaseBlockTree.html">altintegration::BaseBlockTree</a>&lt; <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a> &gt;::increaseAppliedBlockCount </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00031">31</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   31</span>                                                                     {</div>
-<div class="line"><span class="lineno">   32</span>  <span class="comment">// do nothing</span></div>
-<div class="line"><span class="lineno">   33</span>  <span class="comment">// BTC tree is not protected</span></div>
-<div class="line"><span class="lineno">   34</span>}</div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a4226fb8644befc047f78f38d88b7f736"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a4226fb8644befc047f78f38d88b7f736">altintegration::BaseBlockTree::tips_</a></div><div class="ttdeci">std::unordered_set&lt; index_t * &gt; tips_</div><div class="ttdoc">stores ONLY VALID tips, including currently active tip</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01141">base_block_tree.hpp:1141</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1549,8 +1480,8 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  176</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">  177</span>  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00044">strutil.hpp:44</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01139">base_block_tree.hpp:1139</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01141">base_block_tree.hpp:1141</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01135">base_block_tree.hpp:1135</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01137">base_block_tree.hpp:1137</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1580,11 +1511,11 @@ template&lt;typename Block &gt; </div>
 <p >In this weird case, when Block=<a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a>, we may call <code>getBlockIndex(block-&gt;previousBlock)</code>, it is a call <code>getBlockIndex(<a class="el" href="structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size.">Blob</a>&lt;12&gt;). But when</code>getBlockIndex` accepts it, it does an implicit cast to full hash (hash_t), adding zeroes in the end. Then, .trimLE returns 12 zeroes.</p>
 <p >This hack allows us to inject explicit conversion hash_t (Blob&lt;24&gt;) -&gt; prev_block_hash_t (Blob&lt;12&gt;). </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00305">305</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  307</span>                           {</div>
-<div class="line"><span class="lineno">  308</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><span class="lineno">  309</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><span class="lineno">  310</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00299">299</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  301</span>                           {</div>
+<div class="line"><span class="lineno">  302</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><span class="lineno">  303</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><span class="lineno">  304</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1656,7 +1587,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  430</span>    <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.setTip(&amp;to);</div>
 <div class="line"><span class="lineno">  431</span>    appliedBlockCount = <a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a4bb681ace9153b3ed6258849a2e50c69">activeChain_</a>.blocksCount();</div>
 <div class="line"><span class="lineno">  432</span>  }</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a25d47da621c58eb4af01f5e1039e1354"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a25d47da621c58eb4af01f5e1039e1354">altintegration::BaseBlockTree::onBeforeOverrideTip</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;index)&gt; onBeforeOverrideTip</div><div class="ttdoc">chain reorg signal - the tip is being changed</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01135">base_block_tree.hpp:1135</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a25d47da621c58eb4af01f5e1039e1354"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a25d47da621c58eb4af01f5e1039e1354">altintegration::BaseBlockTree::onBeforeOverrideTip</a></div><div class="ttdeci">signals::Signal&lt; void(const index_t &amp;index)&gt; onBeforeOverrideTip</div><div class="ttdoc">chain reorg signal - the tip is being changed</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01131">base_block_tree.hpp:1131</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2126,7 +2057,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01147">1147</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01143">1143</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2152,7 +2083,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01156">1156</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01152">1152</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2178,7 +2109,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01143">1143</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01139">1139</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2205,7 +2136,7 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <p >For BTC tree does nothing. stores payloads only from finalized blocks. </p>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01151">1151</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01147">1147</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2231,7 +2162,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01141">1141</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01137">1137</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2257,7 +2188,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01139">1139</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01135">1135</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2275,7 +2206,7 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01135">1135</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01131">1131</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2293,7 +2224,7 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01131">1131</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01127">1127</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2311,7 +2242,7 @@ template&lt;typename Block &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01133">1133</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01129">1129</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2338,7 +2269,7 @@ template&lt;typename Block &gt; </div>
 </div><div class="memdoc">
 <p >For BTC tree does nothing. </p>
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01154">1154</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01150">1150</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -2364,7 +2295,7 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01145">1145</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l01141">1141</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 
 </div>
 </div>
