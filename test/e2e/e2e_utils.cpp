@@ -12,7 +12,6 @@
 namespace altintegration {
 namespace testing_utils {
 
-template <>
 AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>& previous,
                                  const AltChainParams&) {
   AltBlock block;
@@ -21,24 +20,6 @@ AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>& previous,
   block.previousBlock = previous.getHash();
   block.timestamp = previous.getTimestamp() + 1;
   return block;
-}
-
-template <>
-VbkBlock generateRandomNextBlock(const BlockIndex<VbkBlock>& previous,
-                                 const VbkChainParams& params) {
-  Miner<VbkBlock, VbkChainParams> miner =
-      Miner<VbkBlock, VbkChainParams>(params);
-
-  return miner.createNextBlock(previous);
-}
-
-template <>
-BtcBlock generateRandomNextBlock(const BlockIndex<BtcBlock>& previous,
-                                 const BtcChainParams& params) {
-  Miner<BtcBlock, BtcChainParams> miner =
-      Miner<BtcBlock, BtcChainParams>(params);
-
-  return miner.createNextBlock(previous);
 }
 
 void E2EState::createAction(CreateOption create,
@@ -56,7 +37,10 @@ void E2EState::createAction(CreateOption create,
     case CreateOption::CREATE_VBK: {
       // generate new block
       auto& block = *getBlock(fork, tree.vbk());
-      auto new_block = mock_miner.mineVbkBlocks(1, block, {}, {});
+      auto new_block =
+          mock_miner.mineVbkBlocks(1, block, this->vbk_txs, this->vbk_pop_txs);
+      this->vbk_txs.clear();
+      this->vbk_pop_txs.clear();
       break;
     }
     case CreateOption::CREATE_BTC: {

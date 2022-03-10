@@ -50,20 +50,7 @@ OptionT GetRandomOption() {
   return (OptionT)(rand() % (uint8_t)OptionT::kMaxValue);
 }
 
-template <typename block_t, typename params_t>
-block_t generateRandomNextBlock(const BlockIndex<block_t>&, const params_t&);
-
-template <>
-AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>&,
-                                 const AltChainParams&);
-
-template <>
-VbkBlock generateRandomNextBlock(const BlockIndex<VbkBlock>&,
-                                 const VbkChainParams&);
-
-template <>
-BtcBlock generateRandomNextBlock(const BlockIndex<BtcBlock>&,
-                                 const BtcChainParams&);
+AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>&, const AltChainParams&);
 
 template <typename tree_t>
 const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
@@ -106,6 +93,12 @@ struct E2EState {
   struct BtcBlockRelation {
     BtcTxRelation tx;
     BtcBlock btc_block;
+  };
+
+  struct VbkBlockRelation {
+    VbkBlock block;
+    std::vector<VbkTx> txs;
+    std::vector<VbkPopTx> pop_txs;
   };
 
   MockMiner mock_miner;
