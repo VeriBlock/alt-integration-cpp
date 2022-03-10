@@ -177,6 +177,14 @@ BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
   return mineBlocks(amount, tip, {}, txs);
 }
 
+BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
+    size_t amount,
+    const BlockIndex<VbkBlock>& tip,
+    const std::vector<VbkTx>& txs,
+    const std::vector<VbkPopTx>& pop_txs) {
+  return mineBlocks(amount, tip, txs, pop_txs);
+}
+
 BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(size_t amount,
                                                const std::vector<BtcTx>& txs) {
   return mineBlocks(amount, *btcTip(), txs);

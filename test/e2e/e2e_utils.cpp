@@ -56,7 +56,7 @@ void E2EState::createAction(CreateOption create,
     case CreateOption::CREATE_VBK: {
       // generate new block
       auto& block = *getBlock(fork, tree.vbk());
-      auto new_block = generateRandomNextBlock(block, tree.vbk().getParams());
+      auto new_block = mock_miner.mineVbkBlocks(1, block, {}, {});
       break;
     }
     case CreateOption::CREATE_BTC: {
