@@ -18,18 +18,11 @@
 #include "veriblock/pop/entities/btcblock.hpp"
 #include "veriblock/pop/finalizer.hpp"
 #include "veriblock/pop/storage/block_reader.hpp"
-#include "veriblock/pop/storage/payloads_index.hpp"
 
 namespace altintegration {
 
 template <>
 inline void BaseBlockTree<BtcBlock>::decreaseAppliedBlockCount(size_t) {
-  // do nothing
-  // BTC tree is not protected
-}
-
-template <>
-inline void BaseBlockTree<BtcBlock>::increaseAppliedBlockCount(size_t) {
   // do nothing
   // BTC tree is not protected
 }
@@ -118,8 +111,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   VbkBlockTree(const VbkChainParams& vbkp,
                const BtcChainParams& btcp,
                PayloadsStorage& payloadsProvider,
-               BlockReader& blockProvider,
-               PayloadsIndex& payloadsIndex);
+               BlockReader& blockProvider);
 
   //! efficiently connect `index` to current tree as a leaf, loaded from disk
   //! - recovers all pointers (pprev, pnext, endorsedBy)
@@ -135,7 +127,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   PopForkComparator& getComparator() { return cmp_; }
   const PopForkComparator& getComparator() const { return cmp_; }
-  PayloadsIndex& getPayloadsIndex() { return payloadsIndex_; }
   //! @private
   VbkCommandGroupStore& getCommandGroupStore() { return commandGroupStore_; }
   //! @private
@@ -204,7 +195,6 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   PopForkComparator cmp_;
   PayloadsStorage& payloadsProvider_;
-  PayloadsIndex& payloadsIndex_;
   command_group_store_t commandGroupStore_;
 };
 

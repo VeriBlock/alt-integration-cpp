@@ -11,7 +11,6 @@
 #include <veriblock/pop/blockchain/chain.hpp>
 #include <veriblock/pop/blockchain/chain_slice.hpp>
 #include <veriblock/pop/reversed_range.hpp>
-#include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/trace.hpp>
 
@@ -78,12 +77,10 @@ struct PopStateMachine {
   using command_group_store_t = typename ProtectedTree::command_group_store_t;
 
   PopStateMachine(ProtectedTree& ed,
-                  ProtectingBlockTree& ing,
-                  PayloadsIndex& payloadsIndex)
+                  ProtectingBlockTree& ing)
       : ed_(ed),
         ing_(ing),
-        commandGroupStore_(ed_.getCommandGroupStore()),
-        payloadsIndex_(payloadsIndex) {}
+        commandGroupStore_(ed_.getCommandGroupStore()) {}
 
   //! @invariant atomic - applies either all or none of the block's commands
   VBK_CHECK_RETURN bool applyBlock(index_t& index, ValidationState& state) {
@@ -348,7 +345,6 @@ struct PopStateMachine {
   ProtectedTree& ed_;
   ProtectingBlockTree& ing_;
   command_group_store_t& commandGroupStore_;
-  PayloadsIndex& payloadsIndex_;
 };
 
 }  // namespace altintegration

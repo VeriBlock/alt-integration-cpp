@@ -32,7 +32,6 @@ struct BtcInvalidationTest {
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
   adaptors::BlockReaderImpl blockProvider{storage, altparam};
-  PayloadsIndex payloadsIndex;
 };
 
 TEST(VbkBlocksTest, basic_test1) {
@@ -318,7 +317,6 @@ TEST(VbkBlocksTest, basic_test1) {
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
   adaptors::BlockReaderImpl blockProvider{storage, altparam};
-  PayloadsIndex payloadsIndex;
   ValidationState state;
 
   int32_t starting_height = 1405253;
@@ -335,8 +333,7 @@ TEST(VbkBlocksTest, basic_test1) {
   auto bootstrap_chain = blocks;
   bootstrap_chain.resize(100);
 
-  VbkBlockTree tree(
-      vbkparam, btcparam, payloadsProvider, blockProvider, payloadsIndex);
+  VbkBlockTree tree(vbkparam, btcparam, payloadsProvider, blockProvider);
 
   ASSERT_EQ(bootstrap_chain.size(), 100);
 
@@ -592,7 +589,6 @@ TEST(VbkBlocksTest, basic_test2) {
   adaptors::InmemStorageImpl storage{};
   adaptors::PayloadsStorageImpl payloadsProvider{storage};
   adaptors::BlockReaderImpl blockProvider{storage, altparam};
-  PayloadsIndex payloadsIndex;
   ValidationState state;
 
   int32_t starting_height = 1315487;
@@ -609,8 +605,7 @@ TEST(VbkBlocksTest, basic_test2) {
   auto bootstrap_chain = blocks;
   bootstrap_chain.resize(100);
 
-  VbkBlockTree tree(
-      vbkparam, btcparam, payloadsProvider, blockProvider, payloadsIndex);
+  VbkBlockTree tree(vbkparam, btcparam, payloadsProvider, blockProvider);
 
   ASSERT_EQ(bootstrap_chain.size(), 100);
 
@@ -692,8 +687,7 @@ TEST_P(AcceptTest, DISABLED_BootstrapWithChain) {
       allblocks.begin() + value.params->numBlocksForBootstrap() * 2,
       allblocks.end()};
 
-  VbkBlockTree tree(
-      *value.params, btcparam, payloadsProvider, blockProvider, payloadsIndex);
+  VbkBlockTree tree(*value.params, btcparam, payloadsProvider, blockProvider);
 
   tree.bootstrapWithChain(bootstrapChain[0].getHeight(), bootstrapChain);
   EXPECT_TRUE(state.IsValid());

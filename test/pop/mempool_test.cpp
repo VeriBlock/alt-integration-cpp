@@ -430,8 +430,7 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
   // generate vtbs with the deprecated endorsements
   // build merkle tree
   auto hashes = hashAll<VbkPopTx>(txes);
-  const int32_t treeIndex = 0;  // this is POP tx
-  VbkMerkleTree mtree(hashes, treeIndex);
+  VbkMerkleTree mtree({}, hashes);
 
   // create containing block
   auto containingBlock = vbk_miner.createNextBlock(
@@ -449,10 +448,12 @@ TEST_F(MemPoolFixture, submit_deprecated_payloads) {
                  [&](const VbkPopTx& tx) -> VTB {
                    VTB vtb;
                    vtb.transaction = tx;
-                   vtb.merklePath.treeIndex = treeIndex;
+                   vtb.merklePath.treeIndex =
+                       (int32_t)VbkMerkleTree::TreeIndex::POP;
                    vtb.merklePath.index = index;
                    vtb.merklePath.subject = hashes[index];
-                   vtb.merklePath.layers = mtree.getMerklePathLayers(index);
+                   vtb.merklePath.layers = mtree.getMerklePathLayers(
+                       index, VbkMerkleTree::TreeIndex::POP);
                    vtb.containingBlock = containingBlock;
                    index++;
 
@@ -502,12 +503,9 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
 
   /// First, prepare VTB0, VTB1, VTB2
   auto vbkendorsed = popminer.mineVbkBlocks(7);
-  auto btctx0 =
-      popminer.createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
-  auto btctx1 =
-      popminer.createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
-  auto btctx2 =
-      popminer.createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+  auto btctx0 = popminer.createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+  auto btctx1 = popminer.createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
+  auto btctx2 = popminer.createBtcTxEndorsingVbkBlock(vbkendorsed->getHeader());
 
   // mine BTC1..5
   popminer.mineBtcBlocks(5);
@@ -529,24 +527,24 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   // create POP TX for VTB0
   auto poptx0 =
       popminer.createVbkPopTxEndorsingVbkBlock(btc6->getHeader(),
-                                                btctx0,
-                                                vbkendorsed->getHeader(),
-                                                // equals to genesis
-                                                getLastKnownBtcBlock());
+                                               btctx0,
+                                               vbkendorsed->getHeader(),
+                                               // equals to genesis
+                                               getLastKnownBtcBlock());
   // create POP TX for VTB1
   auto poptx1 =
       popminer.createVbkPopTxEndorsingVbkBlock(btc9->getHeader(),
-                                                btctx1,
-                                                vbkendorsed->getHeader(),
-                                                // context starts at 8
-                                                btc7->getHash());
+                                               btctx1,
+                                               vbkendorsed->getHeader(),
+                                               // context starts at 8
+                                               btc7->getHash());
   // create POP TX for VTB2
   auto poptx2 =
       popminer.createVbkPopTxEndorsingVbkBlock(btc11->getHeader(),
-                                                btctx2,
-                                                vbkendorsed->getHeader(),
-                                                // context starts at 8
-                                                btc6->getHash());
+                                               btctx2,
+                                               vbkendorsed->getHeader(),
+                                               // context starts at 8
+                                               btc6->getHash());
 
   // apply VTB0 in VBK8
   auto vtb0containing = popminer.mineVbkBlocks(1, *vbkendorsed, {poptx0});
@@ -774,8 +772,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   ASSERT_TRUE(mempool.submit(atv, state));
 
   auto vtb = popminer.endorseVbkBlock(
-      popminer.vbk().getBestChain().tip()->getHeader(),
-      getLastKnownBtcBlock());
+      popminer.vbk().getBestChain().tip()->getHeader(), getLastKnownBtcBlock());
   ASSERT_TRUE(mempool.submit(vtb, state));
 
   // mempool has 3 VBK blocks, 1 VTB and 1 ATV
@@ -818,7 +815,9 @@ TEST_F(MemPoolFixture, getPop_scenario_13) {
 
   // submit corrupted atvs
   AltBlock endorsedBlock = chain[5];
-  std::fill(endorsedBlock.previousBlock.begin(), endorsedBlock.previousBlock.end(), uint8_t(3u));
+  std::fill(endorsedBlock.previousBlock.begin(),
+            endorsedBlock.previousBlock.end(),
+            uint8_t(3u));
   std::vector<VbkTx> txs;
   for (size_t i = 0; i < 1000; i++) {
     VbkTx tx = popminer.createVbkTxEndorsingAltBlock(

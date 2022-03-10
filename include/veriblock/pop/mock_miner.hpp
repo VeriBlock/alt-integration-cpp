@@ -56,10 +56,10 @@ class MockMiner {
 
   PopData createPopDataEndorsingAltBlock(
       const VbkBlock& blockOfProof,
-      const VbkTx& transaction,
+      const VbkTx& tx,
       const VbkBlock::hash_t& lastKnownVbkBlockHash) const;
 
-  ATV createATV(const VbkBlock& blockOfProof, const VbkTx& transaction) const;
+  ATV createATV(const VbkBlock& blockOfProof, const VbkTx& tx) const;
 
   VbkTx createVbkTxEndorsingAltBlockWithSourceAmount(
       const PublicationData& publicationData, const Coin& sourceAmount) const;
@@ -67,12 +67,11 @@ class MockMiner {
   VbkTx createVbkTxEndorsingAltBlock(
       const PublicationData& publicationData) const;
 
-  VTB createVTB(const VbkBlock& containingBlock,
-                const VbkPopTx& transaction) const;
+  VTB createVTB(const VbkBlock& containingBlock, const VbkPopTx& tx) const;
 
   VbkPopTx createVbkPopTxEndorsingVbkBlock(
       const BtcBlock& blockOfProof,
-      const BtcTx& transaction,
+      const BtcTx& tx,
       const VbkBlock& publishedBlock,
       const BtcBlock::hash_t& lastKnownBtcBlockHash) const;
 
@@ -80,25 +79,30 @@ class MockMiner {
 
   BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount);
   BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
-                                      const std::vector<VbkTx>& transactions);
-  BlockIndex<VbkBlock>* mineVbkBlocks(
-      size_t amount, const std::vector<VbkPopTx>& transactions);
-  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
                                       const BlockIndex<VbkBlock>& tip);
   BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const std::vector<VbkTx>& txs,
+                                      const std::vector<VbkPopTx>& pop_txs);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const std::vector<VbkTx>& txs);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const std::vector<VbkPopTx>& pop_txs);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
                                       const BlockIndex<VbkBlock>& tip,
-                                      const std::vector<VbkTx>& transactions);
-  BlockIndex<VbkBlock>* mineVbkBlocks(
-      size_t amount,
-      const BlockIndex<VbkBlock>& tip,
-      const std::vector<VbkPopTx>& transactions);
+                                      const std::vector<VbkTx>& txs,
+                                      const std::vector<VbkPopTx>& pop_txs);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const BlockIndex<VbkBlock>& tip,
+                                      const std::vector<VbkTx>& txs);
+  BlockIndex<VbkBlock>* mineVbkBlocks(size_t amount,
+                                      const BlockIndex<VbkBlock>& tip,
+                                      const std::vector<VbkPopTx>& pop_txs);
 
-  BlockIndex<BtcBlock>* mineBtcBlocks(
-      size_t amount, const std::vector<BtcTx>& transactions = {});
-  BlockIndex<BtcBlock>* mineBtcBlocks(
-      size_t amount,
-      const BlockIndex<BtcBlock>& tip,
-      const std::vector<BtcTx>& transactions = {});
+  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
+                                      const std::vector<BtcTx>& txs = {});
+  BlockIndex<BtcBlock>* mineBtcBlocks(size_t amount,
+                                      const BlockIndex<BtcBlock>& tip,
+                                      const std::vector<BtcTx>& txs = {});
 
   const BlockIndex<VbkBlock>* vbkTip() const;
   const BlockIndex<BtcBlock>* btcTip() const;
@@ -141,25 +145,34 @@ class MockMiner {
   template <typename BlockTree, typename Block>
   static BlockIndex<Block>* acceptBlock(BlockTree& tree, const Block& block);
 
-  template <typename Block, typename Tx>
-  BlockIndex<Block>* mineBlocks(size_t amount,
-                                const BlockIndex<Block>& tip,
-                                const std::vector<Tx>& transactions);
+  BlockIndex<VbkBlock>* mineBlocks(size_t amount,
+                                   const BlockIndex<VbkBlock>& tip,
+                                   const std::vector<VbkTx>& txs,
+                                   const std::vector<VbkPopTx>& pop_txs);
+
+  BlockIndex<BtcBlock>* mineBlocks(size_t amount,
+                                   const BlockIndex<BtcBlock>& tip,
+                                   const std::vector<BtcTx>& txs);
 
   BlockIndex<VbkBlock>* mineBlock(const BlockIndex<VbkBlock>& tip,
-                                  const std::vector<VbkTx>& transactions);
+                                  const std::vector<VbkTx>& txs);
 
   BlockIndex<VbkBlock>* mineBlock(const BlockIndex<VbkBlock>& tip,
-                                  const std::vector<VbkPopTx>& transactions);
+                                  const std::vector<VbkPopTx>& txs);
+
+  BlockIndex<VbkBlock>* mineBlock(const BlockIndex<VbkBlock>& tip,
+                                  const std::vector<VbkTx>& txs,
+                                  const std::vector<VbkPopTx>& pop_txs);
 
   BlockIndex<BtcBlock>* mineBlock(const BlockIndex<BtcBlock>& tip,
-                                  const std::vector<BtcTx>& transactions);
+                                  const std::vector<BtcTx>& txs);
 
   bool saveVTBs(BlockIndex<VbkBlock>* blockIndex,
-                const std::vector<VbkPopTx>& transactions);
+                const std::vector<VbkPopTx>& txs);
 
   VbkMerklePath getMerklePath(const VbkBlock& block,
-                              const uint256& txHash) const;
+                              const uint256& txHash,
+                              VbkMerkleTree::TreeIndex treeIndex) const;
   MerklePath getMerklePath(const BtcBlock& block, const uint256& txHash) const;
 
   const AltChainParams& alt_params_;
@@ -168,7 +181,6 @@ class MockMiner {
   adaptors::InmemStorageImpl storage_{};
   adaptors::PayloadsStorageImpl payloads_provider_{storage_};
   adaptors::BlockReaderImpl block_provider_{storage_, alt_params_};
-  PayloadsIndex payloads_index_;
 
   Miner<BtcBlock, BtcChainParams> btc_miner_{btc_params_};
   Miner<VbkBlock, VbkChainParams> vbk_miner_{vbk_params_};
@@ -176,8 +188,7 @@ class MockMiner {
   vbk_block_tree vbk_tree_{vbk_params_,
                            btc_params_,
                            payloads_provider_,
-                           block_provider_,
-                           payloads_index_};
+                           block_provider_};
   btc_block_tree& btc_tree_ = vbk_tree_.btc();
 
   std::unordered_map<VbkBlock::hash_t, std::vector<VTB>> vtbs_;

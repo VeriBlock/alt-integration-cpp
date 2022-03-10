@@ -11,9 +11,7 @@
 
 using namespace altintegration;
 
-struct AltTreeRepositoryTest : public ::testing::Test, public PopTestFixture {
-  PayloadsIndex payloadsIndex;
-};
+struct AltTreeRepositoryTest : public ::testing::Test, public PopTestFixture {};
 
 BtcBlock::hash_t lastKnownLocalBtcBlock(const MockMiner& miner) {
   auto tip = miner.btc().getBestChain().tip();

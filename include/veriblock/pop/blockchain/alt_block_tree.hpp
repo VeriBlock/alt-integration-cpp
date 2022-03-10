@@ -18,7 +18,6 @@
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
-#include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/storage/payloads_provider.hpp>
 #include <veriblock/pop/trace.hpp>
 #include <veriblock/pop/validation_state.hpp>
@@ -248,11 +247,14 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! @invariant the tree must not be modified during the lifetime of the object
   struct BlockPayloadMutator {
     using tree_t = AltBlockTree;
-    using payload_index_t = PayloadsIndex;
     using block_index_t = typename tree_t::index_t;
     using id_vector_t = std::vector<uint8_t>;
 
-    BlockPayloadMutator(tree_t& tree, block_index_t& block);
+    BlockPayloadMutator(tree_t& tree,
+                        block_index_t& block,
+                        PayloadsIndex<block_index_t>& pl,
+                        FinalizedPayloadsIndex<block_index_t>& fpl
+                        );
 
     //! stateful duplicate payload check as performed by connectBlock()
     bool isStatefulDuplicate(const id_vector_t& payload_id);
@@ -276,9 +278,10 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    private:
     tree_t& tree_;
     block_index_t& block_;
-    payload_index_t& payload_index_;
     std::unordered_set<std::vector<uint8_t>> ids_;
     Chain<block_index_t> chain_;
+    PayloadsIndex<block_index_t>& pl_;
+    FinalizedPayloadsIndex<block_index_t>& fpl_;
   };
 
   /**
@@ -303,9 +306,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
 
   //! a block has been successfully handed over to the underlying tree
   signals::Signal<void(index_t& index)> onBlockConnected;
-
-  //! chain reorg signal - the tip is being changed
-  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
 
   /**
    * Efficiently connect block loaded from disk as a leaf.
@@ -423,10 +423,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   //! Accessor for Network Parameters stored in this tree
   const AltChainParams& getParams() const { return alt_config_; }
   //! @private
-  PayloadsIndex& getPayloadsIndex()  { return payloadsIndex_; }
-  //! @private
-  const PayloadsIndex& getPayloadsIndex() const { return payloadsIndex_; }
-  //! @private
   PayloadsStorage& getPayloadsProvider()  { return payloadsProvider_; }
   //! @private
   const PayloadsStorage& getPayloadsProvider() const { return payloadsProvider_; }
@@ -452,7 +448,6 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
  private:
   const alt_config_t& alt_config_;
   PopForkComparator cmp_;
-  PayloadsIndex payloadsIndex_;
   PayloadsStorage& payloadsProvider_;
   command_group_store_t commandGroupStore_;
 

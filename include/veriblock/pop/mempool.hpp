@@ -94,39 +94,54 @@ struct MemPool {
    * known to active chain.
    * @tparam T ATV or VTB or VbkBlock
    * @param[in] id payload id
+   * @param[in] onlyInMempool if true, blockchain won't be searched for "known" payloads.
    * @return true if payload exists in mempool or active chain, false otherwise.
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  bool isKnown(const typename T::id_t& id) const {
+  bool isKnown(const typename T::id_t& id, bool onlyInMempool = false) const {
     // is `id` in mempool?
     auto* inmempool = get<T>(id);
     if (inmempool != nullptr) {
       return true;
     }
 
-    // is `id` in blockchain?
-    auto& pl = getPayloadsIndex();
-    std::vector<uint8_t> v(id.begin(), id.end());
-    const auto& containing = pl.getContainingAltBlocks(v);
-    if (containing.empty()) {
+    if (onlyInMempool) {
+      // we did not find in mempool, so exit early
       return false;
     }
 
-    // check if any of containing is on active chain
+    std::vector<uint8_t> v(id.begin(), id.end());
+
     auto& tree = mempool_tree_.alt();
-    for (const auto& c : containing) {
-      auto* index = tree.getBlockIndex(c);
-      if (index == nullptr) {
-        // block is deleted (too old)
-        continue;
-      }
-      if (tree.getBestChain().contains(index)) {
+    auto& fpl = tree.getFinalizedPayloadsIndex();
+    const auto* blockhash = fpl.find(v);
+    if (blockhash != nullptr) {
+      // finalized payloads index stores only payloads from finalized blocks.
+      // all finalized blocks are on active chain.
+      return true;
+    }
+
+    auto& pl = tree.getPayloadsIndex();
+    // is `id` in payloads index?
+    const auto& set = pl.find(v);
+    if (set.empty()) {
+      return false;
+    }
+
+    // check if any of candidates is on active chain
+    for(const auto& hash: set) {
+      const auto* candidate = tree.getBlockIndex(hash);
+      // all candidates must exist in a tree after split on PayloadsIndex+FinalizedPayloadsIndex.
+      // only finalized blocks may not exist in a tree.
+      VBK_ASSERT_MSG(candidate != nullptr, candidate->toPrettyString());
+      if(tree.getBestChain().contains(candidate)) {
+        // candidate is on main chain
         return true;
       }
     }
 
-    // `id` is not on active chain
+    // none of candidates are on main chain
     return false;
   }
 
@@ -338,10 +353,6 @@ struct MemPool {
       const std::shared_ptr<VbkBlock>& block);
 
   void tryConnectPayloads();
-
-  const PayloadsIndex& getPayloadsIndex() const {
-    return mempool_tree_.alt().getPayloadsIndex();
-  }
 
   template <typename T>
   void makePayloadConnected(const std::shared_ptr<T>& t) {

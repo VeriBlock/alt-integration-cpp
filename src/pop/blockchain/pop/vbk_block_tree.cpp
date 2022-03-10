@@ -126,7 +126,7 @@ void VbkBlockTree::removePayloads(index_t& index,
                    index.toPrettyString());
 
     index.removePayloadId<VTB>(pid);
-    payloadsIndex_.removeVbkPayloadIndex(containingHash, pid.asVector());
+    payloadsIndex_.remove(pid.asVector(), containingHash);
   }
 
   updateTips();
@@ -177,7 +177,7 @@ void VbkBlockTree::unsafelyRemovePayload(index_t& index,
   }
 
   index.removePayloadId<VTB>(pid);
-  payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
+  payloadsIndex_.remove(pid.asVector(), index.getHash());
 
   if (shouldDetermineBestChain) {
     updateTips();
@@ -253,7 +253,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
   }
 
   index.insertPayloadId<payloads_t>(pid);
-  payloadsIndex_.addVbkPayloadIndex(index.getHash(), pid.asVector());
+  payloadsIndex_.add(pid.asVector(), index.getHash());
 
   auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);
 
@@ -265,7 +265,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
 
     // remove the failed payload
     index.removePayloadId<payloads_t>(pid);
-    payloadsIndex_.removeVbkPayloadIndex(index.getHash(), pid.asVector());
+    payloadsIndex_.remove(pid.asVector(), index.getHash());
 
     return false;
   }
@@ -402,7 +402,11 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
     return state.Invalid("bad-endorsements");
   }
 
-  payloadsIndex_.addBlockToIndex(*current);
+  if (!current->finalized) {
+    payloadsIndex_.addBlock(*current);
+  } else {
+    finalizedPayloadsIndex_.addBlock(*current);
+  }
 
   return true;
 }
@@ -424,16 +428,13 @@ void VbkBlockTree::finalizeBlocks() {
 VbkBlockTree::VbkBlockTree(const VbkChainParams& vbkp,
                            const BtcChainParams& btcp,
                            PayloadsStorage& payloadsProvider,
-                           BlockReader& blockProvider,
-                           PayloadsIndex& payloadsIndex)
+                           BlockReader& blockProvider)
     : VbkTree(vbkp, blockProvider),
       cmp_(*this,
            std::make_shared<BtcTree>(btcp, blockProvider),
            vbkp,
-           payloadsProvider,
-           payloadsIndex),
+           payloadsProvider),
       payloadsProvider_(payloadsProvider),
-      payloadsIndex_(payloadsIndex),
       commandGroupStore_(*this, payloadsProvider_) {}
 
 bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {

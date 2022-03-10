@@ -336,15 +336,13 @@ struct TestComparator {
     return true;
   }
 
-  bool operator()(const PayloadsIndex& a,
-                  const PayloadsIndex& b,
+  bool operator()(const PayloadsIndex<BlockIndex<AltBlock>>& a,
+                  const PayloadsIndex<BlockIndex<AltBlock>>& b,
                   bool suppress = false) {
-    VBK_EXPECT_TRUE(
-        this->operator()(a.getPayloadsInAlt(), b.getPayloadsInAlt(), suppress),
-        suppress);
-    VBK_EXPECT_TRUE(
-        this->operator()(a.getPayloadsInVbk(), b.getPayloadsInVbk(), suppress),
-        suppress);
+    VBK_EXPECT_TRUE(this->operator()(a.getAll(), b.getAll(), suppress),
+                    suppress);
+    VBK_EXPECT_TRUE(this->operator()(a.getAll(), b.getAll(), suppress),
+                    suppress);
 
     return true;
   }

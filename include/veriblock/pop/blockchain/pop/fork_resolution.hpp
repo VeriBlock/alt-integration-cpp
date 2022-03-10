@@ -17,7 +17,6 @@
 #include <veriblock/pop/finalizer.hpp>
 #include <veriblock/pop/keystone_util.hpp>
 #include <veriblock/pop/logger.hpp>
-#include <veriblock/pop/storage/payloads_index.hpp>
 #include <veriblock/pop/trace.hpp>
 
 namespace altintegration {
@@ -488,14 +487,12 @@ struct PopAwareForkResolutionComparator {
   PopAwareForkResolutionComparator(ProtectedBlockTree& ed,
                                    std::shared_ptr<ProtectingBlockTree> ing,
                                    const protected_params_t& protectedParams,
-                                   PayloadsStorage& payloadsProvider,
-                                   PayloadsIndex& payloadsIndex)
+                                   PayloadsStorage& payloadsProvider)
       : ed_(ed),
         ing_(std::move(ing)),
         protectedParams_(protectedParams),
         payloadsProvider_(payloadsProvider),
-        payloadsIndex_(payloadsIndex),
-        sm_(ed_, *ing_, payloadsIndex_) {
+        sm_(ed_, *ing_) {
     VBK_ASSERT(protectedParams.getKeystoneInterval() > 0);
   }
 
@@ -718,7 +715,6 @@ struct PopAwareForkResolutionComparator {
 
   const protected_params_t& protectedParams_;
   PayloadsStorage& payloadsProvider_;
-  PayloadsIndex& payloadsIndex_;
   sm_t sm_;
 };
 

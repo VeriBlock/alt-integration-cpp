@@ -87,7 +87,7 @@ TEST_F(FinalizedPayloadsIndexTest, FPIndexIsUpdatedAfterFinalization1) {
 
   assertNonFinalizedPayloadsDoNotExistInFinalizedPayloadsIndex();
 
-  // now, after "save" is called we can free some RAM
+  // now, after "save" is called we check that we freed some RAM
   ASSERT_GT(deallocatedAlt, 0);
   ASSERT_GT(deallocatedVbk, 0);
   ASSERT_GT(deallocatedBtc, 0);

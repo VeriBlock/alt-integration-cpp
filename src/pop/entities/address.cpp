@@ -45,14 +45,14 @@ static std::string getChecksumPortionFromAddress(const std::string& address,
   return address.substr(MULTISIG_ADDRESS_DATA_END + 1);
 }
 
-static bool isBase58String(const std::string& input) {
+static bool isBase58String(const std::string& input, ValidationState& state) {
   std::vector<uint8_t> out;
-  return DecodeBase58(input, out);
+  return DecodeBase58(input, out, state);
 }
 
-static bool isBase59String(const std::string& input) {
+static bool isBase59String(const std::string& input, ValidationState& state) {
   std::vector<uint8_t> out;
-  return DecodeBase59(input, out);
+  return DecodeBase59(input, out, state);
 }
 
 static std::string calculateChecksum(const std::string& data, bool multisig) {
@@ -107,8 +107,8 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
   std::string checksum = getChecksumPortionFromAddress(input, multisig);
 
   if (multisig) {
-    if (!isBase59String(input)) {
-      return state.Invalid("addr-bad-multisig-content", "Not a base59 string.");
+    if (!isBase59String(input, state)) {
+      return state.Invalid("addr-bad-multisig-content");
     }
 
     /* To make the addresses 'human-readable' we add 1 to the decoded value (1
@@ -117,9 +117,10 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
      * 9 to be easily recognized. Additionally, an m or n value of 0 makes no
      * sense, so this allows multisig to range from 1 to 58, rather than what
      * would have otherwise been 0 to 57. */
-    auto decodeNumber = [](const std::string& in, int& num) -> bool {
+    auto decodeNumber =
+        [](const std::string& in, int& num, ValidationState& state) -> bool {
       std::vector<uint8_t> ret(in.size(), 0);
-      if (!DecodeBase58(in, ret)) {
+      if (!DecodeBase58(in, ret, state)) {
         return false;
       }
       num = ret[0] + 1;
@@ -127,10 +128,12 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
     };
 
     int n = 0, m = 0;
-    if (!decodeNumber(std::string(1, input[MULTISIG_ADDRESS_M_VALUE]), m)) {
+    if (!decodeNumber(
+            std::string(1, input[MULTISIG_ADDRESS_M_VALUE]), m, state)) {
       return state.Invalid("addr-multisig-bad-m");
     }
-    if (!decodeNumber(std::string(1, input[MULTISIG_ADDRESS_N_VALUE]), n)) {
+    if (!decodeNumber(
+            std::string(1, input[MULTISIG_ADDRESS_N_VALUE]), n, state)) {
       return state.Invalid("addr-multisig-bad-n");
     }
 
@@ -150,13 +153,12 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
                            "Too many addresses or signatures");
     }
 
-    if (!isBase58String(input.substr(0, VBK_ADDRESS_SIZE - 1))) {
-      return state.Invalid("addr-multisig-bad-remainder",
-                           "Remainder is not a base58 string");
+    if (!isBase58String(input.substr(0, VBK_ADDRESS_SIZE - 1), state)) {
+      return state.Invalid("addr-multisig-bad-remainder");
     }
   } else {
-    if (!isBase58String(input)) {
-      return state.Invalid("addr-bad", "Address is not a base58 string");
+    if (!isBase58String(input, state)) {
+      return state.Invalid("addr-bad");
     }
   }
 
@@ -179,17 +181,24 @@ std::string Address::toString() const noexcept { return m_Address; }
 void Address::toVbkEncoding(WriteStream& stream) const {
   stream.writeBE<uint8_t>((uint8_t)getType());
   std::vector<uint8_t> decoded;
+  ValidationState state;
   switch (getType()) {
     case AddressType::STANDARD:
-      decoded = AssertDecodeBase58(toString());
+      DecodeBase58(toString(), decoded, state);
       break;
     case AddressType ::MULTISIG:
-      decoded = AssertDecodeBase59(toString());
+      DecodeBase59(toString(), decoded, state);
       break;
     default:
       // if we don't know address type, do not encode anything
       return;
   }
+
+  VBK_ASSERT_MSG(state.IsValid(),
+                 "cannot decode address, err: %s, address: %s, hex address: %s",
+                 state.toString(),
+                 toString(),
+                 HexStr(toString().begin(), toString().end()));
 
   writeSingleByteLenValue(stream, decoded);
 }
@@ -198,17 +207,24 @@ size_t Address::estimateSize() const {
   size_t size = 0;
   size += sizeof((uint8_t)getType());
   std::vector<uint8_t> decoded;
+  ValidationState state;
   switch (getType()) {
     case AddressType::STANDARD:
-      decoded = AssertDecodeBase58(toString());
+      DecodeBase58(toString(), decoded, state);
       break;
     case AddressType ::MULTISIG:
-      decoded = AssertDecodeBase59(toString());
+      DecodeBase59(toString(), decoded, state);
       break;
     default:
       // if we don't know address type, do not encode anything
       return size;
   }
+
+  VBK_ASSERT_MSG(state.IsValid(),
+                 "cannot decode address, err: %s, address: %s, hex address: %s",
+                 state.toString(),
+                 toString(),
+                 HexStr(toString().begin(), toString().end()));
 
   size += singleByteLenValueSize(decoded);
   return size;
@@ -217,19 +233,26 @@ size_t Address::estimateSize() const {
 void Address::getPopBytes(WriteStream& stream) const {
   auto data = m_Address.substr(1);
   std::vector<uint8_t> bytes;
+  ValidationState state;
   switch (getType()) {
     case AddressType::STANDARD: {
-      bytes = AssertDecodeBase58(data);
+      DecodeBase58(data, bytes, state);
       break;
     }
     case AddressType::MULTISIG: {
-      bytes = AssertDecodeBase59(data);
+      DecodeBase59(data, bytes, state);
       break;
     }
     default:
       VBK_ASSERT_MSG(false,
                      "Address have been constructed with an invalid type");
   }
+
+  VBK_ASSERT_MSG(state.IsValid(),
+                 "cannot decode address, err: %s, address: %s, hex address: %s",
+                 state.toString(),
+                 data,
+                 HexStr(data.begin(), data.end()));
 
   stream.write(bytes.data(), ADDRESS_POP_DATA_SIZE_PROGPOW);
 }

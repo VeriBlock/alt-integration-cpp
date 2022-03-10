@@ -298,8 +298,7 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   // generate VTB with the duplicate
   // build merkle tree
   auto hashes = hashAll<VbkPopTx>({vbkPopTx});
-  const int32_t treeIndex = 0;  // this is POP tx
-  VbkMerkleTree mtree(hashes, treeIndex);
+  VbkMerkleTree mtree({}, hashes);
 
   // create containing block
   auto containingVbkBlock = vbk_miner.createNextBlock(
@@ -312,14 +311,15 @@ TEST_F(MemPoolFixture, getPop_scenario_6) {
   // Create VTB
   VTB vtb2;
   vtb2.transaction = vbkPopTx;
-  vtb2.merklePath.treeIndex = treeIndex;
+  vtb2.merklePath.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
   vtb2.merklePath.index = 0;
   vtb2.merklePath.subject = hashes[0];
-  vtb2.merklePath.layers = mtree.getMerklePathLayers(0);
+  vtb2.merklePath.layers =
+      mtree.getMerklePathLayers(0, VbkMerkleTree::TreeIndex::POP);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer.btc().getParams(), popminer.vbkParams()));
+  EXPECT_TRUE(
+      checkVTB(vtb2, state, popminer.btc().getParams(), popminer.vbkParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);
@@ -443,8 +443,7 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   // generate VTB with the duplicate
   // build merkle tree
   auto hashes = hashAll<VbkPopTx>({vbkPopTx});
-  const int32_t treeIndex = 0;  // this is POP tx
-  VbkMerkleTree mtree(hashes, treeIndex);
+  VbkMerkleTree mtree({}, hashes);
 
   // create containing block
   auto containingVbkBlock = vbk_miner.createNextBlock(
@@ -457,14 +456,15 @@ TEST_F(MemPoolFixture, unimplemented_getPop_scenario_8) {
   // Create VTV
   VTB vtb2;
   vtb2.transaction = vbkPopTx;
-  vtb2.merklePath.treeIndex = treeIndex;
+  vtb2.merklePath.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
   vtb2.merklePath.index = 0;
   vtb2.merklePath.subject = hashes[0];
-  vtb2.merklePath.layers = mtree.getMerklePathLayers(0);
+  vtb2.merklePath.layers =
+      mtree.getMerklePathLayers(0, VbkMerkleTree::TreeIndex::POP);
   vtb2.containingBlock = containingVbkBlock;
 
-  EXPECT_TRUE(checkVTB(
-      vtb2, state, popminer.btc().getParams(), popminer.vbkParams()));
+  EXPECT_TRUE(
+      checkVTB(vtb2, state, popminer.btc().getParams(), popminer.vbkParams()));
 
   EXPECT_NE(vtb1.containingBlock, vtb2.containingBlock);
   auto E1 = VbkEndorsement::fromContainer(vtb1);

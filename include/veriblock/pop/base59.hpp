@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <veriblock/pop/validation_state.hpp>
 
 namespace altintegration {
 
@@ -28,11 +29,9 @@ std::string EncodeBase59(const T &container) {
 }
 
 //! Decode base59 string into bytes.
-bool DecodeBase59(const std::string &input, std::vector<uint8_t> &out);
-
-//! @overload
-//! @note Will die on assert if input string is not base59.
-std::vector<uint8_t> AssertDecodeBase59(const std::string &str);
+bool DecodeBase59(const std::string &input,
+                  std::vector<uint8_t> &out,
+                  ValidationState &state);
 
 }  // namespace altintegration
 

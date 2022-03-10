@@ -21,7 +21,7 @@
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
 #include "chain.hpp"
-#include "finalized_payloads_index.hpp"
+#include "payloads_index.hpp"
 #include "tree_algo.hpp"
 
 namespace altintegration {
@@ -426,6 +426,7 @@ struct BaseBlockTree {
   }
 
   virtual void overrideTip(index_t& to) {
+    onBeforeOverrideTip.emit(to);
     activeChain_.setTip(&to);
     appliedBlockCount = activeChain_.blocksCount();
   }
@@ -769,6 +770,10 @@ struct BaseBlockTree {
     return finalizedPayloadsIndex_;
   }
 
+  const PayloadsIndex<index_t>& getPayloadsIndex() const {
+    return payloadsIndex_;
+  }
+
   //! @private
   class DeferForkResolutionGuard {
     BaseBlockTree<Block>& tree_;
@@ -848,10 +853,6 @@ struct BaseBlockTree {
     appliedBlockCount -= erasedBlocks;
   }
 
-  inline void increaseAppliedBlockCount(size_t appliedBlocks) {
-    appliedBlockCount += appliedBlocks;
-  }
-
   //! Marks `block` as finalized.
   //!
   //! Final blocks can not be reorganized, thus we can remove outdated blocks
@@ -890,7 +891,7 @@ struct BaseBlockTree {
       }
 
       finalizedBlock->finalized = true;
-      FinalizedPayloadsAddBlock(finalizedPayloadsIndex_, *finalizedBlock);
+      finalizedPayloadsIndex_.addBlock(*finalizedBlock);
       return;
     }
 
@@ -976,14 +977,14 @@ struct BaseBlockTree {
       VBK_LOG_WARN(
           "%s tree deallocated blocks: %d", block_t::name(), deallocatedBlocks);
     }
-    decreaseAppliedBlockCount(deallocatedBlocks);
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
+    appliedBlockCount = activeChain_.blocksCount();
 
     // fourth, mark `index` and all predecessors as finalized
     index_t* ptr = finalizedBlock;
     while (ptr != nullptr && !ptr->finalized) {
       ptr->finalized = true;
-      FinalizedPayloadsAddBlock(finalizedPayloadsIndex_, *ptr);
+      finalizedPayloadsIndex_.addBlock(*ptr);
       ptr = ptr->pprev;
     }
   }
@@ -1126,6 +1127,8 @@ struct BaseBlockTree {
   signals::Signal<void(const index_t&)> onBlockBeforeDeallocated;
   //! signals to the end user that block have been invalidated
   signals::Signal<on_invalidate_t> onBlockValidityChanged;
+  //! chain reorg signal - the tip is being changed
+  signals::Signal<void(const index_t& index)> onBeforeOverrideTip;
 
  protected:
   //! if true, we're in "loading blocks" state
@@ -1138,9 +1141,13 @@ struct BaseBlockTree {
   std::unordered_set<index_t*> tips_;
   //! currently applied chain
   Chain<index_t> activeChain_;
-  //! stores mapping of payload id -> its containing ALT/VBK block. For BTC tree
-  //! does nothing. stores payloads only from finalized blocks.
+  //! stores mapping of payload id -> its containing ALT/VBK block which are
+  //! already finalized. For BTC tree does nothing. stores payloads only from
+  //! finalized blocks.
   FinalizedPayloadsIndex<index_t> finalizedPayloadsIndex_;
+  //! stores mapping of payload id -> its containing ALT/VBK blocks which are
+  //! not yet finalized. For BTC tree does nothing.
+  PayloadsIndex<index_t> payloadsIndex_;
 
   const BlockReader& blockProvider_;
 };
