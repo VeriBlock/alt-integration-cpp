@@ -100,6 +100,8 @@ struct MerkleTree {
 
   Specific& instance;
   std::vector<std::vector<hash_t>> layers;
+
+ private:
   std::unordered_map<hash_t, int32_t> hash_indices;
 };
 
