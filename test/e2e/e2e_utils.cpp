@@ -86,7 +86,7 @@ void E2EState::createAction(CreateOption create,
       auto& block = *getBlock(fork, tree);
 
       PublicationData pd =
-          GeneratePublicationData(block.getHash(),
+          GeneratePublicationData(block.getHeader().toRaw(),
                                   block,
                                   {1, 2, 3, 4, 5},
                                   1,
@@ -147,7 +147,6 @@ void E2EState::submitAction(SubmitOption submit, MemPool& mempool) {
         auto rel = this->vbk_block_tx_rel.front();
         auto atv = mock_miner.createATV(rel.block, rel.tx);
         mempool.submit(atv, state);
-        printf("state: %s \n", state.toString().c_str());
 
         this->vbk_block_tx_rel.erase(this->vbk_block_tx_rel.begin());
       }
