@@ -50,7 +50,8 @@ OptionT GetRandomOption() {
   return (OptionT)(rand() % (uint8_t)OptionT::kMaxValue);
 }
 
-AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>&, const AltChainParams&);
+AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>&,
+                                 const AltChainParams&);
 
 template <typename tree_t>
 const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
@@ -91,22 +92,29 @@ struct E2EState {
   };
 
   struct BtcBlockRelation {
-    BtcTxRelation tx;
     BtcBlock btc_block;
+    BtcTxRelation tx;
   };
 
   struct VbkBlockRelation {
     VbkBlock block;
-    std::vector<VbkTx> txs;
-    std::vector<VbkPopTx> pop_txs;
+    VbkTx tx;
+  };
+
+  struct VbkBlockPopRelation {
+    VbkBlock block;
+    VbkPopTx tx;
   };
 
   MockMiner mock_miner;
 
   std::vector<VbkTx> vbk_txs;
   std::vector<VbkPopTx> vbk_pop_txs;
-  std::vector<BtcTxRelation> btc_txs;
-  std::vector<BtcBlockRelation> btc_blocks;
+  std::vector<BtcTxRelation> btc_tx_rel;
+  std::vector<BtcBlockRelation> btc_block_tx_rel;
+  std::vector<VbkBlockRelation> vbk_block_tx_rel;
+  std::vector<VbkBlockPopRelation> vbk_block_pop_tx_rel;
+  std::vector<VbkBlock> vbk_blocks;
 };
 
 }  // namespace testing_utils

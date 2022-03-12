@@ -39,6 +39,17 @@ void E2EState::createAction(CreateOption create,
       auto& block = *getBlock(fork, tree.vbk());
       auto new_block =
           mock_miner.mineVbkBlocks(1, block, this->vbk_txs, this->vbk_pop_txs);
+
+      for (const auto& el : this->vbk_txs) {
+        this->vbk_block_tx_rel.push_back({new_block->getHeader(), el});
+      }
+
+      for (const auto& el : this->vbk_pop_txs) {
+        this->vbk_block_pop_tx_rel.push_back({new_block->getHeader(), el});
+      }
+
+      this->vbk_blocks.push_back(new_block->getHeader());
+
       this->vbk_txs.clear();
       this->vbk_pop_txs.clear();
       break;
@@ -48,45 +59,42 @@ void E2EState::createAction(CreateOption create,
       auto& block = *getBlock(fork, tree.btc());
 
       std::vector<BtcTx> txs;
-      for (const auto& el : this->btc_txs) {
+      for (const auto& el : this->btc_tx_rel) {
         txs.push_back(el.btc_tx);
       }
 
       auto new_block = mock_miner.mineBtcBlocks(1, block, txs);
 
       std::vector<BtcBlockRelation> blocks;
-      for (const auto& el : this->btc_txs) {
-        blocks.push_back({el, new_block->getHeader()});
+      for (const auto& el : this->btc_tx_rel) {
+        blocks.push_back({new_block->getHeader(), el});
       }
 
-      this->btc_blocks.insert(
-          this->btc_blocks.begin(), blocks.begin(), blocks.end());
-      this->btc_txs.clear();
+      this->btc_block_tx_rel.insert(
+          this->btc_block_tx_rel.begin(), blocks.begin(), blocks.end());
+      this->btc_tx_rel.clear();
       break;
     }
     case CreateOption::CREATE_BTC_TX: {
       auto& block = *getBlock(fork, tree.vbk());
       auto tx = mock_miner.createBtcTxEndorsingVbkBlock(block.getHeader());
 
-      this->btc_txs.push_back({tx, block.getHeader()});
+      this->btc_tx_rel.push_back({tx, block.getHeader()});
       break;
     }
     case CreateOption::CREATE_VBK_TX: {
       auto& block = *getBlock(fork, tree);
 
-      auto& atvs = block.getPayloadIds<ATV>();
-      auto& vtbs = block.getPayloadIds<VTB>();
-      auto& vbks = block.getPayloadIds<VbkBlock>();
-
-      PublicationData pd = GeneratePublicationData(block.getHash(),
-                                                   block,
-                                                   {1, 2, 3, 4, 5},
-                                                   1,
-                                                   atvs,
-                                                   vtbs,
-                                                   vbks,
-                                                   {1, 2, 3, 4, 5},
-                                                   tree.getParams());
+      PublicationData pd =
+          GeneratePublicationData(block.getHash(),
+                                  block,
+                                  {1, 2, 3, 4, 5},
+                                  1,
+                                  block.getPayloadIds<ATV>(),
+                                  block.getPayloadIds<VTB>(),
+                                  block.getPayloadIds<VbkBlock>(),
+                                  {1, 2, 3, 4, 5},
+                                  tree.getParams());
 
       auto tx = mock_miner.createVbkTxEndorsingAltBlock(pd);
 
@@ -94,8 +102,8 @@ void E2EState::createAction(CreateOption create,
       break;
     }
     case CreateOption::CREATE_VBK_POP_TX: {
-      if (!this->btc_blocks.empty()) {
-        auto& block = this->btc_blocks.front();
+      if (!this->btc_block_tx_rel.empty()) {
+        auto& block = this->btc_block_tx_rel.front();
         auto tx = mock_miner.createVbkPopTxEndorsingVbkBlock(
             block.btc_block,
             block.tx.btc_tx,
@@ -103,7 +111,7 @@ void E2EState::createAction(CreateOption create,
             tree.btc().getBestChain().tip()->getHash());
 
         this->vbk_pop_txs.push_back(tx);
-        this->btc_blocks.erase(this->btc_blocks.begin());
+        this->btc_block_tx_rel.erase(this->btc_block_tx_rel.begin());
       }
       break;
     }
@@ -116,15 +124,33 @@ void E2EState::submitAction(SubmitOption submit, MemPool& mempool) {
   ValidationState state;
   switch (submit) {
     case SubmitOption::SUBMIT_VBK: {
-      // TODO
+      if (!this->vbk_blocks.empty()) {
+        auto block = this->vbk_blocks.front();
+        mempool.submit(block, state);
+
+        this->vbk_blocks.erase(this->vbk_blocks.begin());
+      }
       break;
     }
     case SubmitOption::SUBMIT_VTB: {
-      // TODO
+      if (!this->vbk_block_pop_tx_rel.empty()) {
+        auto rel = this->vbk_block_pop_tx_rel.front();
+        auto vtb = mock_miner.createVTB(rel.block, rel.tx);
+        mempool.submit(vtb, state);
+
+        this->vbk_block_pop_tx_rel.erase(this->vbk_block_pop_tx_rel.begin());
+      }
       break;
     }
     case SubmitOption::SUBMIT_ATV: {
-      // TODO
+      if (!this->vbk_block_tx_rel.empty()) {
+        auto rel = this->vbk_block_tx_rel.front();
+        auto atv = mock_miner.createATV(rel.block, rel.tx);
+        mempool.submit(atv, state);
+        printf("state: %s \n", state.toString().c_str());
+
+        this->vbk_block_tx_rel.erase(this->vbk_block_tx_rel.begin());
+      }
       break;
     }
     default:
