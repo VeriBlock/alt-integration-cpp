@@ -32,6 +32,8 @@ void E2EState::createAction(CreateOption create,
       auto& block = *getBlock(fork, tree);
       auto new_block = generateRandomNextBlock(block, tree.getParams());
       alt_blocks.push_back(new_block);
+
+      this->stats.created_alt++;
       break;
     }
     case CreateOption::CREATE_VBK: {
@@ -52,6 +54,8 @@ void E2EState::createAction(CreateOption create,
 
       this->vbk_txs.clear();
       this->vbk_pop_txs.clear();
+
+      this->stats.created_vbk++;
       break;
     }
     case CreateOption::CREATE_BTC: {
@@ -73,6 +77,8 @@ void E2EState::createAction(CreateOption create,
       this->btc_block_tx_rel.insert(
           this->btc_block_tx_rel.begin(), blocks.begin(), blocks.end());
       this->btc_tx_rel.clear();
+
+      this->stats.created_btc++;
       break;
     }
     case CreateOption::CREATE_BTC_TX: {
@@ -80,6 +86,8 @@ void E2EState::createAction(CreateOption create,
       auto tx = mock_miner.createBtcTxEndorsingVbkBlock(block.getHeader());
 
       this->btc_tx_rel.push_back({tx, block.getHeader()});
+
+      this->stats.created_btc_tx++;
       break;
     }
     case CreateOption::CREATE_VBK_TX: {
@@ -99,6 +107,8 @@ void E2EState::createAction(CreateOption create,
       auto tx = mock_miner.createVbkTxEndorsingAltBlock(pd);
 
       this->vbk_txs.push_back(tx);
+
+      this->stats.created_vbk_tx++;
       break;
     }
     case CreateOption::CREATE_VBK_POP_TX: {
@@ -112,6 +122,8 @@ void E2EState::createAction(CreateOption create,
 
         this->vbk_pop_txs.push_back(tx);
         this->btc_block_tx_rel.erase(this->btc_block_tx_rel.begin());
+
+        this->stats.created_vbk_pop_tx++;
       }
       break;
     }

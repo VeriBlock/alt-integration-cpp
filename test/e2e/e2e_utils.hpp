@@ -71,6 +71,17 @@ const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
   }
 }
 
+struct E2EStats {
+  uint32_t created_alt{0};
+  uint32_t created_vbk{0};
+  uint32_t created_btc{0};
+  uint32_t created_btc_tx{0};
+  uint32_t created_vbk_tx{0};
+  uint32_t created_vbk_pop_tx{0};
+  uint32_t created_vtb{0};
+  uint32_t created_atv{0};
+};
+
 struct E2EState {
   E2EState(const AltChainParams& alt_config,
            const VbkChainParams& vbk_config,
@@ -82,6 +93,8 @@ struct E2EState {
                     AltBlockTree& current_state);
 
   void submitAction(SubmitOption submit, MemPool& mempool, AltBlockTree& tree);
+
+  const E2EStats& getStats() const { return this->stats; };
 
  private:
   struct BtcTxRelation {
@@ -114,6 +127,8 @@ struct E2EState {
   std::vector<VbkBlockPopRelation> vbk_block_pop_tx_rel;
   std::vector<VbkBlock> vbk_blocks;
   std::vector<AltBlock> alt_blocks;
+
+  E2EStats stats;
 };
 
 }  // namespace testing_utils

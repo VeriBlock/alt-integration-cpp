@@ -34,6 +34,8 @@ TEST_F(E2E_Utils, submit_vbk) {
   EXPECT_EQ(this->mempool.getMap<VbkBlock>().size() +
                 this->mempool.getInFlightMap<VbkBlock>().size(),
             1);
+
+  EXPECT_EQ(this->e2e.getStats().created_vbk, 1);
 }
 
 TEST_F(E2E_Utils, submit_vtb) {
@@ -54,6 +56,11 @@ TEST_F(E2E_Utils, submit_vtb) {
   EXPECT_EQ(this->mempool.getMap<VTB>().size() +
                 this->mempool.getInFlightMap<VTB>().size(),
             1);
+
+  EXPECT_EQ(this->e2e.getStats().created_vbk, 1);
+  EXPECT_EQ(this->e2e.getStats().created_vbk_pop_tx, 1);
+  EXPECT_EQ(this->e2e.getStats().created_btc, 1);
+  EXPECT_EQ(this->e2e.getStats().created_btc_tx, 1);
 }
 
 TEST_F(E2E_Utils, submit_atv) {
@@ -72,6 +79,9 @@ TEST_F(E2E_Utils, submit_atv) {
   EXPECT_EQ(this->mempool.getMap<ATV>().size() +
                 this->mempool.getInFlightMap<ATV>().size(),
             1);
+
+  EXPECT_EQ(this->e2e.getStats().created_vbk, 1);
+  EXPECT_EQ(this->e2e.getStats().created_vbk_tx, 1);
 }
 
 TEST_F(E2E_Utils, submit_alt) {
@@ -85,4 +95,6 @@ TEST_F(E2E_Utils, submit_alt) {
       SubmitOption::SUBMIT_ALT, this->mempool, this->alttree);
 
   EXPECT_EQ(this->alttree.getAllBlocks().size(), 2);
+
+  EXPECT_EQ(this->e2e.getStats().created_alt, 1);
 }
