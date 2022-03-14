@@ -31,7 +31,7 @@ void E2EState::createAction(CreateOption create,
       // generate new block
       auto& block = *getBlock(fork, tree);
       auto new_block = generateRandomNextBlock(block, tree.getParams());
-
+      alt_blocks.push_back(new_block);
       break;
     }
     case CreateOption::CREATE_VBK: {
@@ -120,7 +120,9 @@ void E2EState::createAction(CreateOption create,
   }
 }
 
-void E2EState::submitAction(SubmitOption submit, MemPool& mempool) {
+void E2EState::submitAction(SubmitOption submit,
+                            MemPool& mempool,
+                            AltBlockTree& tree) {
   ValidationState state;
   switch (submit) {
     case SubmitOption::SUBMIT_VBK: {
@@ -149,6 +151,19 @@ void E2EState::submitAction(SubmitOption submit, MemPool& mempool) {
         mempool.submit(atv, state);
 
         this->vbk_block_tx_rel.erase(this->vbk_block_tx_rel.begin());
+      }
+      break;
+    }
+    case SubmitOption::SUBMIT_ALT: {
+      if (!this->alt_blocks.empty()) {
+        auto block = this->alt_blocks.front();
+        auto pop_data = mempool.generatePopData();
+
+        tree.acceptBlockHeader(block, state);
+        tree.acceptBlock(block.hash, pop_data);
+        tree.comparePopScore(tree.getBestChain().tip()->getHash(), block.hash);
+
+        this->alt_blocks.erase(this->alt_blocks.begin());
       }
       break;
     }

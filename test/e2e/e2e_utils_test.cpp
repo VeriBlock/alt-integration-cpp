@@ -28,7 +28,8 @@ TEST_F(E2E_Utils, submit_vbk) {
                 this->mempool.getInFlightMap<VbkBlock>().size(),
             0);
 
-  this->e2e.submitAction(SubmitOption::SUBMIT_VBK, this->mempool);
+  this->e2e.submitAction(
+      SubmitOption::SUBMIT_VBK, this->mempool, this->alttree);
 
   EXPECT_EQ(this->mempool.getMap<VbkBlock>().size() +
                 this->mempool.getInFlightMap<VbkBlock>().size(),
@@ -47,7 +48,8 @@ TEST_F(E2E_Utils, submit_vtb) {
                 this->mempool.getInFlightMap<VTB>().size(),
             0);
 
-  this->e2e.submitAction(SubmitOption::SUBMIT_VTB, this->mempool);
+  this->e2e.submitAction(
+      SubmitOption::SUBMIT_VTB, this->mempool, this->alttree);
 
   EXPECT_EQ(this->mempool.getMap<VTB>().size() +
                 this->mempool.getInFlightMap<VTB>().size(),
@@ -64,9 +66,23 @@ TEST_F(E2E_Utils, submit_atv) {
                 this->mempool.getInFlightMap<ATV>().size(),
             0);
 
-  this->e2e.submitAction(SubmitOption::SUBMIT_ATV, this->mempool);
+  this->e2e.submitAction(
+      SubmitOption::SUBMIT_ATV, this->mempool, this->alttree);
 
   EXPECT_EQ(this->mempool.getMap<ATV>().size() +
                 this->mempool.getInFlightMap<ATV>().size(),
             1);
+}
+
+TEST_F(E2E_Utils, submit_alt) {
+  auto fork = GetRandomOption<ForkOption>();
+
+  this->e2e.createAction(CreateOption::CREATE_ALT, fork, this->alttree);
+
+  EXPECT_EQ(this->alttree.getAllBlocks().size(), 1);
+
+  this->e2e.submitAction(
+      SubmitOption::SUBMIT_ALT, this->mempool, this->alttree);
+
+  EXPECT_EQ(this->alttree.getAllBlocks().size(), 2);
 }

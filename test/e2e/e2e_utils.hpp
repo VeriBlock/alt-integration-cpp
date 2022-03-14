@@ -33,8 +33,9 @@ enum class SubmitOption : uint8_t {
   SUBMIT_ATV,
   SUBMIT_VTB,
   SUBMIT_VBK,
+  SUBMIT_ALT,
 
-  kMaxValue = SUBMIT_VBK
+  kMaxValue = SUBMIT_ALT
 };
 
 enum class ForkOption : uint8_t {
@@ -49,9 +50,6 @@ template <typename OptionT>
 OptionT GetRandomOption() {
   return (OptionT)(rand() % (uint8_t)OptionT::kMaxValue);
 }
-
-AltBlock generateRandomNextBlock(const BlockIndex<AltBlock>&,
-                                 const AltChainParams&);
 
 template <typename tree_t>
 const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
@@ -83,7 +81,7 @@ struct E2EState {
                     ForkOption fork,
                     AltBlockTree& current_state);
 
-  void submitAction(SubmitOption submit, MemPool& mempool);
+  void submitAction(SubmitOption submit, MemPool& mempool, AltBlockTree& tree);
 
  private:
   struct BtcTxRelation {
@@ -115,6 +113,7 @@ struct E2EState {
   std::vector<VbkBlockRelation> vbk_block_tx_rel;
   std::vector<VbkBlockPopRelation> vbk_block_pop_tx_rel;
   std::vector<VbkBlock> vbk_blocks;
+  std::vector<AltBlock> alt_blocks;
 };
 
 }  // namespace testing_utils
