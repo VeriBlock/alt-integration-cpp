@@ -126,6 +126,10 @@ constexpr const auto VBK_ETHASH_EPOCH_OFFSET = 323U;
 constexpr const auto VBK_MAXIMUM_DIFFICULTY =
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 
+//! minimum number of blocks in ALT tree 
+const static int32_t MAX_REORG_BLOCKS_MIN_VALUE = 3000;
+
+
 }  // namespace altintegration
 
 #endif  // ALT_INTEGRATION_INCLUDE_VERIBLOCK_CONSTS_HPP_

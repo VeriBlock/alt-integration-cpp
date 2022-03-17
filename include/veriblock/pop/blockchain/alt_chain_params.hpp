@@ -135,8 +135,6 @@ JsonValue ToJSON(const PopPayoutsParams& p) {
  * Base class for all Altchain-related configs.
  */
 struct AltChainParams {
-  const static int32_t MAX_REORG_BLOCKS_MIN_VALUE = 3000;
-
   virtual ~AltChainParams() = default;
 
   size_t maxWorkerQueueSize() const noexcept {
