@@ -10,9 +10,9 @@
 #include "veriblock/pop/mock_miner.hpp"
 
 struct __pop_mock_miner {
-  inline static altintegration::AltChainParamsRegTest alt_param{};
-  inline static altintegration::VbkChainParamsRegTest vbk_param{};
-  inline static altintegration::BtcChainParamsRegTest btc_param{};
+  static altintegration::AltChainParamsRegTest alt_param;
+  static altintegration::VbkChainParamsRegTest vbk_param;
+  static altintegration::BtcChainParamsRegTest btc_param;
 
   altintegration::MockMiner ref{alt_param, vbk_param, btc_param};
 };
