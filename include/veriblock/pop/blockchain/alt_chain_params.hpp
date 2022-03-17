@@ -15,7 +15,7 @@
 #include <veriblock/pop/validation_state.hpp>
 
 namespace altintegration {
-  
+
 /**
  * @struct PopPayoutsParams
  *
@@ -207,7 +207,6 @@ struct AltChainParams {
   int32_t getMaxReorgBlocks() const noexcept {
     VBK_ASSERT(int64_t(mMaxReorgBlocks) >
                int64_t(mEndorsementSettlementInterval));
-    VBK_ASSERT(mMaxReorgBlocks > MAX_REORG_BLOCKS_MIN_VALUE);
     return mMaxReorgBlocks;
   }
 
