@@ -1,5 +1,5 @@
 <map id="altintegration::AltChainParams" name="altintegration::AltChainParams">
-<area shape="rect" id="node1" title="Base class for all Altchain&#45;related configs." alt="" coords="5,1183,232,1597"/>
+<area shape="rect" id="node1" title="Base class for all Altchain&#45;related configs." alt="" coords="5,1183,232,1568"/>
 <area shape="rect" id="node2" title=" " alt="" coords="220,1028,412,1120"/>
 <area shape="rect" id="node3" href="$structaltintegration_1_1PopPayoutsParams.html" title="Defines config for POP payouts." alt="" coords="135,551,348,965"/>
 <area shape="rect" id="node4" title=" " alt="" coords="170,348,313,425"/>

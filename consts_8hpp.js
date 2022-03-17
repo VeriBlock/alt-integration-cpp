@@ -24,6 +24,7 @@ var consts_8hpp =
     [ "MAX_POPDATA_VTB", "consts_8hpp.html#aee63841a399e1460dc669cd3e7066ee3", null ],
     [ "MAX_PUBLIC_KEY_SIZE", "consts_8hpp.html#ac7b3c50040acc97d8d53a0d021359778", null ],
     [ "MAX_PUBLICATIONDATA_SIZE", "consts_8hpp.html#a67ae3afe51683d3174592eb5e16e56fd", null ],
+    [ "MAX_REORG_BLOCKS_MIN_VALUE", "consts_8hpp.html#aa67ab97f38c2073117e0f6c0e1b74095", null ],
     [ "MAX_SIGNATURE_SIZE", "consts_8hpp.html#a8c20f468b859b5651935782a83447ab0", null ],
     [ "MAX_VBKPOPTX_PER_VBK_BLOCK", "consts_8hpp.html#a9cfaca1dc8314ca5d84978b8b1828f7d", null ],
     [ "MIN_ALT_HASH_SIZE", "consts_8hpp.html#aea6d857ba3c337f05199c53b81ee4053", null ],
