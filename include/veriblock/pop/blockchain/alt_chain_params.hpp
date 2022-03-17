@@ -135,6 +135,8 @@ JsonValue ToJSON(const PopPayoutsParams& p) {
  * Base class for all Altchain-related configs.
  */
 struct AltChainParams {
+  const static int32_t MAX_REORG_BLOCKS_MIN_VALUE = 3000;
+
   virtual ~AltChainParams() = default;
 
   size_t maxWorkerQueueSize() const noexcept {
@@ -261,8 +263,8 @@ struct AltChainParams {
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();
 
-  int32_t mMaxReorgBlocks = std::numeric_limits<int32_t>::max();  // blocks
-  uint32_t mMaxAltchainFutureBlockTime = 10 * 60;                 // 10 min
+  int32_t mMaxReorgBlocks = MAX_REORG_BLOCKS_MIN_VALUE;  // blocks
+  uint32_t mMaxAltchainFutureBlockTime = 10 * 60;        // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   uint32_t mEndorsementSettlementInterval = 50;
