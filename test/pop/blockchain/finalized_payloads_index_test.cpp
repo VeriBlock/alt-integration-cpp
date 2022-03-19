@@ -62,7 +62,7 @@ struct FinalizedPayloadsIndexTest : public ::testing::Test,
 };
 
 TEST_F(FinalizedPayloadsIndexTest, FPIndexIsUpdatedAfterFinalization1) {
-  createEndorsedAltChain(1500);
+  createEndorsedAltChain(2200);
   save(alttree);
 
   auto allAtvs = getAllPayloadIdsInTree<ATV>(alttree);
