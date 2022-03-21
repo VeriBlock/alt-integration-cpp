@@ -89,6 +89,23 @@ bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
   return true;
 }
 
+/* To make the addresses 'human-readable' we add 1 to the decoded value (1
+ * in Base58 is 0, but we want an address with a '1' in the m slot to
+ * represent m=1, for example). this allows addresses with m and n both <=
+ * 9 to be easily recognized. Additionally, an m or n value of 0 makes no
+ * sense, so this allows multisig to range from 1 to 58, rather than what
+ * would have otherwise been 0 to 57. */
+static bool decodeNumber(const std::string& in,
+                         int& num,
+                         ValidationState& state) {
+  std::vector<uint8_t> ret(in.size(), 0);
+  if (!DecodeBase58(in, ret, state)) {
+    return false;
+  }
+  num = ret[0] + 1;
+  return true;
+}
+
 bool Address::fromString(const std::string& input, ValidationState& state) {
   if (input.size() != VBK_ADDRESS_SIZE) {
     return state.Invalid("addr-bad-length",
@@ -110,22 +127,6 @@ bool Address::fromString(const std::string& input, ValidationState& state) {
     if (!isBase59String(input, state)) {
       return state.Invalid("addr-bad-multisig-content");
     }
-
-    /* To make the addresses 'human-readable' we add 1 to the decoded value (1
-     * in Base58 is 0, but we want an address with a '1' in the m slot to
-     * represent m=1, for example). this allows addresses with m and n both <=
-     * 9 to be easily recognized. Additionally, an m or n value of 0 makes no
-     * sense, so this allows multisig to range from 1 to 58, rather than what
-     * would have otherwise been 0 to 57. */
-    auto decodeNumber =
-        [](const std::string& in, int& num, ValidationState& state) -> bool {
-      std::vector<uint8_t> ret(in.size(), 0);
-      if (!DecodeBase58(in, ret, state)) {
-        return false;
-      }
-      num = ret[0] + 1;
-      return true;
-    };
 
     int n = 0, m = 0;
     if (!decodeNumber(

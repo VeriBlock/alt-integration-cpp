@@ -172,8 +172,9 @@ struct VbkMerkleTree {
         return this->pop_tree.getMerklePathLayers(index);
       case TreeIndex::NORMAL:
         return this->normal_tree.getMerklePathLayers(index);
+      default:
+        return {};
     }
-    return {};
   }
 
   VbkMerklePath getMerklePath(const hash_t& hash, TreeIndex treeIndex) const {
@@ -199,6 +200,8 @@ struct VbkMerkleTree {
         merklePath.layers = this->normal_tree.getMerklePathLayers(index);
         break;
       }
+      default:
+        return merklePath;
     }
 
     return merklePath;
