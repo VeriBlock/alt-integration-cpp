@@ -60,8 +60,6 @@ constexpr const auto VBK_PREVIOUS_BLOCK_HASH_SIZE = 12;
 //! size of VBK previous keystone hash size
 constexpr const auto VBK_PREVIOUS_KEYSTONE_HASH_SIZE = 9;
 
-
-
 //! max payout info size.
 //! @see https://bitcoin.stackexchange.com/a/35881/85437
 constexpr const auto MAX_PAYOUT_INFO_SIZE = 10000;
@@ -126,9 +124,8 @@ constexpr const auto VBK_ETHASH_EPOCH_OFFSET = 323U;
 constexpr const auto VBK_MAXIMUM_DIFFICULTY =
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 
-//! minimum number of blocks in ALT tree 
+//! minimum number of blocks in ALT tree
 const static int32_t MAX_REORG_BLOCKS_MIN_VALUE = 3000;
-
 
 }  // namespace altintegration
 

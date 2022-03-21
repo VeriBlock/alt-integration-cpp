@@ -87,14 +87,9 @@ struct PayloadsIndex {
     if(it == map_.end()) {
       return; // not found
     }
-    // VBK_ASSERT_MSG(it != map_.end(),
-    //                "Can not remove payload %s from %s block %s",
-    //                HexStr(id),
-    //                index_t::block_t::name(),
-    //                HexStr(block));
+
     auto& set = it->second;
     size_t erased = set.erase(block);
-    // VBK_ASSERT(erased == 1);
 
     if (set.empty()) {
       // "value" set is empty, we can cleanup key

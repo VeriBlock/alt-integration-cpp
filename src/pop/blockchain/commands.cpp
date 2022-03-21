@@ -53,21 +53,6 @@ void payloadToCommands(AltBlockTree& tree,
 }
 
 template <>
-std::vector<CommandGroup> payloadsToCommandGroups(
-    AltBlockTree& tree,
-    const PopData& pop,
-    const std::vector<uint8_t>& containinghash) {
-  std::vector<CommandGroup> cgs;
-  cgs.reserve(pop.context.size() + pop.vtbs.size() + pop.atvs.size());
-
-  vectorPopToCommandGroup(tree, pop.context, containinghash, cgs);
-  vectorPopToCommandGroup(tree, pop.vtbs, containinghash, cgs);
-  vectorPopToCommandGroup(tree, pop.atvs, containinghash, cgs);
-
-  return cgs;
-}
-
-template <>
 void payloadToCommands(VbkBlockTree& tree,
                        const VTB& pop,
                        const std::vector<uint8_t>& /* ignore */,

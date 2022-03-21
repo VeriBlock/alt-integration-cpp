@@ -24,13 +24,6 @@ bool checkBlockTime(const BlockIndex<AltBlock>& prev,
                     ValidationState& state,
                     const AltChainParams& params);
 
-//! @private
-template <>
-std::vector<CommandGroup> payloadsToCommandGroups(
-    AltBlockTree& tree,
-    const PopData& pop,
-    const AltBlock::hash_t& containinghash);
-
 }  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_ALT_BLOCK_TREE_UTIL_HPP
