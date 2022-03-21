@@ -24,7 +24,7 @@ struct MerkleTree {
   MerkleTree(Specific& instance, const std::vector<hash_t>& hashes)
       : instance(instance) {
     buildTree(hashes);
-    for (int32_t i = 0; i < (int32_t)hashes.size(); i++) {
+    for (int32_t i = 0, size = hashes.size(); i < size; i++) {
       hash_indices[hashes[i]] = i;
     }
   }
@@ -133,14 +133,14 @@ struct VbkMerkleTree {
       return hash_t{};
     }
 
-    if (this->pop_tree.getLayers().size() == 1 &&
+    if ((this->pop_tree.getLayers().size() == 1) &&
         this->normal_tree.getLayers().empty()) {
       // the only layer
       VBK_ASSERT(this->pop_tree.getLayers()[0].size() == 1);
       return this->pop_tree.getLayers()[0][0];
     }
 
-    if (this->normal_tree.getLayers().size() == 1 &&
+    if ((this->normal_tree.getLayers().size() == 1) &&
         this->pop_tree.getLayers().empty()) {
       // the only layer
       VBK_ASSERT(this->normal_tree.getLayers()[0].size() == 1);
@@ -180,7 +180,7 @@ struct VbkMerkleTree {
   VbkMerklePath getMerklePath(const hash_t& hash, TreeIndex treeIndex) const {
     VbkMerklePath merklePath;
     merklePath.subject = hash;
-    merklePath.treeIndex = (int32_t)treeIndex;
+    merklePath.treeIndex = static_cast<int32_t>(treeIndex);
     switch (treeIndex) {
       case TreeIndex::POP: {
         auto it = this->pop_tree.getHashIndices().find(hash);

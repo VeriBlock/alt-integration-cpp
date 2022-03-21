@@ -147,7 +147,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
       chainAtip->getHeader(),
       btctx,
       vbkTip->getHeader(),
-      lastKnownLocalBtcBlock(this->popminer));
+      ::lastKnownLocalBtcBlock(this->popminer));
 
   // mine txA into VBK 2nd block
   vbkTip = this->popminer.mineVbkBlocks(1, {vbkpoptx});
