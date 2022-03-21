@@ -737,7 +737,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   // mempool is currently empty
   for (size_t i = emptyPopDataSize; i < 1000; i++) {
     altparam.mMaxPopDataSize = (uint32_t)i;
-    ASSERT_NO_FATAL_FAILURE(mempool.generatePopData());
+    ASSERT_NO_FATAL_FAILURE({ std::ignore = mempool.generatePopData(); });
   }
 
   // mine one VBK block
@@ -754,7 +754,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
   // mempool has 1 VBK block
   for (size_t i = emptyPopDataSize; i < 1000; i++) {
     altparam.mMaxPopDataSize = (uint32_t)i;
-    ASSERT_NO_FATAL_FAILURE(mempool.generatePopData());
+    ASSERT_NO_FATAL_FAILURE({ std::ignore = mempool.generatePopData(); });
   }
 
   altparam.mMaxPopDataSize =
