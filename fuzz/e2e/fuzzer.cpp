@@ -6,6 +6,7 @@
 #include <list>
 #include <veriblock/pop.hpp>
 
+#include "../../test/e2e/e2e_utils.hpp"
 #include "../EntitiesProviders.hpp"
 #include "../FuzzedDataProvider.hpp"
 
@@ -19,9 +20,9 @@ struct AtvCandidate {
 };
 
 struct FuzzState {
-  ai::AltChainParamsRegTest altparam;
-  ai::VbkChainParamsRegTest vbkparam;
-  ai::BtcChainParamsRegTest btcparam;
+  ai::AltChainParamsRegTest altparam{};
+  ai::VbkChainParamsRegTest vbkparam{};
+  ai::BtcChainParamsRegTest btcparam{};
 
   altintegration::adaptors::InmemStorageImpl storage{};
   altintegration::adaptors::PayloadsStorageImpl payloadsProvider{storage};
@@ -30,12 +31,25 @@ struct FuzzState {
   altintegration::AltBlockTree tree{
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider};
   altintegration::MemPool mempool{tree};
+
+  altintegration::testing_utils::E2EState e2e_state{
+      altparam, vbkparam, btcparam};
 };
 
 bool handle(FuzzedDataProvider& p, FuzzState& state) {
   if (p.remaining_bytes() == 0) {
     return false;
   }
+
+  auto create = p.ConsumeEnum<altintegration::testing_utils::CreateOption>();
+  auto submit = p.ConsumeEnum<altintegration::testing_utils::SubmitOption>();
+  auto fork = p.ConsumeEnum<altintegration::testing_utils::ForkOption>();
+
+  // creat action
+  state.e2e_state.createAction(create, fork, state.tree);
+
+  // submit action
+  state.e2e_state.submitAction(submit, state.mempool, state.tree);
 
   return true;
 }

@@ -46,11 +46,6 @@ enum class ForkOption : uint8_t {
   kMaxValue = RANDOM_BLOCK
 };
 
-template <typename OptionT>
-OptionT GetRandomOption() {
-  return (OptionT)(rand() % (uint8_t)OptionT::kMaxValue);
-}
-
 template <typename tree_t>
 const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
   switch (fork) {

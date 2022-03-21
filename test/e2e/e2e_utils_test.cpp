@@ -19,6 +19,11 @@ struct E2E_Utils : public PopTestFixture, public ::testing::Test {
       : PopTestFixture(), e2e(this->altparam, this->vbkparam, this->btcparam) {}
 };
 
+template <typename OptionT>
+ OptionT GetRandomOption() {
+   return (OptionT)(rand() % (uint8_t)OptionT::kMaxValue);
+ }
+
 TEST_F(E2E_Utils, submit_vbk) {
   auto fork = GetRandomOption<ForkOption>();
 
