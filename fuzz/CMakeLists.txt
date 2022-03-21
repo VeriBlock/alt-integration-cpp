@@ -5,8 +5,6 @@ vbk_define(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
 # WEIGHT defines how "important" fuzzer is. More important fuzzers will run longer in CI.
 set(TOTAL_WEIGHT 27)
 
-add_subdirectory(e2e)
-
 add_fuzz(address_deserialization_fuzz
         SOURCES address_deserialization_fuzz.cpp
         ARGS
@@ -27,8 +25,6 @@ add_fuzz(value_sorted_map_fuzz
 add_fuzz(e2e_fuzz
         SOURCES
             e2e/fuzzer.cpp
-            e2e/tree.cpp
-            e2e/tree.hpp
         ARGS
             # fail if malloc(>10MB) is called
             -malloc_limit_mb=10
@@ -38,3 +34,4 @@ add_fuzz(e2e_fuzz
             -max_len=100000
         WEIGHT 20
         )
+target_link_libraries(e2e_fuzz PUBLIC e2e_utils)
