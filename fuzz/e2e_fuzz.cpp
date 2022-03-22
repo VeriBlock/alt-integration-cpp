@@ -11,9 +11,9 @@
 #include "FuzzedDataProvider.hpp"
 
 struct FuzzState {
-  ai::AltChainParamsRegTest altparam{};
-  ai::VbkChainParamsRegTest vbkparam{};
-  ai::BtcChainParamsRegTest btcparam{};
+  altintegration::AltChainParamsRegTest altparam{};
+  altintegration::VbkChainParamsRegTest vbkparam{};
+  altintegration::BtcChainParamsRegTest btcparam{};
 
   altintegration::adaptors::InmemStorageImpl storage{};
   altintegration::adaptors::PayloadsStorageImpl payloadsProvider{storage};
@@ -34,7 +34,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
 
   // 10% probability - submit action
   // 90% probability - create action
-  if (ConsumeIntegralInRange<uint32_t>(0, 100) < 10) {
+  if (p.ConsumeIntegralInRange<uint32_t>(0, 100) < 10) {
     state.e2e_state.createAction(
         p.ConsumeEnum<altintegration::testing_utils::CreateOption>(),
         p.ConsumeEnum<altintegration::testing_utils::ForkOption>(),
