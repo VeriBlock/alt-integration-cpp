@@ -24,7 +24,7 @@ add_fuzz(value_sorted_map_fuzz
 
 add_fuzz(e2e_fuzz
         SOURCES
-            e2e/fuzzer.cpp
+            e2e_fuzz.cpp
         ARGS
             # fail if malloc(>10MB) is called
             -malloc_limit_mb=10

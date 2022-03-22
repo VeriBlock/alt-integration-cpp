@@ -6,18 +6,9 @@
 #include <list>
 #include <veriblock/pop.hpp>
 
-#include "../../test/e2e/e2e_utils.hpp"
-#include "../EntitiesProviders.hpp"
-#include "../FuzzedDataProvider.hpp"
-
-namespace ai = altintegration;
-
-static const int hashsize = 8;
-
-struct AtvCandidate {
-  ai::VbkTx tx;
-  ai::VbkBlock blockOfProof;
-};
+#include "../test/e2e/e2e_utils.hpp"
+#include "EntitiesProviders.hpp"
+#include "FuzzedDataProvider.hpp"
 
 struct FuzzState {
   ai::AltChainParamsRegTest altparam{};
@@ -41,15 +32,20 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
     return false;
   }
 
-  auto create = p.ConsumeEnum<altintegration::testing_utils::CreateOption>();
-  auto submit = p.ConsumeEnum<altintegration::testing_utils::SubmitOption>();
-  auto fork = p.ConsumeEnum<altintegration::testing_utils::ForkOption>();
+  // 10% probability - submit action
+  // 90% probability - create action
+  if (ConsumeIntegralInRange<uint32_t>(0, 100) < 10) {
+    state.e2e_state.createAction(
+        p.ConsumeEnum<altintegration::testing_utils::CreateOption>(),
+        p.ConsumeEnum<altintegration::testing_utils::ForkOption>(),
+        state.tree);
 
-  // creat action
-  state.e2e_state.createAction(create, fork, state.tree);
-
-  // submit action
-  state.e2e_state.submitAction(submit, state.mempool, state.tree);
+  } else {
+    state.e2e_state.submitAction(
+        p.ConsumeEnum<altintegration::testing_utils::SubmitOption>(),
+        state.mempool,
+        state.tree);
+  }
 
   return true;
 }

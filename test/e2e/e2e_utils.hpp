@@ -26,7 +26,7 @@ enum class CreateOption : uint8_t {
   CREATE_VTB,
   CREATE_ATV,
 
-  kMaxValue = CREATE_VBK_POP_TX
+  kMaxValue = CREATE_VBK_POP_TX,
 };
 
 enum class SubmitOption : uint8_t {
