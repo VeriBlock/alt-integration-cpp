@@ -79,7 +79,8 @@ TEST_F(Scenario8, scenario_8) {
   // Create VTB
   VTB vtb2;
   vtb2.transaction = popTx2;
-  vtb2.merklePath.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
+  vtb2.merklePath.treeIndex =
+      static_cast<int32_t>(VbkMerkleTree::TreeIndex::POP);
   vtb2.merklePath.index = 1;
   vtb2.merklePath.subject = hashes[1];
   vtb2.merklePath.layers =

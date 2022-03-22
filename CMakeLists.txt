@@ -37,34 +37,6 @@ else()
     endif(CCACHE)
 endif()
 
-
-set(LIB_NAME veriblock-pop-cpp)
-project(${LIB_NAME} LANGUAGES C CXX)
-
-include(FetchContent)
-include(cmake/backward.cmake)
-include(cmake/GitVersion.cmake)
-include(GNUInstallDirs)
-include(CheckCCompilerFlag)
-include(ProcessorCount)
-include(CheckCXXCompilerFlag)
-include(cmake/clang-tidy.cmake)
-include(cmake/asan.cmake)
-include(cmake/tsan.cmake)
-include(cmake/ubsan.cmake)
-include(cmake/functions.cmake)
-include(cmake/protobuf.cmake)
-
-ProcessorCount(PROCESSOR_COUNT)
-
-has_extrinsic("int main(){__builtin_expect(0, 1);return 0;}"  VBK_HAS_BUILTIN_EXPECT)
-has_extrinsic("int main(){__builtin_clz(5);      return 0;}"  VBK_HAS_BUILTIN_CLZ)
-has_extrinsic("int main(){__builtin_popcount(5); return 0;}"  VBK_HAS_BUILTIN_POPCOUNT)
-has_extrinsic("
-    void f(float * __restrict__ a){}
-    int main(){return 0;}
-" VBK_HAS_RESTRICT)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -95,6 +67,34 @@ option(WITH_ROCKSDB   "Build with the rocksdb storage" OFF)
 option(WITH_LEVELDB  "Build with the leveldb storage" OFF)
 option(WITH_TRACER   "Build with `tracy` tracer enabled" OFF)
 option(WITH_BACKWARD "If ON, any failure will print stacktrace (only in Debug mode)" ON)
+
+
+set(LIB_NAME veriblock-pop-cpp)
+project(${LIB_NAME} LANGUAGES C CXX)
+
+include(FetchContent)
+include(cmake/backward.cmake)
+include(cmake/GitVersion.cmake)
+include(GNUInstallDirs)
+include(CheckCCompilerFlag)
+include(ProcessorCount)
+include(CheckCXXCompilerFlag)
+include(cmake/clang-tidy.cmake)
+include(cmake/asan.cmake)
+include(cmake/tsan.cmake)
+include(cmake/ubsan.cmake)
+include(cmake/functions.cmake)
+include(cmake/protobuf.cmake)
+
+ProcessorCount(PROCESSOR_COUNT)
+
+has_extrinsic("int main(){__builtin_expect(0, 1);return 0;}"  VBK_HAS_BUILTIN_EXPECT)
+has_extrinsic("int main(){__builtin_clz(5);      return 0;}"  VBK_HAS_BUILTIN_CLZ)
+has_extrinsic("int main(){__builtin_popcount(5); return 0;}"  VBK_HAS_BUILTIN_POPCOUNT)
+has_extrinsic("
+    void f(float * __restrict__ a){}
+    int main(){return 0;}
+" VBK_HAS_RESTRICT)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -133,6 +133,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(AppleClang|Clang|GNU)$")
     add_flag(-Wextra)
     add_cxx_flag(-Woverloaded-virtual) # warn if you overload (not override) a virtual function
     add_cxx_flag(-Wnon-virtual-dtor)   # warn the user if a class with virtual functions has a non-virtual destructor. This helps catch hard to track down memory errors
+    add_flag(-Wunused-result)          # fail if return value is unused
     add_flag(-Wdouble-promotion)       # (GCC >= 4.6, Clang >= 3.8) warn if float is implicit promoted to double
     add_flag(-Wduplicated-cond)        # (only in GCC >= 6.0) warn if if / else chain has duplicated conditions
     add_flag(-Wduplicated-branches)    # (only in GCC >= 7.0) warn if if / else branches have duplicated code

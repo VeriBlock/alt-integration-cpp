@@ -28,7 +28,7 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
     VbkMerklePath path;
     path.layers = mtree->getMerklePathLayers(n, VbkMerkleTree::TreeIndex::POP);
     path.subject = txes[n];
-    path.treeIndex = (int32_t)VbkMerkleTree::TreeIndex::POP;
+    path.treeIndex = static_cast<int32_t>(VbkMerkleTree::TreeIndex::POP);
     path.index = n;
     return path;
   }

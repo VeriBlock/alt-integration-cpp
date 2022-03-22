@@ -140,8 +140,7 @@ void E2EState::submitAction(SubmitOption submit,
     case SubmitOption::SUBMIT_VBK: {
       if (!this->vbk_blocks.empty()) {
         auto block = this->vbk_blocks.front();
-        mempool.submit(block, state);
-
+        std::ignore = mempool.submit(block, state);
         this->vbk_blocks.erase(this->vbk_blocks.begin());
       }
       break;
@@ -150,8 +149,7 @@ void E2EState::submitAction(SubmitOption submit,
       if (!this->vbk_block_pop_tx_rel.empty()) {
         auto rel = this->vbk_block_pop_tx_rel.front();
         auto vtb = mock_miner.createVTB(rel.block, rel.tx);
-        mempool.submit(vtb, state);
-
+        std::ignore = mempool.submit(vtb, state);
         this->vbk_block_pop_tx_rel.erase(this->vbk_block_pop_tx_rel.begin());
       }
       break;
@@ -160,8 +158,7 @@ void E2EState::submitAction(SubmitOption submit,
       if (!this->vbk_block_tx_rel.empty()) {
         auto rel = this->vbk_block_tx_rel.front();
         auto atv = mock_miner.createATV(rel.block, rel.tx);
-        mempool.submit(atv, state);
-
+        std::ignore = mempool.submit(atv, state);
         this->vbk_block_tx_rel.erase(this->vbk_block_tx_rel.begin());
       }
       break;
@@ -170,11 +167,9 @@ void E2EState::submitAction(SubmitOption submit,
       if (!this->alt_blocks.empty()) {
         auto block = this->alt_blocks.front();
         auto pop_data = mempool.generatePopData();
-
-        tree.acceptBlockHeader(block, state);
+        std::ignore = tree.acceptBlockHeader(block, state);
         tree.acceptBlock(block.hash, pop_data);
-        tree.comparePopScore(tree.getBestChain().tip()->getHash(), block.hash);
-
+        std::ignore = tree.comparePopScore(tree.getBestChain().tip()->getHash(), block.hash);
         this->alt_blocks.erase(this->alt_blocks.begin());
       }
       break;

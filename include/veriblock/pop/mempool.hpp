@@ -18,6 +18,7 @@
 #include "serde.hpp"
 #include "signals.hpp"
 #include "value_sorted_map.hpp"
+#include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/json.hpp"
 #include "veriblock/pop/validation_state.hpp"
 
@@ -94,12 +95,14 @@ struct MemPool {
    * known to active chain.
    * @tparam T ATV or VTB or VbkBlock
    * @param[in] id payload id
-   * @param[in] onlyInMempool if true, blockchain won't be searched for "known" payloads.
+   * @param[in] onlyInMempool if true, blockchain won't be searched for "known"
+   * payloads.
    * @return true if payload exists in mempool or active chain, false otherwise.
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  bool isKnown(const typename T::id_t& id, bool onlyInMempool = false) const {
+  VBK_CHECK_RETURN bool isKnown(const typename T::id_t& id,
+                                bool onlyInMempool = false) const {
     // is `id` in mempool?
     auto* inmempool = get<T>(id);
     if (inmempool != nullptr) {
@@ -130,12 +133,13 @@ struct MemPool {
     }
 
     // check if any of candidates is on active chain
-    for(const auto& hash: set) {
+    for (const auto& hash : set) {
       const auto* candidate = tree.getBlockIndex(hash);
-      // all candidates must exist in a tree after split on PayloadsIndex+FinalizedPayloadsIndex.
-      // only finalized blocks may not exist in a tree.
+      // all candidates must exist in a tree after split on
+      // PayloadsIndex+FinalizedPayloadsIndex. only finalized blocks may not
+      // exist in a tree.
       VBK_ASSERT_MSG(candidate != nullptr, candidate->toPrettyString());
-      if(tree.getBestChain().contains(candidate)) {
+      if (tree.getBestChain().contains(candidate)) {
         // candidate is on main chain
         return true;
       }
@@ -148,7 +152,7 @@ struct MemPool {
   //! getter for payloads stored in mempool
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  const T* get(const typename T::id_t& id) const {
+  VBK_CHECK_RETURN const T* get(const typename T::id_t& id) const {
     const auto& map = getMap<T>();
     auto it = map.find(id);
     if (it != map.end()) {
@@ -183,7 +187,8 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(Slice<const uint8_t> bytes, ValidationState& state) {
+  VBK_CHECK_RETURN SubmitResult submit(Slice<const uint8_t> bytes,
+                                       ValidationState& state) {
     ReadStream stream(bytes);
     T payload;
     if (!DeserializeFromVbkEncoding(stream, payload, state)) {
@@ -213,7 +218,7 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(const T& pl, ValidationState& state) {
+  VBK_CHECK_RETURN SubmitResult submit(const T& pl, ValidationState& state) {
     return submit<T>(std::make_shared<T>(pl), state);
   }
 
@@ -235,7 +240,8 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  SubmitResult submit(const std::shared_ptr<T>& pl, ValidationState& state) {
+  VBK_CHECK_RETURN SubmitResult submit(const std::shared_ptr<T>& pl,
+                                       ValidationState& state) {
     (void)pl;
     (void)state;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
@@ -271,13 +277,13 @@ struct MemPool {
    * @return statefully valid altintegration::PopData that can be connected to
    * current tip.
    */
-  PopData generatePopData();
+  VBK_CHECK_RETURN PopData generatePopData();
   //! @overload
   //! @param[in] onATV a callback that is executed when ATV have been considered
   //! @param[in] onVTB a callback that is executed when VTB have been considered
   //! @param[in] onVBK a callback that is executed when VbkBlock have been
   //! considered
-  PopData generatePopData(
+  VBK_CHECK_RETURN PopData generatePopData(
       const std::function<void(const ATV&, const ValidationState&)>& onATV,
       const std::function<void(const VTB&, const ValidationState&)>& onVTB,
       const std::function<void(const VbkBlock&, const ValidationState&)>&

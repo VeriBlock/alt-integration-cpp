@@ -17,4 +17,8 @@ struct __pop_mock_miner {
   altintegration::MockMiner ref{alt_param, vbk_param, btc_param};
 };
 
+altintegration::AltChainParamsRegTest __pop_mock_miner::alt_param;
+altintegration::VbkChainParamsRegTest __pop_mock_miner::vbk_param;
+altintegration::BtcChainParamsRegTest __pop_mock_miner::btc_param;
+
 #endif

@@ -17,7 +17,7 @@ namespace altintegration {
 namespace testing_utils {
 
 enum class CreateOption : uint8_t {
-  CREATE_ALT,
+  CREATE_ALT = 0,
   CREATE_VBK,
   CREATE_BTC,
   CREATE_BTC_TX,
@@ -30,7 +30,7 @@ enum class CreateOption : uint8_t {
 };
 
 enum class SubmitOption : uint8_t {
-  SUBMIT_ATV,
+  SUBMIT_ATV = 0,
   SUBMIT_VTB,
   SUBMIT_VBK,
   SUBMIT_ALT,
@@ -58,7 +58,8 @@ const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
       return *select_randomly(tips.begin(), tips.end());
       break;
     }
-    case ForkOption::RANDOM_BLOCK: {
+    case ForkOption::RANDOM_BLOCK:
+    default: {
       auto blocks = tree.getBlocks();
       return *select_randomly(blocks.begin(), blocks.end());
       break;

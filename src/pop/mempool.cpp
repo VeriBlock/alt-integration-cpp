@@ -294,19 +294,19 @@ void MemPool::tryConnectPayloads() {
   // resubmit vbk blocks
   auto vbks = vbkblocks_in_flight_.getSortedValues();
   for (const auto& v : vbks) {
-    submit<VbkBlock>(*v, state);
+    std::ignore = submit<VbkBlock>(*v, state);
   }
 
   // resubmit vtbs
   auto vtbs = vtbs_in_flight_.getSortedValues();
   for (const auto& v : vtbs) {
-    submit<VTB>(*v, state);
+    std::ignore = submit<VTB>(*v, state);
   }
 
   // resubmit atvs
   auto atvs = atvs_in_flight_.getSortedValues();
   for (const auto& v : atvs) {
-    submit<ATV>(*v, state);
+    std::ignore = submit<ATV>(*v, state);
   }
 }
 
