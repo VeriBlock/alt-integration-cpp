@@ -37,7 +37,7 @@ struct VbkChainParams {
   //! production, and to FALSE in tests.
   virtual bool EnableTimeAdjustment() const noexcept = 0;
 
-  virtual int32_t getMaxReorgBlocks() const noexcept { return 2000; }
+  virtual int32_t getMaxReorgBlocks() const noexcept { return 20000; }
   virtual uint32_t getKeystoneInterval() const noexcept { return 20; }
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
