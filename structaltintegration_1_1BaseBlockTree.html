@@ -1466,7 +1466,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  162</span>        !this-&gt;<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">isLoaded_</a>, <span class="stringliteral">&quot;%s tree is already loaded!&quot;</span>, block_t::name());</div>
 <div class="line"><span class="lineno">  163</span> </div>
 <div class="line"><span class="lineno">  164</span>    <span class="keyword">auto</span>* tip = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(hash);</div>
-<div class="line"><span class="lineno">  165</span>    <span class="keywordflow">if</span> (tip == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  165</span>    <span class="keywordflow">if</span> (!tip) {</div>
 <div class="line"><span class="lineno">  166</span>      <span class="keywordflow">return</span> state.Invalid(</div>
 <div class="line"><span class="lineno">  167</span>          block_t::name() + <span class="stringliteral">&quot;-no-tip&quot;</span>,</div>
 <div class="line"><span class="lineno">  168</span>          format(<span class="stringliteral">&quot;tip {} doesn&#39;t exist in block tree&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(hash)));</div>
@@ -1913,7 +1913,7 @@ template&lt;typename Block &gt; </div>
 <p class="definition">Definition at line <a class="el" href="base__block__tree_8hpp_source.html#l00413">413</a> of file <a class="el" href="base__block__tree_8hpp_source.html">base_block_tree.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">  413</span>                                                                     {</div>
 <div class="line"><span class="lineno">  414</span>    <span class="keyword">auto</span>* index = <a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#ae516864aa99c0d64b1ed301b7e261687">getBlockIndex</a>(block);</div>
-<div class="line"><span class="lineno">  415</span>    <span class="keywordflow">if</span> (index == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  415</span>    <span class="keywordflow">if</span> (!index) {</div>
 <div class="line"><span class="lineno">  416</span>      <span class="keywordflow">return</span> state.Invalid(block_t::name() + <span class="stringliteral">&quot;-setstate-unknown-block&quot;</span>,</div>
 <div class="line"><span class="lineno">  417</span>                           <span class="stringliteral">&quot;could not find the block to set the state to&quot;</span>);</div>
 <div class="line"><span class="lineno">  418</span>    }</div>
