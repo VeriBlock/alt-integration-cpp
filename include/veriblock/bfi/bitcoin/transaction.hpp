@@ -138,7 +138,7 @@ struct Transaction {
 template <typename Stream>
 inline void UnserializeTransaction(Transaction& tx, Stream& s) {
   const bool fAllowWitness =
-      0 == (s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS);
+      (s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS) == 0;
 
   Unserialize(s, tx.nVersion);
   unsigned char flags = 0;
@@ -179,7 +179,7 @@ inline void UnserializeTransaction(Transaction& tx, Stream& s) {
 template <typename Stream>
 inline void SerializeTransaction(const Transaction& tx, Stream& s) {
   const bool fAllowWitness =
-      0 == (s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS);
+      (s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS) == 0;
 
   Serialize(s, tx.nVersion);
   unsigned char flags = 0;

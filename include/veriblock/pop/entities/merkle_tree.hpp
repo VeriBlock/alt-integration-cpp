@@ -24,7 +24,7 @@ struct MerkleTree {
   MerkleTree(Specific& instance, const std::vector<hash_t>& hashes)
       : instance(instance) {
     buildTree(hashes);
-    for (int32_t i = 0, size = hashes.size(); i < size; i++) {
+    for (int32_t i = 0, size = (int32_t)hashes.size(); i < size; i++) {
       hash_indices[hashes[i]] = i;
     }
   }
