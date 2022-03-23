@@ -109,7 +109,7 @@ public:
      */
     R operator()(ARGS... args)
     {
-        if(!m_method_ptr) throw std::runtime_error("call of empty functor");
+        if(m_method_ptr == nullptr) throw std::runtime_error("call of empty functor");
         return m_method_ptr(&m_storage, m_function_ptr, args...);
     }
 

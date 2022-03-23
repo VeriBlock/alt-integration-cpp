@@ -1203,7 +1203,7 @@ template <typename Context> struct arg_mapper {
     // a pointer cast it to "void *" or "const void *". In particular, this
     // forbids formatting of "[const] volatile char *" which is printed as bool
     // by iostreams.
-    static_assert(!sizeof(T), "formatting of non-void pointers is disallowed");
+    static_assert(sizeof(T) != 0, "formatting of non-void pointers is disallowed");
     return 0;
   }
 

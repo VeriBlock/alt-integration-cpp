@@ -138,7 +138,7 @@ struct Transaction {
 template <typename Stream>
 inline void UnserializeTransaction(Transaction& tx, Stream& s) {
   const bool fAllowWitness =
-      !(s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS);
+      (s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS) == 0;
 
   Unserialize(s, tx.nVersion);
   unsigned char flags = 0;
@@ -158,7 +158,7 @@ inline void UnserializeTransaction(Transaction& tx, Stream& s) {
     /* We read a non-empty vin. Assume a normal vout follows. */
     Unserialize(s, tx.vout);
   }
-  if ((flags & 1) && fAllowWitness) {
+  if (((flags & 1) != 0) && fAllowWitness) {
     /* The witness flag is present, and we support witnesses. */
     flags ^= 1;
     for (size_t i = 0; i < tx.vin.size(); i++) {
@@ -179,7 +179,7 @@ inline void UnserializeTransaction(Transaction& tx, Stream& s) {
 template <typename Stream>
 inline void SerializeTransaction(const Transaction& tx, Stream& s) {
   const bool fAllowWitness =
-      !(s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS);
+      (s.getVersion() & SERIALIZE_TRANSACTION_NO_WITNESS) == 0;
 
   Serialize(s, tx.nVersion);
   unsigned char flags = 0;

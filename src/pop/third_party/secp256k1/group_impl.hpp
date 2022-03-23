@@ -118,7 +118,7 @@ static void secp256k1_ge_set_all_gej_var(secp256k1_ge *r, const secp256k1_gej *a
     size_t last_i = SIZE_MAX;
 
     for (i = 0; i < len; i++) {
-        if (!a[i].infinity) {
+        if (a[i].infinity == 0) {
             /* Use destination's x coordinates as scratch space */
             if (last_i == SIZE_MAX) {
                 r[i].x = a[i].z;
@@ -136,7 +136,7 @@ static void secp256k1_ge_set_all_gej_var(secp256k1_ge *r, const secp256k1_gej *a
     i = last_i;
     while (i > 0) {
         i--;
-        if (!a[i].infinity) {
+        if (a[i].infinity == 0) {
             secp256k1_fe_mul(&r[last_i].x, &r[i].x, &u);
             secp256k1_fe_mul(&u, &u, &a[last_i].z);
             last_i = i;
@@ -147,7 +147,7 @@ static void secp256k1_ge_set_all_gej_var(secp256k1_ge *r, const secp256k1_gej *a
 
     for (i = 0; i < len; i++) {
         r[i].infinity = a[i].infinity;
-        if (!a[i].infinity) {
+        if (a[i].infinity == 0) {
             secp256k1_ge_set_gej_zinv(&r[i], &a[i], &r[i].x);
         }
     }
@@ -210,7 +210,7 @@ static int secp256k1_ge_set_xquad(secp256k1_ge *r, const secp256k1_fe *x) {
 }
 
 static int secp256k1_ge_set_xo_var(secp256k1_ge *r, const secp256k1_fe *x, int odd) {
-    if (!secp256k1_ge_set_xquad(r, x)) {
+    if (secp256k1_ge_set_xquad(r, x) == 0) {
         return 0;
     }
     secp256k1_fe_normalize_var(&r->y);
@@ -569,8 +569,8 @@ static void secp256k1_gej_add_ge(secp256k1_gej *r, const secp256k1_gej *a, const
     secp256k1_fe_mul_int(&rr_alt, 2);       /* rr = Y1*Z2^3 - Y2*Z1^3 (2) */
     secp256k1_fe_add(&m_alt, &u1);          /* Malt = X1*Z2^2 - X2*Z1^2 */
 
-    secp256k1_fe_cmov(&rr_alt, &rr, !degenerate);
-    secp256k1_fe_cmov(&m_alt, &m, !degenerate);
+    secp256k1_fe_cmov(&rr_alt, &rr, degenerate == 0);
+    secp256k1_fe_cmov(&m_alt, &m, degenerate == 0);
     /* Now Ralt / Malt = lambda and is guaranteed not to be 0/0.
      * From here on out Ralt and Malt represent the numerator
      * and denominator of lambda; R and M represent the explicit

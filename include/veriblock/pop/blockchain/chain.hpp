@@ -151,7 +151,7 @@ typename C::index_t* findFork(const C& chain,
   if (pindex->getHeight() > lastHeight) {
     pindex = pindex->getAncestor(lastHeight);
   }
-  while (pindex && !chain.contains(pindex)) {
+  while (pindex != nullptr && !chain.contains(pindex)) {
     pindex = pindex->getPrev();
   }
   return const_cast<typename C::index_t*>(pindex);
@@ -164,7 +164,7 @@ const index_t* findBlockContainingEndorsement(
     const index_t* workBlock,
     const typename index_t::endorsement_t::id_t& id,
     const uint32_t& window) {
-  for (uint32_t count = 0; count < window && workBlock &&
+  for (uint32_t count = 0; count < window && workBlock != nullptr &&
                            workBlock->getHeight() >= chain.getStartHeight();
        count++) {
     if (workBlock->getContainingEndorsements().count(id)) {

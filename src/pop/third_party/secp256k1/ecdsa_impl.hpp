@@ -141,7 +141,7 @@ static int secp256k1_der_parse_integer(secp256k1_scalar *r, const unsigned char 
     if (rlen > 32) {
         overflow = 1;
     }
-    if (!overflow) {
+    if (overflow == 0) {
         memcpy(ra + 32 - rlen, *sig, rlen);
         secp256k1_scalar_set_b32(r, ra, &overflow);
     }
@@ -167,10 +167,10 @@ static int secp256k1_ecdsa_sig_parse(secp256k1_scalar *rr, secp256k1_scalar *rs,
         return 0;
     }
 
-    if (!secp256k1_der_parse_integer(rr, &sig, sigend)) {
+    if (secp256k1_der_parse_integer(rr, &sig, sigend) == 0) {
         return 0;
     }
-    if (!secp256k1_der_parse_integer(rs, &sig, sigend)) {
+    if (secp256k1_der_parse_integer(rs, &sig, sigend) == 0) {
         return 0;
     }
 
@@ -215,7 +215,7 @@ static int secp256k1_ecdsa_sig_verify(const secp256k1_ecmult_context *ctx, const
     secp256k1_gej pubkeyj;
     secp256k1_gej pr;
 
-    if (secp256k1_scalar_is_zero(sigr) || secp256k1_scalar_is_zero(sigs)) {
+    if (secp256k1_scalar_is_zero(sigr) != 0 || secp256k1_scalar_is_zero(sigs) != 0) {
         return 0;
     }
 
