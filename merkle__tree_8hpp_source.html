@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('merkle__tree_8hpp_source.html',''); in
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  MerkleTree(Specific&amp; instance, <span class="keyword">const</span> std::vector&lt;hash_t&gt;&amp; hashes)</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>      : instance(instance) {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    buildTree(hashes);</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, size = hashes.size(); i &lt; size; i++) {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordflow">for</span> (int32_t i = 0, size = hashes.size(); i &lt; size; i++) {</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      hash_indices[hashes[i]] = i;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    }</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  }</div>
