@@ -125,7 +125,7 @@ $(document).ready(function(){initNavTree('addendorsement_8hpp_source.html',''); 
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keywordtype">bool</span> Execute(ValidationState&amp; state) <span class="keyword">noexcept</span> <span class="keyword">override</span> {</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">auto</span>* containing = ed_-&gt;getBlockIndex(e_-&gt;containingHash);</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">if</span> (!containing) {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">if</span> (containing == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>      <span class="keywordflow">return</span> state.Invalid(</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>          protected_block_t::name() + <span class="stringliteral">&quot;-no-containing&quot;</span>,</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>          format(<span class="stringliteral">&quot;Can not find containing block in endorsement={}&quot;</span>,</div>
@@ -133,7 +133,7 @@ $(document).ready(function(){initNavTree('addendorsement_8hpp_source.html',''); 
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">auto</span>* endorsed = ed_-&gt;getBlockIndex(e_-&gt;endorsedHash);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">if</span> (!endorsed) {</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">if</span> (endorsed == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      <span class="keywordflow">return</span> state.Invalid(protected_block_t::name() + <span class="stringliteral">&quot;-no-endorsed-block&quot;</span>,</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                           format(<span class="stringliteral">&quot;Endorsed block={} not found in the tree&quot;</span>,</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                                  <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(e_-&gt;endorsedHash)));</div>
@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('addendorsement_8hpp_source.html',''); 
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keyword">auto</span>* blockOfProof = ing_-&gt;getBlockIndex(e_-&gt;blockOfProof);</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">if</span> (!blockOfProof) {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">if</span> (blockOfProof == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>      <span class="keywordflow">return</span> state.Invalid(</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>          protected_block_t::name() + <span class="stringliteral">&quot;-block-of-proof-not-found&quot;</span>,</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>          format(<span class="stringliteral">&quot;Can not find block of proof in SP Chain ({})&quot;</span>,</div>

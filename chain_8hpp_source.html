@@ -232,7 +232,7 @@ $(document).ready(function(){initNavTree('chain_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>  <span class="keywordflow">if</span> (pindex-&gt;getHeight() &gt; lastHeight) {</div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    pindex = pindex-&gt;getAncestor(lastHeight);</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>  }</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>  <span class="keywordflow">while</span> (pindex &amp;&amp; !chain.contains(pindex)) {</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>  <span class="keywordflow">while</span> (pindex != <span class="keyword">nullptr</span> &amp;&amp; !chain.contains(pindex)) {</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    pindex = pindex-&gt;getPrev();</div>
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>  }</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>  <span class="keywordflow">return</span> <span class="keyword">const_cast&lt;</span>typename C::index_t*<span class="keyword">&gt;</span>(pindex);</div>
@@ -244,7 +244,7 @@ $(document).ready(function(){initNavTree('chain_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keyword">const</span> index_t* workBlock,</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    <span class="keyword">const</span> <span class="keyword">typename</span> index_t::endorsement_t::id_t&amp; <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keyword">const</span> uint32_t&amp; window) {</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  <span class="keywordflow">for</span> (uint32_t count = 0; count &lt; window &amp;&amp; workBlock &amp;&amp;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  <span class="keywordflow">for</span> (uint32_t count = 0; count &lt; window &amp;&amp; workBlock != <span class="keyword">nullptr</span> &amp;&amp;</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                           workBlock-&gt;getHeight() &gt;= chain.getStartHeight();</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>       count++) {</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordflow">if</span> (workBlock-&gt;getContainingEndorsements().count(<span class="keywordtype">id</span>)) {</div>
