@@ -162,7 +162,7 @@ struct BaseBlockTree {
         !this->isLoaded_, "%s tree is already loaded!", block_t::name());
 
     auto* tip = getBlockIndex(hash);
-    if (!tip) {
+    if (tip == nullptr) {
       return state.Invalid(
           block_t::name() + "-no-tip",
           format("tip {} doesn't exist in block tree", HexStr(hash)));
@@ -412,7 +412,7 @@ struct BaseBlockTree {
 
   virtual bool setState(const hash_t& block, ValidationState& state) {
     auto* index = getBlockIndex(block);
-    if (!index) {
+    if (index == nullptr) {
       return state.Invalid(block_t::name() + "-setstate-unknown-block",
                            "could not find the block to set the state to");
     }
@@ -648,14 +648,14 @@ struct BaseBlockTree {
 
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
-    if (current && !current->isDeleted() &&
+    if (current != nullptr && !current->isDeleted() &&
         !current->hasFlags(BLOCK_BOOTSTRAP)) {
       return state.Invalid(
           "block-exists",
           "Found duplicate block, which is not bootstrap block");
     }
 
-    if (current) {
+    if (current != nullptr) {
       if (current->isDeleted()) {
         current->restore();
       }
