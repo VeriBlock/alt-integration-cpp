@@ -151,7 +151,7 @@ $(document).ready(function(){initNavTree('blockchain__util_8hpp_source.html','')
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    }</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keyword">auto</span>* endorsed = ed_.getBlockIndex(e.endorsedHash);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">if</span> (!endorsed) {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">if</span> (endorsed == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>      <span class="keywordflow">return</span> state.Invalid(</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>          <span class="stringliteral">&quot;no-endorsed&quot;</span>,</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>          format(<span class="stringliteral">&quot;Can not find endorsed block in {}&quot;</span>, e.toPrettyString()));</div>
@@ -172,7 +172,7 @@ $(document).ready(function(){initNavTree('blockchain__util_8hpp_source.html','')
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    }</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keyword">auto</span>* blockOfProof = as_mut(ing).getBlockIndex(e.blockOfProof);</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">if</span> (!blockOfProof) {</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">if</span> (blockOfProof == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>      <span class="keywordflow">return</span> state.Invalid(</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>          <span class="stringliteral">&quot;bad-blockofproof&quot;</span>,</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>          format(<span class="stringliteral">&quot;Block Of Proof {} does not exist in SP chain&quot;</span>,</div>
@@ -190,8 +190,8 @@ $(document).ready(function(){initNavTree('blockchain__util_8hpp_source.html','')
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                     <span class="stringliteral">&quot;same endorsement is added to endorsedBy second time&quot;</span>);</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>      <span class="keywordtype">bool</span> isDirty = endorsed-&gt;isDirty();</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>      endorsed-&gt;insertEndorsedBy(endorsement);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>      <span class="comment">// keep dirty flag since recoverEndorsements is used when loading blocks from storage</span></div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>      <span class="comment">// and should not affect dirtyness of the blocks</span></div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>      <span class="comment">// keep dirty flag since recoverEndorsements is used when loading blocks</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>      <span class="comment">// from storage and should not affect dirtyness of the blocks</span></div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>      <span class="keywordflow">if</span> (!isDirty) {</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        endorsed-&gt;unsetDirty();</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>      }</div>
