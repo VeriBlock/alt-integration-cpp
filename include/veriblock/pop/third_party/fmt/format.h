@@ -808,7 +808,7 @@ FMT_CONSTEXPR bool is_supported_floating_point(T) {
 // represent all values of an integral type T.
 template <typename T>
 using uint32_or_64_or_128_t =
-    conditional_t<num_bits<T>() <= 32 && !FMT_REDUCE_INT_INSTANTIATIONS,
+    conditional_t<num_bits<T>() <= 32 && FMT_REDUCE_INT_INSTANTIATIONS == 0,
                   uint32_t,
                   conditional_t<num_bits<T>() <= 64, uint64_t, uint128_t>>;
 
@@ -1411,8 +1411,8 @@ FMT_CONSTEXPR float_specs parse_float_type_spec(
 template <typename Char, typename Handler>
 FMT_CONSTEXPR void handle_char_specs(const basic_format_specs<Char>* specs,
                                      Handler&& handler) {
-  if (!specs) return handler.on_char();
-  if (specs->type && specs->type != 'c') return handler.on_int();
+  if (specs == nullptr) return handler.on_char();
+  if (specs->type != 0 && specs->type != 'c') return handler.on_int();
   if (specs->align == align::numeric || specs->sign != sign::none || specs->alt)
     handler.on_error("invalid format specifier for char");
   handler.on_char();
@@ -1665,7 +1665,7 @@ template <typename OutputIt, typename Char, typename UInt> struct int_writer {
     std::string groups = grouping<Char>(locale);
     if (groups.empty()) return on_dec();
     auto sep = thousands_sep<Char>(locale);
-    if (!sep) return on_dec();
+    if (sep == 0) return on_dec();
     int num_digits = count_digits(abs_value);
     int size = num_digits, n = num_digits;
     std::string::const_iterator group = groups.cbegin();
@@ -1762,7 +1762,7 @@ template <typename Char, typename UInt,
 inline Char* write_significand(Char* out, UInt significand,
                                int significand_size, int integral_size,
                                Char decimal_point) {
-  if (!decimal_point)
+  if (decimal_point == 0)
     return format_decimal(out, significand, significand_size).end;
   auto end = format_decimal(out + 1, significand, significand_size).end;
   if (integral_size == 1)
@@ -1790,7 +1790,7 @@ inline OutputIt write_significand(OutputIt out, const char* significand,
                                   int significand_size, int integral_size,
                                   Char decimal_point) {
   out = detail::copy_str<Char>(significand, significand + integral_size, out);
-  if (!decimal_point) return out;
+  if (decimal_point == 0) return out;
   *out++ = decimal_point;
   return detail::copy_str<Char>(significand + integral_size,
                                 significand + significand_size, out);
@@ -1910,7 +1910,7 @@ OutputIt write(OutputIt out, T value, basic_format_specs<Char> specs,
   if (!std::isfinite(value))
     return write_nonfinite(out, std::isinf(value), specs, fspecs);
 
-  if (specs.align == align::numeric && fspecs.sign) {
+  if (specs.align == align::numeric && fspecs.sign != 0) {
     auto it = reserve(out, 1);
     *it++ = static_cast<Char>(data::signs[fspecs.sign]);
     out = base_iterator(out, it);
@@ -1924,7 +1924,7 @@ OutputIt write(OutputIt out, T value, basic_format_specs<Char> specs,
     snprintf_float(promote_float(value), specs.precision, fspecs, buffer);
     return write_bytes(out, {buffer.data(), buffer.size()}, specs);
   }
-  int precision = specs.precision >= 0 || !specs.type ? specs.precision : 6;
+  int precision = specs.precision >= 0 || specs.type == 0 ? specs.precision : 6;
   if (fspecs.format == float_format::exp) {
     if (precision == max_value<int>())
       FMT_THROW(format_error("number is too big"));
@@ -2066,7 +2066,7 @@ OutputIt write(OutputIt out, Char value) {
 
 template <typename Char, typename OutputIt>
 OutputIt write(OutputIt out, const Char* value) {
-  if (!value) {
+  if (value == nullptr) {
     FMT_THROW(format_error("string pointer is null"));
   } else {
     auto length = std::char_traits<Char>::length(value);
@@ -2225,7 +2225,7 @@ class arg_formatter_base {
   }
 
   void write(const Char* value) {
-    if (!value) {
+    if (value == nullptr) {
       FMT_THROW(format_error("string pointer is null"));
     } else {
       auto length = std::char_traits<char_type>::length(value);
@@ -2259,7 +2259,7 @@ class arg_formatter_base {
   }
 
   iterator operator()(bool value) {
-    if (specs_ && specs_->type) return (*this)(value ? 1 : 0);
+    if (specs_ != nullptr && specs_->type != 0) return (*this)(value ? 1 : 0);
     write(value != 0);
     return out_;
   }
@@ -2275,7 +2275,7 @@ class arg_formatter_base {
   }
 
   iterator operator()(const Char* value) {
-    if (!specs_) return write(value), out_;
+    if (specs_ == nullptr) return write(value), out_;
     handle_cstring_type_spec(specs_->type, cstring_spec_handler(*this, value));
     return out_;
   }
@@ -2773,7 +2773,7 @@ FMT_CONSTEXPR int code_point_length(const Char* begin) {
   // Compute the pointer to the next character early so that the next
   // iteration can start working on the next character. Neither Clang
   // nor GCC figure out this reordering on their own.
-  return len + !len;
+  return len + (int)(len == 0);
 }
 
 template <typename Char> constexpr bool is_ascii_letter(Char c) {

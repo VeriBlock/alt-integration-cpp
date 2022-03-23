@@ -68,7 +68,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     }
 
     auto* endorsed = ed_.getBlockIndex(e.endorsedHash);
-    if (!endorsed) {
+    if (endorsed == nullptr) {
       return state.Invalid(
           "no-endorsed",
           format("Can not find endorsed block in {}", e.toPrettyString()));
@@ -89,7 +89,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     }
 
     auto* blockOfProof = as_mut(ing).getBlockIndex(e.blockOfProof);
-    if (!blockOfProof) {
+    if (blockOfProof == nullptr) {
       return state.Invalid(
           "bad-blockofproof",
           format("Block Of Proof {} does not exist in SP chain",
@@ -107,8 +107,8 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
                      "same endorsement is added to endorsedBy second time");
       bool isDirty = endorsed->isDirty();
       endorsed->insertEndorsedBy(endorsement);
-      // keep dirty flag since recoverEndorsements is used when loading blocks from storage
-      // and should not affect dirtyness of the blocks
+      // keep dirty flag since recoverEndorsements is used when loading blocks
+      // from storage and should not affect dirtyness of the blocks
       if (!isDirty) {
         endorsed->unsetDirty();
       }

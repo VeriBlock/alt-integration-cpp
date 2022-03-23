@@ -251,7 +251,7 @@ class printf_arg_formatter : public detail::arg_formatter_base<OutputIt, Char> {
       this->write(value != 0);
     } else if (std::is_same<T, char_type>::value) {
       format_specs& fmt_specs = *this->specs();
-      if (fmt_specs.type && fmt_specs.type != 'c')
+      if (fmt_specs.type != 0 && fmt_specs.type != 'c')
         return (*this)(static_cast<int>(value));
       fmt_specs.sign = sign::none;
       fmt_specs.alt = false;
