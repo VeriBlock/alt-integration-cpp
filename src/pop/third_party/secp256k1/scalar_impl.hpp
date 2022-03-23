@@ -220,7 +220,7 @@ static void secp256k1_scalar_inverse(secp256k1_scalar *r, const secp256k1_scalar
 }
 
 SECP256K1_INLINE static int secp256k1_scalar_is_even(const secp256k1_scalar *a) {
-    return !(a->d[0] & 1);
+    return (a->d[0] & 1) == 0;
 }
 #endif
 
