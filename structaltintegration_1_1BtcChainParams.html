@@ -249,7 +249,10 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00038">38</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   38</span>{ <span class="keywordflow">return</span> getDifficultyAdjustmentInterval(); }</div>
+<div class="fragment"><div class="line"><span class="lineno">   38</span>                                              { </div>
+<div class="line"><span class="lineno">   39</span>    <span class="comment">// must be bigger or equal getDifficultyAdjustmentInterval()</span></div>
+<div class="line"><span class="lineno">   40</span>    <span class="keywordflow">return</span> 10000;</div>
+<div class="line"><span class="lineno">   41</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -276,8 +279,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00045">45</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   45</span>{ <span class="keywordflow">return</span> mOldBlocksWindow; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00048">48</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   48</span>{ <span class="keywordflow">return</span> mOldBlocksWindow; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -362,8 +365,8 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p >In BTC we can deallocate all blocks past final block. </p>
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00042">42</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   42</span>{ <span class="keywordflow">return</span> 0; }</div>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00045">45</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   45</span>{ <span class="keywordflow">return</span> 0; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -388,7 +391,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00050">50</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00053">53</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
 
 </div>
 </div>
@@ -404,7 +407,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00047">47</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00050">50</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
 
 </div>
 </div>
