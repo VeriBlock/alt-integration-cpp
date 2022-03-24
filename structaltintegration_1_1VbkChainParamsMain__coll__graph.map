@@ -1,6 +1,6 @@
 <map id="altintegration::VbkChainParamsMain" name="altintegration::VbkChainParamsMain">
-<area shape="rect" id="node1" title="MainNet VBK parameters." alt="" coords="24,757,229,996"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1VbkChainParams.html" title="VeriBlock chain parameters." alt="" coords="5,425,248,708"/>
+<area shape="rect" id="node1" title="MainNet VBK parameters." alt="" coords="24,772,229,1011"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1VbkChainParams.html" title="VeriBlock chain parameters." alt="" coords="5,425,248,723"/>
 <area shape="rect" id="node3" title=" " alt="" coords="51,285,202,363"/>
 <area shape="rect" id="node4" title=" " alt="" coords="71,145,183,223"/>
 <area shape="rect" id="node5" title=" " alt="" coords="107,5,146,83"/>

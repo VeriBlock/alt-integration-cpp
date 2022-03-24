@@ -106,7 +106,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__inherit__graph.svg" width="659" height="566"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__inherit__graph.svg" width="659" height="580"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1BtcChainParams
 <div id="dynsection-1-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__coll__graph.svg" width="227" height="308"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structaltintegration_1_1BtcChainParams__coll__graph.svg" width="227" height="323"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -161,6 +161,8 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>netwo
 Public Attributes</h2></td></tr>
 <tr class="memitem:abbb41e428a57577882c8a7149a6578f3"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#abbb41e428a57577882c8a7149a6578f3">mOldBlocksWindow</a> = 1000</td></tr>
 <tr class="separator:abbb41e428a57577882c8a7149a6578f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fbd9193135e4563641e6fad76e9a338"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1BtcChainParams.html#a0fbd9193135e4563641e6fad76e9a338">mMaxReorgBlocks</a> = 10000</td></tr>
+<tr class="separator:a0fbd9193135e4563641e6fad76e9a338"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -249,9 +251,9 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00038">38</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   38</span>                                              { </div>
-<div class="line"><span class="lineno">   39</span>    <span class="comment">// must be bigger or equal getDifficultyAdjustmentInterval()</span></div>
-<div class="line"><span class="lineno">   40</span>    <span class="keywordflow">return</span> 10000;</div>
+<div class="fragment"><div class="line"><span class="lineno">   38</span>                                              {</div>
+<div class="line"><span class="lineno">   39</span>    VBK_ASSERT((uint32_t)mMaxReorgBlocks &gt;= getDifficultyAdjustmentInterval());</div>
+<div class="line"><span class="lineno">   40</span>    <span class="keywordflow">return</span> mMaxReorgBlocks;</div>
 <div class="line"><span class="lineno">   41</span>  }</div>
 </div><!-- fragment -->
 </div>
@@ -391,7 +393,23 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00053">53</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00054">54</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0fbd9193135e4563641e6fad76e9a338" name="a0fbd9193135e4563641e6fad76e9a338"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fbd9193135e4563641e6fad76e9a338">&#9670;&nbsp;</a></span>mMaxReorgBlocks</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t altintegration::BtcChainParams::mMaxReorgBlocks = 10000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="btc__chain__params_8hpp_source.html#l00051">51</a> of file <a class="el" href="btc__chain__params_8hpp_source.html">btc_chain_params.hpp</a>.</p>
 
 </div>
 </div>
