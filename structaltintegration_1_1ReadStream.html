@@ -377,7 +377,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 <div class="line"><span class="lineno">   75</span>    }</div>
 <div class="line"><span class="lineno">   76</span>    t = 0;</div>
 <div class="line"><span class="lineno">   77</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, shift = (bytes - 1) * 8; i &lt; bytes; i++, shift -= 8) {</div>
-<div class="line"><span class="lineno">   78</span>      t += ((T)m_Buffer[m_Pos++]) &lt;&lt; shift;</div>
+<div class="line"><span class="lineno">   78</span>      t += (T)(((T)m_Buffer[m_Pos++]) &lt;&lt; shift);</div>
 <div class="line"><span class="lineno">   79</span>    }</div>
 <div class="line"><span class="lineno">   80</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">   81</span>  }</div>
@@ -432,7 +432,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 <div class="line"><span class="lineno">  106</span> </div>
 <div class="line"><span class="lineno">  107</span>    t = 0;</div>
 <div class="line"><span class="lineno">  108</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, shift = 0; i &lt; <span class="keyword">sizeof</span>(T); i++, shift += 8) {</div>
-<div class="line"><span class="lineno">  109</span>      t += ((T)m_Buffer[m_Pos++]) &lt;&lt; shift;</div>
+<div class="line"><span class="lineno">  109</span>      t += (T)(((T)m_Buffer[m_Pos++]) &lt;&lt; shift);</div>
 <div class="line"><span class="lineno">  110</span>    }</div>
 <div class="line"><span class="lineno">  111</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">  112</span>  }</div>
