@@ -79,7 +79,7 @@ ArithUint256& ArithUint256::operator<<=(unsigned int shift) {
       data_[i + k + 1] |= (a.data_[i] >> (8 - shift));
     }
     if (i + k < SHA256_HASH_SIZE) {
-      data_[i + k] |= (uint8_t)(a.data_[i] << shift);
+      data_[i + k] |= static_cast<uint8_t>(a.data_[i] << shift);
     }
   }
   return *this;
@@ -94,7 +94,7 @@ ArithUint256& ArithUint256::operator>>=(unsigned int shift) {
   shift = shift % 8;
   for (int i = 0; i < SHA256_HASH_SIZE; i++) {
     if (i - k - 1 >= 0 && shift != 0) {
-      data_[i - k - 1] |= (uint8_t)(a.data_[i] << (8 - shift));
+      data_[i - k - 1] |= static_cast<uint8_t>(a.data_[i] << (8 - shift));
     }
     if (i - k >= 0) {
       data_[i - k] |= (a.data_[i] >> shift);
