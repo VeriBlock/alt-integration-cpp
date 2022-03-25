@@ -37,7 +37,7 @@ struct VbkChainParams {
   //! production, and to FALSE in tests.
   virtual bool EnableTimeAdjustment() const noexcept = 0;
 
-  virtual int32_t getMaxReorgBlocks() const noexcept { return 20000; }
+  virtual int32_t getMaxReorgBlocks() const noexcept { return mMaxReorgBlocks; }
   virtual uint32_t getKeystoneInterval() const noexcept { return 20; }
 
   virtual uint32_t getFinalityDelay() const noexcept { return 11; }
@@ -71,6 +71,7 @@ struct VbkChainParams {
 
   uint32_t mEndorsementSettlementInterval = 400;
   uint32_t mPreserveBlocksBehindFinal = mEndorsementSettlementInterval;
+  int32_t mMaxReorgBlocks = 20000;
 
  protected:
   uint32_t mMaxFutureBlockTime = 5 * 60;  // 5 min

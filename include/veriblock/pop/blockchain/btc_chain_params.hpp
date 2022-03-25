@@ -35,11 +35,11 @@ struct BtcChainParams {
   }
 
   //! by default we store this many last BTC blocks in RAM
-  uint32_t getMaxReorgBlocks() const noexcept { 
-    // must be bigger or equal getDifficultyAdjustmentInterval()
-    return 10000;
+  uint32_t getMaxReorgBlocks() const noexcept {
+    VBK_ASSERT((uint32_t)mMaxReorgBlocks >= getDifficultyAdjustmentInterval());
+    return mMaxReorgBlocks;
   }
-  
+
   //! when finalizeBlockImpl is called, this many blocks behind final block will
   //! be preserved in RAM. In BTC we can deallocate all blocks past final block.
   uint32_t preserveBlocksBehindFinal() const noexcept { return 0; }
@@ -48,6 +48,7 @@ struct BtcChainParams {
   int32_t getOldBlocksWindow() const noexcept { return mOldBlocksWindow; }
 
   uint32_t mOldBlocksWindow = 1000;
+  int32_t mMaxReorgBlocks = 10000;
 
  protected:
   uint32_t mMaxFutureBlockTime = 2 * 60 * 60;  // 2 hours
