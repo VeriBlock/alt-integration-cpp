@@ -771,7 +771,7 @@ void AltBlockTree::finalizeBlocks() {
                        this->getParams().preserveBlocksBehindFinal());
 
   // then, VBK
-  vbk().finalizeBlocks();
+  // vbk().finalizeBlocks();
 
   VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 }
