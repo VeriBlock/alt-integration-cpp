@@ -15,7 +15,7 @@ struct AltBlockFinalization2 : public MemPoolFixture {
   size_t totalBlocks = 0;
 
   void SetUp() override {
-    altparam.mMaxReorgBlocks = 500;
+    altparam.mMaxReorgBlocks = 1;
     altparam.mEndorsementSettlementInterval = 50;
     altparam.mPreserveBlocksBehindFinal = 50;
 
@@ -31,6 +31,7 @@ TEST_F(AltBlockFinalization2, FinalizeVbkTip) {
   vbkparam.mEndorsementSettlementInterval = 0;
   vbkparam.mPreserveBlocksBehindFinal = 0;
   vbkparam.mOldBlocksWindow = 0;
+  vbkparam.mMaxReorgBlocks = 0;
 
   PopData altPayloads;
 
@@ -51,7 +52,6 @@ TEST_F(AltBlockFinalization2, FinalizeVbkTip) {
   EXPECT_TRUE(state.IsValid()) << state.toString();
   vbktip = alttree.vbk().getBestChain().tip();
 
-  // TODO: enable these checks after vbk finalization will work
   ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
 
   // mine ALT block without any contained VBK context
@@ -61,11 +61,11 @@ TEST_F(AltBlockFinalization2, FinalizeVbkTip) {
   // save state
   save(alttree);
 
-  alttree.finalizeBlock(*tip);
-  ASSERT_EQ(alttree.getBlocks().size(), 1);
+  alttree.finalizeBlocks();
+
+  ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
 
-  // TODO: enable these checks after vbk finalization will work
   ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
   assertTreeTips(alttree.vbk(), {vbktip});
 
@@ -78,6 +78,7 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   vbkparam.mEndorsementSettlementInterval = 0;
   vbkparam.mPreserveBlocksBehindFinal = 0;
   vbkparam.mOldBlocksWindow = 0;
+  vbkparam.mMaxReorgBlocks = 0;
 
   popminer.mineVbkBlocks(100);
   std::vector<VbkBlock> context;
@@ -99,13 +100,13 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   applyInNextBlock(popdata);
 
   tip = alttree.getBestChain().tip();
-  // auto *vbktip = alttree.vbk().getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
 
   // save state
   save(alttree);
 
   // finalize block
-  alttree.finalizeBlock(*tip->pprev);
+  alttree.finalizeBlocks();
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
@@ -113,9 +114,8 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   // check the state after finalization
   ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
-  // TODO: enable these checks after vbk finalization will work
-  // ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
-  // assertTreeTips(alttree.vbk(), {vbktip});
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 1);
+  assertTreeTips(alttree.vbk(), {vbktip});
 
   assertTreesHaveNoOrphans(alttree);
 }
