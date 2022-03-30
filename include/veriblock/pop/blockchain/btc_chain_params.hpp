@@ -49,7 +49,7 @@ struct BtcChainParams {
   int32_t getOldBlocksWindow() const noexcept { return mOldBlocksWindow; }
 
   uint32_t mOldBlocksWindow = 1000;
-  int32_t mMaxReorgBlocks = 10000;
+  int32_t mMaxReorgBlocks = BTC_MAX_REORG_BLOCKS_MIN_VALUE;
 
  protected:
   uint32_t mMaxFutureBlockTime = 2 * 60 * 60;  // 2 hours
