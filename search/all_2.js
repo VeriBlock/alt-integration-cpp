@@ -59,13 +59,14 @@ var searchData=
   ['btc_56',['btc',['../structaltintegration_1_1AltBlockTree.html#aa9c323caa87d73063c2a4ffb8146cf61',1,'altintegration::AltBlockTree']]],
   ['btc_5fblock_5fhash_5fsize_57',['BTC_BLOCK_HASH_SIZE',['../namespacealtintegration.html#a7bba86a9e4ae516b6f71fa1e3480cb03',1,'altintegration']]],
   ['btc_5fheader_5fsize_58',['BTC_HEADER_SIZE',['../namespacealtintegration.html#a52287c97d8129ccf63def060a434ae31',1,'altintegration']]],
-  ['btc_5ftx_5fmax_5fraw_5fsize_59',['BTC_TX_MAX_RAW_SIZE',['../namespacealtintegration.html#ae9b38e2e0cf6684c8ecacb3365271045',1,'altintegration']]],
-  ['btcblock_60',['BtcBlock',['../structaltintegration_1_1BtcBlock.html',1,'altintegration']]],
-  ['btcblocktree_61',['BtcBlockTree',['../namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3',1,'altintegration']]],
-  ['btcchainparams_62',['BtcChainParams',['../structaltintegration_1_1BtcChainParams.html',1,'altintegration']]],
-  ['btcchainparamsmain_63',['BtcChainParamsMain',['../structaltintegration_1_1BtcChainParamsMain.html',1,'altintegration']]],
-  ['btcchainparamsregtest_64',['BtcChainParamsRegTest',['../structaltintegration_1_1BtcChainParamsRegTest.html',1,'altintegration']]],
-  ['btcchainparamstest_65',['BtcChainParamsTest',['../structaltintegration_1_1BtcChainParamsTest.html',1,'altintegration']]],
-  ['btctx_66',['BtcTx',['../structaltintegration_1_1BtcTx.html',1,'altintegration']]],
-  ['build_20and_20install_67',['Build and Install',['../build.html',1,'index']]]
+  ['btc_5fmax_5freorg_5fblocks_5fmin_5fvalue_59',['BTC_MAX_REORG_BLOCKS_MIN_VALUE',['../namespacealtintegration.html#a1ae59f05ec93e51258f27e3ac9e9fb85',1,'altintegration']]],
+  ['btc_5ftx_5fmax_5fraw_5fsize_60',['BTC_TX_MAX_RAW_SIZE',['../namespacealtintegration.html#ae9b38e2e0cf6684c8ecacb3365271045',1,'altintegration']]],
+  ['btcblock_61',['BtcBlock',['../structaltintegration_1_1BtcBlock.html',1,'altintegration']]],
+  ['btcblocktree_62',['BtcBlockTree',['../namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3',1,'altintegration']]],
+  ['btcchainparams_63',['BtcChainParams',['../structaltintegration_1_1BtcChainParams.html',1,'altintegration']]],
+  ['btcchainparamsmain_64',['BtcChainParamsMain',['../structaltintegration_1_1BtcChainParamsMain.html',1,'altintegration']]],
+  ['btcchainparamsregtest_65',['BtcChainParamsRegTest',['../structaltintegration_1_1BtcChainParamsRegTest.html',1,'altintegration']]],
+  ['btcchainparamstest_66',['BtcChainParamsTest',['../structaltintegration_1_1BtcChainParamsTest.html',1,'altintegration']]],
+  ['btctx_67',['BtcTx',['../structaltintegration_1_1BtcTx.html',1,'altintegration']]],
+  ['build_20and_20install_68',['Build and Install',['../build.html',1,'index']]]
 ];

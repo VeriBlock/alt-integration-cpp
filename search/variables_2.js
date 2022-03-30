@@ -6,5 +6,6 @@ var searchData=
   ['blocks_5f_3',['blocks_',['../structaltintegration_1_1BaseBlockTree.html#a93f2c656424f783f65c8d5527e115a51',1,'altintegration::BaseBlockTree']]],
   ['btc_5fblock_5fhash_5fsize_4',['BTC_BLOCK_HASH_SIZE',['../namespacealtintegration.html#a7bba86a9e4ae516b6f71fa1e3480cb03',1,'altintegration']]],
   ['btc_5fheader_5fsize_5',['BTC_HEADER_SIZE',['../namespacealtintegration.html#a52287c97d8129ccf63def060a434ae31',1,'altintegration']]],
-  ['btc_5ftx_5fmax_5fraw_5fsize_6',['BTC_TX_MAX_RAW_SIZE',['../namespacealtintegration.html#ae9b38e2e0cf6684c8ecacb3365271045',1,'altintegration']]]
+  ['btc_5fmax_5freorg_5fblocks_5fmin_5fvalue_6',['BTC_MAX_REORG_BLOCKS_MIN_VALUE',['../namespacealtintegration.html#a1ae59f05ec93e51258f27e3ac9e9fb85',1,'altintegration']]],
+  ['btc_5ftx_5fmax_5fraw_5fsize_7',['BTC_TX_MAX_RAW_SIZE',['../namespacealtintegration.html#ae9b38e2e0cf6684c8ecacb3365271045',1,'altintegration']]]
 ];
