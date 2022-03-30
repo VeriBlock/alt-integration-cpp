@@ -71,7 +71,7 @@ struct VbkChainParams {
 
   uint32_t mEndorsementSettlementInterval = 400;
   uint32_t mPreserveBlocksBehindFinal = mEndorsementSettlementInterval;
-  int32_t mMaxReorgBlocks = 20000;
+  int32_t mMaxReorgBlocks = VBK_MAX_REORG_BLOCKS_MIN_VALUE;
 
  protected:
   uint32_t mMaxFutureBlockTime = 5 * 60;  // 5 min
