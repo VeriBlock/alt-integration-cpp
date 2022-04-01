@@ -168,8 +168,6 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   // finalize block
   alttree.finalizeBlocks();
 
-  assertTreeTips(alttree, {tip});
-
   // check the state after finalization
   ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
@@ -190,6 +188,7 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
 }
 
 TEST_F(AltBlockFinalization2, FinalizeForkedBtcBlocks) {
+  altparam.mMaxReorgBlocks = 11;
   altparam.mEndorsementSettlementInterval = 10;
   altparam.mPreserveBlocksBehindFinal = 10;
   vbkparam.mEndorsementSettlementInterval = 10;
@@ -250,9 +249,12 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   vbkparam.mPreserveBlocksBehindFinal = 15;
   vbkparam.mOldBlocksWindow = 15;
   btcparam.mOldBlocksWindow = 15;
+  vbkparam.mMaxReorgBlocks = 15;
+  // theoretical minimum allowed value
+  btcparam.mMaxReorgBlocks = btcparam.getDifficultyAdjustmentInterval();
 
   auto *vbkTip = popminer.mineVbkBlocks(100);
-  popminer.mineBtcBlocks(100);
+  popminer.mineBtcBlocks(btcparam.mMaxReorgBlocks + 100);
 
   const auto *endorsedVbkBlock = vbkTip->getAncestor(vbkTip->getHeight() - 10);
   auto vbkPopTx = generatePopTx(endorsedVbkBlock->getHeader());
@@ -287,14 +289,14 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   applyInNextBlock(popdata);
 
   tip = alttree.getBestChain().tip();
-  // auto *vbktip = alttree.vbk().getBestChain().tip();
-  // auto *btctip = alttree.btc().getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
+  auto *btctip = alttree.btc().getBestChain().tip();
 
   VBK_LOG_DEBUG("save state");
   save(alttree);
 
   VBK_LOG_DEBUG("finalize block");
-  alttree.finalizeBlock(*tip->pprev);
+  alttree.finalizeBlocks();
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
   assertTreeTips(alttree, {tip});
@@ -302,13 +304,12 @@ TEST_F(AltBlockFinalization2, FinalizeMaxBtcs) {
   VBK_LOG_DEBUG("check the state after finalization");
   ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
-  // TODO: enable these checks after vbk/btc finalization will work
-  // ASSERT_EQ(
-  //     alttree.vbk().getBlocks().size(),
-  //     vbkparam.mOldBlocksWindow + vbkparam.mPreserveBlocksBehindFinal + 1);
-  // assertTreeTips(alttree.vbk(), {vbktip});
-  // ASSERT_EQ(alttree.btc().getBlocks().size(), btcparam.mOldBlocksWindow + 1);
-  // assertTreeTips(alttree.btc(), {btctip});
+  ASSERT_EQ(
+      alttree.vbk().getBlocks().size(),
+      vbkparam.mOldBlocksWindow + vbkparam.mPreserveBlocksBehindFinal + 1);
+  assertTreeTips(alttree.vbk(), {vbktip});
+  ASSERT_EQ(alttree.btc().getBlocks().size(), btcparam.mMaxReorgBlocks + 1);
+  assertTreeTips(alttree.btc(), {btctip});
 
   assertTreesHaveNoOrphans(alttree);
 
