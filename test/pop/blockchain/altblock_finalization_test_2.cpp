@@ -121,11 +121,13 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
 }
 
 TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
+  altparam.mMaxReorgBlocks = 11;
   altparam.mEndorsementSettlementInterval = 10;
   altparam.mPreserveBlocksBehindFinal = 10;
   vbkparam.mEndorsementSettlementInterval = 10;
   vbkparam.mPreserveBlocksBehindFinal = 10;
   vbkparam.mOldBlocksWindow = 0;
+  vbkparam.mMaxReorgBlocks = 0;
 
   // generate VTB which will store in the old block
   auto *vbkTip = alttree.vbk().getBestChain().tip();
@@ -150,7 +152,7 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   // size of the context in the popdata should be less or equal to the
   // MAX_POPDATA_VBK
   ASSERT_LE(popdata.context.size(), MAX_POPDATA_VBK);
-  ASSERT_GT(popdata.context.size(), vbkparam.mOldBlocksWindow);
+  // ASSERT_GT(popdata.context.size(), vbkparam.mOldBlocksWindow);
 
   applyInNextBlock(popdata);
 
@@ -161,19 +163,18 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   save(alttree);
 
   tip = alttree.getBestChain().tip();
-  // auto *vbktip = alttree.vbk().getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
 
   // finalize block
-  alttree.finalizeBlock(*tip->pprev);
+  alttree.finalizeBlocks();
 
   assertTreeTips(alttree, {tip});
 
   // check the state after finalization
   ASSERT_TRUE(alttree.setState(*tip->pprev, state));
 
-  // TODO: enable these checks after vbk finalization will work
-  // ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
-  // assertTreeTips(alttree.vbk(), {vbktip});
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
+  assertTreeTips(alttree.vbk(), {vbktip});
 
   assertTreesHaveNoOrphans(alttree);
 
@@ -184,7 +185,8 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   ASSERT_EQ(popdata.atvs.size(), 1);
   ASSERT_EQ(popdata.context.size(), 0);
 
-  applyInNextBlock(popdata);
+  // TODO: currently we can not apply vtb in the finalized block
+  // applyInNextBlock(popdata);
 }
 
 TEST_F(AltBlockFinalization2, FinalizeForkedBtcBlocks) {
