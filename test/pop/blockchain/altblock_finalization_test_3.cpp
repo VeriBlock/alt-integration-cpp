@@ -15,7 +15,7 @@ using namespace altintegration;
 struct StatefulDuplicateWhenFinalized : public ::testing::Test,
                                         public PopTestFixture {
   void SetUp() override {
-    altparam.mMaxReorgDistance = 100;
+    altparam.mMaxReorgBlocks = 100;
     altparam.mEndorsementSettlementInterval = 50;
     altparam.mPreserveBlocksBehindFinal = 50;
   }
@@ -35,7 +35,7 @@ TEST_F(StatefulDuplicateWhenFinalized, VBK) {
   ASSERT_TRUE(tip);
 
   // prepare a PopData with 1 VBK block
-  auto *vbk = popminer->mineVbkBlocks(1);
+  auto *vbk = popminer.mineVbkBlocks(1);
   PopData pd;
   pd.context.push_back(vbk->getHeader());
 
@@ -48,7 +48,7 @@ TEST_F(StatefulDuplicateWhenFinalized, VBK) {
 
   // mine mMaxReorgDistance-2 blocks
   tip = mineAltBlocks(
-      *tip, altparam.mMaxReorgDistance - 2, PopData{}, /*setState=*/true);
+      *tip, altparam.mMaxReorgBlocks - 2, PopData{}, /*setState=*/true);
   ASSERT_TRUE(tip);
 
   save(alttree);
