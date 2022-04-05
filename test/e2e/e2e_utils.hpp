@@ -26,7 +26,7 @@ enum class CreateOption : uint8_t {
   CREATE_VTB,
   CREATE_ATV,
 
-  kMaxValue = CREATE_VBK_POP_TX
+  kMaxValue = CREATE_VBK_POP_TX,
 };
 
 enum class SubmitOption : uint8_t {
@@ -45,11 +45,6 @@ enum class ForkOption : uint8_t {
 
   kMaxValue = RANDOM_BLOCK
 };
-
-template <typename OptionT>
-OptionT GetRandomOption() {
-  return static_cast<OptionT>(::rand() % static_cast<uint8_t>(OptionT::kMaxValue));
-}
 
 template <typename tree_t>
 const typename tree_t::index_t* getBlock(ForkOption fork, const tree_t& tree) {
