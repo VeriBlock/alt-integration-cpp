@@ -183,8 +183,14 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   ASSERT_EQ(popdata.atvs.size(), 1);
   ASSERT_EQ(popdata.context.size(), 0);
 
-  // TODO: currently we can not apply vtb in the finalized block
-  // applyInNextBlock(popdata);
+  // we can not apply vtb in the finalized block
+  auto containingBlock = generateNextBlock(chain.back());
+  chain.push_back(containingBlock);
+  ASSERT_TRUE(alttree.acceptBlockHeader(containingBlock, state))
+      << state.toString();
+  ASSERT_TRUE(AddPayloads(containingBlock.getHash(), popdata))
+      << state.toString();
+  ASSERT_FALSE(alttree.setState(containingBlock.getHash(), state));
 }
 
 TEST_F(AltBlockFinalization2, FinalizeForkedBtcBlocks) {
