@@ -467,7 +467,7 @@ static void secp256k1_ecmult_strauss_wnaf(const secp256k1_ecmult_context *ctx, c
     int no = 0;
 
     for (np = 0; np < num; ++np) {
-        if (secp256k1_scalar_is_zero(&na[np]) || secp256k1_gej_is_infinity(&a[np])) {
+        if (secp256k1_scalar_is_zero(&na[np]) != 0 || secp256k1_gej_is_infinity(&a[np]) != 0) {
             continue;
         }
         state->ps[no].input_pos = np;
@@ -602,7 +602,7 @@ static void secp256k1_ecmult_strauss_wnaf(const secp256k1_ecmult_context *ctx, c
 #endif
     }
 
-    if (!r->infinity) {
+    if (r->infinity == 0) {
         secp256k1_fe_mul(&r->z, &r->z, &Z);
     }
 }

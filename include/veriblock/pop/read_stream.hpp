@@ -75,7 +75,7 @@ struct ReadStream {
     }
     t = 0;
     for (size_t i = 0, shift = (bytes - 1) * 8; i < bytes; i++, shift -= 8) {
-      t += ((T)m_Buffer[m_Pos++]) << shift;
+      t += static_cast<T>(((T)m_Buffer[m_Pos++]) << shift);
     }
     return true;
   }
@@ -106,7 +106,7 @@ struct ReadStream {
 
     t = 0;
     for (size_t i = 0, shift = 0; i < sizeof(T); i++, shift += 8) {
-      t += ((T)m_Buffer[m_Pos++]) << shift;
+      t += static_cast<T>(((T)m_Buffer[m_Pos++]) << shift);
     }
     return true;
   }

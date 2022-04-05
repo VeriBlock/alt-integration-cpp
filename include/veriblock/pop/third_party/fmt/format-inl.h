@@ -2362,7 +2362,7 @@ void fallback_format(Double d, int num_digits, bool binary32, buffer<char>& buf,
   // Invariant: value == (numerator / denominator) * pow(10, exp10).
   if (num_digits < 0) {
     // Generate the shortest representation.
-    if (!upper) upper = &lower;
+    if (upper == nullptr) upper = &lower;
     bool even = (value.f & 1) == 0;
     num_digits = 0;
     char* data = buf.data();

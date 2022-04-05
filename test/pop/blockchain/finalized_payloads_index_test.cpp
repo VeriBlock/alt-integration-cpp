@@ -21,6 +21,9 @@ struct FinalizedPayloadsIndexTest : public ::testing::Test,
     altparam.mEndorsementSettlementInterval = 50;
     altparam.mPreserveBlocksBehindFinal = 50;
 
+    btcparam.mMaxReorgBlocks = btcparam.getDifficultyAdjustmentInterval();
+    vbkparam.mMaxReorgBlocks = 2000;
+
     alttree.onBlockBeforeDeallocated.connect(
         [&](const BlockIndex<AltBlock>&) { deallocatedAlt++; });
 

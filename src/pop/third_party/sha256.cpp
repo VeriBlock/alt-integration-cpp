@@ -221,7 +221,7 @@ void sha256_update(sha256_context *ctx,
 
   if (ctx->total[0] < (unsigned long)ilen) ctx->total[1]++;
 
-  if (left && ilen >= fill) {
+  if (left != 0 && ilen >= fill) {
     memcpy((void *)(ctx->buffer + left), (void *)input, fill);
     sha2_process(ctx, ctx->buffer);
     input += fill;

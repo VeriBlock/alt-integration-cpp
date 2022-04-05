@@ -125,7 +125,11 @@ constexpr const auto VBK_MAXIMUM_DIFFICULTY =
     "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 
 //! minimum number of blocks in ALT tree
-const static int32_t MAX_REORG_BLOCKS_MIN_VALUE = 3000;
+const static int32_t ALT_MAX_REORG_BLOCKS_MIN_VALUE = 10000;
+//! minimum number of blocks in VBK tree
+const static int32_t VBK_MAX_REORG_BLOCKS_MIN_VALUE = 20000;
+//! minimum number of blocks in BTC tree
+const static int32_t BTC_MAX_REORG_BLOCKS_MIN_VALUE = 10000;
 
 }  // namespace altintegration
 

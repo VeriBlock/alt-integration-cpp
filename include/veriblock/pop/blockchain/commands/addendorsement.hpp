@@ -36,7 +36,7 @@ struct AddEndorsement : public Command {
 
   bool Execute(ValidationState& state) noexcept override {
     auto* containing = ed_->getBlockIndex(e_->containingHash);
-    if (!containing) {
+    if (containing == nullptr) {
       return state.Invalid(
           protected_block_t::name() + "-no-containing",
           format("Can not find containing block in endorsement={}",
@@ -44,7 +44,7 @@ struct AddEndorsement : public Command {
     }
 
     auto* endorsed = ed_->getBlockIndex(e_->endorsedHash);
-    if (!endorsed) {
+    if (endorsed == nullptr) {
       return state.Invalid(protected_block_t::name() + "-no-endorsed-block",
                            format("Endorsed block={} not found in the tree",
                                   HexStr(e_->endorsedHash)));
@@ -67,7 +67,7 @@ struct AddEndorsement : public Command {
     }
 
     auto* blockOfProof = ing_->getBlockIndex(e_->blockOfProof);
-    if (!blockOfProof) {
+    if (blockOfProof == nullptr) {
       return state.Invalid(
           protected_block_t::name() + "-block-of-proof-not-found",
           format("Can not find block of proof in SP Chain ({})",

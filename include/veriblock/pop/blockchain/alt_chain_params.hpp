@@ -261,8 +261,8 @@ struct AltChainParams {
   std::shared_ptr<PopPayoutsParams> mPopPayoutsParams =
       std::make_shared<PopPayoutsParams>();
 
-  int32_t mMaxReorgBlocks = MAX_REORG_BLOCKS_MIN_VALUE;  // blocks
-  uint32_t mMaxAltchainFutureBlockTime = 10 * 60;        // 10 min
+  int32_t mMaxReorgBlocks = ALT_MAX_REORG_BLOCKS_MIN_VALUE;  // blocks
+  uint32_t mMaxAltchainFutureBlockTime = 10 * 60;            // 10 min
   uint32_t mKeystoneInterval = 5;
   uint32_t mFinalityDelay = 100;
   uint32_t mEndorsementSettlementInterval = 50;
