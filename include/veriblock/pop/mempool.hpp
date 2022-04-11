@@ -102,7 +102,7 @@ struct MemPool {
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   VBK_CHECK_RETURN bool isKnown(const typename T::id_t& id,
-                                bool onlyInMempool = false) const {
+                                const bool onlyInMempool = false) const {
     // is `id` in mempool?
     auto* inmempool = get<T>(id);
     if (inmempool != nullptr) {
@@ -114,7 +114,7 @@ struct MemPool {
       return false;
     }
 
-    std::vector<uint8_t> v(id.begin(), id.end());
+    const std::vector<uint8_t> v(id.begin(), id.end());
 
     auto& tree = mempool_tree_.alt();
     auto& fpl = tree.getFinalizedPayloadsIndex();

@@ -82,7 +82,7 @@ static bool DecodeBase58(const char *psz,
     }
     VBK_ASSERT(carry == 0);
     length = i;
-    if (length + zeroes > max_ret_len) {
+    if ((length + zeroes) > max_ret_len) {
       return state.Invalid("decode-base-58",
                            format("(zeros + length) more than max_ret_len, "
                                   "(zeros + length): {}, max_ret_len: {}",

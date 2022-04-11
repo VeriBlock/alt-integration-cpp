@@ -26,7 +26,7 @@ void VbkBlockTree::determineBestChain(index_t& candidate,
   VBK_ASSERT(isBootstrapped());
 
   auto bestTip = getBestChain().tip();
-  if (bestTip->getHeight() - candidate.getHeight() >
+  if ((bestTip->getHeight() - candidate.getHeight()) >
       param_->getMaxReorgBlocks()) {
     VBK_LOG_DEBUG("%s Candidate: %s is behind tip more than %d blocks",
                   block_t::name(),

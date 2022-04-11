@@ -96,7 +96,7 @@ bool Address::isDerivedFromPublicKey(Slice<const uint8_t> publicKey) const {
  * sense, so this allows multisig to range from 1 to 58, rather than what
  * would have otherwise been 0 to 57. */
 static bool decodeNumber(const std::string& in,
-                         int& num,
+                         int32_t& num,
                          ValidationState& state) {
   std::vector<uint8_t> ret(in.size(), 0);
   if (!DecodeBase58(in, ret, state)) {

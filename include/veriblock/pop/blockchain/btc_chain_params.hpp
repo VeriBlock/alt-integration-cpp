@@ -35,7 +35,7 @@ struct BtcChainParams {
   }
 
   //! by default we store this many last BTC blocks in RAM
-  uint32_t getMaxReorgBlocks() const noexcept {
+  int32_t getMaxReorgBlocks() const noexcept {
     VBK_ASSERT(static_cast<uint32_t>(mMaxReorgBlocks) >=
                getDifficultyAdjustmentInterval());
     return mMaxReorgBlocks;

@@ -88,7 +88,7 @@ struct Address {
                                          ValidationState& state);
 
  private:
-  Address(AddressType type, std::string addr)
+  Address(const AddressType type, std::string addr)
       : m_Type(type), m_Address(std::move(addr)) {}
 
   AddressType m_Type{};

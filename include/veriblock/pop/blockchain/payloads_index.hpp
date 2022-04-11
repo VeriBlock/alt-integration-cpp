@@ -84,8 +84,9 @@ struct PayloadsIndex {
 
   void remove(const payload_id& id, const hash_t& block) {
     auto it = map_.find(id);
-    if(it == map_.end()) {
-      return; // not found
+    if (it == map_.end()) {
+      // not found
+      return;
     }
 
     auto& set = it->second;

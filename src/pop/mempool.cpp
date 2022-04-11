@@ -69,8 +69,9 @@ void MemPool::cleanUp() {
 
     auto* tip = vbk_tree.getBestChain().tip();
     VBK_ASSERT(tip);
-    bool tooOld = tip->getHeight() - vbk_tree.getParams().getOldBlocksWindow() >
-                  rel.header->getHeight();
+    const bool tooOld =
+        (tip->getHeight() - vbk_tree.getParams().getOldBlocksWindow()) >
+        rel.header->getHeight();
 
     // cleanup stale payloads
     if (tooOld) {
