@@ -28,7 +28,7 @@ var searchData=
   ['getmaxatvsinaltblock_25',['getMaxATVsInAltBlock',['../structaltintegration_1_1AltChainParams.html#a5825b30566316c42675e1254bea15fd5',1,'altintegration::AltChainParams']]],
   ['getmaxatvsinvbkblock_26',['getMaxAtvsInVbkBlock',['../namespacealtintegration.html#a6d614a878c31c63b6c9b39addba9a234',1,'altintegration']]],
   ['getmaxpopdatasize_27',['getMaxPopDataSize',['../structaltintegration_1_1AltChainParams.html#a3c460d50056c2a4f56a7cc93bdc11539',1,'altintegration::AltChainParams']]],
-  ['getmaxreorgblocks_28',['getMaxReorgBlocks',['../structaltintegration_1_1BtcChainParams.html#a8fa4c2c82d4fbbe0d234542b936fef30',1,'altintegration::BtcChainParams::getMaxReorgBlocks()'],['../structaltintegration_1_1AltChainParams.html#accade3baef4a5a310ac1e3b01d95437e',1,'altintegration::AltChainParams::getMaxReorgBlocks() const noexcept']]],
+  ['getmaxreorgblocks_28',['getMaxReorgBlocks',['../structaltintegration_1_1BtcChainParams.html#aed74804a75ec689d7bcf5e8497c04ca7',1,'altintegration::BtcChainParams::getMaxReorgBlocks()'],['../structaltintegration_1_1AltChainParams.html#accade3baef4a5a310ac1e3b01d95437e',1,'altintegration::AltChainParams::getMaxReorgBlocks() const noexcept']]],
   ['getmaxvbkblocksinaltblock_29',['getMaxVbkBlocksInAltBlock',['../structaltintegration_1_1AltChainParams.html#abad6cd98e62272da80037aa23f22452d',1,'altintegration::AltChainParams']]],
   ['getmaxvtbsinaltblock_30',['getMaxVTBsInAltBlock',['../structaltintegration_1_1AltChainParams.html#a30a17437d219fba10e84bb27814ffe35',1,'altintegration::AltChainParams']]],
   ['getmocktime_31',['getMockTime',['../namespacealtintegration.html#a445516438be046b56a9b7fd5140ae4bf',1,'altintegration']]],

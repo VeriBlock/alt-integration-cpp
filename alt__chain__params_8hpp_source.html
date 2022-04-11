@@ -246,8 +246,8 @@ $(document).ready(function(){initNavTree('alt__chain__params_8hpp_source.html','
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  }</div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="structaltintegration_1_1AltChainParams.html#accade3baef4a5a310ac1e3b01d95437e">  205</a></span>  int32_t <a class="code hl_function" href="structaltintegration_1_1AltChainParams.html#accade3baef4a5a310ac1e3b01d95437e">getMaxReorgBlocks</a>() const noexcept {</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    VBK_ASSERT(int64_t(mMaxReorgBlocks) &gt;</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>               int64_t(mEndorsementSettlementInterval));</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    VBK_ASSERT(<span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(mMaxReorgBlocks) &gt;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>               <span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(mEndorsementSettlementInterval));</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keywordflow">return</span> mMaxReorgBlocks;</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  }</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
