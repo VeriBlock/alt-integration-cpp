@@ -120,7 +120,7 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   assertTreesHaveNoOrphans(alttree);
 }
 
-TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
+TEST_F(AltBlockFinalization2, FinalizedVbkBlock_1) {
   altparam.mMaxReorgBlocks = 11;
   altparam.mEndorsementSettlementInterval = 10;
   altparam.mPreserveBlocksBehindFinal = 10;
@@ -134,12 +134,6 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
   auto vbkPopTx = generatePopTx(vbkTip->getHeader());
   vbkTip = popminer.mineVbkBlocks(1, {vbkPopTx});
   auto vtb = popminer.createVTB(vbkTip->getHeader(), vbkPopTx);
-
-  // generate ATV whuch will store in the old block
-  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
-      generatePublicationData(chain[chain.size() - 1]));
-  vbkTip = popminer.mineVbkBlocks(1, {tx});
-  ATV atv = popminer.createATV(vbkTip->getHeader(), tx);
 
   popminer.mineVbkBlocks(100);
   std::vector<VbkBlock> context;
@@ -178,12 +172,72 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock) {
 
   // insert the old vtb into the popdata
   popdata.vtbs = {vtb};
-  popdata.atvs = {atv};
+  popdata.atvs = {};
   ASSERT_EQ(popdata.vtbs.size(), 1);
+  ASSERT_EQ(popdata.atvs.size(), 0);
+  ASSERT_EQ(popdata.context.size(), 0);
+
+  // TODO: enable if after finalization of the VBK tree will work correctly
+  // applyInNextBlock(popdata);
+}
+
+TEST_F(AltBlockFinalization2, FinalizedVbkBlock_2) {
+  altparam.mMaxReorgBlocks = 11;
+  altparam.mEndorsementSettlementInterval = 10;
+  altparam.mPreserveBlocksBehindFinal = 10;
+  vbkparam.mEndorsementSettlementInterval = 10;
+  vbkparam.mPreserveBlocksBehindFinal = 10;
+  vbkparam.mOldBlocksWindow = 0;
+  vbkparam.mMaxReorgBlocks = 0;
+
+  // generate ATV whuch will store in the old block
+  VbkTx tx = popminer.createVbkTxEndorsingAltBlock(
+      generatePublicationData(chain[chain.size() - 1]));
+  auto *vbkTip = popminer.mineVbkBlocks(1, {tx});
+  ATV atv = popminer.createATV(vbkTip->getHeader(), tx);
+
+  popminer.mineVbkBlocks(100);
+  std::vector<VbkBlock> context;
+  fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer.vbk());
+  for (const auto &b : context) {
+    submitVBK(b);
+  }
+
+  auto popdata = checkedGetPop();
+  // size of the context in the popdata should be less or equal to the
+  // MAX_POPDATA_VBK
+  ASSERT_LE(popdata.context.size(), MAX_POPDATA_VBK);
+  // ASSERT_GT(popdata.context.size(), vbkparam.mOldBlocksWindow);
+
+  applyInNextBlock(popdata);
+
+  // mine one more block on top of the block full of VBK payloads
+  popdata = checkedGetPop();
+  applyInNextBlock(popdata);
+
+  save(alttree);
+
+  tip = alttree.getBestChain().tip();
+  auto *vbktip = alttree.vbk().getBestChain().tip();
+
+  // finalize block
+  alttree.finalizeBlocks();
+
+  // check the state after finalization
+  ASSERT_TRUE(alttree.setState(*tip->pprev, state));
+
+  ASSERT_EQ(alttree.vbk().getBlocks().size(), 11);
+  assertTreeTips(alttree.vbk(), {vbktip});
+
+  assertTreesHaveNoOrphans(alttree);
+
+  // insert the old atv into the popdata
+  popdata.atvs = {atv};
+  ASSERT_EQ(popdata.vtbs.size(), 0);
   ASSERT_EQ(popdata.atvs.size(), 1);
   ASSERT_EQ(popdata.context.size(), 0);
 
-  // TODO: currently we can not apply vtb in the finalized block
+  // TODO: enable if after finalization of the VBK tree will work correctly
   // applyInNextBlock(popdata);
 }
 
