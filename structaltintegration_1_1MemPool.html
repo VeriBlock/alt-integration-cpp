@@ -155,10 +155,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa5c209a6b0dc722d3b844152cea835d6"><td class="memItemLeft" align="right" valign="top"><a id="aa5c209a6b0dc722d3b844152cea835d6" name="aa5c209a6b0dc722d3b844152cea835d6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>MemPool</b> (<a class="el" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a> &amp;tree)</td></tr>
 <tr class="separator:aa5c209a6b0dc722d3b844152cea835d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8aadbbc76b6be517b19c48ad3e0ae33f"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;T&gt;::value&gt;::type&gt; </td></tr>
-<tr class="memitem:a8aadbbc76b6be517b19c48ad3e0ae33f"><td class="memTemplItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a8aadbbc76b6be517b19c48ad3e0ae33f">isKnown</a> (const typename T::id_t &amp;id, const bool onlyInMempool=false) const</td></tr>
-<tr class="memdesc:a8aadbbc76b6be517b19c48ad3e0ae33f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use this method to determine if payload of type T with id <code>id</code> is already known to active chain.  <a href="structaltintegration_1_1MemPool.html#a8aadbbc76b6be517b19c48ad3e0ae33f">More...</a><br /></td></tr>
-<tr class="separator:a8aadbbc76b6be517b19c48ad3e0ae33f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae34bf50cac5c7636ef29c78d047a1aa2"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;T&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:ae34bf50cac5c7636ef29c78d047a1aa2"><td class="memTemplItemLeft" align="right" valign="top">VBK_CHECK_RETURN bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#ae34bf50cac5c7636ef29c78d047a1aa2">isKnown</a> (const typename T::id_t &amp;id, bool onlyInMempool=false) const</td></tr>
+<tr class="memdesc:ae34bf50cac5c7636ef29c78d047a1aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use this method to determine if payload of type T with id <code>id</code> is already known to active chain.  <a href="structaltintegration_1_1MemPool.html#ae34bf50cac5c7636ef29c78d047a1aa2">More...</a><br /></td></tr>
+<tr class="separator:ae34bf50cac5c7636ef29c78d047a1aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b52b7ff6bc35966948f61c6ab99021d"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;T&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:a4b52b7ff6bc35966948f61c6ab99021d"><td class="memTemplItemLeft" align="right" valign="top">VBK_CHECK_RETURN const T *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1MemPool.html#a4b52b7ff6bc35966948f61c6ab99021d">get</a> (const typename T::id_t &amp;id) const</td></tr>
 <tr class="memdesc:a4b52b7ff6bc35966948f61c6ab99021d"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for payloads stored in mempool  <a href="structaltintegration_1_1MemPool.html#a4b52b7ff6bc35966948f61c6ab99021d">More...</a><br /></td></tr>
@@ -527,8 +527,8 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a8aadbbc76b6be517b19c48ad3e0ae33f" name="a8aadbbc76b6be517b19c48ad3e0ae33f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8aadbbc76b6be517b19c48ad3e0ae33f">&#9670;&nbsp;</a></span>isKnown()</h2>
+<a id="ae34bf50cac5c7636ef29c78d047a1aa2" name="ae34bf50cac5c7636ef29c78d047a1aa2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae34bf50cac5c7636ef29c78d047a1aa2">&#9670;&nbsp;</a></span>isKnown()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -547,7 +547,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>onlyInMempool</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
@@ -578,7 +578,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 <dl class="section return"><dt>Returns</dt><dd>true if payload exists in mempool or active chain, false otherwise. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00104">104</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  105</span>                                                                        {</div>
+<div class="fragment"><div class="line"><span class="lineno">  105</span>                                                                  {</div>
 <div class="line"><span class="lineno">  106</span>    <span class="comment">// is `id` in mempool?</span></div>
 <div class="line"><span class="lineno">  107</span>    <span class="keyword">auto</span>* inmempool = get&lt;T&gt;(<span class="keywordtype">id</span>);</div>
 <div class="line"><span class="lineno">  108</span>    <span class="keywordflow">if</span> (inmempool != <span class="keyword">nullptr</span>) {</div>
@@ -590,7 +590,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;IsPopPayload&lt;
 <div class="line"><span class="lineno">  114</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><span class="lineno">  115</span>    }</div>
 <div class="line"><span class="lineno">  116</span> </div>
-<div class="line"><span class="lineno">  117</span>    <span class="keyword">const</span> std::vector&lt;uint8_t&gt; v(<span class="keywordtype">id</span>.begin(), <span class="keywordtype">id</span>.end());</div>
+<div class="line"><span class="lineno">  117</span>    std::vector&lt;uint8_t&gt; v(<span class="keywordtype">id</span>.begin(), <span class="keywordtype">id</span>.end());</div>
 <div class="line"><span class="lineno">  118</span> </div>
 <div class="line"><span class="lineno">  119</span>    <span class="keyword">auto</span>&amp; tree = mempool_tree_.alt();</div>
 <div class="line"><span class="lineno">  120</span>    <span class="keyword">auto</span>&amp; fpl = tree.getFinalizedPayloadsIndex();</div>
