@@ -64,7 +64,15 @@ struct MerkleTree {
     return instance.finalizePath(std::move(merklePath));
   }
 
-  hash_t getMerkleRoot() { return instance.finalizeRoot(); }
+  hash_t getMerkleRoot() {
+    if (layers.empty()) {
+      return hash_t{};
+    }
+
+    auto& root = layers.back();
+    VBK_ASSERT(root.size() == 1);
+    return root[0];
+  }
 
   const std::vector<std::vector<hash_t>>& getLayers() const { return layers; }
 
@@ -128,51 +136,38 @@ struct VbkMerkleTree {
     return path;
   }
 
-  hash_t finalizeRoot() {
-    if (this->pop_tree.getLayers().empty() &&
-        this->normal_tree.getLayers().empty()) {
+  hash_t getMerkleRoot() {
+    if (pop_tree.getLayers().empty() && normal_tree.getLayers().empty()) {
       return hash_t{};
     }
 
-    if ((this->pop_tree.getLayers().size() == 1) &&
-        this->normal_tree.getLayers().empty()) {
+    if ((pop_tree.getLayers().size() == 1) && normal_tree.getLayers().empty()) {
       // the only layer
-      VBK_ASSERT(this->pop_tree.getLayers()[0].size() == 1);
-      return this->pop_tree.getLayers()[0][0];
+      VBK_ASSERT(pop_tree.getLayers()[0].size() == 1);
+      return pop_tree.getLayers()[0][0];
     }
 
-    if ((this->normal_tree.getLayers().size() == 1) &&
-        this->pop_tree.getLayers().empty()) {
+    if ((normal_tree.getLayers().size() == 1) && pop_tree.getLayers().empty()) {
       // the only layer
-      VBK_ASSERT(this->normal_tree.getLayers()[0].size() == 1);
-      return this->normal_tree.getLayers()[0][0];
+      VBK_ASSERT(normal_tree.getLayers()[0].size() == 1);
+      return normal_tree.getLayers()[0][0];
     }
 
-    auto pop_hash = hash_t{};
-    auto normal_hash = hash_t{};
-
-    if (!this->pop_tree.getLayers().empty()) {
-      pop_hash = this->pop_tree.getLayers().back()[0];
-    }
-
-    if (!this->normal_tree.getLayers().empty()) {
-      normal_hash = this->normal_tree.getLayers().back()[0];
-    }
+    auto pop_hash = pop_tree.getMerkleRoot();
+    auto normal_hash = normal_tree.getMerkleRoot();
 
     // add metapackage hash (also all zeroes) to the left subtree
     auto metapackageHash = hash_t();
     return hash(metapackageHash, hash(pop_hash, normal_hash));
   }
 
-  hash_t getMerkleRoot() { return this->finalizeRoot(); }
-
   std::vector<hash_t> getMerklePathLayers(const size_t index,
                                           const TreeIndex treeIndex) const {
     switch (treeIndex) {
       case TreeIndex::POP:
-        return this->pop_tree.getMerklePathLayers(index);
+        return pop_tree.getMerklePathLayers(index);
       case TreeIndex::NORMAL:
-        return this->normal_tree.getMerklePathLayers(index);
+        return normal_tree.getMerklePathLayers(index);
       default:
         return {};
     }
@@ -185,23 +180,23 @@ struct VbkMerkleTree {
     merklePath.treeIndex = static_cast<int32_t>(treeIndex);
     switch (treeIndex) {
       case TreeIndex::POP: {
-        const auto it = this->pop_tree.getHashIndices().find(hash);
-        VBK_ASSERT(it != this->pop_tree.getHashIndices().end());
+        const auto it = pop_tree.getHashIndices().find(hash);
+        VBK_ASSERT(it != pop_tree.getHashIndices().end());
         const int32_t index = it->second;
 
         merklePath.index = index;
         merklePath.layers =
-            this->pop_tree.getMerklePathLayers(static_cast<size_t>(index));
+            pop_tree.getMerklePathLayers(static_cast<size_t>(index));
         break;
       }
       case TreeIndex::NORMAL: {
-        const auto it = this->normal_tree.getHashIndices().find(hash);
-        VBK_ASSERT(it != this->normal_tree.getHashIndices().end());
+        const auto it = normal_tree.getHashIndices().find(hash);
+        VBK_ASSERT(it != normal_tree.getHashIndices().end());
         const int32_t index = it->second;
 
         merklePath.index = index;
         merklePath.layers =
-            this->normal_tree.getMerklePathLayers(static_cast<size_t>(index));
+            normal_tree.getMerklePathLayers(static_cast<size_t>(index));
         break;
       }
       default:
@@ -228,16 +223,6 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
     return path;
   }
 
-  hash_t finalizeRoot() {
-    if (layers.empty()) {
-      return hash_t{};
-    }
-
-    auto& root = layers.back();
-    VBK_ASSERT(root.size() == 1);
-    return root[0].reverse();
-  }
-
   MerklePath getMerklePath(const hash_t& hash) const {
     auto it = hash_indices.find(hash);
     VBK_ASSERT(it != hash_indices.end());
@@ -249,6 +234,8 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
     merklePath.layers = getMerklePathLayers(index);
     return merklePath;
   }
+
+  hash_t getMerkleRoot() { return base::getMerkleRoot().reverse(); }
 };
 
 //! @private
@@ -269,15 +256,7 @@ struct PayloadsMerkleTree
     return path;
   }
 
-  hash_t finalizeRoot() {
-    if (this->layers.empty()) {
-      return hash_t{};
-    }
-
-    auto& root = this->layers.back();
-    VBK_ASSERT(root.size() == 1);
-    return root[0].reverse();
-  }
+  hash_t getMerkleRoot() { return base::getMerkleRoot().reverse(); }
 };
 
 }  // namespace altintegration

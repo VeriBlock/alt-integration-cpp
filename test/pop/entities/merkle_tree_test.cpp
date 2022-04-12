@@ -12,38 +12,53 @@
 using namespace altintegration;
 
 struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
-  std::vector<VbkPopTx::hash_t> txes;
+  std::vector<uint256> pop_txs;
+  std::vector<uint256> normal_txs;
   std::shared_ptr<VbkMerkleTree> mtree;
 
   void setNtxes(size_t n) {
     size_t i = 0;
-    txes.clear();
+    pop_txs.clear();
     std::generate_n(
-        std::back_inserter(txes), n, [&]() { return ArithUint256(i++); });
-    mtree = std::make_shared<VbkMerkleTree>(
-        std::vector<typename VbkPopTx::hash_t>{}, txes);
+        std::back_inserter(pop_txs), n, [&]() { return ArithUint256(i++); });
+    std::generate_n(
+        std::back_inserter(normal_txs), n, [&]() { return ArithUint256(i++); });
+    mtree = std::make_shared<VbkMerkleTree>(std::vector<uint256>{}, pop_txs);
   }
 
-  VbkMerklePath makePath(int n) {
+  VbkMerklePath makePath(uint256 hash,
+                         int n,
+                         const VbkMerkleTree::TreeIndex treeIndex) {
     VbkMerklePath path;
-    path.layers = mtree->getMerklePathLayers(n, VbkMerkleTree::TreeIndex::POP);
-    path.subject = txes[n];
-    path.treeIndex = static_cast<int32_t>(VbkMerkleTree::TreeIndex::POP);
+    path.layers = mtree->getMerklePathLayers(n, treeIndex);
+    path.subject = hash;
+    path.treeIndex = static_cast<int32_t>(treeIndex);
     path.index = n;
     return path;
   }
 
-  bool checkPath(const VbkMerklePath& p, int n) {
+  bool checkPath(const VbkMerklePath& p, uint256 hash) {
     auto root = mtree->getMerkleRoot().trim<VBK_MERKLE_ROOT_HASH_SIZE>();
-    return checkMerklePath(p, txes[n], root, state);
+    return checkMerklePath(p, hash, root, state);
   }
 
   void test(size_t n) {
     setNtxes(n);
     for (size_t i = 0; i < n; i++) {
-      VbkMerklePath p = makePath((int)i);
-      for (size_t j = 0; j < n; j++) {
-        bool ret = checkPath(p, (int32_t)j);
+      VbkMerklePath p;
+      if (i < n) {
+        p = makePath(pop_txs[i], (int)i, VbkMerkleTree::TreeIndex::POP);
+      } else {
+        p = makePath(
+            normal_txs[i - n], (int)i - n, VbkMerkleTree::TreeIndex::NORMAL);
+      }
+      for (size_t j = 0; j < n * 2; j++) {
+        bool ret;
+        if (j < n) {
+          ret = checkPath(p, pop_txs[j]);
+        } else {
+          ret = checkPath(p, normal_txs[j - n]);
+        }
         if (i == j) {
           EXPECT_TRUE(ret) << state.GetDebugMessage();
         } else {
