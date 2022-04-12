@@ -127,7 +127,7 @@ struct VbkMerkleTree {
 
   hash_t hash(const hash_t& a, const hash_t& b) { return sha256(a, b); }
 
-  std::vector<hash_t> finalizePath(std::vector<hash_t> path) {
+  std::vector<hash_t> finalizePath(std::vector<hash_t> path) const {
     // opposite tree merkle root (we don't have the opposite tree)
     path.emplace_back();
 
@@ -219,7 +219,7 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
 
   hash_t hash(const hash_t& a, const hash_t& b) { return sha256twice(a, b); }
 
-  std::vector<hash_t> finalizePath(const std::vector<hash_t>& path) {
+  std::vector<hash_t> finalizePath(const std::vector<hash_t>& path) const {
     return path;
   }
 
@@ -252,7 +252,7 @@ struct PayloadsMerkleTree
     return sha256twice(a, b).template trimLE<hash_t::size()>();
   }
 
-  std::vector<hash_t> finalizePath(const std::vector<hash_t>& path) {
+  std::vector<hash_t> finalizePath(const std::vector<hash_t>& path) const {
     return path;
   }
 
