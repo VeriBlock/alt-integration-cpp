@@ -135,7 +135,7 @@ BtcTx MockMiner::createBtcTxEndorsingVbkBlock(
   publishedBlock.toRaw(stream);
   const auto addr = Address::fromPublicKey(defaultPublicKeyVbk);
   addr.getPopBytes(stream);
-  const auto tx = BtcTx(stream.data());
+  auto tx = BtcTx(stream.data());
   return tx;
 }
 
