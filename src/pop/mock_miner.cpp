@@ -133,78 +133,78 @@ BtcTx MockMiner::createBtcTxEndorsingVbkBlock(
     const VbkBlock& publishedBlock) const {
   WriteStream stream;
   publishedBlock.toRaw(stream);
-  auto addr = Address::fromPublicKey(defaultPublicKeyVbk);
+  const auto addr = Address::fromPublicKey(defaultPublicKeyVbk);
   addr.getPopBytes(stream);
   auto tx = BtcTx(stream.data());
   return tx;
 }
 
-BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount) {
-  auto* tip = vbkTip();
+BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const size_t amount) {
+  const auto* tip = vbkTip();
   VBK_ASSERT(tip != nullptr);
   return mineBlocks(amount, *tip, {}, {});
 }
 
-BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount,
+BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const size_t amount,
                                                const std::vector<VbkTx>& txs) {
-  auto* tip = vbkTip();
+  const auto* tip = vbkTip();
   VBK_ASSERT(tip != nullptr);
   return mineBlocks(amount, *tip, txs, {});
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount, const std::vector<VbkPopTx>& txs) {
-  auto* tip = vbkTip();
+    const size_t amount, const std::vector<VbkPopTx>& popTxs) {
+  const auto* tip = vbkTip();
   VBK_ASSERT(tip != nullptr);
-  return mineBlocks(amount, *tip, {}, txs);
+  return mineBlocks(amount, *tip, {}, popTxs);
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount, const BlockIndex<VbkBlock>& tip) {
+    const size_t amount, const BlockIndex<VbkBlock>& tip) {
   return mineBlocks(amount, tip, {}, {});
 }
 
-BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(size_t amount,
+BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(const size_t amount,
                                                const BlockIndex<VbkBlock>& tip,
                                                const std::vector<VbkTx>& txs) {
   return mineBlocks(amount, tip, txs, {});
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount,
+    const size_t amount,
     const BlockIndex<VbkBlock>& tip,
-    const std::vector<VbkPopTx>& txs) {
-  return mineBlocks(amount, tip, {}, txs);
+    const std::vector<VbkPopTx>& popTxs) {
+  return mineBlocks(amount, tip, {}, popTxs);
 }
 
 BlockIndex<VbkBlock>* MockMiner::mineVbkBlocks(
-    size_t amount,
+    const size_t amount,
     const BlockIndex<VbkBlock>& tip,
     const std::vector<VbkTx>& txs,
-    const std::vector<VbkPopTx>& pop_txs) {
-  return mineBlocks(amount, tip, txs, pop_txs);
+    const std::vector<VbkPopTx>& popTxs) {
+  return mineBlocks(amount, tip, txs, popTxs);
 }
 
-BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(size_t amount,
+BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const size_t amount,
                                                const std::vector<BtcTx>& txs) {
   return mineBlocks(amount, *btcTip(), txs);
 }
 
-BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(size_t amount,
+BlockIndex<BtcBlock>* MockMiner::mineBtcBlocks(const size_t amount,
                                                const BlockIndex<BtcBlock>& tip,
                                                const std::vector<BtcTx>& txs) {
   return mineBlocks(amount, tip, txs);
 }
 
 const BlockIndex<VbkBlock>* MockMiner::vbkTip() const {
-  BlockIndex<VbkBlock>* tip = vbk_tree_.getBestChain().tip();
+  const auto* tip = vbk_tree_.getBestChain().tip();
   VBK_ASSERT_MSG(tip != nullptr,
                  "VBK tip is undefined (blockchain may be not bootstrapped)");
   return tip;
 }
 
 const BlockIndex<BtcBlock>* MockMiner::btcTip() const {
-  BlockIndex<BtcBlock>* tip = btc_tree_.getBestChain().tip();
+  const auto* tip = btc_tree_.getBestChain().tip();
   VBK_ASSERT_MSG(tip != nullptr,
                  "BTC tip is undefined (blockchain may be not bootstrapped)");
   return tip;
@@ -229,7 +229,7 @@ const BlockIndex<BtcBlock>* MockMiner::getBtcBlockIndex(
 }
 
 std::vector<VTB> MockMiner::getVTBs(const VbkBlock& block) const {
-  auto it = vtbs_.find(block.getHash());
+  const auto it = vtbs_.find(block.getHash());
   if (it == vtbs_.end()) {
     return {};
   }
@@ -276,9 +276,9 @@ BlockIndex<VbkBlock>* MockMiner::mineBlocks(
     size_t amount,
     const BlockIndex<VbkBlock>& tip,
     const std::vector<VbkTx>& txs,
-    const std::vector<VbkPopTx>& pop_txs) {
+    const std::vector<VbkPopTx>& popTxs) {
   VBK_ASSERT(amount > 0);
-  auto* index = mineBlock(tip, txs, pop_txs);
+  auto* index = mineBlock(tip, txs, popTxs);
   for (size_t i = 1; i < amount; i++) {
     index = mineBlock(*index, {}, {});
   }
@@ -340,16 +340,16 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(const BlockIndex<VbkBlock>& tip,
 BlockIndex<VbkBlock>* MockMiner::mineBlock(
     const BlockIndex<VbkBlock>& tip,
     const std::vector<VbkTx>& txs,
-    const std::vector<VbkPopTx>& pop_txs) {
-  if (txs.empty() && pop_txs.empty()) {
+    const std::vector<VbkPopTx>& popTxs) {
+  if (txs.empty() && popTxs.empty()) {
     VbkBlock block = vbk_miner_.createNextBlock(tip);
     return acceptBlock(vbk_tree_, block);
   }
 
   auto txs_hash = hashAll(txs);
-  auto pop_txs_hash = hashAll(pop_txs);
+  auto popTxs_hash = hashAll(popTxs);
 
-  VbkMerkleTree merkleTree(hashAll(txs), hashAll(pop_txs));
+  VbkMerkleTree merkleTree(hashAll(txs), hashAll(popTxs));
   const auto& merkleRoot =
       merkleTree.getMerkleRoot().template trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 
@@ -357,7 +357,7 @@ BlockIndex<VbkBlock>* MockMiner::mineBlock(
   BlockIndex<VbkBlock>* blockIndex = acceptBlock(vbk_tree_, block);
 
   vbk_merkle_trees_.insert({block.getHash(), merkleTree});
-  if (!saveVTBs(blockIndex, pop_txs)) {
+  if (!saveVTBs(blockIndex, popTxs)) {
     return nullptr;
   }
 

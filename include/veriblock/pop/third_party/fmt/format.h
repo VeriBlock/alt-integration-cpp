@@ -2259,7 +2259,7 @@ class arg_formatter_base {
   }
 
   iterator operator()(bool value) {
-    if (specs_ != nullptr && specs_->type != 0) return (*this)(value ? 1 : 0);
+    if ((specs_ != nullptr) && (specs_->type != 0)) return (*this)(value ? 1 : 0);
     write(value != 0);
     return out_;
   }
@@ -2773,7 +2773,7 @@ FMT_CONSTEXPR int code_point_length(const Char* begin) {
   // Compute the pointer to the next character early so that the next
   // iteration can start working on the next character. Neither Clang
   // nor GCC figure out this reordering on their own.
-  return len + (int)(len == 0);
+  return len + static_cast<int>(len == 0);
 }
 
 template <typename Char> constexpr bool is_ascii_letter(Char c) {

@@ -24,7 +24,8 @@ struct MerkleTree {
   MerkleTree(Specific& instance, const std::vector<hash_t>& hashes)
       : instance(instance) {
     buildTree(hashes);
-    for (int32_t i = 0, size = (int32_t)hashes.size(); i < size; i++) {
+    for (int32_t i = 0, size = static_cast<int32_t>(hashes.size()); i < size;
+         ++i) {
       hash_indices[hashes[i]] = i;
     }
   }
@@ -45,7 +46,7 @@ struct MerkleTree {
     }
     VBK_ASSERT(index < leafs.size());
     std::vector<hash_t> merklePath{};
-    for (size_t i = 0; i < layers.size() - 1; i++) {
+    for (size_t i = 0, size = layers.size(); i < (size - 1); ++i) {
       auto& layer = layers[i];
       if (index % 2 == 0) {
         if (layer.size() == index + 1) {
@@ -165,8 +166,8 @@ struct VbkMerkleTree {
 
   hash_t getMerkleRoot() { return this->finalizeRoot(); }
 
-  std::vector<hash_t> getMerklePathLayers(size_t index,
-                                          TreeIndex treeIndex) const {
+  std::vector<hash_t> getMerklePathLayers(const size_t index,
+                                          const TreeIndex treeIndex) const {
     switch (treeIndex) {
       case TreeIndex::POP:
         return this->pop_tree.getMerklePathLayers(index);
@@ -177,27 +178,30 @@ struct VbkMerkleTree {
     }
   }
 
-  VbkMerklePath getMerklePath(const hash_t& hash, TreeIndex treeIndex) const {
+  VbkMerklePath getMerklePath(const hash_t& hash,
+                              const TreeIndex treeIndex) const {
     VbkMerklePath merklePath;
     merklePath.subject = hash;
     merklePath.treeIndex = static_cast<int32_t>(treeIndex);
     switch (treeIndex) {
       case TreeIndex::POP: {
-        auto it = this->pop_tree.getHashIndices().find(hash);
+        const auto it = this->pop_tree.getHashIndices().find(hash);
         VBK_ASSERT(it != this->pop_tree.getHashIndices().end());
-        int32_t index = it->second;
+        const int32_t index = it->second;
 
         merklePath.index = index;
-        merklePath.layers = this->pop_tree.getMerklePathLayers(index);
+        merklePath.layers =
+            this->pop_tree.getMerklePathLayers(static_cast<size_t>(index));
         break;
       }
       case TreeIndex::NORMAL: {
-        auto it = this->normal_tree.getHashIndices().find(hash);
+        const auto it = this->normal_tree.getHashIndices().find(hash);
         VBK_ASSERT(it != this->normal_tree.getHashIndices().end());
-        int32_t index = it->second;
+        const int32_t index = it->second;
 
         merklePath.index = index;
-        merklePath.layers = this->normal_tree.getMerklePathLayers(index);
+        merklePath.layers =
+            this->normal_tree.getMerklePathLayers(static_cast<size_t>(index));
         break;
       }
       default:

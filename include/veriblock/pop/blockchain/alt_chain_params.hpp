@@ -203,8 +203,8 @@ struct AltChainParams {
   //! As implication, we store last N blocks in RAM and effectively
   //! `tip-maxReorgBlocks` block is finalized.
   int32_t getMaxReorgBlocks() const noexcept {
-    VBK_ASSERT(int64_t(mMaxReorgBlocks) >
-               int64_t(mEndorsementSettlementInterval));
+    VBK_ASSERT(static_cast<int64_t>(mMaxReorgBlocks) >
+               static_cast<int64_t>(mEndorsementSettlementInterval));
     return mMaxReorgBlocks;
   }
 
