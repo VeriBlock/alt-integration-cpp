@@ -46,7 +46,7 @@ struct MerkleTree {
     }
     VBK_ASSERT(index < leafs.size());
     std::vector<hash_t> merklePath{};
-    for (size_t i = 0; i < layers.size() - 1; ++i) {
+    for (size_t i = 0, size = layers.size(); i < (size - 1); ++i) {
       auto& layer = layers[i];
       if (index % 2 == 0) {
         if (layer.size() == index + 1) {
