@@ -61,7 +61,7 @@ struct MerkleTree {
       index /= 2;
     }
 
-    return instance.finalizePath(std::move(merklePath));
+    return merklePath;
   }
 
   hash_t getMerkleRoot() {
@@ -128,6 +128,9 @@ struct VbkMerkleTree {
   hash_t hash(const hash_t& a, const hash_t& b) { return sha256(a, b); }
 
   std::vector<hash_t> finalizePath(std::vector<hash_t> path) const {
+    if (path.empty()) {
+      return path;
+    }
     // opposite tree merkle root (we don't have the opposite tree)
     path.emplace_back();
 
@@ -165,9 +168,9 @@ struct VbkMerkleTree {
                                           const TreeIndex treeIndex) const {
     switch (treeIndex) {
       case TreeIndex::POP:
-        return pop_tree.getMerklePathLayers(index);
+        return finalizePath(pop_tree.getMerklePathLayers(index));
       case TreeIndex::NORMAL:
-        return normal_tree.getMerklePathLayers(index);
+        return finalizePath(normal_tree.getMerklePathLayers(index));
       default:
         return {};
     }
@@ -185,8 +188,8 @@ struct VbkMerkleTree {
         const int32_t index = it->second;
 
         merklePath.index = index;
-        merklePath.layers =
-            pop_tree.getMerklePathLayers(static_cast<size_t>(index));
+        merklePath.layers = finalizePath(
+            pop_tree.getMerklePathLayers(static_cast<size_t>(index)));
         break;
       }
       case TreeIndex::NORMAL: {
@@ -195,8 +198,8 @@ struct VbkMerkleTree {
         const int32_t index = it->second;
 
         merklePath.index = index;
-        merklePath.layers =
-            normal_tree.getMerklePathLayers(static_cast<size_t>(index));
+        merklePath.layers = finalizePath(
+            normal_tree.getMerklePathLayers(static_cast<size_t>(index)));
         break;
       }
       default:
@@ -218,10 +221,6 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
   explicit BtcMerkleTree(const std::vector<hash_t>& txes) : base(*this, txes) {}
 
   hash_t hash(const hash_t& a, const hash_t& b) { return sha256twice(a, b); }
-
-  std::vector<hash_t> finalizePath(const std::vector<hash_t>& path) const {
-    return path;
-  }
 
   MerklePath getMerklePath(const hash_t& hash) const {
     auto it = hash_indices.find(hash);
@@ -250,10 +249,6 @@ struct PayloadsMerkleTree
 
   hash_t hash(const hash_t& a, const hash_t& b) {
     return sha256twice(a, b).template trimLE<hash_t::size()>();
-  }
-
-  std::vector<hash_t> finalizePath(const std::vector<hash_t>& path) const {
-    return path;
   }
 
   hash_t getMerkleRoot() { return base::getMerkleRoot().reverse(); }
