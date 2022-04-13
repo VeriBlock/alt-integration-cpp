@@ -17,7 +17,7 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
   std::shared_ptr<VbkMerkleTree> mtree;
 
   void setNtxes(size_t n) {
-    size_t i = 0;
+    size_t i = 1;
     pop_txs.clear();
     std::generate_n(
         std::back_inserter(pop_txs), n, [&]() { return ArithUint256(i++); });

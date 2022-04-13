@@ -41,6 +41,7 @@ struct MerkleTree {
     VBK_ASSERT(!layers.empty());
     auto& leafs = layers[0];
     if (leafs.size() == 1) {
+      VBK_ASSERT(layers.size() == 1);
       // no layers
       return {};
     }
@@ -129,19 +130,22 @@ struct VbkMerkleTree {
 
   std::vector<hash_t> finalizePath(std::vector<hash_t> path,
                                    const TreeIndex treeIndex) const {
-    switch (treeIndex) {
-      case TreeIndex::POP: {
-        break;
-      }
-      case TreeIndex::NORMAL: {
-        break;
-      }
-    }
     if (path.empty()) {
       return path;
     }
-    // opposite tree merkle root (we don't have the opposite tree)
-    path.emplace_back();
+
+    switch (treeIndex) {
+      case TreeIndex::POP: {
+        // opposite tree merkle root
+        path.emplace_back(normal_tree.getMerkleRoot());
+        break;
+      }
+      case TreeIndex::NORMAL: {
+        // opposite tree merkle root
+        path.emplace_back(pop_tree.getMerkleRoot());
+        break;
+      }
+    }
 
     // metapackage hash
     path.emplace_back();
@@ -156,13 +160,13 @@ struct VbkMerkleTree {
     if ((pop_tree.getLayers().size() == 1) && normal_tree.getLayers().empty()) {
       // the only layer
       VBK_ASSERT(pop_tree.getLayers()[0].size() == 1);
-      return pop_tree.getLayers()[0][0];
+      return pop_tree.getMerkleRoot();
     }
 
     if ((normal_tree.getLayers().size() == 1) && pop_tree.getLayers().empty()) {
       // the only layer
       VBK_ASSERT(normal_tree.getLayers()[0].size() == 1);
-      return normal_tree.getLayers()[0][0];
+      return normal_tree.getMerkleRoot();
     }
 
     auto pop_hash = pop_tree.getMerkleRoot();
