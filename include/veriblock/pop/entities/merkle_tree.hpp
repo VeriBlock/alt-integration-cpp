@@ -64,7 +64,7 @@ struct MerkleTree {
     return merklePath;
   }
 
-  hash_t getMerkleRoot() {
+  hash_t getMerkleRoot() const {
     if (layers.empty()) {
       return hash_t{};
     }
@@ -125,9 +125,18 @@ struct VbkMerkleTree {
                          const std::vector<hash_t>& pop_hashes)
       : pop_tree(*this, pop_hashes), normal_tree(*this, normal_hashes) {}
 
-  hash_t hash(const hash_t& a, const hash_t& b) { return sha256(a, b); }
+  hash_t hash(const hash_t& a, const hash_t& b) const { return sha256(a, b); }
 
-  std::vector<hash_t> finalizePath(std::vector<hash_t> path) const {
+  std::vector<hash_t> finalizePath(std::vector<hash_t> path,
+                                   const TreeIndex treeIndex) const {
+    switch (treeIndex) {
+      case TreeIndex::POP: {
+        break;
+      }
+      case TreeIndex::NORMAL: {
+        break;
+      }
+    }
     if (path.empty()) {
       return path;
     }
@@ -139,7 +148,7 @@ struct VbkMerkleTree {
     return path;
   }
 
-  hash_t getMerkleRoot() {
+  hash_t getMerkleRoot() const {
     if (pop_tree.getLayers().empty() && normal_tree.getLayers().empty()) {
       return hash_t{};
     }
@@ -168,9 +177,9 @@ struct VbkMerkleTree {
                                           const TreeIndex treeIndex) const {
     switch (treeIndex) {
       case TreeIndex::POP:
-        return finalizePath(pop_tree.getMerklePathLayers(index));
+        return finalizePath(pop_tree.getMerklePathLayers(index), treeIndex);
       case TreeIndex::NORMAL:
-        return finalizePath(normal_tree.getMerklePathLayers(index));
+        return finalizePath(normal_tree.getMerklePathLayers(index), treeIndex);
       default:
         return {};
     }
@@ -189,7 +198,8 @@ struct VbkMerkleTree {
 
         merklePath.index = index;
         merklePath.layers = finalizePath(
-            pop_tree.getMerklePathLayers(static_cast<size_t>(index)));
+            pop_tree.getMerklePathLayers(static_cast<size_t>(index)),
+            treeIndex);
         break;
       }
       case TreeIndex::NORMAL: {
@@ -199,7 +209,8 @@ struct VbkMerkleTree {
 
         merklePath.index = index;
         merklePath.layers = finalizePath(
-            normal_tree.getMerklePathLayers(static_cast<size_t>(index)));
+            normal_tree.getMerklePathLayers(static_cast<size_t>(index)),
+            treeIndex);
         break;
       }
       default:
@@ -220,7 +231,9 @@ struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
 
   explicit BtcMerkleTree(const std::vector<hash_t>& txes) : base(*this, txes) {}
 
-  hash_t hash(const hash_t& a, const hash_t& b) { return sha256twice(a, b); }
+  hash_t hash(const hash_t& a, const hash_t& b) const {
+    return sha256twice(a, b);
+  }
 
   MerklePath getMerklePath(const hash_t& hash) const {
     auto it = hash_indices.find(hash);
@@ -247,7 +260,7 @@ struct PayloadsMerkleTree
   explicit PayloadsMerkleTree(const std::vector<hash_t>& hashes)
       : base(*this, hashes) {}
 
-  hash_t hash(const hash_t& a, const hash_t& b) {
+  hash_t hash(const hash_t& a, const hash_t& b) const {
     return sha256twice(a, b).template trimLE<hash_t::size()>();
   }
 
