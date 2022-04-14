@@ -14,7 +14,7 @@ namespace testing_utils {
 
 template <typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator g) {
-  std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+  std::uniform_int_distribution<> dis(0, static_cast<int>(std::distance(start, end) - 1));
   std::advance(start, dis(g));
   return start;
 }
