@@ -23,7 +23,7 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
         std::back_inserter(pop_txs), n, [&]() { return ArithUint256(i++); });
     std::generate_n(
         std::back_inserter(normal_txs), n, [&]() { return ArithUint256(i++); });
-    mtree = std::make_shared<VbkMerkleTree>(std::vector<uint256>{}, pop_txs);
+    mtree = std::make_shared<VbkMerkleTree>(normal_txs, pop_txs);
   }
 
   VbkMerklePath makePath(uint256 hash,
@@ -44,7 +44,7 @@ struct MerkleTreeOnTxTest : public ::testing::TestWithParam<int> {
 
   void test(size_t n) {
     setNtxes(n);
-    for (size_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < n * 2; i++) {
       VbkMerklePath p;
       if (i < n) {
         p = makePath(pop_txs[i], (int)i, VbkMerkleTree::TreeIndex::POP);

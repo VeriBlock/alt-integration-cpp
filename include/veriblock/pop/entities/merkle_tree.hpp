@@ -130,18 +130,22 @@ struct VbkMerkleTree {
 
   std::vector<hash_t> finalizePath(std::vector<hash_t> path,
                                    const TreeIndex treeIndex) const {
-    if (path.empty()) {
-      return path;
-    }
-
     switch (treeIndex) {
       case TreeIndex::POP: {
         // opposite tree merkle root
+        if (path.empty() && normal_tree.getLayers().empty()) {
+          return path;
+        }
+
         path.emplace_back(normal_tree.getMerkleRoot());
         break;
       }
       case TreeIndex::NORMAL: {
         // opposite tree merkle root
+        if (path.empty() && pop_tree.getLayers().empty()) {
+          return path;
+        }
+
         path.emplace_back(pop_tree.getMerkleRoot());
         break;
       }
