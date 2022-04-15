@@ -267,11 +267,13 @@ bool readSetOf(ReadStream& stream,
   }
 
   for (size_t i = 0; i < (size_t)count; i++) {
-    T item;
-    if (!readFunc(out, stream, item, state)) {
+    typename Container::value_type item;
+    if (!readFunc(stream, item, state)) {
       return state.Invalid("readarray-bad-item", i);
     }
-    out.insert(out);
+    if (out.insert(item).second == false) {
+      return state.Invalid("readarray-duplicate-item", i);
+    }
   }
 
   return true;
@@ -296,7 +298,7 @@ bool readSetOf(ReadStream& stream,
                                   typename Container::value_type&,
                                   ValidationState&)> readFunc) {
   int32_t max = std::numeric_limits<int32_t>::max();
-  return readContainer(stream, out, state, 0, max, insertFunc, readFunc);
+  return readContainer(stream, out, state, 0, max, readFunc);
 }
 
 /**
