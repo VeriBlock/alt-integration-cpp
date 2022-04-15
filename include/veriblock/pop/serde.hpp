@@ -239,10 +239,71 @@ void writeNetworkByte(WriteStream& stream, NetworkBytePair networkOrType);
 size_t networkByteSize(NetworkBytePair networkOrType);
 
 /**
- * Reads array of entities of type T.
+ * Reads set of entities of.
  * @tparam T type of entity to read
  * @param stream read data from this stream
- * @param out vector of read elements of type T
+ * @param out output set
+ * @param state will return error description here
+ * @param min min size of array
+ * @param max max size of array
+ * @param readFunc function that is called to read single value
+ * @return true if read is OK, false otherwise
+ */
+template <typename Container>
+bool readSetOf(ReadStream& stream,
+               Container& out,
+               ValidationState& state,
+               size_t min,
+               size_t max,
+               std::function<bool(ReadStream&,
+                                  typename Container::value_type&,
+                                  ValidationState&)> readFunc) {
+  int32_t count = 0;
+  if (!readSingleBEValue<int32_t>(stream, count, state)) {
+    return state.Invalid("readarray-bad-count");
+  }
+  if (!checkRange(count, min, max, state)) {
+    return state.Invalid("readarray-bad-range");
+  }
+
+  for (size_t i = 0; i < (size_t)count; i++) {
+    T item;
+    if (!readFunc(out, stream, item, state)) {
+      return state.Invalid("readarray-bad-item", i);
+    }
+    out.insert(out);
+  }
+
+  return true;
+}
+
+/**
+ * Reads container of entities.
+ * @tparam T type of entity to read
+ * @param[in] stream read data from this stream
+ * @param[out] out output container
+ * @param[in] readFunc function that is called to read single value
+ * @param[out] state validation state
+ * @throws std::out_of_range if stream is out of data
+ * @return vector of read elements
+ */
+template <typename Container>
+bool readSetOf(ReadStream& stream,
+               Container& out,
+               ValidationState& state,
+               std::function<bool(Container&,
+                                  ReadStream&,
+                                  typename Container::value_type&,
+                                  ValidationState&)> readFunc) {
+  int32_t max = std::numeric_limits<int32_t>::max();
+  return readContainer(stream, out, state, 0, max, insertFunc, readFunc);
+}
+
+/**
+ * Reads array of entities of type T
+ * @tparam T type of entity to read
+ * @param stream read data from this stream
+ * @param out out output array of T
  * @param state will return error description here
  * @param min min size of array
  * @param max max size of array
@@ -279,10 +340,10 @@ bool readArrayOf(
 }
 
 /**
- * Reads array of entities of type T.
+ * Reads array of entities of type T
  * @tparam T type of entity to read
  * @param[in] stream read data from this stream
- * @param[out] out output array of T.
+ * @param[out] out output array of T
  * @param[in] readFunc function that is called to read single value of type T
  * @param[out] state validation state.
  * @throws std::out_of_range if stream is out of data
