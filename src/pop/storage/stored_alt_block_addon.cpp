@@ -23,10 +23,10 @@ StoredAltBlockAddon::StoredAltBlockAddon(const addon_t& other) {
 }
 
 void StoredAltBlockAddon::toVbkEncoding(WriteStream& w) const {
-  writeArrayOf<AltEndorsement::id_t>(w, endorsedByIds, writeSingleByteLenValue);
-  writeArrayOf<ATV::id_t>(w, _atvids, writeSingleByteLenValue);
-  writeArrayOf<VTB::id_t>(w, _vtbids, writeSingleByteLenValue);
-  writeArrayOf<VbkBlock::id_t>(w, _vbkblockids, writeSingleByteLenValue);
+  writeContainer(w, endorsedByIds, writeSingleByteLenValue);
+  writeContainer(w, _atvids, writeSingleByteLenValue);
+  writeContainer(w, _vtbids, writeSingleByteLenValue);
+  writeContainer(w, _vbkblockids, writeSingleByteLenValue);
   popState.toVbkEncoding(w);
 }
 

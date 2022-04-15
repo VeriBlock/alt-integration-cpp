@@ -312,14 +312,6 @@ void writeContainer(
 }
 
 //! @private
-template <typename T>
-void writeArrayOf(WriteStream& w,
-                  const std::vector<T>& t,
-                  std::function<void(WriteStream&, const T& t)> f) {
-  return writeContainer<std::vector<T>>(w, t, f);
-}
-
-//! @private
 template <typename Container>
 size_t estimateContainerSize(
     const Container& t,
@@ -347,7 +339,6 @@ bool DeserializeFromVbkEncoding(Slice<const uint8_t> data,
   ReadStream stream(data);
   return DeserializeFromVbkEncoding(stream, out, state);
 }
-
 
 //! Deserialize from RAW encoding.
 template <typename T>
