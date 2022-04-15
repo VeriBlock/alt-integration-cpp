@@ -1,5 +1,7 @@
 var NAVTREEINDEX5 =
 {
+"structaltintegration_1_1VbkBlock.html#a1e135ce7d587b2004627f28be26ab74a":[4,0,0,61,6],
+"structaltintegration_1_1VbkBlock.html#a29b2753b2b6715dce38f825145ca893f":[5,0,0,60,0],
 "structaltintegration_1_1VbkBlock.html#a29b2753b2b6715dce38f825145ca893f":[4,0,0,61,0],
 "structaltintegration_1_1VbkBlock.html#a35eadfa20632be7385693f80a097aa12":[4,0,0,61,2],
 "structaltintegration_1_1VbkBlock.html#a35eadfa20632be7385693f80a097aa12":[5,0,0,60,2],
@@ -247,7 +249,5 @@ var NAVTREEINDEX5 =
 "vbk__command__group__store_8hpp_source.html":[6,0,1,0,1,1,0,6],
 "vbk__merkle__path_8hpp_source.html":[6,0,1,0,1,5,17],
 "vbkblock_8h_source.html":[6,0,1,0,1,2,0,14],
-"vbkblock_8hpp_source.html":[6,0,1,0,1,5,18],
-"vbkpoptx_8hpp_source.html":[6,0,1,0,1,5,19],
-"vbktx_8hpp_source.html":[6,0,1,0,1,5,20]
+"vbkblock_8hpp_source.html":[6,0,1,0,1,5,18]
 };

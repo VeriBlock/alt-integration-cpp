@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1ChainSlice.html":[5,0,0,27],
+"structaltintegration_1_1CheckPublicationData.html":[4,0,0,29],
 "structaltintegration_1_1CheckPublicationData.html":[5,0,0,28],
 "structaltintegration_1_1Coin.html":[5,0,0,29],
 "structaltintegration_1_1Coin.html":[4,0,0,30],
@@ -247,7 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1VbkBlock.html":[5,0,0,60],
 "structaltintegration_1_1VbkBlock.html#a113b0317cabc291ddce3fe2267131aa3":[5,0,0,60,1],
 "structaltintegration_1_1VbkBlock.html#a113b0317cabc291ddce3fe2267131aa3":[4,0,0,61,1],
-"structaltintegration_1_1VbkBlock.html#a1e135ce7d587b2004627f28be26ab74a":[5,0,0,60,6],
-"structaltintegration_1_1VbkBlock.html#a1e135ce7d587b2004627f28be26ab74a":[4,0,0,61,6],
-"structaltintegration_1_1VbkBlock.html#a29b2753b2b6715dce38f825145ca893f":[5,0,0,60,0]
+"structaltintegration_1_1VbkBlock.html#a1e135ce7d587b2004627f28be26ab74a":[5,0,0,60,6]
 };

@@ -283,6 +283,8 @@ var namespacealtintegration =
     [ "readArrayOf", "namespacealtintegration.html#a3a859f598c5cd93b8f0019e252da3c91", null ],
     [ "readNetworkByte", "namespacealtintegration.html#aa5f9c62fc2c624ee713f0ea59c528797", null ],
     [ "readNetworkByte", "namespacealtintegration.html#a7116d28169a39cb1c43f66bddf4ecbfa", null ],
+    [ "readSetOf", "namespacealtintegration.html#ad6ed1ba95d2bb04b01f869b9ec9da107", null ],
+    [ "readSetOf", "namespacealtintegration.html#a519f01a50d38d6f1afacc355fbfb7060", null ],
     [ "readSingleBEValue", "namespacealtintegration.html#abe2d65938bbd5af366249d73e7561c0f", null ],
     [ "readSingleByteLenValue", "namespacealtintegration.html#a8e4ebbae4c53a5fa4ebb15f7259d4906", null ],
     [ "readSingleByteLenValue", "namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78", null ],
