@@ -1697,16 +1697,16 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00434">434</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  434</span>                                          {</div>
-<div class="line"><span class="lineno">  435</span>  T t;</div>
-<div class="line"><span class="lineno">  436</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  437</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a>(hex, t, state);</div>
-<div class="line"><span class="lineno">  438</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  439</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  440</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00425">425</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  425</span>                                          {</div>
+<div class="line"><span class="lineno">  426</span>  T t;</div>
+<div class="line"><span class="lineno">  427</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  428</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a>(hex, t, state);</div>
+<div class="line"><span class="lineno">  429</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  430</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  431</span>}</div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><div class="ttname"><a href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">altintegration::DeserializeFromHex</a></div><div class="ttdeci">bool DeserializeFromHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00363">serde.hpp:363</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><div class="ttname"><a href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">altintegration::DeserializeFromHex</a></div><div class="ttdeci">bool DeserializeFromHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00354">serde.hpp:354</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1729,14 +1729,14 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00412">412</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  412</span>                                                   {</div>
-<div class="line"><span class="lineno">  413</span>  T t;</div>
-<div class="line"><span class="lineno">  414</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  415</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(raw, t, state);</div>
-<div class="line"><span class="lineno">  416</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  417</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  418</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00403">403</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  403</span>                                                   {</div>
+<div class="line"><span class="lineno">  404</span>  T t;</div>
+<div class="line"><span class="lineno">  405</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  406</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(raw, t, state);</div>
+<div class="line"><span class="lineno">  407</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  408</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  409</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a3e464ea06b8e897aff3cc896eab17638"><div class="ttname"><a href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">altintegration::DeserializeFromRaw</a></div><div class="ttdeci">bool DeserializeFromRaw(ReadStream &amp;stream, AltBlock &amp;out, ValidationState &amp;state, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
 </div>
@@ -1760,15 +1760,15 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00445">445</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  445</span>                                             {</div>
-<div class="line"><span class="lineno">  446</span>  T t;</div>
-<div class="line"><span class="lineno">  447</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  448</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a>(hex, t, state);</div>
-<div class="line"><span class="lineno">  449</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can`t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  450</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  451</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_ae263b96770a32f74ed8fd29e1f446fc0"><div class="ttname"><a href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">altintegration::DeserializeFromRawHex</a></div><div class="ttdeci">bool DeserializeFromRawHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00373">serde.hpp:373</a></div></div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00436">436</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  436</span>                                             {</div>
+<div class="line"><span class="lineno">  437</span>  T t;</div>
+<div class="line"><span class="lineno">  438</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  439</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a>(hex, t, state);</div>
+<div class="line"><span class="lineno">  440</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can`t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  441</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  442</span>}</div>
+<div class="ttc" id="anamespacealtintegration_html_ae263b96770a32f74ed8fd29e1f446fc0"><div class="ttname"><a href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">altintegration::DeserializeFromRawHex</a></div><div class="ttdeci">bool DeserializeFromRawHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00364">serde.hpp:364</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1791,14 +1791,14 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00423">423</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  423</span>                                                             {</div>
-<div class="line"><span class="lineno">  424</span>  T t;</div>
-<div class="line"><span class="lineno">  425</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  426</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state);</div>
-<div class="line"><span class="lineno">  427</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  428</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  429</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00414">414</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  414</span>                                                             {</div>
+<div class="line"><span class="lineno">  415</span>  T t;</div>
+<div class="line"><span class="lineno">  416</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  417</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state);</div>
+<div class="line"><span class="lineno">  418</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  419</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  420</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
 </div>
@@ -1946,12 +1946,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00363">363</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  365</span>                                                {</div>
-<div class="line"><span class="lineno">  366</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
-<div class="line"><span class="lineno">  367</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  368</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  369</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00354">354</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  356</span>                                                {</div>
+<div class="line"><span class="lineno">  357</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
+<div class="line"><span class="lineno">  358</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  359</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  360</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_adcf52464886aec4b945cfa999efab6d2"><div class="ttname"><a href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">altintegration::ParseHex</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; ParseHex(const char *psz)</div><div class="ttdoc">Parse bytes from hex.</div></div>
 <div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00022">read_stream.hpp:22</a></div></div>
 </div><!-- fragment -->
@@ -1991,11 +1991,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00354">354</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  356</span>                                                {</div>
-<div class="line"><span class="lineno">  357</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  358</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  359</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00345">345</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  347</span>                                                {</div>
+<div class="line"><span class="lineno">  348</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  349</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  350</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2033,12 +2033,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00373">373</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  375</span>                                                   {</div>
-<div class="line"><span class="lineno">  376</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
-<div class="line"><span class="lineno">  377</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  378</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  379</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00364">364</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  366</span>                                                   {</div>
+<div class="line"><span class="lineno">  367</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
+<div class="line"><span class="lineno">  368</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  369</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  370</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2251,11 +2251,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00344">344</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  346</span>                                                        {</div>
-<div class="line"><span class="lineno">  347</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  348</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  349</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00336">336</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  338</span>                                                        {</div>
+<div class="line"><span class="lineno">  339</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  340</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  341</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2341,10 +2341,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00337">337</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  338</span>                                                              {</div>
-<div class="line"><span class="lineno">  339</span>  <span class="keywordflow">return</span> estimateContainerSize&lt;std::vector&lt;T&gt;&gt;(t, f);</div>
-<div class="line"><span class="lineno">  340</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00329">329</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  330</span>                                                              {</div>
+<div class="line"><span class="lineno">  331</span>  <span class="keywordflow">return</span> estimateContainerSize&lt;std::vector&lt;T&gt;&gt;(t, f);</div>
+<div class="line"><span class="lineno">  332</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3926,10 +3926,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00399">399</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  399</span>                                       {</div>
-<div class="line"><span class="lineno">  400</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToVbkEncoding&lt;T&gt;(obj));</div>
-<div class="line"><span class="lineno">  401</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00390">390</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  390</span>                                       {</div>
+<div class="line"><span class="lineno">  391</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToVbkEncoding&lt;T&gt;(obj));</div>
+<div class="line"><span class="lineno">  392</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3951,12 +3951,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00391">391</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  391</span>                                                {</div>
-<div class="line"><span class="lineno">  392</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
-<div class="line"><span class="lineno">  393</span>  obj.toRaw(w);</div>
-<div class="line"><span class="lineno">  394</span>  <span class="keywordflow">return</span> w.data();</div>
-<div class="line"><span class="lineno">  395</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00382">382</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  382</span>                                                {</div>
+<div class="line"><span class="lineno">  383</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
+<div class="line"><span class="lineno">  384</span>  obj.toRaw(w);</div>
+<div class="line"><span class="lineno">  385</span>  <span class="keywordflow">return</span> w.data();</div>
+<div class="line"><span class="lineno">  386</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3978,10 +3978,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00405">405</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  405</span>                                          {</div>
-<div class="line"><span class="lineno">  406</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToRaw&lt;T&gt;(obj));</div>
-<div class="line"><span class="lineno">  407</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00396">396</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  396</span>                                          {</div>
+<div class="line"><span class="lineno">  397</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToRaw&lt;T&gt;(obj));</div>
+<div class="line"><span class="lineno">  398</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4003,12 +4003,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00383">383</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  383</span>                                                        {</div>
-<div class="line"><span class="lineno">  384</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
-<div class="line"><span class="lineno">  385</span>  obj.toVbkEncoding(w);</div>
-<div class="line"><span class="lineno">  386</span>  <span class="keywordflow">return</span> w.data();</div>
-<div class="line"><span class="lineno">  387</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00374">374</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  374</span>                                                        {</div>
+<div class="line"><span class="lineno">  375</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
+<div class="line"><span class="lineno">  376</span>  obj.toVbkEncoding(w);</div>
+<div class="line"><span class="lineno">  377</span>  <span class="keywordflow">return</span> w.data();</div>
+<div class="line"><span class="lineno">  378</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4310,7 +4310,7 @@ template&lt;typename JsonValue &gt; </div>
 <div class="line"><span class="lineno">  105</span>  json::putStringKV(obj, <span class="stringliteral">&quot;serialized&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(atv));</div>
 <div class="line"><span class="lineno">  106</span>  <span class="keywordflow">return</span> obj;</div>
 <div class="line"><span class="lineno">  107</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_ae8cac3ccae3038ddf8a54c5da8409e05"><div class="ttname"><a href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">altintegration::SerializeToHex</a></div><div class="ttdeci">std::string SerializeToHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00399">serde.hpp:399</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_ae8cac3ccae3038ddf8a54c5da8409e05"><div class="ttname"><a href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">altintegration::SerializeToHex</a></div><div class="ttdeci">std::string SerializeToHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00390">serde.hpp:390</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a04bcfea5f2ebde4cda3457b5cc1fc552"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552">altintegration::ATV::version</a></div><div class="ttdeci">uint32_t version</div><div class="ttdoc">ATV serialization version.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00032">atv.hpp:32</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a454c043b311d13db58e5fa3e93a0a09b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a454c043b311d13db58e5fa3e93a0a09b">altintegration::ATV::getId</a></div><div class="ttdeci">id_t getId() const</div><div class="ttdoc">Calculate a ATV id that is the sha256 hash of the ATV rawBytes.</div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a775bd53259f9a931c90fb09fce37942b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a775bd53259f9a931c90fb09fce37942b">altintegration::ATV::transaction</a></div><div class="ttdeci">VbkTx transaction</div><div class="ttdoc">endorsing transaction.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00035">atv.hpp:35</a></div></div>
@@ -5028,7 +5028,7 @@ template&lt;typename JsonValue &gt; </div>
 <div class="line"><span class="lineno">   91</span>  json::putStringKV(obj, <span class="stringliteral">&quot;publicKey&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.publicKey));</div>
 <div class="line"><span class="lineno">   92</span>  <span class="keywordflow">return</span> obj;</div>
 <div class="line"><span class="lineno">   93</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_aa7c5b7e78805fcf8b1a606abbbc2111e"><div class="ttname"><a href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">altintegration::SerializeToRawHex</a></div><div class="ttdeci">std::string SerializeToRawHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00405">serde.hpp:405</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_aa7c5b7e78805fcf8b1a606abbbc2111e"><div class="ttname"><a href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">altintegration::SerializeToRawHex</a></div><div class="ttdeci">std::string SerializeToRawHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00396">serde.hpp:396</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_ad990bf96def00c233bf48c47f62bd2c8"><div class="ttname"><a href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">altintegration::NetworkBytePair::networkType</a></div><div class="ttdeci">VbkNetworkType networkType</div><div class="ttdoc">&lt; works as std::optional. if hasNetworkByte is true, networkByte is set</div><div class="ttdef"><b>Definition:</b> <a href="network__byte__pair_8hpp_source.html#l00054">network_byte_pair.hpp:54</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkPopTx_html_a0aded8d9a6f867272dcb874405820235"><div class="ttname"><a href="structaltintegration_1_1VbkPopTx.html#a0aded8d9a6f867272dcb874405820235">altintegration::VbkPopTx::getHash</a></div><div class="ttdeci">hash_t getHash() const</div><div class="ttdoc">Calculate the hash of the vbk pop transaction.</div></div>
 </div><!-- fragment -->
