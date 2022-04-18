@@ -52,7 +52,7 @@ void VbkBlockAddon::toVbkEncoding(WriteStream& w) const {
   w.writeBE<uint32_t>(_refCount);
   const PopState<VbkEndorsement>* e = this;
   e->toVbkEncoding(w);
-  writeArrayOf<uint256>(w, _vtbids, [](WriteStream& w, const uint256& u) {
+  writeContainer(w, _vtbids, [](WriteStream& w, const uint256& u) {
     writeSingleByteLenValue(w, u);
   });
 }

@@ -16,12 +16,10 @@ StoredBtcBlockAddon::StoredBtcBlockAddon(const addon_t& other) {
 }
 
 void StoredBtcBlockAddon::toVbkEncoding(WriteStream& w) const {
-  writeArrayOf<VbkEndorsement::id_t>(
-      w, blockOfProofEndorsementIds, writeSingleByteLenValue);
-  writeArrayOf<ref_height_t>(
-      w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
-        w.writeBE<ref_height_t>(value);
-      });
+  writeContainer(w, blockOfProofEndorsementIds, writeSingleByteLenValue);
+  writeContainer(w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
+    w.writeBE<ref_height_t>(value);
+  });
 }
 
 void StoredBtcBlockAddon::toInmem(StoredBtcBlockAddon::addon_t& to) const {

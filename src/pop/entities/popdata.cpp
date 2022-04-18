@@ -24,16 +24,15 @@ void PopData::toVbkEncoding(WriteStream& stream) const {
   VBK_ASSERT_MSG(version == 1,
                  "PopData serialization version=%d is not implemented",
                  version);
-  writeArrayOf<VbkBlock>(
-      stream, context, [](WriteStream& stream, const VbkBlock& v) {
-        v.toVbkEncoding(stream);
-      });
-
-  writeArrayOf<VTB>(stream, vtbs, [](WriteStream& stream, const VTB& v) {
+  writeContainer(stream, context, [](WriteStream& stream, const VbkBlock& v) {
     v.toVbkEncoding(stream);
   });
 
-  writeArrayOf<ATV>(stream, atvs, [](WriteStream& stream, const ATV& atv) {
+  writeContainer(stream, vtbs, [](WriteStream& stream, const VTB& v) {
+    v.toVbkEncoding(stream);
+  });
+
+  writeContainer(stream, atvs, [](WriteStream& stream, const ATV& atv) {
     atv.toVbkEncoding(stream);
   });
 }

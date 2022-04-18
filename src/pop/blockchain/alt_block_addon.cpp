@@ -101,9 +101,9 @@ std::string AltBlockAddon::toPrettyString() const {
 
 void AltBlockAddon::toVbkEncoding(WriteStream& w) const {
   PopState<AltEndorsement>::toVbkEncoding(w);
-  writeArrayOf<uint256>(w, _atvids, writeSingleByteLenValue);
-  writeArrayOf<uint256>(w, _vtbids, writeSingleByteLenValue);
-  writeArrayOf<uint96>(w, _vbkblockids, writeSingleByteLenValue);
+  writeContainer(w, _atvids, writeSingleByteLenValue);
+  writeContainer(w, _vtbids, writeSingleByteLenValue);
+  writeContainer(w, _vbkblockids, writeSingleByteLenValue);
 }
 
 void AltBlockAddon::setNullInmemFields() { _endorsedBy.clear(); }

@@ -22,11 +22,10 @@ StoredVbkBlockAddon::StoredVbkBlockAddon(const addon_t& other) {
 }
 
 void StoredVbkBlockAddon::toVbkEncoding(WriteStream& w) const {
-  writeArrayOf<VbkEndorsement::id_t>(w, endorsedByIds, writeSingleByteLenValue);
-  writeArrayOf<AltEndorsement::id_t>(
-      w, blockOfProofEndorsementIds, writeSingleByteLenValue);
+  writeContainer(w, endorsedByIds, writeSingleByteLenValue);
+  writeContainer(w, blockOfProofEndorsementIds, writeSingleByteLenValue);
   w.writeBE<uint32_t>(_refCount);
-  writeArrayOf<VTB::id_t>(w, _vtbids, [](WriteStream& w, const VTB::id_t& u) {
+  writeContainer(w, _vtbids, [](WriteStream& w, const VTB::id_t& u) {
     writeSingleByteLenValue(w, u);
   });
   popState.toVbkEncoding(w);

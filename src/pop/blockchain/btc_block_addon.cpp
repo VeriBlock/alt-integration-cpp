@@ -33,10 +33,9 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
 
 void BtcBlockAddon::toVbkEncoding(WriteStream& w) const {
   // save only refs
-  writeArrayOf<ref_height_t>(
-      w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
-        w.writeBE<ref_height_t>(value);
-      });
+  writeContainer(w, refs, [&](WriteStream& /*ignore*/, ref_height_t value) {
+    w.writeBE<ref_height_t>(value);
+  });
 }
 
 void BtcBlockAddon::setNullInmemFields() {
