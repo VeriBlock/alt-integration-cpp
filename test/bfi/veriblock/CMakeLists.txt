@@ -1,0 +1,4 @@
+
+addtest(vbk_transaction transaction_test.cpp)
+
+target_link_libraries(vbk_transaction bfi_veriblock)
