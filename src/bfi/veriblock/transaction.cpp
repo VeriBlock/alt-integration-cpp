@@ -86,13 +86,13 @@ bool ConvertFromProto(const core::RpcSignedTransaction& from,
     return state.Invalid("bad-proto-transaction-source_address");
   }
 
-  if (!DeserializeFromVbkEncoding(from.transaction().bitcoin_transaction(),
-                                  to.bitcoinTransaction,
-                                  state)) {
+  if (!DeserializeFromHex(from.transaction().bitcoin_transaction(),
+                          to.bitcoinTransaction,
+                          state)) {
     return state.Invalid("bad-proto-transaction-bitcoin_transaction");
   }
 
-  if (!DeserializeFromVbkEncoding(from.transaction().endorsed_block_header(),
+  if (!DeserializeFromHex(from.transaction().endorsed_block_header(),
                                   to.publishedBlock,
                                   state)) {
     return state.Invalid("bad-proto-transaction-endorsed_block_header");

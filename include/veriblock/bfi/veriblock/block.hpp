@@ -7,11 +7,14 @@
 #define BFI_VERIBLOCK_BLOCK_HPP
 
 #include <veriblock/pop/entities/btcblock.hpp>
+#include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
 namespace core {
 // forward declaration
 class RpcBitcoinBlockHeader;
+class RpcBlock;
+class RpcBlockHeader;
 }  // namespace core
 
 namespace altintegration {
@@ -19,6 +22,14 @@ namespace vbk {
 
 bool ConvertFromProto(const core::RpcBitcoinBlockHeader& from,
                       BtcBlock& to,
+                      ValidationState& state);
+
+bool ConvertFromProto(const core::RpcBlock& from,
+                      VbkBlock& to,
+                      ValidationState& state);
+
+bool ConvertFromProto(const core::RpcBlockHeader& from,
+                      VbkBlock& to,
                       ValidationState& state);
 
 }  // namespace vbk
