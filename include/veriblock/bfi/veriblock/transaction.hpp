@@ -6,6 +6,7 @@
 #ifndef BFI_VERIBLOCK_TRANSACTION_HPP
 #define BFI_VERIBLOCK_TRANSACTION_HPP
 
+#include <veriblock/pop/entities/vbkpoptx.hpp>
 #include <veriblock/pop/entities/vbktx.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
@@ -20,6 +21,9 @@ bool ConvertFromProto(const ProtoOtput& from,
 struct ProtoTransaction;
 bool ConvertFromProto(const ProtoTransaction& from,
                       VbkTx& to,
+                      ValidationState& state);
+bool ConvertFromProto(const ProtoTransaction& from,
+                      VbkPopTx& to,
                       ValidationState& state);
 
 }  // namespace vbk

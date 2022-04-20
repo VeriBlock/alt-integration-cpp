@@ -42,7 +42,7 @@ bool ConvertFromProto(const ProtoTransaction& from,
 
   if (!to.sourceAddress.fromString(from.val.transaction().source_address(),
                                    state)) {
-    return state.Invalid("bad-proto-transaction-sourceAddress");
+    return state.Invalid("bad-proto-transaction-source_address");
   }
 
   for (const auto& output : from.val.transaction().outputs()) {
@@ -78,6 +78,50 @@ bool ConvertFromProto(const ProtoTransaction& from,
   to.sourceAmount = Coin(from.val.transaction().source_amount());
 
   return true;
+}
+
+bool ConvertFromProto(const ProtoTransaction& from,
+                      VbkPopTx& to,
+                      ValidationState& state) {
+  if (from.val.transaction().type() !=
+      core::RpcTransaction_Type::RpcTransaction_Type_PROOF_OF_PROOF) {
+    return state.Invalid("bad-proto-transaction-type");
+  }
+
+  // TODO: need to setup VbkPopTx::networkOrType field
+
+  if (!to.address.fromString(from.val.transaction().source_address(), state)) {
+    return state.Invalid("bad-proto-transaction-source_address");
+  }
+
+  if (!DeserializeFromVbkEncoding(from.val.transaction().bitcoin_transaction(),
+                                  to.bitcoinTransaction,
+                                  state)) {
+    return state.Invalid("bad-proto-transaction-bitcoin_transaction");
+  }
+
+  if (!DeserializeFromVbkEncoding(
+          from.val.transaction().endorsed_block_header(),
+          to.publishedBlock,
+          state)) {
+    return state.Invalid("bad-proto-transaction-endorsed_block_header");
+  }
+
+  // TODO: need to setup VbkPopTx::merklePath field
+
+  if (!IsHex(from.val.signature())) {
+    return state.Invalid("bad-proto-transaction-signature",
+                         "signature key data is not hex");
+  } else {
+    to.signature = ParseHex(from.val.signature());
+  }
+
+  if (!IsHex(from.val.public_key())) {
+    return state.Invalid("bad-proto-transaction-public_key",
+                         "Public key data is not hex");
+  } else {
+    to.publicKey = ParseHex(from.val.public_key());
+  }
 }
 
 }  // namespace vbk
