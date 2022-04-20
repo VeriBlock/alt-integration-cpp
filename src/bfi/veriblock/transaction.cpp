@@ -122,6 +122,8 @@ bool ConvertFromProto(const ProtoTransaction& from,
   } else {
     to.publicKey = ParseHex(from.val.public_key());
   }
+
+  return true;
 }
 
 }  // namespace vbk
