@@ -26,11 +26,6 @@ bool ConvertFromProto(const ProtoOtput& from,
   return true;
 }
 
-void ConvertToProto(const Output& from, ProtoOtput& to) {
-  to.val.set_amount(from.coin.units);
-  to.val.set_address(from.address.toString());
-}
-
 struct ProtoTransaction {
   core::RpcSignedTransaction val;
 };
@@ -38,6 +33,13 @@ struct ProtoTransaction {
 bool ConvertFromProto(const ProtoTransaction& from,
                       VbkTx& to,
                       ValidationState& state) {
+  if (from.val.transaction().type() !=
+      core::RpcTransaction_Type::RpcTransaction_Type_STANDARD) {
+    return state.Invalid("bad-proto-transaction-type");
+  }
+
+  // TODO: need to setup VbkTx::networkOrType field
+
   if (!to.sourceAddress.fromString(from.val.transaction().source_address(),
                                    state)) {
     return state.Invalid("bad-proto-transaction-sourceAddress");
@@ -52,12 +54,31 @@ bool ConvertFromProto(const ProtoTransaction& from,
     to.outputs.push_back(val);
   }
 
+  if (!IsHex(from.val.signature())) {
+    return state.Invalid("bad-proto-transaction-signature",
+                         "signature key data is not hex");
+  } else {
+    to.signature = ParseHex(from.val.signature());
+  }
+
+  if (!IsHex(from.val.public_key())) {
+    return state.Invalid("bad-proto-transaction-public_key",
+                         "Public key data is not hex");
+  } else {
+    to.publicKey = ParseHex(from.val.public_key());
+  }
+
+  if (!DeserializeFromVbkEncoding(
+          from.val.transaction().data(), to.publicationData, state)) {
+    return state.Invalid("bad-proto-transaction-data");
+  }
+
+  to.signatureIndex = from.val.signature_index();
+
   to.sourceAmount = Coin(from.val.transaction().source_amount());
 
   return true;
 }
-
-void ConvertToProto(const VbkTx& from, ProtoTransaction& to) {}
 
 }  // namespace vbk
 

@@ -17,14 +17,10 @@ bool ConvertFromProto(const ProtoOtput& from,
                       Output& to,
                       ValidationState& state);
 
-void ConvertToProto(const Output& from, ProtoOtput& to);
-
 struct ProtoTransaction;
 bool ConvertFromProto(const ProtoTransaction& from,
                       VbkTx& to,
                       ValidationState& state);
-
-void ConvertToProto(const VbkTx& from, ProtoTransaction& to);
 
 }  // namespace vbk
 }  // namespace altintegration
