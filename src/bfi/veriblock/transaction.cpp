@@ -5,122 +5,128 @@
 
 #include <veriblock.pb.h>
 
+#include <veriblock/bfi/veriblock/block.hpp>
 #include <veriblock/bfi/veriblock/transaction.hpp>
 
 namespace altintegration {
 
 namespace vbk {
 
-struct ProtoOtput {
-  core::RpcOutput val;
-};
-
-bool ConvertFromProto(const ProtoOtput& from,
+bool ConvertFromProto(const core::RpcOutput& from,
                       Output& to,
                       ValidationState& state) {
-  if (!to.address.fromString(from.val.address(), state)) {
+  if (!to.address.fromString(from.address(), state)) {
     return state.Invalid("bad-proto-otput-address");
   }
-  to.coin = Coin(from.val.amount());
+  to.coin = Coin(from.amount());
 
   return true;
 }
 
-struct ProtoTransaction {
-  core::RpcSignedTransaction val;
-};
-
-bool ConvertFromProto(const ProtoTransaction& from,
+bool ConvertFromProto(const core::RpcSignedTransaction& from,
                       VbkTx& to,
                       ValidationState& state) {
-  if (from.val.transaction().type() !=
+  if (from.transaction().type() !=
       core::RpcTransaction_Type::RpcTransaction_Type_STANDARD) {
     return state.Invalid("bad-proto-transaction-type");
   }
 
   // TODO: need to setup VbkTx::networkOrType field
 
-  if (!to.sourceAddress.fromString(from.val.transaction().source_address(),
+  if (!to.sourceAddress.fromString(from.transaction().source_address(),
                                    state)) {
     return state.Invalid("bad-proto-transaction-source_address");
   }
 
-  for (const auto& output : from.val.transaction().outputs()) {
-    ProtoOtput proto{output};
+  for (const auto& output : from.transaction().outputs()) {
     Output val;
-    if (!ConvertFromProto(proto, val, state)) {
+    if (!ConvertFromProto(output, val, state)) {
       return state.Invalid("bad-proto-transaction-output");
     }
     to.outputs.push_back(val);
   }
 
-  if (!IsHex(from.val.signature())) {
+  if (!IsHex(from.signature())) {
     return state.Invalid("bad-proto-transaction-signature",
                          "signature key data is not hex");
   } else {
-    to.signature = ParseHex(from.val.signature());
+    to.signature = ParseHex(from.signature());
   }
 
-  if (!IsHex(from.val.public_key())) {
+  if (!IsHex(from.public_key())) {
     return state.Invalid("bad-proto-transaction-public_key",
                          "Public key data is not hex");
   } else {
-    to.publicKey = ParseHex(from.val.public_key());
+    to.publicKey = ParseHex(from.public_key());
   }
 
   if (!DeserializeFromVbkEncoding(
-          from.val.transaction().data(), to.publicationData, state)) {
+          from.transaction().data(), to.publicationData, state)) {
     return state.Invalid("bad-proto-transaction-data");
   }
 
-  to.signatureIndex = from.val.signature_index();
+  to.signatureIndex = from.signature_index();
 
-  to.sourceAmount = Coin(from.val.transaction().source_amount());
+  to.sourceAmount = Coin(from.transaction().source_amount());
 
   return true;
 }
 
-bool ConvertFromProto(const ProtoTransaction& from,
+bool ConvertFromProto(const core::RpcSignedTransaction& from,
                       VbkPopTx& to,
                       ValidationState& state) {
-  if (from.val.transaction().type() !=
+  if (from.transaction().type() !=
       core::RpcTransaction_Type::RpcTransaction_Type_PROOF_OF_PROOF) {
     return state.Invalid("bad-proto-transaction-type");
   }
 
   // TODO: need to setup VbkPopTx::networkOrType field
 
-  if (!to.address.fromString(from.val.transaction().source_address(), state)) {
+  if (!to.address.fromString(from.transaction().source_address(), state)) {
     return state.Invalid("bad-proto-transaction-source_address");
   }
 
-  if (!DeserializeFromVbkEncoding(from.val.transaction().bitcoin_transaction(),
+  if (!DeserializeFromVbkEncoding(from.transaction().bitcoin_transaction(),
                                   to.bitcoinTransaction,
                                   state)) {
     return state.Invalid("bad-proto-transaction-bitcoin_transaction");
   }
 
-  if (!DeserializeFromVbkEncoding(
-          from.val.transaction().endorsed_block_header(),
-          to.publishedBlock,
-          state)) {
+  if (!DeserializeFromVbkEncoding(from.transaction().endorsed_block_header(),
+                                  to.publishedBlock,
+                                  state)) {
     return state.Invalid("bad-proto-transaction-endorsed_block_header");
+  }
+
+  if (!ConvertFromProto(from.transaction().bitcoin_block_header_of_proof(),
+                        to.blockOfProof,
+                        state)) {
+    return state.Invalid("bad-proto-transaction-bitcoin_block_header_of_proof");
+  }
+
+  for (const auto& output :
+       from.transaction().context_bitcoin_block_headers()) {
+    BtcBlock val;
+    if (!ConvertFromProto(output, val, state)) {
+      return state.Invalid("bad-proto-transaction-output");
+    }
+    to.blockOfProofContext.push_back(val);
   }
 
   // TODO: need to setup VbkPopTx::merklePath field
 
-  if (!IsHex(from.val.signature())) {
+  if (!IsHex(from.signature())) {
     return state.Invalid("bad-proto-transaction-signature",
                          "signature key data is not hex");
   } else {
-    to.signature = ParseHex(from.val.signature());
+    to.signature = ParseHex(from.signature());
   }
 
-  if (!IsHex(from.val.public_key())) {
+  if (!IsHex(from.public_key())) {
     return state.Invalid("bad-proto-transaction-public_key",
                          "Public key data is not hex");
   } else {
-    to.publicKey = ParseHex(from.val.public_key());
+    to.publicKey = ParseHex(from.public_key());
   }
 
   return true;

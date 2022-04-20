@@ -10,14 +10,10 @@
 namespace altintegration {
 namespace vbk {
 
-struct ProtoBtcBlock {
-  core::RpcBitcoinBlockHeader val;
-};
-
-bool ConvertFromProto(const ProtoBtcBlock& from,
+bool ConvertFromProto(const core::RpcBitcoinBlockHeader& from,
                       BtcBlock& to,
                       ValidationState& state) {
-  if (!DeserializeFromVbkEncoding(from.val.header(), to, state)) {
+  if (!DeserializeFromVbkEncoding(from.header(), to, state)) {
     return state.Invalid("bad-proto-bitcoin-block-header");
   }
 

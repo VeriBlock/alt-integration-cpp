@@ -10,19 +10,24 @@
 #include <veriblock/pop/entities/vbktx.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
+namespace core {
+// forward declaration
+class RpcOutput;
+class RpcSignedTransaction;
+class RpcSignedTransaction;
+}  // namespace core
+
 namespace altintegration {
 namespace vbk {
 
-struct ProtoOtput;
-bool ConvertFromProto(const ProtoOtput& from,
+bool ConvertFromProto(const core::RpcOutput& from,
                       Output& to,
                       ValidationState& state);
 
-struct ProtoTransaction;
-bool ConvertFromProto(const ProtoTransaction& from,
+bool ConvertFromProto(const core::RpcSignedTransaction& from,
                       VbkTx& to,
                       ValidationState& state);
-bool ConvertFromProto(const ProtoTransaction& from,
+bool ConvertFromProto(const core::RpcSignedTransaction& from,
                       VbkPopTx& to,
                       ValidationState& state);
 

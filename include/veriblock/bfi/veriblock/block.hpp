@@ -9,11 +9,15 @@
 #include <veriblock/pop/entities/btcblock.hpp>
 #include <veriblock/pop/validation_state.hpp>
 
+namespace core {
+// forward declaration
+class RpcBitcoinBlockHeader;
+}  // namespace core
+
 namespace altintegration {
 namespace vbk {
 
-struct ProtoBtcBlock;
-bool ConvertFromProto(const ProtoBtcBlock& from,
+bool ConvertFromProto(const core::RpcBitcoinBlockHeader& from,
                       BtcBlock& to,
                       ValidationState& state);
 
