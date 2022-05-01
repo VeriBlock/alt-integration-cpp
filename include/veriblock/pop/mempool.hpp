@@ -188,6 +188,7 @@ struct MemPool {
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   VBK_CHECK_RETURN SubmitResult submit(Slice<const uint8_t> bytes,
+                                       bool doIsBlockOldCheck,
                                        ValidationState& state) {
     ReadStream stream(bytes);
     T payload;
@@ -196,7 +197,7 @@ struct MemPool {
               state.Invalid("pop-mempool-submit-deserialize")};
     }
 
-    return submit<T>(payload, state);
+    return submit<T>(payload, doIsBlockOldCheck, state);
   }
 
   /**
@@ -218,8 +219,10 @@ struct MemPool {
    */
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
-  VBK_CHECK_RETURN SubmitResult submit(const T& pl, ValidationState& state) {
-    return submit<T>(std::make_shared<T>(pl), state);
+  VBK_CHECK_RETURN SubmitResult submit(const T& pl,
+                                       bool doIsBlockOldCheck,
+                                       ValidationState& state) {
+    return submit<T>(std::make_shared<T>(pl), doIsBlockOldCheck, state);
   }
 
   /**
@@ -241,9 +244,11 @@ struct MemPool {
   template <typename T,
             typename = typename std::enable_if<IsPopPayload<T>::value>::type>
   VBK_CHECK_RETURN SubmitResult submit(const std::shared_ptr<T>& pl,
+                                       bool doIsBlockOldCheck,
                                        ValidationState& state) {
     (void)pl;
     (void)state;
+    (void)doIsBlockOldCheck;
     static_assert(sizeof(T) == 0, "Undefined type used in MemPool::submit");
     return {};
   }
@@ -425,11 +430,11 @@ struct MemPool {
 
 // clang-format off
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, ValidationState& state);
+template <> MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv, bool doIsBlockOldCheck, ValidationState& state);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, ValidationState& state);
+template <> MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb, bool doIsBlockOldCheck, ValidationState& state);
 //! @overload
-template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, ValidationState& state);
+template <> MemPool::SubmitResult MemPool::submit<VbkBlock>(const std::shared_ptr<VbkBlock>& block, bool doIsBlockOldCheck, ValidationState& state);
 //! @overload
 template <> const MemPool::payload_map<VbkBlock>& MemPool::getMap() const;
 //! @overload

@@ -56,7 +56,7 @@ TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer.vbk());
   for (auto it = context.rbegin(); it != context.rend(); ++it) {
-    ASSERT_TRUE(mempool.submit(*it, state));
+    ASSERT_TRUE(mempool.submit(*it, true, state));
   }
 
   state.reset();
@@ -69,10 +69,10 @@ TEST_F(MemPoolFixture, mempool_vtbs_contextgap_gap) {
     ASSERT_TRUE(SetState(alttree, chain.back().getHash()));
   }
 
-  ASSERT_FALSE(mempool.submit(atv1, state));
-  ASSERT_FALSE(mempool.submit(atv2, state));
-  ASSERT_FALSE(mempool.submit(fork_block->getHeader(), state));
+  ASSERT_FALSE(mempool.submit(atv1, true, state));
+  ASSERT_FALSE(mempool.submit(atv2, true, state));
+  ASSERT_FALSE(mempool.submit(fork_block->getHeader(), true, state));
 
-  ASSERT_TRUE(mempool.submit(vtb1, state));
-  ASSERT_TRUE(mempool.submit(vtb2, state));
+  ASSERT_TRUE(mempool.submit(vtb1, true, state));
+  ASSERT_TRUE(mempool.submit(vtb2, true, state));
 }

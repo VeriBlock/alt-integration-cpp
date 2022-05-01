@@ -189,11 +189,12 @@ void MemPool::clear() {
 
 template <>
 MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
+                                           bool doIsBlockOldCheck,
                                            ValidationState& state) {
   VBK_ASSERT(atv);
 
   // before any checks and validations, check if payload is old or not
-  if (mempool_tree_.isBlockOld(atv->blockOfProof)) {
+  if (doIsBlockOldCheck && mempool_tree_.isBlockOld(atv->blockOfProof)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 
@@ -223,6 +224,7 @@ MemPool::SubmitResult MemPool::submit<ATV>(const std::shared_ptr<ATV>& atv,
 
 template <>
 MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
+                                           bool,
                                            ValidationState& state) {
   VBK_ASSERT(vtb);
 
@@ -254,11 +256,13 @@ MemPool::SubmitResult MemPool::submit<VTB>(const std::shared_ptr<VTB>& vtb,
 
 template <>
 MemPool::SubmitResult MemPool::submit<VbkBlock>(
-    const std::shared_ptr<VbkBlock>& blk, ValidationState& state) {
+    const std::shared_ptr<VbkBlock>& blk,
+    bool doIsBlockOldCheck,
+    ValidationState& state) {
   VBK_ASSERT(blk);
 
   // before any checks and validations, check if payload is old or not
-  if (mempool_tree_.isBlockOld(*blk)) {
+  if (doIsBlockOldCheck && mempool_tree_.isBlockOld(*blk)) {
     return {FAILED_STATELESS, state.Invalid("too-old")};
   }
 
@@ -295,19 +299,19 @@ void MemPool::tryConnectPayloads() {
   // resubmit vbk blocks
   auto vbks = vbkblocks_in_flight_.getSortedValues();
   for (const auto& v : vbks) {
-    std::ignore = submit<VbkBlock>(*v, state);
+    std::ignore = submit<VbkBlock>(*v, false, state);
   }
 
   // resubmit vtbs
   auto vtbs = vtbs_in_flight_.getSortedValues();
   for (const auto& v : vtbs) {
-    std::ignore = submit<VTB>(*v, state);
+    std::ignore = submit<VTB>(*v, false, state);
   }
 
   // resubmit atvs
   auto atvs = atvs_in_flight_.getSortedValues();
   for (const auto& v : atvs) {
-    std::ignore = submit<ATV>(*v, state);
+    std::ignore = submit<ATV>(*v, false, state);
   }
 }
 
