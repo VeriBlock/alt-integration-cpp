@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/pop/c/mempool.h"
+
 #include "entities/atv.hpp"
 #include "entities/popdata.hpp"
 #include "entities/vbkblock.hpp"
@@ -10,7 +12,6 @@
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/c/mempool.h"
 
 static int handleSubmitResponse(altintegration::MemPool::SubmitResult e) {
   using S = altintegration::MemPool::Status;
@@ -36,7 +37,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(state);
 
   auto res = self->ref->getMemPool().submit<altintegration::VbkBlock>(
-      vbk_block->ref, state->ref);
+      vbk_block->ref, true, state->ref);
   return handleSubmitResponse(res);
 }
 
@@ -49,8 +50,8 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(vtb);
   VBK_ASSERT(state);
 
-  auto res =
-      self->ref->getMemPool().submit<altintegration::VTB>(vtb->ref, state->ref);
+  auto res = self->ref->getMemPool().submit<altintegration::VTB>(
+      vtb->ref, true, state->ref);
   return handleSubmitResponse(res);
 }
 
@@ -63,8 +64,8 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(atv);
   VBK_ASSERT(state);
 
-  auto res =
-      self->ref->getMemPool().submit<altintegration::ATV>(atv->ref, state->ref);
+  auto res = self->ref->getMemPool().submit<altintegration::ATV>(
+      atv->ref, true, state->ref);
   return handleSubmitResponse(res);
 }
 
