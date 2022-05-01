@@ -575,13 +575,13 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   /// blocks (expect them to connect VTB0)
   {
     // add to mempool
-    auto result = mempool.submit<VTB>(VTB0, state);
+    auto result = mempool.submit<VTB>(VTB0, true, state);
     ASSERT_TRUE(result.isFailedStateful());
     state.reset();
     auto vbkContext0 =
         getContext(popminer.vbk(), VTB0.containingBlock.getHash(), 8);
     for (auto& block : reverse_iterate(vbkContext0)) {
-      ASSERT_TRUE(mempool.submit<VbkBlock>(block, state));
+      ASSERT_TRUE(mempool.submit<VbkBlock>(block, true, state));
     }
     // mine VTB0 to ALT1
     mineAltBlocks(1, chain, false, false);
@@ -604,13 +604,13 @@ TEST_F(MemPoolFixture, BtcBlockReferencedTooEarly) {
   /// Send VBK context + VTB2; expect it to be statefully invalid
   {
     // add to mempool
-    auto result = mempool.submit<VTB>(VTB2, state);
+    auto result = mempool.submit<VTB>(VTB2, true, state);
     ASSERT_TRUE(result.isFailedStateful());
     state.reset();
     auto vbkContext2 =
         getContext(popminer.vbk(), VTB2.containingBlock.getHash(), 2);
     for (auto& block : reverse_iterate(vbkContext2)) {
-      ASSERT_TRUE(mempool.submit<VbkBlock>(block, state));
+      ASSERT_TRUE(mempool.submit<VbkBlock>(block, true, state));
     }
 
     // mine VTB2 in ALT2
@@ -745,7 +745,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 
   altparam.mMaxPopDataSize =
       (uint32_t)(block_index->getHeader().estimateSize() + 1);
-  ASSERT_TRUE(mempool.submit(block_index->getHeader(), state));
+  ASSERT_TRUE(mempool.submit(block_index->getHeader(), true, state));
   auto pop_data = mempool.generatePopData();
   ASSERT_EQ(pop_data.context.size(), 0);
   ASSERT_EQ(pop_data.atvs.size(), 0);
@@ -759,7 +759,7 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
 
   altparam.mMaxPopDataSize =
       (uint32_t)(block_index->getHeader().estimateSize() + 50);
-  ASSERT_TRUE(mempool.submit(block_index->getHeader(), state));
+  ASSERT_TRUE(mempool.submit(block_index->getHeader(), true, state));
   pop_data = mempool.generatePopData();
   ASSERT_EQ(pop_data.context.size(), 1);
   ASSERT_EQ(pop_data.atvs.size(), 0);
@@ -769,11 +769,11 @@ TEST_F(MemPoolFixture, getPop_scenario_11) {
       generatePublicationData(alttree.getBestChain().tip()->getHeader()),
       getLastKnownVbkBlock());
   ATV& atv = pd.atvs.at(0);
-  ASSERT_TRUE(mempool.submit(atv, state));
+  ASSERT_TRUE(mempool.submit(atv, true, state));
 
   auto vtb = popminer.endorseVbkBlock(
       popminer.vbk().getBestChain().tip()->getHeader(), getLastKnownBtcBlock());
-  ASSERT_TRUE(mempool.submit(vtb, state));
+  ASSERT_TRUE(mempool.submit(vtb, true, state));
 
   // mempool has 3 VBK blocks, 1 VTB and 1 ATV
   for (size_t i = emptyPopDataSize; i < 5000; i++) {
@@ -859,7 +859,7 @@ TEST_F(MemPoolFixture, IsKnown) {
   auto next = popminer.mineVbkBlocks(1);
 
   ASSERT_FALSE(mempool.isKnown<VbkBlock>(next->getHeader().getId()));
-  ASSERT_TRUE(mempool.submit(next->getHeader(), state));
+  ASSERT_TRUE(mempool.submit(next->getHeader(), true, state));
   // VBK block is in mempool, so known
   ASSERT_TRUE(mempool.isKnown<VbkBlock>(next->getHeader().getId()));
 
@@ -888,11 +888,11 @@ TEST_F(MemPoolFixture, getPop_txfeePriority) {
   auto pd1 = popminer.createPopDataEndorsingAltBlock(
       block, tx1, getLastKnownVbkBlock());
   ATV& atv1 = pd1.atvs.at(0);
-  ASSERT_TRUE(mempool.submit(atv1, state));
+  ASSERT_TRUE(mempool.submit(atv1, true, state));
   auto pd2 = popminer.createPopDataEndorsingAltBlock(
       block, tx2, getLastKnownVbkBlock());
   ATV& atv2 = pd2.atvs.at(0);
-  ASSERT_TRUE(mempool.submit(atv2, state));
+  ASSERT_TRUE(mempool.submit(atv2, true, state));
 
   auto pop_data = mempool.generatePopData();
   ASSERT_EQ(pop_data.context.size(), 1);
@@ -917,11 +917,11 @@ TEST_F(MemPoolFixture, getPop_endorsedPriority) {
   auto pd1 = popminer.createPopDataEndorsingAltBlock(
       block, tx1, getLastKnownVbkBlock());
   ATV& atv1 = pd1.atvs.at(0);
-  ASSERT_TRUE(mempool.submit(atv1, state));
+  ASSERT_TRUE(mempool.submit(atv1, true, state));
   auto pd2 = popminer.createPopDataEndorsingAltBlock(
       block, tx2, getLastKnownVbkBlock());
   ATV& atv2 = pd2.atvs.at(0);
-  ASSERT_TRUE(mempool.submit(atv2, state));
+  ASSERT_TRUE(mempool.submit(atv2, true, state));
 
   auto pop_data = mempool.generatePopData();
   ASSERT_EQ(pop_data.context.size(), 1);
@@ -974,14 +974,14 @@ TEST_F(MemPoolFixture, getPop_payloads_order1) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer.vbk());
   for (auto it = context.rbegin(); it != context.rend(); ++it) {
-    ASSERT_TRUE(mempool.submit(*it, state));
+    ASSERT_TRUE(mempool.submit(*it, true, state));
   }
 
-  ASSERT_TRUE(mempool.submit(atv1, state));
-  ASSERT_TRUE(mempool.submit(atv2, state));
+  ASSERT_TRUE(mempool.submit(atv1, true, state));
+  ASSERT_TRUE(mempool.submit(atv2, true, state));
 
-  ASSERT_TRUE(mempool.submit(vtb1, state));
-  ASSERT_TRUE(mempool.submit(vtb2, state));
+  ASSERT_TRUE(mempool.submit(vtb1, true, state));
+  ASSERT_TRUE(mempool.submit(vtb2, true, state));
 
   auto pop_data = mempool.generatePopData();
   ASSERT_EQ(pop_data.context.size(), 67);
@@ -1105,7 +1105,7 @@ TEST_F(MemPoolFixture, vbkblocks_cleanup_bug) {
   std::vector<VbkBlock> context;
   fillVbkContext(context, GetRegTestVbkBlock().getHash(), popminer.vbk());
   for (auto it = context.rbegin(); it != context.rend(); ++it) {
-    ASSERT_TRUE(mempool.submit(*it, state));
+    ASSERT_TRUE(mempool.submit(*it, true, state));
   }
 
   auto pop_data = mempool.generatePopData();

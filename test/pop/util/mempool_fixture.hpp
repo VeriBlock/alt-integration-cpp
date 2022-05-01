@@ -46,19 +46,19 @@ struct MemPoolFixture : public PopTestFixture, public ::testing::Test {
   }
 
   void submitATV(const ATV& atv) {
-    auto res = mempool.submit(atv, state);
+    auto res = mempool.submit(atv, true, state);
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }
 
   void submitVTB(const VTB& vtb) {
-    auto res = mempool.submit(vtb, state);
+    auto res = mempool.submit(vtb, true, state);
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }
 
   void submitVBK(const VbkBlock& vbk) {
-    auto res = mempool.submit(vbk, state);
+    auto res = mempool.submit(vbk, true, state);
     EXPECT_TRUE(res.isAccepted()) << state.toString();
     state.reset();
   }

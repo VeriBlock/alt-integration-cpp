@@ -212,7 +212,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
       auto atv = state.APM().createATV(candidate.blockOfProof, candidate.tx);
       ai::ValidationState dummy;
       /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::ATV>(
-          atv, dummy);
+          atv, true, dummy);
       break;
     }
     case Action::SUBMIT_VTB: {
@@ -225,7 +225,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
 
       ai::ValidationState dummy;
       /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::VTB>(
-          vtb, dummy);
+          vtb, true, dummy);
       break;
     }
     case Action::SUBMIT_VBK: {
@@ -250,7 +250,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
             ai::ValidationState dummy;
             /* ignore= */ state.TREE()
                 .popcontext->getMemPool()
-                .submit<ai::VbkBlock>(c, dummy);
+                .submit<ai::VbkBlock>(c, true, dummy);
           }
 
           break;
@@ -263,7 +263,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
           ai::ValidationState dummy;
           /* ignore= */ state.TREE()
               .popcontext->getMemPool()
-              .submit<ai::VbkBlock>((*it)->getHeader(), dummy);
+              .submit<ai::VbkBlock>((*it)->getHeader(), true, dummy);
           break;
         }
       }
@@ -278,14 +278,14 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
         ai::ValidationState dummy;
         /* ignore= */ state.TREE()
             .popcontext->getMemPool()
-            .submit<ai::VbkBlock>(block->getHeader(), dummy);
+            .submit<ai::VbkBlock>(block->getHeader(), true, dummy);
       }
 
       // submit all ATVs
       for (auto& a : state.atvs) {
         ai::ValidationState dummy;
         /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::ATV>(
-            a, dummy);
+            a, true, dummy);
       }
       state.atvs.clear();
 
@@ -293,7 +293,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
       for (auto& a : state.vtbs) {
         ai::ValidationState dummy;
         /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::VTB>(
-            a, dummy);
+            a, true, dummy);
       }
       state.vtbs.clear();
 
@@ -301,7 +301,7 @@ bool handle(FuzzedDataProvider& p, FuzzState& state) {
         for (auto& vtb : a.second) {
           ai::ValidationState dummy;
           /* ignore= */ state.TREE().popcontext->getMemPool().submit<ai::VTB>(
-              vtb, dummy);
+              vtb, true, dummy);
         }
       }
       break;
