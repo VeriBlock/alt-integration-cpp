@@ -181,6 +181,7 @@ struct MemPool {
    *
    * @tparam Raw represantation one of VTB, ATV, VbkBlock
    * @param[in] bytes payload`s bytes
+   * @param[in] doIsBlockOldCheck flag
    * @param[out] state validation state
    * validation
    * @return true if payload is accepted to mempool, false otherwise
@@ -213,6 +214,7 @@ struct MemPool {
    *
    * @tparam T one of VTB, ATV, VbkBlock
    * @param[in] pl payload
+   * @param[in] doIsBlockOldCheck flag
    * @param[out] state validation state
    * validation
    * @return true if payload is accepted to mempool, false otherwise
@@ -238,6 +240,7 @@ struct MemPool {
    *
    * @tparam shared_ptr<T> one of VTB, ATV, VbkBlock
    * @param[in] pl payload
+   * @param[in] doIsBlockOldCheck flag
    * @param[out] state validation state
    * @return true if payload is accepted to mempool, false otherwise
    */
