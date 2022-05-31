@@ -30,8 +30,8 @@ struct MempoolFixture: public benchmark::Fixture {
   }
 
   void SetUp(const ::benchmark::State&) {
-    // generate 1000 vbk blocks
-    for(int i = 0; i < 1000; i++) {
+    // generate 100 vbk blocks
+    for(int i = 0; i < 100; i++) {
       auto block = popminer.mineVbkBlocks(1);
       assert(mempool.submit(block->getHeader(), false, val_state));
     }
