@@ -1,6 +1,3 @@
 <map id="altintegration::KeystoneContainer" name="altintegration::KeystoneContainer">
-<area shape="rect" id="node1" title="A container for two previous keystones of endorsed block." alt="" coords="5,440,164,576"/>
-<area shape="rect" id="node2" title=" " alt="" coords="13,285,156,363"/>
-<area shape="rect" id="node3" title=" " alt="" coords="29,145,141,223"/>
-<area shape="rect" id="node4" title=" " alt="" coords="65,5,104,83"/>
+<area shape="rect" id="node1" title="A container for two previous keystones of endorsed block." alt="" coords="5,5,185,156"/>
 </map>

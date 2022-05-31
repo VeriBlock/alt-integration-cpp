@@ -1,6 +1,3 @@
 <map id="altintegration::PopPayoutsParams" name="altintegration::PopPayoutsParams">
-<area shape="rect" id="node1" title="Defines config for POP payouts." alt="" coords="5,440,219,855"/>
-<area shape="rect" id="node2" title=" " alt="" coords="41,285,183,363"/>
-<area shape="rect" id="node3" title=" " alt="" coords="56,145,168,223"/>
-<area shape="rect" id="node4" title=" " alt="" coords="93,5,131,83"/>
+<area shape="rect" id="node1" title="Defines config for POP payouts." alt="" coords="5,5,219,449"/>
 </map>

@@ -1,4 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="5,5,171,47"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="219,5,381,47"/>
+<area shape="rect" id="node1" href="$structaltintegration_1_1BaseBlockTree.html" title="Base block tree that stores all blocks, maintains tree tips, maintains active chain." alt="" coords="5,39,171,80"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1BlockTree.html" title=" " alt="" coords="219,5,427,47"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1BlockTree.html" title="BlockTree is a tree of blocks with single &quot;bootstrap&quot; block as root." alt="" coords="241,71,404,112"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1VbkBlockTree.html" title="Veriblock block tree." alt="" coords="475,13,659,39"/>
 </map>
