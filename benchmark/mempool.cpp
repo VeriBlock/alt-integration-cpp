@@ -14,11 +14,30 @@
 using namespace altintegration;
 
 struct MempoolFixture: public benchmark::Fixture {
-  void SetUp(const ::benchmark::State& state) {
-    
+  MempoolFixture() {
+    auto BTCgenesis = GetRegTestBtcBlock();
+    auto VBKgenesis = GetRegTestVbkBlock();
+
+    // by default, set mocktime to the latest time between all genesis blocks
+    auto time = std::max({altparam.getBootstrapBlock().getTimestamp(),
+                          BTCgenesis.getTimestamp(),
+                          VBKgenesis.getTimestamp()});
+    setMockTime(time + 1);
+
+    alttree.btc().bootstrapWithGenesis(BTCgenesis);
+    alttree.vbk().bootstrapWithGenesis(VBKgenesis);
+    alttree.bootstrap();
   }
 
-  void TearDown(const ::benchmark::State& state) {
+  void SetUp(const ::benchmark::State&) {
+    // generate 100 vbk blocks
+    for(int i = 0; i < 100; i++) {
+      auto block = popminer.mineVbkBlocks(1);
+      assert(mempool.submit(block->getHeader(), false, val_state));
+    }
+  }
+
+  void TearDown(const ::benchmark::State&) {
   }
 
   AltChainParamsRegTest altparam{};
@@ -36,11 +55,13 @@ struct MempoolFixture: public benchmark::Fixture {
       altparam, vbkparam, btcparam, payloadsProvider, blockProvider};
 
   MemPool mempool{alttree};
+  ValidationState val_state;
 };
 
 BENCHMARK_DEFINE_F(MempoolFixture, Mempool_generatePopData)(benchmark::State& state) {
     for (auto _ : state) {
-
+      auto pop_data = mempool.generatePopData();
+      (void)pop_data;
     }
 }
 
