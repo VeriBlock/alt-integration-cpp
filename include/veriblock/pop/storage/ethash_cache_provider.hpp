@@ -11,12 +11,27 @@
 namespace altintegration {
 
 struct EthashCache {
-    virtual ~EthashCache() = default;
+  virtual ~EthashCache() = default;
 
   //! @pure
-  virtual bool get(uint64_t epoch, CacheEntry& out) const = 0;
+  virtual bool get(uint64_t epoch, std::shared_ptr<CacheEntry> out) const = 0;
+
+  //! @pure
+  virtual void insert(uint64_t epoch,
+                      std::shared_ptr<CacheEntry> value) = 0;
+
+  std::shared_ptr<CacheEntry> getOrDefault(
+      uint64_t epoch, std::function<std::shared_ptr<CacheEntry>()> factory) {
+    std::shared_ptr<CacheEntry> value;
+    if (!get(epoch, value)) {
+      value = factory();
+      insert(epoch, value);
+    }
+
+    return value;
+  }
 };
 
-}
+}  // namespace altintegration
 
 #endif

@@ -8,14 +8,22 @@
 
 #include <memory>
 #include <veriblock/pop/crypto/progpow/ethash.hpp>
+#include <veriblock/pop/serde.hpp>
+#include <veriblock/pop/validation_state.hpp>
 
 namespace altintegration {
 
 struct CacheEntry {
   std::shared_ptr<progpow::ethash_cache> light = nullptr;
   std::vector<uint32_t> dag;
+
+  void toVbkEncoding(WriteStream& stream) const;
 };
 
-}
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                CacheEntry& out,
+                                ValidationState& state);
+
+}  // namespace altintegration
 
 #endif
