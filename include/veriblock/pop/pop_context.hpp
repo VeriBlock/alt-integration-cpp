@@ -41,6 +41,7 @@ struct PopContext {
    * @param[in] config
    * @param[in] payloadsProvider
    * @param[in] blockProvider
+   * @param[in] ethashCache
    * @param[in] validatorWorkers
    *
    * @return
@@ -49,6 +50,7 @@ struct PopContext {
       std::shared_ptr<Config> config,
       std::shared_ptr<PayloadsStorage> payloadsProvider,
       std::shared_ptr<BlockReader> blockProvider,
+      std::shared_ptr<EthashCache> ethashCache,
       size_t validatorWorkers = 0);
 
   /**
@@ -110,15 +112,15 @@ struct PopContext {
    *
    * @param[in] prev Altchain has to supply prev block of a block that will
    * contain POP reward.
-   * @param[out] rewards a map where key=payoutInfo from PublicationData, value=amount to be
-   * paid.
+   * @param[out] rewards a map where key=payoutInfo from PublicationData,
+   * value=amount to be paid.
    * @param[out] state validation state.
    *
    * @return true if rewards are obtained; false otherwise.
    */
   VBK_CHECK_RETURN bool getPopPayout(const AltBlockTree::hash_t& prev,
-                    PopPayouts& rewards,
-                    ValidationState& state);
+                                     PopPayouts& rewards,
+                                     ValidationState& state);
 
   /**
    * Generate PopData for the block next to the current tip.

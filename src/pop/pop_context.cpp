@@ -1,3 +1,4 @@
+#include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/pop_context.hpp>
 
 namespace altintegration {
@@ -6,7 +7,10 @@ std::shared_ptr<PopContext> PopContext::create(
     std::shared_ptr<Config> config,
     std::shared_ptr<PayloadsStorage> payloadsProvider,
     std::shared_ptr<BlockReader> blockProvider,
+    std::shared_ptr<EthashCache> ethashCache,
     size_t validatorWorkers) {
+  setEthashCache(ethashCache);
+
   config->validate();
 
   // because default constructor is hidden
@@ -33,8 +37,8 @@ std::shared_ptr<PopContext> PopContext::create(
   } else if (ctx->config_->btc.blocks.size() == 1) {
     ctx->altTree_->btc().bootstrapWithGenesis(ctx->config_->btc.blocks[0]);
   } else {
-    ctx->altTree_->btc().bootstrapWithChain(
-        ctx->config_->btc.startHeight, ctx->config_->btc.blocks);
+    ctx->altTree_->btc().bootstrapWithChain(ctx->config_->btc.startHeight,
+                                            ctx->config_->btc.blocks);
   }
 
   // then, bootstrap VBK
@@ -43,12 +47,12 @@ std::shared_ptr<PopContext> PopContext::create(
   } else if (ctx->config_->vbk.blocks.size() == 1) {
     ctx->altTree_->vbk().bootstrapWithGenesis(ctx->config_->vbk.blocks[0]);
   } else {
-    ctx->altTree_->vbk().bootstrapWithChain(
-        ctx->config_->vbk.startHeight, ctx->config_->vbk.blocks);
+    ctx->altTree_->vbk().bootstrapWithChain(ctx->config_->vbk.startHeight,
+                                            ctx->config_->vbk.blocks);
   }
 
   // then, bootstrap ALT
- ctx->altTree_->bootstrap();
+  ctx->altTree_->bootstrap();
   return ctx;
 }
 
@@ -144,8 +148,8 @@ const AltBlockTree& PopContext::getAltBlockTree() const {
 }
 
 bool PopContext::getPopPayout(const AltBlockTree::hash_t& prev,
-                                    PopPayouts& rewards,
-                                    ValidationState& state) {
+                              PopPayouts& rewards,
+                              ValidationState& state) {
   VBK_ASSERT(popRewardsCalculator_);
   return popRewardsCalculator_->getPopPayout(prev, rewards, state);
 }

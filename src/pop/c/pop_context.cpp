@@ -14,8 +14,6 @@
 #include "storage.hpp"
 #include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/storage/adaptors/ethash_cache_provider_impl.hpp"
-#include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_context) {
   if (self != nullptr) {
@@ -39,9 +37,6 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
   altintegration::SetLogger<adaptors::Logger>(altintegration::StringToLevel(
       std::string(log_lvl.data, log_lvl.data + log_lvl.size)));
 
-  auto progpow = std::make_shared<altintegration::adaptors::EthashCacheImpl>(
-      *storage->ref);
-
   auto* res = new POP_ENTITY_NAME(pop_context);
   res->storage = storage->ref;
   res->ref = altintegration::PopContext::create(
@@ -49,7 +44,9 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
           *storage->ref),
       std::make_shared<altintegration::adaptors::BlockReaderImpl>(
-          *storage->ref, *config->ref->alt));
+          *storage->ref, *config->ref->alt),
+      std::make_shared<altintegration::adaptors::EthashCacheImpl>(
+          *storage->ref));
 
   return res;
 }

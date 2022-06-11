@@ -10,6 +10,7 @@
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/crypto/progpow/cache_entry.hpp>
 #include <veriblock/pop/crypto/progpow/ethash.hpp>
 #include <veriblock/pop/crypto/progpow/kiss99.hpp>
 #include <veriblock/pop/crypto/progpow/math.hpp>
@@ -17,10 +18,9 @@
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
+#include <veriblock/pop/storage/ethash_cache_provider.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
 #include <veriblock/pop/trace.hpp>
-#include <veriblock/pop/crypto/progpow/cache_entry.hpp>
-#include <veriblock/pop/storage/ethash_cache_provider.hpp>
 
 #include "libethash/internal.hpp"
 
@@ -596,6 +596,12 @@ std::string hash32_t::toHex() const {
 using EthashCache_t =
     cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>;
 
+static std::shared_ptr<EthashCache> ethash_cache{nullptr};
+
+void setEthashCache(std::shared_ptr<EthashCache> cache) {
+  ethash_cache = cache;
+}
+
 static EthashCache_t& GetEthashCache() {
   // NOLINTNEXTLINE(cert-err58-cpp)
   static EthashCache_t instance;
@@ -603,7 +609,7 @@ static EthashCache_t& GetEthashCache() {
 }
 
 // protects gEthashCache
-static VBK_TRACE_LOCKABLE_BASE(std::mutex)& GetEthashCacheMutex() {
+static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
   static VBK_TRACE_LOCKABLE(std::mutex, csEthashCache);
   return csEthashCache;
 }

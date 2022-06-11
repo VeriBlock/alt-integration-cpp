@@ -7,10 +7,17 @@
 #define VERIBLOCK_POP_CPP_STORAGE_ADAPTORS_ETHASH_CACHE_PROVIDER_IMPL_HPP
 
 #include <veriblock/pop/storage/ethash_cache_provider.hpp>
+#include <veriblock/pop/validation_state.hpp>
 
 #include "storage_interface.hpp"
 
 namespace altintegration {
+
+inline std::vector<uint8_t> epoch_bytes(uint64_t epoch) {
+  WriteStream write;
+  write.writeBE(epoch);
+  return write.data();
+}
 
 namespace adaptors {
 
@@ -21,11 +28,25 @@ struct EthashCacheImpl : public EthashCache {
 
   bool get(uint64_t epoch, std::shared_ptr<CacheEntry> out) const override {
     std::vector<uint8_t> bytes_out;
+    if (storage_.read(epoch_bytes(epoch), bytes_out)) {
+      return false;
+    }
+
+    ReadStream read(bytes_out);
+    ValidationState state;
+    if (!DeserializeFromVbkEncoding(read, *out, state)) {
+      return false;
+    }
 
     return true;
   }
 
-  void insert(uint64_t epoch, std::shared_ptr<CacheEntry> value) override {}
+  void insert(uint64_t epoch, std::shared_ptr<CacheEntry> value) override {
+    WriteStream write;
+    value->toVbkEncoding(write);
+
+    storage_.write(epoch_bytes(epoch), write.data());
+  }
 
  private:
   Storage& storage_;

@@ -8,6 +8,7 @@
 
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/uint.hpp>
+#include <veriblock/pop/storage/ethash_cache_provider.hpp>
 
 namespace altintegration {
 
@@ -72,6 +73,8 @@ void clearHeaderCache();
 void clearEthashCache();
 
 }  // namespace progpow
+
+void setEthashCache(std::shared_ptr<EthashCache> cache);
 
 /**
  * Calculate vPROGPOW hash of given VbkBlock header (65 bytes)
