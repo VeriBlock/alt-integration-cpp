@@ -19,6 +19,8 @@
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
 #include <veriblock/pop/trace.hpp>
+#include <veriblock/pop/crypto/progpow/cache_entry.hpp>
+#include <veriblock/pop/storage/ethash_cache_provider.hpp>
 
 #include "libethash/internal.hpp"
 
@@ -589,11 +591,6 @@ std::string hash32_t::toHex() const {
 #ifndef VBK_PROGPOW_HEADER_HASH_SIZE
 #define VBK_PROGPOW_HEADER_HASH_SIZE 100000
 #endif
-
-struct CacheEntry {
-  std::shared_ptr<progpow::ethash_cache> light = nullptr;
-  std::vector<uint32_t> dag;
-};
 
 // epoch -> ethash cache + dag
 using EthashCache_t =
