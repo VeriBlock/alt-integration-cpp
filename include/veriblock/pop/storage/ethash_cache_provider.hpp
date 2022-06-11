@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_ETHASH_CACHE_PROVIDER_HPP
 #define VERIBLOCK_POP_CPP_ETHASH_CACHE_PROVIDER_HPP
 
-#include <veriblock/pop/crypto/progpow/cache_entry.hpp>
+#include <veriblock/pop/crypto/progpow/ethash_cache.hpp>
 
 namespace altintegration {
 

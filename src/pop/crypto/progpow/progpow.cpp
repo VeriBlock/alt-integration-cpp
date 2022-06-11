@@ -10,8 +10,8 @@
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
-#include <veriblock/pop/crypto/progpow/cache_entry.hpp>
 #include <veriblock/pop/crypto/progpow/ethash.hpp>
+#include <veriblock/pop/crypto/progpow/ethash_cache.hpp>
 #include <veriblock/pop/crypto/progpow/kiss99.hpp>
 #include <veriblock/pop/crypto/progpow/math.hpp>
 #include <veriblock/pop/finalizer.hpp>
@@ -593,8 +593,19 @@ std::string hash32_t::toHex() const {
 #endif
 
 // epoch -> ethash cache + dag
-using EthashCache_t =
-    cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>;
+struct EthashCache_t : public EthashCacheI {
+  std::shared_ptr<CacheEntry> getOrDefault(
+      uint64_t epoch,
+      std::function<std::shared_ptr<CacheEntry>()> factory) override {
+    return this->cache.getOrDefault(epoch, factory);
+  }
+
+  void clear() override { this->cache.clear(); }
+
+ private:
+  cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>
+      cache{};
+};
 
 static std::shared_ptr<EthashCache> ethash_cache{nullptr};
 
@@ -602,7 +613,7 @@ void setEthashCache(std::shared_ptr<EthashCache> cache) {
   ethash_cache = cache;
 }
 
-static EthashCache_t& GetEthashCache() {
+static EthashCacheI& GetEthashCache() {
   // NOLINTNEXTLINE(cert-err58-cpp)
   static EthashCache_t instance;
   return instance;
@@ -637,7 +648,6 @@ void progpow::clearEthashCache() {
   LockGuard lock(GetEthashCacheMutex());
   GetEthashCache().clear();
 }
-
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);

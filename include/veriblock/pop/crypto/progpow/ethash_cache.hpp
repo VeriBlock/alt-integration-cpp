@@ -20,6 +20,15 @@ struct CacheEntry {
   void toVbkEncoding(WriteStream& stream) const;
 };
 
+struct EthashCacheI {
+  virtual ~EthashCacheI() = default;
+
+  virtual std::shared_ptr<CacheEntry> getOrDefault(
+      uint64_t epoch, std::function<std::shared_ptr<CacheEntry>()> factory) = 0;
+
+  virtual void clear() = 0;
+};
+
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 CacheEntry& out,
                                 ValidationState& state);
