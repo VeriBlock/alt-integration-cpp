@@ -655,7 +655,7 @@ static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetProgpowHeaderCacheMutex() {
   return csProgpowHeaderCache;
 }
 
-void setEthashCache(std::shared_ptr<ProgpowHeaderCacheI> cache) {
+void setProgpowHeaderCache(std::shared_ptr<ProgpowHeaderCache> cache) {
   LockGuard lock(GetProgpowHeaderCacheMutex());
   progpow_header_cache = cache;
 }

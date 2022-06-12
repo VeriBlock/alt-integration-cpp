@@ -51,6 +51,7 @@ struct PopContext {
       std::shared_ptr<PayloadsStorage> payloadsProvider,
       std::shared_ptr<BlockReader> blockProvider,
       std::shared_ptr<EthashCache> ethashCache,
+      std::shared_ptr<ProgpowHeaderCache> progpowHeaderCache,
       size_t validatorWorkers = 0);
 
   /**
