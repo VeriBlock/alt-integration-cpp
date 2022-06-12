@@ -133,7 +133,9 @@ var hierarchy =
     [ "altintegration::PopRewardsParams", "structaltintegration_1_1PopRewardsParams.html", null ],
     [ "altintegration::btc::PrefilledTransaction", "structaltintegration_1_1btc_1_1PrefilledTransaction.html", null ],
     [ "altintegration::ProgpowHeaderCacheI", "structaltintegration_1_1ProgpowHeaderCacheI.html", [
-      [ "altintegration::ProgpowHeaderCache", "structaltintegration_1_1ProgpowHeaderCache.html", null ]
+      [ "altintegration::ProgpowHeaderCache", "structaltintegration_1_1ProgpowHeaderCache.html", [
+        [ "altintegration::adaptors::ProgpowHeaderCacheImpl", "structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html", null ]
+      ] ]
     ] ],
     [ "altintegration::PublicationData", "structaltintegration_1_1PublicationData.html", null ],
     [ "altintegration::ReadStream", "structaltintegration_1_1ReadStream.html", null ],

@@ -13,6 +13,7 @@ var annotated_dup =
         [ "LevelDBStorageIterator", "structaltintegration_1_1adaptors_1_1LevelDBStorageIterator.html", null ],
         [ "LevelDBWriteBatch", "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html", null ],
         [ "PayloadsStorageImpl", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html", "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl" ],
+        [ "ProgpowHeaderCacheImpl", "structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html", null ],
         [ "RocksDBStorage", "structaltintegration_1_1adaptors_1_1RocksDBStorage.html", null ],
         [ "RocksDBStorageIterator", "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html", null ],
         [ "RocksDBWriteBatch", "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html", null ],

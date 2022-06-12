@@ -28,6 +28,7 @@ var searchData=
   ['progpowhash_25',['progPowHash',['../namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c',1,'altintegration::progPowHash(Slice&lt; const uint8_t &gt; header)'],['../namespacealtintegration.html#ae96a8d5ba801c6a5895d9365cdad7875',1,'altintegration::progPowHash(Slice&lt; const uint8_t &gt; header, progpow::ethash_cache *light)']]],
   ['progpowheadercache_26',['ProgpowHeaderCache',['../structaltintegration_1_1ProgpowHeaderCache.html',1,'altintegration']]],
   ['progpowheadercachei_27',['ProgpowHeaderCacheI',['../structaltintegration_1_1ProgpowHeaderCacheI.html',1,'altintegration']]],
-  ['publicationdata_28',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]],
-  ['pypoptools_29',['PyPoptools',['../group__pypoptools.html',1,'']]]
+  ['progpowheadercacheimpl_28',['ProgpowHeaderCacheImpl',['../structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html',1,'altintegration::adaptors']]],
+  ['publicationdata_29',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]],
+  ['pypoptools_30',['PyPoptools',['../group__pypoptools.html',1,'']]]
 ];

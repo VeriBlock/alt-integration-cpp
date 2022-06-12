@@ -1,4 +1,5 @@
 <map id="altintegration::ProgpowHeaderCacheI" name="altintegration::ProgpowHeaderCacheI">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,200,141"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1ProgpowHeaderCache.html" title=" " alt="" coords="5,189,200,325"/>
+<area shape="rect" id="node1" title=" " alt="" coords="9,5,204,141"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1ProgpowHeaderCache.html" title=" " alt="" coords="9,189,204,325"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html" title=" " alt="" coords="5,373,208,509"/>
 </map>

@@ -70,7 +70,7 @@ var NAVTREEINDEX =
 "structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d",
 "structaltintegration_1_1BtcTx.html#acc030df8fab82d3866b34444d82b3d7f",
 "structaltintegration_1_1VTB.html",
-"type__helpers_8h_source.html"
+"trace_8hpp_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

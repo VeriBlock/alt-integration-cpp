@@ -13,5 +13,6 @@ var searchData=
   ['prefilledtransaction_10',['PrefilledTransaction',['../structaltintegration_1_1btc_1_1PrefilledTransaction.html',1,'altintegration::btc']]],
   ['progpowheadercache_11',['ProgpowHeaderCache',['../structaltintegration_1_1ProgpowHeaderCache.html',1,'altintegration']]],
   ['progpowheadercachei_12',['ProgpowHeaderCacheI',['../structaltintegration_1_1ProgpowHeaderCacheI.html',1,'altintegration']]],
-  ['publicationdata_13',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]]
+  ['progpowheadercacheimpl_13',['ProgpowHeaderCacheImpl',['../structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html',1,'altintegration::adaptors']]],
+  ['publicationdata_14',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]]
 ];

@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1adaptors_1_1Et
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00024">24</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00028">28</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::adaptors::EthashCacheImpl:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -150,8 +150,8 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00027">27</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>: storage_(storage) {}</div>
+<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00031">31</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>: storage_(storage) {}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -192,21 +192,21 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1EthashCache.html">altintegration::EthashCache</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00029">29</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>                                                                         {</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    std::vector&lt;uint8_t&gt; bytes_out;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span> (storage_.read(epoch_bytes(epoch), bytes_out)) {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    }</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    ReadStream read(bytes_out);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    ValidationState state;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(read, *out, state)) {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    }</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00033">33</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>                                                                         {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    std::vector&lt;uint8_t&gt; bytes_out;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordflow">if</span> (storage_.read(epoch_bytes(epoch), bytes_out)) {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    }</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    ReadStream read(bytes_out);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    ValidationState state;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(read, *out, state)) {</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  }</div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
 </div>
@@ -247,13 +247,13 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="structaltintegration_1_1EthashCache.html">altintegration::EthashCache</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00044">44</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                                                                        {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    WriteStream write;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    value-&gt;toVbkEncoding(write);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    storage_.write(epoch_bytes(epoch), write.data());</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00048">48</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
+<div class="fragment"><div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                                                                        {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    WriteStream write;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    value-&gt;toVbkEncoding(write);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    storage_.write(epoch_bytes(epoch), write.data());</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>

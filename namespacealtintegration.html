@@ -992,8 +992,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>checkVTB</b> (const <
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>checkPopData</b> (PopValidator &amp;validator, const <a class="el" href="structaltintegration_1_1PopData.html">PopData</a> &amp;popData, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a3eefe40de0f3d07579a1376fc7562bb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stateless validation for <a class="el" href="structaltintegration_1_1PopData.html" title="Represents ALT block body of POP-related info.">PopData</a> and all internal PoP payloads. <br /></td></tr>
 <tr class="separator:a3eefe40de0f3d07579a1376fc7562bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa199b91ca80ee86e0cb0e5229635c576"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa199b91ca80ee86e0cb0e5229635c576">epoch_bytes</a> (uint64_t epoch)</td></tr>
-<tr class="separator:aa199b91ca80ee86e0cb0e5229635c576"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0323152145f8ab579a6214e3df8eeac3"><td class="memItemLeft" align="right" valign="top"><a id="a0323152145f8ab579a6214e3df8eeac3" name="a0323152145f8ab579a6214e3df8eeac3"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, StoredAltBlockAddon &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:a0323152145f8ab579a6214e3df8eeac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2339,40 +2337,6 @@ template&lt;typename T , typename  = typename std::enable_if&lt;sizeof(typename 
 </div><!-- fragment -->
 </div>
 </div>
-<a id="aa199b91ca80ee86e0cb0e5229635c576" name="aa199b91ca80ee86e0cb0e5229635c576"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa199b91ca80ee86e0cb0e5229635c576">&#9670;&nbsp;</a></span>epoch_bytes()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; uint8_t &gt; altintegration::epoch_bytes </td>
-          <td>(</td>
-          <td class="paramtype">uint64_t&#160;</td>
-          <td class="paramname"><em>epoch</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="ethash__cache__provider__impl_8hpp_source.html#l00016">16</a> of file <a class="el" href="ethash__cache__provider__impl_8hpp_source.html">ethash_cache_provider_impl.hpp</a>.</p>
-<div class="fragment"><div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>                                                      {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> write;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  write.writeBE(epoch);</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordflow">return</span> write.data();</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
-<div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
-</div><!-- fragment -->
-</div>
-</div>
 <a id="a801fe3e5bf2c352b5201918e8db2b5e5" name="a801fe3e5bf2c352b5201918e8db2b5e5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a801fe3e5bf2c352b5201918e8db2b5e5">&#9670;&nbsp;</a></span>estimateArraySizeOf()</h2>
 
@@ -2587,6 +2551,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  inputStream.writeBE(input);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordflow">return</span> inputStream.data();</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>}</div>
+<div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
