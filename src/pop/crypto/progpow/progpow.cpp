@@ -10,8 +10,8 @@
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/crypto/progpow/cache.hpp>
 #include <veriblock/pop/crypto/progpow/ethash.hpp>
-#include <veriblock/pop/crypto/progpow/ethash_cache.hpp>
 #include <veriblock/pop/crypto/progpow/kiss99.hpp>
 #include <veriblock/pop/crypto/progpow/math.hpp>
 #include <veriblock/pop/finalizer.hpp>
@@ -628,7 +628,23 @@ static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
 using LockGuard = std::lock_guard<VBK_TRACE_LOCKABLE_BASE(std::mutex)>;
 
 // sha256d(vbkheader) -> progpow hash
-using ProgpowHeaderCache_T = lru11::Cache<uint256, uint192, std::mutex>;
+struct ProgpowHeaderCache_T : public ProgpowHeaderCacheI {
+  ProgpowHeaderCache_T(size_t maxSize, size_t elasticity)
+      : cache(maxSize, elasticity) {}
+
+  void insert(const uint256& key, uint192 value) {
+    this->cache.insert(key, std::move(value));
+  }
+
+  bool tryGet(const uint256& key, uint192& value) {
+    return this->cache.tryGet(key, value);
+  }
+
+  void clear() { this->cache.clear(); }
+
+ private:
+  lru11::Cache<uint256, uint192, std::mutex> cache;
+};
 
 // NOLINTNEXTLINE(cert-err58-cpp)
 static ProgpowHeaderCache_T& GetProgpowHeaderCache() {
@@ -639,8 +655,8 @@ static ProgpowHeaderCache_T& GetProgpowHeaderCache() {
 void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
                                      uint192 progpowHash) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
-  auto hsha = sha256twice(header);
-  GetProgpowHeaderCache().insert(hsha, std::move(progpowHash));
+  auto hash = sha256twice(header);
+  GetProgpowHeaderCache().insert(hash, std::move(progpowHash));
 }
 
 void progpow::clearHeaderCache() { GetProgpowHeaderCache().clear(); }

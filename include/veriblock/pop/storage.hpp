@@ -16,6 +16,7 @@
 #include "storage/block_reader.hpp"
 #include "storage/ethash_cache_provider.hpp"
 #include "storage/payloads_provider.hpp"
+#include "storage/progpow_header_cache_provider.hpp"
 #include "storage/util.hpp"
 
 #endif  // VERIBLOCK_POP_CPP_STORAGER_HPP

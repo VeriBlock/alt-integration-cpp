@@ -20,6 +20,10 @@ struct CacheEntry {
   void toVbkEncoding(WriteStream& stream) const;
 };
 
+bool DeserializeFromVbkEncoding(ReadStream& stream,
+                                CacheEntry& out,
+                                ValidationState& state);
+
 struct EthashCacheI {
   virtual ~EthashCacheI() = default;
 
@@ -29,9 +33,15 @@ struct EthashCacheI {
   virtual void clear() = 0;
 };
 
-bool DeserializeFromVbkEncoding(ReadStream& stream,
-                                CacheEntry& out,
-                                ValidationState& state);
+struct ProgpowHeaderCacheI {
+  virtual ~ProgpowHeaderCacheI() = default;
+
+  virtual void insert(const uint256& key, uint192 value) = 0;
+
+  virtual bool tryGet(const uint256& key, uint192& value) = 0;
+
+  virtual void clear() = 0;
+};
 
 }  // namespace altintegration
 

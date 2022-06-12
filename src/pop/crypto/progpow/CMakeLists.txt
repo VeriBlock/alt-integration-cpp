@@ -1,7 +1,7 @@
 add_subdirectory(libethash)
 
 add_library(progpow OBJECT
-        ethash_cache.cpp
+        cache.cpp
         kiss99.cpp
         progpow.cpp
         math.cpp

@@ -6,22 +6,22 @@
 #ifndef VERIBLOCK_POP_CPP_ETHASH_CACHE_PROVIDER_HPP
 #define VERIBLOCK_POP_CPP_ETHASH_CACHE_PROVIDER_HPP
 
-#include <veriblock/pop/crypto/progpow/ethash_cache.hpp>
+#include <veriblock/pop/crypto/progpow/cache.hpp>
 
 namespace altintegration {
 
-struct EthashCache {
+struct EthashCache : public EthashCacheI {
   virtual ~EthashCache() = default;
 
   //! @pure
   virtual bool get(uint64_t epoch, std::shared_ptr<CacheEntry> out) const = 0;
 
   //! @pure
-  virtual void insert(uint64_t epoch,
-                      std::shared_ptr<CacheEntry> value) = 0;
+  virtual void insert(uint64_t epoch, std::shared_ptr<CacheEntry> value) = 0;
 
   std::shared_ptr<CacheEntry> getOrDefault(
-      uint64_t epoch, std::function<std::shared_ptr<CacheEntry>()> factory) {
+      uint64_t epoch,
+      std::function<std::shared_ptr<CacheEntry>()> factory) override {
     std::shared_ptr<CacheEntry> value;
     if (!get(epoch, value)) {
       value = factory();
@@ -30,6 +30,8 @@ struct EthashCache {
 
     return value;
   }
+
+  void clear() override {}
 };
 
 }  // namespace altintegration

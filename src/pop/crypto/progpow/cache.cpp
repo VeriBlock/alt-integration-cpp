@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/crypto/progpow/ethash_cache.hpp>
+#include <veriblock/pop/crypto/progpow/cache.hpp>
 
 namespace altintegration {
 
 void CacheEntry::toVbkEncoding(WriteStream& stream) const {
   // TODO implement
+  assert(false && "unimplemented");
   writeContainer(
       stream, this->dag, [](WriteStream& stream, const uint32_t& value) {
         stream.writeBE(value);
@@ -19,7 +20,7 @@ bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 CacheEntry& out,
                                 ValidationState& state) {
   // TODO implement
-
+  assert(false && "unimplemented");
   size_t i = 0;
   if (!readArrayOf<uint32_t>(
           stream,
