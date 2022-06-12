@@ -8,6 +8,7 @@
 namespace altintegration {
 
 void CacheEntry::toVbkEncoding(WriteStream& stream) const {
+  // TODO implement
   writeContainer(
       stream, this->dag, [](WriteStream& stream, const uint32_t& value) {
         stream.writeBE(value);
@@ -17,6 +18,8 @@ void CacheEntry::toVbkEncoding(WriteStream& stream) const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 CacheEntry& out,
                                 ValidationState& state) {
+  // TODO implement
+
   size_t i = 0;
   if (!readArrayOf<uint32_t>(
           stream,
