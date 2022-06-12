@@ -59,6 +59,7 @@ var hierarchy =
       [ "altintegration::BtcChainParamsTest", "structaltintegration_1_1BtcChainParamsTest.html", null ]
     ] ],
     [ "altintegration::BtcTx", "structaltintegration_1_1BtcTx.html", null ],
+    [ "altintegration::CacheEntry", "structaltintegration_1_1CacheEntry.html", null ],
     [ "altintegration::btc::CCompactSize", "classaltintegration_1_1btc_1_1CCompactSize.html", null ],
     [ "altintegration::Chain< BlockIndexT >", "structaltintegration_1_1Chain.html", null ],
     [ "altintegration::ChainSlice< BlockIndexT >", "structaltintegration_1_1ChainSlice.html", null ],
@@ -76,6 +77,10 @@ var hierarchy =
     [ "altintegration::btc::deserialize_type", "structaltintegration_1_1btc_1_1deserialize__type.html", null ],
     [ "altintegration::VbkPayloadsRelations::EndorsedAltComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html", null ],
     [ "altintegration::Endorsement< EndorsedHash, ContainingHash, Container >", "structaltintegration_1_1Endorsement.html", null ],
+    [ "altintegration::EthashCache", "structaltintegration_1_1EthashCache.html", [
+      [ "altintegration::adaptors::EthashCacheImpl", "structaltintegration_1_1adaptors_1_1EthashCacheImpl.html", null ]
+    ] ],
+    [ "altintegration::EthashCacheI", "structaltintegration_1_1EthashCacheI.html", null ],
     [ "std::exception", null, [
       [ "std::logic_error", null, [
         [ "std::domain_error", null, [

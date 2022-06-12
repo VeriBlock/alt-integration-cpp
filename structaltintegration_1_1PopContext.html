@@ -175,9 +175,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>shutdown</b> ()</td><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:adec32cc21acfa08ee51e349157b5b35e"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PopContext.html">PopContext</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#adec32cc21acfa08ee51e349157b5b35e">create</a> (std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1Config.html">Config</a> &gt; config, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &gt; payloadsProvider, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &gt; blockProvider, size_t validatorWorkers=0)</td></tr>
-<tr class="memdesc:adec32cc21acfa08ee51e349157b5b35e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory function for <a class="el" href="structaltintegration_1_1PopContext.html" title="Main entrypoint into the veriblock-pop library.">PopContext</a>.  <a href="structaltintegration_1_1PopContext.html#adec32cc21acfa08ee51e349157b5b35e">More...</a><br /></td></tr>
-<tr class="separator:adec32cc21acfa08ee51e349157b5b35e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a157f22a69f9bf4110c68ec105da87e74"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PopContext.html">PopContext</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#a157f22a69f9bf4110c68ec105da87e74">create</a> (std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1Config.html">Config</a> &gt; config, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &gt; payloadsProvider, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &gt; blockProvider, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt; ethashCache, size_t validatorWorkers=0)</td></tr>
+<tr class="memdesc:a157f22a69f9bf4110c68ec105da87e74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory function for <a class="el" href="structaltintegration_1_1PopContext.html" title="Main entrypoint into the veriblock-pop library.">PopContext</a>.  <a href="structaltintegration_1_1PopContext.html#a157f22a69f9bf4110c68ec105da87e74">More...</a><br /></td></tr>
+<tr class="separator:a157f22a69f9bf4110c68ec105da87e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7c90778f2d195ab64080e3bd326db60c" name="a7c90778f2d195ab64080e3bd326db60c"></a>
@@ -324,8 +324,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="adec32cc21acfa08ee51e349157b5b35e" name="adec32cc21acfa08ee51e349157b5b35e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adec32cc21acfa08ee51e349157b5b35e">&#9670;&nbsp;</a></span>create()</h2>
+<a id="a157f22a69f9bf4110c68ec105da87e74" name="a157f22a69f9bf4110c68ec105da87e74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a157f22a69f9bf4110c68ec105da87e74">&#9670;&nbsp;</a></span>create()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -354,6 +354,12 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt;&#160;</td>
+          <td class="paramname"><em>ethashCache</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>validatorWorkers</em> = <code>0</code>&#160;</td>
         </tr>
@@ -374,6 +380,7 @@ Static Public Member Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">config</td><td></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">payloadsProvider</td><td></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">blockProvider</td><td></td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ethashCache</td><td></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">validatorWorkers</td><td></td></tr>
   </table>
   </dd>
