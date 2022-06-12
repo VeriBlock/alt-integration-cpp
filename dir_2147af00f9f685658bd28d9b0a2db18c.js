@@ -6,6 +6,7 @@ var dir_2147af00f9f685658bd28d9b0a2db18c =
     [ "block_reader.hpp", "block__reader_8hpp_source.html", null ],
     [ "ethash_cache_provider.hpp", "ethash__cache__provider_8hpp_source.html", null ],
     [ "payloads_provider.hpp", "payloads__provider_8hpp_source.html", null ],
+    [ "progpow_header_cache_provider.hpp", "progpow__header__cache__provider_8hpp_source.html", null ],
     [ "stored_alt_block_addon.hpp", "stored__alt__block__addon_8hpp_source.html", null ],
     [ "stored_block_index.hpp", "stored__block__index_8hpp_source.html", null ],
     [ "stored_btc_block_addon.hpp", "stored__btc__block__addon_8hpp_source.html", null ],

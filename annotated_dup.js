@@ -122,6 +122,8 @@ var annotated_dup =
       [ "PopRewardsCalculator", "structaltintegration_1_1PopRewardsCalculator.html", "structaltintegration_1_1PopRewardsCalculator" ],
       [ "PopRewardsCurveParams", "structaltintegration_1_1PopRewardsCurveParams.html", null ],
       [ "PopRewardsParams", "structaltintegration_1_1PopRewardsParams.html", null ],
+      [ "ProgpowHeaderCache", "structaltintegration_1_1ProgpowHeaderCache.html", null ],
+      [ "ProgpowHeaderCacheI", "structaltintegration_1_1ProgpowHeaderCacheI.html", null ],
       [ "PublicationData", "structaltintegration_1_1PublicationData.html", "structaltintegration_1_1PublicationData" ],
       [ "ReadStream", "structaltintegration_1_1ReadStream.html", "structaltintegration_1_1ReadStream" ],
       [ "reverse_range", "classaltintegration_1_1reverse__range.html", null ],

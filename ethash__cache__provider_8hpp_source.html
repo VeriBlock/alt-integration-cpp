@@ -96,20 +96,20 @@ $(document).ready(function(){initNavTree('ethash__cache__provider_8hpp_source.ht
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#ifndef VERIBLOCK_POP_CPP_ETHASH_CACHE_PROVIDER_HPP</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define VERIBLOCK_POP_CPP_ETHASH_CACHE_PROVIDER_HPP</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;veriblock/pop/crypto/progpow/ethash_cache.hpp&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;veriblock/pop/crypto/progpow/cache.hpp&gt;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structaltintegration_1_1EthashCache.html">   13</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1EthashCache.html">EthashCache</a> {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structaltintegration_1_1EthashCache.html">   13</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1EthashCache.html">EthashCache</a> : <span class="keyword">public</span> <a class="code hl_struct" href="structaltintegration_1_1EthashCacheI.html">EthashCacheI</a> {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="keyword">virtual</span> <a class="code hl_struct" href="structaltintegration_1_1EthashCache.html">~EthashCache</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> get(uint64_t epoch, std::shared_ptr&lt;CacheEntry&gt; out) <span class="keyword">const</span> = 0;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> insert(uint64_t epoch,</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>                      std::shared_ptr&lt;CacheEntry&gt; value) = 0;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  std::shared_ptr&lt;CacheEntry&gt; getOrDefault(</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>      uint64_t epoch, std::function&lt;std::shared_ptr&lt;CacheEntry&gt;()&gt; factory) {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> insert(uint64_t epoch, std::shared_ptr&lt;CacheEntry&gt; value) = 0;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  std::shared_ptr&lt;CacheEntry&gt; getOrDefault(</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>      uint64_t epoch,</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>      std::function&lt;std::shared_ptr&lt;CacheEntry&gt;()&gt; factory)<span class="keyword"> override </span>{</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    std::shared_ptr&lt;CacheEntry&gt; value;</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">if</span> (!get(epoch, value)) {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      value = factory();</div>
@@ -118,12 +118,15 @@ $(document).ready(function(){initNavTree('ethash__cache__provider_8hpp_source.ht
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">return</span> value;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  }</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>};</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keywordtype">void</span> clear()<span class="keyword"> override </span>{}</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>};</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1EthashCacheI_html"><div class="ttname"><a href="structaltintegration_1_1EthashCacheI.html">altintegration::EthashCacheI</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00027">cache.hpp:27</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1EthashCache_html"><div class="ttname"><a href="structaltintegration_1_1EthashCache.html">altintegration::EthashCache</a></div><div class="ttdef"><b>Definition:</b> <a href="ethash__cache__provider_8hpp_source.html#l00013">ethash_cache_provider.hpp:13</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

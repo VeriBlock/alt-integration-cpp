@@ -77,10 +77,11 @@ var hierarchy =
     [ "altintegration::btc::deserialize_type", "structaltintegration_1_1btc_1_1deserialize__type.html", null ],
     [ "altintegration::VbkPayloadsRelations::EndorsedAltComparator", "structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html", null ],
     [ "altintegration::Endorsement< EndorsedHash, ContainingHash, Container >", "structaltintegration_1_1Endorsement.html", null ],
-    [ "altintegration::EthashCache", "structaltintegration_1_1EthashCache.html", [
-      [ "altintegration::adaptors::EthashCacheImpl", "structaltintegration_1_1adaptors_1_1EthashCacheImpl.html", null ]
+    [ "altintegration::EthashCacheI", "structaltintegration_1_1EthashCacheI.html", [
+      [ "altintegration::EthashCache", "structaltintegration_1_1EthashCache.html", [
+        [ "altintegration::adaptors::EthashCacheImpl", "structaltintegration_1_1adaptors_1_1EthashCacheImpl.html", null ]
+      ] ]
     ] ],
-    [ "altintegration::EthashCacheI", "structaltintegration_1_1EthashCacheI.html", null ],
     [ "std::exception", null, [
       [ "std::logic_error", null, [
         [ "std::domain_error", null, [
@@ -131,6 +132,9 @@ var hierarchy =
     [ "altintegration::PopRewardsCurveParams", "structaltintegration_1_1PopRewardsCurveParams.html", null ],
     [ "altintegration::PopRewardsParams", "structaltintegration_1_1PopRewardsParams.html", null ],
     [ "altintegration::btc::PrefilledTransaction", "structaltintegration_1_1btc_1_1PrefilledTransaction.html", null ],
+    [ "altintegration::ProgpowHeaderCacheI", "structaltintegration_1_1ProgpowHeaderCacheI.html", [
+      [ "altintegration::ProgpowHeaderCache", "structaltintegration_1_1ProgpowHeaderCache.html", null ]
+    ] ],
     [ "altintegration::PublicationData", "structaltintegration_1_1PublicationData.html", null ],
     [ "altintegration::ReadStream", "structaltintegration_1_1ReadStream.html", null ],
     [ "altintegration::reverse_range< T >", "classaltintegration_1_1reverse__range.html", null ],

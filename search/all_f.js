@@ -23,9 +23,11 @@ var searchData=
   ['poprewardsparams_20',['PopRewardsParams',['../structaltintegration_1_1PopRewardsParams.html',1,'altintegration']]],
   ['pprev_21',['pprev',['../structaltintegration_1_1BlockIndex.html#a26c5aa8d8b55e9c01b3b05bf270faa27',1,'altintegration::BlockIndex']]],
   ['prefilledtransaction_22',['PrefilledTransaction',['../structaltintegration_1_1btc_1_1PrefilledTransaction.html',1,'altintegration::btc']]],
-  ['preserveblocksbehindfinal_23',['preserveBlocksBehindFinal',['../structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689',1,'altintegration::AltChainParams::preserveBlocksBehindFinal()'],['../structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110',1,'altintegration::BtcChainParams::preserveBlocksBehindFinal()'],['../structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3',1,'altintegration::VbkChainParams::preserveBlocksBehindFinal()']]],
+  ['preserveblocksbehindfinal_23',['preserveBlocksBehindFinal',['../structaltintegration_1_1VbkChainParams.html#a0ca06292a7f9d15af8190267c0f479f3',1,'altintegration::VbkChainParams::preserveBlocksBehindFinal()'],['../structaltintegration_1_1BtcChainParams.html#acfa9c9946eaf2d5e277c4f7fd2360110',1,'altintegration::BtcChainParams::preserveBlocksBehindFinal()'],['../structaltintegration_1_1AltChainParams.html#aa2cdde39235adf3c2e00a8a6cf1b6689',1,'altintegration::AltChainParams::preserveBlocksBehindFinal()']]],
   ['printto_24',['PrintTo',['../namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310',1,'altintegration']]],
   ['progpowhash_25',['progPowHash',['../namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c',1,'altintegration::progPowHash(Slice&lt; const uint8_t &gt; header)'],['../namespacealtintegration.html#ae96a8d5ba801c6a5895d9365cdad7875',1,'altintegration::progPowHash(Slice&lt; const uint8_t &gt; header, progpow::ethash_cache *light)']]],
-  ['publicationdata_26',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]],
-  ['pypoptools_27',['PyPoptools',['../group__pypoptools.html',1,'']]]
+  ['progpowheadercache_26',['ProgpowHeaderCache',['../structaltintegration_1_1ProgpowHeaderCache.html',1,'altintegration']]],
+  ['progpowheadercachei_27',['ProgpowHeaderCacheI',['../structaltintegration_1_1ProgpowHeaderCacheI.html',1,'altintegration']]],
+  ['publicationdata_28',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]],
+  ['pypoptools_29',['PyPoptools',['../group__pypoptools.html',1,'']]]
 ];

@@ -11,5 +11,7 @@ var searchData=
   ['poprewardscurveparams_8',['PopRewardsCurveParams',['../structaltintegration_1_1PopRewardsCurveParams.html',1,'altintegration']]],
   ['poprewardsparams_9',['PopRewardsParams',['../structaltintegration_1_1PopRewardsParams.html',1,'altintegration']]],
   ['prefilledtransaction_10',['PrefilledTransaction',['../structaltintegration_1_1btc_1_1PrefilledTransaction.html',1,'altintegration::btc']]],
-  ['publicationdata_11',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]]
+  ['progpowheadercache_11',['ProgpowHeaderCache',['../structaltintegration_1_1ProgpowHeaderCache.html',1,'altintegration']]],
+  ['progpowheadercachei_12',['ProgpowHeaderCacheI',['../structaltintegration_1_1ProgpowHeaderCacheI.html',1,'altintegration']]],
+  ['publicationdata_13',['PublicationData',['../structaltintegration_1_1PublicationData.html',1,'altintegration']]]
 ];
