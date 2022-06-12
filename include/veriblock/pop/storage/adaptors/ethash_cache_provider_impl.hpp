@@ -32,7 +32,7 @@ struct EthashCacheImpl : public EthashCache {
 
   bool get(uint64_t epoch, std::shared_ptr<CacheEntry> out) const override {
     std::vector<uint8_t> bytes_out;
-    if (storage_.read(epoch_bytes(epoch), bytes_out)) {
+    if (!storage_.read(epoch_bytes(epoch), bytes_out)) {
       return false;
     }
 

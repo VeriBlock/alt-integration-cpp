@@ -30,7 +30,7 @@ struct ProgpowHeaderCacheImpl : public ProgpowHeaderCache {
 
   bool get(const uint256& key, uint192& value) const override {
     std::vector<uint8_t> bytes_out;
-    if (storage_.read(key_bytes(key), bytes_out)) {
+    if (!storage_.read(key_bytes(key), bytes_out)) {
       return false;
     }
     value = bytes_out;
