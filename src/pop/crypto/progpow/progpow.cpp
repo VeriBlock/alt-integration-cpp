@@ -625,6 +625,9 @@ void setEthashCache(std::shared_ptr<EthashCache> cache) {
 static EthashCacheI& GetEthashCache() {
   // NOLINTNEXTLINE(cert-err58-cpp)
   static EthashCache_t instance;
+  if (ethash_cache != nullptr) {
+    return *ethash_cache;
+  }
   return instance;
 }
 
@@ -661,8 +664,11 @@ void setProgpowHeaderCache(std::shared_ptr<ProgpowHeaderCache> cache) {
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp)
-static ProgpowHeaderCache_T& GetProgpowHeaderCache() {
+static ProgpowHeaderCacheI& GetProgpowHeaderCache() {
   static ProgpowHeaderCache_T instance(VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
+  if (progpow_header_cache != nullptr) {
+    return *progpow_header_cache;
+  }
   return instance;
 }
 

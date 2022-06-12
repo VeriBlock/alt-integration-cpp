@@ -45,10 +45,8 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
           *storage->ref),
       std::make_shared<altintegration::adaptors::BlockReaderImpl>(
           *storage->ref, *config->ref->alt),
-      std::make_shared<altintegration::adaptors::EthashCacheImpl>(
-          *storage->ref),
-      std::make_shared<altintegration::adaptors::ProgpowHeaderCacheImpl>(
-          *storage->ref));
+      nullptr,
+      nullptr);
 
   return res;
 }
