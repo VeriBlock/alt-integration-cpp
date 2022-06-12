@@ -37,6 +37,10 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
   altintegration::SetLogger<adaptors::Logger>(altintegration::StringToLevel(
       std::string(log_lvl.data, log_lvl.data + log_lvl.size)));
 
+  auto cache =
+      std::make_shared<altintegration::adaptors::ProgpowHeaderCacheImpl>(
+          *storage->ref);
+
   auto* res = new POP_ENTITY_NAME(pop_context);
   res->storage = storage->ref;
   res->ref = altintegration::PopContext::create(

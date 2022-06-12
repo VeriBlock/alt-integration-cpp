@@ -13,13 +13,17 @@
 
 namespace altintegration {
 
+namespace adaptors {
+
+const char DB_ETHASH_PREFIX = '&';
+
 inline std::vector<uint8_t> epoch_bytes(uint64_t epoch) {
   WriteStream write;
   write.writeBE(epoch);
-  return write.data();
+  auto res = write.data();
+  res.insert(res.begin(), DB_ETHASH_PREFIX);
+  return res;
 }
-
-namespace adaptors {
 
 struct EthashCacheImpl : public EthashCache {
   ~EthashCacheImpl() override = default;

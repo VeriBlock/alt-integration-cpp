@@ -10,6 +10,7 @@
 #include "storage/adaptors/ethash_cache_provider_impl.hpp"
 #include "storage/adaptors/inmem_storage_impl.hpp"
 #include "storage/adaptors/payloads_provider_impl.hpp"
+#include "storage/adaptors/progpow_header_cache_provider_impl.hpp"
 #include "storage/adaptors/storage_interface.hpp"
 #include "storage/block_batch.hpp"
 #include "storage/block_iterator.hpp"
