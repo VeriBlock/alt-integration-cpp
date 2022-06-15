@@ -16,11 +16,11 @@ struct ProgpowHeaderCache : public ProgpowHeaderCacheI {
   //! @pure
   virtual bool get(const uint256& key, uint192& value) const = 0;
 
-  bool tryGet(const uint256& key, uint192& value) {
+  bool tryGet(const uint256& key, uint192& value) override {
     return this->get(key, value);
   }
 
-  void clear() {}
+  void clear() override {}
 };
 
 }  // namespace altintegration

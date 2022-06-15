@@ -599,17 +599,28 @@ struct EthashCache_t : public EthashCacheI {
   std::shared_ptr<CacheEntry> getOrDefault(
       uint64_t epoch,
       std::function<std::shared_ptr<CacheEntry>()> factory) override {
-    return this->cache.getOrDefault(epoch, factory);
+    return this->in_memory_cache.getOrDefault(epoch, factory);
   }
 
-  void clear() override { this->cache.clear(); }
+  void clear() override {
+    this->in_memory_cache.clear();
+    if (this->on_disk_cache != nullptr) {
+      this->on_disk_cache->clear();
+    }
+  }
+
+  void setOnDiskCache(std::shared_ptr<EthashCache> cache) {
+    this->on_disk_cache = cache;
+  }
 
  private:
   cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>
-      cache{};
+      in_memory_cache{};
+
+  std::shared_ptr<EthashCacheI> on_disk_cache{nullptr};
 };
 
-static std::shared_ptr<EthashCache> ethash_cache{nullptr};
+static EthashCache_t ethash_cache{};
 
 // protects EthashCache
 static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
@@ -619,38 +630,54 @@ static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
 
 void setEthashCache(std::shared_ptr<EthashCache> cache) {
   LockGuard lock(GetEthashCacheMutex());
-  ethash_cache = cache;
+  ethash_cache.setOnDiskCache(cache);
 }
 
 static EthashCacheI& GetEthashCache() {
   // NOLINTNEXTLINE(cert-err58-cpp)
-  static EthashCache_t instance;
-  if (ethash_cache != nullptr) {
-    return *ethash_cache;
-  }
-  return instance;
+  return ethash_cache;
 }
 
 // sha256d(vbkheader) -> progpow hash
 struct ProgpowHeaderCache_T : public ProgpowHeaderCacheI {
   ProgpowHeaderCache_T(size_t maxSize, size_t elasticity)
-      : cache(maxSize, elasticity) {}
+      : in_memory_cache(maxSize, elasticity), on_disk_cache{nullptr} {}
 
   void insert(const uint256& key, uint192 value) {
-    this->cache.insert(key, std::move(value));
+    this->in_memory_cache.insert(key, std::move(value));
+    if (this->on_disk_cache != nullptr) {
+      this->on_disk_cache->insert(key, std::move(value));
+    }
   }
 
   bool tryGet(const uint256& key, uint192& value) {
-    return this->cache.tryGet(key, value);
+    if (!this->in_memory_cache.tryGet(key, value)) {
+      if (this->on_disk_cache != nullptr) {
+        return this->on_disk_cache->tryGet(key, value);
+      }
+      return false;
+    }
+    return true;
   }
 
-  void clear() { this->cache.clear(); }
+  void clear() {
+    this->in_memory_cache.clear();
+    if (this->on_disk_cache != nullptr) {
+      this->on_disk_cache->clear();
+    }
+  }
+
+  void setOnDiskCache(std::shared_ptr<ProgpowHeaderCache> cache) {
+    this->on_disk_cache = cache;
+  }
 
  private:
-  lru11::Cache<uint256, uint192, std::mutex> cache;
+  lru11::Cache<uint256, uint192, std::mutex> in_memory_cache;
+  std::shared_ptr<ProgpowHeaderCacheI> on_disk_cache{nullptr};
 };
 
-static std::shared_ptr<ProgpowHeaderCacheI> progpow_header_cache{nullptr};
+static ProgpowHeaderCache_T progpow_header_cache(VBK_PROGPOW_HEADER_HASH_SIZE,
+                                                 1000);
 
 // protects ProgpowHeaderCache
 static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetProgpowHeaderCacheMutex() {
@@ -660,16 +687,12 @@ static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetProgpowHeaderCacheMutex() {
 
 void setProgpowHeaderCache(std::shared_ptr<ProgpowHeaderCache> cache) {
   LockGuard lock(GetProgpowHeaderCacheMutex());
-  progpow_header_cache = cache;
+  progpow_header_cache.setOnDiskCache(cache);
 }
 
 // NOLINTNEXTLINE(cert-err58-cpp)
 static ProgpowHeaderCacheI& GetProgpowHeaderCache() {
-  static ProgpowHeaderCache_T instance(VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
-  if (progpow_header_cache != nullptr) {
-    return *progpow_header_cache;
-  }
-  return instance;
+  return progpow_header_cache;
 }
 
 void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
