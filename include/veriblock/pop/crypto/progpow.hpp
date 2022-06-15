@@ -75,9 +75,9 @@ void clearEthashCache();
 
 }  // namespace progpow
 
-void setEthashCache(std::shared_ptr<EthashCache> cache);
+void setEthashCache(const std::shared_ptr<EthashCache>& cache);
 
-void setProgpowHeaderCache(std::shared_ptr<ProgpowHeaderCache> cache);
+void setProgpowHeaderCache(const std::shared_ptr<ProgpowHeaderCache>& cache);
 
 /**
  * Calculate vPROGPOW hash of given VbkBlock header (65 bytes)

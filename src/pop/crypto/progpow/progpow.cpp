@@ -609,7 +609,7 @@ struct EthashCache_t : public EthashCacheI {
     }
   }
 
-  void setOnDiskCache(std::shared_ptr<EthashCache> cache) {
+  void setOnDiskCache(const std::shared_ptr<EthashCache>& cache) {
     this->on_disk_cache = cache;
   }
 
@@ -628,7 +628,7 @@ static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
   return csEthashCache;
 }
 
-void setEthashCache(std::shared_ptr<EthashCache> cache) {
+void setEthashCache(const std::shared_ptr<EthashCache>& cache) {
   LockGuard lock(GetEthashCacheMutex());
   ethash_cache.setOnDiskCache(cache);
 }
@@ -643,14 +643,14 @@ struct ProgpowHeaderCache_T : public ProgpowHeaderCacheI {
   ProgpowHeaderCache_T(size_t maxSize, size_t elasticity)
       : in_memory_cache(maxSize, elasticity), on_disk_cache{nullptr} {}
 
-  void insert(const uint256& key, uint192 value) {
-    this->in_memory_cache.insert(key, std::move(value));
+  void insert(const uint256& key, uint192 value) override {
+    this->in_memory_cache.insert(key, value);
     if (this->on_disk_cache != nullptr) {
       this->on_disk_cache->insert(key, std::move(value));
     }
   }
 
-  bool tryGet(const uint256& key, uint192& value) {
+  bool tryGet(const uint256& key, uint192& value) override {
     if (!this->in_memory_cache.tryGet(key, value)) {
       if (this->on_disk_cache != nullptr) {
         return this->on_disk_cache->tryGet(key, value);
@@ -660,14 +660,14 @@ struct ProgpowHeaderCache_T : public ProgpowHeaderCacheI {
     return true;
   }
 
-  void clear() {
+  void clear() override {
     this->in_memory_cache.clear();
     if (this->on_disk_cache != nullptr) {
       this->on_disk_cache->clear();
     }
   }
 
-  void setOnDiskCache(std::shared_ptr<ProgpowHeaderCache> cache) {
+  void setOnDiskCache(const std::shared_ptr<ProgpowHeaderCache>& cache) {
     this->on_disk_cache = cache;
   }
 
@@ -685,7 +685,7 @@ static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetProgpowHeaderCacheMutex() {
   return csProgpowHeaderCache;
 }
 
-void setProgpowHeaderCache(std::shared_ptr<ProgpowHeaderCache> cache) {
+void setProgpowHeaderCache(const std::shared_ptr<ProgpowHeaderCache>& cache) {
   LockGuard lock(GetProgpowHeaderCacheMutex());
   progpow_header_cache.setOnDiskCache(cache);
 }
