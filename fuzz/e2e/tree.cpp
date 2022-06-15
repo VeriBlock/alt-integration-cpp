@@ -86,13 +86,15 @@ Tree::Tree() {
   bestBlock = genesisBlock.hash;
   params = std::make_shared<FuzzAltChainParams>();
   pp = std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(storage);
-  bp = std::make_shared<altintegration::adaptors::BlockReaderImpl>(storage, *params);
+  bp = std::make_shared<altintegration::adaptors::BlockReaderImpl>(storage,
+                                                                   *params);
 
   auto config = std::make_shared<altintegration::Config>();
   config->SelectBtcParams("regtest", 0, {});
   config->SelectVbkParams("regtest", 0, {});
   config->SelectAltParams(params);
 
-  popcontext = altintegration::PopContext::create(config, pp, bp);
+  popcontext =
+      altintegration::PopContext::create(config, pp, bp, nullptr, nullptr);
 }
 }  // namespace fuzz
