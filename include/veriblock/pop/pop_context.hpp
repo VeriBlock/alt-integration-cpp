@@ -42,6 +42,7 @@ struct PopContext {
    * @param[in] payloadsProvider
    * @param[in] blockProvider
    * @param[in] ethashCache
+   * @param[in] progpowHeaderCache
    * @param[in] validatorWorkers
    *
    * @return
