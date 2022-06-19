@@ -1,6 +1,9 @@
 <map id="altintegration::btc::GetBlocksMsg" name="altintegration::btc::GetBlocksMsg">
-<area shape="rect" id="node1" title=" " alt="" coords="79,711,285,803"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1btc_1_1BlockLocator.html" title=" " alt="" coords="5,431,212,567"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="236,351,411,648"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="243,5,403,288"/>
+<area shape="rect" id="node1" title=" " alt="" coords="48,1112,255,1204"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1btc_1_1BlockLocator.html" title=" " alt="" coords="184,928,391,1049"/>
+<area shape="rect" id="node3" title=" " alt="" coords="204,491,371,583"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="74,145,234,428"/>
+<area shape="rect" id="node7" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,607,180,904"/>
+<area shape="rect" id="node5" title=" " alt="" coords="319,248,431,325"/>
+<area shape="rect" id="node6" title=" " alt="" coords="356,5,395,83"/>
 </map>

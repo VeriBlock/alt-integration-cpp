@@ -1,5 +1,8 @@
 <map id="altintegration::MerklePath" name="altintegration::MerklePath">
-<area shape="rect" id="node1" title="Path in Merkle tree which proves that subject is inside this tree." alt="" coords="9,711,177,847"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,351,180,648"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="13,5,173,288"/>
+<area shape="rect" id="node1" title="Path in Merkle tree which proves that subject is inside this tree." alt="" coords="105,851,273,972"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,491,180,788"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="74,145,234,428"/>
+<area shape="rect" id="node4" title=" " alt="" coords="204,593,371,685"/>
+<area shape="rect" id="node5" title=" " alt="" coords="319,248,431,325"/>
+<area shape="rect" id="node6" title=" " alt="" coords="356,5,395,83"/>
 </map>

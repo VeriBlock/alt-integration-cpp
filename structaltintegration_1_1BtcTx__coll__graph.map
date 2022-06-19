@@ -1,3 +1,6 @@
 <map id="altintegration::BtcTx" name="altintegration::BtcTx">
-<area shape="rect" id="node1" title="Bitcoin transaction representation." alt="" coords="5,5,141,171"/>
+<area shape="rect" id="node1" title="Bitcoin transaction representation." alt="" coords="9,425,145,591"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,285,148,363"/>
+<area shape="rect" id="node3" title=" " alt="" coords="21,145,133,223"/>
+<area shape="rect" id="node4" title=" " alt="" coords="57,5,96,83"/>
 </map>

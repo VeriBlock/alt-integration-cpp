@@ -145,4 +145,4 @@ var menudata={children:[
 {text:"Related Functions",url:"functions_rela.html"}]}]},
 {text:"Files",url:"files.html",children:[
 {text:"File List",url:"files.html"}]},
-{text:"GitHub",url:"http://github.com/VeriBlock/alt-integration-cpp"}]}
+{text:"GitHub",url:"^http://github.com/VeriBlock/alt-integration-cpp"}]}

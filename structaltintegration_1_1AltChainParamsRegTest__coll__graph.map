@@ -1,4 +1,11 @@
 <map id="altintegration::AltChainParamsRegTest" name="altintegration::AltChainParamsRegTest">
-<area shape="rect" id="node1" title=" " alt="" coords="23,468,214,633"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1AltChainParams.html" title="Base class for all Altchain&#45;related configs." alt="" coords="5,5,232,420"/>
+<area shape="rect" id="node1" title=" " alt="" coords="23,1617,214,1783"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1AltChainParams.html" title="Base class for all Altchain&#45;related configs." alt="" coords="5,1183,232,1568"/>
+<area shape="rect" id="node3" title=" " alt="" coords="220,1028,412,1120"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1PopPayoutsParams.html" title="Defines config for POP payouts." alt="" coords="135,551,348,965"/>
+<area shape="rect" id="node5" title=" " alt="" coords="170,348,313,425"/>
+<area shape="rect" id="node6" title=" " alt="" coords="185,145,297,223"/>
+<area shape="rect" id="node9" title=" " alt="" coords="39,449,190,527"/>
+<area shape="rect" id="node7" title=" " alt="" coords="294,5,333,83"/>
+<area shape="rect" id="node8" title=" " alt="" coords="315,247,453,324"/>
 </map>

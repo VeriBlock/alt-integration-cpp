@@ -18,10 +18,7 @@ var dir_0252a7abd2d5cee5cf1dc5c94a7052df =
     [ "blob.hpp", "blob_8hpp_source.html", null ],
     [ "bootstraps.hpp", "bootstraps_8hpp_source.html", null ],
     [ "command_group_cache.hpp", "command__group__cache_8hpp_source.html", null ],
-    [ "config.hpp", "config_8hpp.html", [
-      [ "altintegration::Config", "structaltintegration_1_1Config.html", "structaltintegration_1_1Config" ],
-      [ "altintegration::Config::Bootstrap< Block, ChainParams >", "structaltintegration_1_1Config_1_1Bootstrap.html", "structaltintegration_1_1Config_1_1Bootstrap" ]
-    ] ],
+    [ "config.hpp", "config_8hpp.html", "config_8hpp" ],
     [ "consts.hpp", "consts_8hpp.html", "consts_8hpp" ],
     [ "finalizer.hpp", "finalizer_8hpp_source.html", null ],
     [ "fmt.hpp", "fmt_8hpp_source.html", null ],

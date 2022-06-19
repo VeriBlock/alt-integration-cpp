@@ -1,3 +1,14 @@
 <map id="altintegration::btc::Transaction" name="altintegration::btc::Transaction">
-<area shape="rect" id="node1" title="The basic transaction that is broadcasted on the network and contained in blocks." alt="" coords="5,5,125,171"/>
+<area shape="rect" id="node1" title="The basic transaction that is broadcasted on the network and contained in blocks." alt="" coords="781,1359,901,1495"/>
+<area shape="rect" id="node2" title=" " alt="" coords="692,1204,859,1296"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1btc_1_1TxIn.html" title="An input of a transaction." alt="" coords="276,1035,483,1141"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1btc_1_1OutPoint.html" title="An outpoint &#45; a combination of a transaction hash and an index n into its vout." alt="" coords="5,865,212,972"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="21,491,196,788"/>
+<area shape="rect" id="node6" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="29,145,189,428"/>
+<area shape="rect" id="node7" title=" " alt="" coords="501,601,644,678"/>
+<area shape="rect" id="node10" title=" " alt="" coords="236,873,389,965"/>
+<area shape="rect" id="node12" href="$structaltintegration_1_1btc_1_1TxOut.html" title="An output of a transaction." alt="" coords="525,865,732,972"/>
+<area shape="rect" id="node8" title=" " alt="" coords="673,248,785,325"/>
+<area shape="rect" id="node11" title=" " alt="" coords="824,1042,991,1134"/>
+<area shape="rect" id="node9" title=" " alt="" coords="709,5,748,83"/>
 </map>

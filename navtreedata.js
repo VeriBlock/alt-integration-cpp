@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "veriblock-pop-cpp", "index.html", [
-    [ "Getting Started", "index.html", "index" ],
+    [ "Getting Started", "index.html", null ],
     [ "How to trace performance of ALT-CPP", "md_docs_tracy.html", [
       [ "Install TracyServer", "md_docs_tracy.html#autotoc_md108", null ],
       [ "Usage in C++", "md_docs_tracy.html#autotoc_md109", null ],
@@ -65,12 +65,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
-"integration_11_p2p.html#autotoc_md9",
-"namespacealtintegration.html#a8a10d689ced86bc9e96cfb36b5fd6cb3",
-"structaltintegration_1_1AltBlockTree.html#a8272c69b863b355ad182034984802c6d",
-"structaltintegration_1_1BtcTx.html#acc030df8fab82d3866b34444d82b3d7f",
-"structaltintegration_1_1VTB.html",
-"trace_8hpp_source.html"
+"namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e",
+"namespacemembers_type.html",
+"structaltintegration_1_1BaseBlockTree.html#adc757d7c7665303acf67c26f9fa0694f",
+"structaltintegration_1_1MerklePath.html#a01b734b8c63386ab6aac7a0305e6528b",
+"structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

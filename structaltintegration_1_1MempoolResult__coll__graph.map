@@ -1,3 +1,6 @@
 <map id="altintegration::MempoolResult" name="altintegration::MempoolResult">
-<area shape="rect" id="node1" title="An entity which is returned from MemPool on call to submitAll." alt="" coords="5,5,197,112"/>
+<area shape="rect" id="node1" title="An entity which is returned from MemPool on call to submitAll." alt="" coords="17,513,209,591"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,315,220,421"/>
+<area shape="rect" id="node3" title=" " alt="" coords="57,145,169,223"/>
+<area shape="rect" id="node4" title=" " alt="" coords="93,5,132,83"/>
 </map>
