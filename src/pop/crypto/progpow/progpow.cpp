@@ -644,27 +644,27 @@ struct ProgpowHeaderCache_T : public ProgpowHeaderCacheI {
       : in_memory_cache(maxSize, elasticity), on_disk_cache{nullptr} {}
 
   void insert(const uint256& key, uint192 value) override {
-    this->in_memory_cache.insert(key, value);
     if (this->on_disk_cache != nullptr) {
-      this->on_disk_cache->insert(key, std::move(value));
+      return this->on_disk_cache->insert(key, value);
     }
+
+    return this->in_memory_cache.insert(key, value);
   }
 
   bool tryGet(const uint256& key, uint192& value) override {
-    if (!this->in_memory_cache.tryGet(key, value)) {
-      if (this->on_disk_cache != nullptr) {
-        return this->on_disk_cache->tryGet(key, value);
-      }
-      return false;
+    if (this->on_disk_cache != nullptr) {
+      return this->on_disk_cache->tryGet(key, value);
     }
-    return true;
+
+    return this->in_memory_cache.tryGet(key, value);
   }
 
   void clear() override {
-    this->in_memory_cache.clear();
     if (this->on_disk_cache != nullptr) {
-      this->on_disk_cache->clear();
+      return this->on_disk_cache->clear();
     }
+
+    return this->in_memory_cache.clear();
   }
 
   void setOnDiskCache(const std::shared_ptr<ProgpowHeaderCache>& cache) {
