@@ -7,13 +7,17 @@
 #define VERIBLOCK_POP_CPP_STORAGER_HPP
 
 #include "storage/adaptors/block_provider_impl.hpp"
+#include "storage/adaptors/ethash_cache_provider_impl.hpp"
 #include "storage/adaptors/inmem_storage_impl.hpp"
 #include "storage/adaptors/payloads_provider_impl.hpp"
+#include "storage/adaptors/progpow_header_cache_provider_impl.hpp"
 #include "storage/adaptors/storage_interface.hpp"
 #include "storage/block_batch.hpp"
 #include "storage/block_iterator.hpp"
 #include "storage/block_reader.hpp"
+#include "storage/ethash_cache_provider.hpp"
 #include "storage/payloads_provider.hpp"
+#include "storage/progpow_header_cache_provider.hpp"
 #include "storage/util.hpp"
 
 #endif  // VERIBLOCK_POP_CPP_STORAGER_HPP

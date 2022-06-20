@@ -10,6 +10,7 @@
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/crypto/progpow/cache.hpp>
 #include <veriblock/pop/crypto/progpow/ethash.hpp>
 #include <veriblock/pop/crypto/progpow/kiss99.hpp>
 #include <veriblock/pop/crypto/progpow/math.hpp>
@@ -17,6 +18,7 @@
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
+#include <veriblock/pop/storage/ethash_cache_provider.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
 #include <veriblock/pop/trace.hpp>
 
@@ -590,51 +592,125 @@ std::string hash32_t::toHex() const {
 #define VBK_PROGPOW_HEADER_HASH_SIZE 100000
 #endif
 
-struct CacheEntry {
-  std::shared_ptr<progpow::ethash_cache> light = nullptr;
-  std::vector<uint32_t> dag;
-};
+using LockGuard = std::lock_guard<VBK_TRACE_LOCKABLE_BASE(std::mutex)>;
 
 // epoch -> ethash cache + dag
-using EthashCache_t =
-    cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>;
+struct EthashCache_t : public EthashCacheI {
+  std::shared_ptr<CacheEntry> getOrDefault(
+      uint64_t epoch,
+      std::function<std::shared_ptr<CacheEntry>()> factory) override {
+    return this->in_memory_cache.getOrDefault(epoch, factory);
+  }
 
-static EthashCache_t& GetEthashCache() {
-  // NOLINTNEXTLINE(cert-err58-cpp)
-  static EthashCache_t instance;
-  return instance;
-}
+  void clear() override {
+    this->in_memory_cache.clear();
+    if (this->on_disk_cache != nullptr) {
+      this->on_disk_cache->clear();
+    }
+  }
 
-// protects gEthashCache
-static VBK_TRACE_LOCKABLE_BASE(std::mutex)& GetEthashCacheMutex() {
+  void setOnDiskCache(const std::shared_ptr<EthashCache>& cache) {
+    this->on_disk_cache = cache;
+  }
+
+ private:
+  cache::SmallLFRUCache<uint64_t, CacheEntry, VBK_PROGPOW_ETHASH_CACHE_SIZE>
+      in_memory_cache{};
+
+  std::shared_ptr<EthashCacheI> on_disk_cache{nullptr};
+};
+
+static EthashCache_t ethash_cache{};
+
+// protects EthashCache
+static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
   static VBK_TRACE_LOCKABLE(std::mutex, csEthashCache);
   return csEthashCache;
 }
 
-using LockGuard = std::lock_guard<VBK_TRACE_LOCKABLE_BASE(std::mutex)>;
+void setEthashCache(const std::shared_ptr<EthashCache>& cache) {
+  LockGuard lock(GetEthashCacheMutex());
+  ethash_cache.setOnDiskCache(cache);
+}
+
+static EthashCacheI& GetEthashCache() {
+  // NOLINTNEXTLINE(cert-err58-cpp)
+  return ethash_cache;
+}
 
 // sha256d(vbkheader) -> progpow hash
-using ProgpowHeaderCache_T = lru11::Cache<uint256, uint192, std::mutex>;
+struct ProgpowHeaderCache_T : public ProgpowHeaderCacheI {
+  ProgpowHeaderCache_T(size_t maxSize, size_t elasticity)
+      : in_memory_cache(maxSize, elasticity), on_disk_cache{nullptr} {}
+
+  void insert(const uint256& key, uint192 value) override {
+    if (this->on_disk_cache != nullptr) {
+      return this->on_disk_cache->insert(key, value);
+    }
+
+    return this->in_memory_cache.insert(key, value);
+  }
+
+  bool tryGet(const uint256& key, uint192& value) override {
+    if (this->on_disk_cache != nullptr) {
+      return this->on_disk_cache->tryGet(key, value);
+    }
+
+    return this->in_memory_cache.tryGet(key, value);
+  }
+
+  void clear() override {
+    if (this->on_disk_cache != nullptr) {
+      return this->on_disk_cache->clear();
+    }
+
+    return this->in_memory_cache.clear();
+  }
+
+  void setOnDiskCache(const std::shared_ptr<ProgpowHeaderCache>& cache) {
+    this->on_disk_cache = cache;
+  }
+
+ private:
+  lru11::Cache<uint256, uint192, std::mutex> in_memory_cache;
+  std::shared_ptr<ProgpowHeaderCacheI> on_disk_cache{nullptr};
+};
+
+static ProgpowHeaderCache_T progpow_header_cache(VBK_PROGPOW_HEADER_HASH_SIZE,
+                                                 1000);
+
+// protects ProgpowHeaderCache
+static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetProgpowHeaderCacheMutex() {
+  static VBK_TRACE_LOCKABLE(std::mutex, csProgpowHeaderCache);
+  return csProgpowHeaderCache;
+}
+
+void setProgpowHeaderCache(const std::shared_ptr<ProgpowHeaderCache>& cache) {
+  LockGuard lock(GetProgpowHeaderCacheMutex());
+  progpow_header_cache.setOnDiskCache(cache);
+}
 
 // NOLINTNEXTLINE(cert-err58-cpp)
-static ProgpowHeaderCache_T& GetProgpowHeaderCache() {
-  static ProgpowHeaderCache_T instance(VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
-  return instance;
+static ProgpowHeaderCacheI& GetProgpowHeaderCache() {
+  return progpow_header_cache;
 }
 
 void progpow::insertHeaderCacheEntry(Slice<const uint8_t> header,
                                      uint192 progpowHash) {
+  LockGuard lock(GetProgpowHeaderCacheMutex());
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
-  auto hsha = sha256twice(header);
-  GetProgpowHeaderCache().insert(hsha, std::move(progpowHash));
+  auto hash = sha256twice(header);
+  GetProgpowHeaderCache().insert(hash, std::move(progpowHash));
 }
 
-void progpow::clearHeaderCache() { GetProgpowHeaderCache().clear(); }
+void progpow::clearHeaderCache() {
+  LockGuard lock(GetProgpowHeaderCacheMutex());
+  GetProgpowHeaderCache().clear();
+}
 void progpow::clearEthashCache() {
   LockGuard lock(GetEthashCacheMutex());
   GetEthashCache().clear();
 }
-
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
@@ -708,14 +784,19 @@ uint192 progPowHash(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto headerSha256 = sha256twice(header);
   uint192 ret{};
-  if (GetProgpowHeaderCache().tryGet(headerSha256, ret)) {
-    // cache hit
-    return ret;
+  {
+    LockGuard lock(GetProgpowHeaderCacheMutex());
+    if (GetProgpowHeaderCache().tryGet(headerSha256, ret)) {
+      // cache hit
+      return ret;
+    }
   }
-
   // cache miss
   ret = progPowHashImpl(header);
-  GetProgpowHeaderCache().insert(headerSha256, ret);
+  {
+    LockGuard lock(GetProgpowHeaderCacheMutex());
+    GetProgpowHeaderCache().insert(headerSha256, ret);
+  }
   return ret;
 #endif
 }

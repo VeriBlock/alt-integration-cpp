@@ -14,7 +14,6 @@
 #include "storage.hpp"
 #include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_context) {
   if (self != nullptr) {
@@ -45,7 +44,9 @@ POP_ENTITY_NEW_FUNCTION(pop_context,
       std::make_shared<altintegration::adaptors::PayloadsStorageImpl>(
           *storage->ref),
       std::make_shared<altintegration::adaptors::BlockReaderImpl>(
-          *storage->ref, *config->ref->alt));
+          *storage->ref, *config->ref->alt),
+      nullptr,
+      nullptr);
 
   return res;
 }
