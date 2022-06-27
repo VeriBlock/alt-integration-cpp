@@ -599,14 +599,19 @@ struct EthashCache_t : public EthashCacheI {
   std::shared_ptr<CacheEntry> getOrDefault(
       uint64_t epoch,
       std::function<std::shared_ptr<CacheEntry>()> factory) override {
+    if (this->on_disk_cache != nullptr) {
+      return this->on_disk_cache->getOrDefault(epoch, factory);
+    }
+
     return this->in_memory_cache.getOrDefault(epoch, factory);
   }
 
   void clear() override {
-    this->in_memory_cache.clear();
     if (this->on_disk_cache != nullptr) {
-      this->on_disk_cache->clear();
+      return this->on_disk_cache->clear();
     }
+
+    return this->in_memory_cache.clear();
   }
 
   void setOnDiskCache(const std::shared_ptr<EthashCache>& cache) {
