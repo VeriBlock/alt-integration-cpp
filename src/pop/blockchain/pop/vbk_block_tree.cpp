@@ -370,15 +370,17 @@ std::string VbkBlockTree::toPrettyString(size_t level) const {
 }
 
 bool VbkBlockTree::loadBlockForward(const stored_index_t& index,
+                                    bool fast_load,
                                     ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
-  if (!VbkTree::loadBlockForward(index, state)) {
+  if (!VbkTree::loadBlockForward(index, fast_load, state)) {
     return false;  // already set
   }
-  return loadBlockInner(index, state);
+  return loadBlockInner(index, fast_load, state);
 }
 
 bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
+                                  bool fast_load,
                                   ValidationState& state) {
   VBK_TRACE_ZONE_SCOPED;
   VBK_ASSERT(!this->isLoaded_);
@@ -392,14 +394,20 @@ bool VbkBlockTree::loadBlockInner(const stored_index_t& index,
 
   const auto& vtbIds = current->getPayloadIds<VTB>();
 
-  if (hasDuplicateIdsOf<VTB>(vtbIds, state)) return false;
+  if (!fast_load && hasDuplicateIdsOf<VTB>(vtbIds, state)) {
+    return false;
+  }
 
   // recover `endorsedBy`
-  const auto si = param_->getEndorsementSettlementInterval();
-  auto window = std::max(0, height - si);
-  Chain<index_t> chain(window, current);
-  if (!recoverEndorsements(*this, chain, *current, state)) {
-    return state.Invalid("bad-endorsements");
+  if (!fast_load) {
+    const auto si = param_->getEndorsementSettlementInterval();
+    auto window = std::max(0, height - si);
+    Chain<index_t> chain(window, current);
+    if (!recoverEndorsements(*this, *current, chain, state)) {
+      return state.Invalid("bad-endorsements");
+    }
+  } else {
+    recoverEndorsementsFast(*this, *current);
   }
 
   if (!current->finalized) {

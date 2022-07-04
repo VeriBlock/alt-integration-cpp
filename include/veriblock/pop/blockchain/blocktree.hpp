@@ -121,13 +121,14 @@ struct BlockTree : public BaseBlockTree<Block> {
 
   //! @invariant NOT atomic.
   bool loadBlockForward(const stored_index_t& index,
+                        bool fast_load,
                         ValidationState& state) override {
-    if (!checkBlock(*index.header, state, *param_)) {
+    if (!fast_load && !checkBlock(*index.header, state, *param_)) {
       return state.Invalid("bad-header");
     }
 
     const auto hash = index.header->getHash();
-    if (!base::loadBlockForward(index, state)) {
+    if (!base::loadBlockForward(index, fast_load, state)) {
       return false;
     }
 
@@ -138,7 +139,8 @@ struct BlockTree : public BaseBlockTree<Block> {
 
     // we only check blocks contextually if they are not bootstrap blocks, and
     // previous block exists
-    if (!current->isRoot() && !current->hasFlags(BLOCK_BOOTSTRAP) &&
+    if (!fast_load && !current->isRoot() &&
+        !current->hasFlags(BLOCK_BOOTSTRAP) &&
         !contextuallyCheckBlock(
             *current->pprev, current->getHeader(), state, *param_)) {
       return state.Invalid("bad-block-contextually");

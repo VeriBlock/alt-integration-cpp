@@ -60,64 +60,9 @@ bool loadBlocksAndTip(
   return true;
 }
 
-template <>
-bool validateLoadBlock(const AltBlockTree& tree,
-                       const typename AltBlockTree::stored_index_t& index,
-                       ValidationState& state) {
-  const auto* current = tree.getBlockIndex(index.header->getHash());
-  const auto endorsedByIds =
-      map_get_id_from_pointers<uint256, const AltEndorsement>(
-          current->getEndorsedBy());
-  if (!same_vectors_unique_unordered(endorsedByIds,
-                                     index.addon.endorsedByIds)) {
-    return state.Invalid("alt-block-invalid-stored-endorsed-by");
-  }
-  return true;
-}
-
-template <>
-bool validateLoadBlock(const VbkBlockTree& tree,
-                       const typename VbkBlockTree::stored_index_t& index,
-                       ValidationState& state) {
-  const auto* current = tree.getBlockIndex(index.header->getHash());
-  const auto endorsedByIds =
-      map_get_id_from_pointers<uint256, const VbkEndorsement>(
-          current->getEndorsedBy());
-  if (!same_vectors_unique_unordered(endorsedByIds,
-                                     index.addon.endorsedByIds)) {
-    return state.Invalid("vbk-block-invalid-stored-endorsed-by");
-  }
-
-  const auto blockOfProofIds =
-      map_get_id_from_pointers<uint256, const AltEndorsement>(
-          current->getBlockOfProofEndorsement());
-  if (!same_vectors_unordered(blockOfProofIds,
-                              index.addon.blockOfProofEndorsementIds)) {
-    return state.Invalid(
-        "vbk-block-invalid-stored-block-of-proof-endorsements");
-  }
-  return true;
-}
-
-template <>
-bool validateLoadBlock(const BtcBlockTree& tree,
-                       const typename BtcBlockTree::stored_index_t& index,
-                       ValidationState& state) {
-  const auto* current = tree.getBlockIndex(index.header->getHash());
-  const auto blockOfProofIds =
-      map_get_id_from_pointers<uint256, const VbkEndorsement>(
-          current->getBlockOfProofEndorsement());
-  if (!same_vectors_unordered(blockOfProofIds,
-                              index.addon.blockOfProofEndorsementIds)) {
-    return state.Invalid(
-        "btc-block-invalid-stored-block-of-proof-endorsements");
-  }
-  return true;
-}
-
 }  // namespace detail
 
-bool loadTrees(AltBlockTree& tree, ValidationState& state) {
+bool loadTrees(AltBlockTree& tree, bool fast_load, ValidationState& state) {
   std::vector<typename BtcBlockTree::stored_index_t> btcblocks;
   typename BtcBlock::hash_t btctip;
   if (!detail::loadBlocksAndTip(
@@ -141,36 +86,22 @@ bool loadTrees(AltBlockTree& tree, ValidationState& state) {
   }
   std::vector<typename AltBlockTree::stored_index_t> altblocks;
   typename AltBlock::hash_t alttip;
-  if (!detail::loadBlocksAndTip(altblocks,
-                                alttip,
-                                tree.getBlockProvider(),
-                                state)) {
+  if (!detail::loadBlocksAndTip(
+          altblocks, alttip, tree.getBlockProvider(), state)) {
     return state.Invalid("load-alt-tree-blocks");
   }
 
-  if (!loadTree(tree.btc(), btctip, btcblocks, state)) {
+  if (!loadTree(tree.btc(), btctip, btcblocks, fast_load, state)) {
     return state.Invalid("failed-to-load-btc-tree");
   }
 
-  if (!loadTree(tree.vbk(), vbktip, vbkblocks, state)) {
+  if (!loadTree(tree.vbk(), vbktip, vbkblocks, fast_load, state)) {
     return state.Invalid("failed-to-load-vbk-tree");
   }
 
-  if (!loadTree(tree, alttip, altblocks, state)) {
+  if (!loadTree(tree, alttip, altblocks, fast_load, state)) {
     return state.Invalid("failed-to-load-alt-tree");
   }
-
-  VBK_ASSERT_MSG(detail::loadValidateTree(tree.btc(), btcblocks, state),
-                 "Failed to validate stored BTC tree, error: %s",
-                 state.toString());
-
-  VBK_ASSERT_MSG(detail::loadValidateTree(tree.vbk(), vbkblocks, state),
-                 "Failed to validate stored VBK tree, error: %s",
-                 state.toString());
-
-  VBK_ASSERT_MSG(detail::loadValidateTree(tree, altblocks, state),
-                 "Failed to validate stored ALT tree, error: %s",
-                 state.toString());
 
   return true;
 }

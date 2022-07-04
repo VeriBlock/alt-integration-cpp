@@ -621,11 +621,12 @@ void AltBlockTree::overrideTip(index_t& to) {
 }
 
 bool AltBlockTree::loadBlockForward(const stored_index_t& index,
+                                    bool fast_load,
                                     ValidationState& state) {
-  if (!base::loadBlockForward(index, state)) {
+  if (!base::loadBlockForward(index, fast_load, state)) {
     return false;  // already set
   }
-  return loadBlockInner(index, state);
+  return loadBlockInner(index, fast_load, state);
 }
 
 //! stateless check for duplicates in each of the payload ID vectors
@@ -641,6 +642,7 @@ bool hasDuplicateIds(const AltBlockTree::index_t& index,
 }
 
 bool AltBlockTree::loadBlockInner(const stored_index_t& index,
+                                  bool fast_load,
                                   ValidationState& state) {
   VBK_ASSERT(!this->isLoaded_);
   this->isLoadingBlocks_ = true;
@@ -650,15 +652,16 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
   auto* current = getBlockIndex(containingHash);
   VBK_ASSERT(current);
 
-  if (hasDuplicateIds(*current, state)) {
+  if (!fast_load && hasDuplicateIds(*current, state)) {
     return false;
   }
 
   if (!current->isRoot()) {
     // if the block is not yet connected, defer the stateful duplicate check to
     // connectBlock()
-    if (current->isConnected()) {
+    if (!fast_load && current->isConnected()) {
       auto mutator = makeConnectedLeafPayloadMutator(*current);
+
       if (hasStatefulDuplicates(mutator, state) &&
           !current->hasFlags(BLOCK_FAILED_POP)) {
         return state.Invalid(
@@ -674,11 +677,15 @@ bool AltBlockTree::loadBlockInner(const stored_index_t& index,
   }
 
   // recover `endorsedBy` and `blockOfProofEndorsements`
-  const int si = getParams().getEndorsementSettlementInterval();
-  auto window = std::max(0, index.height - si);
-  Chain<index_t> chain(window, current);
-  if (!recoverEndorsements(*this, chain, *current, state)) {
-    return state.Invalid("bad-endorsements");
+  if (!fast_load) {
+    const int si = getParams().getEndorsementSettlementInterval();
+    auto window = std::max(0, index.height - si);
+    Chain<index_t> chain(window, current);
+    if (!recoverEndorsements(*this, *current, chain, state)) {
+      return state.Invalid("bad-endorsements");
+    }
+  } else {
+    recoverEndorsementsFast(*this, *current);
   }
 
   if (!current->finalized) {

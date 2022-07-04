@@ -50,8 +50,8 @@ bool contextuallyCheckBlock(const BlockIndex<Block>& prev,
 //! @private
 template <typename ProtectedBlockTree>
 bool recoverEndorsements(ProtectedBlockTree& ed_,
-                         Chain<typename ProtectedBlockTree::index_t>& chain,
                          typename ProtectedBlockTree::index_t& toRecover,
+                         Chain<typename ProtectedBlockTree::index_t>& chain,
                          ValidationState& state) {
   std::vector<std::function<void()>> actions;
   auto& containingEndorsements = toRecover.getContainingEndorsements();
@@ -89,6 +89,7 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
     }
 
     auto* blockOfProof = as_mut(ing).getBlockIndex(e.blockOfProof);
+    // TODO: disable validation for testing
     if (blockOfProof == nullptr) {
       return state.Invalid(
           "bad-blockofproof",
@@ -133,6 +134,58 @@ bool recoverEndorsements(ProtectedBlockTree& ed_,
   }
 
   return true;
+}
+
+//! @private
+template <typename ProtectedBlockTree>
+void recoverEndorsementsFast(ProtectedBlockTree& ed_,
+                             typename ProtectedBlockTree::index_t& toRecover) {
+  std::vector<std::function<void()>> actions;
+  auto& containingEndorsements = toRecover.getContainingEndorsements();
+  actions.reserve(containingEndorsements.size());
+  auto& ing = ed_.getComparator().getProtectingBlockTree();
+
+  for (const auto& p : containingEndorsements) {
+    auto& e = *p.second;
+
+    auto* endorsed = ed_.getBlockIndex(e.endorsedHash);
+    auto* blockOfProof = as_mut(ing).getBlockIndex(e.blockOfProof);
+
+    // make sure it is accessible in lambda
+    const auto* endorsement = &e;
+
+    // delay execution. this ensures atomic changes - if any of endorsemens fail
+    // validation, no 'action' is actually executed.
+    actions.push_back([endorsed, blockOfProof, endorsement] {
+      auto& by = endorsed->getEndorsedBy();
+      VBK_ASSERT_MSG(std::find(by.begin(), by.end(), endorsement) == by.end(),
+                     "same endorsement is added to endorsedBy second time");
+      bool isDirty = endorsed->isDirty();
+      endorsed->insertEndorsedBy(endorsement);
+      // keep dirty flag since recoverEndorsements is used when loading blocks
+      // from storage and should not affect dirtyness of the blocks
+      if (!isDirty) {
+        endorsed->unsetDirty();
+      }
+
+      const auto& bop = blockOfProof->getBlockOfProofEndorsement();
+      VBK_ASSERT_MSG(
+          std::find(bop.begin(), bop.end(), endorsement) == bop.end(),
+          "same endorsement is added to blockOfProof second time");
+      isDirty = blockOfProof->isDirty();
+      blockOfProof->insertBlockOfProofEndorsement(endorsement);
+      // keep dirty flag
+      if (!isDirty) {
+        blockOfProof->unsetDirty();
+      }
+    });
+  }
+
+  // all actions have been validated
+  // commit changes
+  for (auto& f : actions) {
+    f();
+  }
 }
 
 //! @private
