@@ -110,7 +110,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="8" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="8" y="-300.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="8" y="-289.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
+<text text-anchor="start" x="8" y="-278.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
 <text text-anchor="start" x="8" y="-267.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
 <text text-anchor="start" x="8" y="-256.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="8" y="-245.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
@@ -154,7 +154,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="8" y="-691.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="8" y="-680.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="8" y="-669.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="8" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
+<text text-anchor="start" x="8" y="-658.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
 <text text-anchor="start" x="8" y="-647.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
 <text text-anchor="start" x="8" y="-636.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="8" y="-625.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>

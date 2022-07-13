@@ -1,7 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html":[5,0,0,0,11],
-"structaltintegration_1_1adaptors_1_1RocksDBStorage.html":[5,0,0,0,12],
 "structaltintegration_1_1adaptors_1_1RocksDBStorageIterator.html":[5,0,0,0,13],
 "structaltintegration_1_1adaptors_1_1RocksDBWriteBatch.html":[5,0,0,0,14],
 "structaltintegration_1_1adaptors_1_1Storage.html":[5,0,0,0,15],

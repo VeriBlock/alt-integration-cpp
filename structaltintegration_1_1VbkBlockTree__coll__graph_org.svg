@@ -93,7 +93,7 @@
 <text text-anchor="start" x="718" y="-592.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="718" y="-581.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="718" y="-570.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="718" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
+<text text-anchor="start" x="718" y="-559.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
 <text text-anchor="start" x="718" y="-548.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
 <text text-anchor="start" x="718" y="-537.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="718" y="-526.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
@@ -153,7 +153,7 @@
 <text text-anchor="start" x="452" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="452" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="452" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="452" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
+<text text-anchor="start" x="452" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
 <text text-anchor="start" x="452" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
 <text text-anchor="start" x="452" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="452" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
@@ -192,7 +192,7 @@
 <text text-anchor="start" x="968" y="-906.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
 <text text-anchor="start" x="968" y="-895.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ BaseBlockTree()</text>
 <text text-anchor="start" x="968" y="-884.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ operator=()</text>
-<text text-anchor="start" x="968" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 25 more...</text>
+<text text-anchor="start" x="968" y="-873.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 24 more...</text>
 <text text-anchor="start" x="968" y="-862.5" font-family="Helvetica,sans-Serif" font-size="10.00"># deallocateBlock()</text>
 <text text-anchor="start" x="968" y="-851.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toPrettyString()</text>
 <text text-anchor="start" x="968" y="-840.5" font-family="Helvetica,sans-Serif" font-size="10.00"># decreaseAppliedBlockCount()</text>
