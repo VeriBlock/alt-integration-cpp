@@ -125,7 +125,7 @@ POP_ENTITY_CUSTOM_FUNCTION(pop_context,
   VBK_ASSERT(self);
   VBK_ASSERT(state);
 
-  return loadTrees(self->ref->getAltBlockTree(), state->ref);
+  return loadTrees(self->ref->getAltBlockTree(), false, state->ref);
 }
 
 POP_ENTITY_CUSTOM_FUNCTION(pop_context,

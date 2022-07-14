@@ -180,28 +180,16 @@ struct BaseBlockTree {
    * Efficiently connects BlockIndex to this tree as a leaf, when it is loaded
    * from disk.
    * @param[in] index block to be connected
+   * @param[in] fast_load flag
    * @param[out] state validation state
    * @return true if block is valid and successfully loaded, false otherwise.
    * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
    * state.
    */
   virtual bool loadBlockForward(const stored_index_t& index,
+                                bool fast_load,
                                 ValidationState& state) {
-    return loadBlockInner(index, true, state);
-  }
-
-  /**
-   * Efficiently connects BlockIndex to this tree as a new root, when it is
-   * loaded from disk.
-   * @param[in] index block to be connected
-   * @param[out] state validation state
-   * @return true if block is valid and successfully loaded, false otherwise.
-   * @invariant NOT atomic. If returned false, leaves BaseBlockTree in undefined
-   * state.
-   */
-  virtual bool loadBlockBackward(const stored_index_t& index,
-                                 ValidationState& state) {
-    return loadBlockInner(index, false, state);
+    return loadBlockInner(index, true, fast_load, state);
   }
 
   /**
@@ -598,6 +586,7 @@ struct BaseBlockTree {
   //! @private
   bool loadBlockInner(const stored_index_t& index,
                       bool connectForward,
+                      bool fast_load,
                       ValidationState& state) {
     VBK_TRACE_ZONE_SCOPED;
 
@@ -610,31 +599,33 @@ struct BaseBlockTree {
 
     // quick check if given block is sane
     auto& root = getRoot();
-    if (connectForward) {
-      if (index.height < root.getHeight()) {
-        auto hash = index.header->getHash();
-        return state.Invalid(
-            "bad-height",
-            format("Blocks can be forward connected after root only. "
-                   "index.height: {}, root.height: {}, index.hash: {}",
-                   index.height,
-                   root.getHeight(),
-                   HexStr(hash.begin(), hash.end())));
-      }
-    } else {
-      if (index.height + 1 != root.getHeight()) {
-        auto hash = index.header->getHash();
-        return state.Invalid(
-            "bad-height",
-            format("Blocks can be backwards connected only to the "
-                   "root, index.height: {}, root.height: {}, index.hash: {}",
-                   index.height,
-                   root.getHeight(),
-                   HexStr(hash.begin(), hash.end())));
+    if (!fast_load) {
+      if (connectForward) {
+        if (index.height < root.getHeight()) {
+          auto hash = index.header->getHash();
+          return state.Invalid(
+              "bad-height",
+              format("Blocks can be forward connected after root only. "
+                     "index.height: {}, root.height: {}, index.hash: {}",
+                     index.height,
+                     root.getHeight(),
+                     HexStr(hash.begin(), hash.end())));
+        }
+      } else {
+        if (index.height + 1 != root.getHeight()) {
+          auto hash = index.header->getHash();
+          return state.Invalid(
+              "bad-height",
+              format("Blocks can be backwards connected only to the "
+                     "root, index.height: {}, root.height: {}, index.hash: {}",
+                     index.height,
+                     root.getHeight(),
+                     HexStr(hash.begin(), hash.end())));
+        }
       }
     }
 
-    if (index.height == root.getHeight() &&
+    if (!fast_load && index.height == root.getHeight() &&
         index.header->getHash() != root.getHash()) {
       // root is finalized, we can't load a block on same height
       return state.Invalid("bad-root",
@@ -648,7 +639,7 @@ struct BaseBlockTree {
 
     // we can not load a block, which already exists on chain and is not a
     // bootstrap block
-    if (current != nullptr && !current->isDeleted() &&
+    if (!fast_load && current != nullptr && !current->isDeleted() &&
         !current->hasFlags(BLOCK_BOOTSTRAP)) {
       return state.Invalid(
           "block-exists",
@@ -664,15 +655,19 @@ struct BaseBlockTree {
       // we can not load block which is not connected to the
       // bootstrap block
       if (prev == nullptr) {
-        if (connectForward) {
-          return state.Invalid("bad-prev",
-                               "Block does not connect to current tree");
-        }
+        if (!fast_load) {
+          if (connectForward) {
+            return state.Invalid("bad-prev",
+                                 "Block does not connect to current tree");
+          }
 
-        if (root.getHeader().getPreviousBlock() != makePrevHash(currentHash)) {
-          return state.Invalid("bad-block-hash",
-                               format("Can't replace root block with block {}",
-                                      index.toPrettyString()));
+          if (root.getHeader().getPreviousBlock() !=
+              makePrevHash(currentHash)) {
+            return state.Invalid(
+                "bad-block-hash",
+                format("Can't replace root block with block {} ",
+                       index.toPrettyString()));
+          }
         }
 
         current = createBootstrapBlockIndex(currentHash, index.height);
@@ -705,7 +700,7 @@ struct BaseBlockTree {
     current->pprev = prev;
 
     // check for valid previous block
-    if (current->pprev != nullptr) {
+    if (!fast_load && current->pprev != nullptr) {
       // prev block found
       auto expectedHeight = current->pprev->getHeight() + 1;
       if (current->getHeight() != expectedHeight) {

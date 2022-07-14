@@ -56,7 +56,7 @@ TEST_F(AltTreeRepositoryTest, Altchain) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
   reloadedAltTree.bootstrap();
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, false, state));
   ASSERT_TRUE(this->cmp(reloadedAltTree.vbk().btc(), this->alttree.btc()))
       << "initial : \n"
       << alttree.toPrettyString() << "\n\n"
@@ -121,7 +121,7 @@ TEST_F(AltTreeRepositoryTest, ManyEndorsements) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
   reloadedAltTree.bootstrap();
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, false, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -137,8 +137,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
 
   auto* vbkTip = this->popminer.mineVbkBlocks(1);
   VBK_LOG_DEBUG("create an endorsement of VBKTIP in BTC_1");
-  auto btctx =
-      this->popminer.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
+  auto btctx = this->popminer.createBtcTxEndorsingVbkBlock(vbkTip->getHeader());
   VBK_LOG_DEBUG("add a BTC tx endorsing VBKTIP to the next block");
   auto* chainAtip = this->popminer.mineBtcBlocks(1, {btctx});
 
@@ -198,7 +197,7 @@ TEST_F(AltTreeRepositoryTest, InvalidBlocks) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
   reloadedAltTree.bootstrap();
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, false, state));
 
   ASSERT_TRUE(
       this->cmp(reloadedAltTree.vbk().btc(), this->alttree.vbk().btc()));
@@ -260,5 +259,5 @@ TEST_F(AltTreeRepositoryTest, SaveAfterSave) {
   reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock());
   reloadedAltTree.bootstrap();
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, false, state));
 }

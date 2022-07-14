@@ -253,8 +253,7 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
     BlockPayloadMutator(tree_t& tree,
                         block_index_t& block,
                         PayloadsIndex<block_index_t>& pl,
-                        FinalizedPayloadsIndex<block_index_t>& fpl
-                        );
+                        FinalizedPayloadsIndex<block_index_t>& fpl);
 
     //! stateful duplicate payload check as performed by connectBlock()
     bool isStatefulDuplicate(const id_vector_t& payload_id);
@@ -314,12 +313,14 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
    * blockOfProofEndorsements), validates block and endorsements, recovers
    * validity index, recovers tips array.
    * @param[in] index block
+   * @param[in] fast_load flag
    * @param[out] state validation state
    * @return true if block is valid
    * @invariant NOT atomic. If loadBlock failed, AltBlockTree state is undefined
    * and can not be used. Tip: ask user to run with '-reindex'.
    */
   VBK_CHECK_RETURN bool loadBlockForward(const stored_index_t& index,
+                                         bool fast_load,
                                          ValidationState& state) override;
 
   /**
@@ -452,7 +453,9 @@ struct AltBlockTree : public BaseBlockTree<AltBlock> {
   command_group_store_t commandGroupStore_;
 
   //! @private
-  bool loadBlockInner(const stored_index_t& index, ValidationState& state);
+  bool loadBlockInner(const stored_index_t& index,
+                      bool fast_load,
+                      ValidationState& state);
 
   //! @private
   void determineBestChain(index_t& candidate, ValidationState& state) override;
