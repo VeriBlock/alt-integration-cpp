@@ -120,6 +120,7 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   //! - recovers tips array
   //! @invariant NOT atomic.
   bool loadBlockForward(const stored_index_t& index,
+                        bool fast_load,
                         ValidationState& state) override;
 
   BtcTree& btc() { return cmp_.getProtectingBlockTree(); }
@@ -176,7 +177,9 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
   void finalizeBlocks();
 
  private:
-  bool loadBlockInner(const stored_index_t& index, ValidationState& state);
+  bool loadBlockInner(const stored_index_t& index,
+                      bool fast_load,
+                      ValidationState& state);
 
   bool validateBTCContext(const payloads_t& vtb, ValidationState& state);
   /**

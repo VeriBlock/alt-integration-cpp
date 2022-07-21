@@ -105,9 +105,10 @@ struct PopContext {
   /**
    * Load ALT/VBK/BTC trees from disk via adapter BlockReader.
    *
+   * @param[in] fast_load flag
    * @param[out] state validation state
    */
-  VBK_CHECK_RETURN bool loadAllTrees(ValidationState& state);
+  VBK_CHECK_RETURN bool loadAllTrees(bool fast_load, ValidationState& state);
 
   /**
    * Calculates POP rewards that should be paid in the next block after `prev`.

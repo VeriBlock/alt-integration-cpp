@@ -90,7 +90,7 @@ TEST_F(Scenario10, scenario_10) {
       reloadedAltTree.vbk().bootstrapWithGenesis(GetRegTestVbkBlock()));
   EXPECT_NO_FATAL_FAILURE(reloadedAltTree.bootstrap());
 
-  ASSERT_TRUE(loadTrees(reloadedAltTree, state));
+  ASSERT_TRUE(loadTrees(reloadedAltTree, false, state));
 
   ASSERT_TRUE(reloadedAltTree.getBlockIndex(chainA.back().getHash()) !=
               nullptr);

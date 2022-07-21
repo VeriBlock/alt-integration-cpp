@@ -383,14 +383,15 @@ struct PopTestFixture {
     batch->writeBatch();
   }
 
-  bool load(AltBlockTree& tree) { return loadTrees(tree, state); }
+  bool load(AltBlockTree& tree) { return loadTrees(tree, false, state); }
 };
 
 template <typename pop_t>
-void validatePayloadsIndexState(const PayloadsIndex<BlockIndex<AltBlock>>& storage,
-                                const AltBlock::hash_t& containingHash,
-                                const std::vector<pop_t>& payloads,
-                                bool payloads_existance) {
+void validatePayloadsIndexState(
+    const PayloadsIndex<BlockIndex<AltBlock>>& storage,
+    const AltBlock::hash_t& containingHash,
+    const std::vector<pop_t>& payloads,
+    bool payloads_existance) {
   for (const auto& data : payloads) {
     auto alt_set = storage.find(data.getId().asVector());
     EXPECT_EQ(alt_set.find(containingHash) != alt_set.end(),
