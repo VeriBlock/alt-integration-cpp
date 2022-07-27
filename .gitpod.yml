@@ -10,21 +10,3 @@ gitConfig:
   alias.ca: commit --amend
   alias.f: fetch
   alias.lg: log --oneline
-
-tasks:
-  - name: vbtc
-    before: |
-      cd ../vbtc
-    init: |
-      ./autogen.sh
-      ./configure --with-incompatible-bdb --without-gui --disable-bench
-    command: |
-      make -j12
-
-  - name: lib
-    init: |
-      mkdir build
-      cd build
-      cmake ..
-    command: |
-      make -j12
