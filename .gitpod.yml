@@ -1,8 +1,7 @@
-# example .gitpod.yml from https://github.com/gitpod-io/demo-multi-repo-frontend
 additionalRepositories:
-  - url: https://github.com/gitpod-io/demo-multi-repo-backend
+  - url: https://github.com/VeriBlock/vbk-ri-btc
     # checkoutLocation is relative to /workspaces
-    checkoutLocation: vbtc
+    checkoutLocation: /vbtc
 
 gitConfig:
   alias.s: status
