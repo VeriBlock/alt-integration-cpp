@@ -1,0 +1,30 @@
+# example .gitpod.yml from https://github.com/gitpod-io/demo-multi-repo-frontend
+additionalRepositories:
+  - url: https://github.com/gitpod-io/demo-multi-repo-backend
+    # checkoutLocation is relative to /workspaces
+    checkoutLocation: vbtc
+
+gitConfig:
+  alias.s: status
+  alias.c: commit
+  alias.ca: commit --amend
+  alias.f: fetch
+  alias.lg: log --oneline
+
+tasks:
+  - name: vbtc
+    before: |
+      cd ../vbtc
+    init: |
+      ./autogen.sh
+      ./configure --with-incompatible-bdb --without-gui --disable-bench
+    command: |
+      make -j12
+
+  - name: lib
+    init: |
+      mkdir build
+      cd build
+      cmake ..
+    command: |
+      make -j12
