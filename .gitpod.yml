@@ -9,3 +9,33 @@ gitConfig:
   alias.ca: commit --amend
   alias.f: fetch
   alias.lg: log --oneline
+
+tasks:
+  - name: env
+    init: |
+      sudo apt update
+      sudo apt install -y \
+        ccache \
+        libboost-dev \
+        libboost-system-dev \
+        libboost-filesystem-dev \
+        libboost-program-options-dev \
+        build-essential \
+        libtool \
+        autotools-dev \
+        automake \
+        pkg-config \
+        bsdmainutils \
+        python3 \
+        libevent-dev \
+        libsqlite3-dev \
+        libminiupnpc-dev \
+        libnatpmp-dev \
+        libzmq3-dev \
+        systemtap-sdt-dev \
+        libevent-dev \
+        libboost-chrono-dev \
+        libboost-test-dev \
+        libboost-thread-dev \
+        libdb++-dev \
+        libdb-dev
