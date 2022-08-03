@@ -7,11 +7,11 @@ std::shared_ptr<PopContext> PopContext::create(
     std::shared_ptr<Config> config,
     std::shared_ptr<PayloadsStorage> payloadsProvider,
     std::shared_ptr<BlockReader> blockProvider,
-    const std::shared_ptr<EthashCache>& ethashCache,
-    const std::shared_ptr<ProgpowHeaderCache>& progpowHeaderCache,
+    std::unique_ptr<EthashCache> ethashCache,
+    std::unique_ptr<ProgpowHeaderCache> progpowHeaderCache,
     size_t validatorWorkers) {
-  setEthashCache(ethashCache);
-  setProgpowHeaderCache(progpowHeaderCache);
+  setEthashCache(std::move(ethashCache));
+  setProgpowHeaderCache(std::move(progpowHeaderCache));
 
   config->validate();
 
