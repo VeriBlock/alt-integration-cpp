@@ -1,52 +1,52 @@
 <map id="include/veriblock/pop/config.hpp" name="include/veriblock/pop/config.hpp">
-<area shape="rect" id="node1" title="Altchains must configure AltBlockTree prior any usage by providing bootstrapping Config." alt="" coords="1951,5,2095,47"/>
-<area shape="rect" id="node2" title=" " alt="" coords="2383,698,2435,725"/>
-<area shape="rect" id="node3" title=" " alt="" coords="2153,959,2212,985"/>
-<area shape="rect" id="node4" href="$alt__chain__params_8hpp_source.html" title=" " alt="" coords="2311,244,2451,285"/>
-<area shape="rect" id="node21" href="$serde_8hpp_source.html" title=" " alt="" coords="1331,698,1490,725"/>
-<area shape="rect" id="node42" href="$btc__chain__params_8hpp_source.html" title=" " alt="" coords="833,512,977,553"/>
-<area shape="rect" id="node43" href="$vbk__chain__params_8hpp_source.html" title=" " alt="" coords="1825,423,1972,464"/>
-<area shape="rect" id="node44" href="$stateless__validation_8hpp_source.html" title=" " alt="" coords="1481,95,1642,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="2723,787,2776,814"/>
-<area shape="rect" id="node6" title=" " alt="" coords="2554,1033,2609,1060"/>
-<area shape="rect" id="node7" href="$block__index_8hpp_source.html" title=" " alt="" coords="3056,423,3221,464"/>
-<area shape="rect" id="node27" href="$validation__state_8hpp_source.html" title=" " alt="" coords="619,869,778,911"/>
-<area shape="rect" id="node38" href="$altblock_8hpp_source.html" title=" " alt="" coords="2709,333,2854,375"/>
-<area shape="rect" id="node8" title=" " alt="" coords="2613,609,2681,635"/>
-<area shape="rect" id="node9" title=" " alt="" coords="3200,787,3240,814"/>
-<area shape="rect" id="node10" href="$algorithm_8hpp_source.html" title=" " alt="" coords="2747,698,2927,725"/>
-<area shape="rect" id="node14" href="$endorsements_8hpp_source.html" title=" " alt="" coords="3105,691,3250,732"/>
-<area shape="rect" id="node15" href="$vbkblock_8hpp_source.html" title=" " alt="" coords="2102,512,2247,553"/>
-<area shape="rect" id="node29" href="$write__stream_8hpp_source.html" title=" " alt="" coords="3054,787,3175,814"/>
-<area shape="rect" id="node33" href="$logger_8hpp_source.html" title=" " alt="" coords="3209,519,3290,546"/>
-<area shape="rect" id="node34" href="$stored__block__index_8hpp_source.html" title=" " alt="" coords="3377,601,3538,643"/>
-<area shape="rect" id="node35" href="$block__status_8hpp_source.html" title=" " alt="" coords="3376,698,3496,725"/>
-<area shape="rect" id="node36" href="$command_8hpp_source.html" title=" " alt="" coords="2705,609,2807,635"/>
-<area shape="rect" id="node37" href="$command__group_8hpp_source.html" title=" " alt="" coords="2838,519,2981,546"/>
-<area shape="rect" id="node11" title=" " alt="" coords="1049,959,1124,985"/>
-<area shape="rect" id="node12" title=" " alt="" coords="2619,787,2698,814"/>
-<area shape="rect" id="node13" title=" " alt="" coords="1193,959,1255,985"/>
-<area shape="rect" id="node16" title=" " alt="" coords="2399,877,2460,903"/>
-<area shape="rect" id="node17" href="$arith__uint256_8hpp_source.html" title=" " alt="" coords="1780,691,1908,732"/>
-<area shape="rect" id="node30" href="$uint_8hpp_source.html" title=" " alt="" coords="2085,698,2233,725"/>
-<area shape="rect" id="node31" href="$btcblock_8hpp_source.html" title=" " alt="" coords="867,609,962,635"/>
-<area shape="rect" id="node18" title=" " alt="" coords="1466,877,1545,903"/>
-<area shape="rect" id="node19" href="$consts_8hpp.html" title="All constants in alt&#45;cpp." alt="" coords="2205,787,2291,814"/>
-<area shape="rect" id="node20" href="$strutil_8hpp_source.html" title=" " alt="" coords="1006,787,1085,814"/>
-<area shape="rect" id="node22" href="$network__byte__pair_8hpp_source.html" title=" " alt="" coords="1681,780,1826,821"/>
-<area shape="rect" id="node24" href="$read__stream_8hpp_source.html" title=" " alt="" coords="1486,787,1605,814"/>
-<area shape="rect" id="node25" href="$slice_8hpp_source.html" title=" " alt="" coords="1113,877,1186,903"/>
-<area shape="rect" id="node23" href="$json_8hpp_source.html" title=" " alt="" coords="353,959,423,985"/>
-<area shape="rect" id="node26" title=" " alt="" coords="79,959,145,985"/>
-<area shape="rect" id="node28" title=" " alt="" coords="771,959,840,985"/>
-<area shape="rect" id="node32" title=" " alt="" coords="866,698,963,725"/>
-<area shape="rect" id="node39" href="$alt__block__addon_8hpp_source.html" title=" " alt="" coords="2984,601,3149,643"/>
-<area shape="rect" id="node40" href="$hashers_8hpp_source.html" title=" " alt="" coords="3315,787,3488,814"/>
-<area shape="rect" id="node41" href="$stored__alt__block__addon_8hpp_source.html" title=" " alt="" coords="2475,512,2661,553"/>
-<area shape="rect" id="node45" href="$secp256k1_8hpp_source.html" title=" " alt="" coords="1262,787,1410,814"/>
-<area shape="rect" id="node46" href="$atv_8hpp_source.html" title=" " alt="" coords="1567,430,1678,457"/>
-<area shape="rect" id="node47" href="$popdata_8hpp_source.html" title=" " alt="" coords="1335,341,1473,367"/>
-<area shape="rect" id="node48" href="$vtb_8hpp_source.html" title=" " alt="" coords="1479,430,1543,457"/>
-<area shape="rect" id="node49" href="$pop__stateless__validator_8hpp_source.html" title=" " alt="" coords="1599,169,1782,196"/>
-<area shape="rect" id="node50" href="$time_8hpp_source.html" title=" " alt="" coords="2161,251,2231,278"/>
+<area shape="rect" id="node1" title="Altchains must configure AltBlockTree prior any usage by providing bootstrapping Config." alt="" coords="1308,5,1452,47"/>
+<area shape="rect" id="node2" title=" " alt="" coords="1574,698,1626,725"/>
+<area shape="rect" id="node3" title=" " alt="" coords="2403,959,2462,985"/>
+<area shape="rect" id="node4" href="$alt__chain__params_8hpp_source.html" title=" " alt="" coords="2202,244,2342,285"/>
+<area shape="rect" id="node21" href="$serde_8hpp_source.html" title=" " alt="" coords="1340,698,1498,725"/>
+<area shape="rect" id="node42" href="$btc__chain__params_8hpp_source.html" title=" " alt="" coords="731,512,875,553"/>
+<area shape="rect" id="node43" href="$vbk__chain__params_8hpp_source.html" title=" " alt="" coords="1758,423,1904,464"/>
+<area shape="rect" id="node44" href="$stateless__validation_8hpp_source.html" title=" " alt="" coords="1300,95,1461,121"/>
+<area shape="rect" id="node5" title=" " alt="" coords="3346,787,3399,814"/>
+<area shape="rect" id="node6" title=" " alt="" coords="2801,1033,2856,1060"/>
+<area shape="rect" id="node7" href="$block__index_8hpp_source.html" title=" " alt="" coords="2960,423,3126,464"/>
+<area shape="rect" id="node27" href="$validation__state_8hpp_source.html" title=" " alt="" coords="745,869,904,911"/>
+<area shape="rect" id="node38" href="$altblock_8hpp_source.html" title=" " alt="" coords="2601,333,2746,375"/>
+<area shape="rect" id="node8" title=" " alt="" coords="2420,609,2488,635"/>
+<area shape="rect" id="node9" title=" " alt="" coords="2882,787,2922,814"/>
+<area shape="rect" id="node10" href="$algorithm_8hpp_source.html" title=" " alt="" coords="2718,698,2898,725"/>
+<area shape="rect" id="node14" href="$endorsements_8hpp_source.html" title=" " alt="" coords="3676,691,3821,732"/>
+<area shape="rect" id="node15" href="$vbkblock_8hpp_source.html" title=" " alt="" coords="1742,512,1888,553"/>
+<area shape="rect" id="node29" href="$write__stream_8hpp_source.html" title=" " alt="" coords="3048,787,3169,814"/>
+<area shape="rect" id="node33" href="$logger_8hpp_source.html" title=" " alt="" coords="2924,519,3005,546"/>
+<area shape="rect" id="node34" href="$stored__block__index_8hpp_source.html" title=" " alt="" coords="3097,601,3258,643"/>
+<area shape="rect" id="node35" href="$block__status_8hpp_source.html" title=" " alt="" coords="3227,698,3347,725"/>
+<area shape="rect" id="node36" href="$command_8hpp_source.html" title=" " alt="" coords="2817,609,2920,635"/>
+<area shape="rect" id="node37" href="$command__group_8hpp_source.html" title=" " alt="" coords="2705,519,2848,546"/>
+<area shape="rect" id="node11" title=" " alt="" coords="903,959,978,985"/>
+<area shape="rect" id="node12" title=" " alt="" coords="2576,787,2654,814"/>
+<area shape="rect" id="node13" title=" " alt="" coords="1174,959,1237,985"/>
+<area shape="rect" id="node16" title=" " alt="" coords="2388,877,2450,903"/>
+<area shape="rect" id="node17" href="$arith__uint256_8hpp_source.html" title=" " alt="" coords="1972,691,2100,732"/>
+<area shape="rect" id="node30" href="$uint_8hpp_source.html" title=" " alt="" coords="2277,698,2425,725"/>
+<area shape="rect" id="node31" href="$btcblock_8hpp_source.html" title=" " alt="" coords="830,609,925,635"/>
+<area shape="rect" id="node18" title=" " alt="" coords="1417,877,1496,903"/>
+<area shape="rect" id="node19" href="$consts_8hpp.html" title="All constants in alt&#45;cpp." alt="" coords="2263,787,2348,814"/>
+<area shape="rect" id="node20" href="$strutil_8hpp_source.html" title=" " alt="" coords="1014,787,1093,814"/>
+<area shape="rect" id="node22" href="$network__byte__pair_8hpp_source.html" title=" " alt="" coords="1586,780,1732,821"/>
+<area shape="rect" id="node24" href="$read__stream_8hpp_source.html" title=" " alt="" coords="1392,787,1510,814"/>
+<area shape="rect" id="node25" href="$slice_8hpp_source.html" title=" " alt="" coords="1169,877,1242,903"/>
+<area shape="rect" id="node23" href="$json_8hpp_source.html" title=" " alt="" coords="536,959,606,985"/>
+<area shape="rect" id="node26" title=" " alt="" coords="198,959,264,985"/>
+<area shape="rect" id="node28" title=" " alt="" coords="680,959,750,985"/>
+<area shape="rect" id="node32" title=" " alt="" coords="862,698,960,725"/>
+<area shape="rect" id="node39" href="$alt__block__addon_8hpp_source.html" title=" " alt="" coords="3435,601,3600,643"/>
+<area shape="rect" id="node40" href="$hashers_8hpp_source.html" title=" " alt="" coords="3423,787,3596,814"/>
+<area shape="rect" id="node41" href="$stored__alt__block__addon_8hpp_source.html" title=" " alt="" coords="2494,512,2680,553"/>
+<area shape="rect" id="node45" href="$secp256k1_8hpp_source.html" title=" " alt="" coords="1220,787,1368,814"/>
+<area shape="rect" id="node46" href="$atv_8hpp_source.html" title=" " alt="" coords="1622,430,1733,457"/>
+<area shape="rect" id="node47" href="$popdata_8hpp_source.html" title=" " alt="" coords="1323,341,1462,367"/>
+<area shape="rect" id="node48" href="$vtb_8hpp_source.html" title=" " alt="" coords="1195,430,1259,457"/>
+<area shape="rect" id="node49" href="$pop__stateless__validator_8hpp_source.html" title=" " alt="" coords="1086,169,1269,196"/>
+<area shape="rect" id="node50" href="$time_8hpp_source.html" title=" " alt="" coords="1689,251,1760,278"/>
 </map>
