@@ -5,6 +5,24 @@
 
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/entities/context_info_container.hpp>
+#include <cstddef>
+#include <algorithm>
+#include <cstdint>
+#include <string>
+#include <vector>
+
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/entities/altblock.hpp"
+#include "veriblock/pop/entities/keystone_container.hpp"
+#include "veriblock/pop/hashutil.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

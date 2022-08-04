@@ -3,13 +3,37 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/pop/storage/util.hpp"
+
 #include <algorithm>
-#include <veriblock/pop/blockchain/alt_block_tree.hpp>
-#include <veriblock/pop/crypto/progpow.hpp>
-#include <veriblock/pop/pop_context.hpp>
-#include <veriblock/pop/storage/util.hpp>
+#include <functional>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/base_block_tree.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/blocktree.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/crypto/progpow.hpp"
+#include "veriblock/pop/entities/altblock.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/stateless_validation.hpp"
+#include "veriblock/pop/storage/stored_block_index.hpp"
+#include "veriblock/pop/third_party/Signals.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+struct BlockBatch;
+struct BlockReader;
 
 namespace detail {
 

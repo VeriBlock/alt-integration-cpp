@@ -3,10 +3,24 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <utility>
 #include <veriblock/pop/config.hpp>
+#include <cstdint>
+#include <utility>
+#include <algorithm>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blockchain/btc_chain_params.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/stateless_validation.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+struct AltChainParams;
 
 static std::shared_ptr<altintegration::VbkChainParams> ParseVbkNetwork(
     std::string net) {

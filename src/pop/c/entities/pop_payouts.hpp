@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_C_ENTITIES_POP_PAYOUTS_HPP
 #define VERIBLOCK_POP_CPP_C_ENTITIES_POP_PAYOUTS_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <vector>
 

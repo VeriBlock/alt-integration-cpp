@@ -5,6 +5,10 @@
 
 #include <veriblock/pop/strutil.hpp>
 #include <veriblock/pop/write_stream.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
 
 namespace altintegration {
 

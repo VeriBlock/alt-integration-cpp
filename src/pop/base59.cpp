@@ -3,13 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <veriblock/pop/base59.hpp>
+#include <cstddef>
 #include <array>
 #include <limits>
-#include <stdexcept>
 #include <string>
 #include <vector>
-#include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/base59.hpp>
+#include <cstdint>
+
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 

@@ -4,6 +4,12 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <veriblock/pop/bootstraps.hpp>
 
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/uint.hpp"
+
 namespace altintegration {
 
 // corresponds to "regtest_progpow" VBK network

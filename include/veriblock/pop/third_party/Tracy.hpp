@@ -701,7 +701,7 @@ enum ColorType
 #ifndef __TRACYSYSTEM_HPP__
 #define __TRACYSYSTEM_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
 
 /*** Start of inlined file: TracyApi.h ***/
@@ -917,9 +917,9 @@ tracy_force_inline void MemWrite( void* ptr, T val )
 #ifndef __TRACYPROFILER_HPP__
 #define __TRACYPROFILER_HPP__
 
-#include <assert.h>
+#include <cassert>
 #include <atomic>
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 #include <time.h>
 
@@ -969,7 +969,7 @@ tracy_force_inline void MemWrite( void* ptr, T val )
 /*** Start of inlined file: tracy_rpmalloc.hpp ***/
 #pragma once
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace tracy
 {
@@ -2724,8 +2724,8 @@ inline void swap(ConsumerToken& a, ConsumerToken& b) noexcept
 
 #ifdef TRACY_HAS_CALLSTACK
 
-#include <assert.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstdint>
 
 namespace tracy
 {
@@ -2843,7 +2843,7 @@ static tracy_force_inline void* Callstack( int depth )
 
 #ifdef TRACY_HAS_SYSTIME
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -2872,8 +2872,8 @@ private:
 #ifndef __TRACYFASTVECTOR_HPP__
 #define __TRACYFASTVECTOR_HPP__
 
-#include <assert.h>
-#include <stddef.h>
+#include <cassert>
+#include <cstddef>
 
 namespace tracy
 {
@@ -2992,7 +2992,7 @@ private:
 #ifndef __TRACYQUEUE_HPP__
 #define __TRACYQUEUE_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -3732,7 +3732,7 @@ using TracyMutex = std::mutex;
 #define __TRACYPROTOCOL_HPP__
 
 #include <limits>
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -5218,7 +5218,7 @@ private:
 #define __TRACYSCOPED_HPP__
 
 #include <limits>
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 
 namespace tracy
@@ -5539,4 +5539,3 @@ private:
 #endif
 
 #endif
-

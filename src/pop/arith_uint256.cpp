@@ -5,6 +5,13 @@
 
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/assert.hpp>
+#include <algorithm>
+#include <array>
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/strutil.hpp"
 
 using namespace altintegration;
 

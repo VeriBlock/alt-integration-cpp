@@ -3,12 +3,38 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <cassert>
-#include <vector>
 #include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/rewards/default_poprewards_calculator.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <cassert>
+#include <vector>
+#include <map>
+
+
+#include "veriblock/pop/arith_uint256.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/blockchain/base_block_tree.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/block_status.hpp"
+#include "veriblock/pop/blockchain/chain.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/entities/endorsement.hpp"
+#include "veriblock/pop/entities/pop_payouts.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/entities/vbktx.hpp"
+#include "veriblock/pop/keystone_util.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/rewards/poprewards_bigdecimal.hpp"
+#include "veriblock/pop/storage/payloads_provider.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+struct AltBlock;
 
 static int getBestPublicationHeight(const BlockIndex<AltBlock>& endorsedBlock,
                                     const VbkBlockTree& vbk_tree) {

@@ -6,12 +6,16 @@
 #ifndef __SIGNUTIL__HPP__
 #define __SIGNUTIL__HPP__
 
-#include <stdexcept>
-#include <vector>
 #include <veriblock/pop/blob.hpp>
 #include <veriblock/pop/slice.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
+#include <vector>
 
 namespace altintegration {
+template <class ElementType> struct Slice;
+
 namespace secp256k1 {
 
 static const size_t PRIVATE_KEY_SIZE = 32;

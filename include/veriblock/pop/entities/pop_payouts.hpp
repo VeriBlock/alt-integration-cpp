@@ -6,15 +6,19 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_POP_REWARDS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_POP_REWARDS_HPP_
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <utility>
 #include <vector>
 
-#include <veriblock/pop/serde.hpp>
-#include <veriblock/pop/validation_state.hpp>
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 /**
  * @struct PopPayouts

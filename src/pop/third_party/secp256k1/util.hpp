@@ -12,9 +12,9 @@
 #endif
 
 #include <stdlib.h>
-#include <stdint.h>
+#include <cstdint>
 #include <stdio.h>
-#include <limits.h>
+#include <climits>
 
 namespace altintegration {
 

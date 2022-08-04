@@ -9,7 +9,6 @@
 #include "sha3.hpp"
 
 #include <cstdint>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 

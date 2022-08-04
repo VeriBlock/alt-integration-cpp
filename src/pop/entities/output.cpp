@@ -5,6 +5,18 @@
 
 #include <veriblock/pop/entities/output.hpp>
 
+
+#include "veriblock/pop/entities/address.hpp"
+#include "veriblock/pop/entities/coin.hpp"
+#include "veriblock/pop/json.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/validation_state.hpp"
+
+namespace altintegration {
+class WriteStream;
+struct ReadStream;
+}  // namespace altintegration
+
 using namespace altintegration;
 
 bool Output::operator==(const Output& other) const noexcept {

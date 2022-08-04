@@ -3,13 +3,39 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <deque>
-#include <iterator>
 #include <veriblock/pop/mempool.hpp>
-#include <veriblock/pop/reversed_range.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
+#include <iterator>
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <set>
+#include <tuple>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/algorithm.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/blocktree.hpp"
+#include "veriblock/pop/blockchain/chain.hpp"
+#include "veriblock/pop/blockchain/mempool_block_tree.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/blockchain/temp_block_tree.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/mempool_relations.hpp"
+#include "veriblock/pop/third_party/Signals.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
 

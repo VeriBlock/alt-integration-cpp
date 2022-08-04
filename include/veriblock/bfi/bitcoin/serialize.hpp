@@ -8,7 +8,7 @@
 #ifndef BFI_BITCOIN_SERIALIZE_HPP
 #define BFI_BITCOIN_SERIALIZE_HPP
 
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 
 #include <algorithm>

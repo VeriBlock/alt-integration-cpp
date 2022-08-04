@@ -6,7 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALT_POP_TRANSACTION_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_ALT_POP_TRANSACTION_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <vector>
 #include <veriblock/pop/serde.hpp>

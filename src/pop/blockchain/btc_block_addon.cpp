@@ -5,9 +5,25 @@
 
 #include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/blockchain/btc_block_addon.hpp>
-#include <veriblock/pop/entities/btcblock.hpp>
+#include <cstdint>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+
+#include "veriblock/pop/algorithm.hpp"
+#include "veriblock/pop/arith_uint256.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
+struct BtcBlock;
 
 void BtcBlockAddon::setDirty() {
   static_cast<BlockIndex<BtcBlock>*>(this)->setDirty();

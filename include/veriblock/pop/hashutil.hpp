@@ -6,6 +6,7 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_SHAUTIL_HPP
 #define ALT_INTEGRATION_VERIBLOCK_SHAUTIL_HPP
 
+#include <cstdint>
 #include <cstddef>
 
 #include "crypto/vblake.hpp"
@@ -14,6 +15,7 @@
 #include "uint.hpp"
 
 namespace altintegration {
+template <class ElementType> struct Slice;
 
 /**
  * Calculates SHA256 of the input data

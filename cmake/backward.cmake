@@ -28,7 +28,7 @@ endif()
 FetchContent_Declare(
         backward
         GIT_REPOSITORY https://github.com/bombela/backward-cpp.git
-        GIT_TAG        5ffb2c879ebdbea3bdb8477c671e32b1c984beaa
+        GIT_TAG        74184aad55777f0c04227edd56c3dea84b6a272f
         GIT_PROGRESS   TRUE
         GIT_SHALLOW    TRUE
         USES_TERMINAL_DOWNLOAD TRUE

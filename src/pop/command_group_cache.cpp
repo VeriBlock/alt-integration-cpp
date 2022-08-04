@@ -4,6 +4,10 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/command_group_cache.hpp>
+#include <utility>
+
+#include "veriblock/pop/blockchain/command_group.hpp"
+#include "veriblock/pop/hashers.hpp"
 
 namespace altintegration {
 

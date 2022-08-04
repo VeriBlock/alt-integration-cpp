@@ -6,13 +6,17 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_COMMAND_GROUP_CACHE_HPP_
 
+#include <cstddef>
+#include <cstdint>
 #include <list>
 #include <unordered_map>
+#include <vector>
 
 #include "blockchain/command_group.hpp"
 #include "hashers.hpp"
 
 namespace altintegration {
+struct CommandGroup;
 
 //! @private
 struct CommandGroupCache {

@@ -12,7 +12,6 @@
 #include <string>
 
 #include "assert.hpp"
-#include "fmt.hpp"
 #include "slice.hpp"
 #include "strutil.hpp"
 

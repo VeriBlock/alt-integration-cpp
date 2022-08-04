@@ -24,9 +24,9 @@
 #ifndef SECP256K1_HPP
 #define SECP256K1_HPP
 
-#include <stddef.h>
+#include <cstddef>
 
-namespace altintegration {  
+namespace altintegration {
 
 /* These rules specify the order of arguments in API calls:
  *

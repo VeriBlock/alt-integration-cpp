@@ -6,7 +6,6 @@
 #ifndef ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 #define ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 
-#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/pop/algorithm.hpp>

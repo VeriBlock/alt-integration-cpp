@@ -3,10 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/block_index.hpp>
-#include <veriblock/pop/entities/vbkblock.hpp>
-#include <veriblock/pop/entities/altblock.hpp>
-#include <veriblock/pop/blockchain/pop/pop_state.hpp>
+#include "veriblock/pop/blockchain/pop/pop_state.hpp"
+
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/entities/altblock.hpp"
+#include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
 
 namespace altintegration {
 

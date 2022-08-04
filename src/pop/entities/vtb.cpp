@@ -5,6 +5,22 @@
 
 #include <veriblock/pop/entities/vtb.hpp>
 #include <veriblock/pop/hashutil.hpp>
+#include <veriblock/pop/fmt.hpp>
+#include <algorithm>
+#include <cstdint>
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/btctx.hpp"
+#include "veriblock/pop/entities/vbk_merkle_path.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vbkpoptx.hpp"
+#include "veriblock/pop/json.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 using namespace altintegration;
 

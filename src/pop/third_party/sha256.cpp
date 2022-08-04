@@ -28,8 +28,7 @@
  *  http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf
  */
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
 #include <string.h>
 #include <veriblock/pop/third_party/sha256.hpp>
 

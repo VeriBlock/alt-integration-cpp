@@ -16,18 +16,18 @@
 */
 #include "internal.hpp"
 
-#include <cassert>
-#include <cinttypes>
-#include <cstddef>
+#include <cstdlib>
 #include <cstring>
+#include <memory>
 
-#include "../compiler.hpp"
-#include "data_sizes.hpp"
+#include "data_sizes.hpp"  // IWYU pragma: keep
 #include "fnv.hpp"
 #include "sha3.hpp"
-#include <veriblock/pop/crypto/endian.hpp>
-#include <veriblock/pop/crypto/progpow.hpp>
-#include <veriblock/pop/crypto/progpow/ethash.hpp>
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/crypto/endian.hpp"
+#include "veriblock/pop/crypto/progpow.hpp"
+#include "veriblock/pop/crypto/progpow/ethash.hpp"
 
 namespace altintegration {
 namespace progpow {

@@ -7,21 +7,30 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCBLOCK_HPP_
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <sstream>
 #include <string>
+#include <system_error>
 #include <utility>
 #include <vector>
-#include <veriblock/pop/arith_uint256.hpp>
-#include <veriblock/pop/blockchain/btc_block_addon.hpp>
-#include <veriblock/pop/fmt.hpp>
-#include <veriblock/pop/hashutil.hpp>
-#include <veriblock/pop/serde.hpp>
-#include <veriblock/pop/storage/stored_btc_block_addon.hpp>
-#include <veriblock/pop/uint.hpp>
-#include <veriblock/pop/validation_state.hpp>
+
+#include "veriblock/pop/arith_uint256.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/btc_block_addon.hpp"
+#include "veriblock/pop/fmt.hpp"
+#include "veriblock/pop/hashutil.hpp"
+#include "veriblock/pop/json.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/storage/stored_btc_block_addon.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 /**
  * @struct BtcBlock
