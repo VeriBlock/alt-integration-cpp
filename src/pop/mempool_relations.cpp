@@ -1,5 +1,13 @@
 #include <veriblock/pop/mempool_relations.hpp>
 
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/coin.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/entities/vbktx.hpp"
+
 namespace altintegration {
 
 int VbkPayloadsRelations::TxFeeComparator::operator()(

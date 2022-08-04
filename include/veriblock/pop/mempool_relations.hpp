@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <set>
 
 #include "entities/atv.hpp"
 #include "entities/popdata.hpp"
@@ -17,6 +18,9 @@
 #include "blockchain/alt_block_tree.hpp"
 
 namespace altintegration {
+struct ATV;
+struct AltBlockTree;
+struct VTB;
 
 //! @private
 struct VbkPayloadsRelations {

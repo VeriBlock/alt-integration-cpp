@@ -1,3 +1,5 @@
+return() # for now, ignore protobuf
+
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0074 NEW)

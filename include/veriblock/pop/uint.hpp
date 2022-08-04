@@ -8,6 +8,7 @@
 
 #include "blob.hpp"
 #include "consts.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
 

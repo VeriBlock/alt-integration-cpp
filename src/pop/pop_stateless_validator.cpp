@@ -3,10 +3,24 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/pop_stateless_validator.hpp>
-#include <veriblock/pop/stateless_validation.hpp>
+#include "veriblock/pop/pop_stateless_validator.hpp"
+
+#include <cstdint>
+#include <thread>
+#include <vector>
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/stateless_validation.hpp"
+#include "veriblock/pop/third_party/thread_pool/thread_pool_options.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+struct ATV;
+struct BtcChainParams;
+struct VTB;
+struct VbkBlock;
+struct VbkChainParams;
 
 #ifndef VBK_NO_THREADS
 static unsigned long upper_power_of_two(uint32_t v) {
@@ -19,7 +33,7 @@ static unsigned long upper_power_of_two(uint32_t v) {
   v++;
   return v;
 }
-#endif //VBK_NO_THREADS
+#endif  // VBK_NO_THREADS
 
 // hack to build std::future if VBK_NO_THREADS is defined
 template <typename T>

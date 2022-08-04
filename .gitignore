@@ -16,3 +16,4 @@ dist
 .cache
 compile_commands.json
 include/veriblock/pop/ct_params.hpp
+.clangd

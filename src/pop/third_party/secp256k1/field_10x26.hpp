@@ -7,7 +7,7 @@
 #ifndef SECP256K1_FIELD_REPR_H
 #define SECP256K1_FIELD_REPR_H
 
-#include <stdint.h>
+#include <cstdint>
 
 typedef struct {
     /* X = sum(i=0..9, n[i]*2^(i*26)) mod p

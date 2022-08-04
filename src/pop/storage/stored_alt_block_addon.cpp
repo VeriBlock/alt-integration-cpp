@@ -4,13 +4,28 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/algorithm.hpp>
-#include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/entities/vtb.hpp>
 #include <veriblock/pop/storage/stored_alt_block_addon.hpp>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/pop/pop_state.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/entities/endorsement.hpp"
+#include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+class WriteStream;
+struct ReadStream;
 
 StoredAltBlockAddon::StoredAltBlockAddon(const addon_t& other) {
   endorsedByIds =

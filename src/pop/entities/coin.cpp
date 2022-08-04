@@ -4,6 +4,17 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/entities/coin.hpp>
+#include <veriblock/pop/fmt.hpp>
+
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/validation_state.hpp"
+
+namespace altintegration {
+class WriteStream;
+struct ReadStream;
+}  // namespace altintegration
 
 using namespace altintegration;
 

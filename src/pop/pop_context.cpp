@@ -1,7 +1,40 @@
 #include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/pop_context.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "veriblock/pop/alt-util.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/bootstraps.hpp"
+#include "veriblock/pop/config.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/mempool.hpp"
+#include "veriblock/pop/pop_stateless_validator.hpp"
+#include "veriblock/pop/rewards/default_poprewards_calculator.hpp"
+#include "veriblock/pop/rewards/poprewards_calculator.hpp"
+#include "veriblock/pop/stateless_validation.hpp"
+#include "veriblock/pop/storage/util.hpp"
+#include "veriblock/pop/strutil.hpp"
 
 namespace altintegration {
+class ValidationState;
+struct ATV;
+struct BlockBatch;
+struct BlockReader;
+struct EthashCache;
+struct PayloadsStorage;
+struct PopPayouts;
+struct ProgpowHeaderCache;
+struct VTB;
+struct VbkBlock;
 
 std::shared_ptr<PopContext> PopContext::create(
     std::shared_ptr<Config> config,

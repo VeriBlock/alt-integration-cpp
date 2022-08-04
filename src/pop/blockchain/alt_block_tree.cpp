@@ -3,18 +3,53 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <stack>
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
 #include <veriblock/pop/blockchain/alt_block_tree_util.hpp>
-#include <veriblock/pop/command_group_cache.hpp>
-#include <veriblock/pop/entities/context_info_container.hpp>
-#include <veriblock/pop/reversed_range.hpp>
+#include <cstddef>
+#include <stack>
+#include <algorithm>
+#include <cstdint>
+#include <limits>
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 #include "veriblock/pop/logger.hpp"
 #include "veriblock/pop/validation_state.hpp"
 
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/blockchain/base_block_tree.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/block_status.hpp"
+#include "veriblock/pop/blockchain/blockchain_util.hpp"
+#include "veriblock/pop/blockchain/chain.hpp"
+#include "veriblock/pop/blockchain/payloads_index.hpp"
+#include "veriblock/pop/blockchain/pop/fork_resolution.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/entities/altblock.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/hashers.hpp"
+#include "veriblock/pop/stateless_validation.hpp"
+#include "veriblock/pop/storage/payloads_provider.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/third_party/Signals.hpp"
+#include "veriblock/pop/time.hpp"
+#include "veriblock/pop/trace.hpp"
+#include "veriblock/pop/uint.hpp"
+
 namespace altintegration {
+struct BlockReader;
 
 template struct BlockIndex<AltBlock>;
 template struct BaseBlockTree<AltBlock>;

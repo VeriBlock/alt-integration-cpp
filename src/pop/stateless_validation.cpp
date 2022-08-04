@@ -3,10 +3,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <algorithm>
-#include <bitset>
-#include <unordered_set>
-#include <vector>
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blob.hpp>
@@ -15,6 +11,40 @@
 #include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/trace.hpp>
+#include <cstddef>
+#include <algorithm>
+#include <bitset>
+#include <vector>
+#include <array>
+#include <cstdint>
+#include <future>
+#include <memory>
+#include <string>
+
+
+#include "veriblock/pop/blockchain/btc_chain_params.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/crypto/secp256k1.hpp"
+#include "veriblock/pop/entities/address.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/btctx.hpp"
+#include "veriblock/pop/entities/coin.hpp"
+#include "veriblock/pop/entities/context_info_container.hpp"
+#include "veriblock/pop/entities/network_byte_pair.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vbkpoptx.hpp"
+#include "veriblock/pop/entities/vbktx.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/pop_stateless_validator.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace {
 

@@ -3,11 +3,19 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <chrono>
-#include <thread>
 #include <veriblock/pop/blockchain/btc_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
+#include <cstdint>
+#include <algorithm>
+
+
+#include "veriblock/pop/arith_uint256.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/miner.hpp"
+#include "veriblock/pop/time.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 

@@ -6,19 +6,37 @@
 #ifndef ALT_INTEGRATION_UTIL_HPP
 #define ALT_INTEGRATION_UTIL_HPP
 
+#include <cstddef>
+
 #include <algorithm>
 #include <cstdint>
+#include <limits>
 #include <vector>
-#include <veriblock/pop/blockchain/alt_block_tree.hpp>
-#include <veriblock/pop/blockchain/blocktree.hpp>
-#include <veriblock/pop/entities/context_info_container.hpp>
-#include <veriblock/pop/entities/popdata.hpp>
-#include <veriblock/pop/validation_state.hpp>
 
 #include "hashutil.hpp"
 #include "keystone_util.hpp"
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/blocktree.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/context_info_container.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+class ValidationState;
+struct AltBlock;
+struct AltBlockTree;
+struct AltChainParams;
+struct AuthenticatedContextInfoContainer;
+struct ContextInfoContainer;
+struct PopData;
+template <typename Block, typename ChainParams>
+struct BlockTree;
 
 //! Build a context (blocks necessary to connect) in a `tree` from `tip`
 //! backwards `size` elements.

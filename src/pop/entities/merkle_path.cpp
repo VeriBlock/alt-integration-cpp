@@ -5,6 +5,17 @@
 
 #include <veriblock/pop/entities/merkle_path.hpp>
 
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/hashutil.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
+
 namespace altintegration {
 void MerklePath::toRaw(WriteStream& stream) const {
   writeSingleFixedBEValue<int32_t>(stream, index);

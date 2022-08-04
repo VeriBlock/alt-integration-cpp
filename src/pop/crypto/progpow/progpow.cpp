@@ -2,10 +2,6 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include <cstdint>
-#include <mutex>
-#include <utility>
-#include <vector>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
@@ -14,15 +10,39 @@
 #include <veriblock/pop/crypto/progpow/ethash.hpp>
 #include <veriblock/pop/crypto/progpow/kiss99.hpp>
 #include <veriblock/pop/crypto/progpow/math.hpp>
-#include <veriblock/pop/finalizer.hpp>
 #include <veriblock/pop/hashutil.hpp>
-#include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
-#include <veriblock/pop/storage/ethash_cache_provider.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
 #include <veriblock/pop/trace.hpp>
+#include <climits>
+#include <cstddef>
+#include <cstdint>
+#include <mutex>
+#include <utility>
+#include <vector>
+#include <algorithm>
+#include <array>
+#include <functional>
+#include <limits>
+#include <memory>
+#include <string>
 
 #include "libethash/internal.hpp"
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/crypto/endian.hpp"
+#include "veriblock/pop/crypto/vblake.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
+
+namespace altintegration {
+struct EthashCache;
+struct ProgpowHeaderCache;
+}  // namespace altintegration
 
 #define PROGPOW_PERIOD 10
 #define PROGPOW_LANES 16

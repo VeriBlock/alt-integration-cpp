@@ -6,14 +6,25 @@
 #ifndef ALTINTEGRATION_MEMPOOL_BLOCK_TREE_HPP
 #define ALTINTEGRATION_MEMPOOL_BLOCK_TREE_HPP
 
-#include <unordered_map>
 #include <veriblock/pop/mempool_relations.hpp>
+#include <unordered_map>
+#include <functional>
+#include <memory>
 
 #include "alt_block_tree.hpp"
 #include "temp_block_tree.hpp"
 #include "veriblock/pop/validation_state.hpp"
 
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/uint.hpp"
+
 namespace altintegration {
+class ValidationState;
+struct ATV;
+struct PopData;
+struct VTB;
+struct VbkBlock;
 
 //! @private
 struct MemPoolBlockTree {

@@ -7,7 +7,7 @@
 #ifndef SECP256K1_ECDSA_H
 #define SECP256K1_ECDSA_H
 
-#include <stddef.h>
+#include <cstddef>
 
 #include "scalar.hpp"
 #include "group.hpp"

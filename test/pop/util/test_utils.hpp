@@ -6,7 +6,7 @@
 #ifndef ALT_INTEGRATION_TEST_UTILS_HPP
 #define ALT_INTEGRATION_TEST_UTILS_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <algorithm>
 #include <random>

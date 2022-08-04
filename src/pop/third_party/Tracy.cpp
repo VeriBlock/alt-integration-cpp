@@ -58,7 +58,7 @@
 #ifndef __TRACYSYSTEM_HPP__
 #define __TRACYSYSTEM_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
 
 /*** Start of inlined file: TracyApi.h ***/
@@ -152,7 +152,7 @@ extern "C" typedef HRESULT (WINAPI *t_GetThreadDescription)( HANDLE, PWSTR* );
 
 
 /*** Start of inlined file: tracy_rpmalloc.hpp ***/
-#include <stddef.h>
+#include <cstddef>
 
 namespace tracy
 {
@@ -796,8 +796,8 @@ TRACY_API void ___tracy_set_thread_name( const char* name ) { tracy::SetThreadNa
 #define TRACY_LZ4_H_2983827168210
 
 /* --- Dependency --- */
-#include <stddef.h>   /* size_t */
-#include <stdint.h>
+#include <cstddef>   /* size_t */
+#include <cstdint>
 
 /**
   Introduction
@@ -1641,7 +1641,7 @@ static const int LZ4_minLength = (MFLIMIT+1);
 *  Error detection
 **************************************/
 #if defined(LZ4_DEBUG) && (LZ4_DEBUG>=1)
-#  include <assert.h>
+#  include <cassert>
 #else
 #  ifndef assert
 #    define assert(condition) ((void)0)
@@ -1671,9 +1671,9 @@ static int LZ4_isAligned(const void* ptr, size_t alignment)
 /*-************************************
 *  Types
 **************************************/
-#include <limits.h>
+#include <climits>
 #if defined(__cplusplus) || (defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
-# include <stdint.h>
+# include <cstdint>
   typedef  uint8_t BYTE;
   typedef uint16_t U16;
   typedef uint32_t U32;
@@ -3915,13 +3915,13 @@ char* LZ4_slideInputBuffer (void* state)
 #ifdef __ANDROID__
 #  include <sys/mman.h>
 #  include <stdio.h>
-#  include <stdint.h>
+#  include <cstdint>
 #  include <algorithm>
 #  include <vector>
 #endif
 
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include <atomic>
 #include <chrono>
 #include <limits>
@@ -3967,7 +3967,7 @@ tracy_force_inline void MemWrite( void* ptr, T val )
 #define __TRACYSOCKET_HPP__
 
 #include <atomic>
-#include <stdint.h>
+#include <cstdint>
 
 struct addrinfo;
 struct sockaddr;
@@ -4195,8 +4195,8 @@ static tracy_force_inline void YieldThread()
 
 #ifdef TRACY_HAS_CALLSTACK
 
-#include <assert.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstdint>
 
 namespace tracy
 {
@@ -4319,7 +4319,7 @@ void CompressImageDxt1( const char* src, char* dst, int w, int h );
 #define __TRACYSCOPED_HPP__
 
 #include <limits>
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 
 
@@ -4327,9 +4327,9 @@ void CompressImageDxt1( const char* src, char* dst, int w, int h );
 #ifndef __TRACYPROFILER_HPP__
 #define __TRACYPROFILER_HPP__
 
-#include <assert.h>
+#include <cassert>
 #include <atomic>
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 #include <time.h>
 
@@ -5777,7 +5777,7 @@ inline void swap(ConsumerToken& a, ConsumerToken& b) noexcept
 
 #ifdef TRACY_HAS_SYSTIME
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -5806,8 +5806,8 @@ private:
 #ifndef __TRACYFASTVECTOR_HPP__
 #define __TRACYFASTVECTOR_HPP__
 
-#include <assert.h>
-#include <stddef.h>
+#include <cassert>
+#include <cstddef>
 
 namespace tracy
 {
@@ -5926,7 +5926,7 @@ private:
 #ifndef __TRACYQUEUE_HPP__
 #define __TRACYQUEUE_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -6666,7 +6666,7 @@ using TracyMutex = std::mutex;
 #define __TRACYPROTOCOL_HPP__
 
 #include <limits>
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -8249,7 +8249,7 @@ static const char* DecodeIosDevice( const char* id )
 
 #ifdef TRACY_HAS_SYSTEM_TRACING
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace tracy
 {
@@ -8273,8 +8273,8 @@ void SysTraceSendExternalName( uint64_t thread );
 #ifndef __TRACYC_HPP__
 #define __TRACYC_HPP__
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 #ifdef __cplusplus
 extern "C" {
@@ -8541,7 +8541,7 @@ extern "C" typedef LONG (WINAPI *t_RtlGetVersion)( PRTL_OSVERSIONINFOW );
 extern "C" typedef BOOL (WINAPI *t_GetLogicalProcessorInformationEx)( LOGICAL_PROCESSOR_RELATIONSHIP, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, PDWORD );
 #else
 #  include <unistd.h>
-#  include <limits.h>
+#  include <climits>
 #endif
 #if defined __linux__
 #  include <sys/sysinfo.h>
@@ -12058,7 +12058,7 @@ TRACY_API uint64_t ___tracy_alloc_srcloc_name( uint32_t line, const char* source
 #ifndef __TRACYSTACKFRAMES_HPP__
 #define __TRACYSTACKFRAMES_HPP__
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace tracy
 {
@@ -12119,8 +12119,8 @@ static constexpr int s_tracySkipSubframesMinLen = 7;
 #ifndef BACKTRACE_H
 #define BACKTRACE_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 #include <stdio.h>
 
 namespace tracy
@@ -13440,7 +13440,7 @@ static constexpr int GetSamplingPeriod()
 #    endif
 
 #    define INITGUID
-#    include <assert.h>
+#    include <cassert>
 #    include <string.h>
 #    include <windows.h>
 #    include <dbghelp.h>
@@ -15379,7 +15379,7 @@ void SysTraceSendExternalName( uint64_t thread )
 
 
 /*** Start of inlined file: TracySocket.cpp ***/
-#include <assert.h>
+#include <cassert>
 #include <inttypes.h>
 #include <new>
 #include <stdio.h>
@@ -16269,7 +16269,7 @@ const char* UdpListen::Read( size_t& len, IpAddress& addr, int timeout )
 #  endif
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 
 #if ENABLE_ASSERTS
@@ -16277,7 +16277,7 @@ const char* UdpListen::Read( size_t& len, IpAddress& addr, int timeout )
 #  if defined(_MSC_VER) && !defined(_DEBUG)
 #    define _DEBUG
 #  endif
-#  include <assert.h>
+#  include <cassert>
 #else
 #  undef  assert
 #  define assert(x) do {} while(0)
@@ -18627,8 +18627,8 @@ rpmalloc_dump_statistics(void* file) {
 
 
 /*** Start of inlined file: TracyDxt1.cpp ***/
-#include <assert.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstdint>
 #include <string.h>
 
 #ifdef __ARM_NEON
@@ -19315,7 +19315,7 @@ TRACY_API void InitRpmalloc()
 /*** Start of inlined file: alloc.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -19841,7 +19841,7 @@ backtrace_vector_release (struct backtrace_state *state ATTRIBUTE_UNUSED,
 /*** Start of inlined file: dwarf.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -24252,7 +24252,7 @@ backtrace_dwarf_add (struct backtrace_state *state,
 /*** Start of inlined file: fileline.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -24598,7 +24598,7 @@ backtrace_syminfo_to_full_error_callback (void *data, const char *msg,
 /*** Start of inlined file: mmapio.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -24708,7 +24708,7 @@ backtrace_release_view (struct backtrace_state *state ATTRIBUTE_UNUSED,
 /*** Start of inlined file: posix.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -24812,7 +24812,7 @@ backtrace_close (int descriptor, backtrace_error_callback error_callback,
 /*** Start of inlined file: sort.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -24837,7 +24837,7 @@ backtrace_close (int descriptor, backtrace_error_callback error_callback,
 
 /*** End of inlined file: config.h ***/
 
-#include <stddef.h>
+#include <cstddef>
 #include <sys/types.h>
 
 namespace tracy
@@ -24920,7 +24920,7 @@ backtrace_qsort (void *basearg, size_t count, size_t size,
 /*** Start of inlined file: state.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -24992,7 +24992,7 @@ backtrace_create_state (const char *filename, int threaded,
 /*** Start of inlined file: macho.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -26349,7 +26349,7 @@ backtrace_initialize (struct backtrace_state *state, const char *filename,
 /*** Start of inlined file: elf.cpp ***/
 
 /*** Start of inlined file: config.h ***/
-#include <limits.h>
+#include <climits>
 #if __WORDSIZE == 64
 #  define BACKTRACE_ELF_SIZE 64
 #else
@@ -31408,4 +31408,3 @@ const StringMatch* s_tracySkipSubframes = s_tracySkipSubframes_;
 #endif
 
 #endif
-

@@ -6,14 +6,23 @@
 #ifndef VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 #define VERIBLOCK_POP_CPP_ALT_BLOCK_ADDON_HPP
 
-#include <veriblock/pop/blockchain/block_status.hpp>
-#include <veriblock/pop/blockchain/pop/pop_state.hpp>
-#include <veriblock/pop/entities/endorsements.hpp>
-#include <veriblock/pop/uint.hpp>
+#include <cstdint>
+#include <limits>
+#include <string>
+#include <vector>
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blockchain/block_status.hpp"
+#include "veriblock/pop/blockchain/pop/pop_state.hpp"
+#include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
 
 struct PopData;
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 //! @private
 struct AltBlockAddon : public PopState<AltEndorsement> {

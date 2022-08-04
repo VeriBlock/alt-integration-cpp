@@ -8,7 +8,7 @@
 #define SECP256K1_ECMULT_IMPL_H
 
 #include <string.h>
-#include <stdint.h>
+#include <cstdint>
 
 #include "util.hpp"
 #include "group.hpp"

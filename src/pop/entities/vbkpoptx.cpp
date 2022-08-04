@@ -4,6 +4,23 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/entities/vbkpoptx.hpp>
+#include <algorithm>
+#include <memory>
+
+
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/entities/address.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/btctx.hpp"
+#include "veriblock/pop/entities/merkle_path.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/hashutil.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

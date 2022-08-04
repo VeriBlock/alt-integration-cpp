@@ -7,6 +7,7 @@
 #define HAVE_CONFIG_H 1
 
 #include <veriblock/pop/third_party/secp256k1.hpp>
+#include <string.h>
 
 #include "util.hpp"
 #include "num_impl.hpp"
@@ -19,6 +20,14 @@
 #include "eckey_impl.hpp"
 #include "hash_impl.hpp"
 #include "scratch_impl.hpp"
+#include "third_party/secp256k1/ecmult.hpp"
+#include "third_party/secp256k1/ecmult_gen.hpp"
+#include "third_party/secp256k1/field_10x26.hpp"
+#include "third_party/secp256k1/field_10x26_impl.hpp"
+#include "third_party/secp256k1/group.hpp"
+#include "third_party/secp256k1/hash.hpp"
+#include "third_party/secp256k1/scalar_8x32.hpp"
+#include "third_party/secp256k1/scalar_8x32_impl.hpp"
 
 namespace altintegration {
 
@@ -38,6 +47,7 @@ namespace altintegration {
 #ifndef USE_EXTERNAL_DEFAULT_CALLBACKS
 #include <stdlib.h>
 #include <stdio.h>
+
 static void secp256k1_default_illegal_callback_fn(const char* str, void* data) {
     (void)data;
     fprintf(stderr, "[libsecp256k1] illegal argument: %s\n", str);

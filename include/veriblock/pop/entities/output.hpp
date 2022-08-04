@@ -7,11 +7,17 @@
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_
 
 #include <veriblock/pop/json.hpp>
+#include <cstddef>
+#include <string>
+#include <utility>
 
 #include "address.hpp"
 #include "coin.hpp"
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 /**
  * @struct Output

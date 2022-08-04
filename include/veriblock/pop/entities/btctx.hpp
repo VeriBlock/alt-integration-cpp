@@ -6,15 +6,19 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCTX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_BTCTX_HPP_
 
-#include <cstdint>
-#include <utility>
-#include <vector>
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/uint.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <utility>
+#include <vector>
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 /**
  * @struct BtcTx
