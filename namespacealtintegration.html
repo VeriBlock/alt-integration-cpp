@@ -269,6 +269,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classaltintegration_1_1reverse__range.html">reverse_range</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">translates a pair of forward iterators to a range whose regular iteration order is "backward"  <a href="classaltintegration_1_1reverse__range.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-owning contiguous array.  <a href="structaltintegration_1_1Slice.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1StateCorruptedException.html">StateCorruptedException</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is thrown only when this library detects POP-related state corruption, and can't recover.  <a href="structaltintegration_1_1StateCorruptedException.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -572,11 +575,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setEthashCache</b> (c
 <tr class="memitem:ab70a7e25fa22cfdefe29c3c37e366aa5"><td class="memItemLeft" align="right" valign="top"><a id="ab70a7e25fa22cfdefe29c3c37e366aa5" name="ab70a7e25fa22cfdefe29c3c37e366aa5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setProgpowHeaderCache</b> (const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCache.html">ProgpowHeaderCache</a> &gt; &amp;cache)</td></tr>
 <tr class="separator:ab70a7e25fa22cfdefe29c3c37e366aa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a> (Slice&lt; const uint8_t &gt; header)</td></tr>
+<tr class="memitem:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; header)</td></tr>
 <tr class="memdesc:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate vPROGPOW hash of given <a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a> header (65 bytes)  <a href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">More...</a><br /></td></tr>
 <tr class="separator:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae96a8d5ba801c6a5895d9365cdad7875"><td class="memItemLeft" align="right" valign="top"><a id="ae96a8d5ba801c6a5895d9365cdad7875" name="ae96a8d5ba801c6a5895d9365cdad7875"></a>
-<a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><b>progPowHash</b> (Slice&lt; const uint8_t &gt; header, progpow::ethash_cache *light)</td></tr>
+<a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><b>progPowHash</b> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; header, progpow::ethash_cache *light)</td></tr>
 <tr class="memdesc:ae96a8d5ba801c6a5895d9365cdad7875"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:ae96a8d5ba801c6a5895d9365cdad7875"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab03ed65c2c1201f6b72729de5deb0b69"><td class="memItemLeft" align="right" valign="top"><a id="ab03ed65c2c1201f6b72729de5deb0b69" name="ab03ed65c2c1201f6b72729de5deb0b69"></a>
@@ -733,7 +736,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 <tr class="memdesc:a34320f73eac42930b4112ee3633e3bd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#a34320f73eac42930b4112ee3633e3bd1">More...</a><br /></td></tr>
 <tr class="separator:a34320f73eac42930b4112ee3633e3bd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13fac3f068cb8434aa69ed479ba44da4"><td class="memItemLeft" align="right" valign="top"><a id="a13fac3f068cb8434aa69ed479ba44da4" name="a13fac3f068cb8434aa69ed479ba44da4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromRaw</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, Slice&lt; const uint8_t &gt; signature, Slice&lt; const uint8_t &gt; publicKey, <a class="el" href="structaltintegration_1_1VbkPopTx.html">VbkPopTx</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromRaw</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; signature, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; publicKey, <a class="el" href="structaltintegration_1_1VbkPopTx.html">VbkPopTx</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a13fac3f068cb8434aa69ed479ba44da4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a13fac3f068cb8434aa69ed479ba44da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5514d5239fdf65543ced5edc3aef03a8"><td class="memItemLeft" align="right" valign="top"><a id="a5514d5239fdf65543ced5edc3aef03a8" name="a5514d5239fdf65543ced5edc3aef03a8"></a>
@@ -745,7 +748,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 <tr class="memdesc:a49f6e73be1f8a63ba57a552dce082e55"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#a49f6e73be1f8a63ba57a552dce082e55">More...</a><br /></td></tr>
 <tr class="separator:a49f6e73be1f8a63ba57a552dce082e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83e1dac71531444e1a77a7a22753bb2a"><td class="memItemLeft" align="right" valign="top"><a id="a83e1dac71531444e1a77a7a22753bb2a" name="a83e1dac71531444e1a77a7a22753bb2a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromRaw</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, Slice&lt; const uint8_t &gt; signature, Slice&lt; const uint8_t &gt; publicKey, <a class="el" href="structaltintegration_1_1VbkTx.html">VbkTx</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromRaw</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; signature, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; publicKey, <a class="el" href="structaltintegration_1_1VbkTx.html">VbkTx</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a83e1dac71531444e1a77a7a22753bb2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a83e1dac71531444e1a77a7a22753bb2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3556e5c14280262e941f1bb66c67de7b"><td class="memItemLeft" align="right" valign="top"><a id="a3556e5c14280262e941f1bb66c67de7b" name="a3556e5c14280262e941f1bb66c67de7b"></a>
@@ -760,21 +763,21 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1VTB.html">VTB</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a36f372c191b94851869de04ccebdcdf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a36f372c191b94851869de04ccebdcdf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5bdd8cb04087c393c4ffd4db9f625df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ab5bdd8cb04087c393c4ffd4db9f625df">sha256</a> (Slice&lt; const uint8_t &gt; data)</td></tr>
+<tr class="memitem:ab5bdd8cb04087c393c4ffd4db9f625df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ab5bdd8cb04087c393c4ffd4db9f625df">sha256</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; data)</td></tr>
 <tr class="memdesc:ab5bdd8cb04087c393c4ffd4db9f625df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates SHA256 of the input data.  <a href="namespacealtintegration.html#ab5bdd8cb04087c393c4ffd4db9f625df">More...</a><br /></td></tr>
 <tr class="separator:ab5bdd8cb04087c393c4ffd4db9f625df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82a1110544bc1d024f62df15f022b94b"><td class="memItemLeft" align="right" valign="top"><a id="a82a1110544bc1d024f62df15f022b94b" name="a82a1110544bc1d024f62df15f022b94b"></a>
-<a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sha256</b> (Slice&lt; const uint8_t &gt; a, Slice&lt; const uint8_t &gt; b)</td></tr>
+<a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sha256</b> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; a, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; b)</td></tr>
 <tr class="memdesc:a82a1110544bc1d024f62df15f022b94b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a82a1110544bc1d024f62df15f022b94b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0688ed82ba489bdce1df4561bd2aee0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0688ed82ba489bdce1df4561bd2aee0b">sha256twice</a> (Slice&lt; const uint8_t &gt; data)</td></tr>
+<tr class="memitem:a0688ed82ba489bdce1df4561bd2aee0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0688ed82ba489bdce1df4561bd2aee0b">sha256twice</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; data)</td></tr>
 <tr class="memdesc:a0688ed82ba489bdce1df4561bd2aee0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates SHA256 of the input data twice.  <a href="namespacealtintegration.html#a0688ed82ba489bdce1df4561bd2aee0b">More...</a><br /></td></tr>
 <tr class="separator:a0688ed82ba489bdce1df4561bd2aee0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70c7cdd5c5b7b205d134948e8b67ece6"><td class="memItemLeft" align="right" valign="top"><a id="a70c7cdd5c5b7b205d134948e8b67ece6" name="a70c7cdd5c5b7b205d134948e8b67ece6"></a>
-<a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sha256twice</b> (Slice&lt; const uint8_t &gt; a, Slice&lt; const uint8_t &gt; b)</td></tr>
+<a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sha256twice</b> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; a, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; b)</td></tr>
 <tr class="memdesc:a70c7cdd5c5b7b205d134948e8b67ece6"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a70c7cdd5c5b7b205d134948e8b67ece6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ae78de7cb86b299b13e86248cd3186b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4ae78de7cb86b299b13e86248cd3186b">vblake</a> (Slice&lt; const uint8_t &gt; data)</td></tr>
+<tr class="memitem:a4ae78de7cb86b299b13e86248cd3186b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4ae78de7cb86b299b13e86248cd3186b">vblake</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; data)</td></tr>
 <tr class="memdesc:a4ae78de7cb86b299b13e86248cd3186b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates VBlake of the input data.  <a href="namespacealtintegration.html#a4ae78de7cb86b299b13e86248cd3186b">More...</a><br /></td></tr>
 <tr class="separator:a4ae78de7cb86b299b13e86248cd3186b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6894f029d26a5d48e4e72db4d8e06894"><td class="memTemplParams" colspan="2">template&lt;typename Value , typename T &gt; </td></tr>
@@ -823,10 +826,10 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memitem:a552f7df1f2ba12b76479213b69a44152"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a552f7df1f2ba12b76479213b69a44152">fixedArray</a> (T input)</td></tr>
 <tr class="memdesc:a552f7df1f2ba12b76479213b69a44152"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the input to the byte array.  <a href="namespacealtintegration.html#a552f7df1f2ba12b76479213b69a44152">More...</a><br /></td></tr>
 <tr class="separator:a552f7df1f2ba12b76479213b69a44152"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a97802abc5c380d1640aa258c91241e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e">readVarLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
+<tr class="memitem:a0a97802abc5c380d1640aa258c91241e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e">readVarLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
 <tr class="memdesc:a0a97802abc5c380d1640aa258c91241e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read variable length value, which consists of <code>[N=(4 bytes = size of slice) | N bytes slice]</code> Size of slice should be within range [minLen; maxLen].  <a href="namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e">More...</a><br /></td></tr>
 <tr class="separator:a0a97802abc5c380d1640aa258c91241e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4448797a2a5b62b03e28af03f1dfaa78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
+<tr class="memitem:a4448797a2a5b62b03e28af03f1dfaa78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
 <tr class="memdesc:a4448797a2a5b62b03e28af03f1dfaa78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read variable length value, which consists of <code>[N=(1 byte = size of slice) | N bytes slice]</code> Size of slice should be within range [minLen; maxLen].  <a href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">More...</a><br /></td></tr>
 <tr class="separator:a4448797a2a5b62b03e28af03f1dfaa78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e4ebbae4c53a5fa4ebb15f7259d4906"><td class="memTemplParams" colspan="2">template&lt;typename Container , typename  = typename std::enable_if&lt;              sizeof(typename Container::value_type) == 1&gt;::type&gt; </td></tr>
@@ -837,7 +840,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memitem:abe2d65938bbd5af366249d73e7561c0f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#abe2d65938bbd5af366249d73e7561c0f">readSingleBEValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:abe2d65938bbd5af366249d73e7561c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read single Big-Endian value from a stream.  <a href="namespacealtintegration.html#abe2d65938bbd5af366249d73e7561c0f">More...</a><br /></td></tr>
 <tr class="separator:abe2d65938bbd5af366249d73e7561c0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8347db9e9900d4149b4e9ea5482782f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">writeSingleByteLenValue</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream, Slice&lt; const uint8_t &gt; value)</td></tr>
+<tr class="memitem:a8347db9e9900d4149b4e9ea5482782f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">writeSingleByteLenValue</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; value)</td></tr>
 <tr class="memdesc:a8347db9e9900d4149b4e9ea5482782f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write single byte length value, which consists of <code>N bytes vector</code> Appends 1 byte data length to the stream.  <a href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">More...</a><br /></td></tr>
 <tr class="separator:a8347db9e9900d4149b4e9ea5482782f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dd389f7ec32429e30c233f1bbe64815"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a3dd389f7ec32429e30c233f1bbe64815">writeSingleBEValue</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream, int64_t value)</td></tr>
@@ -847,7 +850,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memitem:a6b8918391a6fcc356daa33fa45da5fc7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a6b8918391a6fcc356daa33fa45da5fc7">writeSingleFixedBEValue</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream, T value)</td></tr>
 <tr class="memdesc:a6b8918391a6fcc356daa33fa45da5fc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write single Big-Endian value to the stream.  <a href="namespacealtintegration.html#a6b8918391a6fcc356daa33fa45da5fc7">More...</a><br /></td></tr>
 <tr class="separator:a6b8918391a6fcc356daa33fa45da5fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac055c354de3b5e251074b2fc67601f26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac055c354de3b5e251074b2fc67601f26">writeVarLenValue</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream, Slice&lt; const uint8_t &gt; value)</td></tr>
+<tr class="memitem:ac055c354de3b5e251074b2fc67601f26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac055c354de3b5e251074b2fc67601f26">writeVarLenValue</a> (<a class="el" href="classaltintegration_1_1WriteStream.html">WriteStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; value)</td></tr>
 <tr class="memdesc:ac055c354de3b5e251074b2fc67601f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write variable length value, which consists of <code>N bytes vector</code> Appends up to 8 bytes data length to the stream and 1 byte data length size.  <a href="namespacealtintegration.html#ac055c354de3b5e251074b2fc67601f26">More...</a><br /></td></tr>
 <tr class="separator:ac055c354de3b5e251074b2fc67601f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5f9c62fc2c624ee713f0ea59c528797"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#structaltintegration_1_1NetworkBytePair">NetworkBytePair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa5f9c62fc2c624ee713f0ea59c528797">readNetworkByte</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="namespacealtintegration.html#a70aee98e5f996404e3f4f5e21656b737">TxType</a> type)</td></tr>
@@ -880,11 +883,11 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memdesc:a801fe3e5bf2c352b5201918e8db2b5e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate size of array in bytes.  <a href="namespacealtintegration.html#a801fe3e5bf2c352b5201918e8db2b5e5">More...</a><br /></td></tr>
 <tr class="separator:a801fe3e5bf2c352b5201918e8db2b5e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac812fd1390e58bc60703fdbe2f3d5619"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ac812fd1390e58bc60703fdbe2f3d5619"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac812fd1390e58bc60703fdbe2f3d5619">DeserializeFromVbkEncoding</a> (Slice&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memitem:ac812fd1390e58bc60703fdbe2f3d5619"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac812fd1390e58bc60703fdbe2f3d5619">DeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:ac812fd1390e58bc60703fdbe2f3d5619"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from VBK encoding.  <a href="namespacealtintegration.html#ac812fd1390e58bc60703fdbe2f3d5619">More...</a><br /></td></tr>
 <tr class="separator:ac812fd1390e58bc60703fdbe2f3d5619"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a2caa72fe1fec5c8370ed7c25df4aff33">DeserializeFromRaw</a> (Slice&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memitem:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a2caa72fe1fec5c8370ed7c25df4aff33">DeserializeFromRaw</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; data, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from RAW encoding.  <a href="namespacealtintegration.html#a2caa72fe1fec5c8370ed7c25df4aff33">More...</a><br /></td></tr>
 <tr class="separator:a2caa72fe1fec5c8370ed7c25df4aff33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
@@ -916,7 +919,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memdesc:a18e4e887c74ecccba41b698fc6bea1d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from RAW encoding.  <a href="namespacealtintegration.html#a18e4e887c74ecccba41b698fc6bea1d1">More...</a><br /></td></tr>
 <tr class="separator:a18e4e887c74ecccba41b698fc6bea1d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9b90561df75533a192bfb882f72bdce"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:af9b90561df75533a192bfb882f72bdce"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce">AssertDeserializeFromVbkEncoding</a> (Slice&lt; const uint8_t &gt; raw)</td></tr>
+<tr class="memitem:af9b90561df75533a192bfb882f72bdce"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce">AssertDeserializeFromVbkEncoding</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; raw)</td></tr>
 <tr class="memdesc:af9b90561df75533a192bfb882f72bdce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize from VBK encoding.  <a href="namespacealtintegration.html#af9b90561df75533a192bfb882f72bdce">More...</a><br /></td></tr>
 <tr class="separator:af9b90561df75533a192bfb882f72bdce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab982318b9fcddb8d73626e7fd22781cf"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
@@ -1354,7 +1357,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00021">21</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00022">22</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
 
 </div>
 </div>
@@ -1370,7 +1373,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00029">29</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00030">30</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
 
 </div>
 </div>
@@ -1386,7 +1389,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00023">23</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00024">24</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
 
 </div>
 </div>
@@ -1402,7 +1405,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00025">25</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00026">26</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
 
 </div>
 </div>
@@ -1418,7 +1421,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00027">27</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="uint_8hpp_source.html#l00028">28</a> of file <a class="el" href="uint_8hpp_source.html">uint.hpp</a>.</p>
 
 </div>
 </div>
@@ -1604,19 +1607,19 @@ chained state </td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fork__resolution_8hpp_source.html#l00445">445</a> of file <a class="el" href="fork__resolution_8hpp_source.html">fork_resolution.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  445</span>                        {</div>
-<div class="line"><span class="lineno">  446</span>  UNKNOWN,</div>
-<div class="line"><span class="lineno">  447</span>  CANDIDATE_IS_TIP,</div>
-<div class="line"><span class="lineno">  448</span>  CANDIDATE_INVALID_CHAIN,</div>
-<div class="line"><span class="lineno">  449</span>  CANDIDATE_INVALID_PAYLOADS,</div>
-<div class="line"><span class="lineno">  450</span>  CANDIDATE_PART_OF_ACTIVE_CHAIN,</div>
-<div class="line"><span class="lineno">  451</span>  CANDIDATE_IS_TIP_SUCCESSOR,</div>
-<div class="line"><span class="lineno">  452</span>  TIP_IS_FINAL,</div>
-<div class="line"><span class="lineno">  453</span>  BOTH_DONT_CROSS_KEYSTONE_BOUNDARY,</div>
-<div class="line"><span class="lineno">  454</span>  CANDIDATE_INVALID_INDEPENDENTLY,</div>
-<div class="line"><span class="lineno">  455</span>  HIGHER_POP_SCORE,</div>
-<div class="line"><span class="lineno">  456</span>};</div>
+<p class="definition">Definition at line <a class="el" href="fork__resolution_8hpp_source.html#l00457">457</a> of file <a class="el" href="fork__resolution_8hpp_source.html">fork_resolution.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  457</span>                        {</div>
+<div class="line"><span class="lineno">  458</span>  UNKNOWN,</div>
+<div class="line"><span class="lineno">  459</span>  CANDIDATE_IS_TIP,</div>
+<div class="line"><span class="lineno">  460</span>  CANDIDATE_INVALID_CHAIN,</div>
+<div class="line"><span class="lineno">  461</span>  CANDIDATE_INVALID_PAYLOADS,</div>
+<div class="line"><span class="lineno">  462</span>  CANDIDATE_PART_OF_ACTIVE_CHAIN,</div>
+<div class="line"><span class="lineno">  463</span>  CANDIDATE_IS_TIP_SUCCESSOR,</div>
+<div class="line"><span class="lineno">  464</span>  TIP_IS_FINAL,</div>
+<div class="line"><span class="lineno">  465</span>  BOTH_DONT_CROSS_KEYSTONE_BOUNDARY,</div>
+<div class="line"><span class="lineno">  466</span>  CANDIDATE_INVALID_INDEPENDENTLY,</div>
+<div class="line"><span class="lineno">  467</span>  HIGHER_POP_SCORE,</div>
+<div class="line"><span class="lineno">  468</span>};</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1691,17 +1694,17 @@ template&lt;typename Block , typename ChainParams &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt-util_8hpp_source.html#l00060">60</a> of file <a class="el" href="alt-util_8hpp_source.html">alt-util.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   62</span>                                       {</div>
-<div class="line"><span class="lineno">   63</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; b : blocks) {</div>
-<div class="line"><span class="lineno">   64</span>    Block block = Block::fromRaw(b);</div>
-<div class="line"><span class="lineno">   65</span>    <span class="keywordflow">if</span> (!tree.acceptBlockHeader(block, state)) {</div>
-<div class="line"><span class="lineno">   66</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">   67</span>    }</div>
-<div class="line"><span class="lineno">   68</span>  }</div>
-<div class="line"><span class="lineno">   69</span> </div>
-<div class="line"><span class="lineno">   70</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   71</span>}</div>
+<p class="definition">Definition at line <a class="el" href="alt-util_8hpp_source.html#l00078">78</a> of file <a class="el" href="alt-util_8hpp_source.html">alt-util.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   80</span>                                       {</div>
+<div class="line"><span class="lineno">   81</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; b : blocks) {</div>
+<div class="line"><span class="lineno">   82</span>    Block block = Block::fromRaw(b);</div>
+<div class="line"><span class="lineno">   83</span>    <span class="keywordflow">if</span> (!tree.acceptBlockHeader(block, state)) {</div>
+<div class="line"><span class="lineno">   84</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   85</span>    }</div>
+<div class="line"><span class="lineno">   86</span>  }</div>
+<div class="line"><span class="lineno">   87</span> </div>
+<div class="line"><span class="lineno">   88</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   89</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1810,7 +1813,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">T altintegration::AssertDeserializeFromVbkEncoding </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>raw</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1995,7 +1998,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">bool altintegration::DeserializeFromRaw </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
@@ -2255,7 +2258,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">bool altintegration::DeserializeFromVbkEncoding </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
@@ -2850,17 +2853,17 @@ template&lt;typename BlockTreeT &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt-util_8hpp_source.html#l00026">26</a> of file <a class="el" href="alt-util_8hpp_source.html">alt-util.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   29</span>                                                  {</div>
-<div class="line"><span class="lineno">   30</span>  std::vector&lt;typename BlockTreeT::block_t&gt; ret;</div>
-<div class="line"><span class="lineno">   31</span>  <span class="keyword">auto</span>* cursor = tree.getBlockIndex(tip);</div>
-<div class="line"><span class="lineno">   32</span>  <span class="keywordtype">size_t</span> i = 0;</div>
-<div class="line"><span class="lineno">   33</span>  <span class="keywordflow">while</span> (cursor != <span class="keyword">nullptr</span> &amp;&amp; i++ &lt; size) {</div>
-<div class="line"><span class="lineno">   34</span>    ret.push_back(cursor-&gt;getHeader());</div>
-<div class="line"><span class="lineno">   35</span>    cursor = cursor-&gt;pprev;</div>
-<div class="line"><span class="lineno">   36</span>  }</div>
-<div class="line"><span class="lineno">   37</span>  <span class="keywordflow">return</span> ret;</div>
-<div class="line"><span class="lineno">   38</span>}</div>
+<p class="definition">Definition at line <a class="el" href="alt-util_8hpp_source.html#l00044">44</a> of file <a class="el" href="alt-util_8hpp_source.html">alt-util.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   47</span>                                                  {</div>
+<div class="line"><span class="lineno">   48</span>  std::vector&lt;typename BlockTreeT::block_t&gt; ret;</div>
+<div class="line"><span class="lineno">   49</span>  <span class="keyword">auto</span>* cursor = tree.getBlockIndex(tip);</div>
+<div class="line"><span class="lineno">   50</span>  <span class="keywordtype">size_t</span> i = 0;</div>
+<div class="line"><span class="lineno">   51</span>  <span class="keywordflow">while</span> (cursor != <span class="keyword">nullptr</span> &amp;&amp; i++ &lt; size) {</div>
+<div class="line"><span class="lineno">   52</span>    ret.push_back(cursor-&gt;getHeader());</div>
+<div class="line"><span class="lineno">   53</span>    cursor = cursor-&gt;pprev;</div>
+<div class="line"><span class="lineno">   54</span>  }</div>
+<div class="line"><span class="lineno">   55</span>  <span class="keywordflow">return</span> ret;</div>
+<div class="line"><span class="lineno">   56</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2939,22 +2942,22 @@ template&lt;typename <a class="el" href="structaltintegration_1_1BlockTree.html"
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="alt-util_8hpp_source.html#l00042">42</a> of file <a class="el" href="alt-util_8hpp_source.html">alt-util.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   43</span>                                                                  {</div>
-<div class="line"><span class="lineno">   44</span>  std::vector&lt;std::vector&lt;uint8_t&gt;&gt; ret;</div>
-<div class="line"><span class="lineno">   45</span>  ret.reserve(size);</div>
-<div class="line"><span class="lineno">   46</span> </div>
-<div class="line"><span class="lineno">   47</span>  <span class="keyword">auto</span>* tip = tree.<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">getBestChain</a>().tip();</div>
-<div class="line"><span class="lineno">   48</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; size &amp;&amp; tip != <span class="keyword">nullptr</span>; i++) {</div>
-<div class="line"><span class="lineno">   49</span>    ret.push_back(tip-&gt;getHash().asVector());</div>
-<div class="line"><span class="lineno">   50</span>    tip = tip-&gt;pprev;</div>
-<div class="line"><span class="lineno">   51</span>  }</div>
-<div class="line"><span class="lineno">   52</span> </div>
-<div class="line"><span class="lineno">   53</span>  <span class="comment">// reverse them since we add them in reverse order (tip -&gt; genesis)</span></div>
-<div class="line"><span class="lineno">   54</span>  std::reverse(ret.begin(), ret.end());</div>
-<div class="line"><span class="lineno">   55</span>  <span class="keywordflow">return</span> ret;</div>
-<div class="line"><span class="lineno">   56</span>}</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00094">base_block_tree.hpp:94</a></div></div>
+<p class="definition">Definition at line <a class="el" href="alt-util_8hpp_source.html#l00060">60</a> of file <a class="el" href="alt-util_8hpp_source.html">alt-util.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   61</span>                                                                  {</div>
+<div class="line"><span class="lineno">   62</span>  std::vector&lt;std::vector&lt;uint8_t&gt;&gt; ret;</div>
+<div class="line"><span class="lineno">   63</span>  ret.reserve(size);</div>
+<div class="line"><span class="lineno">   64</span> </div>
+<div class="line"><span class="lineno">   65</span>  <span class="keyword">auto</span>* tip = tree.<a class="code hl_function" href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">getBestChain</a>().tip();</div>
+<div class="line"><span class="lineno">   66</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; size &amp;&amp; tip != <span class="keyword">nullptr</span>; i++) {</div>
+<div class="line"><span class="lineno">   67</span>    ret.push_back(tip-&gt;getHash().asVector());</div>
+<div class="line"><span class="lineno">   68</span>    tip = tip-&gt;pprev;</div>
+<div class="line"><span class="lineno">   69</span>  }</div>
+<div class="line"><span class="lineno">   70</span> </div>
+<div class="line"><span class="lineno">   71</span>  <span class="comment">// reverse them since we add them in reverse order (tip -&gt; genesis)</span></div>
+<div class="line"><span class="lineno">   72</span>  std::reverse(ret.begin(), ret.end());</div>
+<div class="line"><span class="lineno">   73</span>  <span class="keywordflow">return</span> ret;</div>
+<div class="line"><span class="lineno">   74</span>}</div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00093">base_block_tree.hpp:93</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3388,10 +3391,10 @@ template&lt;typename BlockTreeT &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="arith__uint256_8hpp_source.html#l00294">294</a> of file <a class="el" href="arith__uint256_8hpp_source.html">arith_uint256.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  294</span>                                                              {</div>
-<div class="line"><span class="lineno">  295</span>  *os &lt;&lt; uint.toHex();</div>
-<div class="line"><span class="lineno">  296</span>}</div>
+<p class="definition">Definition at line <a class="el" href="arith__uint256_8hpp_source.html#l00297">297</a> of file <a class="el" href="arith__uint256_8hpp_source.html">arith_uint256.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  297</span>                                                              {</div>
+<div class="line"><span class="lineno">  298</span>  *os &lt;&lt; uint.toHex();</div>
+<div class="line"><span class="lineno">  299</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3404,7 +3407,7 @@ template&lt;typename BlockTreeT &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a> altintegration::progPowHash </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>header</em></td><td>)</td>
           <td></td>
         </tr>
@@ -3893,7 +3896,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 
 <p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00127">127</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">  127</span>                                                                           {</div>
-<div class="line"><span class="lineno">  128</span>  Slice&lt;const uint8_t&gt; data;</div>
+<div class="line"><span class="lineno">  128</span>  <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;const uint8_t&gt;</a> data;</div>
 <div class="line"><span class="lineno">  129</span>  <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
 <div class="line"><span class="lineno">  130</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsinglebe-bad-data&quot;</span>);</div>
 <div class="line"><span class="lineno">  131</span>  }</div>
@@ -3901,6 +3904,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 <div class="line"><span class="lineno">  133</span>  <span class="keywordflow">return</span> dataStream.readBE&lt;T&gt;(out, state, data.size());</div>
 <div class="line"><span class="lineno">  134</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a4448797a2a5b62b03e28af03f1dfaa78"><div class="ttname"><a href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">altintegration::readSingleByteLenValue</a></div><div class="ttdeci">bool readSingleByteLenValue(ReadStream &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, ValidationState &amp;state, size_t minLen, size_t maxLen)</div><div class="ttdoc">Read variable length value, which consists of [N=(1 byte = size of slice) | N bytes slice] Size of sl...</div></div>
+<div class="ttc" id="astructaltintegration_1_1Slice_html"><div class="ttname"><a href="structaltintegration_1_1Slice.html">altintegration::Slice</a></div><div class="ttdoc">Non-owning contiguous array.</div><div class="ttdef"><b>Definition:</b> <a href="slice_8hpp_source.html#l00022">slice.hpp:22</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3981,7 +3985,7 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;&#160;</td>
           <td class="paramname"><em>out</em>, </td>
         </tr>
         <tr>
@@ -4038,7 +4042,7 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;&#160;</td>
           <td class="paramname"><em>out</em>, </td>
         </tr>
         <tr>
@@ -4269,7 +4273,7 @@ template&lt;typename L &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> altintegration::sha256 </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -4294,7 +4298,7 @@ template&lt;typename L &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> altintegration::sha256twice </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -4494,26 +4498,26 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="atv_8hpp_source.html#l00095">95</a> of file <a class="el" href="atv_8hpp_source.html">atv.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   95</span>                                 {</div>
-<div class="line"><span class="lineno">   96</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   97</span>  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552">version</a>);</div>
-<div class="line"><span class="lineno">   98</span>  json::putKV(obj, <span class="stringliteral">&quot;transaction&quot;</span>, ToJSON&lt;JsonValue&gt;(atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#a775bd53259f9a931c90fb09fce37942b">transaction</a>));</div>
-<div class="line"><span class="lineno">   99</span>  json::putKV(obj, <span class="stringliteral">&quot;merklePath&quot;</span>, ToJSON&lt;JsonValue&gt;(atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#aa46860f341b7223cc699b618b6d6ee68">merklePath</a>));</div>
-<div class="line"><span class="lineno">  100</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProof&quot;</span>, ToJSON&lt;JsonValue&gt;(atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#ae13ae3f449859368181c28e8aad72054">blockOfProof</a>));</div>
-<div class="line"><span class="lineno">  101</span> </div>
-<div class="line"><span class="lineno">  102</span>  <span class="comment">// return this entity in VBK-serialized form for easy consumption.</span></div>
-<div class="line"><span class="lineno">  103</span>  <span class="comment">// DO NOT REMOVE these fields - otherwise Stratum compat will break.</span></div>
-<div class="line"><span class="lineno">  104</span>  json::putStringKV(obj, <span class="stringliteral">&quot;id&quot;</span>, atv.<a class="code hl_function" href="structaltintegration_1_1ATV.html#a454c043b311d13db58e5fa3e93a0a09b">getId</a>().toHex());</div>
-<div class="line"><span class="lineno">  105</span>  json::putStringKV(obj, <span class="stringliteral">&quot;serialized&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(atv));</div>
-<div class="line"><span class="lineno">  106</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  107</span>}</div>
+<p class="definition">Definition at line <a class="el" href="atv_8hpp_source.html#l00103">103</a> of file <a class="el" href="atv_8hpp_source.html">atv.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  103</span>                                 {</div>
+<div class="line"><span class="lineno">  104</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  105</span>  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552">version</a>);</div>
+<div class="line"><span class="lineno">  106</span>  json::putKV(obj, <span class="stringliteral">&quot;transaction&quot;</span>, ToJSON&lt;JsonValue&gt;(atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#a775bd53259f9a931c90fb09fce37942b">transaction</a>));</div>
+<div class="line"><span class="lineno">  107</span>  json::putKV(obj, <span class="stringliteral">&quot;merklePath&quot;</span>, ToJSON&lt;JsonValue&gt;(atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#aa46860f341b7223cc699b618b6d6ee68">merklePath</a>));</div>
+<div class="line"><span class="lineno">  108</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProof&quot;</span>, ToJSON&lt;JsonValue&gt;(atv.<a class="code hl_variable" href="structaltintegration_1_1ATV.html#ae13ae3f449859368181c28e8aad72054">blockOfProof</a>));</div>
+<div class="line"><span class="lineno">  109</span> </div>
+<div class="line"><span class="lineno">  110</span>  <span class="comment">// return this entity in VBK-serialized form for easy consumption.</span></div>
+<div class="line"><span class="lineno">  111</span>  <span class="comment">// DO NOT REMOVE these fields - otherwise Stratum compat will break.</span></div>
+<div class="line"><span class="lineno">  112</span>  json::putStringKV(obj, <span class="stringliteral">&quot;id&quot;</span>, atv.<a class="code hl_function" href="structaltintegration_1_1ATV.html#a454c043b311d13db58e5fa3e93a0a09b">getId</a>().toHex());</div>
+<div class="line"><span class="lineno">  113</span>  json::putStringKV(obj, <span class="stringliteral">&quot;serialized&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(atv));</div>
+<div class="line"><span class="lineno">  114</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  115</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_ae8cac3ccae3038ddf8a54c5da8409e05"><div class="ttname"><a href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">altintegration::SerializeToHex</a></div><div class="ttdeci">std::string SerializeToHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00453">serde.hpp:453</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1ATV_html_a04bcfea5f2ebde4cda3457b5cc1fc552"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552">altintegration::ATV::version</a></div><div class="ttdeci">uint32_t version</div><div class="ttdoc">ATV serialization version.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00032">atv.hpp:32</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ATV_html_a04bcfea5f2ebde4cda3457b5cc1fc552"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552">altintegration::ATV::version</a></div><div class="ttdeci">uint32_t version</div><div class="ttdoc">ATV serialization version.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00040">atv.hpp:40</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a454c043b311d13db58e5fa3e93a0a09b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a454c043b311d13db58e5fa3e93a0a09b">altintegration::ATV::getId</a></div><div class="ttdeci">id_t getId() const</div><div class="ttdoc">Calculate a ATV id that is the sha256 hash of the ATV rawBytes.</div></div>
-<div class="ttc" id="astructaltintegration_1_1ATV_html_a775bd53259f9a931c90fb09fce37942b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a775bd53259f9a931c90fb09fce37942b">altintegration::ATV::transaction</a></div><div class="ttdeci">VbkTx transaction</div><div class="ttdoc">endorsing transaction.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00035">atv.hpp:35</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1ATV_html_aa46860f341b7223cc699b618b6d6ee68"><div class="ttname"><a href="structaltintegration_1_1ATV.html#aa46860f341b7223cc699b618b6d6ee68">altintegration::ATV::merklePath</a></div><div class="ttdeci">VbkMerklePath merklePath</div><div class="ttdoc">merkle path that proves that endorsing transaction is in blockOfProof.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00038">atv.hpp:38</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1ATV_html_ae13ae3f449859368181c28e8aad72054"><div class="ttname"><a href="structaltintegration_1_1ATV.html#ae13ae3f449859368181c28e8aad72054">altintegration::ATV::blockOfProof</a></div><div class="ttdeci">VbkBlock blockOfProof</div><div class="ttdoc">VBK block which contains endorsing transaction.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00041">atv.hpp:41</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ATV_html_a775bd53259f9a931c90fb09fce37942b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a775bd53259f9a931c90fb09fce37942b">altintegration::ATV::transaction</a></div><div class="ttdeci">VbkTx transaction</div><div class="ttdoc">endorsing transaction.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00043">atv.hpp:43</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ATV_html_aa46860f341b7223cc699b618b6d6ee68"><div class="ttname"><a href="structaltintegration_1_1ATV.html#aa46860f341b7223cc699b618b6d6ee68">altintegration::ATV::merklePath</a></div><div class="ttdeci">VbkMerklePath merklePath</div><div class="ttdoc">merkle path that proves that endorsing transaction is in blockOfProof.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00046">atv.hpp:46</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ATV_html_ae13ae3f449859368181c28e8aad72054"><div class="ttname"><a href="structaltintegration_1_1ATV.html#ae13ae3f449859368181c28e8aad72054">altintegration::ATV::blockOfProof</a></div><div class="ttdeci">VbkBlock blockOfProof</div><div class="ttdoc">VBK block which contains endorsing transaction.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00049">atv.hpp:49</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4576,10 +4580,10 @@ template&lt;typename Value , size_t N&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="blob_8hpp_source.html#l00250">250</a> of file <a class="el" href="blob_8hpp_source.html">blob.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  250</span>                                         {</div>
-<div class="line"><span class="lineno">  251</span>  <span class="keywordflow">return</span> ToJSON&lt;Value&gt;(blob.toHex());</div>
-<div class="line"><span class="lineno">  252</span>}</div>
+<p class="definition">Definition at line <a class="el" href="blob_8hpp_source.html#l00249">249</a> of file <a class="el" href="blob_8hpp_source.html">blob.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  249</span>                                         {</div>
+<div class="line"><span class="lineno">  250</span>  <span class="keywordflow">return</span> ToJSON&lt;Value&gt;(blob.toHex());</div>
+<div class="line"><span class="lineno">  251</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4699,18 +4703,18 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="btcblock_8hpp_source.html#l00132">132</a> of file <a class="el" href="btcblock_8hpp_source.html">btcblock.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  132</span>                                    {</div>
-<div class="line"><span class="lineno">  133</span>  JsonValue <span class="keywordtype">object</span> = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  134</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;hash&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(b.<a class="code hl_function" href="structaltintegration_1_1BtcBlock.html#a88de88c22045a58d24a78310c1be34d9">getHash</a>()));</div>
-<div class="line"><span class="lineno">  135</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;version&quot;</span>, b.getVersion());</div>
-<div class="line"><span class="lineno">  136</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;previousBlock&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(b.getPreviousBlock()));</div>
-<div class="line"><span class="lineno">  137</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;merkleRoot&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(b.getMerkleRoot()));</div>
-<div class="line"><span class="lineno">  138</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;timestamp&quot;</span>, b.getTimestamp());</div>
-<div class="line"><span class="lineno">  139</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;bits&quot;</span>, b.getDifficulty());</div>
-<div class="line"><span class="lineno">  140</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;nonce&quot;</span>, b.getNonce());</div>
-<div class="line"><span class="lineno">  141</span>  <span class="keywordflow">return</span> object;</div>
-<div class="line"><span class="lineno">  142</span>}</div>
+<p class="definition">Definition at line <a class="el" href="btcblock_8hpp_source.html#l00141">141</a> of file <a class="el" href="btcblock_8hpp_source.html">btcblock.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  141</span>                                    {</div>
+<div class="line"><span class="lineno">  142</span>  JsonValue <span class="keywordtype">object</span> = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  143</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;hash&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(b.<a class="code hl_function" href="structaltintegration_1_1BtcBlock.html#a88de88c22045a58d24a78310c1be34d9">getHash</a>()));</div>
+<div class="line"><span class="lineno">  144</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;version&quot;</span>, b.getVersion());</div>
+<div class="line"><span class="lineno">  145</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;previousBlock&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(b.getPreviousBlock()));</div>
+<div class="line"><span class="lineno">  146</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;merkleRoot&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(b.getMerkleRoot()));</div>
+<div class="line"><span class="lineno">  147</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;timestamp&quot;</span>, b.getTimestamp());</div>
+<div class="line"><span class="lineno">  148</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;bits&quot;</span>, b.getDifficulty());</div>
+<div class="line"><span class="lineno">  149</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;nonce&quot;</span>, b.getNonce());</div>
+<div class="line"><span class="lineno">  150</span>  <span class="keywordflow">return</span> object;</div>
+<div class="line"><span class="lineno">  151</span>}</div>
 <div class="ttc" id="astructaltintegration_1_1BtcBlock_html_a88de88c22045a58d24a78310c1be34d9"><div class="ttname"><a href="structaltintegration_1_1BtcBlock.html#a88de88c22045a58d24a78310c1be34d9">altintegration::BtcBlock::getHash</a></div><div class="ttdeci">const hash_t &amp; getHash() const</div><div class="ttdoc">Calculate the hash of the btc block.</div></div>
 </div><!-- fragment -->
 </div>
@@ -4796,15 +4800,15 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="keystone__container_8hpp_source.html#l00044">44</a> of file <a class="el" href="keystone__container_8hpp_source.html">keystone_container.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   44</span>                                             {</div>
-<div class="line"><span class="lineno">   45</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   46</span>  json::putStringKV(</div>
-<div class="line"><span class="lineno">   47</span>      obj, <span class="stringliteral">&quot;firstPreviousKeystone&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(c.firstPreviousKeystone));</div>
-<div class="line"><span class="lineno">   48</span>  json::putStringKV(</div>
-<div class="line"><span class="lineno">   49</span>      obj, <span class="stringliteral">&quot;secondPreviousKeystone&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(c.secondPreviousKeystone));</div>
-<div class="line"><span class="lineno">   50</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   51</span>}</div>
+<p class="definition">Definition at line <a class="el" href="keystone__container_8hpp_source.html#l00054">54</a> of file <a class="el" href="keystone__container_8hpp_source.html">keystone_container.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   54</span>                                             {</div>
+<div class="line"><span class="lineno">   55</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   56</span>  json::putStringKV(</div>
+<div class="line"><span class="lineno">   57</span>      obj, <span class="stringliteral">&quot;firstPreviousKeystone&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(c.firstPreviousKeystone));</div>
+<div class="line"><span class="lineno">   58</span>  json::putStringKV(</div>
+<div class="line"><span class="lineno">   59</span>      obj, <span class="stringliteral">&quot;secondPreviousKeystone&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(c.secondPreviousKeystone));</div>
+<div class="line"><span class="lineno">   60</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">   61</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4855,14 +4859,14 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="merkle__path_8hpp_source.html#l00053">53</a> of file <a class="el" href="merkle__path_8hpp_source.html">merkle_path.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   53</span>                                      {</div>
-<div class="line"><span class="lineno">   54</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   55</span>  json::putIntKV(obj, <span class="stringliteral">&quot;index&quot;</span>, m.index);</div>
-<div class="line"><span class="lineno">   56</span>  json::putStringKV(obj, <span class="stringliteral">&quot;subject&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(m.subject));</div>
-<div class="line"><span class="lineno">   57</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;layers&quot;</span>, m.layers);</div>
-<div class="line"><span class="lineno">   58</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   59</span>}</div>
+<p class="definition">Definition at line <a class="el" href="merkle__path_8hpp_source.html#l00059">59</a> of file <a class="el" href="merkle__path_8hpp_source.html">merkle_path.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   59</span>                                      {</div>
+<div class="line"><span class="lineno">   60</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   61</span>  json::putIntKV(obj, <span class="stringliteral">&quot;index&quot;</span>, m.index);</div>
+<div class="line"><span class="lineno">   62</span>  json::putStringKV(obj, <span class="stringliteral">&quot;subject&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(m.subject));</div>
+<div class="line"><span class="lineno">   63</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;layers&quot;</span>, m.layers);</div>
+<div class="line"><span class="lineno">   64</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">   65</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4884,13 +4888,13 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="output_8hpp_source.html#l00050">50</a> of file <a class="el" href="output_8hpp_source.html">output.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   50</span>                                  {</div>
-<div class="line"><span class="lineno">   51</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   52</span>  json::putStringKV(obj, <span class="stringliteral">&quot;address&quot;</span>, o.address.<a class="code hl_function" href="structaltintegration_1_1Address.html#aea06f8dc920722b86e09c07f7a1ef51d">toString</a>());</div>
-<div class="line"><span class="lineno">   53</span>  json::putIntKV(obj, <span class="stringliteral">&quot;coin&quot;</span>, o.coin.units);</div>
-<div class="line"><span class="lineno">   54</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   55</span>}</div>
+<p class="definition">Definition at line <a class="el" href="output_8hpp_source.html#l00056">56</a> of file <a class="el" href="output_8hpp_source.html">output.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   56</span>                                  {</div>
+<div class="line"><span class="lineno">   57</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   58</span>  json::putStringKV(obj, <span class="stringliteral">&quot;address&quot;</span>, o.address.<a class="code hl_function" href="structaltintegration_1_1Address.html#aea06f8dc920722b86e09c07f7a1ef51d">toString</a>());</div>
+<div class="line"><span class="lineno">   59</span>  json::putIntKV(obj, <span class="stringliteral">&quot;coin&quot;</span>, o.coin.units);</div>
+<div class="line"><span class="lineno">   60</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">   61</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -5014,19 +5018,19 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="publication__data_8hpp_source.html#l00048">48</a> of file <a class="el" href="publication__data_8hpp_source.html">publication_data.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   48</span>                                           {</div>
-<div class="line"><span class="lineno">   49</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   50</span>  json::putIntKV(obj, <span class="stringliteral">&quot;identifier&quot;</span>, p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#ad293e2906e9896972986469d1048a5e6">identifier</a>);</div>
-<div class="line"><span class="lineno">   51</span>  json::putStringKV(obj, <span class="stringliteral">&quot;header&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#affe04ae79503b38169ecafdb34ea14f1">header</a>));</div>
-<div class="line"><span class="lineno">   52</span>  json::putStringKV(obj, <span class="stringliteral">&quot;payoutInfo&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200">payoutInfo</a>));</div>
-<div class="line"><span class="lineno">   53</span>  json::putStringKV(obj, <span class="stringliteral">&quot;contextInfo&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#add06191a76226e51c6487a7af44ad46a">contextInfo</a>));</div>
-<div class="line"><span class="lineno">   54</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   55</span>}</div>
-<div class="ttc" id="astructaltintegration_1_1PublicationData_html_a6bf3e97b403c19e8591d028d2df62200"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200">altintegration::PublicationData::payoutInfo</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; payoutInfo</div><div class="ttdoc">bitcoin script or POP payout address</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00030">publication_data.hpp:30</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1PublicationData_html_ad293e2906e9896972986469d1048a5e6"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#ad293e2906e9896972986469d1048a5e6">altintegration::PublicationData::identifier</a></div><div class="ttdeci">int64_t identifier</div><div class="ttdoc">altchain network POP ID</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00026">publication_data.hpp:26</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1PublicationData_html_add06191a76226e51c6487a7af44ad46a"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#add06191a76226e51c6487a7af44ad46a">altintegration::PublicationData::contextInfo</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; contextInfo</div><div class="ttdoc">serialized AuthenticatedContextInfoContainer</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00032">publication_data.hpp:32</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1PublicationData_html_affe04ae79503b38169ecafdb34ea14f1"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#affe04ae79503b38169ecafdb34ea14f1">altintegration::PublicationData::header</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; header</div><div class="ttdoc">altchain block header</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00028">publication_data.hpp:28</a></div></div>
+<p class="definition">Definition at line <a class="el" href="publication__data_8hpp_source.html#l00054">54</a> of file <a class="el" href="publication__data_8hpp_source.html">publication_data.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   54</span>                                           {</div>
+<div class="line"><span class="lineno">   55</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   56</span>  json::putIntKV(obj, <span class="stringliteral">&quot;identifier&quot;</span>, p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#ad293e2906e9896972986469d1048a5e6">identifier</a>);</div>
+<div class="line"><span class="lineno">   57</span>  json::putStringKV(obj, <span class="stringliteral">&quot;header&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#affe04ae79503b38169ecafdb34ea14f1">header</a>));</div>
+<div class="line"><span class="lineno">   58</span>  json::putStringKV(obj, <span class="stringliteral">&quot;payoutInfo&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200">payoutInfo</a>));</div>
+<div class="line"><span class="lineno">   59</span>  json::putStringKV(obj, <span class="stringliteral">&quot;contextInfo&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(p.<a class="code hl_variable" href="structaltintegration_1_1PublicationData.html#add06191a76226e51c6487a7af44ad46a">contextInfo</a>));</div>
+<div class="line"><span class="lineno">   60</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">   61</span>}</div>
+<div class="ttc" id="astructaltintegration_1_1PublicationData_html_a6bf3e97b403c19e8591d028d2df62200"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#a6bf3e97b403c19e8591d028d2df62200">altintegration::PublicationData::payoutInfo</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; payoutInfo</div><div class="ttdoc">bitcoin script or POP payout address</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00036">publication_data.hpp:36</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1PublicationData_html_ad293e2906e9896972986469d1048a5e6"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#ad293e2906e9896972986469d1048a5e6">altintegration::PublicationData::identifier</a></div><div class="ttdeci">int64_t identifier</div><div class="ttdoc">altchain network POP ID</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00032">publication_data.hpp:32</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1PublicationData_html_add06191a76226e51c6487a7af44ad46a"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#add06191a76226e51c6487a7af44ad46a">altintegration::PublicationData::contextInfo</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; contextInfo</div><div class="ttdoc">serialized AuthenticatedContextInfoContainer</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00038">publication_data.hpp:38</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1PublicationData_html_affe04ae79503b38169ecafdb34ea14f1"><div class="ttname"><a href="structaltintegration_1_1PublicationData.html#affe04ae79503b38169ecafdb34ea14f1">altintegration::PublicationData::header</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; header</div><div class="ttdoc">altchain block header</div><div class="ttdef"><b>Definition:</b> <a href="publication__data_8hpp_source.html#l00034">publication_data.hpp:34</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -5175,19 +5179,19 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__merkle__path_8hpp_source.html#l00051">51</a> of file <a class="el" href="vbk__merkle__path_8hpp_source.html">vbk_merkle_path.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   51</span>                                          {</div>
-<div class="line"><span class="lineno">   52</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   53</span>  json::putIntKV(obj, <span class="stringliteral">&quot;treeIndex&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">treeIndex</a>);</div>
-<div class="line"><span class="lineno">   54</span>  json::putIntKV(obj, <span class="stringliteral">&quot;index&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">index</a>);</div>
-<div class="line"><span class="lineno">   55</span>  json::putStringKV(obj, <span class="stringliteral">&quot;subject&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f">subject</a>.toHex());</div>
-<div class="line"><span class="lineno">   56</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;layers&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">layers</a>);</div>
-<div class="line"><span class="lineno">   57</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   58</span>}</div>
-<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a02cc7463c53111b13c914c201c7cea4c"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">altintegration::VbkMerklePath::treeIndex</a></div><div class="ttdeci">int32_t treeIndex</div><div class="ttdoc">an indentifier of which transactions tree (pop=0, normal=1)</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00026">vbk_merkle_path.hpp:26</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a15d05f69defdf1f706d2cd909d0c5a56"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">altintegration::VbkMerklePath::layers</a></div><div class="ttdeci">std::vector&lt; uint256 &gt; layers</div><div class="ttdoc">the layers in the merkle path</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00032">vbk_merkle_path.hpp:32</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a80b479e90c1c9a4f8945d428f386fb12"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">altintegration::VbkMerklePath::index</a></div><div class="ttdeci">int32_t index</div><div class="ttdoc">the index of the bottom data TxID in the block it came from</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00028">vbk_merkle_path.hpp:28</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_aca5a94aa8b20e49950a093f90d7a930f"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f">altintegration::VbkMerklePath::subject</a></div><div class="ttdeci">uint256 subject</div><div class="ttdoc">TxID that this merkle path authenticates.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00030">vbk_merkle_path.hpp:30</a></div></div>
+<p class="definition">Definition at line <a class="el" href="vbk__merkle__path_8hpp_source.html#l00056">56</a> of file <a class="el" href="vbk__merkle__path_8hpp_source.html">vbk_merkle_path.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   56</span>                                          {</div>
+<div class="line"><span class="lineno">   57</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   58</span>  json::putIntKV(obj, <span class="stringliteral">&quot;treeIndex&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">treeIndex</a>);</div>
+<div class="line"><span class="lineno">   59</span>  json::putIntKV(obj, <span class="stringliteral">&quot;index&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">index</a>);</div>
+<div class="line"><span class="lineno">   60</span>  json::putStringKV(obj, <span class="stringliteral">&quot;subject&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f">subject</a>.toHex());</div>
+<div class="line"><span class="lineno">   61</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;layers&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">layers</a>);</div>
+<div class="line"><span class="lineno">   62</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">   63</span>}</div>
+<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a02cc7463c53111b13c914c201c7cea4c"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">altintegration::VbkMerklePath::treeIndex</a></div><div class="ttdeci">int32_t treeIndex</div><div class="ttdoc">an indentifier of which transactions tree (pop=0, normal=1)</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00031">vbk_merkle_path.hpp:31</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a15d05f69defdf1f706d2cd909d0c5a56"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">altintegration::VbkMerklePath::layers</a></div><div class="ttdeci">std::vector&lt; uint256 &gt; layers</div><div class="ttdoc">the layers in the merkle path</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00037">vbk_merkle_path.hpp:37</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a80b479e90c1c9a4f8945d428f386fb12"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">altintegration::VbkMerklePath::index</a></div><div class="ttdeci">int32_t index</div><div class="ttdoc">the index of the bottom data TxID in the block it came from</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00033">vbk_merkle_path.hpp:33</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_aca5a94aa8b20e49950a093f90d7a930f"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f">altintegration::VbkMerklePath::subject</a></div><div class="ttdeci">uint256 subject</div><div class="ttdoc">TxID that this merkle path authenticates.</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00035">vbk_merkle_path.hpp:35</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -5209,23 +5213,23 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbkpoptx_8hpp_source.html#l00078">78</a> of file <a class="el" href="vbkpoptx_8hpp_source.html">vbkpoptx.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   78</span>                                     {</div>
-<div class="line"><span class="lineno">   79</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   80</span>  tx.networkOrType.<a class="code hl_variable" href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">networkType</a>.template putJson&lt;JsonValue&gt;(obj);</div>
-<div class="line"><span class="lineno">   81</span>  json::putStringKV(obj, <span class="stringliteral">&quot;hash&quot;</span>, tx.<a class="code hl_function" href="structaltintegration_1_1VbkPopTx.html#a0aded8d9a6f867272dcb874405820235">getHash</a>().toHex());</div>
-<div class="line"><span class="lineno">   82</span>  json::putIntKV(obj, <span class="stringliteral">&quot;type&quot;</span>, tx.networkOrType.typeId);</div>
-<div class="line"><span class="lineno">   83</span>  json::putStringKV(obj, <span class="stringliteral">&quot;address&quot;</span>, tx.address.<a class="code hl_function" href="structaltintegration_1_1Address.html#aea06f8dc920722b86e09c07f7a1ef51d">toString</a>());</div>
-<div class="line"><span class="lineno">   84</span>  json::putKV(obj, <span class="stringliteral">&quot;publishedBlock&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.publishedBlock));</div>
-<div class="line"><span class="lineno">   85</span>  json::putStringKV(</div>
-<div class="line"><span class="lineno">   86</span>      obj, <span class="stringliteral">&quot;bitcoinTransaction&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">SerializeToRawHex</a>(tx.bitcoinTransaction));</div>
-<div class="line"><span class="lineno">   87</span>  json::putKV(obj, <span class="stringliteral">&quot;merklePath&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.merklePath));</div>
-<div class="line"><span class="lineno">   88</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProof&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.blockOfProof));</div>
-<div class="line"><span class="lineno">   89</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;blockOfProofContext&quot;</span>, tx.blockOfProofContext);</div>
-<div class="line"><span class="lineno">   90</span>  json::putStringKV(obj, <span class="stringliteral">&quot;signature&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.signature));</div>
-<div class="line"><span class="lineno">   91</span>  json::putStringKV(obj, <span class="stringliteral">&quot;publicKey&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.publicKey));</div>
-<div class="line"><span class="lineno">   92</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   93</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbkpoptx_8hpp_source.html#l00089">89</a> of file <a class="el" href="vbkpoptx_8hpp_source.html">vbkpoptx.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   89</span>                                     {</div>
+<div class="line"><span class="lineno">   90</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   91</span>  tx.networkOrType.<a class="code hl_variable" href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">networkType</a>.template putJson&lt;JsonValue&gt;(obj);</div>
+<div class="line"><span class="lineno">   92</span>  json::putStringKV(obj, <span class="stringliteral">&quot;hash&quot;</span>, tx.<a class="code hl_function" href="structaltintegration_1_1VbkPopTx.html#a0aded8d9a6f867272dcb874405820235">getHash</a>().toHex());</div>
+<div class="line"><span class="lineno">   93</span>  json::putIntKV(obj, <span class="stringliteral">&quot;type&quot;</span>, tx.networkOrType.typeId);</div>
+<div class="line"><span class="lineno">   94</span>  json::putStringKV(obj, <span class="stringliteral">&quot;address&quot;</span>, tx.address.<a class="code hl_function" href="structaltintegration_1_1Address.html#aea06f8dc920722b86e09c07f7a1ef51d">toString</a>());</div>
+<div class="line"><span class="lineno">   95</span>  json::putKV(obj, <span class="stringliteral">&quot;publishedBlock&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.publishedBlock));</div>
+<div class="line"><span class="lineno">   96</span>  json::putStringKV(</div>
+<div class="line"><span class="lineno">   97</span>      obj, <span class="stringliteral">&quot;bitcoinTransaction&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">SerializeToRawHex</a>(tx.bitcoinTransaction));</div>
+<div class="line"><span class="lineno">   98</span>  json::putKV(obj, <span class="stringliteral">&quot;merklePath&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.merklePath));</div>
+<div class="line"><span class="lineno">   99</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProof&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.blockOfProof));</div>
+<div class="line"><span class="lineno">  100</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;blockOfProofContext&quot;</span>, tx.blockOfProofContext);</div>
+<div class="line"><span class="lineno">  101</span>  json::putStringKV(obj, <span class="stringliteral">&quot;signature&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.signature));</div>
+<div class="line"><span class="lineno">  102</span>  json::putStringKV(obj, <span class="stringliteral">&quot;publicKey&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.publicKey));</div>
+<div class="line"><span class="lineno">  103</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  104</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_aa7c5b7e78805fcf8b1a606abbbc2111e"><div class="ttname"><a href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">altintegration::SerializeToRawHex</a></div><div class="ttdeci">std::string SerializeToRawHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00459">serde.hpp:459</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_ad990bf96def00c233bf48c47f62bd2c8"><div class="ttname"><a href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">altintegration::NetworkBytePair::networkType</a></div><div class="ttdeci">VbkNetworkType networkType</div><div class="ttdoc">&lt; works as std::optional. if hasNetworkByte is true, networkByte is set</div><div class="ttdef"><b>Definition:</b> <a href="network__byte__pair_8hpp_source.html#l00054">network_byte_pair.hpp:54</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkPopTx_html_a0aded8d9a6f867272dcb874405820235"><div class="ttname"><a href="structaltintegration_1_1VbkPopTx.html#a0aded8d9a6f867272dcb874405820235">altintegration::VbkPopTx::getHash</a></div><div class="ttdeci">hash_t getHash() const</div><div class="ttdoc">Calculate the hash of the vbk pop transaction.</div></div>
@@ -5250,21 +5254,21 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbktx_8hpp_source.html#l00085">85</a> of file <a class="el" href="vbktx_8hpp_source.html">vbktx.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   85</span>                                  {</div>
-<div class="line"><span class="lineno">   86</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   87</span>  tx.networkOrType.<a class="code hl_variable" href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">networkType</a>.template putJson&lt;JsonValue&gt;(obj);</div>
-<div class="line"><span class="lineno">   88</span>  json::putStringKV(obj, <span class="stringliteral">&quot;hash&quot;</span>, tx.<a class="code hl_function" href="structaltintegration_1_1VbkTx.html#ab0387b99aeedd7b5b2b3d0fb4b1ee6bf">getHash</a>().toHex());</div>
-<div class="line"><span class="lineno">   89</span>  json::putIntKV(obj, <span class="stringliteral">&quot;type&quot;</span>, tx.networkOrType.typeId);</div>
-<div class="line"><span class="lineno">   90</span>  json::putStringKV(obj, <span class="stringliteral">&quot;sourceAddress&quot;</span>, tx.sourceAddress.<a class="code hl_function" href="structaltintegration_1_1Address.html#aea06f8dc920722b86e09c07f7a1ef51d">toString</a>());</div>
-<div class="line"><span class="lineno">   91</span>  json::putIntKV(obj, <span class="stringliteral">&quot;sourceAmount&quot;</span>, tx.sourceAmount.units);</div>
-<div class="line"><span class="lineno">   92</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;outputs&quot;</span>, tx.outputs);</div>
-<div class="line"><span class="lineno">   93</span>  json::putIntKV(obj, <span class="stringliteral">&quot;signatureIndex&quot;</span>, tx.signatureIndex);</div>
-<div class="line"><span class="lineno">   94</span>  json::putKV(obj, <span class="stringliteral">&quot;publicationData&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.publicationData));</div>
-<div class="line"><span class="lineno">   95</span>  json::putStringKV(obj, <span class="stringliteral">&quot;signature&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.signature));</div>
-<div class="line"><span class="lineno">   96</span>  json::putStringKV(obj, <span class="stringliteral">&quot;publicKey&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.publicKey));</div>
-<div class="line"><span class="lineno">   97</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   98</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbktx_8hpp_source.html#l00094">94</a> of file <a class="el" href="vbktx_8hpp_source.html">vbktx.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   94</span>                                  {</div>
+<div class="line"><span class="lineno">   95</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   96</span>  tx.networkOrType.<a class="code hl_variable" href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">networkType</a>.template putJson&lt;JsonValue&gt;(obj);</div>
+<div class="line"><span class="lineno">   97</span>  json::putStringKV(obj, <span class="stringliteral">&quot;hash&quot;</span>, tx.<a class="code hl_function" href="structaltintegration_1_1VbkTx.html#ab0387b99aeedd7b5b2b3d0fb4b1ee6bf">getHash</a>().toHex());</div>
+<div class="line"><span class="lineno">   98</span>  json::putIntKV(obj, <span class="stringliteral">&quot;type&quot;</span>, tx.networkOrType.typeId);</div>
+<div class="line"><span class="lineno">   99</span>  json::putStringKV(obj, <span class="stringliteral">&quot;sourceAddress&quot;</span>, tx.sourceAddress.<a class="code hl_function" href="structaltintegration_1_1Address.html#aea06f8dc920722b86e09c07f7a1ef51d">toString</a>());</div>
+<div class="line"><span class="lineno">  100</span>  json::putIntKV(obj, <span class="stringliteral">&quot;sourceAmount&quot;</span>, tx.sourceAmount.units);</div>
+<div class="line"><span class="lineno">  101</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;outputs&quot;</span>, tx.outputs);</div>
+<div class="line"><span class="lineno">  102</span>  json::putIntKV(obj, <span class="stringliteral">&quot;signatureIndex&quot;</span>, tx.signatureIndex);</div>
+<div class="line"><span class="lineno">  103</span>  json::putKV(obj, <span class="stringliteral">&quot;publicationData&quot;</span>, ToJSON&lt;JsonValue&gt;(tx.publicationData));</div>
+<div class="line"><span class="lineno">  104</span>  json::putStringKV(obj, <span class="stringliteral">&quot;signature&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.signature));</div>
+<div class="line"><span class="lineno">  105</span>  json::putStringKV(obj, <span class="stringliteral">&quot;publicKey&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.publicKey));</div>
+<div class="line"><span class="lineno">  106</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  107</span>}</div>
 <div class="ttc" id="astructaltintegration_1_1VbkTx_html_ab0387b99aeedd7b5b2b3d0fb4b1ee6bf"><div class="ttname"><a href="structaltintegration_1_1VbkTx.html#ab0387b99aeedd7b5b2b3d0fb4b1ee6bf">altintegration::VbkTx::getHash</a></div><div class="ttdeci">uint256 getHash() const</div><div class="ttdoc">Calculate the hash of the VBK transaction.</div></div>
 </div><!-- fragment -->
 </div>
@@ -5287,20 +5291,20 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vtb_8hpp_source.html#l00087">87</a> of file <a class="el" href="vtb_8hpp_source.html">vtb.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   87</span>                               {</div>
-<div class="line"><span class="lineno">   88</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   89</span>  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, v.version);</div>
-<div class="line"><span class="lineno">   90</span>  json::putKV(obj, <span class="stringliteral">&quot;transaction&quot;</span>, ToJSON&lt;JsonValue&gt;(v.transaction));</div>
-<div class="line"><span class="lineno">   91</span>  json::putKV(obj, <span class="stringliteral">&quot;merklePath&quot;</span>, ToJSON&lt;JsonValue&gt;(v.merklePath));</div>
-<div class="line"><span class="lineno">   92</span>  json::putKV(obj, <span class="stringliteral">&quot;containingBlock&quot;</span>, ToJSON&lt;JsonValue&gt;(v.containingBlock));</div>
-<div class="line"><span class="lineno">   93</span> </div>
-<div class="line"><span class="lineno">   94</span>  <span class="comment">// return this entity in VBK-serialized form for easy consumption.</span></div>
-<div class="line"><span class="lineno">   95</span>  <span class="comment">// DO NOT REMOVE these fields - otherwise Stratum compat will break.</span></div>
-<div class="line"><span class="lineno">   96</span>  json::putStringKV(obj, <span class="stringliteral">&quot;id&quot;</span>, v.<a class="code hl_function" href="structaltintegration_1_1VTB.html#aed8e8955b62f1b96397e1fb3b1e154e7">getId</a>().toHex());</div>
-<div class="line"><span class="lineno">   97</span>  json::putStringKV(obj, <span class="stringliteral">&quot;serialized&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(v));</div>
-<div class="line"><span class="lineno">   98</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   99</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vtb_8hpp_source.html#l00095">95</a> of file <a class="el" href="vtb_8hpp_source.html">vtb.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   95</span>                               {</div>
+<div class="line"><span class="lineno">   96</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   97</span>  json::putIntKV(obj, <span class="stringliteral">&quot;version&quot;</span>, v.version);</div>
+<div class="line"><span class="lineno">   98</span>  json::putKV(obj, <span class="stringliteral">&quot;transaction&quot;</span>, ToJSON&lt;JsonValue&gt;(v.transaction));</div>
+<div class="line"><span class="lineno">   99</span>  json::putKV(obj, <span class="stringliteral">&quot;merklePath&quot;</span>, ToJSON&lt;JsonValue&gt;(v.merklePath));</div>
+<div class="line"><span class="lineno">  100</span>  json::putKV(obj, <span class="stringliteral">&quot;containingBlock&quot;</span>, ToJSON&lt;JsonValue&gt;(v.containingBlock));</div>
+<div class="line"><span class="lineno">  101</span> </div>
+<div class="line"><span class="lineno">  102</span>  <span class="comment">// return this entity in VBK-serialized form for easy consumption.</span></div>
+<div class="line"><span class="lineno">  103</span>  <span class="comment">// DO NOT REMOVE these fields - otherwise Stratum compat will break.</span></div>
+<div class="line"><span class="lineno">  104</span>  json::putStringKV(obj, <span class="stringliteral">&quot;id&quot;</span>, v.<a class="code hl_function" href="structaltintegration_1_1VTB.html#aed8e8955b62f1b96397e1fb3b1e154e7">getId</a>().toHex());</div>
+<div class="line"><span class="lineno">  105</span>  json::putStringKV(obj, <span class="stringliteral">&quot;serialized&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(v));</div>
+<div class="line"><span class="lineno">  106</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  107</span>}</div>
 <div class="ttc" id="astructaltintegration_1_1VTB_html_aed8e8955b62f1b96397e1fb3b1e154e7"><div class="ttname"><a href="structaltintegration_1_1VTB.html#aed8e8955b62f1b96397e1fb3b1e154e7">altintegration::VTB::getId</a></div><div class="ttdeci">id_t getId() const</div><div class="ttdoc">Calculate a VTB id that is the sha256 hash of the VTB rawBytes.</div></div>
 </div><!-- fragment -->
 </div>
@@ -5339,7 +5343,7 @@ template&lt;typename JsonValue &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a> altintegration::vblake </td>
           <td>(</td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -5591,7 +5595,7 @@ template&lt;typename JsonValue &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
@@ -5683,7 +5687,7 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Slice&lt; const uint8_t &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td>
           <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
