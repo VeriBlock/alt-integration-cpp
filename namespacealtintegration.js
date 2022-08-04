@@ -58,7 +58,6 @@ var namespacealtintegration =
     [ "PublicationData", "structaltintegration_1_1PublicationData.html", "structaltintegration_1_1PublicationData" ],
     [ "ReadStream", "structaltintegration_1_1ReadStream.html", "structaltintegration_1_1ReadStream" ],
     [ "reverse_range", "classaltintegration_1_1reverse__range.html", null ],
-    [ "Slice", "structaltintegration_1_1Slice.html", null ],
     [ "StateCorruptedException", "structaltintegration_1_1StateCorruptedException.html", null ],
     [ "StorageIOException", "structaltintegration_1_1StorageIOException.html", null ],
     [ "StoredBlockIndex", "structaltintegration_1_1StoredBlockIndex.html", "structaltintegration_1_1StoredBlockIndex" ],

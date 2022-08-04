@@ -152,7 +152,6 @@ var hierarchy =
     [ "altintegration::ReadStream", "structaltintegration_1_1ReadStream.html", null ],
     [ "altintegration::reverse_range< T >", "classaltintegration_1_1reverse__range.html", null ],
     [ "altintegration::btc::SendCmpctMsg", "structaltintegration_1_1btc_1_1SendCmpctMsg.html", null ],
-    [ "altintegration::Slice< ElementType >", "structaltintegration_1_1Slice.html", null ],
     [ "altintegration::cache::SmallLFRUCache< Key, Value, Size, TimeWindow, typename >", "structaltintegration_1_1cache_1_1SmallLFRUCache.html", null ],
     [ "altintegration::adaptors::Storage", "structaltintegration_1_1adaptors_1_1Storage.html", [
       [ "altintegration::adaptors::InmemStorageImpl", "structaltintegration_1_1adaptors_1_1InmemStorageImpl.html", null ],
