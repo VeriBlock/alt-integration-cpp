@@ -6,6 +6,7 @@
 #include <mutex>
 #include <utility>
 #include <vector>
+#include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
@@ -610,7 +611,7 @@ struct EthashCacheInMem : public EthashCacheI {
 };
 
 static std::unique_ptr<EthashCacheI> ethash_cache =
-    std::unique_ptr<EthashCacheInMem>(new EthashCacheInMem{});
+    make_unique<EthashCacheInMem>();
 
 // protects EthashCache
 static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetEthashCacheMutex() {
@@ -627,6 +628,7 @@ void setEthashCache(std::unique_ptr<EthashCacheI> cache) {
 
 static EthashCacheI& GetEthashCache() {
   // NOLINTNEXTLINE(cert-err58-cpp)
+  VBK_ASSERT(ethash_cache != nullptr);
   return *ethash_cache;
 }
 
@@ -650,8 +652,7 @@ struct ProgpowHeaderCacheInMem : public ProgpowHeaderCacheI {
 };
 
 static std::unique_ptr<ProgpowHeaderCacheI> progpow_header_cache =
-    std::unique_ptr<ProgpowHeaderCacheInMem>(
-        new ProgpowHeaderCacheInMem{VBK_PROGPOW_HEADER_HASH_SIZE, 1000});
+    make_unique<ProgpowHeaderCacheInMem>(VBK_PROGPOW_HEADER_HASH_SIZE, 1000);
 
 // protects ProgpowHeaderCache
 static VBK_TRACE_LOCKABLE_BASE(std::mutex) & GetProgpowHeaderCacheMutex() {
@@ -683,10 +684,12 @@ void progpow::clearHeaderCache() {
   LockGuard lock(GetProgpowHeaderCacheMutex());
   GetProgpowHeaderCache().clear();
 }
+
 void progpow::clearEthashCache() {
   LockGuard lock(GetEthashCacheMutex());
   GetEthashCache().clear();
 }
+
 static uint192 progPowHashImpl(Slice<const uint8_t> header) {
   VBK_ASSERT(header.size() == VBK_HEADER_SIZE_PROGPOW);
   const auto height = progpow::getVbkBlockHeight(header);
