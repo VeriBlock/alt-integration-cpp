@@ -114,7 +114,7 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ReadStream</b> (const void *buff, size_t size)</td></tr>
 <tr class="separator:ae6a91507b72212cf6e6846de5da92d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5bff4a00355493a20f58de01dc991ab"><td class="memItemLeft" align="right" valign="top"><a id="ab5bff4a00355493a20f58de01dc991ab" name="ab5bff4a00355493a20f58de01dc991ab"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ReadStream</b> (Slice&lt; const uint8_t &gt; slice)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ReadStream</b> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; slice)</td></tr>
 <tr class="separator:ab5bff4a00355493a20f58de01dc991ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ed4efbba366d51041a1c02487d41cb4"><td class="memItemLeft" align="right" valign="top"><a id="a1ed4efbba366d51041a1c02487d41cb4" name="a1ed4efbba366d51041a1c02487d41cb4"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ReadStream</b> (const std::vector&lt; uint8_t &gt; &amp;v)</td></tr>
@@ -135,10 +135,10 @@ Public Member Functions</h2></td></tr>
 std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>assertRead</b> (size_t size)</td></tr>
 <tr class="separator:ac784194c8480bda16310ceaacdff0734"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdc0f52675cae0acf806bdbb3fc73da8"><td class="memItemLeft" align="right" valign="top"><a id="afdc0f52675cae0acf806bdbb3fc73da8" name="afdc0f52675cae0acf806bdbb3fc73da8"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>readSlice</b> (size_t size, Slice&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>readSlice</b> (size_t size, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="separator:afdc0f52675cae0acf806bdbb3fc73da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d6d99d715cc8188d44e620fc379de5e"><td class="memItemLeft" align="right" valign="top"><a id="a0d6d99d715cc8188d44e620fc379de5e" name="a0d6d99d715cc8188d44e620fc379de5e"></a>
-Slice&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>assertReadSlice</b> (size_t size)</td></tr>
+<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>assertReadSlice</b> (size_t size)</td></tr>
 <tr class="separator:a0d6d99d715cc8188d44e620fc379de5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb6450df940accea676b27d50697c9b3"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral&lt;T&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:aeb6450df940accea676b27d50697c9b3"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1ReadStream.html#aeb6450df940accea676b27d50697c9b3">assertReadBE</a> (size_t bytes=sizeof(T))</td></tr>
@@ -172,10 +172,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setPosition</b> (cons
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> () noexcept</td></tr>
 <tr class="separator:a7ce1ebf8768623c286fd880e3eff34cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4dcd748879603496b7d143bad0d31f3f"><td class="memItemLeft" align="right" valign="top"><a id="a4dcd748879603496b7d143bad0d31f3f" name="a4dcd748879603496b7d143bad0d31f3f"></a>
-Slice&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>data</b> () const</td></tr>
+<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>data</b> () const</td></tr>
 <tr class="separator:a4dcd748879603496b7d143bad0d31f3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6ae4d68dd16c034e7faa8ad67948b2e"><td class="memItemLeft" align="right" valign="top"><a id="af6ae4d68dd16c034e7faa8ad67948b2e" name="af6ae4d68dd16c034e7faa8ad67948b2e"></a>
-Slice&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>remainingBytes</b> () const</td></tr>
+<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>remainingBytes</b> () const</td></tr>
 <tr class="separator:af6ae4d68dd16c034e7faa8ad67948b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>

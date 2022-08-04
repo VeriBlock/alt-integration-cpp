@@ -96,76 +96,78 @@ $(document).ready(function(){initNavTree('progpow_8hpp_source.html',''); initRes
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#ifndef VERIBLOCK_POP_CPP_PROGPOW_HPP</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define VERIBLOCK_POP_CPP_PROGPOW_HPP</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;veriblock/pop/crypto/progpow/cache.hpp&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;veriblock/pop/serde.hpp&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;veriblock/pop/uint.hpp&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">struct </span>kiss99_t;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span>progpow {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">struct </span>hash32_t {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  uint32_t uint32s[32 / <span class="keyword">sizeof</span>(uint32_t)];</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  hash32_t();</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  std::string toHex() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> hash32_t&amp; h) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keyword">static</span> hash32_t readLE(ReadStream&amp; rs);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keyword">static</span> hash32_t readBE(ReadStream&amp; rs);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><a class="code hl_typedef" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> getVbkHeaderHash(Slice&lt;const uint8_t&gt; header);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keywordtype">void</span> fill_mix(uint64_t seed, uint32_t lane_id, Slice&lt;uint32_t&gt; mix);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keywordtype">void</span> keccak_f800(Slice&lt;uint32_t&gt; state);</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>hash32_t keccak_f800_progpow(<span class="keyword">const</span> <a class="code hl_typedef" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&amp; header,</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                             uint64_t seed,</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                             <span class="keyword">const</span> hash32_t&amp; digest);</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>hash32_t keccak_f800_progpow(<span class="keyword">const</span> hash32_t&amp; header,</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                             uint64_t seed,</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                             <span class="keyword">const</span> hash32_t&amp; digest);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>uint32_t math(uint32_t a, uint32_t b, uint32_t r);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>uint32_t merge(uint32_t a, uint32_t b, uint32_t r);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>kiss99_t progPowInit(uint64_t prog_seed,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                     Slice&lt;int&gt; mix_seq_dst,</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                     Slice&lt;int&gt; mix_seq_src);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">struct </span>ethash_cache;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keyword">inline</span> uint32_t ethashGetEpochWithoutOffset(int64_t height) {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keywordflow">return</span> (uint32_t)(height / <a class="code hl_variable" href="namespacealtintegration.html#a483f4f2c209bf66214c7c89771b97626">VBK_ETHASH_EPOCH_LENGTH</a>);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">inline</span> uint32_t ethashGetEpoch(int64_t height) {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keywordflow">return</span> ethashGetEpochWithoutOffset(height) + <a class="code hl_variable" href="namespacealtintegration.html#afcc5258725c8e410a9d6d9afd9bc239a">VBK_ETHASH_EPOCH_OFFSET</a>;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keywordtype">void</span> insertHeaderCacheEntry(Slice&lt;const uint8_t&gt; header, <a class="code hl_typedef" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a> progpowHash);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keywordtype">void</span> clearHeaderCache();</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keywordtype">void</span> clearEthashCache();</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}  <span class="comment">// namespace progpow</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keywordtype">void</span> setEthashCache(std::unique_ptr&lt;EthashCacheI&gt; cache);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> setProgpowHeaderCache(std::unique_ptr&lt;ProgpowHeaderCacheI&gt; cache);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">   87</a></span><a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a> <a class="code hl_function" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a>(Slice&lt;const uint8_t&gt; header);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#ae96a8d5ba801c6a5895d9365cdad7875">   90</a></span><a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a> <a class="code hl_function" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a>(Slice&lt;const uint8_t&gt; header, progpow::ethash_cache* light);</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_PROGPOW_HPP</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;veriblock/pop/serde.hpp&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;veriblock/pop/storage/ethash_cache_provider.hpp&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;veriblock/pop/storage/progpow_header_cache_provider.hpp&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;veriblock/pop/uint.hpp&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">struct </span>kiss99_t;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>progpow {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">struct </span>hash32_t {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  uint32_t uint32s[32 / <span class="keyword">sizeof</span>(uint32_t)];</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  hash32_t();</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  std::string toHex() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> hash32_t&amp; h) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keyword">static</span> hash32_t readLE(ReadStream&amp; rs);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keyword">static</span> hash32_t readBE(ReadStream&amp; rs);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>};</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><a class="code hl_typedef" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> getVbkHeaderHash(Slice&lt;const uint8_t&gt; header);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keywordtype">void</span> fill_mix(uint64_t seed, uint32_t lane_id, Slice&lt;uint32_t&gt; mix);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> keccak_f800(Slice&lt;uint32_t&gt; state);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>hash32_t keccak_f800_progpow(<span class="keyword">const</span> <a class="code hl_typedef" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a>&amp; header,</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                             uint64_t seed,</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                             <span class="keyword">const</span> hash32_t&amp; digest);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>hash32_t keccak_f800_progpow(<span class="keyword">const</span> hash32_t&amp; header,</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                             uint64_t seed,</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                             <span class="keyword">const</span> hash32_t&amp; digest);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>uint32_t math(uint32_t a, uint32_t b, uint32_t r);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>uint32_t merge(uint32_t a, uint32_t b, uint32_t r);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>kiss99_t progPowInit(uint64_t prog_seed,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                     Slice&lt;int&gt; mix_seq_dst,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                     Slice&lt;int&gt; mix_seq_src);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">struct </span>ethash_cache;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">inline</span> uint32_t ethashGetEpochWithoutOffset(int64_t height) {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keywordflow">return</span> (uint32_t)(height / <a class="code hl_variable" href="namespacealtintegration.html#a483f4f2c209bf66214c7c89771b97626">VBK_ETHASH_EPOCH_LENGTH</a>);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">inline</span> uint32_t ethashGetEpoch(int64_t height) {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keywordflow">return</span> ethashGetEpochWithoutOffset(height) + <a class="code hl_variable" href="namespacealtintegration.html#afcc5258725c8e410a9d6d9afd9bc239a">VBK_ETHASH_EPOCH_OFFSET</a>;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keywordtype">void</span> insertHeaderCacheEntry(Slice&lt;const uint8_t&gt; header, <a class="code hl_typedef" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a> progpowHash);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keywordtype">void</span> clearHeaderCache();</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keywordtype">void</span> clearEthashCache();</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}  <span class="comment">// namespace progpow</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="keywordtype">void</span> setEthashCache(<span class="keyword">const</span> std::shared_ptr&lt;EthashCache&gt;&amp; cache);</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keywordtype">void</span> setProgpowHeaderCache(<span class="keyword">const</span> std::shared_ptr&lt;ProgpowHeaderCache&gt;&amp; cache);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">   88</a></span><a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a> <a class="code hl_function" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a>(<a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;const uint8_t&gt;</a> header);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="namespacealtintegration.html#ae96a8d5ba801c6a5895d9365cdad7875">   91</a></span><a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a> <a class="code hl_function" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a>(<a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;const uint8_t&gt;</a> header, progpow::ethash_cache* light);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#endif  </span><span class="comment">// VERIBLOCK_POP_CPP_PROGPOW_HPP</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a483f4f2c209bf66214c7c89771b97626"><div class="ttname"><a href="namespacealtintegration.html#a483f4f2c209bf66214c7c89771b97626">altintegration::VBK_ETHASH_EPOCH_LENGTH</a></div><div class="ttdeci">constexpr const auto VBK_ETHASH_EPOCH_LENGTH</div><div class="ttdoc">size of 1 ethash epoch in progpow</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00119">consts.hpp:119</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a578e2c0db6c0c5309a1b889a58002416"><div class="ttname"><a href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">altintegration::uint192</a></div><div class="ttdeci">Blob&lt; VBK_BLOCK_HASH_SIZE &gt; uint192</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00029">uint.hpp:29</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00023">uint.hpp:23</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a578e2c0db6c0c5309a1b889a58002416"><div class="ttname"><a href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">altintegration::uint192</a></div><div class="ttdeci">Blob&lt; VBK_BLOCK_HASH_SIZE &gt; uint192</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00030">uint.hpp:30</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_ab81c8673ad312417b7517390cb0915f6"><div class="ttname"><a href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">altintegration::uint256</a></div><div class="ttdeci">Blob&lt; SHA256_HASH_SIZE &gt; uint256</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div><div class="ttdef"><b>Definition:</b> <a href="uint_8hpp_source.html#l00024">uint.hpp:24</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_af1d1d0aac3710a6eff37e6ab8c7da44c"><div class="ttname"><a href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">altintegration::progPowHash</a></div><div class="ttdeci">uint192 progPowHash(Slice&lt; const uint8_t &gt; header)</div><div class="ttdoc">Calculate vPROGPOW hash of given VbkBlock header (65 bytes)</div></div>
 <div class="ttc" id="anamespacealtintegration_html_afcc5258725c8e410a9d6d9afd9bc239a"><div class="ttname"><a href="namespacealtintegration.html#afcc5258725c8e410a9d6d9afd9bc239a">altintegration::VBK_ETHASH_EPOCH_OFFSET</a></div><div class="ttdeci">constexpr const auto VBK_ETHASH_EPOCH_OFFSET</div><div class="ttdoc">we start at this epoch</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00121">consts.hpp:121</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob</a></div><div class="ttdoc">Contiguous byte array of fixed size.</div><div class="ttdef"><b>Definition:</b> <a href="blob_8hpp_source.html#l00026">blob.hpp:26</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1Slice_html"><div class="ttname"><a href="structaltintegration_1_1Slice.html">altintegration::Slice</a></div><div class="ttdoc">Non-owning contiguous array.</div><div class="ttdef"><b>Definition:</b> <a href="slice_8hpp_source.html#l00022">slice.hpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>

@@ -106,7 +106,7 @@ $(document).ready(function(){initNavTree('slice_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ElementType&gt;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">struct </span>Slice {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structaltintegration_1_1Slice.html">   22</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice</a> {</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keyword">using </span>element_type = ElementType;</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">using </span>value_type = <span class="keyword">typename</span> std::remove_cv&lt;ElementType&gt;::type;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keyword">using </span>index_type = std::ptrdiff_t;</div>
@@ -118,9 +118,9 @@ $(document).ready(function(){initNavTree('slice_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">using </span>reverse_iterator = std::reverse_iterator&lt;iterator&gt;;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="keyword">using </span>const_reverse_iterator = std::reverse_iterator&lt;const_iterator&gt;;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  Slice() : storage_(nullptr), size_(0) {}</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice</a>() : storage_(<span class="keyword">nullptr</span>), size_(0) {}</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  Slice(<span class="keyword">const</span> pointer ptr, <span class="keywordtype">size_t</span> size) : storage_(ptr), size_(size) {}</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice</a>(<span class="keyword">const</span> pointer ptr, <span class="keywordtype">size_t</span> size) : storage_(ptr), size_(size) {}</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="comment">// NB: the SFINAE here uses .data() as a incomplete/imperfect proxy for the</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="comment">// requirement on Container to be a contiguous sequence container.</span></div>
@@ -131,12 +131,12 @@ $(document).ready(function(){initNavTree('slice_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>          std::is_same&lt;<span class="keyword">typename</span> std::remove_const&lt;ElementType&gt;::type,</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                       <span class="keyword">typename</span> std::remove_const&lt;</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                           <span class="keyword">typename</span> Container::value_type&gt;::type&gt;::value&gt;::type&gt;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keyword">constexpr</span> Slice(Container &amp;cont) noexcept</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      : Slice(<span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span>pointer<span class="keyword">&gt;</span>(cont.data()), cont.size()) {}</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keyword">constexpr</span> <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice</a>(Container &amp;cont) noexcept</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      : <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice</a>(<span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span>pointer<span class="keyword">&gt;</span>(cont.data()), cont.size()) {}</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keyword">constexpr</span> pointer data() const noexcept { <span class="keywordflow">return</span> storage_; }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keyword">constexpr</span> pointer data() <span class="keyword">const</span> <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> storage_; }</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> size() const noexcept { <span class="keywordflow">return</span> size_; }</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> size() <span class="keyword">const</span> <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> size_; }</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keyword">constexpr</span> reference operator[](index_type idx)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> data()[idx]; }</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
@@ -144,20 +144,20 @@ $(document).ready(function(){initNavTree('slice_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> std::vector&lt;value_type&gt;{storage_, storage_ + size_};</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  }</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keyword">constexpr</span> iterator begin() const noexcept { <span class="keywordflow">return</span> storage_; }</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keyword">constexpr</span> iterator end() const noexcept { <span class="keywordflow">return</span> storage_ + size_; }</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keyword">constexpr</span> iterator cbegin() const noexcept { <span class="keywordflow">return</span> storage_; }</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="keyword">constexpr</span> iterator cend() const noexcept { <span class="keywordflow">return</span> storage_ + size_; }</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keyword">constexpr</span> reverse_iterator rbegin() const noexcept {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keyword">constexpr</span> iterator begin() <span class="keyword">const</span> <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> storage_; }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keyword">constexpr</span> iterator end() <span class="keyword">const</span> <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> storage_ + size_; }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keyword">constexpr</span> iterator cbegin() <span class="keyword">const</span> <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> storage_; }</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="keyword">constexpr</span> iterator cend() <span class="keyword">const</span> <span class="keyword">noexcept</span> { <span class="keywordflow">return</span> storage_ + size_; }</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keyword">constexpr</span> reverse_iterator rbegin() <span class="keyword">const</span> <span class="keyword">noexcept</span> {</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> reverse_iterator{end()};</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  }</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keyword">constexpr</span> reverse_iterator rend() const noexcept {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keyword">constexpr</span> reverse_iterator rend() <span class="keyword">const</span> <span class="keyword">noexcept</span> {</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">return</span> reverse_iterator{begin()};</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keyword">constexpr</span> const_reverse_iterator crbegin() const noexcept {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keyword">constexpr</span> const_reverse_iterator crbegin() <span class="keyword">const</span> <span class="keyword">noexcept</span> {</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">return</span> const_reverse_iterator{cend()};</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  }</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keyword">constexpr</span> const_reverse_iterator crend() const noexcept {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keyword">constexpr</span> const_reverse_iterator crend() <span class="keyword">const</span> <span class="keyword">noexcept</span> {</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">return</span> const_reverse_iterator{cbegin()};</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  }</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
@@ -171,7 +171,7 @@ $(document).ready(function(){initNavTree('slice_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>};</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> Slice&lt;T&gt; &amp;slice, ::std::ostream *os) {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">PrintTo</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;T&gt;</a> &amp;slice, ::std::ostream *os) {</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  *os &lt;&lt; <span class="stringliteral">&quot;Slice(&quot;</span> &lt;&lt; slice.data() &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; slice.size() &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>}</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
@@ -179,7 +179,8 @@ $(document).ready(function(){initNavTree('slice_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#endif  </span><span class="comment">//__SLICE__HPP__</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00294">arith_uint256.hpp:294</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a8fe9559da743732de2b5dc9dda0ba310"><div class="ttname"><a href="namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310">altintegration::PrintTo</a></div><div class="ttdeci">void PrintTo(const ArithUint256 &amp;uint, ::std::ostream *os)</div><div class="ttdoc">custom gtest printer, which prints Blob of any size as hexstring @ private</div><div class="ttdef"><b>Definition:</b> <a href="arith__uint256_8hpp_source.html#l00297">arith_uint256.hpp:297</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1Slice_html"><div class="ttname"><a href="structaltintegration_1_1Slice.html">altintegration::Slice</a></div><div class="ttdoc">Non-owning contiguous array.</div><div class="ttdef"><b>Definition:</b> <a href="slice_8hpp_source.html#l00022">slice.hpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>
