@@ -9,13 +9,13 @@
 namespace altintegration {
 
 bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state) {
-  if (num < min) {
+  if ((uint64_t)num < (uint64_t)min) {
     return state.Invalid(
         "range-below",
         format("Expected num to be more or equal to {}, but got {}", min, num));
   }
 
-  if (num > max) {
+  if ((uint64_t)num > (uint64_t)max) {
     return state.Invalid(
         "range-above",
         format(
