@@ -76,9 +76,7 @@ bool same_vectors_unique_unordered(const std::vector<T>& a,
 
 //! @private
 template <typename T>
-bool same_vectors_unordered(const std::vector<T>& a,
-                            const std::vector<T>& b) {
-
+bool same_vectors_unordered(const std::vector<T>& a, const std::vector<T>& b) {
   std::vector<T> sortedVectorA = a;
   std::vector<T> sortedVectorB = b;
   std::sort(sortedVectorA.begin(), sortedVectorA.end());
@@ -132,7 +130,7 @@ void erase_if(container_t& c, std::function<bool(const val_t&)> pred) {
 //! @private
 template <typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args&&... args) {
-  auto* ptr = new T(std::forward<Args...>(args)...);
+  auto* ptr = new T(args...);
   return std::unique_ptr<T>(ptr);
 }
 
