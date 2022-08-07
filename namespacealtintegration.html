@@ -417,6 +417,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="memTemplParams" colspan="2">template&lt;typename T , typename Container &gt; </td></tr>
+<tr class="memitem:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="memTemplItemLeft" align="right" valign="top">const T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a10bc3427cfcbfa00fbbb8e28e69a9acd">min_or_default</a> (Container &amp;c, const T default_)</td></tr>
+<tr class="memdesc:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns min value in a container (vector, array...), or "default" value if container is empty  <a href="namespacealtintegration.html#a10bc3427cfcbfa00fbbb8e28e69a9acd">More...</a><br /></td></tr>
+<tr class="separator:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc9f193542aa57dac9a8ab2595c2de26"><td class="memTemplParams" colspan="2">template&lt;typename BlockTreeT &gt; </td></tr>
 <tr class="memitem:acc9f193542aa57dac9a8ab2595c2de26"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; typename BlockTreeT::block_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#acc9f193542aa57dac9a8ab2595c2de26">getContext</a> (const BlockTreeT &amp;tree, typename BlockTreeT::hash_t tip, size_t size=std::numeric_limits&lt; size_t &gt;::max())</td></tr>
 <tr class="memdesc:acc9f193542aa57dac9a8ab2595c2de26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a context (blocks necessary to connect) in a <code>tree</code> from <code>tip</code> backwards <code>size</code> elements.  <a href="namespacealtintegration.html#acc9f193542aa57dac9a8ab2595c2de26">More...</a><br /></td></tr>
@@ -2957,7 +2961,7 @@ template&lt;typename <a class="el" href="structaltintegration_1_1BlockTree.html"
 <div class="line"><span class="lineno">   72</span>  std::reverse(ret.begin(), ret.end());</div>
 <div class="line"><span class="lineno">   73</span>  <span class="keywordflow">return</span> ret;</div>
 <div class="line"><span class="lineno">   74</span>}</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00093">base_block_tree.hpp:93</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00094">base_block_tree.hpp:94</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3354,6 +3358,42 @@ template&lt;typename BlockTreeT &gt; </div>
 <div class="line"><span class="lineno">   58</span> </div>
 <div class="line"><span class="lineno">   59</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">   60</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a10bc3427cfcbfa00fbbb8e28e69a9acd" name="a10bc3427cfcbfa00fbbb8e28e69a9acd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10bc3427cfcbfa00fbbb8e28e69a9acd">&#9670;&nbsp;</a></span>min_or_default()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Container &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const T altintegration::min_or_default </td>
+          <td>(</td>
+          <td class="paramtype">Container &amp;&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T&#160;</td>
+          <td class="paramname"><em>default_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="algorithm_8hpp_source.html#l00152">152</a> of file <a class="el" href="algorithm_8hpp_source.html">algorithm.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  152</span>                                                       {</div>
+<div class="line"><span class="lineno">  153</span>  <span class="keyword">const</span> <span class="keyword">auto</span> it = std::min_element(c.begin(), c.end());</div>
+<div class="line"><span class="lineno">  154</span>  <span class="keywordflow">return</span> it == c.end() ? default_ : *it;</div>
+<div class="line"><span class="lineno">  155</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"structaltintegration_1_1MerklePath.html#aa76b3a3e723958ecaef0c628c43f2350":[4,0,0,41,0],
 "structaltintegration_1_1MerklePath.html#aa76b3a3e723958ecaef0c628c43f2350":[5,0,0,44,0],
 "structaltintegration_1_1MerklePath.html#afe1cc7d3dc01e08477ce0cf2c87cc43e":[4,0,0,41,2],
 "structaltintegration_1_1MerklePath.html#afe1cc7d3dc01e08477ce0cf2c87cc43e":[5,0,0,44,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "structaltintegration_1_1adaptors_1_1LevelDBWriteBatch.html":[5,0,0,0,9],
 "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html":[5,0,0,0,10],
 "structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html#a204400a4eea09d18e084a2d8c087deb9":[5,0,0,0,10,0],
-"structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html#a82c43797117be35bb81b443477ddbc49":[5,0,0,0,10,1],
-"structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html#ac682c14b96c2ca086474f271fee9d366":[5,0,0,0,10,2]
+"structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html#a82c43797117be35bb81b443477ddbc49":[5,0,0,0,10,1]
 };
