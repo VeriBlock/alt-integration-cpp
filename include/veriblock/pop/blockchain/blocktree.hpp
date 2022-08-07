@@ -9,16 +9,16 @@
 #include <algorithm>
 #include <memory>
 #include <unordered_map>
-#include <veriblock/pop/fmt.hpp>
-#include <veriblock/pop/stateless_validation.hpp>
-#include <veriblock/pop/storage/block_reader.hpp>
-#include <veriblock/pop/validation_state.hpp>
 
 #include "base_block_tree.hpp"
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
 #include "chain.hpp"
 #include "tree_algo.hpp"
+#include "veriblock/pop/fmt.hpp"
+#include "veriblock/pop/stateless_validation.hpp"
+#include "veriblock/pop/storage/block_reader.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 

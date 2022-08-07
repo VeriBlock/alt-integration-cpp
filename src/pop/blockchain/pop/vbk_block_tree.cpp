@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <limits>
 #include <map>
 #include <memory>
 #include <set>
@@ -459,9 +460,15 @@ void VbkBlockTree::finalizeBlocks() {
   VBK_ASSERT(!this->isLoadingBlocks_);
   VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
+  const auto* btctip = btc().getBestChain().tip();
+  VBK_ASSERT(btctip != nullptr);
+  int32_t minVbkRefHeight =
+      min_or_default(btctip->getRefs(), std::numeric_limits<int32_t>::max());
+
   // first, finalize VBK
   base::finalizeBlocks(this->getParams().getMaxReorgBlocks(),
-                       this->getParams().preserveBlocksBehindFinal());
+                       this->getParams().preserveBlocksBehindFinal(),
+                       /*maxFinalizeBlockHeihht=*/minVbkRefHeight);
 
   // then, finalize BTC
   btc().finalizeBlocks();
