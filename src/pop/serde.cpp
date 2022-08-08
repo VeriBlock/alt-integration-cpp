@@ -21,14 +21,14 @@
 
 namespace altintegration {
 
-bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state) {
-  if ((uint64_t)num < (uint64_t)min) {
+bool checkRange(uint64_t num, uint64_t min, uint64_t max, ValidationState& state) {
+  if (num < min) {
     return state.Invalid(
         "range-below",
         format("Expected num to be more or equal to {}, but got {}", min, num));
   }
 
-  if ((uint64_t)num > (uint64_t)max) {
+  if (num > max) {
     return state.Invalid(
         "range-above",
         format(
@@ -58,8 +58,8 @@ std::vector<uint8_t> trimmedArray(int64_t input) {
 bool readVarLenValue(ReadStream& stream,
                      Slice<const uint8_t>& out,
                      ValidationState& state,
-                     size_t minLen,
-                     size_t maxLen) {
+                     uint64_t minLen,
+                     uint64_t maxLen) {
   int32_t length = 0;
   if (!readSingleBEValue<int32_t>(stream, length, state)) {
     return state.Invalid("readvarlen-bad-length");
@@ -73,8 +73,8 @@ bool readVarLenValue(ReadStream& stream,
 bool readSingleByteLenValue(ReadStream& stream,
                             Slice<const uint8_t>& out,
                             ValidationState& state,
-                            size_t minLen,
-                            size_t maxLen) {
+                            uint64_t minLen,
+                            uint64_t maxLen) {
   uint8_t length = 0;
   if (!stream.readBE<uint8_t>(length, state)) {
     return state.Invalid("readsingle-bad-length");
@@ -88,7 +88,7 @@ bool readSingleByteLenValue(ReadStream& stream,
 void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value) {
   ValidationState state;
   VBK_ASSERT_MSG(
-      checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)(), state),
+      checkRange(value.size(), 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
       "Can not writeSingleByteLen: " + state.toString());
   stream.writeBE<uint8_t>((uint8_t)value.size());
   stream.write(value);
@@ -108,7 +108,7 @@ void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value) {
 size_t singleByteLenValueSize(Slice<const uint8_t> value) {
   ValidationState state;
   VBK_ASSERT_MSG(
-      checkRange(value.size(), 0, (std::numeric_limits<uint8_t>::max)(), state),
+      checkRange(value.size(), 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
       "Can not singleByteLenSize: " + state.toString());
   size_t size = 0;
   size += sizeof((uint8_t)value.size());
@@ -119,7 +119,7 @@ size_t singleByteLenValueSize(Slice<const uint8_t> value) {
 size_t singleByteLenValueSize(size_t valueSize) {
   ValidationState state;
   VBK_ASSERT_MSG(
-      checkRange(valueSize, 0, (std::numeric_limits<uint8_t>::max)(), state),
+      checkRange(valueSize, 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
       "Can not singleByteLenSize: " + state.toString());
   size_t size = 0;
   size += sizeof((uint8_t)valueSize);
