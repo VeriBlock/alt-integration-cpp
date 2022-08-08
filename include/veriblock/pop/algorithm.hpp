@@ -130,7 +130,7 @@ void erase_if(container_t& c, std::function<bool(const val_t&)> pred) {
 //! @private
 template <typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args&&... args) {
-  auto* ptr = new T(args...);
+  auto* ptr = new T(std::forward<Args>(args)...);
   return std::unique_ptr<T>(ptr);
 }
 

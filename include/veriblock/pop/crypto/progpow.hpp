@@ -6,9 +6,9 @@
 #ifndef VERIBLOCK_POP_CPP_PROGPOW_HPP
 #define VERIBLOCK_POP_CPP_PROGPOW_HPP
 
-#include <veriblock/pop/crypto/progpow/cache.hpp>
-#include <veriblock/pop/serde.hpp>
-#include <veriblock/pop/uint.hpp>
+#include "progpow/cache.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
 

@@ -5,11 +5,11 @@
 
 #include <gtest/gtest.h>
 
-#include <veriblock/pop/blockchain/alt_chain_params.hpp>
-#include <veriblock/pop/blockchain/btc_chain_params.hpp>
-#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
-#include <veriblock/pop/crypto/progpow.hpp>
-#include <veriblock/pop/entities/vbkblock.hpp>
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/blockchain/btc_chain_params.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/crypto/progpow.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
 
 using namespace altintegration;
 

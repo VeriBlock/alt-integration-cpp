@@ -2,11 +2,18 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+#include <algorithm>
+#include <array>
+#include <climits>
+#include <cstddef>
 #include <cstdint>
+#include <functional>
+#include <limits>
+#include <memory>
 #include <mutex>
+#include <string>
 #include <utility>
 #include <vector>
-#include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/cache/small_lfru_cache.hpp>
 #include <veriblock/pop/consts.hpp>
@@ -19,21 +26,9 @@
 #include <veriblock/pop/slice.hpp>
 #include <veriblock/pop/third_party/lru_cache.hpp>
 #include <veriblock/pop/trace.hpp>
-#include <climits>
-#include <cstddef>
-#include <cstdint>
-#include <mutex>
-#include <utility>
-#include <vector>
-#include <algorithm>
-#include <array>
-#include <functional>
-#include <limits>
-#include <memory>
-#include <string>
 
 #include "libethash/internal.hpp"
-
+#include "veriblock/pop/algorithm.hpp"
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/crypto/endian.hpp"
 #include "veriblock/pop/crypto/vblake.hpp"
