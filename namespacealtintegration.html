@@ -816,9 +816,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memitem:aab1b7b90c81bce1e15b3f867be8d90f4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classaltintegration_1_1reverse__range.html">reverse_range</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aab1b7b90c81bce1e15b3f867be8d90f4">reverse_iterate</a> (T &amp;x)</td></tr>
 <tr class="memdesc:aab1b7b90c81bce1e15b3f867be8d90f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#aab1b7b90c81bce1e15b3f867be8d90f4">More...</a><br /></td></tr>
 <tr class="separator:aab1b7b90c81bce1e15b3f867be8d90f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5420d3ee53a7120f67cf39a00cd37fe3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3">checkRange</a> (int64_t num, int64_t min, int64_t max, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
-<tr class="memdesc:a5420d3ee53a7120f67cf39a00cd37fe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if expression 'min' &lt;= 'num' &lt;= 'max' is true.  <a href="namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3">More...</a><br /></td></tr>
-<tr class="separator:a5420d3ee53a7120f67cf39a00cd37fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b224364f0ee2d0fd65f3396beea2e02"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0b224364f0ee2d0fd65f3396beea2e02">checkRange</a> (uint64_t num, uint64_t min, uint64_t max, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
+<tr class="memdesc:a0b224364f0ee2d0fd65f3396beea2e02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if expression 'min' &lt;= 'num' &lt;= 'max' is true.  <a href="namespacealtintegration.html#a0b224364f0ee2d0fd65f3396beea2e02">More...</a><br /></td></tr>
+<tr class="separator:a0b224364f0ee2d0fd65f3396beea2e02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeeee91d89ac005d4a0a30907e68847ba"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aeeee91d89ac005d4a0a30907e68847ba">trimmedArray</a> (int64_t input)</td></tr>
 <tr class="memdesc:aeeee91d89ac005d4a0a30907e68847ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the input to the byte array and trims it's size to the lowest possible value.  <a href="namespacealtintegration.html#aeeee91d89ac005d4a0a30907e68847ba">More...</a><br /></td></tr>
 <tr class="separator:aeeee91d89ac005d4a0a30907e68847ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -826,16 +826,16 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>LevelToString<
 <tr class="memitem:a552f7df1f2ba12b76479213b69a44152"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a552f7df1f2ba12b76479213b69a44152">fixedArray</a> (T input)</td></tr>
 <tr class="memdesc:a552f7df1f2ba12b76479213b69a44152"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the input to the byte array.  <a href="namespacealtintegration.html#a552f7df1f2ba12b76479213b69a44152">More...</a><br /></td></tr>
 <tr class="separator:a552f7df1f2ba12b76479213b69a44152"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a97802abc5c380d1640aa258c91241e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e">readVarLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
-<tr class="memdesc:a0a97802abc5c380d1640aa258c91241e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read variable length value, which consists of <code>[N=(4 bytes = size of slice) | N bytes slice]</code> Size of slice should be within range [minLen; maxLen].  <a href="namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e">More...</a><br /></td></tr>
-<tr class="separator:a0a97802abc5c380d1640aa258c91241e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4448797a2a5b62b03e28af03f1dfaa78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
-<tr class="memdesc:a4448797a2a5b62b03e28af03f1dfaa78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read variable length value, which consists of <code>[N=(1 byte = size of slice) | N bytes slice]</code> Size of slice should be within range [minLen; maxLen].  <a href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">More...</a><br /></td></tr>
-<tr class="separator:a4448797a2a5b62b03e28af03f1dfaa78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e4ebbae4c53a5fa4ebb15f7259d4906"><td class="memTemplParams" colspan="2">template&lt;typename Container , typename  = typename std::enable_if&lt;              sizeof(typename Container::value_type) == 1&gt;::type&gt; </td></tr>
-<tr class="memitem:a8e4ebbae4c53a5fa4ebb15f7259d4906"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a8e4ebbae4c53a5fa4ebb15f7259d4906">readSingleByteLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, Container &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, size_t minLen, size_t maxLen)</td></tr>
-<tr class="memdesc:a8e4ebbae4c53a5fa4ebb15f7259d4906"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#a8e4ebbae4c53a5fa4ebb15f7259d4906">More...</a><br /></td></tr>
-<tr class="separator:a8e4ebbae4c53a5fa4ebb15f7259d4906"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac162e391a0920c830caf7656a3a1b0b8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#ac162e391a0920c830caf7656a3a1b0b8">readVarLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, uint64_t minLen, uint64_t maxLen)</td></tr>
+<tr class="memdesc:ac162e391a0920c830caf7656a3a1b0b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read variable length value, which consists of <code>[N=(4 bytes = size of slice) | N bytes slice]</code> Size of slice should be within range [minLen; maxLen].  <a href="namespacealtintegration.html#ac162e391a0920c830caf7656a3a1b0b8">More...</a><br /></td></tr>
+<tr class="separator:ac162e391a0920c830caf7656a3a1b0b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb65173d8add666a52f5c35bb9e685dd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">readSingleByteLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, <a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, uint64_t minLen, uint64_t maxLen)</td></tr>
+<tr class="memdesc:acb65173d8add666a52f5c35bb9e685dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read variable length value, which consists of <code>[N=(1 byte = size of slice) | N bytes slice]</code> Size of slice should be within range [minLen; maxLen].  <a href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">More...</a><br /></td></tr>
+<tr class="separator:acb65173d8add666a52f5c35bb9e685dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaf3fbc70765b2f5387d93d05ca8a68b"><td class="memTemplParams" colspan="2">template&lt;typename Container , typename  = typename std::enable_if&lt;              sizeof(typename Container::value_type) == 1&gt;::type&gt; </td></tr>
+<tr class="memitem:adaf3fbc70765b2f5387d93d05ca8a68b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#adaf3fbc70765b2f5387d93d05ca8a68b">readSingleByteLenValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, Container &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state, uint64_t minLen, uint64_t maxLen)</td></tr>
+<tr class="memdesc:adaf3fbc70765b2f5387d93d05ca8a68b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#adaf3fbc70765b2f5387d93d05ca8a68b">More...</a><br /></td></tr>
+<tr class="separator:adaf3fbc70765b2f5387d93d05ca8a68b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe2d65938bbd5af366249d73e7561c0f"><td class="memTemplParams" colspan="2">template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral&lt;T&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:abe2d65938bbd5af366249d73e7561c0f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#abe2d65938bbd5af366249d73e7561c0f">readSingleBEValue</a> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, T &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:abe2d65938bbd5af366249d73e7561c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read single Big-Endian value from a stream.  <a href="namespacealtintegration.html#abe2d65938bbd5af366249d73e7561c0f">More...</a><br /></td></tr>
@@ -1892,8 +1892,8 @@ template&lt;typename MerklePathType , typename HashType1 , typename HashType2 &g
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a5420d3ee53a7120f67cf39a00cd37fe3" name="a5420d3ee53a7120f67cf39a00cd37fe3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5420d3ee53a7120f67cf39a00cd37fe3">&#9670;&nbsp;</a></span>checkRange()</h2>
+<a id="a0b224364f0ee2d0fd65f3396beea2e02" name="a0b224364f0ee2d0fd65f3396beea2e02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b224364f0ee2d0fd65f3396beea2e02">&#9670;&nbsp;</a></span>checkRange()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1901,19 +1901,19 @@ template&lt;typename MerklePathType , typename HashType1 , typename HashType2 &g
         <tr>
           <td class="memname">bool altintegration::checkRange </td>
           <td>(</td>
-          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>num</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>min</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>max</em>, </td>
         </tr>
         <tr>
@@ -3897,19 +3897,19 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 <p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00127">127</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">  127</span>                                                                           {</div>
 <div class="line"><span class="lineno">  128</span>  <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;const uint8_t&gt;</a> data;</div>
-<div class="line"><span class="lineno">  129</span>  <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
+<div class="line"><span class="lineno">  129</span>  <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
 <div class="line"><span class="lineno">  130</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsinglebe-bad-data&quot;</span>);</div>
 <div class="line"><span class="lineno">  131</span>  }</div>
 <div class="line"><span class="lineno">  132</span>  ReadStream dataStream(data);</div>
 <div class="line"><span class="lineno">  133</span>  <span class="keywordflow">return</span> dataStream.readBE&lt;T&gt;(out, state, data.size());</div>
 <div class="line"><span class="lineno">  134</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_a4448797a2a5b62b03e28af03f1dfaa78"><div class="ttname"><a href="namespacealtintegration.html#a4448797a2a5b62b03e28af03f1dfaa78">altintegration::readSingleByteLenValue</a></div><div class="ttdeci">bool readSingleByteLenValue(ReadStream &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, ValidationState &amp;state, size_t minLen, size_t maxLen)</div><div class="ttdoc">Read variable length value, which consists of [N=(1 byte = size of slice) | N bytes slice] Size of sl...</div></div>
+<div class="ttc" id="anamespacealtintegration_html_acb65173d8add666a52f5c35bb9e685dd"><div class="ttname"><a href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">altintegration::readSingleByteLenValue</a></div><div class="ttdeci">bool readSingleByteLenValue(ReadStream &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, ValidationState &amp;state, uint64_t minLen, uint64_t maxLen)</div><div class="ttdoc">Read variable length value, which consists of [N=(1 byte = size of slice) | N bytes slice] Size of sl...</div></div>
 <div class="ttc" id="astructaltintegration_1_1Slice_html"><div class="ttname"><a href="structaltintegration_1_1Slice.html">altintegration::Slice</a></div><div class="ttdoc">Non-owning contiguous array.</div><div class="ttdef"><b>Definition:</b> <a href="slice_8hpp_source.html#l00022">slice.hpp:22</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a8e4ebbae4c53a5fa4ebb15f7259d4906" name="a8e4ebbae4c53a5fa4ebb15f7259d4906"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e4ebbae4c53a5fa4ebb15f7259d4906">&#9670;&nbsp;</a></span>readSingleByteLenValue() <span class="overload">[1/2]</span></h2>
+<a id="adaf3fbc70765b2f5387d93d05ca8a68b" name="adaf3fbc70765b2f5387d93d05ca8a68b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaf3fbc70765b2f5387d93d05ca8a68b">&#9670;&nbsp;</a></span>readSingleByteLenValue() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3937,13 +3937,13 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>minLen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>maxLen</em>&#160;</td>
         </tr>
         <tr>
@@ -3955,7 +3955,7 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00099">99</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  103</span>                                           {</div>
+<div class="fragment"><div class="line"><span class="lineno">  103</span>                                             {</div>
 <div class="line"><span class="lineno">  104</span>  uint8_t length = 0;</div>
 <div class="line"><span class="lineno">  105</span>  <span class="keywordflow">if</span> (!stream.readBE&lt;uint8_t&gt;(length, state)) {</div>
 <div class="line"><span class="lineno">  106</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsingle-bad-length&quot;</span>);</div>
@@ -3970,8 +3970,8 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a4448797a2a5b62b03e28af03f1dfaa78" name="a4448797a2a5b62b03e28af03f1dfaa78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4448797a2a5b62b03e28af03f1dfaa78">&#9670;&nbsp;</a></span>readSingleByteLenValue() <span class="overload">[2/2]</span></h2>
+<a id="acb65173d8add666a52f5c35bb9e685dd" name="acb65173d8add666a52f5c35bb9e685dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb65173d8add666a52f5c35bb9e685dd">&#9670;&nbsp;</a></span>readSingleByteLenValue() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3997,13 +3997,13 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>minLen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>maxLen</em>&#160;</td>
         </tr>
         <tr>
@@ -4027,8 +4027,8 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
 
 </div>
 </div>
-<a id="a0a97802abc5c380d1640aa258c91241e" name="a0a97802abc5c380d1640aa258c91241e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a97802abc5c380d1640aa258c91241e">&#9670;&nbsp;</a></span>readVarLenValue()</h2>
+<a id="ac162e391a0920c830caf7656a3a1b0b8" name="ac162e391a0920c830caf7656a3a1b0b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac162e391a0920c830caf7656a3a1b0b8">&#9670;&nbsp;</a></span>readVarLenValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4054,13 +4054,13 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>minLen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>maxLen</em>&#160;</td>
         </tr>
         <tr>

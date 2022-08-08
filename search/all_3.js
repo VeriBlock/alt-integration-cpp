@@ -27,7 +27,7 @@ var searchData=
   ['checkproofofwork_24',['checkProofOfWork',['../namespacealtintegration.html#a25a27ef7d9a529ef3319249059a4a4e6',1,'altintegration::checkProofOfWork(const BtcBlock &amp;block, const BtcChainParams &amp;param)'],['../namespacealtintegration.html#ac2b96e9b7c868d1fa800491b5535d5a3',1,'altintegration::checkProofOfWork(const VbkBlock &amp;block, const VbkChainParams &amp;param)']]],
   ['checkpublicationdata_25',['CheckPublicationData',['../structaltintegration_1_1CheckPublicationData.html',1,'altintegration']]],
   ['checkpublicationdata_26',['checkPublicationData',['../namespacealtintegration.html#aab06629ffa720e2980627b8ca8ed5eed',1,'altintegration']]],
-  ['checkrange_27',['checkRange',['../namespacealtintegration.html#a5420d3ee53a7120f67cf39a00cd37fe3',1,'altintegration']]],
+  ['checkrange_27',['checkRange',['../namespacealtintegration.html#a0b224364f0ee2d0fd65f3396beea2e02',1,'altintegration']]],
   ['checksignature_28',['checkSignature',['../namespacealtintegration.html#ac82f9e17cf5ec46949ae4b357d51e1bb',1,'altintegration::checkSignature(const VbkTx &amp;tx, ValidationState &amp;state)'],['../namespacealtintegration.html#af62ee956a81f5b10b89696bd6ab5cde5',1,'altintegration::checkSignature(const VbkPopTx &amp;tx, ValidationState &amp;state)']]],
   ['checkvarintmode_29',['CheckVarIntMode',['../structaltintegration_1_1btc_1_1CheckVarIntMode.html',1,'altintegration::btc']]],
   ['checkvbkblockplausibility_30',['checkVbkBlockPlausibility',['../namespacealtintegration.html#a934d4fb44481484f81964f7ecc89efc4',1,'altintegration']]],
