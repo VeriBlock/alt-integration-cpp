@@ -4,10 +4,19 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/alt-util.hpp>
-#include <veriblock/pop/entities/keystone_container.hpp>
 #include <veriblock/pop/entities/publication_data.hpp>
 
+#include "veriblock/pop/algorithm.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/alt_block_tree.hpp"
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/entities/context_info_container.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/hashutil.hpp"
+#include "veriblock/pop/serde.hpp"
+
 namespace altintegration {
+struct AltBlock;
 
 bool GeneratePublicationData(const std::vector<uint8_t>& endorsedBlockHeader,
                              const std::vector<uint8_t>& txMerkleRoot,

@@ -7,7 +7,7 @@
 #ifndef SECP256K1_SCALAR_REPR_H
 #define SECP256K1_SCALAR_REPR_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace altintegration {
 

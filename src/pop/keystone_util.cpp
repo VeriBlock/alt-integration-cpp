@@ -5,6 +5,7 @@
 
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/keystone_util.hpp>
+#include <cstdint>
 
 namespace altintegration {
 

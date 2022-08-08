@@ -6,12 +6,23 @@
 #ifndef VERIBLOCK_POP_CPP_CACHE_ENTRY
 #define VERIBLOCK_POP_CPP_CACHE_ENTRY
 
+#include <cstdint>
+#include <functional>
 #include <memory>
-#include <veriblock/pop/crypto/progpow/ethash.hpp>
-#include <veriblock/pop/serde.hpp>
-#include <veriblock/pop/validation_state.hpp>
+#include <vector>
+
+#include "veriblock/pop/crypto/progpow/ethash.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+namespace progpow {
+struct ethash_cache;
+}  // namespace progpow
+struct ReadStream;
 
 struct CacheEntry {
   std::shared_ptr<progpow::ethash_cache> light = nullptr;

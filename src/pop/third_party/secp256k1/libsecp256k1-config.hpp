@@ -30,7 +30,7 @@
 // Set window size for ecmult precomputation
 #define ECMULT_WINDOW_SIZE 15
 
-// Define to 1 if you have the <stdint.h> header file.
+// Define to 1 if you have the <cstdint> header file.
 #define HAVE_STDINT_H 1
 
 // Define to 1 if you have the <stdlib.h> header file.

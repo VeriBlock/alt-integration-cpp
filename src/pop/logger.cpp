@@ -5,6 +5,10 @@
 
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/logger.hpp>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace altintegration {
 

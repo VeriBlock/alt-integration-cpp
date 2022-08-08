@@ -4,9 +4,29 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/blockchain/alt_block_tree.hpp>
-#include <veriblock/pop/blockchain/commands/commands.hpp>
+#include <cstdint>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "veriblock/pop/blockchain/alt_chain_params.hpp"
+#include "veriblock/pop/blockchain/blockchain_util.hpp"
+#include "veriblock/pop/blockchain/command.hpp"
+#include "veriblock/pop/blockchain/command_group.hpp"
+#include "veriblock/pop/blockchain/commands/addblock.hpp"
+#include "veriblock/pop/blockchain/commands/addendorsement.hpp"
+#include "veriblock/pop/blockchain/commands/addvtb.hpp"
+#include "veriblock/pop/blockchain/commands/check_pubdata.hpp"
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/entities/vbkpoptx.hpp"
+#include "veriblock/pop/entities/vbktx.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
 
 namespace altintegration {
+struct VbkBlock;
 
 template <>
 void payloadToCommands(AltBlockTree& tree,

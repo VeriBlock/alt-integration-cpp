@@ -5,6 +5,8 @@
 
 #include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
 
+#include <cstdint>
+
 namespace altintegration {
 
 namespace adaptors {

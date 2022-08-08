@@ -3,11 +3,46 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <stdexcept>
-#include <veriblock/pop/crypto/secp256k1.hpp>
-#include <veriblock/pop/entities/address.hpp>
-#include <veriblock/pop/mock_miner.hpp>
-#include <veriblock/pop/strutil.hpp>
+#include "veriblock/pop/mock_miner.hpp"
+
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "veriblock/pop/arith_uint256.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/chain.hpp"
+#include "veriblock/pop/blockchain/miner.hpp"
+#include "veriblock/pop/blockchain/vbk_chain_params.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/crypto/secp256k1.hpp"
+#include "veriblock/pop/entities/address.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/btctx.hpp"
+#include "veriblock/pop/entities/coin.hpp"
+#include "veriblock/pop/entities/merkle_path.hpp"
+#include "veriblock/pop/entities/merkle_tree.hpp"
+#include "veriblock/pop/entities/network_byte_pair.hpp"
+#include "veriblock/pop/entities/popdata.hpp"
+#include "veriblock/pop/entities/publication_data.hpp"
+#include "veriblock/pop/entities/vbk_merkle_path.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vbkpoptx.hpp"
+#include "veriblock/pop/entities/vbktx.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/storage/adaptors/payloads_provider_impl.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/third_party/Signals.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

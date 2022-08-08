@@ -17,7 +17,8 @@
 
 #include <veriblock/pop/uint.hpp>
 
-#include "data_sizes.hpp"
+#include "data_sizes.hpp"  // IWYU pragma: keep
+#include "veriblock/pop/consts.hpp"
 
 namespace altintegration {
 namespace progpow {

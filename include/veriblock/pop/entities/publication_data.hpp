@@ -6,14 +6,20 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_PUBLICATION_DATA_HPP_
 
-#include <cstdint>
-#include <vector>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/strutil.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+#include <string>
 
 #include "context_info_container.hpp"
+#include "veriblock/pop/json.hpp"
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 /**
  * @struct PublicationData

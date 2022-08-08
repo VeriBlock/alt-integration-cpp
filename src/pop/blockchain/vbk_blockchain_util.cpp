@@ -3,12 +3,24 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/third_party/BigDecimal.h>
-
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blockchain/vbk_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <cstddef>
+#include <algorithm>
+#include <cstdint>
+#include <vector>
+
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/miner.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/time.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 

@@ -11,10 +11,13 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <iosfwd>
+#include <vector>
 
 #include "blob.hpp"
 #include "consts.hpp"
 #include "strutil.hpp"
+#include "veriblock/pop/assert.hpp"
 
 namespace altintegration {
 

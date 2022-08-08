@@ -178,5 +178,3 @@ function(has_extrinsic code OUT)
         vbk_define(${OUT})
     endif()
 endfunction()
-
-

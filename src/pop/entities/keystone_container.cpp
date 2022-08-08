@@ -4,8 +4,18 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 #include <veriblock/pop/entities/keystone_container.hpp>
 #include <veriblock/pop/keystone_util.hpp>
+#include <algorithm>
+
+
+#include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/entities/altblock.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
+class WriteStream;
+struct ReadStream;
 
 KeystoneContainer KeystoneContainer::createFromPrevious(
     const BlockIndex<AltBlock>* prev, const uint32_t keystoneInterval) {

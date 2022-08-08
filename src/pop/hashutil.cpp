@@ -4,8 +4,14 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/hashutil.hpp>
-
 #include <veriblock/pop/assert.hpp>
+#include <limits>
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/crypto/vblake.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/third_party/sha256.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
 

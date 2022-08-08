@@ -7,16 +7,31 @@
 #define VERIBLOCK_POP_CPP_STORAGE_ADAPTORS_BLOCK_PROVIDER_IMPL_HPP
 
 #include <veriblock/pop/c/extern.h>
-
-#include <memory>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/storage/block_batch.hpp>
 #include <veriblock/pop/storage/block_reader.hpp>
+#include <memory>
+#include <algorithm>
+#include <cstdint>
+#include <utility>
+#include <vector>
 
 #include "storage_interface.hpp"
 #include "veriblock/pop/logger.hpp"
 
+#include "veriblock/pop/entities/altblock.hpp"
+#include "veriblock/pop/entities/btcblock.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/storage/block_iterator.hpp"
+#include "veriblock/pop/storage/stored_alt_block_addon.hpp"
+#include "veriblock/pop/storage/stored_block_index.hpp"
+#include "veriblock/pop/storage/stored_btc_block_addon.hpp"
+#include "veriblock/pop/storage/stored_vbk_block_addon.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+
 namespace altintegration {
+struct AltChainParams;
 
 namespace adaptors {
 

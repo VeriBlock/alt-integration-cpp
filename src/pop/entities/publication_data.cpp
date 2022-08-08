@@ -5,6 +5,19 @@
 
 #include <veriblock/pop/entities/publication_data.hpp>
 
+
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/validation_state.hpp"
+
+namespace altintegration {
+class WriteStream;
+struct ReadStream;
+}  // namespace altintegration
+
 using namespace altintegration;
 
 void PublicationData::toVbkEncoding(WriteStream& stream) const {

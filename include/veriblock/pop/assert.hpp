@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_ASSERT_HPP
 
 #include "logger.hpp"
+#include "fmt.hpp"
 
 #ifdef VBK_HAS_BUILTIN_EXPECT
 // tell branch predictor that condition is always true
@@ -51,7 +52,7 @@
 #define VBK_ASSERT(x) VBK_ASSERT_MSG(x, " ");
 
 // same as VBK_ASSERT but executes only when compiled in DEBUG mode. similar to
-// how <assert.h> works
+// how <cassert> works
 #if defined(NDEBUG)
 #define VBK_ASSERT_MSG_DEBUG(x, ...)
 #define VBK_ASSERT_DEBUG(x)

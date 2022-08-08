@@ -2,8 +2,10 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+#include "veriblock/pop/crypto/progpow/math.hpp"
+
 #include <climits>
-#include <veriblock/pop/crypto/progpow/math.hpp>
+#include <cstdint>
 
 namespace altintegration {
 namespace progpow {

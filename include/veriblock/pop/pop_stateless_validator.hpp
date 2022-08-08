@@ -6,17 +6,26 @@
 #ifndef ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
 #define ALT_INTEGRATION_VERIBLOCK_POP_STATELESS_VALIDATOR_HPP
 
-#include <future>
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/blockchain/vbk_chain_params.hpp>
 #include <veriblock/pop/validation_state.hpp>
+#include <cstddef>
+#include <future>
+#include <memory>
+
+#include "veriblock/pop/third_party/thread_pool/mpmc_bounded_queue.hpp"
+#include "veriblock/pop/third_party/thread_pool/thread_pool.hpp"
 
 #ifndef VBK_NO_THREADS
 #include <veriblock/pop/third_party/thread_pool.hpp>
 #endif
 
 namespace altintegration {
+class ValidationState;
+struct AltChainParams;
+struct BtcChainParams;
+struct VbkChainParams;
 
 #ifndef VBK_NO_THREADS
 //! @private

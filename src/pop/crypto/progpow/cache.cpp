@@ -4,6 +4,17 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include <veriblock/pop/crypto/progpow/cache.hpp>
+#include <cassert>
+#include <cstddef>
+#include <algorithm>
+#include <cstdint>
+#include <limits>
+
+
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

@@ -1,5 +1,8 @@
 #include <veriblock/pop/uint.hpp>
 
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/consts.hpp"
+
 namespace altintegration {
 
 template struct Blob<VBK_MERKLE_ROOT_HASH_SIZE>;

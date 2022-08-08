@@ -6,11 +6,16 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_
 
-#include <cstdint>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/serde.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <string>
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 //! represents VBK atomic units
 struct Coin {

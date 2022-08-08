@@ -8,7 +8,7 @@
 #define SECP256K1_HASH_H
 
 #include <stdlib.h>
-#include <stdint.h>
+#include <cstdint>
 
 namespace altintegration {
 

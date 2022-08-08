@@ -15,9 +15,10 @@
   along with cpp-ethereum.  If notUUU,see <http://www.gnu.org/licenses/>.
 */
 
-#include <veriblock/pop/uint.hpp>
+#include <cstdint>
 
-#include "data_sizes.hpp"
+#include "data_sizes.hpp"  // IWYU pragma: keep
+#include "veriblock/pop/consts.hpp"
 
 namespace altintegration {
 namespace progpow {

@@ -6,16 +6,22 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_MERKLE_PATH_HPP_
 
+#include <cstddef>
 #include <cstdint>
 #include <stdexcept>
 #include <vector>
 
-#include <veriblock/pop/consts.hpp>
-#include <veriblock/pop/hashutil.hpp>
-#include <veriblock/pop/serde.hpp>
-#include <veriblock/pop/uint.hpp>
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/hashutil.hpp"
+#include "veriblock/pop/json.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
+class ValidationState;
+class WriteStream;
+struct ReadStream;
 
 /**
  * @struct MerklePath

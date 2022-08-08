@@ -7,6 +7,25 @@
 #include <veriblock/pop/entities/merkle_tree.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/hashutil.hpp>
+#include <cstddef>
+#include <algorithm>
+#include <cstdint>
+#include <string>
+#include <vector>
+
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/entities/atv.hpp"
+#include "veriblock/pop/entities/vbkblock.hpp"
+#include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

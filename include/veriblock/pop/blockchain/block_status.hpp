@@ -6,7 +6,7 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_STATUS_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_BLOCK_STATUS_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace altintegration {
 

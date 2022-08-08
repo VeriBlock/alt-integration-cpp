@@ -3,8 +3,21 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <cstring>
 #include <veriblock/pop/serde.hpp>
+#include <cstring>
+#include <cstdint>
+#include <limits>
+#include <string>
+#include <vector>
+
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/entities/network_byte_pair.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

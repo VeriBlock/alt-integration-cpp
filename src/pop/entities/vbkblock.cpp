@@ -3,10 +3,25 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/vbk_chain_params.hpp>
-#include <veriblock/pop/config.hpp>
 #include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
+#include <cstddef>
+#include <algorithm>
+#include <cstdint>
+#include <string>
+#include <utility>
+#include <vector>
+
+
+#include "veriblock/pop/blob.hpp"
+#include "veriblock/pop/consts.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/read_stream.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/slice.hpp"
+#include "veriblock/pop/uint.hpp"
+#include "veriblock/pop/validation_state.hpp"
+#include "veriblock/pop/write_stream.hpp"
 
 namespace altintegration {
 

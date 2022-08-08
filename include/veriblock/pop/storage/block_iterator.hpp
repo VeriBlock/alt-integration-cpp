@@ -6,7 +6,7 @@
 #ifndef VERIBLOCK_POP_CPP_STORAGE_ITERATOR_HPP
 #define VERIBLOCK_POP_CPP_STORAGE_ITERATOR_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <vector>
 

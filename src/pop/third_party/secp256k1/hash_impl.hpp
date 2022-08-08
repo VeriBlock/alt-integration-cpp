@@ -10,7 +10,7 @@
 #include "hash.hpp"
 
 #include <stdlib.h>
-#include <stdint.h>
+#include <cstdint>
 #include <string.h>
 
 namespace altintegration {
