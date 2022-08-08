@@ -66,10 +66,10 @@ var NAVTREEINDEX =
 [
 "addblock_8hpp_source.html",
 "namespacealtintegration.html#a0a97802abc5c380d1640aa258c91241e",
-"namespacemembers_t.html",
+"namespacemembers_type.html",
 "structaltintegration_1_1BaseBlockTree.html#adf4d9734048cd8bedb69d86d830f513d",
 "structaltintegration_1_1MerklePath.html#aa76b3a3e723958ecaef0c628c43f2350",
-"structaltintegration_1_1adaptors_1_1PayloadsStorageImpl.html#ac682c14b96c2ca086474f271fee9d366"
+"structaltintegration_1_1adaptors_1_1ProgpowHeaderCacheImpl.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

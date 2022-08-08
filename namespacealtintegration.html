@@ -417,10 +417,6 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="memTemplParams" colspan="2">template&lt;typename T , typename Container &gt; </td></tr>
-<tr class="memitem:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="memTemplItemLeft" align="right" valign="top">const T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a10bc3427cfcbfa00fbbb8e28e69a9acd">min_or_default</a> (Container &amp;c, const T default_)</td></tr>
-<tr class="memdesc:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns min value in a container (vector, array...), or "default" value if container is empty  <a href="namespacealtintegration.html#a10bc3427cfcbfa00fbbb8e28e69a9acd">More...</a><br /></td></tr>
-<tr class="separator:a10bc3427cfcbfa00fbbb8e28e69a9acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc9f193542aa57dac9a8ab2595c2de26"><td class="memTemplParams" colspan="2">template&lt;typename BlockTreeT &gt; </td></tr>
 <tr class="memitem:acc9f193542aa57dac9a8ab2595c2de26"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; typename BlockTreeT::block_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#acc9f193542aa57dac9a8ab2595c2de26">getContext</a> (const BlockTreeT &amp;tree, typename BlockTreeT::hash_t tip, size_t size=std::numeric_limits&lt; size_t &gt;::max())</td></tr>
 <tr class="memdesc:acc9f193542aa57dac9a8ab2595c2de26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a context (blocks necessary to connect) in a <code>tree</code> from <code>tip</code> backwards <code>size</code> elements.  <a href="namespacealtintegration.html#acc9f193542aa57dac9a8ab2595c2de26">More...</a><br /></td></tr>
@@ -573,12 +569,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEnc
 <a class="el" href="structaltintegration_1_1BtcBlock.html">BtcBlock</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetRegTestBtcBlock</b> ()</td></tr>
 <tr class="memdesc:a0113326bdf77bb9899f62b959aad5bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter for <code>regtest</code> BTC network genesis block. <br /></td></tr>
 <tr class="separator:a0113326bdf77bb9899f62b959aad5bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2d091351adc9d4a0e465820a26f2c04"><td class="memItemLeft" align="right" valign="top"><a id="ab2d091351adc9d4a0e465820a26f2c04" name="ab2d091351adc9d4a0e465820a26f2c04"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setEthashCache</b> (const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt; &amp;cache)</td></tr>
-<tr class="separator:ab2d091351adc9d4a0e465820a26f2c04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab70a7e25fa22cfdefe29c3c37e366aa5"><td class="memItemLeft" align="right" valign="top"><a id="ab70a7e25fa22cfdefe29c3c37e366aa5" name="ab70a7e25fa22cfdefe29c3c37e366aa5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setProgpowHeaderCache</b> (const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCache.html">ProgpowHeaderCache</a> &gt; &amp;cache)</td></tr>
-<tr class="separator:ab70a7e25fa22cfdefe29c3c37e366aa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade69b05344a6244bb9cc32c2a064b743"><td class="memItemLeft" align="right" valign="top"><a id="ade69b05344a6244bb9cc32c2a064b743" name="ade69b05344a6244bb9cc32c2a064b743"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setEthashCache</b> (std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCacheI.html">EthashCacheI</a> &gt; cache)</td></tr>
+<tr class="separator:ade69b05344a6244bb9cc32c2a064b743"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e1864b9806f20fc39f799d8886850f7"><td class="memItemLeft" align="right" valign="top"><a id="a6e1864b9806f20fc39f799d8886850f7" name="a6e1864b9806f20fc39f799d8886850f7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setProgpowHeaderCache</b> (std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCacheI.html">ProgpowHeaderCacheI</a> &gt; cache)</td></tr>
+<tr class="separator:a6e1864b9806f20fc39f799d8886850f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacealtintegration.html#a578e2c0db6c0c5309a1b889a58002416">uint192</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">progPowHash</a> (<a class="el" href="structaltintegration_1_1Slice.html">Slice</a>&lt; const uint8_t &gt; header)</td></tr>
 <tr class="memdesc:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate vPROGPOW hash of given <a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a> header (65 bytes)  <a href="namespacealtintegration.html#af1d1d0aac3710a6eff37e6ab8c7da44c">More...</a><br /></td></tr>
 <tr class="separator:af1d1d0aac3710a6eff37e6ab8c7da44c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2961,7 +2957,7 @@ template&lt;typename <a class="el" href="structaltintegration_1_1BlockTree.html"
 <div class="line"><span class="lineno">   72</span>  std::reverse(ret.begin(), ret.end());</div>
 <div class="line"><span class="lineno">   73</span>  <span class="keywordflow">return</span> ret;</div>
 <div class="line"><span class="lineno">   74</span>}</div>
-<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00094">base_block_tree.hpp:94</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a2ed7a414a9bc1cf7abd70af5a6e5db8a"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a2ed7a414a9bc1cf7abd70af5a6e5db8a">altintegration::BaseBlockTree::getBestChain</a></div><div class="ttdeci">const Chain&lt; index_t &gt; &amp; getBestChain() const</div><div class="ttdoc">Getter for currently Active Chain.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l00093">base_block_tree.hpp:93</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3358,42 +3354,6 @@ template&lt;typename BlockTreeT &gt; </div>
 <div class="line"><span class="lineno">   58</span> </div>
 <div class="line"><span class="lineno">   59</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">   60</span>}</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a10bc3427cfcbfa00fbbb8e28e69a9acd" name="a10bc3427cfcbfa00fbbb8e28e69a9acd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10bc3427cfcbfa00fbbb8e28e69a9acd">&#9670;&nbsp;</a></span>min_or_default()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Container &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">const T altintegration::min_or_default </td>
-          <td>(</td>
-          <td class="paramtype">Container &amp;&#160;</td>
-          <td class="paramname"><em>c</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const T&#160;</td>
-          <td class="paramname"><em>default_</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="algorithm_8hpp_source.html#l00152">152</a> of file <a class="el" href="algorithm_8hpp_source.html">algorithm.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  152</span>                                                       {</div>
-<div class="line"><span class="lineno">  153</span>  <span class="keyword">const</span> <span class="keyword">auto</span> it = std::min_element(c.begin(), c.end());</div>
-<div class="line"><span class="lineno">  154</span>  <span class="keywordflow">return</span> it == c.end() ? default_ : *it;</div>
-<div class="line"><span class="lineno">  155</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -212,7 +212,6 @@ var namespacealtintegration =
     [ "LevelToString", "namespacealtintegration.html#a0718136595cbbce16f499166a2b91dc8", null ],
     [ "loadTree", "namespacealtintegration.html#aadfbc1cd28ec96e3b370f227b7e1d830", null ],
     [ "loadTrees", "namespacealtintegration.html#adc87c959798043c31fb214956b4bfa6b", null ],
-    [ "min_or_default", "namespacealtintegration.html#a10bc3427cfcbfa00fbbb8e28e69a9acd", null ],
     [ "ParseHex", "namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2", null ],
     [ "ParseHex", "namespacealtintegration.html#a6b1f8cf0745a2082f9e38352bc275345", null ],
     [ "PrintTo", "namespacealtintegration.html#a8fe9559da743732de2b5dc9dda0ba310", null ],

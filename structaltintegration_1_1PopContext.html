@@ -175,9 +175,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>shutdown</b> ()</td><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa403987decee61194ecd35a8719ebf0b"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PopContext.html">PopContext</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#aa403987decee61194ecd35a8719ebf0b">create</a> (std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1Config.html">Config</a> &gt; config, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &gt; payloadsProvider, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &gt; blockProvider, const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt; &amp;ethashCache, const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCache.html">ProgpowHeaderCache</a> &gt; &amp;progpowHeaderCache, size_t validatorWorkers=0)</td></tr>
-<tr class="memdesc:aa403987decee61194ecd35a8719ebf0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory function for <a class="el" href="structaltintegration_1_1PopContext.html" title="Main entrypoint into the veriblock-pop library.">PopContext</a>.  <a href="structaltintegration_1_1PopContext.html#aa403987decee61194ecd35a8719ebf0b">More...</a><br /></td></tr>
-<tr class="separator:aa403987decee61194ecd35a8719ebf0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac43473f22040a056f9c401f94df9b13"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PopContext.html">PopContext</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structaltintegration_1_1PopContext.html#aac43473f22040a056f9c401f94df9b13">create</a> (std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1Config.html">Config</a> &gt; config, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1PayloadsStorage.html">PayloadsStorage</a> &gt; payloadsProvider, std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1BlockReader.html">BlockReader</a> &gt; blockProvider, std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt; ethashCache, std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCache.html">ProgpowHeaderCache</a> &gt; progpowHeaderCache, size_t validatorWorkers=0)</td></tr>
+<tr class="memdesc:aac43473f22040a056f9c401f94df9b13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory function for <a class="el" href="structaltintegration_1_1PopContext.html" title="Main entrypoint into the veriblock-pop library.">PopContext</a>.  <a href="structaltintegration_1_1PopContext.html#aac43473f22040a056f9c401f94df9b13">More...</a><br /></td></tr>
+<tr class="separator:aac43473f22040a056f9c401f94df9b13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7c90778f2d195ab64080e3bd326db60c" name="a7c90778f2d195ab64080e3bd326db60c"></a>
@@ -324,8 +324,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa403987decee61194ecd35a8719ebf0b" name="aa403987decee61194ecd35a8719ebf0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa403987decee61194ecd35a8719ebf0b">&#9670;&nbsp;</a></span>create()</h2>
+<a id="aac43473f22040a056f9c401f94df9b13" name="aac43473f22040a056f9c401f94df9b13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac43473f22040a056f9c401f94df9b13">&#9670;&nbsp;</a></span>create()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -354,13 +354,13 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1EthashCache.html">EthashCache</a> &gt;&#160;</td>
           <td class="paramname"><em>ethashCache</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCache.html">ProgpowHeaderCache</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="structaltintegration_1_1ProgpowHeaderCache.html">ProgpowHeaderCache</a> &gt;&#160;</td>
           <td class="paramname"><em>progpowHeaderCache</em>, </td>
         </tr>
         <tr>
