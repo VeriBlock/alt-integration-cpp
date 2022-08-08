@@ -6,10 +6,9 @@
 #ifndef VERIBLOCK_POP_CPP_PROGPOW_HPP
 #define VERIBLOCK_POP_CPP_PROGPOW_HPP
 
-#include <veriblock/pop/serde.hpp>
-#include <veriblock/pop/storage/ethash_cache_provider.hpp>
-#include <veriblock/pop/storage/progpow_header_cache_provider.hpp>
-#include <veriblock/pop/uint.hpp>
+#include "progpow/cache.hpp"
+#include "veriblock/pop/serde.hpp"
+#include "veriblock/pop/uint.hpp"
 
 namespace altintegration {
 
@@ -75,9 +74,9 @@ void clearEthashCache();
 
 }  // namespace progpow
 
-void setEthashCache(const std::shared_ptr<EthashCache>& cache);
+void setEthashCache(std::unique_ptr<EthashCacheI> cache);
 
-void setProgpowHeaderCache(const std::shared_ptr<ProgpowHeaderCache>& cache);
+void setProgpowHeaderCache(std::unique_ptr<ProgpowHeaderCacheI> cache);
 
 /**
  * Calculate vPROGPOW hash of given VbkBlock header (65 bytes)

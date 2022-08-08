@@ -35,7 +35,7 @@ struct AltChainParams;
  * @param state will return error description here
  * @return true if check is OK, false otherwise
  */
-bool checkRange(int64_t num, int64_t min, int64_t max, ValidationState& state);
+bool checkRange(uint64_t num, uint64_t min, uint64_t max, ValidationState& state);
 
 /**
  * Converts the input to the byte array and trims it's size to the
@@ -72,8 +72,8 @@ std::vector<uint8_t> fixedArray(T input) {
 bool readVarLenValue(ReadStream& stream,
                      Slice<const uint8_t>& out,
                      ValidationState& state,
-                     size_t minLen,
-                     size_t maxLen);
+                     uint64_t minLen,
+                     uint64_t maxLen);
 
 /**
  * Read variable length value, which consists of
@@ -89,8 +89,8 @@ bool readVarLenValue(ReadStream& stream,
 bool readSingleByteLenValue(ReadStream& stream,
                             Slice<const uint8_t>& out,
                             ValidationState& state,
-                            size_t minLen,
-                            size_t maxLen);
+                            uint64_t minLen,
+                            uint64_t maxLen);
 
 //! @overload
 template <typename Container,
@@ -99,8 +99,8 @@ template <typename Container,
 bool readSingleByteLenValue(ReadStream& stream,
                             Container& out,
                             ValidationState& state,
-                            size_t minLen,
-                            size_t maxLen) {
+                            uint64_t minLen,
+                            uint64_t maxLen) {
   uint8_t length = 0;
   if (!stream.readBE<uint8_t>(length, state)) {
     return state.Invalid("readsingle-bad-length");

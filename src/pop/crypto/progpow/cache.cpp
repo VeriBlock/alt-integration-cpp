@@ -19,8 +19,10 @@
 namespace altintegration {
 
 void CacheEntry::toVbkEncoding(WriteStream& stream) const {
-  // TODO implement
-  assert(false && "unimplemented");
+  stream.writeBE<uint64_t>(this->light->cache_size);
+  stream.writeBE<uint64_t>(this->light->epoch);
+  stream.write(this->light->cache, this->light->cache_size);
+
   writeContainer(
       stream, this->dag, [](WriteStream& stream, const uint32_t& value) {
         stream.writeBE(value);
@@ -30,8 +32,16 @@ void CacheEntry::toVbkEncoding(WriteStream& stream) const {
 bool DeserializeFromVbkEncoding(ReadStream& stream,
                                 CacheEntry& out,
                                 ValidationState& state) {
-  // TODO implement
-  assert(false && "unimplemented");
+  if (!stream.readBE<uint64_t>(out.light->cache_size, state)) {
+    return state.Invalid("invalid-cache_size");
+  }
+  if (!stream.readBE<uint64_t>(out.light->epoch, state)) {
+    return state.Invalid("invalid-epoch");
+  }
+  if (!stream.read(out.light->cache_size, (uint8_t*)out.light->cache, state)) {
+    return state.Invalid("invalid-cache");
+  }
+
   size_t i = 0;
   if (!readArrayOf<uint32_t>(
           stream,

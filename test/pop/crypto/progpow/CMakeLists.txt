@@ -8,6 +8,7 @@ addtest(progpow_test
         progpow_test.cpp
         ${progpow_test_vectors}
         )
+addtest(cache_entry_test cache_entry_test.cpp)
 set_test_cost(progpow_test 38000) # 38 sec
 addtest(ethash_dag_test ethash_dag_test.cpp)
 set_test_cost(ethash_dag_test 21000) # 21 sec
