@@ -206,7 +206,7 @@ $(document).ready(function(){initNavTree('algorithm_8hpp_source.html',''); initR
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>std::unique_ptr&lt;T&gt; make_unique(Args&amp;&amp;... args) {</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>  <span class="keyword">auto</span>* ptr = <span class="keyword">new</span> T(args...);</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>  <span class="keyword">auto</span>* ptr = <span class="keyword">new</span> T(std::forward&lt;Args&gt;(args)...);</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>  <span class="keywordflow">return</span> std::unique_ptr&lt;T&gt;(ptr);</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>}</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
