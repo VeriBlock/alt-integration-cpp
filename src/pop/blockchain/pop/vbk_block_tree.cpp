@@ -286,7 +286,7 @@ bool VbkBlockTree::addPayloadToAppliedBlock(index_t& index,
                index.toPrettyString()));
   }
 
-  index.insertPayloadId<payloads_t>(pid);
+  index.insertPayload<payloads_t>(payload);
   payloadsIndex_.add(pid.asVector(), index.getHash());
 
   auto cmdGroup = commandGroupStore_.getCommand(index, pid, state);

@@ -62,10 +62,7 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
   }
 
   template <typename pop_t>
-  void insertPayloadId(const typename pop_t::id_t& pid) {
-    _vtbids.push_back(pid);
-    setDirty();
-  }
+  void insertPayload(const pop_t&) {}
 
   template <typename pop_t>
   void insertPayloadIds(const std::vector<typename pop_t::id_t>& pids) {
@@ -95,6 +92,9 @@ struct VbkBlockAddon : public PopState<VbkEndorsement> {
                                          VbkBlockAddon& out,
                                          ValidationState& state);
 };
+
+template <>
+void VbkBlockAddon::insertPayload(const VTB&);
 
 //! @overload
 bool DeserializeFromVbkEncoding(ReadStream& stream,
