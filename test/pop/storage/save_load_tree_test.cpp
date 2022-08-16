@@ -252,7 +252,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test1) {
   // manually add duplicated VTBs
   auto* containingVbkBlock_index =
       alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
-  containingVbkBlock_index->insertPayload<VTB>(vtb1);
+  containingVbkBlock_index->insertPayloadId<VTB>(vtb1.getId());
   as_mut(alttree.vbk().getPayloadsIndex())
       .add(vtb1.getId().asVector(), containingVbkBlock_index->getHash());
 
@@ -292,7 +292,7 @@ TEST_F(SaveLoadTreeTest, ReloadWithDuplicatesVbk_test2) {
   // manually add duplicated VTBs
   auto* containingVbkBlock_index =
       alttree.vbk().getBlockIndex(containingVbkBlock->getHash());
-  containingVbkBlock_index->insertPayload<VTB>(vtb1);
+  containingVbkBlock_index->insertPayloadId<VTB>(vtb1.getId());
   as_mut(alttree.vbk().getPayloadsIndex())
       .add(vtb1.getId().asVector(), containingVbkBlock_index->getHash());
 
