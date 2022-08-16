@@ -128,6 +128,14 @@ struct VbkMerkleTree {
 
   hash_t hash(const hash_t& a, const hash_t& b) const { return sha256(a, b); }
 
+  static bool potentiallyFullTree(uint32_t layers_num, uint32_t leaves_number) {
+    // we need to get only pop txs layers without actual merkle tree
+    // expected_leaves_count == 2^(layers_num - 2)
+    uint32_t expected_leaves_number = (1 << (layers_num - 2));
+    VBK_ASSERT(expected_leaves_number >= leaves_number);
+    return (expected_leaves_number / leaves_number) == 1;
+  }
+
   std::vector<hash_t> finalizePath(std::vector<hash_t> path,
                                    const TreeIndex treeIndex) const {
     switch (treeIndex) {

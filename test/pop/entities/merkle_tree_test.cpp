@@ -119,6 +119,23 @@ TEST(MerklePath, RegressionWhenNormalTx) {
             path.calculateMerkleRoot());
 }
 
+TEST(VbkMerkleTree, fullTree) {
+  uint32_t pop_tx_num = 24;
+  std::vector<uint256> pop_txs;
+  // fill pop_txs
+  std::generate_n(std::back_inserter(pop_txs), pop_tx_num, [&]() {
+    static uint32_t i = 1;
+    return ArithUint256(i++);
+  });
+  VbkMerkleTree mtree({}, pop_txs);
+  
+
+  auto path = mtree.getMerklePath(pop_txs.back(), VbkMerkleTree::TreeIndex::POP);
+  EXPECT_EQ(path.layers.size(), 6);
+  path.calculateMerkleRoot(true);
+  EXPECT_TRUE(VbkMerkleTree::potentiallyFullTree(path.layers.size(), 24));
+}
+
 template <typename T>
 struct GetMerkleRootTest : public ::testing::Test {};
 

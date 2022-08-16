@@ -3,12 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/pop/logger.hpp>
-#include <veriblock/pop/reversed_range.hpp>
-#include <veriblock/pop/trace.hpp>
-#include <cstddef>
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+
 #include <algorithm>
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <set>
@@ -37,9 +35,12 @@
 #include "veriblock/pop/entities/vbkblock.hpp"
 #include "veriblock/pop/entities/vbkpoptx.hpp"
 #include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/reversed_range.hpp"
 #include "veriblock/pop/stateless_validation.hpp"
 #include "veriblock/pop/strutil.hpp"
 #include "veriblock/pop/third_party/Signals.hpp"
+#include "veriblock/pop/trace.hpp"
 #include "veriblock/pop/uint.hpp"
 #include "veriblock/pop/validation_state.hpp"
 
@@ -498,6 +499,31 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
   return true;
+}
+
+uint32_t VbkBlockTree::missedVTBsCount(VbkBlockTree::index_t& index) {
+  auto vtb_ids = index.getPayloadIds<VTB>();
+  if (vtb_ids.empty()) {
+    return std::numeric_limits<uint32_t>::max();
+  }
+
+  auto read_vtb = [this](const VTB::id_t& id) -> VTB {
+    VTB vtb;
+    ValidationState state;
+    bool res = this->payloadsProvider_.getVTB(id, vtb, state);
+    VBK_ASSERT_MSG(res, state.toString());
+    return vtb;
+  };
+
+  // read first VTB
+  auto vtb = read_vtb(vtb_ids[0]);
+  // we need to get only pop txs layers without actual merkle tree
+  uint32_t layers_num = vtb.merklePath.layers.size() - 2;
+
+  // expected_txs_count == 2^(layers_num)
+  uint32_t expected_txs_count = (1 << layers_num);
+
+  return expected_txs_count - vtb_ids.size();
 }
 
 template <>

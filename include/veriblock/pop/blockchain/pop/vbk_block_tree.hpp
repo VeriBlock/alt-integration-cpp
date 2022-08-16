@@ -137,6 +137,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
+  uint32_t missedVTBsCount(index_t& index);
+
   /**
    * Attempts to add payloads to the block and perform full validation.
    * If successful, it is possible to setState() to the block after the
