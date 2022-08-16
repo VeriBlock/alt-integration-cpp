@@ -256,15 +256,21 @@ inline bool isPopMerkleTreeFull(const std::vector<VbkMerklePath>& paths) {
   }
 
   // find the latest index and determine amount of the leaves
+  uint32_t expected_leaves_number = 0;
   for (const auto& path : paths) {
     if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
         *indexes.rbegin() == path.index) {
       uint32_t i = path.foo();
-      (void)i;
+      printf("%d, %d, ", i, (uint32_t)path.layers.size());
+      // expected_leaves_count == 2^(layers_num - 2) - 2^(i)
+      expected_leaves_number =
+          i == 0 ? path.index + 1: (1 << (path.layers.size() - 2)) - (1 << i);
     }
   }
+  printf("%d, %d \n", expected_leaves_number, (uint32_t)indexes.size());
 
-  return true;
+  return expected_leaves_number == indexes.size();
+  // return true;
 }
 
 //! @private
