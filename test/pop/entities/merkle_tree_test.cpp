@@ -119,7 +119,7 @@ TEST(MerklePath, RegressionWhenNormalTx) {
             path.calculateMerkleRoot());
 }
 
-TEST(VbkMerkleTree, fullTree) {
+TEST(VbkMerkleTree, isPopMerkleTreeFull) {
   uint32_t pop_tx_num = 24;
   std::vector<uint256> pop_txs;
   // fill pop_txs
@@ -128,12 +128,17 @@ TEST(VbkMerkleTree, fullTree) {
     return ArithUint256(i++);
   });
   VbkMerkleTree mtree({}, pop_txs);
-  
 
-  auto path = mtree.getMerklePath(pop_txs.back(), VbkMerkleTree::TreeIndex::POP);
-  EXPECT_EQ(path.layers.size(), 6);
-  path.calculateMerkleRoot(true);
-  EXPECT_TRUE(VbkMerkleTree::potentiallyFullTree(path.layers.size(), 24));
+  std::vector<VbkMerklePath> pop_paths;
+  for (auto it = pop_txs.rbegin(); it != pop_txs.rend(); it++) {
+    if (!pop_paths.empty()) {
+      EXPECT_FALSE(isPopMerkleTreeFull(pop_paths));
+    }
+    pop_paths.push_back(
+        mtree.getMerklePath(*it, VbkMerkleTree::TreeIndex::POP));
+  }
+
+  EXPECT_TRUE(isPopMerkleTreeFull(pop_paths));
 }
 
 template <typename T>

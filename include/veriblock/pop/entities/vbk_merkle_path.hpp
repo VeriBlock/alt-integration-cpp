@@ -49,6 +49,8 @@ struct VbkMerklePath {
    * @return hash merkle root hash
    */
   uint128 calculateMerkleRoot() const;
+
+  uint32_t foo() const;
 };
 
 //! @overload

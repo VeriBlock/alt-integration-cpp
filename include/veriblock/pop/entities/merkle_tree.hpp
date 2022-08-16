@@ -241,6 +241,32 @@ struct VbkMerkleTree {
   MerkleTree<VbkMerkleTree, uint256> normal_tree;
 };
 
+inline bool isPopMerkleTreeFull(const std::vector<VbkMerklePath>& paths) {
+  // validate that we have a continugous indexes set
+  std::set<int32_t> indexes;
+  for (const auto& path : paths) {
+    if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {
+      indexes.insert(path.index);
+    }
+  }
+  for (int32_t i = 0; i < (int32_t)indexes.size(); i++) {
+    if (!indexes.count(i)) {
+      return false;
+    }
+  }
+
+  // find the latest index and determine amount of the leaves
+  for (const auto& path : paths) {
+    if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
+        *indexes.rbegin() == path.index) {
+      uint32_t i = path.foo();
+      (void)i;
+    }
+  }
+
+  return true;
+}
+
 //! @private
 struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
   using base = MerkleTree<BtcMerkleTree, uint256>;

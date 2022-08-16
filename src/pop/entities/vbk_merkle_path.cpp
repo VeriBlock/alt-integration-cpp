@@ -3,9 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/vbk_merkle_path.hpp>
 #include <algorithm>
-
+#include <veriblock/pop/entities/vbk_merkle_path.hpp>
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/consts.hpp"
@@ -66,6 +65,32 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
   }
 
   return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
+}
+
+uint32_t VbkMerklePath::foo() const {
+  uint32_t i = 0;
+
+  uint256 cursor = subject;
+  auto layerIndex = index;
+  for (uint32_t size = layers.size(); i < size; ++i) {
+    if (i == size - 1) {
+      // metapackage hash is on the left
+      layerIndex = 1;
+    } else if (i == size - 2) {
+      layerIndex = treeIndex;
+    }
+
+    auto& layer = layers[i];
+    auto& left = (layerIndex & 1u) != 0u ? layer : cursor;
+    auto& right = (layerIndex & 1u) != 0u ? cursor : layer;
+    if (right == left) {
+      return i;
+    }
+    cursor = sha256(left, right);
+    layerIndex >>= 1u;
+  }
+
+  return i;
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,
