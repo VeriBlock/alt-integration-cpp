@@ -32,6 +32,7 @@
 #include "veriblock/pop/consts.hpp"
 #include "veriblock/pop/entities/btcblock.hpp"
 #include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/entities/merkle_tree.hpp"
 #include "veriblock/pop/entities/vbkblock.hpp"
 #include "veriblock/pop/entities/vbkpoptx.hpp"
 #include "veriblock/pop/entities/vtb.hpp"
@@ -501,7 +502,8 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   return true;
 }
 
-uint32_t VbkBlockTree::missedVTBsCount(VbkBlockTree::index_t& index) {
+uint32_t VbkBlockTree::approximateMissedVTBsCount(
+    VbkBlockTree::index_t& index) {
   auto vtb_ids = index.getPayloadIds<VTB>();
   if (vtb_ids.empty()) {
     return std::numeric_limits<uint32_t>::max();
@@ -515,15 +517,15 @@ uint32_t VbkBlockTree::missedVTBsCount(VbkBlockTree::index_t& index) {
     return vtb;
   };
 
-  // read first VTB
-  auto vtb = read_vtb(vtb_ids[0]);
-  // we need to get only pop txs layers without actual merkle tree
-  uint32_t layers_num = vtb.merklePath.layers.size() - 2;
+  // read get VbkMerklePath
+  std::vector<VbkMerklePath> vtb_paths;
+  for (const auto& id : vtb_ids) {
+    vtb_paths.push_back(read_vtb(id).merklePath);
+  }
 
-  // expected_txs_count == 2^(layers_num)
-  uint32_t expected_txs_count = (1 << layers_num);
+  uint32_t approximate_count = approximateVTBsCount(vtb_paths);
 
-  return expected_txs_count - vtb_ids.size();
+  return approximate_count - vtb_paths.size();
 }
 
 template <>
