@@ -519,6 +519,7 @@ uint32_t VbkBlockTree::approximateMissedVTBsCount(
 
   // read get VbkMerklePath
   std::vector<VbkMerklePath> vtb_paths;
+  vtb_paths.reserve(vtb_ids.size());
   for (const auto& id : vtb_ids) {
     vtb_paths.push_back(read_vtb(id).merklePath);
   }
