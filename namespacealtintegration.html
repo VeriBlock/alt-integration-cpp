@@ -1738,40 +1738,42 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <div class="fragment"><div class="line"><span class="lineno">  244</span>                                                                            {</div>
 <div class="line"><span class="lineno">  245</span>  <span class="comment">// validate that we have a continugous indexes set</span></div>
 <div class="line"><span class="lineno">  246</span>  std::set&lt;int32_t&gt; indexes;</div>
-<div class="line"><span class="lineno">  247</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
-<div class="line"><span class="lineno">  248</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {</div>
-<div class="line"><span class="lineno">  249</span>      indexes.insert(path.index);</div>
-<div class="line"><span class="lineno">  250</span>    }</div>
-<div class="line"><span class="lineno">  251</span>  }</div>
-<div class="line"><span class="lineno">  252</span> </div>
-<div class="line"><span class="lineno">  253</span>  <span class="comment">// find the latest index and determine amount of the leaves</span></div>
-<div class="line"><span class="lineno">  254</span>  uint32_t expected_leaves_number = 0;</div>
-<div class="line"><span class="lineno">  255</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
-<div class="line"><span class="lineno">  256</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &amp;&amp;</div>
-<div class="line"><span class="lineno">  257</span>        *indexes.rbegin() == path.index) {</div>
-<div class="line"><span class="lineno">  258</span>      <span class="keywordflow">if</span> (path.layers.empty()) {</div>
-<div class="line"><span class="lineno">  259</span>        expected_leaves_number = 1;</div>
-<div class="line"><span class="lineno">  260</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  261</span>      }</div>
-<div class="line"><span class="lineno">  262</span>      <span class="keyword">auto</span> vec = path.foo();</div>
-<div class="line"><span class="lineno">  263</span>      <span class="keywordflow">if</span> (vec.empty()) {</div>
-<div class="line"><span class="lineno">  264</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
-<div class="line"><span class="lineno">  265</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  266</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vec.front() == 0) {</div>
-<div class="line"><span class="lineno">  267</span>        expected_leaves_number = path.index + 1;</div>
-<div class="line"><span class="lineno">  268</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  269</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  270</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
-<div class="line"><span class="lineno">  271</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : vec) {</div>
-<div class="line"><span class="lineno">  272</span>          expected_leaves_number -= (1 &lt;&lt; i);</div>
-<div class="line"><span class="lineno">  273</span>        }</div>
-<div class="line"><span class="lineno">  274</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  275</span>      }</div>
-<div class="line"><span class="lineno">  276</span>    }</div>
-<div class="line"><span class="lineno">  277</span>  }</div>
-<div class="line"><span class="lineno">  278</span> </div>
-<div class="line"><span class="lineno">  279</span>  <span class="keywordflow">return</span> expected_leaves_number;</div>
-<div class="line"><span class="lineno">  280</span>}</div>
+<div class="line"><span class="lineno">  247</span>  int32_t maxIndex = -1;</div>
+<div class="line"><span class="lineno">  248</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
+<div class="line"><span class="lineno">  249</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &amp;&amp;</div>
+<div class="line"><span class="lineno">  250</span>        maxIndex &lt; path.index) {</div>
+<div class="line"><span class="lineno">  251</span>      maxIndex = path.index;</div>
+<div class="line"><span class="lineno">  252</span>    }</div>
+<div class="line"><span class="lineno">  253</span>  }</div>
+<div class="line"><span class="lineno">  254</span> </div>
+<div class="line"><span class="lineno">  255</span>  <span class="comment">// find the latest index and determine amount of the leaves</span></div>
+<div class="line"><span class="lineno">  256</span>  uint32_t aproximate_leaves_number = 0;</div>
+<div class="line"><span class="lineno">  257</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
+<div class="line"><span class="lineno">  258</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &amp;&amp;</div>
+<div class="line"><span class="lineno">  259</span>        maxIndex == path.index) {</div>
+<div class="line"><span class="lineno">  260</span>      <span class="keywordflow">if</span> (path.layers.empty()) {</div>
+<div class="line"><span class="lineno">  261</span>        aproximate_leaves_number = 1;</div>
+<div class="line"><span class="lineno">  262</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  263</span>      }</div>
+<div class="line"><span class="lineno">  264</span>      <span class="keyword">auto</span> vec = path.foo();</div>
+<div class="line"><span class="lineno">  265</span>      <span class="keywordflow">if</span> (vec.empty()) {</div>
+<div class="line"><span class="lineno">  266</span>        aproximate_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
+<div class="line"><span class="lineno">  267</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  268</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vec.front() == 0) {</div>
+<div class="line"><span class="lineno">  269</span>        aproximate_leaves_number = path.index + 1;</div>
+<div class="line"><span class="lineno">  270</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  271</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">  272</span>        aproximate_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
+<div class="line"><span class="lineno">  273</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : vec) {</div>
+<div class="line"><span class="lineno">  274</span>          aproximate_leaves_number -= (1 &lt;&lt; i);</div>
+<div class="line"><span class="lineno">  275</span>        }</div>
+<div class="line"><span class="lineno">  276</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  277</span>      }</div>
+<div class="line"><span class="lineno">  278</span>    }</div>
+<div class="line"><span class="lineno">  279</span>  }</div>
+<div class="line"><span class="lineno">  280</span> </div>
+<div class="line"><span class="lineno">  281</span>  <span class="keywordflow">return</span> aproximate_leaves_number;</div>
+<div class="line"><span class="lineno">  282</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
