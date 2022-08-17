@@ -50,7 +50,7 @@ struct VbkMerklePath {
    */
   uint128 calculateMerkleRoot() const;
 
-  uint32_t foo() const;
+  std::vector<uint32_t> equalLayerIndexes() const;
 };
 
 //! @overload

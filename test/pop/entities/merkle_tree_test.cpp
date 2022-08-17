@@ -134,57 +134,26 @@ TEST_P(MerkleTreeOnTxTest2, isPopMerkleTreeFull) {
   std::vector<VbkMerklePath> pop_paths;
   for (auto it = pop_txs.rbegin(); it != pop_txs.rend(); it++) {
     if (!pop_paths.empty()) {
-      EXPECT_FALSE(isPopMerkleTreeFull(pop_paths));
+      EXPECT_NE(approximateVTBsCount(pop_paths), (uint32_t)pop_paths.size());
     }
     pop_paths.push_back(
         mtree.getMerklePath(*it, VbkMerkleTree::TreeIndex::POP));
   }
 
-  EXPECT_TRUE(isPopMerkleTreeFull(pop_paths));
+  EXPECT_EQ(approximateVTBsCount(pop_paths), (uint32_t)pop_paths.size());
 
   for (auto it = pop_paths.begin(); it != pop_paths.end();) {
     it = pop_paths.erase(it);
     if (pop_paths.empty()) {
       break;
     }
-    EXPECT_FALSE(isPopMerkleTreeFull(pop_paths));
+    EXPECT_NE(approximateVTBsCount(pop_paths), (uint32_t)pop_paths.size());
   }
 }
 
 INSTANTIATE_TEST_SUITE_P(MerklePath,
                          MerkleTreeOnTxTest2,
-                         testing::Range(1, 20));
-
-TEST(VbkMerkleTree, isPopMerkleTreeFull) {
-  uint32_t pop_tx_num = 23;
-  std::vector<uint256> pop_txs;
-  // fill pop_txs
-  std::generate_n(std::back_inserter(pop_txs), pop_tx_num, [&]() {
-    static uint32_t i = 1;
-    return ArithUint256(i++);
-  });
-  VbkMerkleTree mtree({}, pop_txs);
-
-  std::vector<VbkMerklePath> pop_paths;
-  for (auto it = pop_txs.rbegin(); it != pop_txs.rend(); it++) {
-    if (!pop_paths.empty()) {
-      EXPECT_FALSE(isPopMerkleTreeFull(pop_paths));
-    }
-    pop_paths.push_back(
-        mtree.getMerklePath(*it, VbkMerkleTree::TreeIndex::POP));
-  }
-
-  EXPECT_TRUE(isPopMerkleTreeFull(pop_paths));
-
-  for (auto it = pop_paths.begin(); it != pop_paths.end();) {
-    it = pop_paths.erase(it);
-    if (pop_paths.empty()) {
-      break;
-    }
-    EXPECT_FALSE(isPopMerkleTreeFull(pop_paths));
-  }
-}
-
+                         testing::Range(1, 1000));
 template <typename T>
 struct GetMerkleRootTest : public ::testing::Test {};
 

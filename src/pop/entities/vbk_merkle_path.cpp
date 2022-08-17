@@ -67,12 +67,12 @@ uint128 VbkMerklePath::calculateMerkleRoot() const {
   return cursor.trim<VBK_MERKLE_ROOT_HASH_SIZE>();
 }
 
-uint32_t VbkMerklePath::foo() const {
-  uint32_t i = 0;
+std::vector<uint32_t> VbkMerklePath::equalLayerIndexes() const {
+  std::vector<uint32_t> res;
 
   uint256 cursor = subject;
   auto layerIndex = index;
-  for (uint32_t size = layers.size(); i < size; ++i) {
+  for (uint32_t i = 0, size = layers.size(); i < size; ++i) {
     if (i == size - 1) {
       // metapackage hash is on the left
       layerIndex = 1;
@@ -84,13 +84,13 @@ uint32_t VbkMerklePath::foo() const {
     auto& left = (layerIndex & 1u) != 0u ? layer : cursor;
     auto& right = (layerIndex & 1u) != 0u ? cursor : layer;
     if (right == left) {
-      return i;
+      res.push_back(i);
     }
     cursor = sha256(left, right);
     layerIndex >>= 1u;
   }
 
-  return i;
+  return res;
 }
 
 bool altintegration::DeserializeFromVbkEncoding(ReadStream& stream,

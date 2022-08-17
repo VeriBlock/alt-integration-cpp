@@ -241,17 +241,12 @@ struct VbkMerkleTree {
   MerkleTree<VbkMerkleTree, uint256> normal_tree;
 };
 
-inline bool isPopMerkleTreeFull(const std::vector<VbkMerklePath>& paths) {
+inline uint32_t approximateVTBsCount(const std::vector<VbkMerklePath>& paths) {
   // validate that we have a continugous indexes set
   std::set<int32_t> indexes;
   for (const auto& path : paths) {
     if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {
       indexes.insert(path.index);
-    }
-  }
-  for (int32_t i = 0; i < (int32_t)indexes.size(); i++) {
-    if (!indexes.count(i)) {
-      return false;
     }
   }
 
@@ -260,28 +255,28 @@ inline bool isPopMerkleTreeFull(const std::vector<VbkMerklePath>& paths) {
   for (const auto& path : paths) {
     if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
         *indexes.rbegin() == path.index) {
-      uint32_t i = path.foo();
-      printf("%d, %d, ", i, (uint32_t)path.layers.size());
-      // expected_leaves_count == 2^(layers_num - 2) - 2^(i)
-      if (i == 0) {
-        expected_leaves_number = path.index + 1;
+      if (path.layers.empty()) {
+        expected_leaves_number = 1;
         break;
-      } else if (i == path.layers.size()) {
+      }
+      auto vec = path.foo();
+      if (vec.empty()) {
         expected_leaves_number = (1 << (path.layers.size() - 2));
+        break;
+      } else if (vec.front() == 0) {
+        expected_leaves_number = path.index + 1;
         break;
       } else {
         expected_leaves_number = (1 << (path.layers.size() - 2));
-        while (i < path.layers.size() - 3) {
-          expected_leaves_number -= (1 << i++);
+        for (const auto& i : vec) {
+          expected_leaves_number -= (1 << i);
         }
         break;
       }
     }
   }
-  printf("%d, %d \n", expected_leaves_number, (uint32_t)indexes.size());
 
-  return expected_leaves_number == indexes.size();
-  // return true;
+  return expected_leaves_number;
 }
 
 //! @private
