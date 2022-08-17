@@ -244,39 +244,41 @@ struct VbkMerkleTree {
 inline uint32_t approximateVTBsCount(const std::vector<VbkMerklePath>& paths) {
   // validate that we have a continugous indexes set
   std::set<int32_t> indexes;
+  int32_t maxIndex = -1;
   for (const auto& path : paths) {
-    if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {
-      indexes.insert(path.index);
+    if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
+        maxIndex < path.index) {
+      maxIndex = path.index;
     }
   }
 
   // find the latest index and determine amount of the leaves
-  uint32_t expected_leaves_number = 0;
+  uint32_t aproximate_leaves_number = 0;
   for (const auto& path : paths) {
     if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
-        *indexes.rbegin() == path.index) {
+        maxIndex == path.index) {
       if (path.layers.empty()) {
-        expected_leaves_number = 1;
+        aproximate_leaves_number = 1;
         break;
       }
-      auto vec = path.foo();
+      auto vec = path.equalLayerIndexes();
       if (vec.empty()) {
-        expected_leaves_number = (1 << (path.layers.size() - 2));
+        aproximate_leaves_number = (1 << (path.layers.size() - 2));
         break;
       } else if (vec.front() == 0) {
-        expected_leaves_number = path.index + 1;
+        aproximate_leaves_number = path.index + 1;
         break;
       } else {
-        expected_leaves_number = (1 << (path.layers.size() - 2));
+        aproximate_leaves_number = (1 << (path.layers.size() - 2));
         for (const auto& i : vec) {
-          expected_leaves_number -= (1 << i);
+          aproximate_leaves_number -= (1 << i);
         }
         break;
       }
     }
   }
 
-  return expected_leaves_number;
+  return aproximate_leaves_number;
 }
 
 //! @private
