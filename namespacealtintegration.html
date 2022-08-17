@@ -687,6 +687,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromRaw</b
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, const <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> &amp;subject, <a class="el" href="structaltintegration_1_1MerklePath.html">MerklePath</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a0bf0aff5669d1267304d422fb75a22ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a0bf0aff5669d1267304d422fb75a22ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa533cfad96f0bd74277ddd5e392e93b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa533cfad96f0bd74277ddd5e392e93b7">isPopMerkleTreeFull</a> (const std::vector&lt; <a class="el" href="structaltintegration_1_1VbkMerklePath.html">VbkMerklePath</a> &gt; &amp;paths)</td></tr>
+<tr class="separator:aa533cfad96f0bd74277ddd5e392e93b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc49e482f4f544886ac4547cb2c281e"><td class="memTemplParams" colspan="2">template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:a2fc49e482f4f544886ac4547cb2c281e"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a2fc49e482f4f544886ac4547cb2c281e">ToJSON</a> (const <a class="el" href="structaltintegration_1_1Output.html">Output</a> &amp;o)</td></tr>
 <tr class="memdesc:a2fc49e482f4f544886ac4547cb2c281e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#a2fc49e482f4f544886ac4547cb2c281e">More...</a><br /></td></tr>
@@ -3175,6 +3177,76 @@ template&lt;typename Block &gt; </div>
 
 </div>
 </div>
+<a id="aa533cfad96f0bd74277ddd5e392e93b7" name="aa533cfad96f0bd74277ddd5e392e93b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa533cfad96f0bd74277ddd5e392e93b7">&#9670;&nbsp;</a></span>isPopMerkleTreeFull()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool altintegration::isPopMerkleTreeFull </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structaltintegration_1_1VbkMerklePath.html">VbkMerklePath</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>paths</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="merkle__tree_8hpp_source.html#l00244">244</a> of file <a class="el" href="merkle__tree_8hpp_source.html">merkle_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  244</span>                                                                       {</div>
+<div class="line"><span class="lineno">  245</span>  <span class="comment">// validate that we have a continugous indexes set</span></div>
+<div class="line"><span class="lineno">  246</span>  std::set&lt;int32_t&gt; indexes;</div>
+<div class="line"><span class="lineno">  247</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
+<div class="line"><span class="lineno">  248</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {</div>
+<div class="line"><span class="lineno">  249</span>      indexes.insert(path.index);</div>
+<div class="line"><span class="lineno">  250</span>    }</div>
+<div class="line"><span class="lineno">  251</span>  }</div>
+<div class="line"><span class="lineno">  252</span>  <span class="keywordflow">for</span> (int32_t i = 0; i &lt; (int32_t)indexes.size(); i++) {</div>
+<div class="line"><span class="lineno">  253</span>    <span class="keywordflow">if</span> (!indexes.count(i)) {</div>
+<div class="line"><span class="lineno">  254</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  255</span>    }</div>
+<div class="line"><span class="lineno">  256</span>  }</div>
+<div class="line"><span class="lineno">  257</span> </div>
+<div class="line"><span class="lineno">  258</span>  <span class="comment">// find the latest index and determine amount of the leaves</span></div>
+<div class="line"><span class="lineno">  259</span>  uint32_t expected_leaves_number = 0;</div>
+<div class="line"><span class="lineno">  260</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
+<div class="line"><span class="lineno">  261</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &amp;&amp;</div>
+<div class="line"><span class="lineno">  262</span>        *indexes.rbegin() == path.index) {</div>
+<div class="line"><span class="lineno">  263</span>      uint32_t i = path.foo();</div>
+<div class="line"><span class="lineno">  264</span>      printf(<span class="stringliteral">&quot;%d, %d, &quot;</span>, i, (uint32_t)path.layers.size());</div>
+<div class="line"><span class="lineno">  265</span>      <span class="comment">// expected_leaves_count == 2^(layers_num - 2) - 2^(i)</span></div>
+<div class="line"><span class="lineno">  266</span>      <span class="keywordflow">if</span> (i == 0) {</div>
+<div class="line"><span class="lineno">  267</span>        expected_leaves_number = path.index + 1;</div>
+<div class="line"><span class="lineno">  268</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  269</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (i == path.layers.size()) {</div>
+<div class="line"><span class="lineno">  270</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
+<div class="line"><span class="lineno">  271</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  272</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">  273</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
+<div class="line"><span class="lineno">  274</span>        <span class="keywordflow">while</span> (i &lt; path.layers.size() - 3) {</div>
+<div class="line"><span class="lineno">  275</span>          expected_leaves_number -= (1 &lt;&lt; i++);</div>
+<div class="line"><span class="lineno">  276</span>        }</div>
+<div class="line"><span class="lineno">  277</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  278</span>      }</div>
+<div class="line"><span class="lineno">  279</span>    }</div>
+<div class="line"><span class="lineno">  280</span>  }</div>
+<div class="line"><span class="lineno">  281</span>  printf(<span class="stringliteral">&quot;%d, %d \n&quot;</span>, expected_leaves_number, (uint32_t)indexes.size());</div>
+<div class="line"><span class="lineno">  282</span> </div>
+<div class="line"><span class="lineno">  283</span>  <span class="keywordflow">return</span> expected_leaves_number == indexes.size();</div>
+<div class="line"><span class="lineno">  284</span>  <span class="comment">// return true;</span></div>
+<div class="line"><span class="lineno">  285</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a22ea211a4429fe1ab3471b6fe90f6e40" name="a22ea211a4429fe1ab3471b6fe90f6e40"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a22ea211a4429fe1ab3471b6fe90f6e40">&#9670;&nbsp;</a></span>IsSpace()</h2>
 
@@ -4605,26 +4677,26 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00269">269</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  269</span>                                                {</div>
-<div class="line"><span class="lineno">  270</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  271</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  272</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  273</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  274</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  275</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
-<div class="line"><span class="lineno">  276</span> </div>
-<div class="line"><span class="lineno">  277</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  278</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  279</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  280</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  281</span>    }</div>
-<div class="line"><span class="lineno">  282</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  283</span>  }</div>
-<div class="line"><span class="lineno">  284</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  285</span> </div>
-<div class="line"><span class="lineno">  286</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  287</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00271">271</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  271</span>                                                {</div>
+<div class="line"><span class="lineno">  272</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  273</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  274</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  275</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  276</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  277</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
+<div class="line"><span class="lineno">  278</span> </div>
+<div class="line"><span class="lineno">  279</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  280</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  281</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  282</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  283</span>    }</div>
+<div class="line"><span class="lineno">  284</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  285</span>  }</div>
+<div class="line"><span class="lineno">  286</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  287</span> </div>
+<div class="line"><span class="lineno">  288</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  289</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4646,42 +4718,42 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00231">231</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  231</span>                                                {</div>
-<div class="line"><span class="lineno">  232</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  233</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  234</span> </div>
-<div class="line"><span class="lineno">  235</span>  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><span class="lineno">  236</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><span class="lineno">  237</span>    endorsements.push_back(e.first);</div>
-<div class="line"><span class="lineno">  238</span>  }</div>
-<div class="line"><span class="lineno">  239</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
-<div class="line"><span class="lineno">  240</span> </div>
-<div class="line"><span class="lineno">  241</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><span class="lineno">  242</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><span class="lineno">  243</span>    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><span class="lineno">  244</span>  }</div>
-<div class="line"><span class="lineno">  245</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><span class="lineno">  246</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  247</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  248</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  249</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
-<div class="line"><span class="lineno">  250</span> </div>
-<div class="line"><span class="lineno">  251</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  252</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
-<div class="line"><span class="lineno">  253</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><span class="lineno">  254</span> </div>
-<div class="line"><span class="lineno">  255</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  256</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  257</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  258</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  259</span>    }</div>
-<div class="line"><span class="lineno">  260</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  261</span>  }</div>
-<div class="line"><span class="lineno">  262</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  263</span> </div>
-<div class="line"><span class="lineno">  264</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  265</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00233">233</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  233</span>                                                {</div>
+<div class="line"><span class="lineno">  234</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  235</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  236</span> </div>
+<div class="line"><span class="lineno">  237</span>  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><span class="lineno">  238</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><span class="lineno">  239</span>    endorsements.push_back(e.first);</div>
+<div class="line"><span class="lineno">  240</span>  }</div>
+<div class="line"><span class="lineno">  241</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><span class="lineno">  242</span> </div>
+<div class="line"><span class="lineno">  243</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><span class="lineno">  244</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><span class="lineno">  245</span>    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><span class="lineno">  246</span>  }</div>
+<div class="line"><span class="lineno">  247</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><span class="lineno">  248</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  249</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  250</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  251</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<div class="line"><span class="lineno">  252</span> </div>
+<div class="line"><span class="lineno">  253</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  254</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
+<div class="line"><span class="lineno">  255</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
+<div class="line"><span class="lineno">  256</span> </div>
+<div class="line"><span class="lineno">  257</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  258</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  259</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  260</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  261</span>    }</div>
+<div class="line"><span class="lineno">  262</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  263</span>  }</div>
+<div class="line"><span class="lineno">  264</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  265</span> </div>
+<div class="line"><span class="lineno">  266</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  267</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -5179,15 +5251,15 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__merkle__path_8hpp_source.html#l00056">56</a> of file <a class="el" href="vbk__merkle__path_8hpp_source.html">vbk_merkle_path.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   56</span>                                          {</div>
-<div class="line"><span class="lineno">   57</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   58</span>  json::putIntKV(obj, <span class="stringliteral">&quot;treeIndex&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">treeIndex</a>);</div>
-<div class="line"><span class="lineno">   59</span>  json::putIntKV(obj, <span class="stringliteral">&quot;index&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">index</a>);</div>
-<div class="line"><span class="lineno">   60</span>  json::putStringKV(obj, <span class="stringliteral">&quot;subject&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f">subject</a>.toHex());</div>
-<div class="line"><span class="lineno">   61</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;layers&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">layers</a>);</div>
-<div class="line"><span class="lineno">   62</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">   63</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__merkle__path_8hpp_source.html#l00058">58</a> of file <a class="el" href="vbk__merkle__path_8hpp_source.html">vbk_merkle_path.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   58</span>                                          {</div>
+<div class="line"><span class="lineno">   59</span>  JsonValue obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   60</span>  json::putIntKV(obj, <span class="stringliteral">&quot;treeIndex&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">treeIndex</a>);</div>
+<div class="line"><span class="lineno">   61</span>  json::putIntKV(obj, <span class="stringliteral">&quot;index&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">index</a>);</div>
+<div class="line"><span class="lineno">   62</span>  json::putStringKV(obj, <span class="stringliteral">&quot;subject&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#aca5a94aa8b20e49950a093f90d7a930f">subject</a>.toHex());</div>
+<div class="line"><span class="lineno">   63</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;layers&quot;</span>, mp.<a class="code hl_variable" href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">layers</a>);</div>
+<div class="line"><span class="lineno">   64</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">   65</span>}</div>
 <div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a02cc7463c53111b13c914c201c7cea4c"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a02cc7463c53111b13c914c201c7cea4c">altintegration::VbkMerklePath::treeIndex</a></div><div class="ttdeci">int32_t treeIndex</div><div class="ttdoc">an indentifier of which transactions tree (pop=0, normal=1)</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00031">vbk_merkle_path.hpp:31</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a15d05f69defdf1f706d2cd909d0c5a56"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a15d05f69defdf1f706d2cd909d0c5a56">altintegration::VbkMerklePath::layers</a></div><div class="ttdeci">std::vector&lt; uint256 &gt; layers</div><div class="ttdoc">the layers in the merkle path</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00037">vbk_merkle_path.hpp:37</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkMerklePath_html_a80b479e90c1c9a4f8945d428f386fb12"><div class="ttname"><a href="structaltintegration_1_1VbkMerklePath.html#a80b479e90c1c9a4f8945d428f386fb12">altintegration::VbkMerklePath::index</a></div><div class="ttdeci">int32_t index</div><div class="ttdoc">the index of the bottom data TxID in the block it came from</div><div class="ttdef"><b>Definition:</b> <a href="vbk__merkle__path_8hpp_source.html#l00033">vbk_merkle_path.hpp:33</a></div></div>

@@ -400,23 +400,24 @@
 <g id="node19" class="node">
 <title>Node19</title>
 <g id="a_node19"><a xlink:href="structaltintegration_1_1VbkMerklePath.html" target="_top" xlink:title="Path in Merkle tree, which proves that subject exists in the tree.">
-<polygon fill="white" stroke="black" points="864,-370 864,-460 1007,-460 1007,-370 864,-370"/>
-<text text-anchor="middle" x="935.5" y="-448" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkMerklePath</text>
-<polyline fill="none" stroke="black" points="864,-441 1007,-441 "/>
-<text text-anchor="start" x="872" y="-429" font-family="Helvetica,sans-Serif" font-size="10.00">+ treeIndex</text>
-<text text-anchor="start" x="872" y="-418" font-family="Helvetica,sans-Serif" font-size="10.00">+ index</text>
-<polyline fill="none" stroke="black" points="864,-411 1007,-411 "/>
-<text text-anchor="start" x="872" y="-399" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
-<text text-anchor="start" x="872" y="-388" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateSize()</text>
-<text text-anchor="start" x="872" y="-377" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateMerkleRoot()</text>
+<polygon fill="white" stroke="black" points="864,-364.5 864,-465.5 1007,-465.5 1007,-364.5 864,-364.5"/>
+<text text-anchor="middle" x="935.5" y="-453.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkMerklePath</text>
+<polyline fill="none" stroke="black" points="864,-446.5 1007,-446.5 "/>
+<text text-anchor="start" x="872" y="-434.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ treeIndex</text>
+<text text-anchor="start" x="872" y="-423.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ index</text>
+<polyline fill="none" stroke="black" points="864,-416.5 1007,-416.5 "/>
+<text text-anchor="start" x="872" y="-404.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
+<text text-anchor="start" x="872" y="-393.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateSize()</text>
+<text text-anchor="start" x="872" y="-382.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateMerkleRoot()</text>
+<text text-anchor="start" x="872" y="-371.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ foo()</text>
 </a>
 </g>
 </g>
 <!-- Node12&#45;&gt;Node19 -->
 <g id="edge26" class="edge">
 <title>Node12&#45;&gt;Node19</title>
-<path fill="none" stroke="#404040" d="M463.23,-897.14C492.12,-876.48 527.22,-853.85 561.5,-838 648.22,-797.91 704.87,-851.27 768.5,-780 835.36,-705.11 757.41,-645.67 804.5,-557 818.8,-530.06 833.41,-532.03 854.5,-510 866.73,-497.23 879.44,-482.99 891.07,-469.53"/>
-<polygon fill="none" stroke="#404040" points="891.11,-469.48 891.98,-462.32 898.93,-460.37 898.06,-467.53 891.11,-469.48"/>
+<path fill="none" stroke="#404040" d="M463.23,-897.14C492.12,-876.48 527.22,-853.85 561.5,-838 648.22,-797.91 704.87,-851.27 768.5,-780 835.36,-705.11 757.41,-645.67 804.5,-557 818.8,-530.06 833.41,-532.03 854.5,-510 865.08,-498.95 876.03,-486.8 886.32,-475"/>
+<polygon fill="none" stroke="#404040" points="886.56,-474.73 887.46,-467.57 894.41,-465.65 893.51,-472.81 886.56,-474.73"/>
 <text text-anchor="middle" x="824.5" y="-666" font-family="Helvetica,sans-Serif" font-size="10.00"> +subject</text>
 </g>
 <!-- Node13 -->
@@ -477,8 +478,8 @@
 <!-- Node14&#45;&gt;Node19 -->
 <g id="edge27" class="edge">
 <title>Node14&#45;&gt;Node19</title>
-<path fill="none" stroke="#404040" d="M919,-634.36C922.12,-593.17 927.48,-522.22 931.24,-472.41"/>
-<polygon fill="none" stroke="#404040" points="931.25,-472.19 927.72,-465.91 932.16,-460.23 935.7,-466.51 931.25,-472.19"/>
+<path fill="none" stroke="#404040" d="M919,-634.36C922,-594.64 927.09,-527.27 930.83,-477.84"/>
+<polygon fill="none" stroke="#404040" points="930.84,-477.65 927.31,-471.37 931.75,-465.69 935.28,-471.97 930.84,-477.65"/>
 <text text-anchor="middle" x="944.5" y="-531" font-family="Helvetica,sans-Serif" font-size="10.00"> +layers</text>
 </g>
 <!-- Node15&#45;&gt;Node2 -->
@@ -545,7 +546,7 @@
 <!-- Node19&#45;&gt;Node1 -->
 <g id="edge25" class="edge">
 <title>Node19&#45;&gt;Node1</title>
-<path fill="none" stroke="#404040" d="M965.24,-369.52C979.94,-351.14 999.3,-331.48 1021.5,-320 1079.5,-290.02 1203.29,-344.23 1165.5,-291 1033.32,-104.82 733.15,-73.16 597.42,-68.66"/>
+<path fill="none" stroke="#404040" d="M969.66,-364.12C983.73,-347.39 1001.46,-330.36 1021.5,-320 1079.5,-290.02 1203.29,-344.23 1165.5,-291 1033.32,-104.82 733.15,-73.16 597.42,-68.66"/>
 <polygon fill="none" stroke="#404040" points="597.19,-68.65 591.08,-72.48 585.2,-68.31 591.31,-64.48 597.19,-68.65"/>
 <text text-anchor="middle" x="1175.5" y="-225" font-family="Helvetica,sans-Serif" font-size="10.00"> +merklePath</text>
 </g>
