@@ -687,8 +687,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromRaw</b
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DeserializeFromVbkEncoding</b> (<a class="el" href="structaltintegration_1_1ReadStream.html">ReadStream</a> &amp;stream, const <a class="el" href="namespacealtintegration.html#ab81c8673ad312417b7517390cb0915f6">uint256</a> &amp;subject, <a class="el" href="structaltintegration_1_1MerklePath.html">MerklePath</a> &amp;out, <a class="el" href="classaltintegration_1_1ValidationState.html">ValidationState</a> &amp;state)</td></tr>
 <tr class="memdesc:a0bf0aff5669d1267304d422fb75a22ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. <br /></td></tr>
 <tr class="separator:a0bf0aff5669d1267304d422fb75a22ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa533cfad96f0bd74277ddd5e392e93b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#aa533cfad96f0bd74277ddd5e392e93b7">isPopMerkleTreeFull</a> (const std::vector&lt; <a class="el" href="structaltintegration_1_1VbkMerklePath.html">VbkMerklePath</a> &gt; &amp;paths)</td></tr>
-<tr class="separator:aa533cfad96f0bd74277ddd5e392e93b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af693a5720d8f0cb0c6d8e60f0361a241"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#af693a5720d8f0cb0c6d8e60f0361a241">approximateVTBsCount</a> (const std::vector&lt; <a class="el" href="structaltintegration_1_1VbkMerklePath.html">VbkMerklePath</a> &gt; &amp;paths)</td></tr>
+<tr class="separator:af693a5720d8f0cb0c6d8e60f0361a241"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc49e482f4f544886ac4547cb2c281e"><td class="memTemplParams" colspan="2">template&lt;typename JsonValue &gt; </td></tr>
 <tr class="memitem:a2fc49e482f4f544886ac4547cb2c281e"><td class="memTemplItemLeft" align="right" valign="top">JsonValue&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacealtintegration.html#a2fc49e482f4f544886ac4547cb2c281e">ToJSON</a> (const <a class="el" href="structaltintegration_1_1Output.html">Output</a> &amp;o)</td></tr>
 <tr class="memdesc:a2fc49e482f4f544886ac4547cb2c281e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.  <a href="namespacealtintegration.html#a2fc49e482f4f544886ac4547cb2c281e">More...</a><br /></td></tr>
@@ -1707,6 +1707,71 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 <div class="line"><span class="lineno">   87</span> </div>
 <div class="line"><span class="lineno">   88</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">   89</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="af693a5720d8f0cb0c6d8e60f0361a241" name="af693a5720d8f0cb0c6d8e60f0361a241"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af693a5720d8f0cb0c6d8e60f0361a241">&#9670;&nbsp;</a></span>approximateVTBsCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t altintegration::approximateVTBsCount </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structaltintegration_1_1VbkMerklePath.html">VbkMerklePath</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>paths</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="merkle__tree_8hpp_source.html#l00244">244</a> of file <a class="el" href="merkle__tree_8hpp_source.html">merkle_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  244</span>                                                                            {</div>
+<div class="line"><span class="lineno">  245</span>  <span class="comment">// validate that we have a continugous indexes set</span></div>
+<div class="line"><span class="lineno">  246</span>  std::set&lt;int32_t&gt; indexes;</div>
+<div class="line"><span class="lineno">  247</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
+<div class="line"><span class="lineno">  248</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {</div>
+<div class="line"><span class="lineno">  249</span>      indexes.insert(path.index);</div>
+<div class="line"><span class="lineno">  250</span>    }</div>
+<div class="line"><span class="lineno">  251</span>  }</div>
+<div class="line"><span class="lineno">  252</span> </div>
+<div class="line"><span class="lineno">  253</span>  <span class="comment">// find the latest index and determine amount of the leaves</span></div>
+<div class="line"><span class="lineno">  254</span>  uint32_t expected_leaves_number = 0;</div>
+<div class="line"><span class="lineno">  255</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
+<div class="line"><span class="lineno">  256</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &amp;&amp;</div>
+<div class="line"><span class="lineno">  257</span>        *indexes.rbegin() == path.index) {</div>
+<div class="line"><span class="lineno">  258</span>      <span class="keywordflow">if</span> (path.layers.empty()) {</div>
+<div class="line"><span class="lineno">  259</span>        expected_leaves_number = 1;</div>
+<div class="line"><span class="lineno">  260</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  261</span>      }</div>
+<div class="line"><span class="lineno">  262</span>      <span class="keyword">auto</span> vec = path.foo();</div>
+<div class="line"><span class="lineno">  263</span>      <span class="keywordflow">if</span> (vec.empty()) {</div>
+<div class="line"><span class="lineno">  264</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
+<div class="line"><span class="lineno">  265</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  266</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vec.front() == 0) {</div>
+<div class="line"><span class="lineno">  267</span>        expected_leaves_number = path.index + 1;</div>
+<div class="line"><span class="lineno">  268</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  269</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">  270</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
+<div class="line"><span class="lineno">  271</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; i : vec) {</div>
+<div class="line"><span class="lineno">  272</span>          expected_leaves_number -= (1 &lt;&lt; i);</div>
+<div class="line"><span class="lineno">  273</span>        }</div>
+<div class="line"><span class="lineno">  274</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  275</span>      }</div>
+<div class="line"><span class="lineno">  276</span>    }</div>
+<div class="line"><span class="lineno">  277</span>  }</div>
+<div class="line"><span class="lineno">  278</span> </div>
+<div class="line"><span class="lineno">  279</span>  <span class="keywordflow">return</span> expected_leaves_number;</div>
+<div class="line"><span class="lineno">  280</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3175,76 +3240,6 @@ template&lt;typename Block &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if block is keystone </dd></dl>
 
-</div>
-</div>
-<a id="aa533cfad96f0bd74277ddd5e392e93b7" name="aa533cfad96f0bd74277ddd5e392e93b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa533cfad96f0bd74277ddd5e392e93b7">&#9670;&nbsp;</a></span>isPopMerkleTreeFull()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool altintegration::isPopMerkleTreeFull </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="structaltintegration_1_1VbkMerklePath.html">VbkMerklePath</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>paths</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="merkle__tree_8hpp_source.html#l00244">244</a> of file <a class="el" href="merkle__tree_8hpp_source.html">merkle_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  244</span>                                                                       {</div>
-<div class="line"><span class="lineno">  245</span>  <span class="comment">// validate that we have a continugous indexes set</span></div>
-<div class="line"><span class="lineno">  246</span>  std::set&lt;int32_t&gt; indexes;</div>
-<div class="line"><span class="lineno">  247</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
-<div class="line"><span class="lineno">  248</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP) {</div>
-<div class="line"><span class="lineno">  249</span>      indexes.insert(path.index);</div>
-<div class="line"><span class="lineno">  250</span>    }</div>
-<div class="line"><span class="lineno">  251</span>  }</div>
-<div class="line"><span class="lineno">  252</span>  <span class="keywordflow">for</span> (int32_t i = 0; i &lt; (int32_t)indexes.size(); i++) {</div>
-<div class="line"><span class="lineno">  253</span>    <span class="keywordflow">if</span> (!indexes.count(i)) {</div>
-<div class="line"><span class="lineno">  254</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  255</span>    }</div>
-<div class="line"><span class="lineno">  256</span>  }</div>
-<div class="line"><span class="lineno">  257</span> </div>
-<div class="line"><span class="lineno">  258</span>  <span class="comment">// find the latest index and determine amount of the leaves</span></div>
-<div class="line"><span class="lineno">  259</span>  uint32_t expected_leaves_number = 0;</div>
-<div class="line"><span class="lineno">  260</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; path : paths) {</div>
-<div class="line"><span class="lineno">  261</span>    <span class="keywordflow">if</span> (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &amp;&amp;</div>
-<div class="line"><span class="lineno">  262</span>        *indexes.rbegin() == path.index) {</div>
-<div class="line"><span class="lineno">  263</span>      uint32_t i = path.foo();</div>
-<div class="line"><span class="lineno">  264</span>      printf(<span class="stringliteral">&quot;%d, %d, &quot;</span>, i, (uint32_t)path.layers.size());</div>
-<div class="line"><span class="lineno">  265</span>      <span class="comment">// expected_leaves_count == 2^(layers_num - 2) - 2^(i)</span></div>
-<div class="line"><span class="lineno">  266</span>      <span class="keywordflow">if</span> (i == 0) {</div>
-<div class="line"><span class="lineno">  267</span>        expected_leaves_number = path.index + 1;</div>
-<div class="line"><span class="lineno">  268</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  269</span>      } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (i == path.layers.size()) {</div>
-<div class="line"><span class="lineno">  270</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
-<div class="line"><span class="lineno">  271</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  272</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">  273</span>        expected_leaves_number = (1 &lt;&lt; (path.layers.size() - 2));</div>
-<div class="line"><span class="lineno">  274</span>        <span class="keywordflow">while</span> (i &lt; path.layers.size() - 3) {</div>
-<div class="line"><span class="lineno">  275</span>          expected_leaves_number -= (1 &lt;&lt; i++);</div>
-<div class="line"><span class="lineno">  276</span>        }</div>
-<div class="line"><span class="lineno">  277</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  278</span>      }</div>
-<div class="line"><span class="lineno">  279</span>    }</div>
-<div class="line"><span class="lineno">  280</span>  }</div>
-<div class="line"><span class="lineno">  281</span>  printf(<span class="stringliteral">&quot;%d, %d \n&quot;</span>, expected_leaves_number, (uint32_t)indexes.size());</div>
-<div class="line"><span class="lineno">  282</span> </div>
-<div class="line"><span class="lineno">  283</span>  <span class="keywordflow">return</span> expected_leaves_number == indexes.size();</div>
-<div class="line"><span class="lineno">  284</span>  <span class="comment">// return true;</span></div>
-<div class="line"><span class="lineno">  285</span>}</div>
-</div><!-- fragment -->
 </div>
 </div>
 <a id="a22ea211a4429fe1ab3471b6fe90f6e40" name="a22ea211a4429fe1ab3471b6fe90f6e40"></a>

@@ -393,7 +393,7 @@ var sectionId = 'dynsection-0';
 <text text-anchor="start" x="753.53" y="-448.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ toVbkEncoding()</text>
 <text text-anchor="start" x="753.53" y="-437.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateSize()</text>
 <text text-anchor="start" x="753.53" y="-426.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ calculateMerkleRoot()</text>
-<text text-anchor="start" x="753.53" y="-415.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ foo()</text>
+<text text-anchor="start" x="753.53" y="-415.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ equalLayerIndexes()</text>
 </a>
 </g>
 </g>
