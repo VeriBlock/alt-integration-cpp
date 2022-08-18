@@ -502,8 +502,7 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   return true;
 }
 
-uint32_t VbkBlockTree::approximateMissedVTBsCount(
-    VbkBlockTree::index_t& index) {
+uint32_t VbkBlockTree::estimateNumberOfVTBs(VbkBlockTree::index_t& index) {
   auto vtb_ids = index.getPayloadIds<VTB>();
   if (vtb_ids.empty()) {
     return std::numeric_limits<uint32_t>::max();
@@ -524,7 +523,7 @@ uint32_t VbkBlockTree::approximateMissedVTBsCount(
     vtb_paths.push_back(read_vtb(id).merklePath);
   }
 
-  uint32_t approximate_count = approximateVTBsCount(vtb_paths);
+  uint32_t approximate_count = estimateNumberOfPopTxs(vtb_paths);
 
   return approximate_count - vtb_paths.size();
 }

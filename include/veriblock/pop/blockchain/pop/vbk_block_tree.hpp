@@ -137,7 +137,8 @@ struct VbkBlockTree : public BlockTree<VbkBlock, VbkChainParams> {
 
   bool loadTip(const hash_t& hash, ValidationState& state) override;
 
-  uint32_t approximateMissedVTBsCount(index_t& index);
+  // Calculates an approximate amount of PopTxs in the POP merkle subtree
+  uint32_t estimateNumberOfVTBs(index_t& index);
 
   /**
    * Attempts to add payloads to the block and perform full validation.
