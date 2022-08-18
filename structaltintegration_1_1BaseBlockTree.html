@@ -1463,11 +1463,11 @@ template&lt;typename Block &gt; </div>
 <p >In this weird case, when Block=<a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a>, we may call <code>getBlockIndex(block-&gt;previousBlock)</code>, it is a call <code>getBlockIndex(<a class="el" href="structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size.">Blob</a>&lt;12&gt;). But when</code>getBlockIndex` accepts it, it does an implicit cast to full hash (hash_t), adding zeroes in the end. Then, .trimLE returns 12 zeroes.</p>
 <p >This hack allows us to inject explicit conversion hash_t (Blob&lt;24&gt;) -&gt; prev_block_hash_t (Blob&lt;12&gt;). </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00304">304</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  306</span>                           {</div>
-<div class="line"><span class="lineno">  307</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><span class="lineno">  308</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><span class="lineno">  309</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00305">305</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  307</span>                           {</div>
+<div class="line"><span class="lineno">  308</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><span class="lineno">  309</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><span class="lineno">  310</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
