@@ -5,9 +5,10 @@ var searchData=
   ['encodebase59_2',['EncodeBase59',['../namespacealtintegration.html#a6f613f72831baf5c7a6507d9572d4e3b',1,'altintegration::EncodeBase59(const T &amp;container)'],['../namespacealtintegration.html#ab90f5676d34463caeda17852d60405a7',1,'altintegration::EncodeBase59(const uint8_t *buf, size_t size)'],['../namespacealtintegration.html#a9f53544a6e6cc06290fbaea369142eb4',1,'altintegration::EncodeBase59(const unsigned char *pbegin, const unsigned char *pend)']]],
   ['endorsedaltcomparator_3',['EndorsedAltComparator',['../structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html',1,'altintegration::VbkPayloadsRelations']]],
   ['endorsement_4',['Endorsement',['../structaltintegration_1_1Endorsement.html',1,'altintegration']]],
-  ['estimatearraysizeof_5',['estimateArraySizeOf',['../namespacealtintegration.html#a801fe3e5bf2c352b5201918e8db2b5e5',1,'altintegration']]],
-  ['estimatesize_6',['estimateSize',['../structaltintegration_1_1ATV.html#a909492db5dce9c1af3f60e96530f2c01',1,'altintegration::ATV']]],
-  ['ethashcache_7',['EthashCache',['../structaltintegration_1_1EthashCache.html',1,'altintegration']]],
-  ['ethashcachei_8',['EthashCacheI',['../structaltintegration_1_1EthashCacheI.html',1,'altintegration']]],
-  ['ethashcacheimpl_9',['EthashCacheImpl',['../structaltintegration_1_1adaptors_1_1EthashCacheImpl.html',1,'altintegration::adaptors']]]
+  ['equallayerindexes_5',['equalLayerIndexes',['../structaltintegration_1_1VbkMerklePath.html#ad8d0938d8f5435a852d48fe9628c2b44',1,'altintegration::VbkMerklePath']]],
+  ['estimatearraysizeof_6',['estimateArraySizeOf',['../namespacealtintegration.html#a801fe3e5bf2c352b5201918e8db2b5e5',1,'altintegration']]],
+  ['estimatesize_7',['estimateSize',['../structaltintegration_1_1ATV.html#a909492db5dce9c1af3f60e96530f2c01',1,'altintegration::ATV']]],
+  ['ethashcache_8',['EthashCache',['../structaltintegration_1_1EthashCache.html',1,'altintegration']]],
+  ['ethashcachei_9',['EthashCacheI',['../structaltintegration_1_1EthashCacheI.html',1,'altintegration']]],
+  ['ethashcacheimpl_10',['EthashCacheImpl',['../structaltintegration_1_1adaptors_1_1EthashCacheImpl.html',1,'altintegration::adaptors']]]
 ];
