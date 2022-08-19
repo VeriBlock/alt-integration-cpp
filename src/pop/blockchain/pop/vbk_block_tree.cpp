@@ -502,7 +502,8 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   return true;
 }
 
-uint32_t VbkBlockTree::estimateNumberOfVTBs(VbkBlockTree::index_t& index) {
+uint32_t VbkBlockTree::estimateNumberOfVTBs(
+    const VbkBlockTree::index_t& index) const {
   auto vtb_ids = index.getPayloadIds<VTB>();
   if (vtb_ids.empty()) {
     return std::numeric_limits<uint32_t>::max();
