@@ -50,6 +50,10 @@ struct VbkMerklePath {
    */
   uint128 calculateMerkleRoot() const;
 
+  /**
+   * Return layer indexes where left and right nodes are equal
+   * @return indexes vector
+   */
   std::vector<uint32_t> equalLayerIndexes() const;
 };
 
