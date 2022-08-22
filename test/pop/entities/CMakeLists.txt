@@ -12,12 +12,12 @@ addtest(entities_serde_test
         atv_test.cpp
         vtb_test.cpp
         altblock_test.cpp
-        merkle_tree_test.cpp
         popdata_test.cpp
         blockindex_test.cpp
         pop_payouts_test.cpp
         )
 
+addtest(merkle_tree_test merkle_tree_test.cpp)
 addtest(json_test
         json_test.cpp
         )

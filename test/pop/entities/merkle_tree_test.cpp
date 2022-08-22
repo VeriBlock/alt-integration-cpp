@@ -119,6 +119,41 @@ TEST(MerklePath, RegressionWhenNormalTx) {
             path.calculateMerkleRoot());
 }
 
+struct MerkleTreeOnTxTest2 : public ::testing::TestWithParam<int> {};
+
+TEST_P(MerkleTreeOnTxTest2, isTreeFull) {
+  uint32_t pop_tx_num = (uint32_t)GetParam();
+  std::vector<uint256> pop_txs;
+  // fill pop_txs
+  std::generate_n(std::back_inserter(pop_txs), pop_tx_num, [&]() {
+    static uint32_t i = 1;
+    return ArithUint256(i++);
+  });
+  VbkMerkleTree mtree({}, pop_txs);
+
+  std::vector<VbkMerklePath> pop_paths;
+  for (auto it = pop_txs.rbegin(); it != pop_txs.rend(); ++it) {
+    if (!pop_paths.empty()) {
+      EXPECT_FALSE(isPopSubTreeFull(pop_paths));
+    }
+    pop_paths.push_back(
+        mtree.getMerklePath(*it, VbkMerkleTree::TreeIndex::POP));
+  }
+
+  EXPECT_TRUE(isPopSubTreeFull(pop_paths));
+
+  for (auto it = pop_paths.begin(); it != pop_paths.end();) {
+    it = pop_paths.erase(it);
+    if (pop_paths.empty()) {
+      break;
+    }
+    EXPECT_FALSE(isPopSubTreeFull(pop_paths));
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(MerklePath,
+                         MerkleTreeOnTxTest2,
+                         testing::Range(1, 1000));
 template <typename T>
 struct GetMerkleRootTest : public ::testing::Test {};
 

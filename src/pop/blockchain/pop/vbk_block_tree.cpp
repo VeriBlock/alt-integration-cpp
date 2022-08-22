@@ -3,12 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/pop/vbk_block_tree.hpp>
-#include <veriblock/pop/logger.hpp>
-#include <veriblock/pop/reversed_range.hpp>
-#include <veriblock/pop/trace.hpp>
-#include <cstddef>
+#include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
+
 #include <algorithm>
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <set>
@@ -34,12 +32,16 @@
 #include "veriblock/pop/consts.hpp"
 #include "veriblock/pop/entities/btcblock.hpp"
 #include "veriblock/pop/entities/endorsements.hpp"
+#include "veriblock/pop/entities/merkle_tree.hpp"
 #include "veriblock/pop/entities/vbkblock.hpp"
 #include "veriblock/pop/entities/vbkpoptx.hpp"
 #include "veriblock/pop/entities/vtb.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/reversed_range.hpp"
 #include "veriblock/pop/stateless_validation.hpp"
 #include "veriblock/pop/strutil.hpp"
 #include "veriblock/pop/third_party/Signals.hpp"
+#include "veriblock/pop/trace.hpp"
 #include "veriblock/pop/uint.hpp"
 #include "veriblock/pop/validation_state.hpp"
 
@@ -498,6 +500,33 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   VBK_ASSERT(appliedBlockCount == activeChain_.blocksCount());
 
   return true;
+}
+
+uint32_t VbkBlockTree::estimateNumberOfVTBs(
+    const VbkBlockTree::index_t& index) const {
+  auto vtb_ids = index.getPayloadIds<VTB>();
+  if (vtb_ids.empty()) {
+    return std::numeric_limits<uint32_t>::max();
+  }
+
+  auto read_vtb = [this](const VTB::id_t& id) -> VTB {
+    VTB vtb;
+    ValidationState state;
+    bool res = this->payloadsProvider_.getVTB(id, vtb, state);
+    VBK_ASSERT_MSG(res, state.toString());
+    return vtb;
+  };
+
+  // read get VbkMerklePath
+  std::vector<VbkMerklePath> vtb_paths;
+  vtb_paths.reserve(vtb_ids.size());
+  for (const auto& id : vtb_ids) {
+    vtb_paths.push_back(read_vtb(id).merklePath);
+  }
+
+  uint32_t approximate_count = estimateNumberOfPopTxs(vtb_paths);
+
+  return approximate_count - vtb_paths.size();
 }
 
 template <>

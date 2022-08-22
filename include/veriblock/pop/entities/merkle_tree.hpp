@@ -233,6 +233,51 @@ struct VbkMerkleTree {
   MerkleTree<VbkMerkleTree, uint256> normal_tree;
 };
 
+// Calculates an approximate amount of PopTxs in the POP merkle subtree
+inline uint32_t estimateNumberOfPopTxs(const std::vector<VbkMerklePath>& paths) {
+  // validate that we have a continugous indexes set
+  std::set<int32_t> indexes;
+  int32_t maxIndex = -1;
+  for (const auto& path : paths) {
+    if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
+        maxIndex < path.index) {
+      maxIndex = path.index;
+    }
+  }
+
+  // find the latest index and determine amount of the leaves
+  uint32_t aproximate_leaves_number = 0;
+  for (const auto& path : paths) {
+    if (path.treeIndex == (int32_t)VbkMerkleTree::TreeIndex::POP &&
+        maxIndex == path.index) {
+      if (path.layers.empty()) {
+        aproximate_leaves_number = 1;
+        break;
+      }
+      auto vec = path.equalLayerIndexes();
+      if (vec.empty()) {
+        aproximate_leaves_number = (1 << (path.layers.size() - 2));
+        break;
+      } else if (vec.front() == 0) {
+        aproximate_leaves_number = path.index + 1;
+        break;
+      } else {
+        aproximate_leaves_number = (1 << (path.layers.size() - 2));
+        for (const auto& i : vec) {
+          aproximate_leaves_number -= (1 << i);
+        }
+        break;
+      }
+    }
+  }
+
+  return aproximate_leaves_number;
+}
+
+inline bool isPopSubTreeFull(const std::vector<VbkMerklePath>& paths) {
+  return (uint32_t)paths.size() == estimateNumberOfPopTxs(paths);
+}
+
 //! @private
 struct BtcMerkleTree : public MerkleTree<BtcMerkleTree, uint256> {
   using base = MerkleTree<BtcMerkleTree, uint256>;
