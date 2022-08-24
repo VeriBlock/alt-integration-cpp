@@ -6,6 +6,7 @@
 #ifndef ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 #define ALTINTEGRATION_BASE_BLOCK_TREE_HPP
 
+#include <limits>
 #include <unordered_map>
 #include <unordered_set>
 #include <veriblock/pop/algorithm.hpp>
@@ -431,8 +432,12 @@ struct BaseBlockTree {
 
  protected:
   //! @private
-  void finalizeBlocks(int32_t maxReorgBlocks,
-                      int32_t preserveBlocksBehindFinal) {
+  void finalizeBlocks(
+      int32_t maxReorgBlocks,
+      int32_t preserveBlocksBehindFinal,
+      // we should not finalize blocks
+      // above this height
+      int32_t maxFinalizeBlockHeight = std::numeric_limits<int32_t>::max()) {
     auto* tip = this->getBestChain().tip();
     VBK_ASSERT_MSG(tip, "%s tree must be bootstrapped", block_t::name());
     VBK_ASSERT(!this->isLoadingBlocks_);
@@ -447,6 +452,17 @@ struct BaseBlockTree {
     firstBlockHeight = std::max(bootstrapBlockHeight, firstBlockHeight);
     auto* finalizedIndex = this->getBestChain()[firstBlockHeight];
     VBK_ASSERT(finalizedIndex != nullptr);
+    if (finalizedIndex->getHeight() >= maxFinalizeBlockHeight) {
+      // we should not finalize blocks with height higher than
+      // maxFinalizeBlockHeight
+      VBK_LOG_INFO(
+          "Skipping finalization of %s because its height >= %d (max "
+          "possible height to finalize)",
+          finalizedIndex->toShortPrettyString(),
+          maxFinalizeBlockHeight);
+      return;
+    }
+
     this->finalizeBlockImpl(*finalizedIndex, preserveBlocksBehindFinal);
   }
 
@@ -967,12 +983,16 @@ struct BaseBlockTree {
     // update active chain
     VBK_ASSERT(firstBlockHeight >= rootBlockHeight);
     size_t deallocatedBlocks = firstBlockHeight - rootBlockHeight;
-    if (deallocatedBlocks > 0) {
-      VBK_LOG_WARN(
-          "%s tree deallocated blocks: %d", block_t::name(), deallocatedBlocks);
-    }
     activeChain_ = Chain<index_t>(firstBlockHeight, activeChain_.tip());
     appliedBlockCount = activeChain_.blocksCount();
+
+    if (deallocatedBlocks > 0) {
+      VBK_LOG_WARN("Deallocated %d blocks in %s tree. Active chain %d..%d",
+                   deallocatedBlocks,
+                   block_t::name(),
+                   activeChain_.first()->getHeight(),
+                   activeChain_.tip()->getHeight());
+    }
 
     // fourth, mark `index` and all predecessors as finalized
     index_t* ptr = finalizedBlock;

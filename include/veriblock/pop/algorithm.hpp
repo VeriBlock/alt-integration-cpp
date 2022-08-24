@@ -146,6 +146,14 @@ T& as_mut(const T& t) {
   return const_cast<T&>(t);
 }
 
+//! returns min value in a container (vector, array...), or "default" value if
+//! container is empty
+template <typename T, typename Container>
+const T min_or_default(Container& c, const T default_) {
+  const auto it = std::min_element(c.begin(), c.end());
+  return it == c.end() ? default_ : *it;
+}
+
 }  // namespace altintegration
 
 #endif  // VERIBLOCK_POP_CPP_ALGORITHM_HPP

@@ -46,9 +46,13 @@ function(addtest test_name)
             gtest
             Threads::Threads
             )
+
+    # generate 7-digit random number to run UT with different seeds
+    string(RANDOM LENGTH 7 ALPHABET 0123456789 _SEED)
+    math(EXPR number "${_SEED} + 0")  # Remove extra leading 0s.
     add_test(
             NAME ${test_name}
-            COMMAND $<TARGET_FILE:${test_name}>
+            COMMAND $<TARGET_FILE:${test_name}> ${_SEED}
     )
     set_target_properties(${test_name} PROPERTIES
             CXX_STANDARD 17
