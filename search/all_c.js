@@ -27,6 +27,7 @@ var searchData=
   ['merklepath_24',['MerklePath',['../structaltintegration_1_1MerklePath.html',1,'altintegration']]],
   ['merklepath_25',['merklePath',['../structaltintegration_1_1ATV.html#aa46860f341b7223cc699b618b6d6ee68',1,'altintegration::ATV']]],
   ['min_5falt_5fhash_5fsize_26',['MIN_ALT_HASH_SIZE',['../namespacealtintegration.html#aea6d857ba3c337f05199c53b81ee4053',1,'altintegration']]],
-  ['mockminer_27',['MockMiner',['../group__mockminer.html',1,'']]],
-  ['modifying_20build_20setup_28',['Modifying build setup',['../integration_1_build.html',1,'integration']]]
+  ['min_5for_5fdefault_27',['min_or_default',['../namespacealtintegration.html#a10bc3427cfcbfa00fbbb8e28e69a9acd',1,'altintegration']]],
+  ['mockminer_28',['MockMiner',['../group__mockminer.html',1,'']]],
+  ['modifying_20build_20setup_29',['Modifying build setup',['../integration_1_build.html',1,'integration']]]
 ];
