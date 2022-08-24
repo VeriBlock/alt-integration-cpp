@@ -22,6 +22,13 @@ struct AltBlockFinalization2 : public MemPoolFixture {
     tip = mineAltBlocks(alttree.getRoot(), 100);
     ASSERT_TRUE(alttree.setState(*tip, state));
     totalBlocks = alttree.getBlocks().size();
+
+    alttree.btc().getBestChain().tip()->addRef(1000000u);
+  }
+
+  void disableBtcContextGapCheck() {
+    alttree.btc().getBestChain().tip()->removeRef(0);
+    alttree.btc().getBestChain().tip()->addRef(1000000u);
   }
 };
 
@@ -61,6 +68,8 @@ TEST_F(AltBlockFinalization2, FinalizeVbkTip) {
   // save state
   save(alttree);
 
+  // this allows to bypass context gap finalization check
+  disableBtcContextGapCheck();
   alttree.finalizeBlocks();
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
@@ -106,6 +115,7 @@ TEST_F(AltBlockFinalization2, FinalizeMaxVbks) {
   save(alttree);
 
   // finalize block
+  disableBtcContextGapCheck();
   alttree.finalizeBlocks();
 
   ASSERT_EQ(alttree.getBlocks().size(), 2);
@@ -160,6 +170,7 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock_1) {
   auto *vbktip = alttree.vbk().getBestChain().tip();
 
   // finalize block
+  disableBtcContextGapCheck();
   alttree.finalizeBlocks();
 
   // check the state after finalization
@@ -221,6 +232,7 @@ TEST_F(AltBlockFinalization2, FinalizedVbkBlock_2) {
   auto *vbktip = alttree.vbk().getBestChain().tip();
 
   // finalize block
+  disableBtcContextGapCheck();
   alttree.finalizeBlocks();
 
   // check the state after finalization

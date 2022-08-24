@@ -455,6 +455,11 @@ struct BaseBlockTree {
     if (finalizedIndex->getHeight() >= maxFinalizeBlockHeight) {
       // we should not finalize blocks with height higher than
       // maxFinalizeBlockHeight
+      VBK_LOG_INFO(
+          "Skipping finalization of %s because its height >= %d (max "
+          "possible height to finalize)",
+          finalizedIndex->toShortPrettyString(),
+          maxFinalizeBlockHeight);
       return;
     }
 
