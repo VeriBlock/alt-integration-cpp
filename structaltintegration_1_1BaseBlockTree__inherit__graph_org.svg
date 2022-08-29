@@ -216,22 +216,22 @@
 <g id="node4" class="node">
 <title>Node4</title>
 <g id="a_node4"><a xlink:href="structaltintegration_1_1VbkBlockTree.html" target="_top" xlink:title="Veriblock block tree.">
-<polygon fill="white" stroke="black" points="79,-0.5 79,-167.5 217,-167.5 217,-0.5 79,-0.5"/>
+<polygon fill="white" stroke="black" points="63,-0.5 63,-167.5 233,-167.5 233,-0.5 63,-0.5"/>
 <text text-anchor="middle" x="148" y="-155.5" font-family="Helvetica,sans-Serif" font-size="10.00">altintegration::VbkBlockTree</text>
-<polyline fill="none" stroke="black" points="79,-148.5 217,-148.5 "/>
+<polyline fill="none" stroke="black" points="63,-148.5 233,-148.5 "/>
 <text text-anchor="middle" x="148" y="-136.5" font-family="Helvetica,sans-Serif" font-size="10.00"> </text>
-<polyline fill="none" stroke="black" points="79,-129.5 217,-129.5 "/>
-<text text-anchor="start" x="87" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~VbkBlockTree()</text>
-<text text-anchor="start" x="87" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ VbkBlockTree()</text>
-<text text-anchor="start" x="87" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
-<text text-anchor="start" x="87" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
-<text text-anchor="start" x="87" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
-<text text-anchor="start" x="87" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
-<text text-anchor="start" x="87" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
-<text text-anchor="start" x="87" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
-<text text-anchor="start" x="87" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateNumberOfVTBs()</text>
-<text text-anchor="start" x="87" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
-<text text-anchor="start" x="87" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 8 more...</text>
+<polyline fill="none" stroke="black" points="63,-129.5 233,-129.5 "/>
+<text text-anchor="start" x="71" y="-117.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ~VbkBlockTree()</text>
+<text text-anchor="start" x="71" y="-106.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ VbkBlockTree()</text>
+<text text-anchor="start" x="71" y="-95.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadBlockForward()</text>
+<text text-anchor="start" x="71" y="-84.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
+<text text-anchor="start" x="71" y="-73.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ btc()</text>
+<text text-anchor="start" x="71" y="-62.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
+<text text-anchor="start" x="71" y="-51.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getComparator()</text>
+<text text-anchor="start" x="71" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ loadTip()</text>
+<text text-anchor="start" x="71" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ estimateMissedNumberOfVTBs()</text>
+<text text-anchor="start" x="71" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ addPayloads()</text>
+<text text-anchor="start" x="71" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 8 more...</text>
 </a>
 </g>
 </g>
