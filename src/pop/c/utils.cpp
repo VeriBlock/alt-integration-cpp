@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/pop/c/utils.h"
+
 #include "entities/altblock.hpp"
 #include "entities/atv.hpp"
 #include "entities/popdata.hpp"
@@ -12,7 +14,6 @@
 #include "pop_context.hpp"
 #include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "veriblock/pop/c/utils.h"
 #include "veriblock/pop/exceptions/storage_io.hpp"
 #include "veriblock/pop/storage/adaptors/block_provider_impl.hpp"
 #include "veriblock/pop/storage/util.hpp"

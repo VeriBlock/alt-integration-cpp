@@ -48,7 +48,8 @@ enum class ForkOption : uint8_t {
 
 template <typename OptionT>
 OptionT GetRandomOption() {
-  return static_cast<OptionT>(::rand() % static_cast<uint8_t>(OptionT::kMaxValue));
+  return static_cast<OptionT>(::rand() %
+                              static_cast<uint8_t>(OptionT::kMaxValue));
 }
 
 template <typename tree_t>

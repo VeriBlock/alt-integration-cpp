@@ -29,7 +29,7 @@ We will add:
 
 # 2. Define POP_BLOCK_VERSION_BIT flag.
 
-This flag is set in a block header version and will tell users if given block header contains PopData or not. 
+This flag is set in a block header version and will tell users if given block header contains PopData or not.
 
 In file `src/version.h` define this flag:
 
@@ -81,7 +81,7 @@ public:
 
 # 3. Add new PopData field into the BlockTransactions, CBlockHeaderAndShortTxIDs, PartiallyDownloadedBlock and update their serialization/deserialization.
 
-Bitcoin uses these classes during sync protocol. 
+Bitcoin uses these classes during sync protocol.
 We must ensure that altintegration::PopData is propagated alongside transactions during sync.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/blockencodings.h)
@@ -95,7 +95,7 @@ public:
     std::vector<CTransactionRef> txn;
 +   altintegration::PopData popData;
 ```
-```cpp 
+```cpp
              for (size_t i = 0; i < txn.size(); i++)
                  READWRITE(TransactionCompressor(txn[i]));
          }
@@ -111,7 +111,7 @@ public:
      CBlockHeader header;
 +    altintegration::PopData popData;
 ```
-```cpp 
+```cpp
              }
          }
 
@@ -128,7 +128,7 @@ public:
 +    altintegration::PopData popData;
 
      explicit PartiallyDownloadedBlock(CTxMemPool* poolIn) : pool(poolIn) {}
- 
+
      // extra_txn is a list of extra transactions to look at, in <witness hash, reference> form
      ReadStatus InitData(const CBlockHeaderAndShortTxIDs& cmpctblock, const std::vector<std::pair<uint256, CTransactionRef>>& extra_txn);
      bool IsTxAvailable(size_t index) const;
@@ -316,13 +316,13 @@ During deserialization, if any of internal entities can not be deserialized, thr
  static const unsigned int MAX_SIZE = 0x02000000;
 ```
 
-```cpp 
+```cpp
 +// VeriBlock: Serialize a PopData object
 +template<typename Stream> inline void Serialize(Stream& s, const altintegration::PopData& pop_data) {
 +    std::vector<uint8_t> bytes_data = pop_data.toVbkEncoding();
 +    Serialize(s, bytes_data);
 +}
- 
+
 +template <typename T>
 +void UnserializeOrThrow(const std::vector<uint8_t>& in, T& out) {
 +    altintegration::ValidationState state;

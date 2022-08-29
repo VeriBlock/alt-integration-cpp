@@ -19,7 +19,7 @@ See Tracy Documentation: https://github.com/wolfpld/tracy/releases/latest/downlo
    void foo() {
     VBK_TRACE_ZONE_SCOPED;
    }
-   
+
    void bar() {
     VBK_TRACE_ZONE_SCOPED_N("MyBarFunction");
    }
@@ -31,5 +31,4 @@ See Tracy Documentation: https://github.com/wolfpld/tracy/releases/latest/downlo
 
 First, run `TracyServer` and press "Connect".
 
-Then, run your code. 
-
+Then, run your code.

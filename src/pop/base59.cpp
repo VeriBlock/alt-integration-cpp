@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/base59.hpp>
-#include <cstddef>
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <string>
 #include <vector>
-#include <cstdint>
+#include <veriblock/pop/base59.hpp>
 
 #include "veriblock/pop/validation_state.hpp"
 

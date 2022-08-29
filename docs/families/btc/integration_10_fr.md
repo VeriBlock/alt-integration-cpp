@@ -134,7 +134,7 @@ Add additional failure codes.
 +{
 +    AssertLockHeld(cs_main);
 +    CBlockIndex* bestCandidate = m_chain.Tip();
- 
+
 -        // Find the best candidate header.
 -        {
 -            std::set<CBlockIndex*, CBlockIndexWorkComparator>::reverse_iterator it = setBlockIndexCandidates.rbegin();
@@ -277,7 +277,7 @@ Add additional failure codes.
 [method CChainState::ActivateBestChain](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L2856)
 ```cpp
                  ConnectTrace connectTrace(mempool); // Destructed before cs_main is unlocked
- 
+
 -                if (pindexMostWork == nullptr) {
 -                    pindexMostWork = FindMostWorkChain();
 +                if (pblock && pindexBestChain == nullptr) {
@@ -297,13 +297,13 @@ Add additional failure codes.
 +                if (pindexBestChain == nullptr) {
 +                    pindexBestChain = FindBestChain();
                  }
- 
+
                  // Whether we have anything to do at all.
 -                if (pindexMostWork == nullptr || pindexMostWork == m_chain.Tip()) {
 +                if (pindexBestChain == nullptr || pindexBestChain == m_chain.Tip()) {
                      break;
                  }
- 
+
 +                assert(pindexBestChain);
 +                // if pindexBestHeader is a direct successor of pindexBestChain, pindexBestHeader is still best.
 +                // otherwise pindexBestChain is new best pindexBestHeader
@@ -352,7 +352,7 @@ Add additional failure codes.
 ```cpp
          InvalidChainFound(to_mark_failed);
      }
- 
+
 +    PruneBlockIndexCandidates();
 +
      // Only notify about a new block tip if the active chain was modified.
@@ -377,7 +377,7 @@ Add additional failure codes.
 [method CChainState::ResetBlockFailureFlags](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L3162)
 ```cpp
      }
- 
+
 +    PruneBlockIndexCandidates();
 +
      // Remove the invalidity flag from all ancestors too.

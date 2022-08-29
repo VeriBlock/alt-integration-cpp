@@ -6,11 +6,11 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_COIN_HPP_
 
-#include <veriblock/pop/fmt.hpp>
-#include <veriblock/pop/serde.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/serde.hpp>
 
 namespace altintegration {
 class ValidationState;

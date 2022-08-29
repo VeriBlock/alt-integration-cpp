@@ -6,6 +6,16 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_BLOCKCHAIN_POP_FORK_RESOLUTION_HPP_
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <limits>
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 #include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/blockchain/blocktree.hpp>
 #include <veriblock/pop/blockchain/chain_slice.hpp>
@@ -14,16 +24,6 @@
 #include <veriblock/pop/keystone_util.hpp>
 #include <veriblock/pop/logger.hpp>
 #include <veriblock/pop/trace.hpp>
-#include <cstddef>
-#include <cstdint>
-#include <functional>
-#include <memory>
-#include <set>
-#include <vector>
-#include <algorithm>
-#include <limits>
-#include <string>
-#include <utility>
 
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/blockchain/block_status.hpp"

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <veriblock/pop/crypto/endian.hpp>
-#include <veriblock/pop/crypto/progpow/ethash.hpp>
 #include <cstdint>
 #include <cstring>
+#include <veriblock/pop/crypto/endian.hpp>
+#include <veriblock/pop/crypto/progpow/ethash.hpp>
 
 #include "veriblock/pop/uint.hpp"
 

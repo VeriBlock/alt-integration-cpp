@@ -6,14 +6,14 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKPOPTX_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VBKPOPTX_HPP_
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include <veriblock/pop/consts.hpp>
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/slice.hpp>
-#include <cstddef>
-#include <cstdint>
-#include <vector>
-#include <string>
 
 #include "address.hpp"
 #include "btcblock.hpp"
@@ -30,7 +30,8 @@ namespace altintegration {
 class ValidationState;
 class WriteStream;
 struct ReadStream;
-template <class ElementType> struct Slice;
+template <class ElementType>
+struct Slice;
 
 /**
  * @struct VbkPopTx

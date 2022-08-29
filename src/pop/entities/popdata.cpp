@@ -3,16 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/entities/merkle_tree.hpp>
 #include <veriblock/pop/entities/popdata.hpp>
 #include <veriblock/pop/hashutil.hpp>
-#include <cstddef>
-#include <algorithm>
-#include <cstdint>
-#include <string>
-#include <vector>
-
 
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/blob.hpp"

@@ -7,7 +7,6 @@
 
 #include <cstdint>
 #include <vector>
-
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/uint.hpp>

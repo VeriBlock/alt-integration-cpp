@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "mock_miner.hpp"
+
 #include "entities/atv.hpp"
 #include "entities/btcblock.hpp"
 #include "entities/publication_data.hpp"
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
-#include "mock_miner.hpp"
 #include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(mock_miner) {
@@ -18,9 +19,7 @@ POP_ENTITY_FREE_SIGNATURE(mock_miner) {
   }
 }
 
-POP_ENTITY_NEW_FUNCTION(mock_miner) {
-  return new POP_ENTITY_NAME(mock_miner);
-}
+POP_ENTITY_NEW_FUNCTION(mock_miner) { return new POP_ENTITY_NAME(mock_miner); }
 
 POP_ENTITY_CUSTOM_FUNCTION(mock_miner,
                            POP_ENTITY_NAME(btc_block) *,

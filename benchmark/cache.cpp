@@ -39,7 +39,6 @@ static void ThirdPartyLRUCacheWithMutex(benchmark::State& state) {
   }
 }
 
-
 static void ThirdPartyLRUCacheWithoutMutex(benchmark::State& state) {
   srand(0);
   lru11::Cache<int, std::shared_ptr<int>, lru11::NullLock> cache(SIZE);

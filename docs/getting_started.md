@@ -7,7 +7,7 @@ POP overall consists of 2 protocols:
 - POP Rewards - an economic incentive for POP miners to send endorsing VBK transactions in VBK blockchain, and sending back proofs to Altchain. POP Rewards are paid in Altchain coins.
 
 
-#### Guides: 
+#### Guides:
 
 1. @subpage build
 2. @subpage description

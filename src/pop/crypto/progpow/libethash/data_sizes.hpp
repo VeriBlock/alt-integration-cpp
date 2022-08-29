@@ -18,8 +18,8 @@
 #pragma once
 
 #include <cstdint>
-#include <veriblock/pop/uint.hpp>
 #include <veriblock/pop/consts.hpp>
+#include <veriblock/pop/uint.hpp>
 
 namespace altintegration {
 namespace progpow {

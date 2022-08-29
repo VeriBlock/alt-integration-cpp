@@ -60,4 +60,3 @@ class PopActivateTest(PopIntegrationTestFramework):
         endorse_block(self.nodes[0], apm, after_activation_height)
         self.nodes[0].generate(nblocks=1)
         self.log.info("node endorsed block {}".format(after_activation_height))
-

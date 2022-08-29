@@ -35,9 +35,9 @@ Search for all places where `vBitcoin` or `vBTC` is used, and replace with yours
 
 #### 3. Change network ID
 
-vBTC uses network id to distinguish between different networks. 
-Network ID is `pchMessageStart` bytes from [`chainparams.cpp`](https://github.com/bitcoin/bitcoin/blob/master/src/chainparams.cpp#L100-L103). 
-They must be unique per chain/per network. 
+vBTC uses network id to distinguish between different networks.
+Network ID is `pchMessageStart` bytes from [`chainparams.cpp`](https://github.com/bitcoin/bitcoin/blob/master/src/chainparams.cpp#L100-L103).
+They must be unique per chain/per network.
 
 @warning Don't forget to update these bytes in functional tests - https://github.com/VeriBlock/vbk-ri-btc/blob/master/test/functional/test_framework/mininode.py#L115-L119
 
@@ -57,4 +57,4 @@ See [rebootstrap guide](../rebootstrap.md).
 
 #### 6. Make sure all unit and functional tests pass.
 
-See [BTC testing guide](./btc/testing.md). 
+See [BTC testing guide](./btc/testing.md).

@@ -3,9 +3,6 @@
 #include <algorithm>
 #include <random>
 #include <set>
-
-#include "util/literals.hpp"
-#include "util/test_utils.hpp"
 #include <veriblock/pop/entities/atv.hpp"
 #include <veriblock/pop/entities/payloads.hpp"
 #include <veriblock/pop/entities/vtb.hpp"
@@ -13,6 +10,9 @@
 #include <veriblock/pop/storage/payloads_repository_inmem.hpp"
 #include <veriblock/pop/storage/payloads_repository_rocks.hpp"
 #include <veriblock/pop/storage/repository_rocks_manager.hpp"
+
+#include "util/literals.hpp"
+#include "util/test_utils.hpp"
 
 using namespace altintegration;
 

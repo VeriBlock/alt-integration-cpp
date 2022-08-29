@@ -191,7 +191,7 @@ static const std::vector<TestCase> AwinsCases = {
      /**
      * VeriBlock chain B wins because chain A has a publication gap; keystone A40 was published to Bitcoin block 100 and keystone B40 was published to Bitcoin block 102,
      * so when the next keystones (A60 and B60) in both chains were published to Bitcoin block 112, VeriBlock chain A has a context gap (>11 BTC blocks between publications of two keystones),
-     * but B60 has a context gap <11, so PoP score for 2nd different keystone period (A60 vs B60) is A=0 B=1, making chain B have a higher PoP score. 
+     * but B60 has a context gap <11, so PoP score for 2nd different keystone period (A60 vs B60) is A=0 B=1, making chain B have a higher PoP score.
      * Maxwell Sanchez comments.
      * Expected: Chain B should be better than Chain A
      */

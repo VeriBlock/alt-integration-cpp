@@ -135,8 +135,7 @@ struct Address : public Service {
   }
 
   friend bool operator==(const Address& a, const Address& b) {
-    return (a.nTime == b.nTime) &&
-           ((Service&)a == (Service&)b);
+    return (a.nTime == b.nTime) && ((Service&)a == (Service&)b);
   }
   friend bool operator!=(const Address& a, const Address& b) {
     return !(a == b);

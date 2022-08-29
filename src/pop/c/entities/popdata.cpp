@@ -11,13 +11,13 @@
 #include <veriblock/pop/adaptors/picojson.hpp>
 // clang-format on
 
+#include "../validation_state.hpp"
 #include "atv.hpp"
 #include "popdata.hpp"
 #include "vbkblock.hpp"
 #include "veriblock/pop/assert.hpp"
-#include "vtb.hpp"
 #include "veriblock/pop/serde.hpp"
-#include "../validation_state.hpp"
+#include "vtb.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(pop_data) {
   if (self != nullptr) {

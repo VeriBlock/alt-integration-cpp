@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/coin.hpp>
-
 #include <gtest/gtest.h>
 
+#include <veriblock/pop/entities/coin.hpp>
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;

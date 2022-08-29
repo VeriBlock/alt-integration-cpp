@@ -46,7 +46,7 @@ Endorse VBK block
 # or
 >>> endorsed = VbkBlock()
 >>> endorsed.version = ... # fill all fields manually
->>> 
+>>>
 >>> m.endorseVbkBlock(endorsed, lastKnownBtcHash, numberOfVtbs)
 # or this:
 # use prevBtcHash and prevVbkHash to determine where VTB/blockOfProof will be mined on chains
@@ -69,7 +69,7 @@ PublicationData{id=3860170, header=0011223344, payoutInfo=55667788}
 Payloads{atv, vtbs}
 >>> payloads.atv
 '0135bb01011667b55493722b4807bea7bb8ed2835d990885f3fe51c30203e80001070113033ae6ca010500112233440100010455667788473045022100a6e715b6905d622c3130b992daba751bada98fa7479523b238abfb7b5b7fc08102202086a06bd931e6ea251317cb7390adfd98b83fb0bdc0a1ebac4cbb484621a7fe583056301006072a8648ce3d020106052b8104000a034200042fca63a20cb5208c2a55ff5099ca1966b7f52e687600784d1de062c1dd9c8a5fe55b2ba5d906c703d37cbd02ecd9c97a806110fa05d9014a102a0513dd354ec50400000000040000000020631a0bad3e1087de13766f728e634ce7e4aa92c273bfcadec9c4e51b96323b3b0400000000400000000100026ad38f8a5995053b4b04d16c000000000000000000000000000000000000631a0bad3e1087de13766f728e634ce75ec7e6a101010000000000000100'
->>> payloads.vtbs 
+>>> payloads.vtbs
 []
 ```
 
@@ -124,4 +124,3 @@ payoutInfo = script.hex()
                p2sh_p2wpkh_redeem_script=CScript([OP_0, pkh]).hex(),
                p2sh_p2wpkh_addr=key_to_p2sh_p2wpkh(pubkey))
 ```
-

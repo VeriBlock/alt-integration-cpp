@@ -26,7 +26,8 @@ struct VbkNetworkType {
       return true;
     }
 
-    return hasValue && other.hasValue && value == other.value; }
+    return hasValue && other.hasValue && value == other.value;
+  }
 
   std::string toPrettyString() const {
     if (hasValue) {

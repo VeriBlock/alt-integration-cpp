@@ -4,13 +4,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <cstdint>
+#include <cstring>
+#include <string>
+#include <vector>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/base58.hpp>
 #include <veriblock/pop/strutil.hpp>
-#include <cstdint>
-#include <cstring>
-#include <vector>
-#include <string>
 
 #include "veriblock/pop/logger.hpp"
 #include "veriblock/pop/validation_state.hpp"

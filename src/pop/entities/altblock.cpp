@@ -3,15 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/ct_params.hpp>
-#include <veriblock/pop/entities/altblock.hpp>
-#include <veriblock/pop/strutil.hpp>
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
-
+#include <veriblock/pop/ct_params.hpp>
+#include <veriblock/pop/entities/altblock.hpp>
+#include <veriblock/pop/strutil.hpp>
 
 #include "veriblock/pop/logger.hpp"
 #include "veriblock/pop/read_stream.hpp"

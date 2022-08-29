@@ -3,9 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/hashutil.hpp>
-#include <veriblock/pop/assert.hpp>
 #include <limits>
+#include <veriblock/pop/assert.hpp>
+#include <veriblock/pop/hashutil.hpp>
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/crypto/vblake.hpp"

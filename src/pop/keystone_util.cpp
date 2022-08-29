@@ -3,9 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <cstdint>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/keystone_util.hpp>
-#include <cstdint>
 
 namespace altintegration {
 

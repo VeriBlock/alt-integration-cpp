@@ -15,14 +15,14 @@ Rebootstrapping is a process of changing bootstrap blocks stored in altchain.
 To properly validate every ATV and VTB, Altchain should maintain a SPV view on BTC and VBK blockchains.
 Every blockchain starts with a genesis block - a single hand-crafted block, which is a "root" of a tree.
 
-Similarly, VBK and BTC blockchains should start with a root block. 
+Similarly, VBK and BTC blockchains should start with a root block.
 Since we don't start at block 0, we should specify at least 1 `difficulty adjustment interval` worth of contiguous blocks, otherwise we won't be able to statefully validate their difficulty.
 For BTC we require at least 2016 blocks, and for VBK we require at least 100 blocks.
 
 #### Protocol
 
-@warning For Altchain `mainnet` you ALWAYS should use VBK `mainnet` and BTC `mainnet`, otherwise there will be serious security issues. 
-@warning For Altchain Testnet, use VBK `testnet` and BTC `testnet`. 
+@warning For Altchain `mainnet` you ALWAYS should use VBK `mainnet` and BTC `mainnet`, otherwise there will be serious security issues.
+@warning For Altchain Testnet, use VBK `testnet` and BTC `testnet`.
 @warning For automated testing/`regtest`, use VBK `regtest_progpow` and BTC `regtest`.
 
 1. Fetch 2016 finalized **contiguous** BTC headers, and save height of first header.

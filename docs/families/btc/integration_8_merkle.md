@@ -12,14 +12,14 @@ Merkle Root which is inserted into Block Header is now called **Top Level Merkle
 
 ![](./img/toplevelmroot.png)
 
-**Algorithm to calculate Top Level Merkle Root**: 
+**Algorithm to calculate Top Level Merkle Root**:
 1. Build Merkle Tree from individual items of PopData (those are VBK blocks, marked as VBK1 on the picture, VTBs and ATVs), resulting Merkle Root is called **Pop Root**.
 2. Insert PopRoot into vector of leaves and calculate **Tx Merkle Root**
 3. Calculate `ContextHash = HASH(BlockHeightBE || PreviousKeystoneHash || SecondPreviousKeystoneHash)`
-   
+
    where
    - `BlockHeightBE` is 4 bytes of block height, serialized in Big-Endian
-   - `PreviousKeystoneHash` is a hash of a Previous Keystone Block. Its height can be calculated with altintegration::getPreviousKeystone(int, int) 
+   - `PreviousKeystoneHash` is a hash of a Previous Keystone Block. Its height can be calculated with altintegration::getPreviousKeystone(int, int)
 4. Calculate `TopLevelMerkleRoot = HASH(TxMerkleRoot || ContextHash)`
 
 # 1. VeriBlock Merkle root related functions are implemented in the merkle.hpp and merkle.cpp.
@@ -135,7 +135,7 @@ Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 ```cpp
      if (!CheckBlockHeader(block, state, consensusParams, fCheckPOW))
          return false;
- 
+
 -    // Check the merkle root.
 -    if (fCheckMerkleRoot) {
 -        bool mutated;
@@ -154,7 +154,7 @@ Pop Merkle trees source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/sr
 ```cpp
      if (nSigOps * WITNESS_SCALE_FACTOR > MAX_BLOCK_SIGOPS_COST)
          return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-blk-sigops", "out-of-bounds SigOpCount");
- 
+
 -    if (fCheckPOW && fCheckMerkleRoot)
 +    if (fCheckPOW)
          block.fChecked = true;

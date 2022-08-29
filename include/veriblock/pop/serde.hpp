@@ -35,7 +35,10 @@ struct AltChainParams;
  * @param state will return error description here
  * @return true if check is OK, false otherwise
  */
-bool checkRange(uint64_t num, uint64_t min, uint64_t max, ValidationState& state);
+bool checkRange(uint64_t num,
+                uint64_t min,
+                uint64_t max,
+                ValidationState& state);
 
 /**
  * Converts the input to the byte array and trims it's size to the

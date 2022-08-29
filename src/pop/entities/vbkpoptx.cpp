@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/vbkpoptx.hpp>
 #include <algorithm>
 #include <memory>
-
+#include <veriblock/pop/entities/vbkpoptx.hpp>
 
 #include "veriblock/pop/consts.hpp"
 #include "veriblock/pop/entities/address.hpp"

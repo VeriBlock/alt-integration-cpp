@@ -22,11 +22,13 @@ static auto defaultSignatureVbk =
     "3044022008d07afee77324d0bced6f3bce19892d0413981e83e68401cd83d1e1ed3bc37c022005273429062dcf623ccd04c8d9c9e601e7fc45b5db32900c9b0ffda2dbc8f452"_unhex;
 
 static void VerifySecp256k1Sig(benchmark::State& state) {
-  auto privateKey = altintegration::secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk);
+  auto privateKey =
+      altintegration::secp256k1::privateKeyFromVbk(defaultPrivateKeyVbk);
   auto publicKey = altintegration::secp256k1::derivePublicKey(privateKey);
 
   for (auto _ : state) {
-    altintegration::secp256k1::verify(defaultMsg, defaultSignatureVbk, publicKey);
+    altintegration::secp256k1::verify(
+        defaultMsg, defaultSignatureVbk, publicKey);
   }
 }
 // Register the function as a benchmark

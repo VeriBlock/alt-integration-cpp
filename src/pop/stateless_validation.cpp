@@ -3,6 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <algorithm>
+#include <array>
+#include <bitset>
+#include <cstddef>
+#include <cstdint>
+#include <future>
+#include <memory>
+#include <string>
+#include <vector>
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/blob.hpp>
@@ -11,16 +20,6 @@
 #include <veriblock/pop/crypto/progpow.hpp>
 #include <veriblock/pop/stateless_validation.hpp>
 #include <veriblock/pop/trace.hpp>
-#include <cstddef>
-#include <algorithm>
-#include <bitset>
-#include <vector>
-#include <array>
-#include <cstdint>
-#include <future>
-#include <memory>
-#include <string>
-
 
 #include "veriblock/pop/blockchain/btc_chain_params.hpp"
 #include "veriblock/pop/blockchain/vbk_chain_params.hpp"

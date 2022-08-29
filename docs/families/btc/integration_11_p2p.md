@@ -95,20 +95,20 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
  {
      if (count == 0)
          return;
- 
+
      vBlocks.reserve(vBlocks.size() + count);
 -    CNodeState *state = State(nodeid);
 -    assert(state != nullptr);
 -
 -    // Make sure pindexBestKnownBlock is up to date, we'll need it.
 -    ProcessBlockAvailability(nodeid);
- 
+
 -    if (state->pindexBestKnownBlock == nullptr || state->pindexBestKnownBlock->nChainWork < ::ChainActive().Tip()->nChainWork || state->pindexBestKnownBlock->nChainWork < nMinimumChainWork) {
 +    if (bestBlock == nullptr || bestBlock->nChainWork < nMinimumChainWork) {
          // This peer has nothing interesting.
          return;
      }
- 
+
 -    if (state->pindexLastCommonBlock == nullptr) {
 +    assert(lastCommonBlockOut);
 +
@@ -118,7 +118,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 -        state->pindexLastCommonBlock = ::ChainActive()[std::min(state->pindexBestKnownBlock->nHeight, ::ChainActive().Height())];
 +        *lastCommonBlockOut = ::ChainActive()[std::min(bestBlock->nHeight, ::ChainActive().Height())];
      }
- 
+
      // If the peer reorganized, our previous pindexLastCommonBlock may not be an ancestor
      // of its current tip anymore. Go back enough to fix that.
 -    state->pindexLastCommonBlock = LastCommonAncestor(state->pindexLastCommonBlock, state->pindexBestKnownBlock);
@@ -126,7 +126,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 +    *lastCommonBlockOut = LastCommonAncestor(*lastCommonBlockOut, bestBlock);
 +    if (*lastCommonBlockOut == bestBlock)
          return;
- 
+
      std::vector<const CBlockIndex*> vToFetch;
 -    const CBlockIndex *pindexWalk = state->pindexLastCommonBlock;
 +    const CBlockIndex *pindexWalk = *lastCommonBlockOut;
@@ -248,7 +248,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 [method PeerLogicValidation::FinalizeNode](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L799)
 ```cpp
      assert(g_outbound_peers_with_protect_from_disconnect >= 0);
- 
+
      mapNodeState.erase(nodeid);
 +    // VeriBlock
 +    VeriBlock::p2p::erasePopDataNodeState(nodeid);
@@ -256,7 +256,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 [method ProcessMessage](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/net_processing.cpp#L1919)
 ```cpp
      }
- 
+
 +    // VeriBlock: if POP is not enabled, ignore POP-related P2P calls
 +    int tipHeight = ChainActive().Height();
 +    if (Params().isPopActive(tipHeight)) {
@@ -265,7 +265,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 +            return pop_res;
 +        }
 +    }
- 
+
      if (!(pfrom->GetLocalServices() & NODE_BLOOM) &&
                (strCommand == NetMsgType::FILTERLOAD ||
 ```
@@ -273,7 +273,7 @@ P2P source: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/p2p_syn
 ```cpp
          if (!vInv.empty())
              connman->PushMessage(pto, msgMaker.Make(NetMsgType::INV, vInv));
- 
+
 +        // VeriBlock offer Pop Data
 +        {
 +            VeriBlock::p2p::offerPopData<altintegration::ATV>(pto, connman, msgMaker);

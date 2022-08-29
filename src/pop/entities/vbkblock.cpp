@@ -3,15 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/crypto/progpow.hpp>
-#include <veriblock/pop/entities/vbkblock.hpp>
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
-
+#include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/entities/vbkblock.hpp>
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/consts.hpp"
@@ -61,12 +60,12 @@ VbkBlock::hash_t VbkBlock::calculateHash() const {
   WriteStream stream;
   toRaw(stream);
   auto& header = stream.data();
-  #if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
+#if defined(VBK_FUZZING_UNSAFE_FOR_PRODUCTION)
   // use single sha instead of progpow hash in fuzzing
   return sha256(header).trim<hash_t::size()>();
-  #else
+#else
   return progPowHash(header);
-  #endif
+#endif
 }
 
 const VbkBlock::hash_t& VbkBlock::getHash() const {

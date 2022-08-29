@@ -5,7 +5,7 @@
 # Overview
 
 ALT block storage should be modified to store VeriBlock related data.
-          
+
 # 1. Add PayloadsProvider.
 
 We should add a `PayloadsProvider` for the VeriBlock library. The main idea of such class is that we reuse the existing ALT blockchain database. Our library allows to use the native implementation of the database. We implement it with `PayloadsProvider` class which is inherited from the altintegration::PayloadsStorage class.

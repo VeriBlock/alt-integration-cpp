@@ -24,7 +24,12 @@ struct BlockHeader : public BtcBlock {
               uint32_t timestamp,
               uint32_t bits,
               uint32_t nonce)
-      : BtcBlock(version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}
+      : BtcBlock(version,
+                 std::move(previousBlock),
+                 std::move(merkleRoot),
+                 timestamp,
+                 bits,
+                 nonce) {}
 
   ADD_SERIALIZE_METHODS;
 
@@ -50,8 +55,12 @@ struct Block : public BlockHeader {
         uint32_t timestamp,
         uint32_t bits,
         uint32_t nonce)
-      : BlockHeader(
-            version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}
+      : BlockHeader(version,
+                    std::move(previousBlock),
+                    std::move(merkleRoot),
+                    timestamp,
+                    bits,
+                    nonce) {}
 
   ADD_SERIALIZE_METHODS;
 
@@ -62,8 +71,8 @@ struct Block : public BlockHeader {
   }
 
   friend bool operator==(const Block& a, const Block& b) {
-    const BlockHeader &A = a;
-    const BlockHeader &B = b;
+    const BlockHeader& A = a;
+    const BlockHeader& B = b;
     return A == B && a.vtx == b.vtx;
   }
 

@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "network_byte_pair.hpp"
+
 #include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(network_byte_pair) {

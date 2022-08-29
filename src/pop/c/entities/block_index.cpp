@@ -11,11 +11,11 @@
 #include <veriblock/pop/adaptors/picojson.hpp>
 // clang-format on
 
-#include "block_index.hpp"
-#include "veriblock/pop/assert.hpp"
 #include "altblock.hpp"
-#include "vbkblock.hpp"
+#include "block_index.hpp"
 #include "btcblock.hpp"
+#include "vbkblock.hpp"
+#include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/blockchain/alt_block_tree.hpp"
 #include "veriblock/pop/blockchain/pop/vbk_block_tree.hpp"
 

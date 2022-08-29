@@ -6,7 +6,7 @@
 
 Before using structures of the VeriBlock library, we should define some VeriBlock specific parameters. We have to add new Config class which inherits from the altintegration::AltChainParams.
 But first we will add functions that contain API for the library interactions.
-          
+
 # 1. Create two new source files: pop_common.hpp, pop_common.cpp.
 
 POP configuration header: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_common.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_common.hpp). Copy this file to your project.

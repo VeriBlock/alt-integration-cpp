@@ -17,4 +17,3 @@ class NodeRestartTest(PopIntegrationTestFramework):
 
         for node in self.nodes:
             assert node.getbestblock().height == 0
-            

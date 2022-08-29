@@ -16,7 +16,8 @@ struct __pop_network_byte_pair {
 
 namespace default_value {
 template <>
-altintegration::NetworkBytePair generateDefaultValue<altintegration::NetworkBytePair>();
+altintegration::NetworkBytePair
+generateDefaultValue<altintegration::NetworkBytePair>();
 }
 
 #endif

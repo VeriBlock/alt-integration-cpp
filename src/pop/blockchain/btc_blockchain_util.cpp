@@ -3,12 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <algorithm>
+#include <cstdint>
 #include <veriblock/pop/blockchain/btc_blockchain_util.hpp>
 #include <veriblock/pop/blockchain/btc_chain_params.hpp>
 #include <veriblock/pop/entities/btcblock.hpp>
-#include <cstdint>
-#include <algorithm>
-
 
 #include "veriblock/pop/arith_uint256.hpp"
 #include "veriblock/pop/assert.hpp"

@@ -1,5 +1,3 @@
 #include <veriblock.pb.h>
 
-int main (){
-  core::RpcEvent e;
-}
+int main() { core::RpcEvent e; }

@@ -122,7 +122,7 @@ class Node(ABC):
         pass
 
     # RPC
-    
+
     @abstractmethod
     def getrpcfunctions(self) -> RpcFunctions:
         pass

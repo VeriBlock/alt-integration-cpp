@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "config.hpp"
+
 #include "entities/altblock.hpp"
 #include "entities/btcblock.hpp"
 #include "entities/vbkblock.hpp"

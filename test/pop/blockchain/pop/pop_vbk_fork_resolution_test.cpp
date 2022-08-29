@@ -62,9 +62,9 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
   auto Apoptx1 =
       popminer.createVbkPopTxEndorsingVbkBlock(Abtccontaining1->getHeader(),
-                                                Atx1,
-                                                chainAtip->getHeader(),
-                                                GetRegTestBtcBlock().getHash());
+                                               Atx1,
+                                               chainAtip->getHeader(),
+                                               GetRegTestBtcBlock().getHash());
 
   // state is still at chain B
   ASSERT_EQ(popminer.vbk().getBestChain().tip(), chainBtip);
@@ -87,9 +87,9 @@ TEST_F(PopVbkForkResolution, A_1_endorsement_B_longer) {
 
   auto Bpoptx1 =
       popminer.createVbkPopTxEndorsingVbkBlock(Bbtccontaining1->getHeader(),
-                                                Btx1,
-                                                B60->getHeader(),
-                                                GetRegTestBtcBlock().getHash());
+                                               Btx1,
+                                               B60->getHeader(),
+                                               GetRegTestBtcBlock().getHash());
 
   popminer.mineVbkBlocks(1, *chainBtip, {Bpoptx1});
 
@@ -119,9 +119,9 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   auto vbkPopTx1 =
       popminer.createVbkPopTxEndorsingVbkBlock(btcBlockTip2->getHeader(),
-                                                Atx1,
-                                                vbkBlockTip->getHeader(),
-                                                GetRegTestBtcBlock().getHash());
+                                               Atx1,
+                                               vbkBlockTip->getHeader(),
+                                               GetRegTestBtcBlock().getHash());
 
   // Test the same case but in the getProtoKeystoneContext() function
   // make btcBlockTtip2 active chain tip
@@ -135,10 +135,8 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_BTC_main_chain) {
 
   Chain<BlockIndex<VbkBlock>> chain(0, vbkBlockTip);
 
-  internal::ReducedPublicationView reducedPublicationView{ChainSlice(chain),
-                                                          popminer.vbkParams(),
-                                                          popminer.vbk(),
-                                                          popminer.btc()};
+  internal::ReducedPublicationView reducedPublicationView{
+      ChainSlice(chain), popminer.vbkParams(), popminer.vbk(), popminer.btc()};
 
   EXPECT_NE(
       reducedPublicationView.getKeystone(reducedPublicationView.lastKeystone())
@@ -196,9 +194,9 @@ TEST_F(PopVbkForkResolution, endorsement_not_in_the_Vbk_chain) {
 
   auto vbkPopTx1 =
       popminer.createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
-                                                Atx1,
-                                                endorsedVbkBlock->getHeader(),
-                                                GetRegTestBtcBlock().getHash());
+                                               Atx1,
+                                               endorsedVbkBlock->getHeader(),
+                                               GetRegTestBtcBlock().getHash());
 
   auto vbktip1 = popminer.vbk().getBestChain().tip();
   ASSERT_EQ(popminer.mineVbkBlocks(1, *vbkBlockTip2, {vbkPopTx1}), nullptr);
@@ -237,9 +235,9 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
 
   auto vbkPopTxA =
       popminer.createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
-                                                Atx1,
-                                                endorsedVbkBlock->getHeader(),
-                                                GetRegTestBtcBlock().getHash());
+                                               Atx1,
+                                               endorsedVbkBlock->getHeader(),
+                                               GetRegTestBtcBlock().getHash());
 
   // mine the first endorsement
   popminer.mineVbkBlocks(1, {vbkPopTxA});
@@ -247,9 +245,9 @@ TEST_F(PopVbkForkResolution, duplicate_endorsement_in_the_same_chain) {
 
   auto vbkPopTxB =
       popminer.createVbkPopTxEndorsingVbkBlock(btcBlockTip1->getHeader(),
-                                                Atx1,
-                                                endorsedVbkBlock->getHeader(),
-                                                GetRegTestBtcBlock().getHash());
+                                               Atx1,
+                                               endorsedVbkBlock->getHeader(),
+                                               GetRegTestBtcBlock().getHash());
 
   // mine another copy of the same endorsement
 

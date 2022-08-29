@@ -11,4 +11,3 @@ function(enable_ubsan_on_target target)
         set(ENV{UBSAN_OPTIONS} print_stacktrace=1)
     endif()
 endfunction()
-

@@ -8,9 +8,9 @@
 #include <ostream>
 #include <string>
 #include <veriblock/pop/entities/address.hpp>
+#include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/serde.hpp>
 
-#include <veriblock/pop/literals.hpp>
 #include "veriblock/pop/write_stream.hpp"
 
 using namespace altintegration;

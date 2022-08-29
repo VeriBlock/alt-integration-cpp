@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/merkle_path.hpp>
-
 #include <gtest/gtest.h>
 
+#include <veriblock/pop/entities/merkle_path.hpp>
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;
@@ -50,7 +49,8 @@ TEST(MerklePath, DeserializeFromVbkEncoding) {
   auto stream = ReadStream(merklePath);
   ValidationState state;
   MerklePath decoded;
-  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, uint256(subject), decoded, state));
+  ASSERT_TRUE(
+      DeserializeFromVbkEncoding(stream, uint256(subject), decoded, state));
   EXPECT_EQ(decoded.index, defaultIndex);
   EXPECT_EQ(decoded.subject.toHex(), defaultSubject);
   EXPECT_EQ(decoded.layers, defaultLayers);
@@ -76,7 +76,8 @@ TEST(MerklePath, RoundTrip) {
   auto stream = ReadStream(merklePath);
   MerklePath decoded;
   ValidationState state;
-  ASSERT_TRUE(DeserializeFromVbkEncoding(stream, uint256(subject), decoded, state));
+  ASSERT_TRUE(
+      DeserializeFromVbkEncoding(stream, uint256(subject), decoded, state));
   EXPECT_EQ(decoded.index, defaultIndex);
 
   WriteStream outputStream;

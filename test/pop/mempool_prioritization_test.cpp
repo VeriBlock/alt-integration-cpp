@@ -5,8 +5,9 @@
 
 #include <gtest/gtest.h>
 
-#include "util/pop_test_fixture.hpp"
 #include <veriblock/pop/blockchain/mempool_block_tree.hpp>
+
+#include "util/pop_test_fixture.hpp"
 
 using namespace altintegration;
 
@@ -52,8 +53,7 @@ struct MemPoolPrioritizationFixture : public ::testing::Test,
   }
 
   BlockIndex<VbkBlock>* mineVbkBlocks(
-      size_t amount,
-      const std::vector<VbkPopTx>& transactions = {}) {
+      size_t amount, const std::vector<VbkPopTx>& transactions = {}) {
     auto* tip = alttree.vbk().getBestChain().tip();
     assert(tip);
     return mineVbkBlocks(amount, *tip, transactions);
@@ -235,9 +235,9 @@ TEST_F(MemPoolPrioritizationFixture, vtb_areWeaklyEquivalent_scenario3_test) {
       mineVbkBlocks(popminer.vbk().getParams().getKeystoneInterval() * 3);
 
   // endorse VBK blocks
-  const auto* endorsedVbkBlock1 = vbkTip->getAncestor(
-      vbkTip->getHeight() - popminer.vbk().getParams().getKeystoneInterval() +
-      1);
+  const auto* endorsedVbkBlock1 =
+      vbkTip->getAncestor(vbkTip->getHeight() -
+                          popminer.vbk().getParams().getKeystoneInterval() + 1);
   const auto* endorsedVbkBlock2 =
       vbkTip->getAncestor(popminer.vbk().getParams().getKeystoneInterval());
 

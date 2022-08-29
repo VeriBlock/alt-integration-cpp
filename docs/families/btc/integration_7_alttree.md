@@ -9,7 +9,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 - `acceptBlock()` - adds an ALT block into to the library.
 - `addAllBlockPayloads()` - adds popData for the current ALT block into the library and should be invoked before `acceptBlock()` call.
 - `setState()` - changes the state of the VeriBlock AltTree as if the provided ALT block was the current tip of the blockchain.
-          
+
 # 1. Implement AltTree related methods in the pop_service.hpp and pop_service.cpp source files.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp)
@@ -120,7 +120,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
      // move best block pointer to prevout block
 -    view.SetBestBlock(pindex->pprev->GetBlockHash());
 +    view.SetBestBlock(prevHash);
- 
+
      return fClean ? DISCONNECT_OK : DISCONNECT_UNCLEAN;
 ```
 [method CChainState::ConnectBlock](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L1879)
@@ -129,7 +129,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 +    if (!VeriBlock::setState(pindex->GetBlockHash(), _state)) {
 +        return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-block-pop", strprintf("Block %s is POP invalid: %s", pindex->GetBlockHash().ToString(), _state.toString()));
      }
- 
+
      if (!control.Wait()) {
          LogPrintf("ERROR: %s: CheckQueue failed\n", __func__);
          return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "block-validation-failed");
@@ -142,7 +142,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 +    altintegration::ValidationState state;
 +    bool ret = VeriBlock::setState(pindexNew->GetBlockHash(), state);
 +    assert(ret && "block has been checked previously and should be valid");
- 
+
      std::string warningMessages;
 ```
 [method UpdateTip](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/validation.cpp#L2360)
@@ -153,7 +153,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 -      FormatISO8601DateTime(pindexNew->GetBlockTime()),
 -      GuessVerificationProgress(chainParams.TxData(), pindexNew), ::ChainstateActive().CoinsTip().DynamicMemoryUsage() * (1.0 / (1<<20)), ::ChainstateActive().CoinsTip().GetCacheSize(),
 -      !warningMessages.empty() ? strprintf(" warning='%s'", warningMessages) : "");
- 
+
 +    auto& pop = VeriBlock::GetPop();
 +    auto* vbktip = pop.getVbkBlockTree().getBestChain().tip();
 +    auto* btctip = pop.getBtcBlockTree().getBestChain().tip();
@@ -173,7 +173,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 ```cpp
      if (ppindex)
          *ppindex = pindex;
- 
+
 +    if (!VeriBlock::acceptBlock(*pindex, state)) {
 +        return error("%s: ALT tree could not accept block ALT:%d:%s, reason: %s", __func__, pindex->nHeight, pindex->GetBlockHash().ToString(), state.ToString());
 +    }
@@ -183,7 +183,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 ```cpp
          return error("%s: %s", __func__, FormatStateMessage(state));
      }
- 
+
 +    {
 +        if (!VeriBlock::addAllBlockPayloads(block, state)) {
 +            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-block-pop-payloads",
@@ -227,7 +227,7 @@ At this stage we should add functions for maintaining the VeriBlock AltTree: `se
 -            pindexBestHeader = pindex;
 +        // do not set best chain here
      }
- 
+
      // get best chain from ALT tree and update vBTC's best chain
      {
          AssertLockHeld(cs_main);

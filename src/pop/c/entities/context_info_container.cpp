@@ -4,9 +4,10 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "context_info_container.hpp"
+
+#include "../validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/serde.hpp"
-#include "../validation_state.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(context_info_container) {
   if (self != nullptr) {
@@ -17,13 +18,12 @@ POP_ENTITY_FREE_SIGNATURE(context_info_container) {
 
 POP_GENERATE_DEFAULT_VALUE(context_info_container) {
   auto* v = new POP_ENTITY_NAME(context_info_container);
-  v->ref = default_value::generateDefaultValue<altintegration::ContextInfoContainer>();
+  v->ref = default_value::generateDefaultValue<
+      altintegration::ContextInfoContainer>();
   return v;
 }
 
-POP_ENTITY_GETTER_FUNCTION(context_info_container,
-                           int,
-                           height) {
+POP_ENTITY_GETTER_FUNCTION(context_info_container, int, height) {
   VBK_ASSERT(self);
   return self->ref.height;
 }
@@ -89,7 +89,8 @@ POP_ENTITY_DESERIALIZE_FROM_VBK(context_info_container) {
 
 namespace default_value {
 template <>
-altintegration::ContextInfoContainer generateDefaultValue<altintegration::ContextInfoContainer>() {
+altintegration::ContextInfoContainer
+generateDefaultValue<altintegration::ContextInfoContainer>() {
   altintegration::ContextInfoContainer res;
   altintegration::KeystoneContainer keystones;
 

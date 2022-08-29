@@ -16,7 +16,8 @@ struct __pop_context_info_container {
 
 namespace default_value {
 template <>
-altintegration::ContextInfoContainer generateDefaultValue<altintegration::ContextInfoContainer>();
+altintegration::ContextInfoContainer
+generateDefaultValue<altintegration::ContextInfoContainer>();
 }
 
 #endif

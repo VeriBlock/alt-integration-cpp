@@ -6,14 +6,14 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VTB_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_VTB_HPP_
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include <veriblock/pop/fmt.hpp>
 #include <veriblock/pop/json.hpp>
 #include <veriblock/pop/serde.hpp>
 #include <veriblock/pop/uint.hpp>
-#include <cstddef>
-#include <cstdint>
-#include <vector>
-#include <string>
 
 #include "vbk_merkle_path.hpp"
 #include "vbkblock.hpp"
@@ -24,7 +24,8 @@ namespace altintegration {
 class ValidationState;
 class WriteStream;
 struct ReadStream;
-template <typename T> struct IsPopPayload;
+template <typename T>
+struct IsPopPayload;
 
 /**
  * @struct VTB

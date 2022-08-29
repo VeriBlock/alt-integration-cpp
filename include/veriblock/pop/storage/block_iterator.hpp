@@ -7,7 +7,6 @@
 #define VERIBLOCK_POP_CPP_STORAGE_ITERATOR_HPP
 
 #include <cstdint>
-
 #include <vector>
 
 namespace altintegration {

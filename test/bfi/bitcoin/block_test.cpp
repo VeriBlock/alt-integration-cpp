@@ -3,9 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <gtest/gtest.h>
-
 #include "veriblock/bfi/bitcoin/block.hpp"
+
+#include <gtest/gtest.h>
 
 using namespace altintegration;
 using namespace altintegration::btc;

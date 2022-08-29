@@ -121,7 +121,8 @@ TEST_P(AcceptTest, BootstrapWithChain) {
       allblocks.end()};
 
   BlockTree<BtcBlock, BtcChainParams> tree(*value.params, blockProvider);
-  ASSERT_NO_FATAL_FAILURE(tree.bootstrapWithChain(value.startHeight, bootstrapChain));
+  ASSERT_NO_FATAL_FAILURE(
+      tree.bootstrapWithChain(value.startHeight, bootstrapChain));
   size_t totalBlocks = bootstrapChain.size();
 
   EXPECT_EQ(tree.getBestChain().tip()->getHeader(),

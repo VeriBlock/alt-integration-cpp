@@ -1,10 +1,10 @@
-#include <veriblock/pop/crypto/progpow.hpp>
-#include <veriblock/pop/pop_context.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <utility>
 #include <vector>
+#include <veriblock/pop/crypto/progpow.hpp>
+#include <veriblock/pop/pop_context.hpp>
 
 #include "veriblock/pop/alt-util.hpp"
 #include "veriblock/pop/assert.hpp"

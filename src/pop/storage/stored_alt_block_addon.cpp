@@ -3,15 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <algorithm>
+#include <string>
+#include <vector>
 #include <veriblock/pop/algorithm.hpp>
 #include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/entities/vbkblock.hpp>
 #include <veriblock/pop/entities/vtb.hpp>
 #include <veriblock/pop/storage/stored_alt_block_addon.hpp>
-#include <algorithm>
-#include <string>
-#include <vector>
-
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/blockchain/pop/pop_state.hpp"

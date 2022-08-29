@@ -11,7 +11,8 @@
 namespace altintegration {
 
 //! exception which is thrown on any IO errors.
-//! @warning This is FATAL error, and can not be recovered. If Altchain caught this exception, then POP state MAY BE INVALID.
+//! @warning This is FATAL error, and can not be recovered. If Altchain caught
+//! this exception, then POP state MAY BE INVALID.
 struct StorageIOException : public std::domain_error {
   StorageIOException(const std::string& msg) : std::domain_error(msg) {}
 };

@@ -3,10 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <iostream>
-#include <string>
-#include <stdexcept>
 #include <fstream>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 template <typename InStream, typename OutStream>
 void write(InStream& in, OutStream& out, const std::string& var) {

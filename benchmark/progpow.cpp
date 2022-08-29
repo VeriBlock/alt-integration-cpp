@@ -29,7 +29,9 @@ static void ProgpowEpochUnCached(benchmark::State& state) {
   }
 }
 
-BENCHMARK(ProgpowEpochCached)->Unit(benchmark::kMillisecond);;
-BENCHMARK(ProgpowEpochUnCached)->Unit(benchmark::kMillisecond);;
+BENCHMARK(ProgpowEpochCached)->Unit(benchmark::kMillisecond);
+;
+BENCHMARK(ProgpowEpochUnCached)->Unit(benchmark::kMillisecond);
+;
 // Run the benchmark
 BENCHMARK_MAIN();
