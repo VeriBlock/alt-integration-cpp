@@ -141,7 +141,7 @@ Alternatively you can use the following environment variables to configure the A
 
 |Configuration name          | Environment variable           | Default           | Description                                                                   |
 |----------------------------|--------------------------------|-------------------|-------------------------------------------------------------------------------|
-| altchainId                 | ALTCHAIN_ID                    | undefined         | The altchain id, it must be configured                                        |   
+| altchainId                 | ALTCHAIN_ID                    | undefined         | The altchain id, it must be configured                                        |
 | blockChainNetwork          | NETWORK                        | testnet           | The altchain network, there are three options: mainnet, testnet and regtest   |
 | blockChainRegtestHost      | REGTEST_HOST                   | undefined         | The altchain regtest host (the network should be specified as regtest)        |
 | nodeCoreRpcHost            | NODECORE_HOST                  | 127.0.0.1:10500   | The NodeCore ip where the ABFI will connects to                               |

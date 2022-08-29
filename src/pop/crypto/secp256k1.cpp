@@ -3,17 +3,17 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/crypto/secp256k1.hpp>
-#include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/hashutil.hpp>
-#include <veriblock/pop/strutil.hpp>
-#include <veriblock/pop/third_party/secp256k1.hpp>
-#include <veriblock/pop/trace.hpp>
-#include <utility>
 #include <cstdint>
 #include <iterator>
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <veriblock/pop/assert.hpp>
+#include <veriblock/pop/crypto/secp256k1.hpp>
+#include <veriblock/pop/hashutil.hpp>
+#include <veriblock/pop/strutil.hpp>
+#include <veriblock/pop/third_party/secp256k1.hpp>
+#include <veriblock/pop/trace.hpp>
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/slice.hpp"
@@ -169,7 +169,6 @@ PublicKey derivePublicKey(PrivateKey privateKey) {
   VBK_ASSERT_MSG(ret, "can not serialize public key");
   return output;
 }
-
 
 #ifdef VBK_FUZZING_UNSAFE_FOR_PRODUCTION
 

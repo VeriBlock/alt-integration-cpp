@@ -15,7 +15,7 @@ $ mkdir build
 $ cd build
 
 # build static library in release mode
-$ cmake .. -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF 
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DSHARED=OFF
 $ make -j
 
 # install it in your OS globally

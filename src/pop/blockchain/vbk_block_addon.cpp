@@ -3,15 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/blockchain/block_index.hpp>
-#include <veriblock/pop/blockchain/vbk_block_addon.hpp>
-#include <veriblock/pop/entities/vtb.hpp>
 #include <algorithm>
 #include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
-
+#include <veriblock/pop/blockchain/block_index.hpp>
+#include <veriblock/pop/blockchain/vbk_block_addon.hpp>
+#include <veriblock/pop/entities/vtb.hpp>
 
 #include "veriblock/pop/algorithm.hpp"
 #include "veriblock/pop/arith_uint256.hpp"

@@ -3,11 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "validation_state.hpp"
+
 #include <string.h>
 
 #include <memory>
 
-#include "validation_state.hpp"
 #include "veriblock/pop/assert.hpp"
 
 POP_ENTITY_FREE_SIGNATURE(validation_state) {

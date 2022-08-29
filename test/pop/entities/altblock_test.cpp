@@ -3,11 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/altblock.hpp>
-#include <veriblock/pop/blockchain/alt_chain_params.hpp>
-
 #include <gtest/gtest.h>
 
+#include <veriblock/pop/blockchain/alt_chain_params.hpp>
+#include <veriblock/pop/entities/altblock.hpp>
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;

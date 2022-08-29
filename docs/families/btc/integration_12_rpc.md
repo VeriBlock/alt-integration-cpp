@@ -6,7 +6,7 @@
 
 We have to provide Pop aware RPC calls to let users interact with node. We'll add new functions to the RPC.
 
-Here is the list of the provided Pop RPC calls: 
+Here is the list of the provided Pop RPC calls:
 - `getpopparams`
 - `submitpopatv`
 - `submitpopvtb`
@@ -26,7 +26,7 @@ Here is the list of the provided Pop RPC calls:
 
 Besides new RPC calls some of the original calls will be extended to provide additional Pop information.
 
-Here is the list of extended RPC calls: 
+Here is the list of extended RPC calls:
 - `getblock`
 - `getblockchaininfo`
 - `getmininginfo`
@@ -153,7 +153,7 @@ Univalue conversions: [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/a
 ```cpp
      if(!g_rpc_node->connman)
          throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
- 
+
 -    if (g_rpc_node->connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)
 -        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, PACKAGE_NAME " is not connected!");
 +    // VERIBLOCK: when node does not have other peers, this disables certain RPCs. Disable this condition for now.

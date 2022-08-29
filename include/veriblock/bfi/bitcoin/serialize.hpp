@@ -8,10 +8,10 @@
 #ifndef BFI_BITCOIN_SERIALIZE_HPP
 #define BFI_BITCOIN_SERIALIZE_HPP
 
-#include <cstdint>
 #include <string.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <ios>
 #include <limits>
 #include <map>

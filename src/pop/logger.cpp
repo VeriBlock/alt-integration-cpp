@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/logger.hpp>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <veriblock/pop/assert.hpp>
+#include <veriblock/pop/logger.hpp>
 
 namespace altintegration {
 

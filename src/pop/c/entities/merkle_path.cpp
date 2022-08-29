@@ -4,6 +4,7 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
 #include "merkle_path.hpp"
+
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/uint.hpp"
 

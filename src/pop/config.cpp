@@ -3,14 +3,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/config.hpp>
-#include <cstdint>
-#include <utility>
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
+#include <veriblock/pop/config.hpp>
 
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/blockchain/btc_chain_params.hpp"

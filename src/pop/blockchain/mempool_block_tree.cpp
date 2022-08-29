@@ -1,23 +1,20 @@
 #include "veriblock/pop/blockchain/mempool_block_tree.hpp"
 
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "veriblock/pop/blockchain/blockchain_util.hpp"
-#include "veriblock/pop/blockchain/pop/counting_context.hpp"
-#include "veriblock/pop/fmt.hpp"
-#include "veriblock/pop/keystone_util.hpp"
-#include "veriblock/pop/validation_state.hpp"
 #include "veriblock/pop/algorithm.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/blockchain/alt_block_tree.hpp"
 #include "veriblock/pop/blockchain/alt_chain_params.hpp"
 #include "veriblock/pop/blockchain/base_block_tree.hpp"
 #include "veriblock/pop/blockchain/block_index.hpp"
+#include "veriblock/pop/blockchain/blockchain_util.hpp"
 #include "veriblock/pop/blockchain/chain.hpp"
+#include "veriblock/pop/blockchain/pop/counting_context.hpp"
 #include "veriblock/pop/blockchain/temp_block_tree.hpp"
 #include "veriblock/pop/blockchain/vbk_chain_params.hpp"
 #include "veriblock/pop/entities/altblock.hpp"
@@ -31,9 +28,12 @@
 #include "veriblock/pop/entities/vbktx.hpp"
 #include "veriblock/pop/entities/vtb.hpp"
 #include "veriblock/pop/finalizer.hpp"
+#include "veriblock/pop/fmt.hpp"
+#include "veriblock/pop/keystone_util.hpp"
 #include "veriblock/pop/logger.hpp"
 #include "veriblock/pop/storage/payloads_provider.hpp"
 #include "veriblock/pop/strutil.hpp"
+#include "veriblock/pop/validation_state.hpp"
 
 namespace altintegration {
 

@@ -7,6 +7,7 @@
 #define VERIBLOCK_POP_CPP_ENTITIESPROVIDERS_HPP
 
 #include <veriblock/pop/blockchain/block_index.hpp>
+
 #include "FuzzedDataProvider.hpp"
 
 namespace fuzz {
@@ -58,7 +59,7 @@ inline bool ConsumeAddon(FuzzedDataProvider& p, VbkBlockAddon& addon) {
   }
 
   const auto size = p.ConsumeIntegral<uint32_t>();
-  for(auto i = 0u; i < size; i++) {
+  for (auto i = 0u; i < size; i++) {
     VbkEndorsement e;
     if (!ConsumeEndorsement(p, e)) {
       return false;

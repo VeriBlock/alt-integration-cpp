@@ -63,11 +63,11 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         assert res["authenticated_context"] != None
         assert res["last_known_veriblock_blocks"] != None
         assert res["last_known_bitcoin_blocks"] != None
-        # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>() 
+        # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>()
         assert res["authenticated_context"]["serialized"] != None
         assert res["authenticated_context"]["stateRoot"] != None
         assert res["authenticated_context"]["context"] != None
-        # JSON represantation of the altintegration::ContextInfoContainer, altintegration::ToJSON<ContextInfoContainer>() 
+        # JSON represantation of the altintegration::ContextInfoContainer, altintegration::ToJSON<ContextInfoContainer>()
         assert res["authenticated_context"]["context"]["height"] != None
         assert res["authenticated_context"]["context"]["firstPreviousKeystone"] != None
         assert res["authenticated_context"]["context"]["secondPreviousKeystone"] != None
@@ -88,11 +88,11 @@ class RpcFunctionsSignatureTest(PopIntegrationTestFramework):
         assert res["authenticated_context"] != None
         assert res["last_known_veriblock_blocks"] != None
         assert res["last_known_bitcoin_blocks"] != None
-        # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>() 
+        # JSON represantation of the altintegration::AuthenticatedContextInfoContainer, altintegration::ToJSON<AuthenticatedContextInfoContainer>()
         assert res["authenticated_context"]["serialized"] != None
         assert res["authenticated_context"]["stateRoot"] != None
         assert res["authenticated_context"]["context"] != None
-        # JSON represantation of the altintegration::ContextInfoContainer, altintegration::ToJSON<ContextInfoContainer>() 
+        # JSON represantation of the altintegration::ContextInfoContainer, altintegration::ToJSON<ContextInfoContainer>()
         assert res["authenticated_context"]["context"]["height"] != None
         assert res["authenticated_context"]["context"]["firstPreviousKeystone"] != None
         assert res["authenticated_context"]["context"]["secondPreviousKeystone"] != None

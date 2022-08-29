@@ -6,8 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_ETHASH_EXPECTED_DAG_HPP
 #define VERIBLOCK_POP_CPP_ETHASH_EXPECTED_DAG_HPP
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 const std::vector<uint32_t> ethash_expected_dag = {
     0x2deee328, 0xa3c70ed5, 0x38336e39, 0xf6a7c7c8, 0x6a1138cd, 0xd70c0449,

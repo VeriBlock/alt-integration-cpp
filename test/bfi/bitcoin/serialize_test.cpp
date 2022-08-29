@@ -3,9 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "veriblock/bfi/bitcoin/serialize.hpp"
+
 #include <gtest/gtest.h>
 
-#include "veriblock/bfi/bitcoin/serialize.hpp"
 #include "veriblock/pop/hashutil.hpp"
 #include "veriblock/pop/literals.hpp"
 
@@ -254,8 +255,7 @@ TEST(Serialize, varints_bitpatterns) {
   EXPECT_EQ(writer.hex(), "c7e756");
   writer = WriteStream{};
 
-  Serialize(writer,
-               VARINT((int32_t)0x123456, VarIntMode::NONNEGATIVE_SIGNED));
+  Serialize(writer, VARINT((int32_t)0x123456, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "c7e756");
   writer = WriteStream{};
 
@@ -272,7 +272,7 @@ TEST(Serialize, varints_bitpatterns) {
   writer = WriteStream{};
 
   Serialize(writer,
-               VARINT(0x7fffffffffffffffLL, VarIntMode::NONNEGATIVE_SIGNED));
+            VARINT(0x7fffffffffffffffLL, VarIntMode::NONNEGATIVE_SIGNED));
   EXPECT_EQ(writer.hex(), "fefefefefefefefe7f");
   writer = WriteStream{};
 

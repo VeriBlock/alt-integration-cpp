@@ -15,9 +15,7 @@ extern "C" {
 
 POP_DECLARE_ENTITY(context_info_container);
 
-POP_ENTITY_GETTER_FUNCTION(context_info_container,
-                           int,
-                           height);
+POP_ENTITY_GETTER_FUNCTION(context_info_container, int, height);
 
 POP_ENTITY_GETTER_FUNCTION(context_info_container,
                            POP_ARRAY_NAME(u8),

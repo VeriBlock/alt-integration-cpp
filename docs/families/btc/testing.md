@@ -12,14 +12,14 @@ To show that the pop-enabled altchain most likely works, once could screenshots 
 ![apm_getoperation_screenshot](./img/apmgetoperationscreenshot.png)
 ​
 3. A running network with multiple APM instances. For example, multiple pop tx with different reward addresses on the VBK explorer. If you run this API (with your unique altchain id), then it will return at least 2 rows:
-https://testnet.explore.veriblock.org/api/altchain/{altchain id}/validation/apm?withinNHours=4  
+https://testnet.explore.veriblock.org/api/altchain/{altchain id}/validation/apm?withinNHours=4
 ![apm_instances](./img/apm_instances.png)
 
 4. Altchain explorer screenshot showing (1) recent ATV and VTB, and (2) ABFI on a transaction.
 ![vbtc_explorer_screenshot_1](./img/vbtcexplorerscreenshot_1.png)
 ![vbtc_explorer_screenshot_2](./img/vbtcexplorerscreenshot_2.png)
 
-5. Run ABFI and view successful health ping 
+5. Run ABFI and view successful health ping
 ```
 http://[ip_to_altchain_abfi]:4568/api/chains/blocks/last-finalized-btc
 ```
@@ -39,10 +39,10 @@ Here we describe which POP related tests should be added and should pass to be c
 ​
 First thing is to make sure that all original BTC tests pass and work well.
 ​
-On the Unix sytem you can do it with the following command: 
+On the Unix sytem you can do it with the following command:
 ```bash
 make check
-``` 
+```
 ​
 Before starting the POP integration it is recommended to fix tests if some of them do not work properly.
 ​
@@ -55,7 +55,7 @@ Here is the full list of the POP unit tests:
 - `genesis_block_tests.cpp`
 - `forkresolution_tests.cpp`
 ​
- 
+
 You can see the corresponding changes in the Makefile: [https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/src/Makefile.test.include#L117](https://github.com/VeriBlock/vbk-ri-btc/blob/026fba4e80bc114c68c636e3c9cfc6af855c9c94/src/Makefile.test.include#L117)
 ​
 These tests are available in the ```vbk/tests/unit``` directory.
@@ -64,7 +64,7 @@ These tests are available in the ```vbk/tests/unit``` directory.
 ​
 # BTC functional tests
 ​
-Original Bitcoin code has functional tests that reside in the ```test/functional``` directory. 
+Original Bitcoin code has functional tests that reside in the ```test/functional``` directory.
 ​
 `bitcoind` should be built prior to running functional tests. ```VBITCOIND_PATH``` environment variable should be set to the path to the `bitcoind` daemon:
 ```bash
@@ -114,7 +114,7 @@ PopMempoolSyncTest    | ✓ Passed  | 64 s
 PopParamsTest         | ✓ Passed  | 8 s
 PopSyncTest           | ✓ Passed  | 31 s
 
-ALL                   | ✓ Passed  | 1269 s (accumulated) 
+ALL                   | ✓ Passed  | 1269 s (accumulated)
 Runtime: 1273 s
 ```
 ​

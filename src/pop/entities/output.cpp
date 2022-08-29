@@ -5,7 +5,6 @@
 
 #include <veriblock/pop/entities/output.hpp>
 
-
 #include "veriblock/pop/entities/address.hpp"
 #include "veriblock/pop/entities/coin.hpp"
 #include "veriblock/pop/json.hpp"

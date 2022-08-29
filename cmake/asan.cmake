@@ -14,4 +14,3 @@ function(enable_asan_on_target target)
         set(ENV{ASAN_OPTIONS} detect_container_overflow=0:verbosity=1:debug=1:detect_leaks=1:check_initialization_order=1:alloc_dealloc_mismatch=true:use_odr_indicator=true)
     endif()
 endfunction()
-

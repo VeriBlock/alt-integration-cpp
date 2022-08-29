@@ -7,7 +7,6 @@
 
 #include <cstdint>
 #include <vector>
-
 #include <veriblock/pop/arith_uint256.hpp>
 #include <veriblock/pop/literals.hpp>
 #include <veriblock/pop/uint.hpp>

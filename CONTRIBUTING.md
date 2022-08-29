@@ -10,7 +10,7 @@
 
 ### Requirements for Pull-Requests
 
-A Pull-Request can be merged into `master` only if: 
+A Pull-Request can be merged into `master` only if:
 
 1. Code is formatted with `clang-format`.
 2. Continuous Integration system is green (all checks passed).

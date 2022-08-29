@@ -13,11 +13,10 @@
 #ifndef LLVM_FUZZER_FUZZED_DATA_PROVIDER_H_
 #define LLVM_FUZZER_FUZZED_DATA_PROVIDER_H_
 
+#include <algorithm>
 #include <climits>
 #include <cstddef>
 #include <cstdint>
-
-#include <algorithm>
 #include <cstring>
 #include <initializer_list>
 #include <string>
@@ -47,7 +46,7 @@ class FuzzedDataProvider {
 
   template <typename T>
   std::vector<T> ConsumeBytesOrFail(size_t num_bytes) {
-    if(num_bytes > remaining_bytes_) {
+    if (num_bytes > remaining_bytes_) {
       throw NotEnoughDataException{};
     }
 

@@ -370,7 +370,8 @@ struct BlockIndex : public Block::addon_t {
 
   std::string toPrettyString(size_t level = 0) const {
     return format(
-        "{}{}BlockIndex(height={} hash={} prev={} next={} final={} status={} {})",
+        "{}{}BlockIndex(height={} hash={} prev={} next={} final={} status={} "
+        "{})",
         std::string(level, ' '),
         Block::name(),
         height,

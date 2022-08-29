@@ -6,8 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_PROGPOW_EXPECTED_MIX_STATE_HPP
 #define VERIBLOCK_POP_CPP_PROGPOW_EXPECTED_MIX_STATE_HPP
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 const std::vector<std::vector<uint32_t>> expected_mix = {
     {// clang-format off

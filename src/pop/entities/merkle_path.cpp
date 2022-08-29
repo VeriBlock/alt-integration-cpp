@@ -5,7 +5,6 @@
 
 #include <veriblock/pop/entities/merkle_path.hpp>
 
-
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/consts.hpp"
 #include "veriblock/pop/hashutil.hpp"

@@ -39,8 +39,7 @@ using namespace altintegration;
 struct Scenario5 : public ::testing::Test, public PopTestFixture {
   uint256 vbkContextStart;
 
-  Scenario5()
-      : vbkContextStart(GetRegTestBtcBlock().getHash()) {}
+  Scenario5() : vbkContextStart(GetRegTestBtcBlock().getHash()) {}
 
   void mineVbkFork(size_t blockCount,
                    BlockIndex<VbkBlock>*& tip,
@@ -88,18 +87,20 @@ TEST_F(Scenario5, scenario_5) {
         popminer.createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
     auto* btcTip = popminer.mineBtcBlocks(1, {btcTx});
 
-    auto vbkPopTxA = popminer.createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
-                                              btcTx,
-                                              endorsedBlock->getHeader(),
-                                              vbkContextStart);
+    auto vbkPopTxA =
+        popminer.createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+                                                 btcTx,
+                                                 endorsedBlock->getHeader(),
+                                                 vbkContextStart);
     mineVbkFork(1, tipA, {vbkPopTxA});
 
     btcTx = popminer.createBtcTxEndorsingVbkBlock(endorsedBlock->getHeader());
     btcTip = popminer.mineBtcBlocks(1, {btcTx});
-    auto vbkPopTxB = popminer.createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
-                                              btcTx,
-                                              endorsedBlock->getHeader(),
-                                              vbkContextStart);
+    auto vbkPopTxB =
+        popminer.createVbkPopTxEndorsingVbkBlock(btcTip->getHeader(),
+                                                 btcTx,
+                                                 endorsedBlock->getHeader(),
+                                                 vbkContextStart);
     mineVbkFork(1, tipB, {vbkPopTxB});
   }
 
@@ -107,7 +108,7 @@ TEST_F(Scenario5, scenario_5) {
   mineVbkFork(9, tipB);
 
   {
-    //100 = contains endorsement of A40 present in A50
+    // 100 = contains endorsement of A40 present in A50
     ASSERT_EQ(99, popminer.btc().getBestChain().tip()->getHeight());
     ASSERT_EQ(49, tipA->getHeight());
     auto& endorsedBlockA = tipA->getAncestor(40)->getHeader();

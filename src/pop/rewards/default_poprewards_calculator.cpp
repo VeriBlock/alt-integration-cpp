@@ -3,14 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/atv.hpp>
-#include <veriblock/pop/rewards/default_poprewards_calculator.hpp>
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
-#include <cassert>
-#include <vector>
 #include <map>
-
+#include <vector>
+#include <veriblock/pop/entities/atv.hpp>
+#include <veriblock/pop/rewards/default_poprewards_calculator.hpp>
 
 #include "veriblock/pop/arith_uint256.hpp"
 #include "veriblock/pop/assert.hpp"

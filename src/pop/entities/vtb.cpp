@@ -3,11 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/entities/vtb.hpp>
-#include <veriblock/pop/hashutil.hpp>
-#include <veriblock/pop/fmt.hpp>
 #include <algorithm>
 #include <cstdint>
+#include <veriblock/pop/entities/vtb.hpp>
+#include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/hashutil.hpp>
 
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/entities/btcblock.hpp"

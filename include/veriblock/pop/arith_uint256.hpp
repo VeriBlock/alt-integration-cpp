@@ -8,10 +8,10 @@
 
 #include <cstdint>
 #include <cstring>
+#include <iosfwd>
 #include <limits>
 #include <stdexcept>
 #include <string>
-#include <iosfwd>
 #include <vector>
 
 #include "blob.hpp"

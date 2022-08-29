@@ -85,7 +85,7 @@ TEST_F(BtcInvalidationTest, InvalidateBlockInTheMiddleOfChain) {
 
   // revalidate block 5
   popminer.btc().revalidateSubtree(toBeInvalidated->getHash(),
-                                    BLOCK_FAILED_BLOCK);
+                                   BLOCK_FAILED_BLOCK);
 
   // all next blocks are valid
   current = chain.next(toBeInvalidated);

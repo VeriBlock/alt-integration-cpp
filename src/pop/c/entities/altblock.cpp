@@ -6,7 +6,6 @@
 #include "altblock.hpp"
 
 #include <cstring>
-
 #include <memory>
 #include <veriblock/pop/adaptors/picojson.hpp>
 #include <veriblock/pop/assert.hpp>

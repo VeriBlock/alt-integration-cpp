@@ -85,7 +85,7 @@ using namespace altintegration;
 using namespace progpow;
 
 template <typename F>
-hash32_t h32 (const std::string& hex, F&& read){
+hash32_t h32(const std::string& hex, F&& read) {
   auto bytes = ParseHex(hex);
   auto rs = ReadStream(bytes);
   return read(rs);
@@ -93,7 +93,6 @@ hash32_t h32 (const std::string& hex, F&& read){
 
 TEST_P(KeccakF800ProgPowTest, Regression) {
   auto [strheader, seed, strdigest, strresult] = GetParam();
-
 
   uint256 header = uint256::fromHex(strheader);
   hash32_t digest = h32(strdigest, hash32_t::readBE);

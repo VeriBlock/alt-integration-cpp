@@ -66,8 +66,8 @@ struct PopRewardsParams {
 
   // reward score table
   // we score each VeriBlock and lower the reward for late blocks
-  virtual std::vector<PopRewardsBigDecimal> relativeScoreLookupTable() const
-      noexcept {
+  virtual std::vector<PopRewardsBigDecimal> relativeScoreLookupTable()
+      const noexcept {
     return {1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
             1.00000000, 1.00000000, 1.00000000, 1.00000000, 1.00000000,
             1.00000000, 1.00000000, 0.48296816, 0.31551694, 0.23325824,

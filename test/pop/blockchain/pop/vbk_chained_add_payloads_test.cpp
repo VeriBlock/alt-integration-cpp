@@ -48,7 +48,8 @@ TEST_F(AddPayloadsChained, addPayloadsChained) {
 
   // manually add the VBK context to alttree
   for (auto& block : popData.context) {
-    ASSERT_TRUE(alttree.vbk().acceptBlockHeader(block, state)) << state.toString();
+    ASSERT_TRUE(alttree.vbk().acceptBlockHeader(block, state))
+        << state.toString();
   }
 
   auto* containingIndex =

@@ -3,12 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include "pop_payouts.hpp"
+
 #include <string.h>
 
 #include <memory>
 
 #include "../validation_state.hpp"
-#include "pop_payouts.hpp"
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/serde.hpp"
 

@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <veriblock/pop/crypto/vblake.hpp>
-
 #include <veriblock/pop/literals.hpp>
 
 using namespace altintegration;
@@ -44,8 +43,8 @@ TEST_P(VBlakeTest, Regression) {
 
   std::vector<uint8_t> actual(VBLAKE_HASH_SIZE, 0);
 
-  int ret =
-      altintegration::vblake(actual.data(), tc.message.data(), tc.message.size());
+  int ret = altintegration::vblake(
+      actual.data(), tc.message.data(), tc.message.size());
 
   ASSERT_EQ(ret, 0);
   EXPECT_EQ(actual, tc.hash);

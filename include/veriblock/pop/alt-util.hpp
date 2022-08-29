@@ -6,9 +6,8 @@
 #ifndef ALT_INTEGRATION_UTIL_HPP
 #define ALT_INTEGRATION_UTIL_HPP
 
-#include <cstddef>
-
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <vector>

@@ -6,14 +6,14 @@
 #include <benchmark/benchmark.h>
 
 #include <veriblock/pop/mempool.hpp>
+#include <veriblock/pop/mock_miner.hpp>
 #include <veriblock/pop/storage/adaptors/block_provider_impl.hpp>
 #include <veriblock/pop/storage/adaptors/inmem_storage_impl.hpp>
 #include <veriblock/pop/storage/adaptors/payloads_provider_impl.hpp>
-#include <veriblock/pop/mock_miner.hpp>
 
 using namespace altintegration;
 
-struct MempoolFixture: public benchmark::Fixture {
+struct MempoolFixture : public benchmark::Fixture {
   MempoolFixture() {
     auto BTCgenesis = GetRegTestBtcBlock();
     auto VBKgenesis = GetRegTestVbkBlock();
@@ -31,14 +31,13 @@ struct MempoolFixture: public benchmark::Fixture {
 
   void SetUp(const ::benchmark::State&) {
     // generate 100 vbk blocks
-    for(int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; i++) {
       auto block = popminer.mineVbkBlocks(1);
       assert(mempool.submit(block->getHeader(), false, val_state));
     }
   }
 
-  void TearDown(const ::benchmark::State&) {
-  }
+  void TearDown(const ::benchmark::State&) {}
 
   AltChainParamsRegTest altparam{};
   VbkChainParamsRegTest vbkparam{};
@@ -58,11 +57,12 @@ struct MempoolFixture: public benchmark::Fixture {
   ValidationState val_state;
 };
 
-BENCHMARK_DEFINE_F(MempoolFixture, Mempool_generatePopData)(benchmark::State& state) {
-    for (auto _ : state) {
-      auto pop_data = mempool.generatePopData();
-      (void)pop_data;
-    }
+BENCHMARK_DEFINE_F(MempoolFixture, Mempool_generatePopData)
+(benchmark::State& state) {
+  for (auto _ : state) {
+    auto pop_data = mempool.generatePopData();
+    (void)pop_data;
+  }
 }
 
 BENCHMARK_REGISTER_F(MempoolFixture, Mempool_generatePopData);

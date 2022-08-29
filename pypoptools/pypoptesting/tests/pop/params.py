@@ -23,7 +23,7 @@ class PopParamsTest(PopIntegrationTestFramework):
             self.log.info("Test passed: bootstrap block={} exists (direction B)!".format(reversed_bootstrap_hash))
         except:
             raise Exception('''
-            It appears that bootstrap block hash can not be found in local blockchain. 
+            It appears that bootstrap block hash can not be found in local blockchain.
             Make sure you specified EXISTING Bootstrap block.
             ''')
 

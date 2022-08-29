@@ -6,15 +6,16 @@
 #ifndef __SIGNUTIL__HPP__
 #define __SIGNUTIL__HPP__
 
-#include <veriblock/pop/blob.hpp>
-#include <veriblock/pop/slice.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
 #include <vector>
+#include <veriblock/pop/blob.hpp>
+#include <veriblock/pop/slice.hpp>
 
 namespace altintegration {
-template <class ElementType> struct Slice;
+template <class ElementType>
+struct Slice;
 
 namespace secp256k1 {
 

@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <cstdlib>
-
 #include <veriblock/pop/uint.hpp>
 
 namespace altintegration {

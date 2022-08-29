@@ -5,7 +5,7 @@
 # Overview
 
 Next step is to add the Pop mempool support for the ALT blockchain. We should implement methods for submitting Pop payloads to the mempool, fetching payloads during the block mining and removing payloads after successfully submitting a block to the blockchain.
-          
+
 # 1. Implement mempool related methods in the pop_service.hpp and pop_service.cpp source files.
 
 [https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp](https://github.com/VeriBlock/vbk-ri-btc/blob/master/src/vbk/pop_service.hpp)

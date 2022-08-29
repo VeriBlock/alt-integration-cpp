@@ -5,7 +5,6 @@
 
 #include <veriblock/pop/entities/publication_data.hpp>
 
-
 #include "veriblock/pop/consts.hpp"
 #include "veriblock/pop/logger.hpp"
 #include "veriblock/pop/serde.hpp"

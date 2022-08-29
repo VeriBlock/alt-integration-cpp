@@ -11,7 +11,7 @@ def start_all(nodes: List[Node]):
 
 
 def connect_all(nodes: List[Node]):
-    # connect each node with each others 
+    # connect each node with each others
     for i in range(len(nodes)):
         for j in range(i, len(nodes)):
             if i == j:

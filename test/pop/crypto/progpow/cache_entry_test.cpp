@@ -23,7 +23,8 @@ TEST(CacheEntry, serde) {
   deserialized.light = progpow::ethash_make_cache(10);
   ValidationState state;
 
-  ASSERT_TRUE(DeserializeFromVbkEncoding(r_stream, deserialized, state)) << state.toString();
+  ASSERT_TRUE(DeserializeFromVbkEncoding(r_stream, deserialized, state))
+      << state.toString();
   ASSERT_EQ(entry.dag, deserialized.dag);
   ASSERT_EQ(entry.light->cache_size, deserialized.light->cache_size);
   ASSERT_EQ(entry.light->epoch, deserialized.light->epoch);

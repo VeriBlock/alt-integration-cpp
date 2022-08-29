@@ -3,6 +3,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include <veriblock/pop/assert.hpp>
 #include <veriblock/pop/base58.hpp>
 #include <veriblock/pop/base59.hpp>
@@ -10,12 +15,6 @@
 #include <veriblock/pop/entities/address.hpp>
 #include <veriblock/pop/hashutil.hpp>
 #include <veriblock/pop/serde.hpp>
-#include <cstddef>
-#include <algorithm>
-#include <cstdint>
-#include <string>
-#include <vector>
-
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/logger.hpp"

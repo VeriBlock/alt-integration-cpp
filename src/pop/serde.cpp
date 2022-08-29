@@ -3,12 +3,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/serde.hpp>
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 #include <limits>
 #include <string>
 #include <vector>
+#include <veriblock/pop/serde.hpp>
 
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/consts.hpp"
@@ -21,7 +21,10 @@
 
 namespace altintegration {
 
-bool checkRange(uint64_t num, uint64_t min, uint64_t max, ValidationState& state) {
+bool checkRange(uint64_t num,
+                uint64_t min,
+                uint64_t max,
+                ValidationState& state) {
   if (num < min) {
     return state.Invalid(
         "range-below",
@@ -87,9 +90,11 @@ bool readSingleByteLenValue(ReadStream& stream,
 
 void writeSingleByteLenValue(WriteStream& stream, Slice<const uint8_t> value) {
   ValidationState state;
-  VBK_ASSERT_MSG(
-      checkRange(value.size(), 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
-      "Can not writeSingleByteLen: " + state.toString());
+  VBK_ASSERT_MSG(checkRange(value.size(),
+                            0,
+                            (uint64_t)(std::numeric_limits<uint8_t>::max)(),
+                            state),
+                 "Can not writeSingleByteLen: " + state.toString());
   stream.writeBE<uint8_t>((uint8_t)value.size());
   stream.write(value);
 }
@@ -107,9 +112,11 @@ void writeVarLenValue(WriteStream& stream, Slice<const uint8_t> value) {
 
 size_t singleByteLenValueSize(Slice<const uint8_t> value) {
   ValidationState state;
-  VBK_ASSERT_MSG(
-      checkRange(value.size(), 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
-      "Can not singleByteLenSize: " + state.toString());
+  VBK_ASSERT_MSG(checkRange(value.size(),
+                            0,
+                            (uint64_t)(std::numeric_limits<uint8_t>::max)(),
+                            state),
+                 "Can not singleByteLenSize: " + state.toString());
   size_t size = 0;
   size += sizeof((uint8_t)value.size());
   size += value.size();
@@ -119,7 +126,8 @@ size_t singleByteLenValueSize(Slice<const uint8_t> value) {
 size_t singleByteLenValueSize(size_t valueSize) {
   ValidationState state;
   VBK_ASSERT_MSG(
-      checkRange(valueSize, 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
+      checkRange(
+          valueSize, 0, (uint64_t)(std::numeric_limits<uint8_t>::max)(), state),
       "Can not singleByteLenSize: " + state.toString());
   size_t size = 0;
   size += sizeof((uint8_t)valueSize);

@@ -6,11 +6,11 @@
 #ifndef VERIBLOCK_POP_CPP_KEYSTONE_CONTAINER_HPP
 #define VERIBLOCK_POP_CPP_KEYSTONE_CONTAINER_HPP
 
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 #include <veriblock/pop/blockchain/block_index.hpp>
 #include <veriblock/pop/entities/altblock.hpp>
-#include <cstddef>
-#include <vector>
-#include <cstdint>
 
 #include "veriblock/pop/json.hpp"
 #include "veriblock/pop/strutil.hpp"
@@ -20,12 +20,14 @@ class ValidationState;
 class WriteStream;
 struct AltBlock;
 struct ReadStream;
-template <typename Block> struct BlockIndex;
+template <typename Block>
+struct BlockIndex;
 
 /**
  * A container for two previous keystones of endorsed block.
  *
- * A keystone is a block which satisfies a condition `isKeystone(block.height) == true`.
+ * A keystone is a block which satisfies a condition `isKeystone(block.height)
+ * == true`.
  */
 struct KeystoneContainer {
   std::vector<uint8_t> firstPreviousKeystone;

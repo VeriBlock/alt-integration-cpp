@@ -6,8 +6,8 @@
 #ifndef VERIBLOCK_POP_CPP_ASSERT_HPP
 #define VERIBLOCK_POP_CPP_ASSERT_HPP
 
-#include "logger.hpp"
 #include "fmt.hpp"
+#include "logger.hpp"
 
 #ifdef VBK_HAS_BUILTIN_EXPECT
 // tell branch predictor that condition is always true

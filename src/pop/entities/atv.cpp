@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
+#include <algorithm>
 #include <veriblock/pop/entities/atv.hpp>
 #include <veriblock/pop/hashutil.hpp>
-#include <algorithm>
-
 
 #include "veriblock/pop/assert.hpp"
 #include "veriblock/pop/consts.hpp"

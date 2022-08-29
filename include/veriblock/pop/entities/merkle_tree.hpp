@@ -234,7 +234,8 @@ struct VbkMerkleTree {
 };
 
 // Calculates an approximate amount of PopTxs in the POP merkle subtree
-inline uint32_t estimateNumberOfPopTxs(const std::vector<VbkMerklePath>& paths) {
+inline uint32_t estimateNumberOfPopTxs(
+    const std::vector<VbkMerklePath>& paths) {
   // validate that we have a continugous indexes set
   std::set<int32_t> indexes;
   int32_t maxIndex = -1;

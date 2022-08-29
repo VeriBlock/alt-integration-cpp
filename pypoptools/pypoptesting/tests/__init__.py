@@ -2,8 +2,8 @@ from .node import (
     NodeRestartTest,
     NodeStartTest,
     NodeStopTest,
-    NodeBasicSyncTest, 
-    NodeConnectTest, 
+    NodeBasicSyncTest,
+    NodeConnectTest,
     NodeGenerateTest,
     NodePreflightTest
 )
@@ -29,7 +29,7 @@ node_tests = [
     NodeStopTest(),
     NodeRestartTest(),
     NodeBasicSyncTest(),
-    NodeConnectTest(), 
+    NodeConnectTest(),
     NodeGenerateTest(),
     NodePreflightTest()
 ]

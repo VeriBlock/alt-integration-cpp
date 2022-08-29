@@ -7,15 +7,15 @@
 #define ALT_INTEGRATION_VERIBLOCK_MEMPOOL_RELATIONS_HPP
 
 #include <memory>
+#include <set>
 #include <utility>
 #include <vector>
-#include <set>
 
+#include "blockchain/alt_block_tree.hpp"
 #include "entities/atv.hpp"
 #include "entities/popdata.hpp"
 #include "entities/vbkblock.hpp"
 #include "entities/vtb.hpp"
-#include "blockchain/alt_block_tree.hpp"
 
 namespace altintegration {
 struct ATV;
@@ -42,7 +42,8 @@ struct VbkPayloadsRelations {
   };
 
   struct AtvCombinedComparator {
-    AtvCombinedComparator(const AltBlockTree& tree) : txFeeComparator(), endorsedAltComparator(tree) {}
+    AtvCombinedComparator(const AltBlockTree& tree)
+        : txFeeComparator(), endorsedAltComparator(tree) {}
     bool operator()(const std::shared_ptr<ATV>& a,
                     const std::shared_ptr<ATV>& b) const;
 

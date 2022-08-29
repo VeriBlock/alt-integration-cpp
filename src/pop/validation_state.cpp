@@ -2,11 +2,11 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
-#include <veriblock/pop/fmt.hpp>
-#include <veriblock/pop/validation_state.hpp>
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <veriblock/pop/fmt.hpp>
+#include <veriblock/pop/validation_state.hpp>
 
 namespace altintegration {
 

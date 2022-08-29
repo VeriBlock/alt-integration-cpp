@@ -2,10 +2,9 @@
 // https://www.veriblock.org
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+#include <algorithm>
 #include <veriblock/pop/entities/keystone_container.hpp>
 #include <veriblock/pop/keystone_util.hpp>
-#include <algorithm>
-
 
 #include "veriblock/pop/blockchain/block_index.hpp"
 #include "veriblock/pop/consts.hpp"

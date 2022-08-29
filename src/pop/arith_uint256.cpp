@@ -3,10 +3,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-#include <veriblock/pop/arith_uint256.hpp>
-#include <veriblock/pop/assert.hpp>
 #include <algorithm>
 #include <array>
+#include <veriblock/pop/arith_uint256.hpp>
+#include <veriblock/pop/assert.hpp>
 
 #include "veriblock/pop/blob.hpp"
 #include "veriblock/pop/consts.hpp"

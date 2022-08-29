@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 
 #include <string>
-
 #include <veriblock/pop/validation_state.hpp>
 
 TEST(ValidationState, BasicFormatting) {

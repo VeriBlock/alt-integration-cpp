@@ -6,9 +6,8 @@
 #ifndef ALT_INTEGRATION_TEST_UTILS_HPP
 #define ALT_INTEGRATION_TEST_UTILS_HPP
 
-#include <cstdint>
-
 #include <algorithm>
+#include <cstdint>
 #include <random>
 #include <vector>
 #include <veriblock/pop/blockchain/alt_chain_params.hpp>
@@ -136,7 +135,7 @@ inline StoredBlockIndex<VbkBlock> getRandomIndex() {
   index.status = rand() & 0x0f;
   index.addon._refCount = 100;
   index.addon._vtbids.push_back(generateRandomBlob<32>());
-  //index.chainWork = generateRandomBytesVector(uint256::size());
+  // index.chainWork = generateRandomBytesVector(uint256::size());
   return index;
 }
 

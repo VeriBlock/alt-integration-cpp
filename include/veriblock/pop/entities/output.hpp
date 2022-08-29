@@ -6,10 +6,10 @@
 #ifndef ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_
 #define ALT_INTEGRATION_INCLUDE_VERIBLOCK_ENTITIES_OUTPUT_HPP_
 
-#include <veriblock/pop/json.hpp>
 #include <cstddef>
 #include <string>
 #include <utility>
+#include <veriblock/pop/json.hpp>
 
 #include "address.hpp"
 #include "coin.hpp"

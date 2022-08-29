@@ -172,4 +172,3 @@ def chain_random(iterators: List[Iterator], sizes: List[int]) -> Iterator:
         index = random.choices(range(n), weights=sizes)[0]
         yield next(iterators[index])
         sizes[index] -= 1
-

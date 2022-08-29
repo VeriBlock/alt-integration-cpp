@@ -34,7 +34,7 @@ class NodeBasicSyncTest(PopIntegrationTestFramework):
         self.log.info("restart all nodes")
         for node in self.nodes:
             node.restart()
-            
+
         assert node_0_tip == self.nodes[0].getbestblock()
         assert node_1_tip == self.nodes[1].getbestblock()
         assert node_2_tip == self.nodes[2].getbestblock()

@@ -10,7 +10,7 @@
 - altintegration::VTB - Cryptographic proof of VeriBlock block header publication in Bitcoin.
 - altintegration::VbkBlock - VeriBlock block header.
 - Payloads - ATV, VTB, VbkBlock sometimes can be referred to as "payloads".
-- altintegration::PopData - contains a list of VTBs, a list of ATVs, and a list of VBK blocks, called "Context". 
+- altintegration::PopData - contains a list of VTBs, a list of ATVs, and a list of VBK blocks, called "Context".
 - APM - Altchain PoP Miner.
 - VPM - VeriBlock PoP Miner.
 - Security Providing Chain (SP Chain) - blockchain, which stores endorsements and is used for providing security for SI chain.
@@ -31,14 +31,14 @@
 
 ![Network Topology](./img/topology.png)
 
-PoP security is built around "endorsing" blocks. 
+PoP security is built around "endorsing" blocks.
 When miners want to increase likelyhood of finalizing a block, they "endorse" it and blocks after it by creating "endorsing transaction" in SP chain.
 
 In example above, we see 3 chains (top-down): Bitcoin, VeriBlock, Altchain.
 
 In Altchain, we want to finalize block A100, then:
 1. APM creates altintegration::VbkTx, which contains altintegration::PublicationData - an entity, which contains Endorsed Block header, and Payout Information - for rewarding APM for this endorsement.
-2. This VBK TX is sent to VeriBlock. 
+2. This VBK TX is sent to VeriBlock.
 3. VBK POW miners create block V54 - this block will include this VBK TX from step above.
 4. APM builds cryptographic proof that endorsement of Altchain block is added to main chain. This proof is named ATV (Altchain to VeriBlock publication) and includes: VBK TX, Context (VBK blocks connecting V54 to V51 - V52..V53), Block Of Proof (V54), Merkle Path which proves that VBK TX is really inside V54.
 5. Then all this data is sent to Altchain, and added to PoP MemPool.
@@ -51,12 +51,12 @@ Continuing this example, VPM does exactly the same algorithm but with VBK blocks
 
 @note Endorsement Settlement Interval for VeriBlock is 400 blocks, PoP Payout Delay is also 400 blocks.
 
-Block V54 contains proof for A100, and B16 contains proof for block V56. 
+Block V54 contains proof for A100, and B16 contains proof for block V56.
 Since V56 is after V54, and V56 is finalized, we finalize all previous blocks, including V54, thus
 Altchain transitively inherits security of Bitcoin.
 
 @note We count endorsements, whose according blocks of proof **are on main chains** of according blockchains. An endorsement whose block of proof is not on the main chain of SP chain is not eligible for PoP Payout.
 
-You can also notice that VTBs and VBK blocks are sent to Altchain. 
+You can also notice that VTBs and VBK blocks are sent to Altchain.
 This is needed to communicate Bitcoin and VeriBlock consensus information to Altchain.
 APM implementation continuously submits VBK blocks and VTBs found on VeriBlock network to Altchain, so it is important to have at least 1 APM running continuously for the whole network.

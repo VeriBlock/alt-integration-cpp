@@ -40,7 +40,7 @@ struct BlocksOwner {
     // destroy chain in reverse order (from tip to root)
     for (auto it = blocks.rbegin(); it != blocks.rend(); ++it) {
       auto* blk = (*it).get();
-      if(!blk->isDeleted()) {
+      if (!blk->isDeleted()) {
         blk->deleteTemporarily();
       }
       blk->disconnectFromPrev();

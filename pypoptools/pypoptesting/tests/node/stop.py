@@ -11,7 +11,7 @@ class NodeStopTest(PopIntegrationTestFramework):
     def run_test(self):
         for node in self.nodes:
             node.stop()
-        
+
         for node in self.nodes:
             try:
                 node.getbestblock()

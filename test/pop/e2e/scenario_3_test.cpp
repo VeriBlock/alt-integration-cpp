@@ -13,7 +13,7 @@ using namespace altintegration;
  * VBK:
  *
  * o-o-o-o-o-o-o-o-o-o-o-o--o-o-[Height 66, popTx1 endorsement in the Btc block 1, popTx2 endorsement in the Btc block 103]-o-o-o (tip, 69 blocks)
- *           \[Height 59, popTx3 endorsement in the Btc block 12] (59 blocks, fork)   
+ *           \[Height 59, popTx3 endorsement in the Btc block 12] (59 blocks, fork)
  *
  * ALT:
  * o-o-o-o-o-o-o-[Height 11: Payloads1 with VTB popTx2]-[Height 12: Payloads2 with VTB popTx3]-[Height 12: Payloads3 with VTB popTx1]

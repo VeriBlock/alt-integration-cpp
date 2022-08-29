@@ -19,7 +19,6 @@
 
 #include <cstdint>
 #include <string>
-
 #include <veriblock/pop/uint.hpp>
 
 #define VBK_ETHASH_REVISION 23

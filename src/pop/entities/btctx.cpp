@@ -26,9 +26,7 @@ void BtcTx::toVbkEncoding(WriteStream& stream) const {
 
 void BtcTx::toRaw(WriteStream& stream) const { stream.write(tx); }
 
-size_t BtcTx::estimateSize() const {
-  return varLenValueSize(tx);
-}
+size_t BtcTx::estimateSize() const { return varLenValueSize(tx); }
 
 uint256 BtcTx::getHash() const { return sha256twice(tx); }
 

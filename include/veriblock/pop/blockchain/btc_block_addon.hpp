@@ -37,7 +37,7 @@ struct BtcBlockAddon {
   void removeRef(ref_height_t referencedAtHeight);
 
   void clearRefs();
-  
+
   void insertBlockOfProofEndorsement(const VbkEndorsement* e);
 
   bool eraseLastFromBlockOfProofEndorsement(const VbkEndorsement* endorsement);
