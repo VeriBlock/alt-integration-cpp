@@ -109,54 +109,53 @@ $(document).ready(function(){initNavTree('cache_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">class </span>ValidationState;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">class </span>WriteStream;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">namespace </span>progpow {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">struct </span>ethash_cache;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}  <span class="comment">// namespace progpow</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">struct </span>ReadStream;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structaltintegration_1_1CacheEntry.html">   28</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1CacheEntry.html">CacheEntry</a> {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  std::shared_ptr&lt;progpow::ethash_cache&gt; light = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  std::vector&lt;uint32_t&gt; dag;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="keywordtype">void</span> toVbkEncoding(<a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a>&amp; stream) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>};</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(<a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                                <a class="code hl_struct" href="structaltintegration_1_1CacheEntry.html">CacheEntry</a>&amp; out,</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>                                <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="structaltintegration_1_1EthashCacheI.html">   39</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1EthashCacheI.html">EthashCacheI</a> {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  <span class="keyword">virtual</span> <a class="code hl_struct" href="structaltintegration_1_1EthashCacheI.html">~EthashCacheI</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="keyword">virtual</span> std::shared_ptr&lt;CacheEntry&gt; getOrDefault(</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      uint64_t epoch, std::function&lt;std::shared_ptr&lt;CacheEntry&gt;()&gt; factory) = 0;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> clear() = 0;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>};</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structaltintegration_1_1ProgpowHeaderCacheI.html">   48</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1ProgpowHeaderCacheI.html">ProgpowHeaderCacheI</a> {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keyword">virtual</span> <a class="code hl_struct" href="structaltintegration_1_1ProgpowHeaderCacheI.html">~ProgpowHeaderCacheI</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> insert(<span class="keyword">const</span> <a class="code hl_class" href="structaltintegration_1_1Blob.html">uint256</a>&amp; key, <a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a> value) = 0;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> tryGet(<span class="keyword">const</span> <a class="code hl_class" href="structaltintegration_1_1Blob.html">uint256</a>&amp; key, <a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a>&amp; value) = 0;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> clear() = 0;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>};</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace </span>progpow {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">struct </span>ethash_cache;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}  <span class="comment">// namespace progpow</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">struct </span>ReadStream;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structaltintegration_1_1CacheEntry.html">   27</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1CacheEntry.html">CacheEntry</a> {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  std::shared_ptr&lt;progpow::ethash_cache&gt; light = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  std::vector&lt;uint32_t&gt; dag;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keywordtype">void</span> toVbkEncoding(<a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a>&amp; stream) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>};</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(<a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream,</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                                <a class="code hl_struct" href="structaltintegration_1_1CacheEntry.html">CacheEntry</a>&amp; out,</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                                <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structaltintegration_1_1EthashCacheI.html">   38</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1EthashCacheI.html">EthashCacheI</a> {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keyword">virtual</span> <a class="code hl_struct" href="structaltintegration_1_1EthashCacheI.html">~EthashCacheI</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keyword">virtual</span> std::shared_ptr&lt;CacheEntry&gt; getOrDefault(</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      uint64_t epoch, std::function&lt;std::shared_ptr&lt;CacheEntry&gt;()&gt; factory) = 0;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> clear() = 0;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>};</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structaltintegration_1_1ProgpowHeaderCacheI.html">   47</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1ProgpowHeaderCacheI.html">ProgpowHeaderCacheI</a> {</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keyword">virtual</span> <a class="code hl_struct" href="structaltintegration_1_1ProgpowHeaderCacheI.html">~ProgpowHeaderCacheI</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> insert(<span class="keyword">const</span> <a class="code hl_class" href="structaltintegration_1_1Blob.html">uint256</a>&amp; key, <a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a> value) = 0;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> tryGet(<span class="keyword">const</span> <a class="code hl_class" href="structaltintegration_1_1Blob.html">uint256</a>&amp; key, <a class="code hl_struct" href="structaltintegration_1_1Blob.html">uint192</a>&amp; value) = 0;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> clear() = 0;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>};</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
 <div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 <div class="ttc" id="astructaltintegration_1_1Blob_html"><div class="ttname"><a href="structaltintegration_1_1Blob.html">altintegration::Blob&lt; SHA256_HASH_SIZE &gt;</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1CacheEntry_html"><div class="ttname"><a href="structaltintegration_1_1CacheEntry.html">altintegration::CacheEntry</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00028">cache.hpp:28</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1EthashCacheI_html"><div class="ttname"><a href="structaltintegration_1_1EthashCacheI.html">altintegration::EthashCacheI</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00039">cache.hpp:39</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1ProgpowHeaderCacheI_html"><div class="ttname"><a href="structaltintegration_1_1ProgpowHeaderCacheI.html">altintegration::ProgpowHeaderCacheI</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00048">cache.hpp:48</a></div></div>
-<div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00026">read_stream.hpp:26</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1CacheEntry_html"><div class="ttname"><a href="structaltintegration_1_1CacheEntry.html">altintegration::CacheEntry</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00027">cache.hpp:27</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1EthashCacheI_html"><div class="ttname"><a href="structaltintegration_1_1EthashCacheI.html">altintegration::EthashCacheI</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00038">cache.hpp:38</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ProgpowHeaderCacheI_html"><div class="ttname"><a href="structaltintegration_1_1ProgpowHeaderCacheI.html">altintegration::ProgpowHeaderCacheI</a></div><div class="ttdef"><b>Definition:</b> <a href="cache_8hpp_source.html#l00047">cache.hpp:47</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00022">read_stream.hpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <script>

@@ -1,10 +1,10 @@
 <map id="altintegration::btc::TxIn" name="altintegration::btc::TxIn">
-<area shape="rect" id="node1" title="An input of a transaction." alt="" coords="157,1049,364,1156"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1btc_1_1OutPoint.html" title="An outpoint &#45; a combination of a transaction hash and an index n into its vout." alt="" coords="5,880,212,987"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="21,505,196,817"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="29,145,189,443"/>
-<area shape="rect" id="node5" title=" " alt="" coords="233,623,376,700"/>
-<area shape="rect" id="node8" title=" " alt="" coords="348,887,501,979"/>
-<area shape="rect" id="node6" title=" " alt="" coords="317,255,429,333"/>
+<area shape="rect" id="node1" title="An input of a transaction." alt="" coords="157,1020,364,1127"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1btc_1_1OutPoint.html" title="An outpoint &#45; a combination of a transaction hash and an index n into its vout." alt="" coords="5,851,212,957"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="21,491,196,788"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="29,145,189,428"/>
+<area shape="rect" id="node5" title=" " alt="" coords="233,601,376,678"/>
+<area shape="rect" id="node8" title=" " alt="" coords="348,858,501,950"/>
+<area shape="rect" id="node6" title=" " alt="" coords="317,248,429,325"/>
 <area shape="rect" id="node7" title=" " alt="" coords="353,5,392,83"/>
 </map>

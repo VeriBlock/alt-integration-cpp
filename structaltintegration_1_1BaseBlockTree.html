@@ -622,11 +622,11 @@ template&lt;typename Block &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00046">46</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   46</span>                                                                     {</div>
-<div class="line"><span class="lineno">   47</span>  <span class="comment">// do nothing</span></div>
-<div class="line"><span class="lineno">   48</span>  <span class="comment">// BTC tree is not protected</span></div>
-<div class="line"><span class="lineno">   49</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00025">25</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   25</span>                                                                     {</div>
+<div class="line"><span class="lineno">   26</span>  <span class="comment">// do nothing</span></div>
+<div class="line"><span class="lineno">   27</span>  <span class="comment">// BTC tree is not protected</span></div>
+<div class="line"><span class="lineno">   28</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1431,7 +1431,7 @@ template&lt;typename Block &gt; </div>
 <div class="line"><span class="lineno">  175</span>    this-&gt;<a class="code hl_variable" href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">isLoadingBlocks_</a> = <span class="keyword">false</span>;</div>
 <div class="line"><span class="lineno">  176</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">  177</span>  }</div>
-<div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00046">strutil.hpp:46</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00044">strutil.hpp:44</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_a901c1f0b3e9a7532b03fd9eef685f901"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#a901c1f0b3e9a7532b03fd9eef685f901">altintegration::BaseBlockTree::isLoadingBlocks_</a></div><div class="ttdeci">bool isLoadingBlocks_</div><div class="ttdoc">if true, we're in &quot;loading blocks&quot; state</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01149">base_block_tree.hpp:1149</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1BaseBlockTree_html_acf6e8a17801c54de0761f794dc6408f9"><div class="ttname"><a href="structaltintegration_1_1BaseBlockTree.html#acf6e8a17801c54de0761f794dc6408f9">altintegration::BaseBlockTree::isLoaded_</a></div><div class="ttdeci">bool isLoaded_</div><div class="ttdoc">if true, we can no longer execute loadBlock/loadTip on this tree.</div><div class="ttdef"><b>Definition:</b> <a href="base__block__tree_8hpp_source.html#l01151">base_block_tree.hpp:1151</a></div></div>
 </div><!-- fragment -->
@@ -1463,11 +1463,11 @@ template&lt;typename Block &gt; </div>
 <p >In this weird case, when Block=<a class="el" href="structaltintegration_1_1VbkBlock.html" title="Veriblock block.">VbkBlock</a>, we may call <code>getBlockIndex(block-&gt;previousBlock)</code>, it is a call <code>getBlockIndex(<a class="el" href="structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size.">Blob</a>&lt;12&gt;). But when</code>getBlockIndex` accepts it, it does an implicit cast to full hash (hash_t), adding zeroes in the end. Then, .trimLE returns 12 zeroes.</p>
 <p >This hack allows us to inject explicit conversion hash_t (Blob&lt;24&gt;) -&gt; prev_block_hash_t (Blob&lt;12&gt;). </p>
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00326">326</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  328</span>                           {</div>
-<div class="line"><span class="lineno">  329</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
-<div class="line"><span class="lineno">  330</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
-<div class="line"><span class="lineno">  331</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00305">305</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  307</span>                           {</div>
+<div class="line"><span class="lineno">  308</span>  <span class="comment">// do an explicit cast from hash_t -&gt; prev_block_hash_t</span></div>
+<div class="line"><span class="lineno">  309</span>  <span class="keywordflow">return</span> h.template trimLE&lt;prev_block_hash_t::size()&gt;();</div>
+<div class="line"><span class="lineno">  310</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

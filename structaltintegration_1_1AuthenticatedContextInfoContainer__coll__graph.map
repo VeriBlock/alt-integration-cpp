@@ -1,10 +1,10 @@
 <map id="altintegration::AuthenticatedContextInfoContainer" name="altintegration::AuthenticatedContextInfoContainer">
-<area shape="rect" id="node1" title="Contains ContextInfoContainer and merkle path which authenticates hash of ContextInfoContainer to a b..." alt="" coords="95,1175,278,1340"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1ContextInfoContainer.html" title="Container of context info for endorsed block." alt="" coords="5,866,173,1046"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1KeystoneContainer.html" title="A container for two previous keystones of endorsed block." alt="" coords="10,521,169,657"/>
+<area shape="rect" id="node1" title="Contains ContextInfoContainer and merkle path which authenticates hash of ContextInfoContainer to a b..." alt="" coords="95,1145,278,1311"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1ContextInfoContainer.html" title="Container of context info for endorsed block." alt="" coords="5,844,173,1024"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1KeystoneContainer.html" title="A container for two previous keystones of endorsed block." alt="" coords="10,513,169,649"/>
 <area shape="rect" id="node4" title=" " alt="" coords="18,285,161,363"/>
 <area shape="rect" id="node5" title=" " alt="" coords="33,145,145,223"/>
 <area shape="rect" id="node6" title=" " alt="" coords="70,5,109,83"/>
-<area shape="rect" id="node7" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="198,800,373,1112"/>
-<area shape="rect" id="node8" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="205,440,365,737"/>
+<area shape="rect" id="node7" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="198,785,373,1083"/>
+<area shape="rect" id="node8" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="205,440,365,723"/>
 </map>

@@ -1349,7 +1349,7 @@ chained state </td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00060">60</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00039">39</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
 
 </div>
 </div>
@@ -1735,16 +1735,16 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00498">498</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  498</span>                                          {</div>
-<div class="line"><span class="lineno">  499</span>  T t;</div>
-<div class="line"><span class="lineno">  500</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  501</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a>(hex, t, state);</div>
-<div class="line"><span class="lineno">  502</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  503</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  504</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00491">491</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  491</span>                                          {</div>
+<div class="line"><span class="lineno">  492</span>  T t;</div>
+<div class="line"><span class="lineno">  493</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  494</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">DeserializeFromHex</a>(hex, t, state);</div>
+<div class="line"><span class="lineno">  495</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  496</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  497</span>}</div>
 <div class="ttc" id="aclassaltintegration_1_1ValidationState_html"><div class="ttname"><a href="classaltintegration_1_1ValidationState.html">altintegration::ValidationState</a></div><div class="ttdoc">Class that is used for storing validation state.</div><div class="ttdef"><b>Definition:</b> <a href="validation__state_8hpp_source.html#l00028">validation_state.hpp:28</a></div></div>
-<div class="ttc" id="anamespacealtintegration_html_a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><div class="ttname"><a href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">altintegration::DeserializeFromHex</a></div><div class="ttdeci">bool DeserializeFromHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00427">serde.hpp:427</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_a2270bfd565f6b5e5d6e4f2bd6f01d4fa"><div class="ttname"><a href="namespacealtintegration.html#a2270bfd565f6b5e5d6e4f2bd6f01d4fa">altintegration::DeserializeFromHex</a></div><div class="ttdeci">bool DeserializeFromHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00420">serde.hpp:420</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1767,14 +1767,14 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00476">476</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  476</span>                                                   {</div>
-<div class="line"><span class="lineno">  477</span>  T t;</div>
-<div class="line"><span class="lineno">  478</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  479</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(raw, t, state);</div>
-<div class="line"><span class="lineno">  480</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  481</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  482</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00469">469</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  469</span>                                                   {</div>
+<div class="line"><span class="lineno">  470</span>  T t;</div>
+<div class="line"><span class="lineno">  471</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  472</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(raw, t, state);</div>
+<div class="line"><span class="lineno">  473</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  474</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  475</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a3e464ea06b8e897aff3cc896eab17638"><div class="ttname"><a href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">altintegration::DeserializeFromRaw</a></div><div class="ttdeci">bool DeserializeFromRaw(ReadStream &amp;stream, AltBlock &amp;out, ValidationState &amp;state, const AltBlock::hash_t &amp;=AltBlock::hash_t{})</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
 </div>
@@ -1798,15 +1798,15 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00509">509</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  509</span>                                             {</div>
-<div class="line"><span class="lineno">  510</span>  T t;</div>
-<div class="line"><span class="lineno">  511</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  512</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a>(hex, t, state);</div>
-<div class="line"><span class="lineno">  513</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can`t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  514</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  515</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_ae263b96770a32f74ed8fd29e1f446fc0"><div class="ttname"><a href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">altintegration::DeserializeFromRawHex</a></div><div class="ttdeci">bool DeserializeFromRawHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00437">serde.hpp:437</a></div></div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00502">502</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  502</span>                                             {</div>
+<div class="line"><span class="lineno">  503</span>  T t;</div>
+<div class="line"><span class="lineno">  504</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  505</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">DeserializeFromRawHex</a>(hex, t, state);</div>
+<div class="line"><span class="lineno">  506</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can`t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  507</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  508</span>}</div>
+<div class="ttc" id="anamespacealtintegration_html_ae263b96770a32f74ed8fd29e1f446fc0"><div class="ttname"><a href="namespacealtintegration.html#ae263b96770a32f74ed8fd29e1f446fc0">altintegration::DeserializeFromRawHex</a></div><div class="ttdeci">bool DeserializeFromRawHex(const std::string &amp;hex, T &amp;out, ValidationState &amp;state)</div><div class="ttdoc">Deserialize from HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00430">serde.hpp:430</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1829,14 +1829,14 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <dl class="section note"><dt>Note</dt><dd>will fail on assert if can't be deserialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00487">487</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  487</span>                                                             {</div>
-<div class="line"><span class="lineno">  488</span>  T t;</div>
-<div class="line"><span class="lineno">  489</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
-<div class="line"><span class="lineno">  490</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state);</div>
-<div class="line"><span class="lineno">  491</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">  492</span>  <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">  493</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00480">480</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  480</span>                                                             {</div>
+<div class="line"><span class="lineno">  481</span>  T t;</div>
+<div class="line"><span class="lineno">  482</span>  <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a> state;</div>
+<div class="line"><span class="lineno">  483</span>  <span class="keywordtype">bool</span> result = <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(raw, t, state);</div>
+<div class="line"><span class="lineno">  484</span>  VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t deserialize: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">  485</span>  <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">  486</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a88b8b3c0c6658d96fe684ffad67e2476"><div class="ttname"><a href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">altintegration::DeserializeFromVbkEncoding</a></div><div class="ttdeci">bool DeserializeFromVbkEncoding(ReadStream &amp;stream, AltBlockAddon &amp;out, ValidationState &amp;state)</div><div class="ttdoc">This is an overloaded member function, provided for convenience. It differs from the above function o...</div></div>
 </div><!-- fragment -->
 </div>
@@ -1984,14 +1984,14 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00427">427</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  429</span>                                                {</div>
-<div class="line"><span class="lineno">  430</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
-<div class="line"><span class="lineno">  431</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  432</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  433</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00420">420</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  422</span>                                                {</div>
+<div class="line"><span class="lineno">  423</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
+<div class="line"><span class="lineno">  424</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  425</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  426</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_adcf52464886aec4b945cfa999efab6d2"><div class="ttname"><a href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">altintegration::ParseHex</a></div><div class="ttdeci">std::vector&lt; uint8_t &gt; ParseHex(const char *psz)</div><div class="ttdoc">Parse bytes from hex.</div></div>
-<div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00026">read_stream.hpp:26</a></div></div>
+<div class="ttc" id="astructaltintegration_1_1ReadStream_html"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html">altintegration::ReadStream</a></div><div class="ttdoc">Binary reading stream, that is useful during binary deserialization.</div><div class="ttdef"><b>Definition:</b> <a href="read__stream_8hpp_source.html#l00022">read_stream.hpp:22</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2029,11 +2029,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00418">418</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  420</span>                                                {</div>
-<div class="line"><span class="lineno">  421</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  422</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  423</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00411">411</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  413</span>                                                {</div>
+<div class="line"><span class="lineno">  414</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  415</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  416</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2071,12 +2071,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00437">437</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  439</span>                                                   {</div>
-<div class="line"><span class="lineno">  440</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
-<div class="line"><span class="lineno">  441</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  442</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  443</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00430">430</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  432</span>                                                   {</div>
+<div class="line"><span class="lineno">  433</span>  <span class="keyword">auto</span> data = <a class="code hl_function" href="namespacealtintegration.html#adcf52464886aec4b945cfa999efab6d2">ParseHex</a>(hex);</div>
+<div class="line"><span class="lineno">  434</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  435</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a3e464ea06b8e897aff3cc896eab17638">DeserializeFromRaw</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  436</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2157,32 +2157,32 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="pop__state_8hpp_source.html#l00111">111</a> of file <a class="el" href="pop__state_8hpp_source.html">pop_state.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  113</span>                                                        {</div>
-<div class="line"><span class="lineno">  114</span>  std::vector&lt;T&gt; endorsements;</div>
-<div class="line"><span class="lineno">  115</span>  <span class="keyword">auto</span> max = std::max(<a class="code hl_variable" href="namespacealtintegration.html#a049bbf9c96cb5ab4f392f169a09cf8c8">MAX_POPDATA_ATV</a>, <a class="code hl_variable" href="namespacealtintegration.html#aee63841a399e1460dc669cd3e7066ee3">MAX_POPDATA_VTB</a>);</div>
-<div class="line"><span class="lineno">  116</span>  <span class="keywordflow">if</span> (!readArrayOf&lt;T&gt;(</div>
-<div class="line"><span class="lineno">  117</span>          stream,</div>
-<div class="line"><span class="lineno">  118</span>          endorsements,</div>
-<div class="line"><span class="lineno">  119</span>          state,</div>
-<div class="line"><span class="lineno">  120</span>          0,</div>
-<div class="line"><span class="lineno">  121</span>          max,</div>
-<div class="line"><span class="lineno">  122</span>          [](<a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream, T&amp; t, <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) -&gt; <span class="keywordtype">bool</span> {</div>
-<div class="line"><span class="lineno">  123</span>            <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, t, state);</div>
-<div class="line"><span class="lineno">  124</span>          })) {</div>
-<div class="line"><span class="lineno">  125</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;popstate-bad-endorsement&quot;</span>);</div>
+<p class="definition">Definition at line <a class="el" href="pop__state_8hpp_source.html#l00104">104</a> of file <a class="el" href="pop__state_8hpp_source.html">pop_state.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  106</span>                                                        {</div>
+<div class="line"><span class="lineno">  107</span>  std::vector&lt;T&gt; endorsements;</div>
+<div class="line"><span class="lineno">  108</span>  <span class="keyword">auto</span> max = std::max(<a class="code hl_variable" href="namespacealtintegration.html#a049bbf9c96cb5ab4f392f169a09cf8c8">MAX_POPDATA_ATV</a>, <a class="code hl_variable" href="namespacealtintegration.html#aee63841a399e1460dc669cd3e7066ee3">MAX_POPDATA_VTB</a>);</div>
+<div class="line"><span class="lineno">  109</span>  <span class="keywordflow">if</span> (!readArrayOf&lt;T&gt;(</div>
+<div class="line"><span class="lineno">  110</span>          stream,</div>
+<div class="line"><span class="lineno">  111</span>          endorsements,</div>
+<div class="line"><span class="lineno">  112</span>          state,</div>
+<div class="line"><span class="lineno">  113</span>          0,</div>
+<div class="line"><span class="lineno">  114</span>          max,</div>
+<div class="line"><span class="lineno">  115</span>          [](<a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a>&amp; stream, T&amp; t, <a class="code hl_class" href="classaltintegration_1_1ValidationState.html">ValidationState</a>&amp; state) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><span class="lineno">  116</span>            <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, t, state);</div>
+<div class="line"><span class="lineno">  117</span>          })) {</div>
+<div class="line"><span class="lineno">  118</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;popstate-bad-endorsement&quot;</span>);</div>
+<div class="line"><span class="lineno">  119</span>  }</div>
+<div class="line"><span class="lineno">  120</span> </div>
+<div class="line"><span class="lineno">  121</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; endorsement : endorsements) {</div>
+<div class="line"><span class="lineno">  122</span>    <span class="keyword">auto</span> it = out._containingEndorsements.emplace(</div>
+<div class="line"><span class="lineno">  123</span>        endorsement.getId(), std::make_shared&lt;T&gt;(endorsement));</div>
+<div class="line"><span class="lineno">  124</span>    <span class="comment">// newly created endorsement must not be null</span></div>
+<div class="line"><span class="lineno">  125</span>    VBK_ASSERT(it-&gt;second);</div>
 <div class="line"><span class="lineno">  126</span>  }</div>
-<div class="line"><span class="lineno">  127</span> </div>
-<div class="line"><span class="lineno">  128</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; endorsement : endorsements) {</div>
-<div class="line"><span class="lineno">  129</span>    <span class="keyword">auto</span> it = out._containingEndorsements.emplace(</div>
-<div class="line"><span class="lineno">  130</span>        endorsement.getId(), std::make_shared&lt;T&gt;(endorsement));</div>
-<div class="line"><span class="lineno">  131</span>    <span class="comment">// newly created endorsement must not be null</span></div>
-<div class="line"><span class="lineno">  132</span>    VBK_ASSERT(it-&gt;second);</div>
-<div class="line"><span class="lineno">  133</span>  }</div>
-<div class="line"><span class="lineno">  134</span>  <span class="comment">// do not restore &#39;endorsedBy&#39; here, it will be done later during tree</span></div>
-<div class="line"><span class="lineno">  135</span>  <span class="comment">// loading</span></div>
-<div class="line"><span class="lineno">  136</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  137</span>}</div>
+<div class="line"><span class="lineno">  127</span>  <span class="comment">// do not restore &#39;endorsedBy&#39; here, it will be done later during tree</span></div>
+<div class="line"><span class="lineno">  128</span>  <span class="comment">// loading</span></div>
+<div class="line"><span class="lineno">  129</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  130</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a049bbf9c96cb5ab4f392f169a09cf8c8"><div class="ttname"><a href="namespacealtintegration.html#a049bbf9c96cb5ab4f392f169a09cf8c8">altintegration::MAX_POPDATA_ATV</a></div><div class="ttdeci">constexpr const auto MAX_POPDATA_ATV</div><div class="ttdoc">absolute maximum number of ATV blocks per ALT block</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00082">consts.hpp:82</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_aee63841a399e1460dc669cd3e7066ee3"><div class="ttname"><a href="namespacealtintegration.html#aee63841a399e1460dc669cd3e7066ee3">altintegration::MAX_POPDATA_VTB</a></div><div class="ttdeci">constexpr const auto MAX_POPDATA_VTB</div><div class="ttdoc">absolute maximum number of VTB blocks per ALT block</div><div class="ttdef"><b>Definition:</b> <a href="consts_8hpp_source.html#l00080">consts.hpp:80</a></div></div>
 </div><!-- fragment -->
@@ -2289,11 +2289,11 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00409">409</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  411</span>                                                        {</div>
-<div class="line"><span class="lineno">  412</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
-<div class="line"><span class="lineno">  413</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
-<div class="line"><span class="lineno">  414</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00402">402</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  404</span>                                                        {</div>
+<div class="line"><span class="lineno">  405</span>  <a class="code hl_struct" href="structaltintegration_1_1ReadStream.html">ReadStream</a> stream(data);</div>
+<div class="line"><span class="lineno">  406</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a88b8b3c0c6658d96fe684ffad67e2476">DeserializeFromVbkEncoding</a>(stream, out, state);</div>
+<div class="line"><span class="lineno">  407</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2342,11 +2342,11 @@ template&lt;typename T , typename  = typename std::enable_if&lt;sizeof(typename 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="base59_8hpp_source.html#l00029">29</a> of file <a class="el" href="base59_8hpp_source.html">base59.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   29</span>                                           {</div>
-<div class="line"><span class="lineno">   30</span>  <span class="keyword">const</span> uint8_t *ptr = container.data();</div>
-<div class="line"><span class="lineno">   31</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a9f53544a6e6cc06290fbaea369142eb4">EncodeBase59</a>(ptr, ptr + container.size());</div>
-<div class="line"><span class="lineno">   32</span>}</div>
+<p class="definition">Definition at line <a class="el" href="base59_8hpp_source.html#l00026">26</a> of file <a class="el" href="base59_8hpp_source.html">base59.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   26</span>                                           {</div>
+<div class="line"><span class="lineno">   27</span>  <span class="keyword">const</span> uint8_t *ptr = container.data();</div>
+<div class="line"><span class="lineno">   28</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a9f53544a6e6cc06290fbaea369142eb4">EncodeBase59</a>(ptr, ptr + container.size());</div>
+<div class="line"><span class="lineno">   29</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a9f53544a6e6cc06290fbaea369142eb4"><div class="ttname"><a href="namespacealtintegration.html#a9f53544a6e6cc06290fbaea369142eb4">altintegration::EncodeBase59</a></div><div class="ttdeci">std::string EncodeBase59(const unsigned char *pbegin, const unsigned char *pend)</div><div class="ttdoc">Encode input bytes to base59.</div></div>
 </div><!-- fragment -->
 </div>
@@ -2379,10 +2379,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00402">402</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  403</span>                                                              {</div>
-<div class="line"><span class="lineno">  404</span>  <span class="keywordflow">return</span> estimateContainerSize&lt;std::vector&lt;T&gt;&gt;(t, f);</div>
-<div class="line"><span class="lineno">  405</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00395">395</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  396</span>                                                              {</div>
+<div class="line"><span class="lineno">  397</span>  <span class="keywordflow">return</span> estimateContainerSize&lt;std::vector&lt;T&gt;&gt;(t, f);</div>
+<div class="line"><span class="lineno">  398</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2626,12 +2626,12 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>converted byte array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00065">65</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   65</span>                                       {</div>
-<div class="line"><span class="lineno">   66</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> inputStream;</div>
-<div class="line"><span class="lineno">   67</span>  inputStream.writeBE(input);</div>
-<div class="line"><span class="lineno">   68</span>  <span class="keywordflow">return</span> inputStream.data();</div>
-<div class="line"><span class="lineno">   69</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00058">58</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   58</span>                                       {</div>
+<div class="line"><span class="lineno">   59</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> inputStream;</div>
+<div class="line"><span class="lineno">   60</span>  inputStream.writeBE(input);</div>
+<div class="line"><span class="lineno">   61</span>  <span class="keywordflow">return</span> inputStream.data();</div>
+<div class="line"><span class="lineno">   62</span>}</div>
 <div class="ttc" id="aclassaltintegration_1_1WriteStream_html"><div class="ttname"><a href="classaltintegration_1_1WriteStream.html">altintegration::WriteStream</a></div><div class="ttdoc">Binary writer that is useful for binary serialization.</div><div class="ttdef"><b>Definition:</b> <a href="write__stream_8hpp_source.html#l00020">write_stream.hpp:20</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -3090,15 +3090,15 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="strutil_8hpp_source.html#l00062">62</a> of file <a class="el" href="strutil_8hpp_source.html">strutil.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   62</span>                                                               {</div>
-<div class="line"><span class="lineno">   63</span>  <span class="keywordflow">if</span> (reverseHex) {</div>
-<div class="line"><span class="lineno">   64</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(vch.rbegin(), vch.rend());</div>
-<div class="line"><span class="lineno">   65</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">   66</span>    <span class="keywordflow">return</span> HexStr(vch.begin(), vch.end());</div>
-<div class="line"><span class="lineno">   67</span>  }</div>
-<div class="line"><span class="lineno">   68</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00046">strutil.hpp:46</a></div></div>
+<p class="definition">Definition at line <a class="el" href="strutil_8hpp_source.html#l00060">60</a> of file <a class="el" href="strutil_8hpp_source.html">strutil.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   60</span>                                                               {</div>
+<div class="line"><span class="lineno">   61</span>  <span class="keywordflow">if</span> (reverseHex) {</div>
+<div class="line"><span class="lineno">   62</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(vch.rbegin(), vch.rend());</div>
+<div class="line"><span class="lineno">   63</span>  } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">   64</span>    <span class="keywordflow">return</span> HexStr(vch.begin(), vch.end());</div>
+<div class="line"><span class="lineno">   65</span>  }</div>
+<div class="line"><span class="lineno">   66</span>}</div>
+<div class="ttc" id="anamespacealtintegration_html_a8b332a0d662f714a005e16089931237f"><div class="ttname"><a href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">altintegration::HexStr</a></div><div class="ttdeci">std::string HexStr(const T itbegin, const T itend)</div><div class="ttdoc">Convert bytes to hex.</div><div class="ttdef"><b>Definition:</b> <a href="strutil_8hpp_source.html#l00044">strutil.hpp:44</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3130,20 +3130,20 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="strutil_8hpp_source.html#l00046">46</a> of file <a class="el" href="strutil_8hpp_source.html">strutil.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   46</span>                                                 {</div>
-<div class="line"><span class="lineno">   47</span>  std::string rv;</div>
-<div class="line"><span class="lineno">   48</span>  <span class="comment">// clang-format off</span></div>
-<div class="line"><span class="lineno">   49</span>  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> hexmap[16] = {<span class="charliteral">&#39;0&#39;</span>,<span class="charliteral">&#39;1&#39;</span>,<span class="charliteral">&#39;2&#39;</span>,<span class="charliteral">&#39;3&#39;</span>,<span class="charliteral">&#39;4&#39;</span>,<span class="charliteral">&#39;5&#39;</span>,<span class="charliteral">&#39;6&#39;</span>,<span class="charliteral">&#39;7&#39;</span>,<span class="charliteral">&#39;8&#39;</span>,<span class="charliteral">&#39;9&#39;</span>,<span class="charliteral">&#39;a&#39;</span>,<span class="charliteral">&#39;b&#39;</span>,<span class="charliteral">&#39;c&#39;</span>,<span class="charliteral">&#39;d&#39;</span>,<span class="charliteral">&#39;e&#39;</span>,<span class="charliteral">&#39;f&#39;</span>};</div>
-<div class="line"><span class="lineno">   50</span>  <span class="comment">// clang-format on</span></div>
-<div class="line"><span class="lineno">   51</span>  rv.reserve(std::distance(itbegin, itend) * 2u);</div>
-<div class="line"><span class="lineno">   52</span>  <span class="keywordflow">for</span> (T it = itbegin; it &lt; itend; ++it) {</div>
-<div class="line"><span class="lineno">   53</span>    <span class="keyword">auto</span> val = (uint8_t)(*it);</div>
-<div class="line"><span class="lineno">   54</span>    rv.push_back(hexmap[val &gt;&gt; 4u]);</div>
-<div class="line"><span class="lineno">   55</span>    rv.push_back(hexmap[val &amp; 15u]);</div>
-<div class="line"><span class="lineno">   56</span>  }</div>
-<div class="line"><span class="lineno">   57</span>  <span class="keywordflow">return</span> rv;</div>
-<div class="line"><span class="lineno">   58</span>}</div>
+<p class="definition">Definition at line <a class="el" href="strutil_8hpp_source.html#l00044">44</a> of file <a class="el" href="strutil_8hpp_source.html">strutil.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   44</span>                                                 {</div>
+<div class="line"><span class="lineno">   45</span>  std::string rv;</div>
+<div class="line"><span class="lineno">   46</span>  <span class="comment">// clang-format off</span></div>
+<div class="line"><span class="lineno">   47</span>  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> hexmap[16] = {<span class="charliteral">&#39;0&#39;</span>,<span class="charliteral">&#39;1&#39;</span>,<span class="charliteral">&#39;2&#39;</span>,<span class="charliteral">&#39;3&#39;</span>,<span class="charliteral">&#39;4&#39;</span>,<span class="charliteral">&#39;5&#39;</span>,<span class="charliteral">&#39;6&#39;</span>,<span class="charliteral">&#39;7&#39;</span>,<span class="charliteral">&#39;8&#39;</span>,<span class="charliteral">&#39;9&#39;</span>,<span class="charliteral">&#39;a&#39;</span>,<span class="charliteral">&#39;b&#39;</span>,<span class="charliteral">&#39;c&#39;</span>,<span class="charliteral">&#39;d&#39;</span>,<span class="charliteral">&#39;e&#39;</span>,<span class="charliteral">&#39;f&#39;</span>};</div>
+<div class="line"><span class="lineno">   48</span>  <span class="comment">// clang-format on</span></div>
+<div class="line"><span class="lineno">   49</span>  rv.reserve(std::distance(itbegin, itend) * 2u);</div>
+<div class="line"><span class="lineno">   50</span>  <span class="keywordflow">for</span> (T it = itbegin; it &lt; itend; ++it) {</div>
+<div class="line"><span class="lineno">   51</span>    <span class="keyword">auto</span> val = (uint8_t)(*it);</div>
+<div class="line"><span class="lineno">   52</span>    rv.push_back(hexmap[val &gt;&gt; 4u]);</div>
+<div class="line"><span class="lineno">   53</span>    rv.push_back(hexmap[val &amp; 15u]);</div>
+<div class="line"><span class="lineno">   54</span>  }</div>
+<div class="line"><span class="lineno">   55</span>  <span class="keywordflow">return</span> rv;</div>
+<div class="line"><span class="lineno">   56</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3314,11 +3314,11 @@ template&lt;typename Block &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the argument is a whitespace character; otherwise false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="strutil_8hpp_source.html#l00039">39</a> of file <a class="el" href="strutil_8hpp_source.html">strutil.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   39</span>                                               {</div>
-<div class="line"><span class="lineno">   40</span>  <span class="keywordflow">return</span> c == <span class="charliteral">&#39; &#39;</span> || c == <span class="charliteral">&#39;\f&#39;</span> || c == <span class="charliteral">&#39;\n&#39;</span> || c == <span class="charliteral">&#39;\r&#39;</span> || c == <span class="charliteral">&#39;\t&#39;</span> ||</div>
-<div class="line"><span class="lineno">   41</span>         c == <span class="charliteral">&#39;\v&#39;</span>;</div>
-<div class="line"><span class="lineno">   42</span>}</div>
+<p class="definition">Definition at line <a class="el" href="strutil_8hpp_source.html#l00037">37</a> of file <a class="el" href="strutil_8hpp_source.html">strutil.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   37</span>                                               {</div>
+<div class="line"><span class="lineno">   38</span>  <span class="keywordflow">return</span> c == <span class="charliteral">&#39; &#39;</span> || c == <span class="charliteral">&#39;\f&#39;</span> || c == <span class="charliteral">&#39;\n&#39;</span> || c == <span class="charliteral">&#39;\r&#39;</span> || c == <span class="charliteral">&#39;\t&#39;</span> ||</div>
+<div class="line"><span class="lineno">   39</span>         c == <span class="charliteral">&#39;\v&#39;</span>;</div>
+<div class="line"><span class="lineno">   40</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3425,41 +3425,41 @@ template&lt;typename BlockTreeT &gt; </div>
 </div><div class="memdoc">
 <p >Sets tip after loading. </p><dl class="section invariant"><dt>Invariant</dt><dd>NOT atomic </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00028">28</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   32</span>                                      {</div>
-<div class="line"><span class="lineno">   33</span>  <span class="keyword">using </span>stored_index_t = <span class="keyword">typename</span> BlockTreeT::stored_index_t;</div>
-<div class="line"><span class="lineno">   34</span> </div>
-<div class="line"><span class="lineno">   35</span>  <span class="keywordflow">if</span> (blocks.size() == 0) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   36</span> </div>
-<div class="line"><span class="lineno">   37</span>  VBK_LOG_INFO(<span class="stringliteral">&quot;Loading %d %s blocks with tip %s&quot;</span>,</div>
-<div class="line"><span class="lineno">   38</span>               blocks.size(),</div>
-<div class="line"><span class="lineno">   39</span>               BlockTreeT::block_t::name(),</div>
-<div class="line"><span class="lineno">   40</span>               <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tiphash));</div>
-<div class="line"><span class="lineno">   41</span>  VBK_ASSERT(tree.isBootstrapped() &amp;&amp; <span class="stringliteral">&quot;tree must be bootstrapped&quot;</span>);</div>
-<div class="line"><span class="lineno">   42</span> </div>
-<div class="line"><span class="lineno">   43</span>  <span class="comment">// first, sort them by height</span></div>
-<div class="line"><span class="lineno">   44</span>  std::sort(blocks.begin(),</div>
-<div class="line"><span class="lineno">   45</span>            blocks.end(),</div>
-<div class="line"><span class="lineno">   46</span>            [](<span class="keyword">const</span> stored_index_t&amp; a, <span class="keyword">const</span> stored_index_t&amp; b) {</div>
-<div class="line"><span class="lineno">   47</span>              return a.height &lt; b.height;</div>
-<div class="line"><span class="lineno">   48</span>            });</div>
-<div class="line"><span class="lineno">   49</span> </div>
-<div class="line"><span class="lineno">   50</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; block : blocks) {</div>
-<div class="line"><span class="lineno">   51</span>    <span class="comment">// load blocks one by one</span></div>
-<div class="line"><span class="lineno">   52</span>    <span class="keywordflow">if</span> (!tree.loadBlockForward(block, fast_load, state)) {</div>
-<div class="line"><span class="lineno">   53</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
-<div class="line"><span class="lineno">   54</span>    }</div>
-<div class="line"><span class="lineno">   55</span>  }</div>
-<div class="line"><span class="lineno">   56</span> </div>
-<div class="line"><span class="lineno">   57</span>  <span class="keywordflow">if</span> (!tree.loadTip(tiphash, state)) {</div>
-<div class="line"><span class="lineno">   58</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
-<div class="line"><span class="lineno">   59</span>  }</div>
-<div class="line"><span class="lineno">   60</span> </div>
-<div class="line"><span class="lineno">   61</span>  <span class="keyword">auto</span>* t = tree.getBestChain().tip();</div>
-<div class="line"><span class="lineno">   62</span>  VBK_ASSERT(t != <span class="keyword">nullptr</span>);</div>
-<div class="line"><span class="lineno">   63</span> </div>
-<div class="line"><span class="lineno">   64</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   65</span>}</div>
+<p class="definition">Definition at line <a class="el" href="util_8hpp_source.html#l00023">23</a> of file <a class="el" href="util_8hpp_source.html">util.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   27</span>                                      {</div>
+<div class="line"><span class="lineno">   28</span>  <span class="keyword">using </span>stored_index_t = <span class="keyword">typename</span> BlockTreeT::stored_index_t;</div>
+<div class="line"><span class="lineno">   29</span> </div>
+<div class="line"><span class="lineno">   30</span>  <span class="keywordflow">if</span> (blocks.size() == 0) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   31</span> </div>
+<div class="line"><span class="lineno">   32</span>  VBK_LOG_INFO(<span class="stringliteral">&quot;Loading %d %s blocks with tip %s&quot;</span>,</div>
+<div class="line"><span class="lineno">   33</span>               blocks.size(),</div>
+<div class="line"><span class="lineno">   34</span>               BlockTreeT::block_t::name(),</div>
+<div class="line"><span class="lineno">   35</span>               <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tiphash));</div>
+<div class="line"><span class="lineno">   36</span>  VBK_ASSERT(tree.isBootstrapped() &amp;&amp; <span class="stringliteral">&quot;tree must be bootstrapped&quot;</span>);</div>
+<div class="line"><span class="lineno">   37</span> </div>
+<div class="line"><span class="lineno">   38</span>  <span class="comment">// first, sort them by height</span></div>
+<div class="line"><span class="lineno">   39</span>  std::sort(blocks.begin(),</div>
+<div class="line"><span class="lineno">   40</span>            blocks.end(),</div>
+<div class="line"><span class="lineno">   41</span>            [](<span class="keyword">const</span> stored_index_t&amp; a, <span class="keyword">const</span> stored_index_t&amp; b) {</div>
+<div class="line"><span class="lineno">   42</span>              return a.height &lt; b.height;</div>
+<div class="line"><span class="lineno">   43</span>            });</div>
+<div class="line"><span class="lineno">   44</span> </div>
+<div class="line"><span class="lineno">   45</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; block : blocks) {</div>
+<div class="line"><span class="lineno">   46</span>    <span class="comment">// load blocks one by one</span></div>
+<div class="line"><span class="lineno">   47</span>    <span class="keywordflow">if</span> (!tree.loadBlockForward(block, fast_load, state)) {</div>
+<div class="line"><span class="lineno">   48</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
+<div class="line"><span class="lineno">   49</span>    }</div>
+<div class="line"><span class="lineno">   50</span>  }</div>
+<div class="line"><span class="lineno">   51</span> </div>
+<div class="line"><span class="lineno">   52</span>  <span class="keywordflow">if</span> (!tree.loadTip(tiphash, state)) {</div>
+<div class="line"><span class="lineno">   53</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;load-tree&quot;</span>);</div>
+<div class="line"><span class="lineno">   54</span>  }</div>
+<div class="line"><span class="lineno">   55</span> </div>
+<div class="line"><span class="lineno">   56</span>  <span class="keyword">auto</span>* t = tree.getBestChain().tip();</div>
+<div class="line"><span class="lineno">   57</span>  VBK_ASSERT(t != <span class="keyword">nullptr</span>);</div>
+<div class="line"><span class="lineno">   58</span> </div>
+<div class="line"><span class="lineno">   59</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   60</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3635,28 +3635,28 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if read is OK, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00326">326</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  332</span>                                                                   {</div>
-<div class="line"><span class="lineno">  333</span>  int32_t count = 0;</div>
-<div class="line"><span class="lineno">  334</span>  <span class="keywordflow">if</span> (!readSingleBEValue&lt;int32_t&gt;(stream, count, state)) {</div>
-<div class="line"><span class="lineno">  335</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-count&quot;</span>);</div>
-<div class="line"><span class="lineno">  336</span>  }</div>
-<div class="line"><span class="lineno">  337</span>  <span class="keywordflow">if</span> (!checkRange(count, min, max, state)) {</div>
-<div class="line"><span class="lineno">  338</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-range&quot;</span>);</div>
-<div class="line"><span class="lineno">  339</span>  }</div>
-<div class="line"><span class="lineno">  340</span> </div>
-<div class="line"><span class="lineno">  341</span>  out.reserve(count);</div>
-<div class="line"><span class="lineno">  342</span> </div>
-<div class="line"><span class="lineno">  343</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
-<div class="line"><span class="lineno">  344</span>    T item;</div>
-<div class="line"><span class="lineno">  345</span>    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
-<div class="line"><span class="lineno">  346</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
-<div class="line"><span class="lineno">  347</span>    }</div>
-<div class="line"><span class="lineno">  348</span>    out.push_back(item);</div>
-<div class="line"><span class="lineno">  349</span>  }</div>
-<div class="line"><span class="lineno">  350</span> </div>
-<div class="line"><span class="lineno">  351</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  352</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00319">319</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  325</span>                                                                   {</div>
+<div class="line"><span class="lineno">  326</span>  int32_t count = 0;</div>
+<div class="line"><span class="lineno">  327</span>  <span class="keywordflow">if</span> (!readSingleBEValue&lt;int32_t&gt;(stream, count, state)) {</div>
+<div class="line"><span class="lineno">  328</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-count&quot;</span>);</div>
+<div class="line"><span class="lineno">  329</span>  }</div>
+<div class="line"><span class="lineno">  330</span>  <span class="keywordflow">if</span> (!checkRange(count, min, max, state)) {</div>
+<div class="line"><span class="lineno">  331</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-range&quot;</span>);</div>
+<div class="line"><span class="lineno">  332</span>  }</div>
+<div class="line"><span class="lineno">  333</span> </div>
+<div class="line"><span class="lineno">  334</span>  out.reserve(count);</div>
+<div class="line"><span class="lineno">  335</span> </div>
+<div class="line"><span class="lineno">  336</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
+<div class="line"><span class="lineno">  337</span>    T item;</div>
+<div class="line"><span class="lineno">  338</span>    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
+<div class="line"><span class="lineno">  339</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
+<div class="line"><span class="lineno">  340</span>    }</div>
+<div class="line"><span class="lineno">  341</span>    out.push_back(item);</div>
+<div class="line"><span class="lineno">  342</span>  }</div>
+<div class="line"><span class="lineno">  343</span> </div>
+<div class="line"><span class="lineno">  344</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  345</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3722,11 +3722,11 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>vector of read elements of type T </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00365">365</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  369</span>                                                                   {</div>
-<div class="line"><span class="lineno">  370</span>  int32_t max = std::numeric_limits&lt;int32_t&gt;::max();</div>
-<div class="line"><span class="lineno">  371</span>  <span class="keywordflow">return</span> readArrayOf&lt;T&gt;(stream, out, state, 0, max, readFunc);</div>
-<div class="line"><span class="lineno">  372</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00358">358</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  362</span>                                                                   {</div>
+<div class="line"><span class="lineno">  363</span>  int32_t max = std::numeric_limits&lt;int32_t&gt;::max();</div>
+<div class="line"><span class="lineno">  364</span>  <span class="keywordflow">return</span> readArrayOf&lt;T&gt;(stream, out, state, 0, max, readFunc);</div>
+<div class="line"><span class="lineno">  365</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3892,28 +3892,28 @@ template&lt;typename Container &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if read is OK, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00263">263</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  270</span>                                                               {</div>
-<div class="line"><span class="lineno">  271</span>  int32_t count = 0;</div>
-<div class="line"><span class="lineno">  272</span>  <span class="keywordflow">if</span> (!readSingleBEValue&lt;int32_t&gt;(stream, count, state)) {</div>
-<div class="line"><span class="lineno">  273</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-count&quot;</span>);</div>
-<div class="line"><span class="lineno">  274</span>  }</div>
-<div class="line"><span class="lineno">  275</span>  <span class="keywordflow">if</span> (!checkRange(count, min, max, state)) {</div>
-<div class="line"><span class="lineno">  276</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-range&quot;</span>);</div>
-<div class="line"><span class="lineno">  277</span>  }</div>
-<div class="line"><span class="lineno">  278</span> </div>
-<div class="line"><span class="lineno">  279</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
-<div class="line"><span class="lineno">  280</span>    <span class="keyword">typename</span> Container::value_type item;</div>
-<div class="line"><span class="lineno">  281</span>    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
-<div class="line"><span class="lineno">  282</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
-<div class="line"><span class="lineno">  283</span>    }</div>
-<div class="line"><span class="lineno">  284</span>    <span class="keywordflow">if</span> (out.insert(item).second == <span class="keyword">false</span>) {</div>
-<div class="line"><span class="lineno">  285</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-duplicate-item&quot;</span>, i);</div>
-<div class="line"><span class="lineno">  286</span>    }</div>
-<div class="line"><span class="lineno">  287</span>  }</div>
-<div class="line"><span class="lineno">  288</span> </div>
-<div class="line"><span class="lineno">  289</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  290</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00256">256</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  263</span>                                                               {</div>
+<div class="line"><span class="lineno">  264</span>  int32_t count = 0;</div>
+<div class="line"><span class="lineno">  265</span>  <span class="keywordflow">if</span> (!readSingleBEValue&lt;int32_t&gt;(stream, count, state)) {</div>
+<div class="line"><span class="lineno">  266</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-count&quot;</span>);</div>
+<div class="line"><span class="lineno">  267</span>  }</div>
+<div class="line"><span class="lineno">  268</span>  <span class="keywordflow">if</span> (!checkRange(count, min, max, state)) {</div>
+<div class="line"><span class="lineno">  269</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-range&quot;</span>);</div>
+<div class="line"><span class="lineno">  270</span>  }</div>
+<div class="line"><span class="lineno">  271</span> </div>
+<div class="line"><span class="lineno">  272</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; (size_t)count; i++) {</div>
+<div class="line"><span class="lineno">  273</span>    <span class="keyword">typename</span> Container::value_type item;</div>
+<div class="line"><span class="lineno">  274</span>    <span class="keywordflow">if</span> (!readFunc(stream, item, state)) {</div>
+<div class="line"><span class="lineno">  275</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-bad-item&quot;</span>, i);</div>
+<div class="line"><span class="lineno">  276</span>    }</div>
+<div class="line"><span class="lineno">  277</span>    <span class="keywordflow">if</span> (out.insert(item).second == <span class="keyword">false</span>) {</div>
+<div class="line"><span class="lineno">  278</span>      <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readarray-duplicate-item&quot;</span>, i);</div>
+<div class="line"><span class="lineno">  279</span>    }</div>
+<div class="line"><span class="lineno">  280</span>  }</div>
+<div class="line"><span class="lineno">  281</span> </div>
+<div class="line"><span class="lineno">  282</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  283</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3979,11 +3979,11 @@ template&lt;typename Container &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>vector of read elements </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00303">303</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  309</span>                                                               {</div>
-<div class="line"><span class="lineno">  310</span>  int32_t max = std::numeric_limits&lt;int32_t&gt;::max();</div>
-<div class="line"><span class="lineno">  311</span>  <span class="keywordflow">return</span> readContainer(stream, out, state, 0, max, readFunc);</div>
-<div class="line"><span class="lineno">  312</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00296">296</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  302</span>                                                               {</div>
+<div class="line"><span class="lineno">  303</span>  int32_t max = std::numeric_limits&lt;int32_t&gt;::max();</div>
+<div class="line"><span class="lineno">  304</span>  <span class="keywordflow">return</span> readContainer(stream, out, state, 0, max, readFunc);</div>
+<div class="line"><span class="lineno">  305</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4036,15 +4036,15 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if read is OK, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00137">137</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  137</span>                                                                           {</div>
-<div class="line"><span class="lineno">  138</span>  <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;const uint8_t&gt;</a> data;</div>
-<div class="line"><span class="lineno">  139</span>  <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
-<div class="line"><span class="lineno">  140</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsinglebe-bad-data&quot;</span>);</div>
-<div class="line"><span class="lineno">  141</span>  }</div>
-<div class="line"><span class="lineno">  142</span>  ReadStream dataStream(data);</div>
-<div class="line"><span class="lineno">  143</span>  <span class="keywordflow">return</span> dataStream.readBE&lt;T&gt;(out, state, data.size());</div>
-<div class="line"><span class="lineno">  144</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00130">130</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  130</span>                                                                           {</div>
+<div class="line"><span class="lineno">  131</span>  <a class="code hl_struct" href="structaltintegration_1_1Slice.html">Slice&lt;const uint8_t&gt;</a> data;</div>
+<div class="line"><span class="lineno">  132</span>  <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">readSingleByteLenValue</a>(stream, data, state, 0, <span class="keyword">sizeof</span>(T))) {</div>
+<div class="line"><span class="lineno">  133</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsinglebe-bad-data&quot;</span>);</div>
+<div class="line"><span class="lineno">  134</span>  }</div>
+<div class="line"><span class="lineno">  135</span>  ReadStream dataStream(data);</div>
+<div class="line"><span class="lineno">  136</span>  <span class="keywordflow">return</span> dataStream.readBE&lt;T&gt;(out, state, data.size());</div>
+<div class="line"><span class="lineno">  137</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_acb65173d8add666a52f5c35bb9e685dd"><div class="ttname"><a href="namespacealtintegration.html#acb65173d8add666a52f5c35bb9e685dd">altintegration::readSingleByteLenValue</a></div><div class="ttdeci">bool readSingleByteLenValue(ReadStream &amp;stream, Slice&lt; const uint8_t &gt; &amp;out, ValidationState &amp;state, uint64_t minLen, uint64_t maxLen)</div><div class="ttdoc">Read variable length value, which consists of [N=(1 byte = size of slice) | N bytes slice] Size of sl...</div></div>
 <div class="ttc" id="astructaltintegration_1_1Slice_html"><div class="ttname"><a href="structaltintegration_1_1Slice.html">altintegration::Slice</a></div><div class="ttdoc">Non-owning contiguous array.</div><div class="ttdef"><b>Definition:</b> <a href="slice_8hpp_source.html#l00022">slice.hpp:22</a></div></div>
 </div><!-- fragment -->
@@ -4096,18 +4096,18 @@ template&lt;typename Container , typename  = typename std::enable_if&lt;        
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00109">109</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  113</span>                                             {</div>
-<div class="line"><span class="lineno">  114</span>  uint8_t length = 0;</div>
-<div class="line"><span class="lineno">  115</span>  <span class="keywordflow">if</span> (!stream.readBE&lt;uint8_t&gt;(length, state)) {</div>
-<div class="line"><span class="lineno">  116</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsingle-bad-length&quot;</span>);</div>
-<div class="line"><span class="lineno">  117</span>  }</div>
-<div class="line"><span class="lineno">  118</span>  <span class="keywordflow">if</span> (!checkRange(length, minLen, maxLen, state)) {</div>
-<div class="line"><span class="lineno">  119</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsingle-bad-range&quot;</span>);</div>
-<div class="line"><span class="lineno">  120</span>  }</div>
-<div class="line"><span class="lineno">  121</span>  out.resize(length);</div>
-<div class="line"><span class="lineno">  122</span>  <span class="keywordflow">return</span> stream.<a class="code hl_function" href="structaltintegration_1_1ReadStream.html#a6ed425f4893b4455f072e86322ed64ce">read</a>(length, out.data(), state);</div>
-<div class="line"><span class="lineno">  123</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00102">102</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  106</span>                                             {</div>
+<div class="line"><span class="lineno">  107</span>  uint8_t length = 0;</div>
+<div class="line"><span class="lineno">  108</span>  <span class="keywordflow">if</span> (!stream.readBE&lt;uint8_t&gt;(length, state)) {</div>
+<div class="line"><span class="lineno">  109</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsingle-bad-length&quot;</span>);</div>
+<div class="line"><span class="lineno">  110</span>  }</div>
+<div class="line"><span class="lineno">  111</span>  <span class="keywordflow">if</span> (!checkRange(length, minLen, maxLen, state)) {</div>
+<div class="line"><span class="lineno">  112</span>    <span class="keywordflow">return</span> state.Invalid(<span class="stringliteral">&quot;readsingle-bad-range&quot;</span>);</div>
+<div class="line"><span class="lineno">  113</span>  }</div>
+<div class="line"><span class="lineno">  114</span>  out.resize(length);</div>
+<div class="line"><span class="lineno">  115</span>  <span class="keywordflow">return</span> stream.<a class="code hl_function" href="structaltintegration_1_1ReadStream.html#a6ed425f4893b4455f072e86322ed64ce">read</a>(length, out.data(), state);</div>
+<div class="line"><span class="lineno">  116</span>}</div>
 <div class="ttc" id="astructaltintegration_1_1ReadStream_html_a6ed425f4893b4455f072e86322ed64ce"><div class="ttname"><a href="structaltintegration_1_1ReadStream.html#a6ed425f4893b4455f072e86322ed64ce">altintegration::ReadStream::read</a></div><div class="ttdeci">bool read(size_t size, uint8_t *out, ValidationState &amp;state)</div><div class="ttdoc">Read type T of 'size' bytes.</div></div>
 </div><!-- fragment -->
 </div>
@@ -4270,10 +4270,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00463">463</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  463</span>                                       {</div>
-<div class="line"><span class="lineno">  464</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToVbkEncoding&lt;T&gt;(obj));</div>
-<div class="line"><span class="lineno">  465</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00456">456</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  456</span>                                       {</div>
+<div class="line"><span class="lineno">  457</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToVbkEncoding&lt;T&gt;(obj));</div>
+<div class="line"><span class="lineno">  458</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4295,12 +4295,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00455">455</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  455</span>                                                {</div>
-<div class="line"><span class="lineno">  456</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
-<div class="line"><span class="lineno">  457</span>  obj.toRaw(w);</div>
-<div class="line"><span class="lineno">  458</span>  <span class="keywordflow">return</span> w.data();</div>
-<div class="line"><span class="lineno">  459</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00448">448</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  448</span>                                                {</div>
+<div class="line"><span class="lineno">  449</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
+<div class="line"><span class="lineno">  450</span>  obj.toRaw(w);</div>
+<div class="line"><span class="lineno">  451</span>  <span class="keywordflow">return</span> w.data();</div>
+<div class="line"><span class="lineno">  452</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4322,10 +4322,10 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00469">469</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  469</span>                                          {</div>
-<div class="line"><span class="lineno">  470</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToRaw&lt;T&gt;(obj));</div>
-<div class="line"><span class="lineno">  471</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00462">462</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  462</span>                                          {</div>
+<div class="line"><span class="lineno">  463</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(SerializeToRaw&lt;T&gt;(obj));</div>
+<div class="line"><span class="lineno">  464</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4347,12 +4347,12 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00447">447</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  447</span>                                                        {</div>
-<div class="line"><span class="lineno">  448</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
-<div class="line"><span class="lineno">  449</span>  obj.toVbkEncoding(w);</div>
-<div class="line"><span class="lineno">  450</span>  <span class="keywordflow">return</span> w.data();</div>
-<div class="line"><span class="lineno">  451</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00440">440</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  440</span>                                                        {</div>
+<div class="line"><span class="lineno">  441</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> w;</div>
+<div class="line"><span class="lineno">  442</span>  obj.toVbkEncoding(w);</div>
+<div class="line"><span class="lineno">  443</span>  <span class="keywordflow">return</span> w.data();</div>
+<div class="line"><span class="lineno">  444</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4542,16 +4542,16 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="altblock_8hpp_source.html#l00097">97</a> of file <a class="el" href="altblock_8hpp_source.html">altblock.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   97</span>                                                                 {</div>
-<div class="line"><span class="lineno">   98</span>  JsonValue <span class="keywordtype">object</span> = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">   99</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;hash&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.<a class="code hl_function" href="structaltintegration_1_1AltBlock.html#acc2509671bd926fc713d2c6b05615d13">getHash</a>(), reverseHashes));</div>
-<div class="line"><span class="lineno">  100</span>  json::putStringKV(</div>
-<div class="line"><span class="lineno">  101</span>      <span class="keywordtype">object</span>, <span class="stringliteral">&quot;previousBlock&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.previousBlock, reverseHashes));</div>
-<div class="line"><span class="lineno">  102</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;timestamp&quot;</span>, alt.getBlockTime());</div>
-<div class="line"><span class="lineno">  103</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;height&quot;</span>, alt.height);</div>
-<div class="line"><span class="lineno">  104</span>  <span class="keywordflow">return</span> object;</div>
-<div class="line"><span class="lineno">  105</span>}</div>
+<p class="definition">Definition at line <a class="el" href="altblock_8hpp_source.html#l00090">90</a> of file <a class="el" href="altblock_8hpp_source.html">altblock.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   90</span>                                                                 {</div>
+<div class="line"><span class="lineno">   91</span>  JsonValue <span class="keywordtype">object</span> = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">   92</span>  json::putStringKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;hash&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.<a class="code hl_function" href="structaltintegration_1_1AltBlock.html#acc2509671bd926fc713d2c6b05615d13">getHash</a>(), reverseHashes));</div>
+<div class="line"><span class="lineno">   93</span>  json::putStringKV(</div>
+<div class="line"><span class="lineno">   94</span>      <span class="keywordtype">object</span>, <span class="stringliteral">&quot;previousBlock&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(alt.previousBlock, reverseHashes));</div>
+<div class="line"><span class="lineno">   95</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;timestamp&quot;</span>, alt.getBlockTime());</div>
+<div class="line"><span class="lineno">   96</span>  json::putIntKV(<span class="keywordtype">object</span>, <span class="stringliteral">&quot;height&quot;</span>, alt.height);</div>
+<div class="line"><span class="lineno">   97</span>  <span class="keywordflow">return</span> object;</div>
+<div class="line"><span class="lineno">   98</span>}</div>
 <div class="ttc" id="astructaltintegration_1_1AltBlock_html_acc2509671bd926fc713d2c6b05615d13"><div class="ttname"><a href="structaltintegration_1_1AltBlock.html#acc2509671bd926fc713d2c6b05615d13">altintegration::AltBlock::getHash</a></div><div class="ttdeci">const hash_t &amp; getHash() const</div></div>
 </div><!-- fragment -->
 </div>
@@ -4654,7 +4654,7 @@ template&lt;typename JsonValue &gt; </div>
 <div class="line"><span class="lineno">  113</span>  json::putStringKV(obj, <span class="stringliteral">&quot;serialized&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">SerializeToHex</a>(atv));</div>
 <div class="line"><span class="lineno">  114</span>  <span class="keywordflow">return</span> obj;</div>
 <div class="line"><span class="lineno">  115</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_ae8cac3ccae3038ddf8a54c5da8409e05"><div class="ttname"><a href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">altintegration::SerializeToHex</a></div><div class="ttdeci">std::string SerializeToHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00463">serde.hpp:463</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_ae8cac3ccae3038ddf8a54c5da8409e05"><div class="ttname"><a href="namespacealtintegration.html#ae8cac3ccae3038ddf8a54c5da8409e05">altintegration::SerializeToHex</a></div><div class="ttdeci">std::string SerializeToHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX VBK encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00456">serde.hpp:456</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a04bcfea5f2ebde4cda3457b5cc1fc552"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a04bcfea5f2ebde4cda3457b5cc1fc552">altintegration::ATV::version</a></div><div class="ttdeci">uint32_t version</div><div class="ttdoc">ATV serialization version.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00040">atv.hpp:40</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a454c043b311d13db58e5fa3e93a0a09b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a454c043b311d13db58e5fa3e93a0a09b">altintegration::ATV::getId</a></div><div class="ttdeci">id_t getId() const</div><div class="ttdoc">Calculate a ATV id that is the sha256 hash of the ATV rawBytes.</div></div>
 <div class="ttc" id="astructaltintegration_1_1ATV_html_a775bd53259f9a931c90fb09fce37942b"><div class="ttname"><a href="structaltintegration_1_1ATV.html#a775bd53259f9a931c90fb09fce37942b">altintegration::ATV::transaction</a></div><div class="ttdeci">VbkTx transaction</div><div class="ttdoc">endorsing transaction.</div><div class="ttdef"><b>Definition:</b> <a href="atv_8hpp_source.html#l00043">atv.hpp:43</a></div></div>
@@ -4722,10 +4722,10 @@ template&lt;typename Value , size_t N&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="blob_8hpp_source.html#l00261">261</a> of file <a class="el" href="blob_8hpp_source.html">blob.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  261</span>                                         {</div>
-<div class="line"><span class="lineno">  262</span>  <span class="keywordflow">return</span> ToJSON&lt;Value&gt;(blob.toHex());</div>
-<div class="line"><span class="lineno">  263</span>}</div>
+<p class="definition">Definition at line <a class="el" href="blob_8hpp_source.html#l00249">249</a> of file <a class="el" href="blob_8hpp_source.html">blob.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  249</span>                                         {</div>
+<div class="line"><span class="lineno">  250</span>  <span class="keywordflow">return</span> ToJSON&lt;Value&gt;(blob.toHex());</div>
+<div class="line"><span class="lineno">  251</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4747,26 +4747,26 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00293">293</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  293</span>                                                {</div>
-<div class="line"><span class="lineno">  294</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  295</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  296</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  297</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  298</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  299</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
-<div class="line"><span class="lineno">  300</span> </div>
-<div class="line"><span class="lineno">  301</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  302</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  303</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  304</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  305</span>    }</div>
-<div class="line"><span class="lineno">  306</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  307</span>  }</div>
-<div class="line"><span class="lineno">  308</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  309</span> </div>
-<div class="line"><span class="lineno">  310</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  311</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00272">272</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  272</span>                                                {</div>
+<div class="line"><span class="lineno">  273</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  274</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  275</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  276</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  277</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  278</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;vbkrefs&quot;</span>, i.getRefs());</div>
+<div class="line"><span class="lineno">  279</span> </div>
+<div class="line"><span class="lineno">  280</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  281</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  282</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  283</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  284</span>    }</div>
+<div class="line"><span class="lineno">  285</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  286</span>  }</div>
+<div class="line"><span class="lineno">  287</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  288</span> </div>
+<div class="line"><span class="lineno">  289</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  290</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -4788,42 +4788,42 @@ template&lt;typename JsonValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00255">255</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  255</span>                                                {</div>
-<div class="line"><span class="lineno">  256</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  257</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
-<div class="line"><span class="lineno">  258</span> </div>
-<div class="line"><span class="lineno">  259</span>  std::vector&lt;uint256&gt; endorsements;</div>
-<div class="line"><span class="lineno">  260</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
-<div class="line"><span class="lineno">  261</span>    endorsements.push_back(e.first);</div>
-<div class="line"><span class="lineno">  262</span>  }</div>
-<div class="line"><span class="lineno">  263</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
-<div class="line"><span class="lineno">  264</span> </div>
-<div class="line"><span class="lineno">  265</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
-<div class="line"><span class="lineno">  266</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
-<div class="line"><span class="lineno">  267</span>    endorsedBy.push_back(e-&gt;id);</div>
-<div class="line"><span class="lineno">  268</span>  }</div>
-<div class="line"><span class="lineno">  269</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
-<div class="line"><span class="lineno">  270</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
-<div class="line"><span class="lineno">  271</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
-<div class="line"><span class="lineno">  272</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
-<div class="line"><span class="lineno">  273</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
-<div class="line"><span class="lineno">  274</span> </div>
-<div class="line"><span class="lineno">  275</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  276</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
-<div class="line"><span class="lineno">  277</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
-<div class="line"><span class="lineno">  278</span> </div>
-<div class="line"><span class="lineno">  279</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
-<div class="line"><span class="lineno">  280</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
-<div class="line"><span class="lineno">  281</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><span class="lineno">  282</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><span class="lineno">  283</span>    }</div>
-<div class="line"><span class="lineno">  284</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
-<div class="line"><span class="lineno">  285</span>  }</div>
-<div class="line"><span class="lineno">  286</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
-<div class="line"><span class="lineno">  287</span> </div>
-<div class="line"><span class="lineno">  288</span>  <span class="keywordflow">return</span> obj;</div>
-<div class="line"><span class="lineno">  289</span>}</div>
+<p class="definition">Definition at line <a class="el" href="vbk__block__tree_8hpp_source.html#l00234">234</a> of file <a class="el" href="vbk__block__tree_8hpp_source.html">vbk_block_tree.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  234</span>                                                {</div>
+<div class="line"><span class="lineno">  235</span>  <span class="keyword">auto</span> obj = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  236</span>  json::putStringKV(obj, <span class="stringliteral">&quot;chainWork&quot;</span>, i.chainWork.toHex());</div>
+<div class="line"><span class="lineno">  237</span> </div>
+<div class="line"><span class="lineno">  238</span>  std::vector&lt;uint256&gt; endorsements;</div>
+<div class="line"><span class="lineno">  239</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; e : i.getContainingEndorsements()) {</div>
+<div class="line"><span class="lineno">  240</span>    endorsements.push_back(e.first);</div>
+<div class="line"><span class="lineno">  241</span>  }</div>
+<div class="line"><span class="lineno">  242</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;containingEndorsements&quot;</span>, endorsements);</div>
+<div class="line"><span class="lineno">  243</span> </div>
+<div class="line"><span class="lineno">  244</span>  std::vector&lt;uint256&gt; endorsedBy;</div>
+<div class="line"><span class="lineno">  245</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getEndorsedBy()) {</div>
+<div class="line"><span class="lineno">  246</span>    endorsedBy.push_back(e-&gt;id);</div>
+<div class="line"><span class="lineno">  247</span>  }</div>
+<div class="line"><span class="lineno">  248</span>  json::putArrayKV(obj, <span class="stringliteral">&quot;endorsedBy&quot;</span>, endorsedBy);</div>
+<div class="line"><span class="lineno">  249</span>  json::putIntKV(obj, <span class="stringliteral">&quot;height&quot;</span>, i.getHeight());</div>
+<div class="line"><span class="lineno">  250</span>  json::putKV(obj, <span class="stringliteral">&quot;header&quot;</span>, ToJSON&lt;JsonValue&gt;(i.getHeader()));</div>
+<div class="line"><span class="lineno">  251</span>  json::putIntKV(obj, <span class="stringliteral">&quot;status&quot;</span>, i.getStatus());</div>
+<div class="line"><span class="lineno">  252</span>  json::putIntKV(obj, <span class="stringliteral">&quot;altrefs&quot;</span>, i.refCount());</div>
+<div class="line"><span class="lineno">  253</span> </div>
+<div class="line"><span class="lineno">  254</span>  <span class="keyword">auto</span> stored = json::makeEmptyObject&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  255</span>  json::putArrayKV(stored, <span class="stringliteral">&quot;vtbids&quot;</span>, i.getPayloadIds&lt;VTB&gt;());</div>
+<div class="line"><span class="lineno">  256</span>  json::putKV(obj, <span class="stringliteral">&quot;stored&quot;</span>, stored);</div>
+<div class="line"><span class="lineno">  257</span> </div>
+<div class="line"><span class="lineno">  258</span>  <span class="keyword">auto</span> bopEndorsements = json::makeEmptyArray&lt;JsonValue&gt;();</div>
+<div class="line"><span class="lineno">  259</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* e : i.getBlockOfProofEndorsement()) {</div>
+<div class="line"><span class="lineno">  260</span>    <span class="keywordflow">if</span> (e == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">  261</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><span class="lineno">  262</span>    }</div>
+<div class="line"><span class="lineno">  263</span>    json::arrayPushBack(bopEndorsements, ToJSON&lt;JsonValue&gt;(e-&gt;getId()));</div>
+<div class="line"><span class="lineno">  264</span>  }</div>
+<div class="line"><span class="lineno">  265</span>  json::putKV(obj, <span class="stringliteral">&quot;blockOfProofEndorsements&quot;</span>, bopEndorsements);</div>
+<div class="line"><span class="lineno">  266</span> </div>
+<div class="line"><span class="lineno">  267</span>  <span class="keywordflow">return</span> obj;</div>
+<div class="line"><span class="lineno">  268</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -5372,7 +5372,7 @@ template&lt;typename JsonValue &gt; </div>
 <div class="line"><span class="lineno">  103</span>  json::putStringKV(obj, <span class="stringliteral">&quot;publicKey&quot;</span>, <a class="code hl_function" href="namespacealtintegration.html#a8b332a0d662f714a005e16089931237f">HexStr</a>(tx.publicKey));</div>
 <div class="line"><span class="lineno">  104</span>  <span class="keywordflow">return</span> obj;</div>
 <div class="line"><span class="lineno">  105</span>}</div>
-<div class="ttc" id="anamespacealtintegration_html_aa7c5b7e78805fcf8b1a606abbbc2111e"><div class="ttname"><a href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">altintegration::SerializeToRawHex</a></div><div class="ttdeci">std::string SerializeToRawHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00469">serde.hpp:469</a></div></div>
+<div class="ttc" id="anamespacealtintegration_html_aa7c5b7e78805fcf8b1a606abbbc2111e"><div class="ttname"><a href="namespacealtintegration.html#aa7c5b7e78805fcf8b1a606abbbc2111e">altintegration::SerializeToRawHex</a></div><div class="ttdeci">std::string SerializeToRawHex(const T &amp;obj)</div><div class="ttdoc">Serialize to HEX RAW encoding.</div><div class="ttdef"><b>Definition:</b> <a href="serde_8hpp_source.html#l00462">serde.hpp:462</a></div></div>
 <div class="ttc" id="anamespacealtintegration_html_ad990bf96def00c233bf48c47f62bd2c8"><div class="ttname"><a href="namespacealtintegration.html#ad990bf96def00c233bf48c47f62bd2c8">altintegration::NetworkBytePair::networkType</a></div><div class="ttdeci">VbkNetworkType networkType</div><div class="ttdoc">&lt; works as std::optional. if hasNetworkByte is true, networkByte is set</div><div class="ttdef"><b>Definition:</b> <a href="network__byte__pair_8hpp_source.html#l00055">network_byte_pair.hpp:55</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkPopTx_html_a0aded8d9a6f867272dcb874405820235"><div class="ttname"><a href="structaltintegration_1_1VbkPopTx.html#a0aded8d9a6f867272dcb874405820235">altintegration::VbkPopTx::getHash</a></div><div class="ttdeci">hash_t getHash() const</div><div class="ttdoc">Calculate the hash of the vbk pop transaction.</div></div>
 </div><!-- fragment -->
@@ -5804,12 +5804,12 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00176">176</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  176</span>                                                           {</div>
-<div class="line"><span class="lineno">  177</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> dataStream;</div>
-<div class="line"><span class="lineno">  178</span>  dataStream.writeBE&lt;T&gt;(value);</div>
-<div class="line"><span class="lineno">  179</span>  <a class="code hl_function" href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">writeSingleByteLenValue</a>(stream, dataStream.data());</div>
-<div class="line"><span class="lineno">  180</span>}</div>
+<p class="definition">Definition at line <a class="el" href="serde_8hpp_source.html#l00169">169</a> of file <a class="el" href="serde_8hpp_source.html">serde.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  169</span>                                                           {</div>
+<div class="line"><span class="lineno">  170</span>  <a class="code hl_class" href="classaltintegration_1_1WriteStream.html">WriteStream</a> dataStream;</div>
+<div class="line"><span class="lineno">  171</span>  dataStream.writeBE&lt;T&gt;(value);</div>
+<div class="line"><span class="lineno">  172</span>  <a class="code hl_function" href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">writeSingleByteLenValue</a>(stream, dataStream.data());</div>
+<div class="line"><span class="lineno">  173</span>}</div>
 <div class="ttc" id="anamespacealtintegration_html_a8347db9e9900d4149b4e9ea5482782f2"><div class="ttname"><a href="namespacealtintegration.html#a8347db9e9900d4149b4e9ea5482782f2">altintegration::writeSingleByteLenValue</a></div><div class="ttdeci">void writeSingleByteLenValue(WriteStream &amp;stream, Slice&lt; const uint8_t &gt; value)</div><div class="ttdoc">Write single byte length value, which consists of N bytes vector Appends 1 byte data length to the st...</div></div>
 </div><!-- fragment -->
 </div>
@@ -5864,7 +5864,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00471">471</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00452">452</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 
 </div>
 </div>
@@ -5882,7 +5882,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00471">471</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00452">452</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 
 </div>
 </div>
@@ -5900,7 +5900,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00471">471</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mempool_8hpp_source.html#l00452">452</a> of file <a class="el" href="mempool_8hpp_source.html">mempool.hpp</a>.</p>
 
 </div>
 </div>

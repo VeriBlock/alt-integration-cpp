@@ -1,7 +1,7 @@
 <map id="altintegration::Blob&lt; N &gt;" name="altintegration::Blob&lt; N &gt;">
-<area shape="rect" id="node1" title="Contiguous byte array of fixed size." alt="" coords="218,5,378,303"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,387,180,699"/>
-<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="205,380,391,707"/>
-<area shape="rect" id="node5" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="416,380,625,707"/>
-<area shape="rect" id="node3" href="$classaltintegration_1_1ArithUint256.html" title="256&#45;bit unsigned big integer." alt="" coords="5,756,180,1039"/>
+<area shape="rect" id="node1" title="Contiguous byte array of fixed size." alt="" coords="218,5,378,288"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,373,180,670"/>
+<area shape="rect" id="node4" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="205,365,391,677"/>
+<area shape="rect" id="node5" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="416,365,625,677"/>
+<area shape="rect" id="node3" href="$classaltintegration_1_1ArithUint256.html" title="256&#45;bit unsigned big integer." alt="" coords="5,727,180,1009"/>
 </map>

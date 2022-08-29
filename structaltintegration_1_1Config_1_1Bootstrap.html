@@ -98,7 +98,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1Config_1_1Boot
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Block, typename ChainParams&gt;<br />
 struct altintegration::Config::Bootstrap&lt; Block, ChainParams &gt;</div>
-<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00054">54</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00044">44</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="config_8hpp_source.html">config.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -179,21 +179,21 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00067">67</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   69</span>                                                               {</div>
-<div class="line"><span class="lineno">   70</span>      Bootstrap b;</div>
-<div class="line"><span class="lineno">   71</span>      b.startHeight = start;</div>
-<div class="line"><span class="lineno">   72</span>      b.params = std::move(<a class="code hl_variable" href="structaltintegration_1_1Config_1_1Bootstrap.html#a87ed66ca8603a2309ca83fd5ff6bd5ef">params</a>);</div>
-<div class="line"><span class="lineno">   73</span> </div>
-<div class="line"><span class="lineno">   74</span>      b.blocks.reserve(hexblocks.size());</div>
-<div class="line"><span class="lineno">   75</span>      std::transform(hexblocks.begin(),</div>
-<div class="line"><span class="lineno">   76</span>                     hexblocks.end(),</div>
-<div class="line"><span class="lineno">   77</span>                     std::back_inserter(b.blocks),</div>
-<div class="line"><span class="lineno">   78</span>                     AssertDeserializeFromRawHex&lt;Block&gt;);</div>
-<div class="line"><span class="lineno">   79</span> </div>
-<div class="line"><span class="lineno">   80</span>      <span class="keywordflow">return</span> b;</div>
-<div class="line"><span class="lineno">   81</span>    }</div>
-<div class="ttc" id="astructaltintegration_1_1Config_1_1Bootstrap_html_a87ed66ca8603a2309ca83fd5ff6bd5ef"><div class="ttname"><a href="structaltintegration_1_1Config_1_1Bootstrap.html#a87ed66ca8603a2309ca83fd5ff6bd5ef">altintegration::Config::Bootstrap::params</a></div><div class="ttdeci">std::shared_ptr&lt; ChainParams &gt; params</div><div class="ttdoc">network parameters - Mainnet/Testnet/Regtest...</div><div class="ttdef"><b>Definition:</b> <a href="config_8hpp_source.html#l00064">config.hpp:64</a></div></div>
+<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00057">57</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   59</span>                                                               {</div>
+<div class="line"><span class="lineno">   60</span>      Bootstrap b;</div>
+<div class="line"><span class="lineno">   61</span>      b.startHeight = start;</div>
+<div class="line"><span class="lineno">   62</span>      b.params = std::move(<a class="code hl_variable" href="structaltintegration_1_1Config_1_1Bootstrap.html#a87ed66ca8603a2309ca83fd5ff6bd5ef">params</a>);</div>
+<div class="line"><span class="lineno">   63</span> </div>
+<div class="line"><span class="lineno">   64</span>      b.blocks.reserve(hexblocks.size());</div>
+<div class="line"><span class="lineno">   65</span>      std::transform(hexblocks.begin(),</div>
+<div class="line"><span class="lineno">   66</span>                     hexblocks.end(),</div>
+<div class="line"><span class="lineno">   67</span>                     std::back_inserter(b.blocks),</div>
+<div class="line"><span class="lineno">   68</span>                     AssertDeserializeFromRawHex&lt;Block&gt;);</div>
+<div class="line"><span class="lineno">   69</span> </div>
+<div class="line"><span class="lineno">   70</span>      <span class="keywordflow">return</span> b;</div>
+<div class="line"><span class="lineno">   71</span>    }</div>
+<div class="ttc" id="astructaltintegration_1_1Config_1_1Bootstrap_html_a87ed66ca8603a2309ca83fd5ff6bd5ef"><div class="ttname"><a href="structaltintegration_1_1Config_1_1Bootstrap.html#a87ed66ca8603a2309ca83fd5ff6bd5ef">altintegration::Config::Bootstrap::params</a></div><div class="ttdeci">std::shared_ptr&lt; ChainParams &gt; params</div><div class="ttdoc">network parameters - Mainnet/Testnet/Regtest...</div><div class="ttdef"><b>Definition:</b> <a href="config_8hpp_source.html#l00054">config.hpp:54</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -213,7 +213,7 @@ template&lt;typename Block , typename ChainParams &gt; </div>
 </div><div class="memdoc">
 <p >if empty, bootstrapWithGenesis() will be used has to have at least <code>params-&gt;numBlocksForBootstrap()</code> blocks </p>
 
-<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00061">61</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00051">51</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
 
 </div>
 </div>
@@ -231,7 +231,7 @@ template&lt;typename Block , typename ChainParams &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00064">64</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00054">54</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
 
 </div>
 </div>
@@ -249,7 +249,7 @@ template&lt;typename Block , typename ChainParams &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00056">56</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="config_8hpp_source.html#l00046">46</a> of file <a class="el" href="config_8hpp_source.html">config.hpp</a>.</p>
 
 </div>
 </div>
