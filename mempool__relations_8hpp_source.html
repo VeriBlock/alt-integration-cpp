@@ -97,15 +97,15 @@ $(document).ready(function(){initNavTree('mempool__relations_8hpp_source.html','
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define ALT_INTEGRATION_VERIBLOCK_MEMPOOL_RELATIONS_HPP</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;set&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;set&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;entities/atv.hpp&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;entities/popdata.hpp&quot;</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;entities/vbkblock.hpp&quot;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;entities/vtb.hpp&quot;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;blockchain/alt_block_tree.hpp&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;blockchain/alt_block_tree.hpp&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;entities/atv.hpp&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;entities/popdata.hpp&quot;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;entities/vbkblock.hpp&quot;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;entities/vtb.hpp&quot;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacealtintegration.html">altintegration</a> {</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">struct </span>ATV;</div>
@@ -131,40 +131,41 @@ $(document).ready(function(){initNavTree('mempool__relations_8hpp_source.html','
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  };</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html">   44</a></span>  <span class="keyword">struct </span><a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html">AtvCombinedComparator</a> {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html">AtvCombinedComparator</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a>&amp; tree) : txFeeComparator(), endorsedAltComparator(tree) {}</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">bool</span> operator()(<span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; a,</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                    <span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; b) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>   <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html">TxFeeComparator</a> txFeeComparator;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html">EndorsedAltComparator</a> endorsedAltComparator;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  };</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  VbkPayloadsRelations(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a>&amp; tree, <span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&amp; b)</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>      : tree_(tree),</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        header(std::make_shared&lt;<a class="code hl_struct" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&gt;(b)),</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        atvComparator(tree),</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        atvs(atvComparator) {}</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  VbkPayloadsRelations(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a>&amp; tree,</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>                       std::shared_ptr&lt;VbkBlock&gt; ptr_b)</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>      : tree_(tree),</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        header(std::move(ptr_b)),</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        atvComparator(tree),</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        atvs(atvComparator) {}</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="keyword">const</span> AltBlockTree&amp; tree_;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  std::shared_ptr&lt;VbkBlock&gt; header;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  std::vector&lt;std::shared_ptr&lt;VTB&gt;&gt; vtbs;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  AtvCombinedComparator atvComparator;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  std::set&lt;std::shared_ptr&lt;ATV&gt;, AtvCombinedComparator&gt; atvs;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keywordtype">bool</span> empty()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> atvs.empty() &amp;&amp; vtbs.empty(); }</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>};</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}  <span class="comment">// namespace altintegration</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1AtvCombinedComparator.html">AtvCombinedComparator</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a>&amp; tree)</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        : txFeeComparator(), endorsedAltComparator(tree) {}</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">bool</span> operator()(<span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; a,</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                    <span class="keyword">const</span> std::shared_ptr&lt;ATV&gt;&amp; b) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>   <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1TxFeeComparator.html">TxFeeComparator</a> txFeeComparator;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <a class="code hl_struct" href="structaltintegration_1_1VbkPayloadsRelations_1_1EndorsedAltComparator.html">EndorsedAltComparator</a> endorsedAltComparator;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  };</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  VbkPayloadsRelations(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a>&amp; tree, <span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&amp; b)</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>      : tree_(tree),</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        header(std::make_shared&lt;<a class="code hl_struct" href="structaltintegration_1_1VbkBlock.html">VbkBlock</a>&gt;(b)),</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        atvComparator(tree),</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        atvs(atvComparator) {}</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  VbkPayloadsRelations(<span class="keyword">const</span> <a class="code hl_struct" href="structaltintegration_1_1AltBlockTree.html">AltBlockTree</a>&amp; tree,</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                       std::shared_ptr&lt;VbkBlock&gt; ptr_b)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>      : tree_(tree),</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        header(std::move(ptr_b)),</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        atvComparator(tree),</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        atvs(atvComparator) {}</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  <span class="keyword">const</span> AltBlockTree&amp; tree_;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  std::shared_ptr&lt;VbkBlock&gt; header;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  std::vector&lt;std::shared_ptr&lt;VTB&gt;&gt; vtbs;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  AtvCombinedComparator atvComparator;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  std::set&lt;std::shared_ptr&lt;ATV&gt;, AtvCombinedComparator&gt; atvs;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keywordtype">bool</span> empty()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> atvs.empty() &amp;&amp; vtbs.empty(); }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>};</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}  <span class="comment">// namespace altintegration</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacealtintegration_html"><div class="ttname"><a href="namespacealtintegration.html">altintegration</a></div><div class="ttdoc">Defines logging helpers.</div><div class="ttdef"><b>Definition:</b> <a href="block_8hpp_source.html#l00014">block.hpp:14</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1AltBlockTree_html"><div class="ttname"><a href="structaltintegration_1_1AltBlockTree.html">altintegration::AltBlockTree</a></div><div class="ttdoc">Represents simplified view on Altchain's block tree, maintains VBK tree and BTC tree.</div><div class="ttdef"><b>Definition:</b> <a href="alt__block__tree_8hpp_source.html#l00178">alt_block_tree.hpp:178</a></div></div>
 <div class="ttc" id="astructaltintegration_1_1VbkBlock_html"><div class="ttname"><a href="structaltintegration_1_1VbkBlock.html">altintegration::VbkBlock</a></div><div class="ttdoc">Veriblock block.</div><div class="ttdef"><b>Definition:</b> <a href="vbkblock_8hpp_source.html#l00032">vbkblock.hpp:32</a></div></div>

@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1btc_1_1Block.h
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00042">42</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00047">47</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for altintegration::btc::Block:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -297,9 +297,13 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00047">47</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   53</span>      : BlockHeader(</div>
-<div class="line"><span class="lineno">   54</span>            version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00052">52</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   58</span>      : BlockHeader(version,</div>
+<div class="line"><span class="lineno">   59</span>                    std::move(previousBlock),</div>
+<div class="line"><span class="lineno">   60</span>                    std::move(merkleRoot),</div>
+<div class="line"><span class="lineno">   61</span>                    timestamp,</div>
+<div class="line"><span class="lineno">   62</span>                    bits,</div>
+<div class="line"><span class="lineno">   63</span>                    nonce) {}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -340,11 +344,11 @@ template&lt;typename Stream , typename Operation &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00059">59</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   59</span>                                                               {</div>
-<div class="line"><span class="lineno">   60</span>    READWRITEAS(BlockHeader, *<span class="keyword">this</span>);</div>
-<div class="line"><span class="lineno">   61</span>    READWRITE(this-&gt;vtx);</div>
-<div class="line"><span class="lineno">   62</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00068">68</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   68</span>                                                               {</div>
+<div class="line"><span class="lineno">   69</span>    READWRITEAS(BlockHeader, *<span class="keyword">this</span>);</div>
+<div class="line"><span class="lineno">   70</span>    READWRITE(this-&gt;vtx);</div>
+<div class="line"><span class="lineno">   71</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -383,8 +387,8 @@ template&lt;typename Stream , typename Operation &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00070">70</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   70</span>{ <span class="keywordflow">return</span> !(a == b); }</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00079">79</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   79</span>{ <span class="keywordflow">return</span> !(a == b); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -422,12 +426,12 @@ template&lt;typename Stream , typename Operation &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00064">64</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   64</span>                                                         {</div>
-<div class="line"><span class="lineno">   65</span>    <span class="keyword">const</span> BlockHeader &amp;A = a;</div>
-<div class="line"><span class="lineno">   66</span>    <span class="keyword">const</span> BlockHeader &amp;B = b;</div>
-<div class="line"><span class="lineno">   67</span>    <span class="keywordflow">return</span> A == B &amp;&amp; a.vtx == b.vtx;</div>
-<div class="line"><span class="lineno">   68</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00073">73</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   73</span>                                                         {</div>
+<div class="line"><span class="lineno">   74</span>    <span class="keyword">const</span> BlockHeader&amp; A = a;</div>
+<div class="line"><span class="lineno">   75</span>    <span class="keyword">const</span> BlockHeader&amp; B = b;</div>
+<div class="line"><span class="lineno">   76</span>    <span class="keywordflow">return</span> A == B &amp;&amp; a.vtx == b.vtx;</div>
+<div class="line"><span class="lineno">   77</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -444,7 +448,7 @@ template&lt;typename Stream , typename Operation &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00056">56</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00065">65</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
 
 </div>
 </div>
@@ -460,7 +464,7 @@ template&lt;typename Stream , typename Operation &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00043">43</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00048">48</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
 
 </div>
 </div>

@@ -1,8 +1,8 @@
 <map id="altintegration::btc::BlockTransactionsRequest" name="altintegration::btc::BlockTransactionsRequest">
-<area shape="rect" id="node1" title=" " alt="" coords="83,851,289,943"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,491,180,788"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="13,145,173,428"/>
-<area shape="rect" id="node4" title=" " alt="" coords="204,601,355,678"/>
-<area shape="rect" id="node5" title=" " alt="" coords="223,248,335,325"/>
+<area shape="rect" id="node1" title=" " alt="" coords="83,880,289,972"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="5,505,180,817"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="13,145,173,443"/>
+<area shape="rect" id="node4" title=" " alt="" coords="204,623,355,700"/>
+<area shape="rect" id="node5" title=" " alt="" coords="223,255,335,333"/>
 <area shape="rect" id="node6" title=" " alt="" coords="260,5,299,83"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="altintegration::btc::OutPoint" name="altintegration::btc::OutPoint">
-<area shape="rect" id="node1" title="An outpoint &#45; a combination of a transaction hash and an index n into its vout." alt="" coords="5,711,212,817"/>
-<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="21,351,196,648"/>
-<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="29,5,189,288"/>
+<area shape="rect" id="node1" title="An outpoint &#45; a combination of a transaction hash and an index n into its vout." alt="" coords="5,740,212,847"/>
+<area shape="rect" id="node2" href="$structaltintegration_1_1Blob.html" title=" " alt="" coords="21,365,196,677"/>
+<area shape="rect" id="node3" href="$structaltintegration_1_1Blob.html" title="Contiguous byte array of fixed size." alt="" coords="29,5,189,303"/>
 </map>

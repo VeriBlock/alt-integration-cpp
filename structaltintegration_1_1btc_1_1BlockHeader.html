@@ -279,7 +279,12 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00021">21</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   27</span>      : BtcBlock(version, std::move(previousBlock), std::move(merkleRoot), timestamp, bits, nonce) {}</div>
+<div class="fragment"><div class="line"><span class="lineno">   27</span>      : BtcBlock(version,</div>
+<div class="line"><span class="lineno">   28</span>                 std::move(previousBlock),</div>
+<div class="line"><span class="lineno">   29</span>                 std::move(merkleRoot),</div>
+<div class="line"><span class="lineno">   30</span>                 timestamp,</div>
+<div class="line"><span class="lineno">   31</span>                 bits,</div>
+<div class="line"><span class="lineno">   32</span>                 nonce) {}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -320,15 +325,15 @@ template&lt;typename Stream , typename Operation &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00032">32</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   32</span>                                                               {</div>
-<div class="line"><span class="lineno">   33</span>    READWRITE(this-&gt;version);</div>
-<div class="line"><span class="lineno">   34</span>    READWRITE(this-&gt;previousBlock);</div>
-<div class="line"><span class="lineno">   35</span>    READWRITE(this-&gt;merkleRoot);</div>
-<div class="line"><span class="lineno">   36</span>    READWRITE(this-&gt;timestamp);</div>
-<div class="line"><span class="lineno">   37</span>    READWRITE(this-&gt;bits);</div>
-<div class="line"><span class="lineno">   38</span>    READWRITE(this-&gt;nonce);</div>
-<div class="line"><span class="lineno">   39</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00037">37</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   37</span>                                                               {</div>
+<div class="line"><span class="lineno">   38</span>    READWRITE(this-&gt;version);</div>
+<div class="line"><span class="lineno">   39</span>    READWRITE(this-&gt;previousBlock);</div>
+<div class="line"><span class="lineno">   40</span>    READWRITE(this-&gt;merkleRoot);</div>
+<div class="line"><span class="lineno">   41</span>    READWRITE(this-&gt;timestamp);</div>
+<div class="line"><span class="lineno">   42</span>    READWRITE(this-&gt;bits);</div>
+<div class="line"><span class="lineno">   43</span>    READWRITE(this-&gt;nonce);</div>
+<div class="line"><span class="lineno">   44</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -345,7 +350,7 @@ template&lt;typename Stream , typename Operation &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00029">29</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="block_8hpp_source.html#l00034">34</a> of file <a class="el" href="block_8hpp_source.html">block.hpp</a>.</p>
 
 </div>
 </div>

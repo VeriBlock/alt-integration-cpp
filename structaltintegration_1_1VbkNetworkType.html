@@ -190,7 +190,8 @@ Public Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   26</span>      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">   27</span>    }</div>
 <div class="line"><span class="lineno">   28</span> </div>
-<div class="line"><span class="lineno">   29</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#ae19ae2ace8fe638f716344ed0da61442">hasValue</a> &amp;&amp; other.hasValue &amp;&amp; <a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">value</a> == other.value; }</div>
+<div class="line"><span class="lineno">   29</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#ae19ae2ace8fe638f716344ed0da61442">hasValue</a> &amp;&amp; other.hasValue &amp;&amp; <a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">value</a> == other.value;</div>
+<div class="line"><span class="lineno">   30</span>  }</div>
 <div class="ttc" id="astructaltintegration_1_1VbkNetworkType_html_af9eb76cc0a24e8b68705655d3c8ba00e"><div class="ttname"><a href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">altintegration::VbkNetworkType::value</a></div><div class="ttdeci">uint8_t value</div><div class="ttdoc">otherwise, use value for network ID</div><div class="ttdef"><b>Definition:</b> <a href="network__byte__pair_8hpp_source.html#l00020">network_byte_pair.hpp:20</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -221,14 +222,14 @@ template&lt;typename JsonValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="network__byte__pair_8hpp_source.html#l00040">40</a> of file <a class="el" href="network__byte__pair_8hpp_source.html">network_byte_pair.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   40</span>                                     {</div>
-<div class="line"><span class="lineno">   41</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#ae19ae2ace8fe638f716344ed0da61442">hasValue</a>) {</div>
-<div class="line"><span class="lineno">   42</span>      json::putIntKV(obj, <span class="stringliteral">&quot;networkByte&quot;</span>, <a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">value</a>);</div>
-<div class="line"><span class="lineno">   43</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><span class="lineno">   44</span>      json::putNullKV(obj, <span class="stringliteral">&quot;networkByte&quot;</span>);</div>
-<div class="line"><span class="lineno">   45</span>    }</div>
-<div class="line"><span class="lineno">   46</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="network__byte__pair_8hpp_source.html#l00041">41</a> of file <a class="el" href="network__byte__pair_8hpp_source.html">network_byte_pair.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   41</span>                                     {</div>
+<div class="line"><span class="lineno">   42</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#ae19ae2ace8fe638f716344ed0da61442">hasValue</a>) {</div>
+<div class="line"><span class="lineno">   43</span>      json::putIntKV(obj, <span class="stringliteral">&quot;networkByte&quot;</span>, <a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">value</a>);</div>
+<div class="line"><span class="lineno">   44</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><span class="lineno">   45</span>      json::putNullKV(obj, <span class="stringliteral">&quot;networkByte&quot;</span>);</div>
+<div class="line"><span class="lineno">   46</span>    }</div>
+<div class="line"><span class="lineno">   47</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -255,14 +256,14 @@ template&lt;typename JsonValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="network__byte__pair_8hpp_source.html#l00031">31</a> of file <a class="el" href="network__byte__pair_8hpp_source.html">network_byte_pair.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   31</span>                                   {</div>
-<div class="line"><span class="lineno">   32</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#ae19ae2ace8fe638f716344ed0da61442">hasValue</a>) {</div>
-<div class="line"><span class="lineno">   33</span>      <span class="keywordflow">return</span> std::to_string(<a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">value</a>);</div>
-<div class="line"><span class="lineno">   34</span>    }</div>
-<div class="line"><span class="lineno">   35</span> </div>
-<div class="line"><span class="lineno">   36</span>    <span class="keywordflow">return</span> {<span class="stringliteral">&quot;null&quot;</span>};</div>
-<div class="line"><span class="lineno">   37</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="network__byte__pair_8hpp_source.html#l00032">32</a> of file <a class="el" href="network__byte__pair_8hpp_source.html">network_byte_pair.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   32</span>                                   {</div>
+<div class="line"><span class="lineno">   33</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#ae19ae2ace8fe638f716344ed0da61442">hasValue</a>) {</div>
+<div class="line"><span class="lineno">   34</span>      <span class="keywordflow">return</span> std::to_string(<a class="code hl_variable" href="structaltintegration_1_1VbkNetworkType.html#af9eb76cc0a24e8b68705655d3c8ba00e">value</a>);</div>
+<div class="line"><span class="lineno">   35</span>    }</div>
+<div class="line"><span class="lineno">   36</span> </div>
+<div class="line"><span class="lineno">   37</span>    <span class="keywordflow">return</span> {<span class="stringliteral">&quot;null&quot;</span>};</div>
+<div class="line"><span class="lineno">   38</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>

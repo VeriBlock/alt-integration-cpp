@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('structaltintegration_1_1ReadStream.htm
  <a href="structaltintegration_1_1ReadStream.html#details">More...</a></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00022">22</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00026">26</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
 </div>
 <p><code>#include &lt;<a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -205,14 +205,14 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00056">56</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   56</span>                                           {</div>
-<div class="line"><span class="lineno">   57</span>    ValidationState state;</div>
-<div class="line"><span class="lineno">   58</span>    T t = 0;</div>
-<div class="line"><span class="lineno">   59</span>    <span class="keywordtype">bool</span> result = readBE&lt;T&gt;(t, state, bytes);</div>
-<div class="line"><span class="lineno">   60</span>    VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t readBE: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">   61</span>    <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">   62</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00060">60</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   60</span>                                           {</div>
+<div class="line"><span class="lineno">   61</span>    ValidationState state;</div>
+<div class="line"><span class="lineno">   62</span>    T t = 0;</div>
+<div class="line"><span class="lineno">   63</span>    <span class="keywordtype">bool</span> result = readBE&lt;T&gt;(t, state, bytes);</div>
+<div class="line"><span class="lineno">   64</span>    VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t readBE: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">   65</span>    <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">   66</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -241,14 +241,14 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00086">86</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   86</span>                   {</div>
-<div class="line"><span class="lineno">   87</span>    ValidationState state;</div>
-<div class="line"><span class="lineno">   88</span>    T t = 0;</div>
-<div class="line"><span class="lineno">   89</span>    <span class="keywordtype">bool</span> result = readLE&lt;T&gt;(t, state);</div>
-<div class="line"><span class="lineno">   90</span>    VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t readLE: %s&quot;</span>, state.toString());</div>
-<div class="line"><span class="lineno">   91</span>    <span class="keywordflow">return</span> t;</div>
-<div class="line"><span class="lineno">   92</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00090">90</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   90</span>                   {</div>
+<div class="line"><span class="lineno">   91</span>    ValidationState state;</div>
+<div class="line"><span class="lineno">   92</span>    T t = 0;</div>
+<div class="line"><span class="lineno">   93</span>    <span class="keywordtype">bool</span> result = readLE&lt;T&gt;(t, state);</div>
+<div class="line"><span class="lineno">   94</span>    VBK_ASSERT_MSG(result, <span class="stringliteral">&quot;Can&#39;t readLE: %s&quot;</span>, state.toString());</div>
+<div class="line"><span class="lineno">   95</span>    <span class="keywordflow">return</span> t;</div>
+<div class="line"><span class="lineno">   96</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -276,8 +276,8 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00119">119</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  119</span>{ <span class="keywordflow">return</span> (remaining() &gt;= nbytes); }</div>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00123">123</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  123</span>{ <span class="keywordflow">return</span> (remaining() &gt;= nbytes); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -366,21 +366,21 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00068">68</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   68</span>                                                                      {</div>
-<div class="line"><span class="lineno">   69</span>    <span class="keywordflow">if</span> (!hasMore(bytes)) {</div>
-<div class="line"><span class="lineno">   70</span>      <span class="keywordflow">return</span> state.Invalid(</div>
-<div class="line"><span class="lineno">   71</span>          <span class="stringliteral">&quot;readbe-underflow&quot;</span>,</div>
-<div class="line"><span class="lineno">   72</span>          format(<span class="stringliteral">&quot;Tried to read {} bytes from stream, but it has {} bytes&quot;</span>,</div>
-<div class="line"><span class="lineno">   73</span>                 bytes,</div>
-<div class="line"><span class="lineno">   74</span>                 remaining()));</div>
-<div class="line"><span class="lineno">   75</span>    }</div>
-<div class="line"><span class="lineno">   76</span>    t = 0;</div>
-<div class="line"><span class="lineno">   77</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, shift = (bytes - 1) * 8; i &lt; bytes; i++, shift -= 8) {</div>
-<div class="line"><span class="lineno">   78</span>      t += <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>((<span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(m_Buffer[m_Pos++])) &lt;&lt; shift);</div>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00072">72</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   72</span>                                                                      {</div>
+<div class="line"><span class="lineno">   73</span>    <span class="keywordflow">if</span> (!hasMore(bytes)) {</div>
+<div class="line"><span class="lineno">   74</span>      <span class="keywordflow">return</span> state.Invalid(</div>
+<div class="line"><span class="lineno">   75</span>          <span class="stringliteral">&quot;readbe-underflow&quot;</span>,</div>
+<div class="line"><span class="lineno">   76</span>          format(<span class="stringliteral">&quot;Tried to read {} bytes from stream, but it has {} bytes&quot;</span>,</div>
+<div class="line"><span class="lineno">   77</span>                 bytes,</div>
+<div class="line"><span class="lineno">   78</span>                 remaining()));</div>
 <div class="line"><span class="lineno">   79</span>    }</div>
-<div class="line"><span class="lineno">   80</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   81</span>  }</div>
+<div class="line"><span class="lineno">   80</span>    t = 0;</div>
+<div class="line"><span class="lineno">   81</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, shift = (bytes - 1) * 8; i &lt; bytes; i++, shift -= 8) {</div>
+<div class="line"><span class="lineno">   82</span>      t += <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>((<span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(m_Buffer[m_Pos++])) &lt;&lt; shift);</div>
+<div class="line"><span class="lineno">   83</span>    }</div>
+<div class="line"><span class="lineno">   84</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   85</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -420,22 +420,22 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00098">98</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   98</span>                                            {</div>
-<div class="line"><span class="lineno">   99</span>    <span class="keywordflow">if</span> (!hasMore(<span class="keyword">sizeof</span>(T))) {</div>
-<div class="line"><span class="lineno">  100</span>      <span class="keywordflow">return</span> state.Invalid(</div>
-<div class="line"><span class="lineno">  101</span>          <span class="stringliteral">&quot;readle-underflow&quot;</span>,</div>
-<div class="line"><span class="lineno">  102</span>          format(<span class="stringliteral">&quot;Tried to read {} bytes from stream, but it has {} bytes&quot;</span>,</div>
-<div class="line"><span class="lineno">  103</span>                 <span class="keyword">sizeof</span>(T),</div>
-<div class="line"><span class="lineno">  104</span>                 remaining()));</div>
-<div class="line"><span class="lineno">  105</span>    }</div>
-<div class="line"><span class="lineno">  106</span> </div>
-<div class="line"><span class="lineno">  107</span>    t = 0;</div>
-<div class="line"><span class="lineno">  108</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, shift = 0; i &lt; <span class="keyword">sizeof</span>(T); i++, shift += 8) {</div>
-<div class="line"><span class="lineno">  109</span>      t += <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>((<span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(m_Buffer[m_Pos++])) &lt;&lt; shift);</div>
-<div class="line"><span class="lineno">  110</span>    }</div>
-<div class="line"><span class="lineno">  111</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">  112</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00102">102</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  102</span>                                            {</div>
+<div class="line"><span class="lineno">  103</span>    <span class="keywordflow">if</span> (!hasMore(<span class="keyword">sizeof</span>(T))) {</div>
+<div class="line"><span class="lineno">  104</span>      <span class="keywordflow">return</span> state.Invalid(</div>
+<div class="line"><span class="lineno">  105</span>          <span class="stringliteral">&quot;readle-underflow&quot;</span>,</div>
+<div class="line"><span class="lineno">  106</span>          format(<span class="stringliteral">&quot;Tried to read {} bytes from stream, but it has {} bytes&quot;</span>,</div>
+<div class="line"><span class="lineno">  107</span>                 <span class="keyword">sizeof</span>(T),</div>
+<div class="line"><span class="lineno">  108</span>                 remaining()));</div>
+<div class="line"><span class="lineno">  109</span>    }</div>
+<div class="line"><span class="lineno">  110</span> </div>
+<div class="line"><span class="lineno">  111</span>    t = 0;</div>
+<div class="line"><span class="lineno">  112</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0, shift = 0; i &lt; <span class="keyword">sizeof</span>(T); i++, shift += 8) {</div>
+<div class="line"><span class="lineno">  113</span>      t += <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>((<span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(m_Buffer[m_Pos++])) &lt;&lt; shift);</div>
+<div class="line"><span class="lineno">  114</span>    }</div>
+<div class="line"><span class="lineno">  115</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  116</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -462,8 +462,8 @@ template&lt;typename T , typename  = typename std::enable_if&lt;std::is_integral
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00118">118</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  118</span>{ <span class="keywordflow">return</span> (m_Size - m_Pos); }</div>
+<p class="definition">Definition at line <a class="el" href="read__stream_8hpp_source.html#l00122">122</a> of file <a class="el" href="read__stream_8hpp_source.html">read_stream.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  122</span>{ <span class="keywordflow">return</span> (m_Size - m_Pos); }</div>
 </div><!-- fragment -->
 </div>
 </div>

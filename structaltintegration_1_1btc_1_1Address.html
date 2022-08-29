@@ -236,10 +236,10 @@ template&lt;typename Stream , typename Operation &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="net__entities_8hpp_source.html#l00141">141</a> of file <a class="el" href="net__entities_8hpp_source.html">net_entities.hpp</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  141</span>                                                             {</div>
-<div class="line"><span class="lineno">  142</span>    <span class="keywordflow">return</span> !(a == b);</div>
-<div class="line"><span class="lineno">  143</span>  }</div>
+<p class="definition">Definition at line <a class="el" href="net__entities_8hpp_source.html#l00140">140</a> of file <a class="el" href="net__entities_8hpp_source.html">net_entities.hpp</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  140</span>                                                             {</div>
+<div class="line"><span class="lineno">  141</span>    <span class="keywordflow">return</span> !(a == b);</div>
+<div class="line"><span class="lineno">  142</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -279,9 +279,8 @@ template&lt;typename Stream , typename Operation &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="net__entities_8hpp_source.html#l00137">137</a> of file <a class="el" href="net__entities_8hpp_source.html">net_entities.hpp</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">  137</span>                                                             {</div>
-<div class="line"><span class="lineno">  138</span>    <span class="keywordflow">return</span> (a.nTime == b.nTime) &amp;&amp;</div>
-<div class="line"><span class="lineno">  139</span>           ((Service&amp;)a == (Service&amp;)b);</div>
-<div class="line"><span class="lineno">  140</span>  }</div>
+<div class="line"><span class="lineno">  138</span>    <span class="keywordflow">return</span> (a.nTime == b.nTime) &amp;&amp; ((Service&amp;)a == (Service&amp;)b);</div>
+<div class="line"><span class="lineno">  139</span>  }</div>
 </div><!-- fragment -->
 </div>
 </div>
