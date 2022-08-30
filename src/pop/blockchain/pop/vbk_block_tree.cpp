@@ -509,7 +509,7 @@ bool VbkBlockTree::loadTip(const hash_t& hash, ValidationState& state) {
   return true;
 }
 
-uint32_t VbkBlockTree::estimateNumberOfVTBs(
+uint32_t VbkBlockTree::estimateMissedNumberOfVTBs(
     const VbkBlockTree::index_t& index) const {
   auto vtb_ids = index.getPayloadIds<VTB>();
   if (vtb_ids.empty()) {
