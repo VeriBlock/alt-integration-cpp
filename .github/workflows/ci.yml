@@ -247,8 +247,6 @@ jobs:
     runs-on: macos-latest
     strategy:
       fail-fast: false
-      matrix:
-        flags: ["-DCMAKE_BUILD_TYPE=Release -DASAN=ON"]
     env:
       CC: clang
       CXX: clang++
@@ -272,10 +270,10 @@ jobs:
           key: macos-ccache-${{ steps.cache_timestamp.outputs.timestamp }}
           restore-keys: |
             macos-ccache-
-      - name: install ccache
-        run: brew install ccache
+      - name: install deps
+        run: brew install ccache boost-python3
       - name: cmake
-        run: cmake . -Bbuild ${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Release
+        run: cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DWITH_PYPOPTOOLS=ON
       - name: build
         run: cmake --build build --parallel 2
       - name: test
