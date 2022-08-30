@@ -134,6 +134,7 @@ struct PopTestFixture {
     auto index = tree.getBlockIndex(hash);
     EXPECT_TRUE(index);
 
+    VBK_ASSERT(index != nullptr);
     if (index->pprev != nullptr) {
       ConnectBlocksUntil(tree, index->pprev->getHash());
     }

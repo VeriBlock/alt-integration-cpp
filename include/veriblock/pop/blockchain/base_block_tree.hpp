@@ -9,20 +9,20 @@
 #include <limits>
 #include <unordered_map>
 #include <unordered_set>
-#include <veriblock/pop/algorithm.hpp>
-#include <veriblock/pop/assert.hpp>
-#include <veriblock/pop/fmt.hpp>
-#include <veriblock/pop/logger.hpp>
-#include <veriblock/pop/signals.hpp>
-#include <veriblock/pop/storage/block_reader.hpp>
-#include <veriblock/pop/storage/stored_block_index.hpp>
-#include <veriblock/pop/trace.hpp>
 
 #include "block_index.hpp"
 #include "blockchain_util.hpp"
 #include "chain.hpp"
 #include "payloads_index.hpp"
 #include "tree_algo.hpp"
+#include "veriblock/pop/algorithm.hpp"
+#include "veriblock/pop/assert.hpp"
+#include "veriblock/pop/fmt.hpp"
+#include "veriblock/pop/logger.hpp"
+#include "veriblock/pop/signals.hpp"
+#include "veriblock/pop/storage/block_reader.hpp"
+#include "veriblock/pop/storage/stored_block_index.hpp"
+#include "veriblock/pop/trace.hpp"
 
 namespace altintegration {
 
@@ -893,7 +893,6 @@ struct BaseBlockTree {
                    activeChain_.blocksCount());
 
     index_t* finalizedBlock = &index;
-
     if (finalizedBlock == &this->getRoot()) {
       if (finalizedBlock->finalized) {
         // block is already finalized
@@ -944,6 +943,8 @@ struct BaseBlockTree {
 
           return false;
         });
+
+    VBK_ASSERT(finalizedBlock != nullptr);
 
     // second, update active chain (it should start with
     // 'finalizedBlock' but we also need to preserve `preserveBlocksBehindFinal`
