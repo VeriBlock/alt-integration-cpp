@@ -1,0 +1,1 @@
+#include <veriblock/pop/entities/coin.hpp>

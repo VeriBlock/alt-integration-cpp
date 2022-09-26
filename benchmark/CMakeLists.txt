@@ -9,7 +9,7 @@ function(addbenchmark name)
     target_link_libraries(${_target}
             benchmark::benchmark
             Threads::Threads
-            ${LIB_NAME}
+            ${POP_LIB_NAME}
             )
 endfunction()
 

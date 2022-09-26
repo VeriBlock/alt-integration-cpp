@@ -1,9 +1,9 @@
 libdir=@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
 includedir=@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@
 
-Name: @LIB_NAME@
+Name: @POP_LIB_NAME@
 Description: Libraries for leveraging VeriBlock Proof-Of-Proof blockchain technology.
 Version: @PROJECT_VERSION@
 URL: https://github.com/VeriBlock/alt-integration-cpp
-Libs: -L${libdir} -l@LIB_NAME@ @VBK_DEPENDENCIES_LIBS@ -lstdc++ -lm @SANITIZERS_LIBS@
+Libs: -L${libdir} -l@POP_LIB_NAME@ @VBK_DEPENDENCIES_LIBS@ -lstdc++ -lm @SANITIZERS_LIBS@
 Cflags: -I${includedir} @SANITIZERS_CFLAGS@ @ADDITIONAL_CFLAGS@
