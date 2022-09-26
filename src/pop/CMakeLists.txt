@@ -87,20 +87,13 @@ if(VERIBLOCK_POP_LOGGER_ENABLED)
     list(APPEND SOURCES logger.cpp)
 endif()
 
-if(SHARED)
-    set(BUILD SHARED)
-else()
-    set(BUILD STATIC)
-endif()
-message(STATUS "BUILD=${BUILD}")
-
-add_library(${LIB_NAME} ${BUILD} ${SOURCES})
-enable_clang_tidy(${LIB_NAME})
+add_library(${POP_LIB_NAME} ${BUILD} ${SOURCES})
+enable_clang_tidy(${POP_LIB_NAME})
 
 if(WITH_TRACER)
     add_compile_definitions(TRACY_ON_DEMAND)
-    target_sources(${LIB_NAME} PRIVATE $<TARGET_OBJECTS:tracy>)
-    target_link_libraries(${LIB_NAME} PUBLIC dl)
+    target_sources(${POP_LIB_NAME} PRIVATE $<TARGET_OBJECTS:tracy>)
+    target_link_libraries(${POP_LIB_NAME} PUBLIC dl)
     set(ADDITIONAL_CFLAGS -DTRACY_ENABLE=1)
     if(UNIX)
         set(VBK_DEPENDENCIES_LIBS ${VBK_DEPENDENCIES_LIBS} -ldl)
@@ -109,21 +102,21 @@ if(WITH_TRACER)
     endif()
 endif()
 
-set_target_properties(${LIB_NAME} PROPERTIES
+set_target_properties(${POP_LIB_NAME} PROPERTIES
         VERSION ${VERSION}
         SOVERSION ${MAJOR_VERSION}
-        INTERFACE_${LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
+        INTERFACE_${POP_LIB_NAME}_MAJOR_VERSION ${MAJOR_VERSION}
         )
 set_property(
-        TARGET ${LIB_NAME}
+        TARGET ${POP_LIB_NAME}
         APPEND PROPERTY
         COMPATIBLE_INTERFACE_STRING MAJOR_VERSION
 )
 
 # make install is not defined with FUZZING=ON
 if(NOT FUZZING)
-    install(TARGETS ${LIB_NAME}
-            EXPORT ${LIB_NAME}Config
+    install(TARGETS ${POP_LIB_NAME}
+            EXPORT ${POP_LIB_NAME}Config
             COMPONENT devel
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -137,15 +130,15 @@ if(NOT FUZZING)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
     install(
-            EXPORT ${LIB_NAME}Config
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_NAME}
+            EXPORT ${POP_LIB_NAME}Config
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${POP_LIB_NAME}
     )
     export(
-            TARGETS ${LIB_NAME}
-            FILE ${LIB_NAME}Config.cmake
+            TARGETS ${POP_LIB_NAME}
+            FILE ${POP_LIB_NAME}Config.cmake
     )
 endif()
-target_include_directories(${LIB_NAME}
+target_include_directories(${POP_LIB_NAME}
         INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -166,14 +159,14 @@ endif()
 
 string(REPLACE ";" " " VBK_DEPENDENCIES_LIBS "${VBK_DEPENDENCIES_LIBS}")
 
-set(configured_pc ${CMAKE_BINARY_DIR}/${LIB_NAME}.pc)
+set(configured_pc ${CMAKE_BINARY_DIR}/${POP_LIB_NAME}.pc)
 configure_file("${CMAKE_SOURCE_DIR}/cmake/lib.pc.in" "${configured_pc}" @ONLY)
 install(FILES "${configured_pc}"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
 
-enable_asan_on_target(${LIB_NAME})
-enable_tsan_on_target(${LIB_NAME})
-enable_ubsan_on_target(${LIB_NAME})
-enable_werror(${LIB_NAME})
-enable_stacktrace_on_target(${LIB_NAME})
+enable_asan_on_target(${POP_LIB_NAME})
+enable_tsan_on_target(${POP_LIB_NAME})
+enable_ubsan_on_target(${POP_LIB_NAME})
+enable_werror(${POP_LIB_NAME})
+enable_stacktrace_on_target(${POP_LIB_NAME})

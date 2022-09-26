@@ -1,4 +1,4 @@
-link_libraries(${LIB_NAME})
+link_libraries(${POP_LIB_NAME})
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_BINARY_DIR}/include)
 

@@ -69,7 +69,9 @@ option(WITH_TRACER   "Build with `tracy` tracer enabled" OFF)
 option(WITH_BACKWARD "If ON, any failure will print stacktrace (only in Debug mode)" ON)
 
 
-set(LIB_NAME veriblock-pop-cpp)
+set(LIB_NAME veriblock)
+set(POP_LIB_NAME "${LIB_NAME}-pop-cpp")
+set(BFI_LIB_NAME "${LIB_NAME}-bfi-cpp")
 project(${LIB_NAME} LANGUAGES C CXX)
 
 include(FetchContent)
@@ -212,6 +214,13 @@ endif()
 if(WITH_PYPOPTOOLS)
     add_subdirectory(pypoptools)
 endif()
+
+if(SHARED)
+    set(BUILD SHARED)
+else()
+    set(BUILD STATIC)
+endif()
+message(STATUS "BUILD=${BUILD}")
 
 message(STATUS "ALT_HASH_SIZE=${ALT_HASH_SIZE}")
 message(STATUS "CLANG_TIDY=${CLANG_TIDY}")

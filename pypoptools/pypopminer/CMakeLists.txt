@@ -24,7 +24,7 @@ add_library(pypopminer MODULE
 target_link_libraries(pypopminer
         ${Boost_LIBRARIES}
         ${PYTHON_LIBRARIES}
-        ${LIB_NAME}
+        ${POP_LIB_NAME}
         )
 
 set_target_properties(pypopminer PROPERTIES

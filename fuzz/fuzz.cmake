@@ -22,7 +22,7 @@ function(fuzz_add_cov_flags target)
 endfunction()
 
 
-fuzz_add_cov_flags(${LIB_NAME})
+fuzz_add_cov_flags(${POP_LIB_NAME})
 
 
 add_custom_target(fuzz
@@ -31,7 +31,7 @@ add_custom_target(fuzz
         )
 add_custom_command(
         OUTPUT fuzz_targets
-        DEPENDS ${LIB_NAME}
+        DEPENDS ${POP_LIB_NAME}
         COMMAND ;
 )
 set_source_files_properties(fuzz_targets PROPERTIES SYMBOLIC "true")
@@ -81,7 +81,7 @@ function(add_fuzz FUZZ_TARGET)
             CXX_STANDARD 17
             CXX_STANDARD_REQUIRED TRUE
             )
-    target_link_libraries(${FUZZ_TARGET} PUBLIC ${LIB_NAME})
+    target_link_libraries(${FUZZ_TARGET} PUBLIC ${POP_LIB_NAME})
     target_compile_options(${FUZZ_TARGET} PUBLIC
             -fsanitize=${fuzzers}
             -g
