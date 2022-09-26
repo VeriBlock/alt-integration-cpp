@@ -1,7 +1,5 @@
 add_subdirectory(veriblock)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-
 set(SOURCES 
         dummy.cpp
         )
